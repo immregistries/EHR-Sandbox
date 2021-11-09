@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.immregistries.ehr.model">
+  <class name="Facility" table="facility">
+    <id name="facilityId" column="facility_id">
+      <generator class="native"/>
+    </id>
+    <many-to-one name="siloId" column="silo_id" class="Silo"/>
+    <many-to-one name="parentFacilityId" column="facility_id" class="Facility"/>
+    <property name="nameDisplay" column="name_display" type="string"/>
+    <property name="location" column="location" type="string"/>
+  </class>
+</hibernate-mapping>

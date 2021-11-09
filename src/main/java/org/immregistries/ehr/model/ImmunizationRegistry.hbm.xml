@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.immregistries.ehr.model">
+  <class name="ImmunizationRegistry" table="immunization_registry">
+    <id name="immunizationRegistryId" column="immunization_registry_id">
+      <generator class="native"/>
+    </id>
+    <many-to-one name="testerId" column="tester_id" class="Tester"/>
+    <property name="iisUrl" column="iis_url" type="string"/>
+    <property name="iisUsername" column="iis_username" type="string"/>
+    <property name="iisFacilityId" column="iis_facility_id" type="string"/>
+    <property name="iisPassword" column="iis_password" type="string"/>
+  </class>
+</hibernate-mapping>

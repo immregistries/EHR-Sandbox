@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.immregistries.ehr.model">
+  <class name="Silo" table="silo">
+    <id name="siloId" column="silo_id">
+      <generator class="native"/>
+    </id>
+    <many-to-one name="testerId" column="tester_id" class="Tester"/>
+    <property name="nameDisplay" column="name_display" type="string"/>
+  </class>
+</hibernate-mapping>
