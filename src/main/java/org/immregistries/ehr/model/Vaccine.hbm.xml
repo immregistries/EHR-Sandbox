@@ -12,6 +12,7 @@
     <property name="vaccineNdcCode" column="vaccine_ndc_code" type="string"/>
     <property name="vaccineMvxCode" column="vaccine_mvx_code" type="string"/>
     <property name="administeredAmount" column="administered_amount" type="string"/>
+    <property name="manufacturer" column="manufacturer" type="string"/>
     <property name="informationSource" column="information_source" type="string"/>
     <property name="lotnumber" column="lot_number" type="string"/>
     <property name="expirationDate" column="expiration_date" type="date"/>
