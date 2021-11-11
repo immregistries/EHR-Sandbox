@@ -5,8 +5,8 @@
     <id name="patientId" column="patient_id">
       <generator class="native"/>
     </id>
-    <many-to-one name="facilityId" column="facility_id" class="Facility"/>
-    <many-to-one name="siloId" column="silo_id" class="Silo"/>
+    <many-to-one name="facility" column="facility_id" class="Facility"/>
+    <many-to-one name="silo" column="silo_id" class="Silo"/>
     <property name="createdDate" column="created_date" type="date"/>
     <property name="updatedDate" column="updated_date" type="date"/>
     <property name="birthDate" column="birth_date" type="date"/>

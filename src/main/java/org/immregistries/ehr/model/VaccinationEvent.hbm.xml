@@ -13,4 +13,4 @@
     <many-to-one name="vaccineId" column="vaccine_id" class="Vaccine"/>
     <many-to-one name="logId" column="log_id" class="LogsOfModifications"/>
   </class>
-</hibernate-mapping>v
+</hibernate-mapping>

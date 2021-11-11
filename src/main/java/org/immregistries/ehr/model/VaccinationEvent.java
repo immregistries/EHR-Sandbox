@@ -1,4 +1,4 @@
-package org.immregistries.ehr.model
+package org.immregistries.ehr.model;
 import java.io.Serializable;
 import java.util.Date;
 
