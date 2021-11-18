@@ -11,7 +11,7 @@ public class Tester implements Serializable {
   private String loginPassword = "";
 
   public int getTesterId() {
-    return observationReportedId;
+    return testerId;
   }
 
   public void setTesterId(int testerId) {

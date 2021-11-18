@@ -2,7 +2,7 @@ package org.immregistries.ehr.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Test implements Serializable {
+public class Clinician implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
