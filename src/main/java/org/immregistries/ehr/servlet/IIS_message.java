@@ -16,8 +16,11 @@ public class IIS_message extends HttpServlet {
      * @see HttpServlet#HttpServlet()
      */
     public IIS_message() {
+    	/*
         super();
         // TODO Auto-generated constructor stub
+         * 
+         */
     }
 
 	/**

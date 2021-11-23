@@ -15,11 +15,12 @@ public class facility_patient_display extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
+	/*
     public facility_patient_display() {
         super();
         // TODO Auto-generated constructor stub
     }
-
+*/
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */

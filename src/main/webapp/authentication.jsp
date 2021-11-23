@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8" />
         <title>Authentication</title>
-        <link rel="stylesheet" href="inc/authentication.css" />
+        <link rel="stylesheet" href="src/main/webapp/inc/authentication.css" />
     </head>
     <body>
     	<header>

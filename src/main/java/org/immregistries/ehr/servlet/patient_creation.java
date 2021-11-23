@@ -15,11 +15,12 @@ public class patient_creation extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
+	/*
     public patient_creation() {
         super();
         // TODO Auto-generated constructor stub
     }
-
+*/
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
