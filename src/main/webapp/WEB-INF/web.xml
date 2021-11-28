@@ -74,7 +74,7 @@
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>Entry</servlet-name>
-  	<url-pattern>/Entry</url-pattern>
+  	<url-pattern>/entry</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>patient_record</servlet-name>
@@ -82,7 +82,7 @@
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>Silos</servlet-name>
-  	<url-pattern>/Silos</url-pattern>
+  	<url-pattern>/silos</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>IIS_message</servlet-name>
@@ -90,7 +90,7 @@
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>Silo_creation</servlet-name>
-  	<url-pattern>/Silo_creation</url-pattern>
+  	<url-pattern>/silo_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>patient_creation</servlet-name>
@@ -102,6 +102,6 @@
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>Authentication</servlet-name>
-  	<url-pattern>/Authentication</url-pattern>
+  	<url-pattern>/authentication</url-pattern>
   </servlet-mapping>
 </web-app>
