@@ -14,20 +14,17 @@ import javax.servlet.http.HttpSession;
  */
 public class Entry extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Entry() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	public static final String PARAM_SHOW = "show";
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		      throws ServletException, IOException {
+	  @Override
+	  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+	      throws ServletException, IOException {
+	    doGet(req, resp);
+	  }
+
+	  @Override
+	  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+	      throws ServletException, IOException {
 
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
@@ -36,21 +33,18 @@ public class Entry extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
-	        out.println("<form method=\"post\" action=\"authentication\">\r\n"
-	        		+ "                <fieldset>\r\n"
-	        		+ "  						<input type=\"text\" placeholder=\"EHR Username\" id=\"EHRuid\" name=\"EHRuid\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
-	        		+ "	                	<br />\r\n"
-	        		+ "	                    <br />\r\n"
-	        		+ "	                    <br />\r\n"
-	        		+ "	                    <input type=\"password\" placeholder=\"password\" id=\"motdepasse\" name=\"motdepasse\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
-	        		+ "	                    <br />\r\n"
-	        		+ "                </fieldset>\r\n"
-	        		+ "                <div class=\"ok\">\r\n"
-	        		+ "	                <input type=\"submit\" value=\"Validate\" class=\"bouton\" />\r\n"
-	        		+ "	                 <br />\r\n"
-	        		+ "                </div>\r\n"
-	        		+ "            </form>");  
-	        
+	        out.println("<div class=\"container\">\r\n\"\r\n"
+	        		+ "	        		+ \"  <div class=\"toppane\\\">Test Page</div>\\r\\n\"\r\n"
+	        		+ "	        		+ \"  <div class=\\\"leftpane\\\">\\r\\n\"\r\n"
+	        		+ "	        		+ \"  	</div>\\r\\n\"\r\n"
+	        		+ "	        		+ \"  <div class=\\\"middlepane\\\">Test Page</div>\\r\\n\"\r\n"
+	        		+ "	        		+ \"  <div class=\\\"rightpane\\\">\\r\\n\"\r\n"
+	        		+ "	        		+		\"<h1> name </h1>\"\r\n"
+	        		+ "	        		+       \"<button>add a new entry</button>\\r\\n\"\r\n"
+	        		+ "	        		+      \"<button>historical</button>\"\r\n"
+	        		+ "	        		+ \"		</div>\\r\\n\"\r\n"
+	        		+ "	        		+ \"</div>");  
+	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
 	      e.printStackTrace(System.err);
@@ -59,28 +53,26 @@ public class Entry extends HttpServlet {
 	    out.close();
 	  }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-	
-	
 	  public static void doHeader(PrintWriter out, HttpSession session) {
-		    out.println("<html>");
-		    out.println("  <head>");
-		    out.println("    <title>EHR Sandbox</title>");
-		    out.println("<link rel=\"stylesheet\" href=\"src/main/webapp/inc/authentication.css\" />");
-		    out.println("  </head>");
-		    out.println("  <body>");
-		    out.println("    <header class=\"w3-container w3-light-grey\">");
-		    out.println("<header>\r\n"
-		    		+ "    		<h1>OUILLE</h1>\r\n"
-		    		+ "    	</header>");
-		    out.println("<div id=\"formulaire\">");
+	    out.println("<html>");
+	    out.println("  <head>");
+	    out.println("    <title>EHR Sandbox</title>");
+	    out.println("<link rel=\"stylesheet\" href=\"inc/Entry.css\" />");
+	    out.println("  </head>");
+	    out.println("  <body>");
+	    out.println("    <header class=\"w3-container w3-light-grey\">");
+	    out.println("<header>\r\n"
+	    		+ "    		<h1>Entry</h1>\r\n"
+	    		+ "    	</header>");
+	    out.println("<div id=\"formulaire\">");
 
-		  }
+	  }
+
+	  public static void doFooter(PrintWriter out, HttpSession session) {
+	    out.println("</div>\r\n"
+	    		+ "    </body>\r\n"
+	    		+ "</html>");
+	  }
+
 
 }

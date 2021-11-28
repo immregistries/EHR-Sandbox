@@ -39,10 +39,8 @@ public class Authentication extends HttpServlet {
         		+ "	                    <input type=\"password\" placeholder=\"password\" id=\"motdepasse\" name=\"motdepasse\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
         		+ "	                    <br />\r\n"
         		+ "                </fieldset>\r\n"
-        		+ "                <div class=\"ok\">\r\n"
-        		+ "	                <input type=\"submit\" value=\"Validate\" class=\"bouton\" />\r\n"
-        		+ "	                 <br />\r\n"
-        		+ "                </div>\r\n"
+        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\">ok</button>\r\n"
+        		
         		+ "            </form>");  
         doFooter(out, session);
       }
@@ -57,13 +55,14 @@ public class Authentication extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"src/main/webapp/inc/authentication.css\" />");
+    out.println("<link rel=\"stylesheet\" href=\"inc/authentication.css\" />");
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
     out.println("<header>\r\n"
     		+ "    		<h1>Authentication</h1>\r\n"
     		+ "    	</header>");
+    
     out.println("<div id=\"formulaire\">");
 
   }
