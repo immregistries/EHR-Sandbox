@@ -1,8 +1,8 @@
 DROP DATABASE ehr;
 CREATE DATABASE ehr;
+
 USE ehr;
 
-USE EHR;
 
 CREATE TABLE `clinician` (
   `clinician_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -98,8 +98,8 @@ CREATE TABLE `patient` (
   CONSTRAINT `patient_ibfk_2` FOREIGN KEY (`silo_id`) REFERENCES `silo` (`silo_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `Next-of-Kins` (
-  `Next-of-Kins_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `next_of_kin` (
+  `next_of_kin_id` int(11) NOT NULL AUTO_INCREMENT,
   `patient_id` int(11) NOT NULL,
   `birth_date` date NOT NULL,
   `name_last` varchar(250) DEFAULT NULL,
@@ -118,9 +118,9 @@ CREATE TABLE `Next-of-Kins` (
   `phone` varchar(250) DEFAULT NULL,
   `email` varchar(250) DEFAULT NULL,
   `ethnicity` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`Next-of-Kins_id`),
+  PRIMARY KEY (`next_of_kin_id`),
   KEY `patient_id` (`patient_id`),
-  CONSTRAINT `Next-of-Kins_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
+  CONSTRAINT `next_of_kin_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `vaccine` (

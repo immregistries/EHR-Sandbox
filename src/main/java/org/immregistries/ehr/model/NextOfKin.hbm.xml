@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.immregistries.ehr.model">
-  <class name="NextOfKins" table="Next-of-kins">
-    <id name="nextOfKinsId" column="Next-of-kins_id">
+  <class name="NextOfKin" table="next_of_kin">
+    <id name="nextOfKinId" column="next_of_kin_id">
       <generator class="native"/>
     </id>
     <many-to-one name="patientId" column="patient_id" class="Patient"/>
