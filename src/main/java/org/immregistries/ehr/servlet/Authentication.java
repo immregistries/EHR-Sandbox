@@ -39,7 +39,7 @@ public class Authentication extends HttpServlet {
         		+ "	                    <input type=\"password\" placeholder=\"password\" id=\"motdepasse\" name=\"motdepasse\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
         		+ "	                    <br />\r\n"
         		+ "                </fieldset>\r\n"
-        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\">ok</button>\r\n"
+        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"boutton\"  >Validate</button>\r\n"
         		
         		+ "            </form>");  
         doFooter(out, session);

@@ -41,10 +41,7 @@ public class Silo_creation extends HttpServlet {
 	        		+ "	                    <input type=\"password\" placeholder=\"Location\" id=\"motdepasse\" name=\"motdepasse\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
 	        		+ "	                    <br />\r\n"
 	        		+ "                </fieldset>\r\n"
-	        		+ "                <div class=\"ok\">\r\n"
-	        		+ "	                <input type=\"submit\" value=\"Validate\" class=\"bouton\" />\r\n"
-	        		+ "	                 <br />\r\n"
-	        		+ "                </div>\r\n"
+	        		+"<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"boutton\"  >Validate</button>\r\n"
 	        		+ "            </form>");  
 	        doFooter(out, session);
 	      }

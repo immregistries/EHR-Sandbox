@@ -33,10 +33,12 @@ public class Silos extends HttpServlet {
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println("<div class=\"container\">\r\n"
 	        		+ "  <div class=\"leftpane\">\r\n"
-	        		+ "  	left \r\n"
+	        		+ "  	list of silos \r\n"
+	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\" class=\"boutton\">Choose silo</button>"
+
 	        		+     "</div>"
-	        		+ "  <div class=\"rightpane\">\r\n right"
-	        		+    "<buttononclick=\\\"location.href=\\'http://localhost:9091/ehr-sandbox/Silo_creation'\\\">create new silo</button>"
+	        		+ "  <div class=\"rightpane\">\r\n "
+	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"boutton\">Create new silo</button>"
 	        		+ "		</div>\r\n"
 	        		+ "</div>");  
 	        doFooter(out, session);
@@ -55,7 +57,6 @@ public class Silos extends HttpServlet {
 	    out.println("<link rel=\"stylesheet\" href=\"inc/Silos.css\" />");
 	    out.println("  </head>");
 	    out.println("  <body>");
-	    out.println("    <header class=\"w3-container w3-light-grey\">");
 	    out.println("<header>\r\n"
 	    		+ "    		<h1>Silos</h1>\r\n"
 	    		+ "    	</header>");

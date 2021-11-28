@@ -2,6 +2,7 @@ body{
 	margin: 0;
 	padding: 0;
 	font: normal 8pt verdana, helvetica, sans-serif;
+	
 }
 
 p, legend, label, input {
@@ -11,16 +12,16 @@ p, legend, label, input {
 header {
 	display :flex;
 	text-align : center;
+	width:100%;
+	flex-direction: column;
 }
 /* Forms --------------------------------------------------------------------------------------- */
 
 fieldset {
     padding: 50px;
-    border: 1px #660033 solid;
     margin-top: 10px;
     margin-bottom:10px; 
     flex-wrap:wrap;
-	background-color: #660033;
 	display: flex;
 	text-align:center;
 }
@@ -66,8 +67,8 @@ fieldset {
 
 
 fieldset input {
-	height : 2em;
-    width : 50em;
+	height : 4em;
+    width : 30em;
     display : block;
     margin-left : 0;
     margin-right : 0;
@@ -89,7 +90,6 @@ form {
 
 form input {
     margin: 3px 3px 0px 0px;
-    border: 1px #999 solid;
 }
 
 form input.sansLabel {
@@ -105,16 +105,17 @@ form input.sansLabel {
 	
 }
 
-.bouton {
+.boutton {
 	width : 20%;
 	height : 4em;
 	background-color: #660033;
 	border: 1.5px solid #660033;
 	color: white;
 	transition-duration: 0.4s;
+	border-radius: 10px; 
 }
 
-.bouton:hover{
+.boutton:hover{
 	background-color: #CCCCCC;
 	color: #660033;
 	border: 1.5px solid #660033;

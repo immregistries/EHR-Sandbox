@@ -1,8 +1,9 @@
 @charset "ISO-8859-1";
 body, html {
   width: 100%;
-  height: 100%;
+  height: 90%;
   margin: 0;
+  font: normal 8pt verdana, helvetica, sans-serif;
 }
 
 .container {
@@ -11,33 +12,69 @@ body, html {
 }
 
 .leftpane {
-    width: 25%;
+    width: 50%;
     height: 100%;
-    float: left;
-    background-color: rosybrown;
+    overflow:auto;
+    float:left;
+    border: 2px #666666 solid;
     border-collapse: collapse;
+    position:relative;
 }
 
 .middlepane {
     width: 50%;
     height: 100%;
     float: left;
-    background-color: royalblue;
+    
     border-collapse: collapse;
 }
 
 .rightpane {
-  width: 25%;
-  height: 100%;
+  width: 30%;
+  height: 50%;
   position: relative;
   float: right;
-  background-color: yellow;
+  display:flex;
+  flex-direction: center;
+  align-items:center;
+  justify-content:center;
   border-collapse: collapse;
 }
 
 .toppane {
   width: 100%;
-  height: 100px;
+  height: 1000px;
   border-collapse: collapse;
   background-color: #4da6ff;
+}
+.boutton {
+	width : 50%;
+	height : 4em;
+	background-color: #660033;
+	border: 1.5px solid #660033;
+	color: white;
+	transition-duration: 0.4s;
+	border-radius: 10px; 
+	}
+
+.boutton:hover{
+	background-color: #CCCCCC;
+	color: #660033;
+	border: 1.5px solid #660033;
+	font-weight: bold;
+}
+
+
+h1 {
+	text-align : center; 
+    font-weight: bold;
+    font-size : 5em;
+    color : #ee8936 ;
+	
+}
+header {
+	align-items : center;
+	width:100%;
+	flex-direction: column;
+	height: 100px;
 }
