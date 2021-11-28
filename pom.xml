@@ -64,8 +64,7 @@
 			<artifactId>codebase-client</artifactId>
 			<version>2.3</version>
 		</dependency>
-
-
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
