@@ -34,14 +34,18 @@ public class patient_record extends HttpServlet {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println("<div class=\"container\">\r\n"
-	        		+ "  <div class=\"toppane\">Test Page</div>\r\n"
 	        		+ "  <div class=\"leftpane\">\r\n"
-	        		+ "  	</div>\r\n"
-	        		+ "  <div class=\"middlepane\">Test Page</div>\r\n"
-	        		+ "  <div class=\"rightpane\">\r\n"
-	        		+		"<h1> name </h1>"
-	        		+       "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/entry'\">add a new entry</button>\r\n"
-	        		+      "<button>historical</button>"
+	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/entry'\"style=\"text-decoration:none;\" \">"
+        			+ 		"<div class = clickable_silo>Entry 1</div>\r\n"
+	        		+"</a>"
+        			+    "<a href=\'http://localhost:9091/ehr-sandbox/entry'\"style=\"text-decoration:none;\" \">"
+        			+ 		"<div class = clickable_silo>Entry 2</div>"
+	        		+     "</div>\r\n"
+	        		+"</a>"
+	        		+ "  <div class=\"rightpane\">\r\n "
+	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"boutton\">Historical</button>"
+	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"boutton\">Add a new entry </button>"
+
 	        		+ "		</div>\r\n"
 	        		+ "</div>");  
 	        doFooter(out, session);
@@ -60,9 +64,8 @@ public class patient_record extends HttpServlet {
 	    out.println("<link rel=\"stylesheet\" href=\"inc/patient_record.css\" />");
 	    out.println("  </head>");
 	    out.println("  <body>");
-	    out.println("    <header class=\"w3-container w3-light-grey\">");
 	    out.println("<header>\r\n"
-	    		+ "    		<h1>patient record</h1>\r\n"
+	    		+ "    		<h1>Name</h1>\r\n"
 	    		+ "    	</header>");
 	    out.println("<div id=\"formulaire\">");
 
