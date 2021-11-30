@@ -16,6 +16,15 @@
     <property name="hibernate.c3p0.max_size">30</property>
     <property name="hibernate.c3p0.min_size">5</property>
     <property name="hibernate.c3p0.max_statements">10</property>
-    <mapping resource="org/immregistries/ehr/model/User.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Vaccine.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/VaccinationEvent.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Tester.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Silo.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Patient.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/NextOfKin.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/LogsOfModifications.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/ImmunizationRegistry.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Facility.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Clinician.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>
