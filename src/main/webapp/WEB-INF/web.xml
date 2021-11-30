@@ -5,12 +5,12 @@
   <display-name>EHR-Sandbox</display-name>
   
   <welcome-file-list>  
-  	<welcome-file>authentication.jsp</welcome-file>
+  	<welcome-file>org.immregistries.ehr.servlet.Authentication</welcome-file>
   </welcome-file-list>
 
   <servlet>
     <servlet-name>home</servlet-name>
-    <servlet-class>org.immregistries.ehr.servlet.HomeServlet.java</servlet-class>
+    <servlet-class>org.immregistries.ehr.servlet.HomeServlet</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -61,6 +61,13 @@
   	<servlet-name>facility_patient_display</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.facility_patient_display</servlet-class>
   </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>Authentication</display-name>
+  	<servlet-name>Authentication</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Authentication</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>home</servlet-name>
     <url-pattern>/home</url-pattern>
@@ -92,5 +99,9 @@
   <servlet-mapping>
   	<servlet-name>facility_patient_display</servlet-name>
   	<url-pattern>/facility_patient_display</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>Authentication</servlet-name>
+  	<url-pattern>/Authentication</url-pattern>
   </servlet-mapping>
 </web-app>
