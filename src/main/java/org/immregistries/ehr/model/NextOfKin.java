@@ -2,11 +2,11 @@ package org.immregistries.ehr.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class NextOfKins implements Serializable {
+public class NextOfKin implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private int nextOfKinsId = 0;
+    private int nextOfKinId = 0;
     private Patient patientId = null;
     private Date birthDate = null;
     private String nameLast = "";
@@ -27,11 +27,11 @@ public class NextOfKins implements Serializable {
     private String ethnicity = "";
 
     public int getNextOfKinsId() {
-        return nextOfKinsId;
+        return nextOfKinId;
     }
 
     public void setNextOfKinsId(int nextOfKinsId) {
-        this.nextOfKinsId = nextOfKinsId;
+        this.nextOfKinId = nextOfKinsId;
     }
 
     public Patient getPatientId() {
