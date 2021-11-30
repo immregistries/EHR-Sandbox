@@ -37,21 +37,17 @@ public class Test_numeromille extends HttpServlet {
     List<Tester> testerList = null;
     try {
       {
-        String loginUsername = req.getParameter("loginUsername");
         Query query = dataSession.createQuery(
-            "from Tester where loginUsername like :loginUsername ");
-        query.setParameter("loginUsername", loginUsername + "%");
+            "SELECT * FROM tester");
         testerList = query.list();
         int count = 0;
         for (Tester tester : testerList) {
           count++;
-          if (count > 100) {
+          if (count > 1) {
             break;
           }
-          String link = "tester?" + "testerId" + "="
-              + tester.getTesterId();
-          out.println("    <td><a href=\"" + link + "\">"
-              + "</a></td>");
+          
+          out.println(tester.getLoginUsername());
         }
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
