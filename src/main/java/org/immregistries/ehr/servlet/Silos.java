@@ -33,10 +33,13 @@ public class Silos extends HttpServlet {
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println("<div class=\"container\">\r\n"
 	        		+ "  <div class=\"leftpane\">\r\n"
-	        		+ "  	list of silos \r\n"
-	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\" class=\"boutton\">Choose silo</button>"
-
-	        		+     "</div>"
+	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
+        			+ 		"<div class = clickable_silo>Silo test</div>\r\n"
+	        		+"</a>"
+        			+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
+        			+ 		"<div class = clickable_silo>Silo test 2</div>"
+	        		+     "</div>\r\n"
+	        		+"</a>"
 	        		+ "  <div class=\"rightpane\">\r\n "
 	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"boutton\">Create new silo</button>"
 	        		+ "		</div>\r\n"
@@ -71,3 +74,4 @@ public class Silos extends HttpServlet {
 	  }
 
 }
+

@@ -1,7 +1,9 @@
-@charset "ISO-8859-1";body, html {
+@charset "ISO-8859-1";
+body, html {
   width: 100%;
-  height: 100%;
+  height: 90%;
   margin: 0;
+  font: normal 8pt verdana, helvetica, sans-serif;
 }
 
 .container {
@@ -10,33 +12,91 @@
 }
 
 .leftpane {
-    width: 25%;
+    width: 50%;
     height: 100%;
-    float: left;
-    background-color: rosybrown;
-    border-collapse: collapse;
+    overflow:auto;
+    float:left;
+    border: 2px #666666 solid;
+    text-decoration:none;	
+    position:relative;
+    padding-right:3px;
 }
 
 .middlepane {
     width: 50%;
     height: 100%;
     float: left;
-    background-color: royalblue;
+    
     border-collapse: collapse;
 }
 
 .rightpane {
-  width: 25%;
-  height: 100%;
+  width: 30%;
+  height: 50%;
   position: relative;
   float: right;
-  background-color: yellow;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
   border-collapse: collapse;
+  
 }
 
 .toppane {
   width: 100%;
-  height: 100px;
+  height: 1000px;
   border-collapse: collapse;
   background-color: #4da6ff;
+}
+.boutton {
+	width : 50%;
+	height : 4em;
+	background-color: #660033;
+	border: 1.5px solid #660033;
+	color: white;
+	transition-duration: 0.4s;
+	border-radius: 10px; 
+	margin-bottom:10px;
+	}
+
+.boutton:hover{
+	background-color: #CCCCCC;
+	color: #660033;
+	border: 1.5px solid #660033;
+	font-weight: bold;
+}
+
+
+h1 {
+	text-align : center; 
+    font-weight: bold;
+    font-size : 5em;
+    color : #ee8936 ;
+	
+}
+header {
+	align-items : center;
+	width:100%;
+	flex-direction: column;
+	height: 100px;
+}
+.clickable_silo{
+	border-style: solid;
+	width : 100%;
+	height : 10%;
+	text-align:center;
+	background-color:#ee8936;
+   display: flex;
+   	align-items: center; 
+   justify-content: center;
+	border: 1.5px solid #660033;
+	font-size:2em;
+	text-decoration:none;
+	
+}
+a:link {
+  color: #660033;
+  text-decoration: none;
+  
 }
