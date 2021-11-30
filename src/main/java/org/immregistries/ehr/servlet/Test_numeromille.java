@@ -2,12 +2,15 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.immregistries.ehr.model.Tester;
 
 
 /**
@@ -30,8 +33,26 @@ public class Test_numeromille extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
+    Session dataSession = PopServlet.getDataSession();
+    List<Tester> testerList = null;
     try {
       {
+        String loginUsername = req.getParameter("loginUsername");
+        Query query = dataSession.createQuery(
+            "from Tester where loginUsername like :loginUsername ");
+        query.setParameter("loginUsername", loginUsername + "%");
+        testerList = query.list();
+        int count = 0;
+        for (Tester tester : testerList) {
+          count++;
+          if (count > 100) {
+            break;
+          }
+          String link = "tester?" + "testerId" + "="
+              + tester.getTesterId();
+          out.println("    <td><a href=\"" + link + "\">"
+              + "</a></td>");
+        }
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("oui c cool");  
