@@ -62,7 +62,7 @@ public class Entry extends HttpServlet {
 	        		+ "	        		+ \"  <div class=\\\"middlepane\\\">Test Page</div>\\r\\n\"\r\n"
 	        		+ "	        		+ \"  <div class=\\\"rightpane\\\">\\r\\n\"\r\n"
 	        		+ "	        		+		\"<h1> name </h1>\"\r\n"
-	        		+ "	        		+       \"<button>add a new entry</button>\\r\\n\"\r\n"
+	        		+ "	        		+       \"<button onclick=\"printHL7();\" >add a new entry</button>\\r\\n\"\r\n"
 	        		+ "	        		+      \"<button>historical</button>\"\r\n"
 	        		+ "	        		+ \"		</div>\\r\\n\"\r\n"
 	        		+ "	        		+ \"</div>");  
@@ -74,7 +74,7 @@ public class Entry extends HttpServlet {
 	    out.flush();
 	    out.close();
 	  }
-
+	  
 	  public static void doHeader(PrintWriter out, HttpSession session) {
 	    out.println("<html>");
 	    out.println("  <head>");
