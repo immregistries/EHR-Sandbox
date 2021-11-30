@@ -34,20 +34,26 @@ public class facility_patient_display extends HttpServlet {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"leftpane\">\r\n"
+	        		+ "<h4>patients</h4>"
 	        		+		"<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;\" \">"
-        			+ 		"<div class = clickable_silo>patient 1</div>\r\n"
+	        		        			+ 		"<div class = clickable_silo>patient 1</div>\r\n"
+	        		        			+"</a>"
         			+    "<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;\" \">"
         			+ 		"<div class = clickable_silo>patient 2</div>"
+        			+"</a>"
 	        		+ "  	 </div>\r\n"
 	        		+ "  <div class=\"middlepane\">\r\n"
+	        		+ "<h4>facilities</h4>"
 	        		+		"<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
         			+ 		"<div class = clickable_silo>facility 1</div>\r\n"
+        			+"</a>"
         			+    	"<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
         			+ 		"<div class = clickable_silo>facility 2</div>"
+        			+"</a>"
     	            +	"</div>\r\n"
 	        		+ "  <div class=\"rightpane\">\r\n"
 	        		+       "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/patient_creation'\" class=\"boutton\">create new patient</button>\r\n"
-	        		+      "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/Silo_creation'\"class=\"boutton\">crleate new silo</button>"
+	        		+      "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\"class=\"boutton\">create new silo</button>"
 	        		+ "		</div>\r\n"
 	        		);  
 	        doFooter(out, session);
