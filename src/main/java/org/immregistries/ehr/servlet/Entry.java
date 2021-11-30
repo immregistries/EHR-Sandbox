@@ -75,6 +75,10 @@ public class Entry extends HttpServlet {
 	    out.close();
 	  }
 	  
+	  public static void printHL7() {
+	    System.out.println("wow");
+	  }
+	  
 	  public static void doHeader(PrintWriter out, HttpSession session) {
 	    out.println("<html>");
 	    out.println("  <head>");
