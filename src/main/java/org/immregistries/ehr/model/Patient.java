@@ -7,8 +7,8 @@ public class Patient implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int patientId = 0;
-    private Facility facilityId = null;
-    private Silo siloId = null;
+    private Facility facility = null;
+    private Silo silo = null;
     private Date createdDate = null;
     private Date updatedDate = null;
     private Date birthDate = null;
@@ -51,20 +51,20 @@ public class Patient implements Serializable {
         this.patientId = patientId;
     }
 
-    public Facility getFacilityId() {
-        return facilityId;
+    public Facility getFacility() {
+        return facility;
     }
 
-    public void setFacilityId(Facility facilityId) {
-        this.facilityId = facilityId;
+    public void setFacility(Facility facility) {
+        this.facility = facility;
     }
 
-    public Silo getSiloId() {
-        return siloId;
+    public Silo getSilo() {
+        return silo;
     }
 
-    public void setSiloId(Silo siloId) {
-        this.siloId = siloId;
+    public void setSilo(Silo silo) {
+        this.silo = silo;
     }
 
     public Date getCreatedDate() {

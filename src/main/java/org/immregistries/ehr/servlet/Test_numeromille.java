@@ -38,7 +38,7 @@ public class Test_numeromille extends HttpServlet {
     try {
       {
         Query query = dataSession.createQuery(
-            "SELECT * FROM tester");
+            "from Tester");
         testerList = query.list();
         int count = 0;
         for (Tester tester : testerList) {
