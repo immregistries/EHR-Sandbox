@@ -30,18 +30,16 @@ public class Authentication extends HttpServlet {
       {
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" action=\"authentication\">\r\n"
-        		+ "                <fieldset>\r\n"
-        		+ "  						<input type=\"text\" placeholder=\"EHR Username\" id=\"EHRuid\" name=\"EHRuid\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
-        		+ "	                	<br />\r\n"
-        		+ "	                    <br />\r\n"
-        		+ "	                    <br />\r\n"
-        		+ "	                    <input type=\"password\" placeholder=\"password\" id=\"motdepasse\" name=\"motdepasse\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
-        		+ "	                    <br />\r\n"
-        		+ "                </fieldset>\r\n"
-        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"boutton\"  >Validate</button>\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
+        		+ 							"<label class=\"w3-text-green\"><b>EHR username</b></label>"
+        		+ "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
+        		+						"	<label class=\"w3-text-green\"><b>password</b></label>"	                	
+        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
         		
-        		+ "            </form>");  
+        		
+        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+        		+ "                </form> "
+        		+ "            </div>");  
         doFooter(out, session);
       }
     } catch (Exception e) {
@@ -55,15 +53,14 @@ public class Authentication extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"inc/authentication.css\" />");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />");
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("<header>\r\n"
-    		+ "    		<h1>Authentication</h1>\r\n"
+    out.println( "    		<h1>Authentication</h1>\r\n"
     		+ "    	</header>");
     
-    out.println("<div id=\"formulaire\">");
+   out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");
 
   }
 
