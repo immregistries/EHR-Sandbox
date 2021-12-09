@@ -31,19 +31,18 @@ public class Silos extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
-	        out.println("<div class=\"container\">\r\n"
-	        		+ "  <div class=\"leftpane\">\r\n"
-	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
-        			+ 		"<div class = clickable_silo>Silo test</div>\r\n"
-	        		+"</a>"
-        			+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
-        			+ 		"<div class = clickable_silo>Silo test 2</div>"
-	        		+     "</div>\r\n"
-	        		+"</a>"
-	        		+ "  <div class=\"rightpane\">\r\n "
-	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"boutton\">Create new silo</button>"
-	        		+ "		</div>\r\n"
-	        		+ "</div>");  
+	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
+	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        				
+	        		+"Test silo 1</a>"
+        			+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+    				
+        			+"Test silo 2</a>"
+        			+"</div>"
+	        		+ "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
+	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
+	        		//+ "		</div>\r\n" 	
+	        		+"</div\r\n");  
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
@@ -57,14 +56,14 @@ public class Silos extends HttpServlet {
 	    out.println("<html>");
 	    out.println("  <head>");
 	    out.println("    <title>EHR Sandbox</title>");
-	    out.println("<link rel=\"stylesheet\" href=\"inc/Silos.css\" />");
+	    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
 	    out.println("  </head>");
 	    out.println("  <body>");
-	    out.println("<header>\r\n"
-	    		+ "    		<h1>Silos</h1>\r\n"
+	   // out.println("<div class=\"w3-container \">");
+	    out.println("<header class=\"w3-green\" >\r\n"
+	    		+ "List of silos"
 	    		+ "    	</header>");
-	    out.println("<div id=\"formulaire\">");
-
+	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
 	  }
 
 	  public static void doFooter(PrintWriter out, HttpSession session) {

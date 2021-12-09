@@ -5,9 +5,9 @@
     <id name="vaccinationEventId" column="vaccination_event_id">
       <generator class="native"/>
     </id>
-    <many-to-one name="administeringClinicianId" column="clinician_id" class="Clinician"/>
-    <many-to-one name="enteringClinicianId" column="clinician_id" class="Clinician"/>
-    <many-to-one name="orderingClinicianId" column="clinician_id" class="Clinician"/>
+    <many-to-one name="administeringClinicianId" column="administering_clinician_id" class="Clinician"/>
+    <many-to-one name="enteringClinicianId" column="entering_clinician_id" class="Clinician"/>
+    <many-to-one name="orderingClinicianId" column="ordering_clinician_id" class="Clinician"/>
     <many-to-one name="administeringFacilityId" column="facility_id" class="Facility"/>
     <many-to-one name="patientId" column="patient_id" class="Patient"/>
     <many-to-one name="vaccineId" column="vaccine_id" class="Vaccine"/>

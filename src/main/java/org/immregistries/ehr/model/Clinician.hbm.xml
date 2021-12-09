@@ -2,11 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.immregistries.ehr.model">
   <class name="Clinician" table="clinician">
-    <id name="CLinicianId" column="clinician_id">
+    <id name="clinicianId" column="clinician_id">
       <generator class="native"/>
     </id>
     <property name="nameLast" column="name_last" type="string"/>
     <property name="nameMiddle" column="name_middle" type="string"/>
-    <property name="nameMiddle" column="name_middle" type="string"/>
+    <property name="nameFirst" column="name_first" type="string"/>
   </class>
 </hibernate-mapping> 

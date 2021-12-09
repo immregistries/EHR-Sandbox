@@ -47,7 +47,7 @@ public class IIS_message extends HttpServlet {
 	    out.println("<html>");
 	    out.println("  <head>");
 	    out.println("    <title>EHR Sandbox</title>");
-	    out.println("<link rel=\"stylesheet\" href=\"inc/IIS_message.css\" />");
+	    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
 	    out.println("  </head>");
 	    out.println("  <body>");
 	    out.println("    <header class=\"w3-container w3-light-grey\">");

@@ -26,12 +26,12 @@ public class NextOfKin implements Serializable {
     private String email = "";
     private String ethnicity = "";
 
-    public int getNextOfKinsId() {
+    public int getNextOfKinId() {
         return nextOfKinId;
     }
 
-    public void setNextOfKinsId(int nextOfKinsId) {
-        this.nextOfKinId = nextOfKinsId;
+    public void setNextOfKinId(int nextOfKinId) {
+        this.nextOfKinId = nextOfKinId;
     }
 
     public Patient getPatientId() {

@@ -33,29 +33,29 @@ public class facility_patient_display extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
-	        out.println( "  <div class=\"leftpane\">\r\n"
-	        		+ "<h4>patients</h4>"
-	        		+		"<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;\" \">"
-	        		        			+ 		"<div class = clickable_silo>patient 1</div>\r\n"
-	        		        			+"</a>"
-        			+    "<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;\" \">"
-        			+ 		"<div class = clickable_silo>patient 2</div>"
-        			+"</a>"
-	        		+ "  	 </div>\r\n"
-	        		+ "  <div class=\"middlepane\">\r\n"
-	        		+ "<h4>facilities</h4>"
-	        		+		"<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
-        			+ 		"<div class = clickable_silo>facility 1</div>\r\n"
-        			+"</a>"
-        			+    	"<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;\" \">"
-        			+ 		"<div class = clickable_silo>facility 2</div>"
-        			+"</a>"
-    	            +	"</div>\r\n"
-	        		+ "  <div class=\"rightpane\">\r\n"
-	        		+       "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/patient_creation'\" class=\"boutton\">create new patient</button>\r\n"
-	        		+      "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\"class=\"boutton\">create new silo</button>"
-	        		+ "		</div>\r\n"
-	        		);  
+	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
+	        		+    "<h3>Facilities</h3>"
+	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        				
+	        		+"Test facility 1</a>"
+        			+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+    				
+        			+"Test facility 2</a>"
+        			+"</div>"
+        			+"  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
+        			+"<h3>Patients</h3>"
+	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        				
+	        		+"Test patient 1</a>"
+        			+    "<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+    				
+        			+"Test patient 2</a>"
+        			+"</div>"
+	        		+ "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
+	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
+	        		+"<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/patient_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
+	        			
+	        		+"</div\r\n");  
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
@@ -69,14 +69,18 @@ public class facility_patient_display extends HttpServlet {
 	    out.println("<html>");
 	    out.println("  <head>");
 	    out.println("    <title>EHR Sandbox</title>");
-	    out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"inc/facility_patient_display.css\" />");
+	    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
 	    out.println("  </head>");
 	    out.println("  <body>");
-	    out.println("<header>\r\n"
-	    		+ "    		<h1>patient facility</h1>\r\n"
+	   // out.println("<div class=\"w3-container \">");
+	    out.println("<header >\r\n"
+	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
+	    		+ "  <div class=\"w3-bar-item\">London</div>\r\n"
+	    		+ "  <div class=\"w3-bar-item\">Paris</div>\r\n"
+	    		+ "  <div class=\"w3-bar-item\">Tokyo</div>\r\n"
+	    		+ "</div>"
 	    		+ "    	</header>");
-	    out.println("<div id=\"formulaire\">");
-
+	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
 	  }
 
 	  public static void doFooter(PrintWriter out, HttpSession session) {
