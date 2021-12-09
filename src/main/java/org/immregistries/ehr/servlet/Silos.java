@@ -60,12 +60,8 @@ public class Silos extends HttpServlet {
 	    out.println("  </head>");
 	    out.println("  <body>");
 	   // out.println("<div class=\"w3-container \">");
-	    out.println("<header >\r\n"
-	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-	    		+ "  <div class=\"w3-bar-item\">London</div>\r\n"
-	    		+ "  <div class=\"w3-bar-item\">Paris</div>\r\n"
-	    		+ "  <div class=\"w3-bar-item\">Tokyo</div>\r\n"
-	    		+ "</div>"
+	    out.println("<header class=\"w3-green\" >\r\n"
+	    		+ "List of silos"
 	    		+ "    	</header>");
 	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
 	  }
