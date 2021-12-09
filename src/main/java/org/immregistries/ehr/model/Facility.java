@@ -7,8 +7,8 @@ public class Facility implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int facilityId = 0;
-    private Silo siloId = null;
-    private Facility parentFacilityId = null;
+    private Silo silo = null;
+    private Facility parentFacility = null;
     private String nameDisplay = "";
     private String location = "";
 
@@ -20,20 +20,20 @@ public class Facility implements Serializable {
         this.facilityId = facilityId;
     }
 
-    public Silo getSiloId() {
-        return siloId;
+    public Silo getSilo() {
+        return silo;
     }
 
-    public void setSiloId(Silo siloId) {
-        this.siloId = siloId;
+    public void setSilo(Silo silo) {
+        this.silo = silo;
     }
 
-    public Facility getParentFacilityId() {
-        return parentFacilityId;
+    public Facility getParentFacility() {
+        return parentFacility;
     }
 
-    public void setParentFacilityId(Facility parentFacilityId) {
-        this.parentFacilityId = parentFacilityId;
+    public void setParentFacility(Facility parentFacility) {
+        this.parentFacility = parentFacility;
     }
 
     public String getNameDisplay() {

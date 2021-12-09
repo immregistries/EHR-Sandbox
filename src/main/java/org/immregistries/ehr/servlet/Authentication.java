@@ -2,11 +2,17 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 
 @SuppressWarnings("serial")
 public class Authentication extends HttpServlet {
@@ -28,6 +34,10 @@ public class Authentication extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     try {
       {
+        Session dataSession = PopServlet.getDataSession();
+        
+        String Username ="";
+        String Password ="";
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
@@ -39,7 +49,36 @@ public class Authentication extends HttpServlet {
         		
         		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
         		+ "                </form> "
-        		+ "            </div>");  
+        		+ "            </div>");
+        
+        List<Tester> testerList = null;
+        Query query = dataSession.createQuery(
+                "from Tester where loginUsername= ?");
+        query.setParameter(0,Username);
+        testerList = query.list();
+        if(!testerList.isEmpty()) {
+        if(testerList.get(0).getLoginPassword()==Password) {
+          //on se connecte
+          out.println("connected");  
+        }
+        else {
+          //wrong password
+          out.println("wrong password"); 
+          
+          
+        }
+        }
+        else {
+          //on crée le nouveau tester
+          Tester newTester = new Tester();
+          newTester.setLoginUsername(Username);
+          newTester.setLoginPassword(Password);
+          Transaction transaction = dataSession.beginTransaction();
+          dataSession.save(newTester);
+          transaction.commit();
+          
+        }
+        
         doFooter(out, session);
       }
     } catch (Exception e) {
