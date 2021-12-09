@@ -7,7 +7,7 @@ public class Silo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int siloId = 0;
-    private Tester testerId = null;
+    private Tester tester = null;
     private String nameDisplay = "";
 
     public int getSiloId() {
@@ -18,12 +18,12 @@ public class Silo implements Serializable {
         this.siloId = siloId;
     }
 
-    public Tester getTesterId() {
-        return testerId;
+    public Tester getTester() {
+        return tester;
     }
 
-    public void setTesterId(Tester testerId) {
-        this.testerId = testerId;
+    public void setTester(Tester tester) {
+        this.tester = tester;
     }
 
     public String getNameDisplay() {

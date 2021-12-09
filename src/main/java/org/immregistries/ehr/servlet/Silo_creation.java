@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 
 /**
  * Servlet implementation class Silo_creation
@@ -28,6 +32,7 @@ public class Silo_creation extends HttpServlet {
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
+	    Session dataSession = PopServlet.getDataSession();
 	    try {
 	      {
 	        doHeader(out, session);
@@ -41,7 +46,15 @@ public class Silo_creation extends HttpServlet {
 	        		
 	        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
 	        		+ "                </form> "
-	        		+ "            </div>");  
+	        		+ "            </div>");
+	        String name="";
+	        Tester tester = new Tester();
+	        Silo newSilo = new Silo();
+	        newSilo.setNameDisplay(name);
+	        newSilo.setTester(tester);
+	        Transaction transaction = dataSession.beginTransaction();
+	        dataSession.save(newSilo);
+	        transaction.commit();
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {

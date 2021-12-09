@@ -34,11 +34,13 @@ public class Silos extends HttpServlet {
 	    try {
 	      {
 	        doHeader(out, session);
+	        Tester tester = new Tester();
 	        Session dataSession = PopServlet.getDataSession();
 	        List<Silo> siloList = null;
-	        Query query = dataSession.createQuery(
-	            "from Silo ");
-	        siloList = query.list();
+            Query query = dataSession.createQuery(
+                "from Silo where tester=?");
+            query.setParameter(0,tester);
+            siloList = query.list();
 	        int count = 0;
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
