@@ -85,7 +85,7 @@ public class Entry extends HttpServlet {
 	    out.println("    <title>EHR Sandbox</title>");
 	    out.println("<link rel=\"stylesheet\" href=\"inc/Entry.css\" />");
 	    out.println("  </head>");
-	    out.println("  <body onload= \"printHL7();\">");
+	    out.println("  <body>");
 	    out.println("    <header class=\"w3-container w3-light-grey\">");
 	    out.println("<header>\r\n"
 	    		+ "    		<h1>Entry</h1>\r\n"
