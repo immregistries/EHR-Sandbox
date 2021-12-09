@@ -33,7 +33,7 @@ public class Entry extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
-	        out.println("<form method=\"post\" action=\"authentication\">\r\n"
+	        out.println("<form method=\"post\" action=\"http://localhost:8080/ehr-sandbox/IIS_message\">\r\n"
                 + "                <fieldset>\r\n"
                 + "                         <input type=\"text\" placeholder=\"Ordering Physician\" id=\"OrdPhy\" name=\"OrdPhy\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
                 + "                     <br />\r\n"
@@ -49,23 +49,25 @@ public class Entry extends HttpServlet {
                 + "                     <br />\r\n"
                 + "                     <input type=\"text\" placeholder=\"Name of EHR User (Clinician)\" id=\"EHRuid\" name=\"EHRuid\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
                 + "                     <br />\r\n"
+                + "                     <br />\r\n"
+                + "                     <br />\r\n"
                 + "                </fieldset>\r\n"
                 + "                <div class=\"ok\">\r\n"
                 + "                 <input type=\"submit\" value=\"Validate\" class=\"bouton\" />\r\n"
                 + "                  <br />\r\n"
+                
                 + "                </div>\r\n"
                 + "            </form>"
-                + "<div class=\"container\">\r\n\"\r\n"
-	        		+ "	        		+ \"  <div class=\"toppane\\\">Test Page</div>\\r\\n\"\r\n"
-	        		+ "	        		+ \"  <div class=\\\"leftpane\\\">\\r\\n\"\r\n"
-	        		+ "	        		+ \"  	</div>\\r\\n\"\r\n"
-	        		+ "	        		+ \"  <div class=\\\"middlepane\\\">Test Page</div>\\r\\n\"\r\n"
-	        		+ "	        		+ \"  <div class=\\\"rightpane\\\">\\r\\n\"\r\n"
-	        		+ "	        		+		\"<h1> name </h1>\"\r\n"
-	        		+ "	        		+       \"<button onclick=\"printHL7();\" >add a new entry</button>\\r\\n\"\r\n"
-	        		+ "	        		+      \"<button>historical</button>\"\r\n"
-	        		+ "	        		+ \"		</div>\\r\\n\"\r\n"
-	        		+ "	        		+ \"</div>");  
+                + "<div class=\"container\">\r\n"
+	        		+ "	        		  <div class=\"toppane\\\"></div>\r\n"
+	        		+ "	        		  <div class=\\\"leftpane\\\">\r\n"
+	        		+ "	        		  	</div>\r\n"
+	        		+ "	        		  <div class=\\\"middlepane\\\"></div>\r\n\"\r\n"
+	        		+ "	        		   <div class=\\\"rightpane\\\">\r\n\"\r\n"
+	        		+ "	        		       \"<button >add a new entry</button>\r\n"
+	        		+ "	        		     <button>historical</button>\r\n"
+	        		+ "	        			</div>\r\n"
+	        		+ "	        		 </div>");  
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
@@ -75,9 +77,7 @@ public class Entry extends HttpServlet {
 	    out.close();
 	  }
 	  
-	  public static void printHL7() {
-	    System.out.println("wow");
-	  }
+	 
 	  
 	  public static void doHeader(PrintWriter out, HttpSession session) {
 	    out.println("<html>");
@@ -85,7 +85,7 @@ public class Entry extends HttpServlet {
 	    out.println("    <title>EHR Sandbox</title>");
 	    out.println("<link rel=\"stylesheet\" href=\"inc/Entry.css\" />");
 	    out.println("  </head>");
-	    out.println("  <body>");
+	    out.println("  <body onload= \"printHL7();\">");
 	    out.println("    <header class=\"w3-container w3-light-grey\">");
 	    out.println("<header>\r\n"
 	    		+ "    		<h1>Entry</h1>\r\n"
@@ -99,6 +99,6 @@ public class Entry extends HttpServlet {
 	    		+ "    </body>\r\n"
 	    		+ "</html>");
 	  }
-
+	  
 
 }

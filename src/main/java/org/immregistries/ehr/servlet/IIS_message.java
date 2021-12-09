@@ -31,7 +31,7 @@ public class IIS_message extends HttpServlet {
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
 	    try {
 	      {
-	        doHeader(out, session);
+	        doHeader(out, session,req);
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println("<button>send to IIS</button> ");  
 	        doFooter(out, session);
@@ -43,7 +43,7 @@ public class IIS_message extends HttpServlet {
 	    out.close();
 	  }
 
-	  public static void doHeader(PrintWriter out, HttpSession session) {
+	  public static void doHeader(PrintWriter out, HttpSession session,HttpServletRequest req) {
 	    out.println("<html>");
 	    out.println("  <head>");
 	    out.println("    <title>EHR Sandbox</title>");
@@ -54,6 +54,13 @@ public class IIS_message extends HttpServlet {
 	    out.println("<header>\r\n"
 	    		+ "    		<h1>Message sent to IIS</h1>\r\n"
 	    		+ "    	</header>");
+	    out.println("<textarea id=\"story\" name=\"story\"\r\n"
+	        + "          rows=\"5\" cols=\"33\">\r\n"
+	        + req.getParameter("OrdPhy") +" "
+	        + req.getParameter("manufacturer")+" "
+	        + req.getParameter("AdmDate")+" "
+	        + req.getParameter("EHRuid")
+	        + "</textarea>");
 	    out.println("<div id=\"formulaire\">");
 
 	  }
