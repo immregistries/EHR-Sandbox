@@ -2,12 +2,17 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.immregistries.ehr.model.Facility;
+import org.immregistries.ehr.model.Patient;
+import org.immregistries.ehr.model.Silo;
 
 /**
  * Servlet implementation class facility_patient_display
@@ -29,9 +34,23 @@ public class facility_patient_display extends HttpServlet {
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
+	    Session dataSession = PopServlet.getDataSession();
 	    try {
 	      {
 	        doHeader(out, session);
+	        Silo silo = new Silo();
+	        List<Facility> facilityList = null;
+            Query query = dataSession.createQuery(
+                "from facility where silo=?");
+            query.setParameter(0,silo);
+            facilityList = query.list();
+            
+            List<Patient> patientList = null;
+            query = dataSession.createQuery(
+                "from patient where silo=?");
+            query.setParameter(0,silo);
+            patientList = query.list();
+
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
 	        		+    "<h3>Facilities</h3>"
@@ -55,7 +74,8 @@ public class facility_patient_display extends HttpServlet {
 	        		+    "<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
 	        		+"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
 	        			
-	        		+"</div\r\n");  
+	        		+"</div\r\n");
+	        
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
