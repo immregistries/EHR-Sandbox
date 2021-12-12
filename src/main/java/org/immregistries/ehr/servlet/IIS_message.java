@@ -69,7 +69,7 @@ public class IIS_message extends HttpServlet {
 	        + req.getParameter("EHRuid")+" "
 	        
 	        + "</textarea>");
-	    System.out.println(printerhl7.printQueryPID(new Patient(), new StringBuilder(), new Patient(), sdf, 1).toString()+" "
+	    out.println(printerhl7.printQueryPID(new Patient(), new StringBuilder(), new Patient(), sdf, 1).toString()+" "
             +printerhl7.printQueryNK1(new Patient(), new StringBuilder(), new CodeMap()).toString()+" ");
 	    out.println("<div id=\"formulaire\">");
 
