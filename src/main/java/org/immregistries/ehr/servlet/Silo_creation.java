@@ -2,14 +2,16 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 
@@ -47,14 +49,34 @@ public class Silo_creation extends HttpServlet {
 	        		+ "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
 	        		+ "                </form> "
 	        		+ "            </div>");
-	        String name="";
+	        String name="silotest";
 	        Tester tester = new Tester();
+	        tester = (Tester) session.getAttribute("tester");
 	        Silo newSilo = new Silo();
+	        Facility facility = new Facility();
 	        newSilo.setNameDisplay(name);
-	        newSilo.setTester(tester);
+            newSilo.setTester(tester);
+	        facility.setNameDisplay("facilityTest");
+	        facility.setLocation("nancy");
+	        
 	        Transaction transaction = dataSession.beginTransaction();
 	        dataSession.save(newSilo);
 	        transaction.commit();
+	        List<Silo> siloList = null;
+            Query query = dataSession.createQuery(
+                "from Silo where nameDisplay=?");
+            query.setParameter(0,name);
+            siloList = query.list();
+            facility.setSilo(siloList.get(0));
+            Transaction transaction2 = dataSession.beginTransaction();
+            dataSession.save(facility);
+            transaction2.commit();
+            query = dataSession.createQuery(
+                "from Facility where nameDisplay=?");
+            query.setParameter(0,"facilitytest");
+            List<Facility> facilityList = query.list();
+            session.setAttribute("facility", facilityList.get(0));
+            doFooter(out, session);
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {

@@ -36,8 +36,9 @@ public class Authentication extends HttpServlet {
       {
         Session dataSession = PopServlet.getDataSession();
         
-        String Username ="";
-        String Password ="";
+        String username ="oui";
+        String password ="oui";
+        Tester newTester = new Tester();
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
@@ -54,12 +55,13 @@ public class Authentication extends HttpServlet {
         List<Tester> testerList = null;
         Query query = dataSession.createQuery(
                 "from Tester where loginUsername= ?");
-        query.setParameter(0,Username);
+        query.setParameter(0,username);
         testerList = query.list();
         if(!testerList.isEmpty()) {
-        if(testerList.get(0).getLoginPassword()==Password) {
+        if(testerList.get(0).getLoginPassword().equals(password)) {
           //on se connecte
-          out.println("connected");  
+          out.println("connected");
+          newTester =testerList.get(0);
         }
         else {
           //wrong password
@@ -70,15 +72,20 @@ public class Authentication extends HttpServlet {
         }
         else {
           //on crée le nouveau tester
-          Tester newTester = new Tester();
-          newTester.setLoginUsername(Username);
-          newTester.setLoginPassword(Password);
+          newTester.setLoginUsername(username);
+          newTester.setLoginPassword(password);
           Transaction transaction = dataSession.beginTransaction();
           dataSession.save(newTester);
           transaction.commit();
+          query = dataSession.createQuery(
+                  "from Tester where loginUsername= ?");
+          query.setParameter(0,username);
+          testerList = query.list();
+          newTester=testerList.get(0);
           
         }
         
+        session.setAttribute("tester", newTester);
         System.out.print("youhoooooou");
         doFooter(out, session);
       }

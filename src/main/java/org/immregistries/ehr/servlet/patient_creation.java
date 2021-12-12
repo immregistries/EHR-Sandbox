@@ -2,12 +2,17 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.immregistries.ehr.model.Facility;
+import org.immregistries.ehr.model.Patient;
+import org.immregistries.ehr.model.Silo;
 
 /**
  * Servlet implementation class patient_creation
@@ -33,6 +38,7 @@ public class patient_creation extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
+	        Session dataSession = PopServlet.getDataSession();
 	        out.println( "<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
 	        		
 	        		+ 							"<label class=\"w3-text-green\"><b>Date of birth</b></label>"
@@ -132,7 +138,23 @@ public class patient_creation extends HttpServlet {
 	        		
 	        		+ "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
 	        		+ "                </form> "	        			
-	        		+"</div\r\n");  
+	        		+"</div\r\n");
+	        Silo silo = new Silo();
+	        Facility facility = new Facility();
+	        Patient patient = new Patient();
+	        silo = (Silo) session.getAttribute("silo");
+	        facility = (Facility) session.getAttribute("facility");
+	        patient.setSilo(silo);
+	        patient.setFacility(facility);
+	        patient.setNameFirst("alanus");
+	        Date updatedDate = new Date();
+	        patient.setUpdatedDate(updatedDate);
+	        patient.setCreatedDate(updatedDate);
+	        patient.setBirthDate(updatedDate);
+	        Transaction transaction = dataSession.beginTransaction();
+            dataSession.save(patient);
+            transaction.commit();
+	        
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
