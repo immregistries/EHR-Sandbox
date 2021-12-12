@@ -47,7 +47,7 @@ public class Authentication extends HttpServlet {
         		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
         		
         		
-        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+        		+ "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
         		+ "                </form> "
         		+ "            </div>");
         
@@ -79,6 +79,7 @@ public class Authentication extends HttpServlet {
           
         }
         
+        System.out.print("youhoooooou");
         doFooter(out, session);
       }
     } catch (Exception e) {
@@ -108,5 +109,6 @@ public class Authentication extends HttpServlet {
     		+ "    </body>\r\n"
     		+ "</html>");
   }
+
 
 }

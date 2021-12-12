@@ -42,15 +42,15 @@ public class Silos extends HttpServlet {
 	        int count = 0;
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
-	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+	        		+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
         				
 	        		+"Test silo 1</a>"
-        			+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        			+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
     				
         			+"Test silo 2</a>"
         			+"</div>"
 	        		+ "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
-	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
+	        		+    "<button onclick=\"location.href=\'silo_creation'\" class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
 	        		//+ "		</div>\r\n" 	
 	        		+"</div\r\n");  
 	        doFooter(out, session);
@@ -72,9 +72,9 @@ public class Silos extends HttpServlet {
 	   // out.println("<div class=\"w3-container \">");
 	    out.println("<header >\r\n"
 	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-	    		+ "  <div class=\"w3-bar-item\">London</div>\r\n"
-	    		+ "  <div class=\"w3-bar-item\">Paris</div>\r\n"
-	    		+ "  <div class=\"w3-bar-item\">Tokyo</div>\r\n"
+	    		+ "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+	    		+ "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+	    		+ "  <a href = \'silo_creation\' class=\"w3-bar-item w3-button\">Silo creation </a>\r\n"
 	    		+ "</div>"
 	    		+ "    	</header>");
 	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
