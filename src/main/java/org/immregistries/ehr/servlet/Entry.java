@@ -33,7 +33,7 @@ public class Entry extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
-	        out.println("<form method=\"post\" action=\"http://localhost:8080/ehr-sandbox/IIS_message\">\r\n"
+	        out.println("<form method=\"post\" action=\"IIS_message\">\r\n"
                 + "                <fieldset>\r\n"
                 + "                         <input type=\"text\" placeholder=\"Ordering Physician\" id=\"OrdPhy\" name=\"OrdPhy\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
                 + "                     <br />\r\n"

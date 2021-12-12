@@ -54,25 +54,25 @@ public class facility_patient_display extends HttpServlet {
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
 	        		+    "<h3>Facilities</h3>"
-	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+	        		+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
         				
 	        		+"Test facility 1</a>"
-        			+    "<a href=\'http://localhost:9091/ehr-sandbox/facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        			+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
     				
         			+"Test facility 2</a>"
         			+"</div>"
         			+"  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
         			+"<h3>Patients</h3>"
-	        		+    "<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+	        		+    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
         				
 	        		+"Test patient 1</a>"
-        			+    "<a href=\'http://localhost:9091/ehr-sandbox/patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        			+    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
     				
         			+"Test patient 2</a>"
         			+"</div>"
 	        		+ "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
-	        		+    "<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/silo_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
-	        		+"<button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/patient_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
+	        		+    "<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
+	        		+"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
 	        			
 	        		+"</div\r\n");
 	        
@@ -95,10 +95,10 @@ public class facility_patient_display extends HttpServlet {
 	   // out.println("<div class=\"w3-container \">");
 	    out.println("<header >\r\n"
 	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-	    		+ "  <div class=\"w3-bar-item\">London</div>\r\n"
-	    		+ "  <div class=\"w3-bar-item\">Paris</div>\r\n"
-	    		+ "  <div class=\"w3-bar-item\">Tokyo</div>\r\n"
-	    		+ "</div>"
+	    		+    	"<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
+        		+		"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
+        		+		"<button onclick=\"location.href=\'entry'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"	
+        		+ "</div>"
 	    		+ "    	</header>");
 	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
 	  }

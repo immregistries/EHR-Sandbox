@@ -130,7 +130,7 @@ public class patient_creation extends HttpServlet {
                     
 
 	        		
-	        		+ "                <button onclick=\"location.href=\'http://localhost:9091/ehr-sandbox/patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+	        		+ "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
 	        		+ "                </form> "	        			
 	        		+"</div\r\n");  
 	        doFooter(out, session);
@@ -152,9 +152,9 @@ public class patient_creation extends HttpServlet {
 	   // out.println("<div class=\"w3-container \">");
 	    out.println("<header >\r\n"
 	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-	    		+ "  <a href = \'http://localhost:9091/ehr-sandbox/silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
-	    		+ "  <a href = \'http://localhost:9091/ehr-sandbox/facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-	    		+ "  <a href = \'http://localhost:9091/ehr-sandbox/silo_creation\' class=\"w3-bar-item w3-button\">Silo creation </a>\r\n"
+	    		+ "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+	    		+ "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+	    		+ "  <a href = \'silo_creation\' class=\"w3-bar-item w3-button\">Silo creation </a>\r\n"
 	    		+ "</div>"
 	    		+ "    	</header>");
 	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
