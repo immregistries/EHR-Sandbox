@@ -45,7 +45,7 @@ public class patient_creation extends HttpServlet {
 	        		+ "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>First Name</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
+	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"first_name\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Last name</b></label>"	                	
 	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" />\r\n"
@@ -146,7 +146,7 @@ public class patient_creation extends HttpServlet {
 	        facility = (Facility) session.getAttribute("facility");
 	        patient.setSilo(silo);
 	        patient.setFacility(facility);
-	        patient.setNameFirst("alanus");
+	        patient.setNameFirst(req.getParameter("_name"));
 	        Date updatedDate = new Date();
 	        patient.setUpdatedDate(updatedDate);
 	        patient.setCreatedDate(updatedDate);
