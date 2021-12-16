@@ -3,14 +3,18 @@ package org.immregistries.ehr.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
+import org.immregistries.ehr.model.Silo;
 
 /**
  * Servlet implementation class IIS_message
@@ -32,6 +36,9 @@ public class IIS_message extends HttpServlet {
 	    
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
+
+
+        
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
 	    try {
 	      {
@@ -48,6 +55,16 @@ public class IIS_message extends HttpServlet {
 	  }
 
 	  public static void doHeader(PrintWriter out, HttpSession session,HttpServletRequest req) {
+	    List<Patient> patientList = null;
+	    Session dataSession = PopServlet.getDataSession();
+	    Silo silo = new Silo();
+        silo = (Silo) session.getAttribute("silo");
+	    Query query = dataSession.createQuery(
+            "from Facility where silo=?");
+        query = dataSession.createQuery(
+            "from Patient where silo=?");
+        query.setParameter(0,silo);
+        patientList = query.list();
 	    HL7printer printerhl7=new HL7printer();
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	    out.println("<html>");

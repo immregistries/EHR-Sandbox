@@ -231,8 +231,8 @@ public class HL7printer {
         if (code != null) {
           sb.append("NK1");
           sb.append("|1");
-          sb.append("|" + patientReported.getGuardianLast() + "^"
-              + patientReported.getGuardianFirst() + "^^^^^L");
+          sb.append("|" + patientReported.getGuardianLast()==null ?"": patientReported.getGuardianLast() + "^"
+              + patientReported.getGuardianFirst() ==null ?"": patientReported.getGuardianFirst() + "^^^^^L");
           sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
           sb.append("\r");
         }
@@ -271,7 +271,7 @@ public class HL7printer {
     // PID-6
     sb.append("|");
     if (patientReported != null) {
-      sb.append(patientReported.getMotherMaiden() + "^^^^^^M");
+      sb.append(patientReported.getMotherMaiden()==null ?"": patientReported.getMotherMaiden() + "^^^^^^M");
     }
     // PID-7
     sb.append("|" + dateOfBirth );
