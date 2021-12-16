@@ -31,11 +31,39 @@ public class patient_creation extends HttpServlet {
 		  	Silo silo = new Silo();
 	        Facility facility = new Facility();
 	        Patient patient = new Patient();
+	        
 	        silo = (Silo) session.getAttribute("silo");
 	        facility = (Facility) session.getAttribute("facility");
+	        
 	        patient.setSilo(silo);
 	        patient.setFacility(facility);
+	        
 	        patient.setNameFirst(req.getParameter("first_name"));
+	        patient.setAddressCity(req.getParameter("city"));
+	        patient.setAddressCountry(req.getParameter("country"));
+	        patient.setAddressCountyParish(req.getParameter("county"));
+	        patient.setAddressState(req.getParameter("state"));
+	        //patient.setBirthDate(req.getParameter("DoB"));
+	        patient.setBirthFlag(req.getParameter("birth_flag"));
+	        patient.setBirthOrder(req.getParameter("birth_order"));
+	        //patient.setDeathDate(null);
+	        patient.setDeathFlag(req.getParameter("death_flag"));
+	        patient.setEmail(req.getParameter("email"));
+	        patient.setEthnicity(req.getParameter("ethnicity"));
+	        patient.setGuardianFirst(req.getParameter("guardian_first"));
+	        patient.setGuardianLast(req.getParameter("guardian_last"));
+	        patient.setGuardianMiddle(req.getParameter("guardian_middle"));
+	        patient.setGuardianRelationship(req.getParameter("guardian_relation"));
+	        patient.setMotherMaiden(req.getParameter("mother_maiden"));
+	        patient.setPhone(req.getParameter("phone"));
+	        patient.setProtectionIndicator(req.getParameter("protection_indicator"));
+	        patient.setProtectionIndicatorDate(null);
+	        patient.setPublicityIndicator(req.getParameter("publicity_indicator"));
+	        patient.setPublicityIndicatorDate(null);
+	        patient.setRace(req.getParameter("race"));
+	        patient.setRegistryStatusIndicator(req.getParameter("registry_status_indicator"));
+	        patient.setRegistryStatusIndicatorDate(null);
+	        patient.setSex(req.getParameter("sex"));
 	        Date updatedDate = new Date();
 	        patient.setUpdatedDate(updatedDate);
 	        patient.setCreatedDate(updatedDate);
