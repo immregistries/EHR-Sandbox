@@ -58,6 +58,7 @@ public class Silo_creation extends HttpServlet {
           List<Facility> facilityList = query.list();
           session.setAttribute("silo", siloList.get(0));
           session.setAttribute("facility", facilityList.get(0));
+          resp.sendRedirect("silos"); 
   	    doGet(req, resp);
 	  }
 
