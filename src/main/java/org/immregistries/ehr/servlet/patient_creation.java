@@ -39,6 +39,8 @@ public class patient_creation extends HttpServlet {
 	        patient.setFacility(facility);
 	        
 	        patient.setNameFirst(req.getParameter("first_name"));
+	        patient.setNameLast(req.getParameter("last_name"));
+	        patient.setNameMiddle(req.getParameter("middle_name"));
 	        patient.setAddressCity(req.getParameter("city"));
 	        patient.setAddressCountry(req.getParameter("country"));
 	        patient.setAddressCountyParish(req.getParameter("county"));

@@ -52,7 +52,7 @@ public class Silos extends HttpServlet {
 	        }
         	out.println("</div>"
 	        		+ "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
-	        		+    "<button class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
+	        		+    "<button onclick=\"location.href=\'silo_creation\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
 	        		//+ "		</div>\r\n" 	
 	        		+"</div\r\n");
 	        String name = "silotest";

@@ -42,6 +42,7 @@ public class Facility_creation extends HttpServlet {
       query.setParameter(0,name);
       List<Facility> facilityList = query.list();
       session.setAttribute("facility", facilityList.get(0));
+      resp.sendRedirect("facility_patient_display"); 
     doGet(req, resp);
   }
 
@@ -64,7 +65,7 @@ public class Facility_creation extends HttpServlet {
                 + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name= \"location\"/>\r\n"
                 
                 
-                + "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+                + "                <button \" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
                 + "                </form> "
                 + "            </div>");
         
@@ -85,7 +86,7 @@ public class Facility_creation extends HttpServlet {
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println( "          <h1>Faciity creation</h1>\r\n"
+    out.println( "          <h1>Facility creation</h1>\r\n"
             + "     </header>");
     
    out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");

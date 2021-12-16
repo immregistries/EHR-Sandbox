@@ -43,9 +43,7 @@ public class patient_record extends HttpServlet {
         			+"Entry 2</a>"
         			+"</div>"
 	        		+ "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
-	        		+    	"<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
-	        		+		"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
-	        		+		"<button onclick=\"location.href=\'entry'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"	
+	        		+		"<button onclick=\"location.href=\'entry_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"	
 	        		+"</div\r\n");  
 	        doFooter(out, session);
 	      }

@@ -89,7 +89,7 @@ public class Authentication extends HttpServlet {
         		+ 							"<label class=\"w3-text-green\"><b>EHR username</b></label>"
         		+ "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"
         		+						"	<label class=\"w3-text-green\"><b>password</b></label>"	                	
-        		+ "	                   	<input type=\"current-password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
+        		+ "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
         		
         	                
         		+ "                <button onclick=\"location.href=\'silos\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" name=\"validate_button\" >Validate</button>\r\n"
