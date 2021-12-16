@@ -36,7 +36,7 @@ public class facility_patient_display extends HttpServlet {
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
 	    Session dataSession = PopServlet.getDataSession();
 	    try {
-	      {
+	      
 	        doHeader(out, session);
 	        Silo silo = new Silo();
 	        silo = (Silo) session.getAttribute("silo");
@@ -51,13 +51,18 @@ public class facility_patient_display extends HttpServlet {
                 "from Patient where silo=?");
             query.setParameter(0,silo);
             patientList = query.list();
-
+            String showFacility = null;
+            if(req.getParameter("paramFacilityId")!=null) {
+              showFacility=req.getParameter("paramFacilityId");
+            }
 	        String show = req.getParameter(PARAM_SHOW);
+	        if(showFacility==null) {
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
 	        		+    "<h3>Facilities</h3>");
 	        for(Facility facilityDisplay : facilityList) {
+	          String link = "paramFacilityId="+facilityDisplay.getFacilityId();
               out.println(
-	        		    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
+	        		    "<a href=\'facility_patient_display?"+ link +"'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
         			+ facilityDisplay.getNameDisplay()
 	        		+"</a>");
 	        }
@@ -84,9 +89,32 @@ public class facility_patient_display extends HttpServlet {
 	        		+"<button onclick=\"location.href=\'facility_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility </button>"
 	
 	        		+"</div\r\n");
-	        
+	        }
+	        else {
+	          patientList = null;
+	            facilityList=null;
+	            query = dataSession.createQuery(
+	                "from Facility where facilityId=?");
+	            query.setParameter(0,Integer.parseInt(showFacility));
+	            facilityList = query.list();
+	            query = dataSession.createQuery(
+	                "from Patient where facility=?");
+	            query.setParameter(0,facilityList.get(0));
+	            patientList = query.list();
+	            out.println(
+	                "  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
+	                +"<h3>Patients</h3>");
+	        for(Patient patientDisplay : patientList) {
+	                  out.println(
+	                    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+	                +patientDisplay.getNameFirst()+" "+patientDisplay.getNameLast() 
+	                +"</a>");
+	                
+	                }
+	                out.println("</div>");
+	        }
 	        doFooter(out, session);
-	      }
+	      
 	    } catch (Exception e) {
 	      e.printStackTrace(System.err);
 	    }
