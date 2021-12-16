@@ -86,97 +86,97 @@ public class patient_creation extends HttpServlet {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
 	        
-	        out.println( "<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
+	        out.println( "<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
 	        		
 	        		+ 							"<label class=\"w3-text-green\"><b>Date of birth</b></label>"
 	        		+ "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"DoB\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>First Name</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"first_name\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"first_name\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Last name</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"last_name\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"last_name\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Middle name</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"middle_name\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"middle_name\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Mother maiden name</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"mother_maiden_name\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"mother_maiden_name\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Sex (F or M) </b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"sex\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"sex\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Race</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"race\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"race\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Address 1</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"address\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"address\"/>\r\n"
 	        			        		
 	        		+						"	<label class=\"w3-text-green\"><b>City</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"city\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"city\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>State</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"state\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"state\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Country</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"  name=\\\"country\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"  name=\"country\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>County/parish</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"county\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"county\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>phone</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"phone\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"phone\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>E-mail</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"email\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"email\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Ethnicity</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"ethnicity\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"ethnicity\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Birth flag</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"birth_flag\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"birth_flag\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Birth order</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"birth_ order\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"birth_ order\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Death flag</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"death_flag\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"death_flag\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Death date</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"DoD\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"DoD\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>publicity indicator</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"publicity_indicator\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"publicity_indicator\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>publicity indicator date</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"publicity_date\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"publicity_date\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>protection indicator</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"protection\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"protection\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>protection indicator date</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"protection_date\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"protection_date\" />\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Registry indicator date  </b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"registry_indicator_date\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"registry_indicator_date\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>registry status indicator</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"registry_status_indicator\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"registry_status_indicator\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>registry status indicator date</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\\\"registry_status_indicator_date\\\"/>\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"registry_status_indicator_date\"/>\r\n"
 	        		
 	        		+						"	<label class=\"w3-text-green\"><b>Guardian last name</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"guardian_last_name\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"guardian_last_name\" />\r\n"
                     
 					+						"	<label class=\"w3-text-green\"><b>Guardian first name</b></label>"	                	
-					+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"guardian_first_name\\\" />\r\n"
+					+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"guardian_first_name\" />\r\n"
 
 					+						"	<label class=\"w3-text-green\"><b>Guardian middle name</b></label>"	                	
-					+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"guardian_middle_name\\\" />\r\n"
+					+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"guardian_middle_name\" />\r\n"
 					
 					+						"	<label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"	                	
-	        		+ "	                    	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\\\"guardian_relation\\\" />\r\n"
+	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"guardian_relation\" />\r\n"
                     
 
 	        		
