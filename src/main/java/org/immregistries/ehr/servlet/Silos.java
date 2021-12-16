@@ -43,14 +43,14 @@ public class Silos extends HttpServlet {
             query.setParameter(0,tester);
             siloList = query.list();
 	        String show = req.getParameter(PARAM_SHOW);
-	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
-	        		+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-        				
-	        		+"Test silo 1</a>"
-        			+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-    				
-        			+"Test silo 2</a>"
-        			+"</div>"
+	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n");
+	        for(Silo siloDisplay : siloList ) {
+	            out.println(
+	                "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        			+ siloDisplay.getNameDisplay()
+	        		+"</a>");
+	        }
+        	out.println("</div>"
 	        		+ "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
 	        		+    "<button class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
 	        		//+ "		</div>\r\n" 	
