@@ -5,27 +5,33 @@
   <display-name>EHR-Sandbox</display-name>
   
   <welcome-file-list>  
-  	<welcome-file>org.immregistries.ehr.servlet.Authentication</welcome-file>
-  </welcome-file-list>
+  	<welcome-file>org.immregistries.ehr.servlet.Authentication</welcome-file></welcome-file-list>
 
   <servlet>
     <servlet-name>home</servlet-name>
     <servlet-class>org.immregistries.ehr.servlet.HomeServlet</servlet-class>
   </servlet>
   <servlet>
+  <display-name>Entry Creation</display-name>
+  <servlet-name>entry_creation</servlet-name>
+  <servlet-class>org.immregistries.ehr.servlet.Entry_creation</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>test</servlet-name>
     <servlet-class>org.immregistries.ehr.servlet.Test_numeromille</servlet-class>
   </servlet>
   <servlet>
-  	<description>
-  	</description>
+  	
   	<display-name>Entry</display-name>
   	<servlet-name>Entry</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.Entry</servlet-class>
   </servlet>
+    <servlet>
+    <display-name>Facility </display-name>
+  <servlet-name> Facility</servlet-name>
+  <servlet-class>org.immregistries.ehr.servlet.Facility_creation</servlet-class>
+  </servlet>
   <servlet>
-  	<description>
-  	</description>
   	<display-name>patient_record</display-name>
   	<servlet-name>patient_record</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.patient_record</servlet-class>
@@ -52,8 +58,6 @@
   	<servlet-class>org.immregistries.ehr.servlet.Silo_creation</servlet-class>
   </servlet>
   <servlet>
-  	<description>
-  	</description>
   	<display-name>patient_creation</display-name>
   	<servlet-name>patient_creation</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.patient_creation</servlet-class>
@@ -93,6 +97,10 @@
   	<url-pattern>/silos</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
+  <servlet-name>Facility</servlet-name>
+  <url-pattern>/facility_creation</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
   	<servlet-name>IIS_message</servlet-name>
   	<url-pattern>/IIS_message</url-pattern>
   </servlet-mapping>
@@ -103,6 +111,10 @@
   <servlet-mapping>
   	<servlet-name>patient_creation</servlet-name>
   	<url-pattern>/patient_creation</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>entry_creation</servlet-name>
+  <url-pattern>/entry_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>facility_patient_display</servlet-name>
