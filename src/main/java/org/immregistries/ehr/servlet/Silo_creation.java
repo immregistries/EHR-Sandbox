@@ -56,6 +56,7 @@ public class Silo_creation extends HttpServlet {
               "from Facility where nameDisplay=?");
           query.setParameter(0,"facilitytest");
           List<Facility> facilityList = query.list();
+          session.setAttribute("silo", siloList.get(0));
           session.setAttribute("facility", facilityList.get(0));
   	    doGet(req, resp);
 	  }
