@@ -32,7 +32,6 @@ public class IIS_message extends HttpServlet {
 	    
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
-	    System.out.print("wow");
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
 	    try {
 	      {
@@ -68,7 +67,7 @@ public class IIS_message extends HttpServlet {
 	        + req.getParameter("manufacturer")+" \r\n"
 	        + req.getParameter("AdmDate")+" \r\n"
 	        + req.getParameter("EHRuid")+" \r\n"
-	           
+	        + req.getParameter("Obs")+" \r\n" 
 	        + "</textarea>");
 	    out.println("<div id=\"formulaire\">");
 
