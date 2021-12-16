@@ -62,15 +62,14 @@ public class IIS_message extends HttpServlet {
 	    		+ "    		<h1>Message sent to IIS</h1>\r\n"
 	    		+ "    	</header>");
 	    out.println("<textarea id=\"story\" name=\"story\"\r\n"
-	        + "          rows=\"5\" cols=\"33\">\r\n"
-	        + req.getParameter("OrdPhy") +" "
-	        + req.getParameter("manufacturer")+" "
-	        + req.getParameter("AdmDate")+" "
-	        + req.getParameter("EHRuid")+" "
-	        
+	        + "          rows=\"20\" cols=\"200\">\r\n"
+	        + new HL7printer().buildHL7(new Patient()).toString() +" \r\n"
+	        + req.getParameter("OrdPhy") +" \r\n"
+	        + req.getParameter("manufacturer")+" \r\n"
+	        + req.getParameter("AdmDate")+" \r\n"
+	        + req.getParameter("EHRuid")+" \r\n"
+	           
 	        + "</textarea>");
-	    out.println(printerhl7.printQueryPID(new Patient(), new StringBuilder(), new Patient(), sdf, 1).toString()+" "
-            +printerhl7.printQueryNK1(new Patient(), new StringBuilder(), new CodeMap()).toString()+" ");
 	    out.println("<div id=\"formulaire\">");
 
 	  }

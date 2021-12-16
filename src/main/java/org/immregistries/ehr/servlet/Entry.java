@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.immregistries.codebase.client.CodeMap;
+import org.immregistries.ehr.HL7printer;
+import org.immregistries.ehr.model.Patient;
 
 /**
  * Servlet implementation class Entry
@@ -51,6 +54,9 @@ public class Entry extends HttpServlet {
                 + "                     <br />\r\n"
                 + "                     <br />\r\n"
                 + "                     <br />\r\n"
+                + "                     <textarea id=\"Obs\" name=\"Obs\"\r\n"
+                + "                     rows=\"20\" cols=\"200\">\r\n"
+                + "                     </textarea>"
                 + "                </fieldset>\r\n"
                 + "                <div class=\"ok\">\r\n"
                 + "                 <input type=\"submit\" value=\"Validate\" class=\"bouton\" />\r\n"
