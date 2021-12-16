@@ -80,9 +80,9 @@ public class facility_patient_display extends HttpServlet {
         			}
         			out.println("</div>"
 	        		+ "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
-	        		+    "<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
 	        		+"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
-	        			
+	        		+"<button onclick=\"location.href=\'facility_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility </button>"
+	
 	        		+"</div\r\n");
 	        
 	        doFooter(out, session);
@@ -104,10 +104,10 @@ public class facility_patient_display extends HttpServlet {
 	   // out.println("<div class=\"w3-container \">");
 	    out.println("<header >\r\n"
 	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-	    		+    	"<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
-        		+		"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
-        		+		"<button onclick=\"location.href=\'entry'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"	
-        		+ "</div>"
+	    		+"  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
+	    		+"  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+	    		+ "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
+	    		+ "</div>\r\n"
 	    		+ "    	</header>");
 	    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
 	  }
