@@ -2,12 +2,16 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.immregistries.ehr.model.Patient;
+import org.immregistries.ehr.model.Silo;
 
 /**
  * Servlet implementation class patient_record
@@ -29,10 +33,19 @@ public class patient_record extends HttpServlet {
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
+	    Session dataSession = PopServlet.getDataSession();
 	    try {
 	      {
 	        doHeader(out, session);
 	        String show = req.getParameter(PARAM_SHOW);
+	        Patient patient = new Patient();
+	        List<Patient> patientList = null;
+            Query query = dataSession.createQuery(
+                "from Patient where patientId=?");
+            query.setParameter(0,Integer.parseInt(req.getParameter("paramPatientId")));
+            patientList = query.list();
+            patient = patientList.get(0);
+            session.setAttribute("patient", patient);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
 	        		+"<h3>Entries</h3>"
 	        		+    "<a href=\'Entry'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
