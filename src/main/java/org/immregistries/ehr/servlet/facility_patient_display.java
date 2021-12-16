@@ -57,11 +57,18 @@ public class facility_patient_display extends HttpServlet {
 	        		+    "<h3>Facilities</h3>");
 	        for(Facility facilityDisplay : facilityList) {
               out.println(
-	        		    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+	        		    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
         			+ facilityDisplay.getNameDisplay()
 	        		+"</a>");
 	        }
+	        
         	        out.println("</div>"
+        	        //+"<script type=\"text/javascript\">"
+        	        //+"function theFunction () {"
+        	        
+        	        //+" }"
+        	        //+"</script> "
+        	        
         			+"  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
         			+"<h3>Patients</h3>");
         	for(Patient patientDisplay : patientList) {
