@@ -56,6 +56,7 @@ public class Authentication extends HttpServlet {
       }
       }
       else {
+        
         //on crée le nouveau tester
         newTester.setLoginUsername(username);
         newTester.setLoginPassword(password);

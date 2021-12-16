@@ -63,14 +63,17 @@ public class facility_patient_display extends HttpServlet {
 	        }
         			out.println("</div>"
         			+"  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
-        			+"<h3>Patients</h3>"
-	        		+    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+        			+"<h3>Patients</h3>");
+        			for(Facility facilityDisplay : facilityList) {
+                      out.println(
+	        		    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
         				
 	        		+"Test patient 1</a>"
         			+    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
     				
-        			+"Test patient 2</a>"
-        			+"</div>"
+        			+"Test patient 2</a>");
+        			}
+        			out.println("</div>"
 	        		+ "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
 	        		+    "<button onclick=\"location.href=\'silo_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
 	        		+"<button onclick=\"location.href=\'patient_creation'\" style=\"width:100%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
