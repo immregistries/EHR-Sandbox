@@ -7,13 +7,13 @@ public class VaccinationEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int vaccinationEventId = 0;
-    private Clinician administeringClinicianId = null;
-    private Clinician enteringClinicianId = null;
-    private Clinician orderingClinicianId = null;
-    private Facility administeringFacilityId = null;
-    private Patient patientId = null;
-    private Vaccine vaccineId = null;
-    private LogsOfModifications logId = null;
+    private Clinician administeringClinician = null;
+    private Clinician enteringClinician = null;
+    private Clinician orderingClinician = null;
+    private Facility administeringFacility = null;
+    private Patient patient = null;
+    private Vaccine vaccine = null;
+    private LogsOfModifications log = null;
 
     public int getVaccinationEventId() {
         return vaccinationEventId;
@@ -23,59 +23,59 @@ public class VaccinationEvent implements Serializable {
         this.vaccinationEventId = vaccinationEventId;
     }
 
-    public Clinician getAdministeringClinicianId() {
-        return administeringClinicianId;
+    public Clinician getAdministeringClinician() {
+        return administeringClinician;
     }
 
-    public void setAdministeringClinicianId(Clinician administeringClinicianId) {
-        this.administeringClinicianId = administeringClinicianId;
+    public void setAdministeringClinician(Clinician administeringClinician) {
+        this.administeringClinician = administeringClinician;
     }
 
-    public Clinician getEnteringClinicianId() {
-        return enteringClinicianId;
+    public Clinician getEnteringClinician() {
+        return enteringClinician;
     }
 
-    public void setEnteringClinicianId(Clinician enteringClinicianId) {
-        this.enteringClinicianId = enteringClinicianId;
+    public void setEnteringClinician(Clinician enteringClinician) {
+        this.enteringClinician = enteringClinician;
     }
 
-    public Clinician getOrderingClinicianId() {
-        return orderingClinicianId;
+    public Clinician getOrderingClinician() {
+        return orderingClinician;
     }
 
-    public void setOrderingClinicianId(Clinician orderingClinicianId) {
-        this.orderingClinicianId = orderingClinicianId;
+    public void setOrderingClinician(Clinician orderingClinician) {
+        this.orderingClinician = orderingClinician;
     }
 
-    public Facility getAdministeringFacilityId() {
-        return administeringFacilityId;
+    public Facility getAdministeringFacility() {
+        return administeringFacility;
     }
 
-    public void setAdministeringFacilityId(Facility administeringFacilityId) {
-        this.administeringFacilityId = administeringFacilityId;
+    public void setAdministeringFacility(Facility administeringFacility) {
+        this.administeringFacility = administeringFacility;
     }
 
-    public Patient getPatientId() {
-        return patientId;
+    public Patient getPatient() {
+        return patient;
     }
 
-    public void setPatientId(Patient patientId) {
-        this.patientId = patientId;
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
-    public Vaccine getVaccineId() {
-        return vaccineId;
+    public Vaccine getVaccine() {
+        return vaccine;
     }
 
-    public void setVaccineId(Vaccine vaccineId) {
-        this.vaccineId = vaccineId;
+    public void setVaccine(Vaccine vaccine) {
+        this.vaccine = vaccine;
     }
 
-    public LogsOfModifications getLogId() {
-        return logId;
+    public LogsOfModifications getLog() {
+        return log;
     }
 
-    public void setLogId(LogsOfModifications logId) {
-        this.logId = logId;
+    public void setLog(LogsOfModifications log) {
+        this.log = log;
     }
 }

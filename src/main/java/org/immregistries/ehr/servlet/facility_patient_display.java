@@ -39,6 +39,7 @@ public class facility_patient_display extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        Silo silo = new Silo();
+	        silo = (Silo) session.getAttribute("silo");
 	        List<Facility> facilityList = null;
             Query query = dataSession.createQuery(
                 "from facility where silo=?");

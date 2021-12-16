@@ -35,13 +35,13 @@ public class Silos extends HttpServlet {
 	      {
 	        doHeader(out, session);
 	        Tester tester = new Tester();
+	        tester = (Tester) session.getAttribute("tester");
 	        Session dataSession = PopServlet.getDataSession();
 	        List<Silo> siloList = null;
             Query query = dataSession.createQuery(
                 "from Silo where tester=?");
             query.setParameter(0,tester);
             siloList = query.list();
-	        int count = 0;
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
 	        		+    "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
@@ -52,9 +52,15 @@ public class Silos extends HttpServlet {
         			+"Test silo 2</a>"
         			+"</div>"
 	        		+ "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
-	        		+    "<button onclick=\"location.href=\'silo_creation'\" class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
+	        		+    "<button class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
 	        		//+ "		</div>\r\n" 	
-	        		+"</div\r\n");  
+	        		+"</div\r\n");
+	        String name = "silotest";
+	        query = dataSession.createQuery(
+                "from Silo where nameDisplay=?");
+            query.setParameter(0,name);
+            siloList = query.list();
+            session.setAttribute("silo", siloList.get(0));
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {
@@ -68,7 +74,8 @@ public class Silos extends HttpServlet {
 	    out.println("<html>");
 	    out.println("  <head>");
 	    out.println("    <title>EHR Sandbox</title>");
-	    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+	    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
+	    		+ "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
 	    out.println("  </head>");
 	    out.println("  <body>");
 	   // out.println("<div class=\"w3-container \">");
