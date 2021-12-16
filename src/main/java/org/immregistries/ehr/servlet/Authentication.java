@@ -36,9 +36,6 @@ public class Authentication extends HttpServlet {
       String username = req.getParameter("username") ;
       String password = req.getParameter("pwd");
       
-      //System.out.println(username);
-      //System.out.println(password);
-      
       query.setParameter(0,username);
       testerList = query.list();
       
@@ -56,6 +53,7 @@ public class Authentication extends HttpServlet {
       }
       }
       else {
+        
         //on crée le nouveau tester
         newTester.setLoginUsername(username);
         newTester.setLoginPassword(password);
