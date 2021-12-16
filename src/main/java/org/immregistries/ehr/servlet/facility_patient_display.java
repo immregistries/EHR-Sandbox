@@ -42,13 +42,13 @@ public class facility_patient_display extends HttpServlet {
 	        silo = (Silo) session.getAttribute("silo");
 	        List<Facility> facilityList = null;
             Query query = dataSession.createQuery(
-                "from facility where silo=?");
+                "from Facility where silo=?");
             query.setParameter(0,silo);
             facilityList = query.list();
             
             List<Patient> patientList = null;
             query = dataSession.createQuery(
-                "from patient where silo=?");
+                "from Patient where silo=?");
             query.setParameter(0,silo);
             patientList = query.list();
 
@@ -61,17 +61,15 @@ public class facility_patient_display extends HttpServlet {
         			+ facilityDisplay.getNameDisplay()
 	        		+"</a>");
 	        }
-        			out.println("</div>"
+        	        out.println("</div>"
         			+"  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
         			+"<h3>Patients</h3>");
-        			for(Facility facilityDisplay : facilityList) {
+        	for(Patient patientDisplay : patientList) {
                       out.println(
 	        		    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-        				
-	        		+"Test patient 1</a>"
-        			+    "<a href=\'patient_record'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-    				
-        			+"Test patient 2</a>");
+        			+patientDisplay.getNameFirst()+" "+patientDisplay.getNameLast()	
+	        		+"</a>");
+        			
         			}
         			out.println("</div>"
 	        		+ "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "

@@ -25,33 +25,21 @@ public class Facility_creation extends HttpServlet {
       HttpSession session = req.getSession(true);
       Session dataSession = PopServlet.getDataSession();
     
-      String name=req.getParameter("silo_name");
+      String name=req.getParameter("facility_name");
       
-      Tester tester = new Tester();
-      tester = (Tester) session.getAttribute("tester");
-      
-      Silo newSilo = new Silo();
+      Silo silo = new Silo();
+      silo = (Silo) session.getAttribute("silo");
+
       Facility facility = new Facility();
-      newSilo.setNameDisplay(name);
-      newSilo.setTester(tester);
-      facility.setNameDisplay("facilityTest");
+      facility.setNameDisplay(name);
       facility.setLocation(req.getParameter("location"));
-      
+      facility.setSilo(silo);
       Transaction transaction = dataSession.beginTransaction();
-      dataSession.save(newSilo);
-      transaction.commit();
-      List<Silo> siloList = null;
-      Query query = dataSession.createQuery(
-          "from Silo where nameDisplay=?");
-      query.setParameter(0,name);
-      siloList = query.list();
-      facility.setSilo(siloList.get(0));
-      Transaction transaction2 = dataSession.beginTransaction();
       dataSession.save(facility);
-      transaction2.commit();
-      query = dataSession.createQuery(
+      transaction.commit();
+      Query query = dataSession.createQuery(
           "from Facility where nameDisplay=?");
-      query.setParameter(0,"facilitytest");
+      query.setParameter(0,name);
       List<Facility> facilityList = query.list();
       session.setAttribute("facility", facilityList.get(0));
     doGet(req, resp);
@@ -70,8 +58,8 @@ public class Facility_creation extends HttpServlet {
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"facility_creation\">\r\n"
-                +                           "<label class=\"w3-text-green\"><b>Silo name</b></label>"
-                + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"silo_name\"/>\r\n"
+                +                           "<label class=\"w3-text-green\"><b>Facility name</b></label>"
+                + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"facility_name\"/>\r\n"
                 +                       "   <label class=\"w3-text-green\"><b>Location</b></label>"                     
                 + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name= \"location\"/>\r\n"
                 
@@ -97,7 +85,7 @@ public class Facility_creation extends HttpServlet {
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println( "          <h1>Silo creation</h1>\r\n"
+    out.println( "          <h1>Faciity creation</h1>\r\n"
             + "     </header>");
     
    out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");
