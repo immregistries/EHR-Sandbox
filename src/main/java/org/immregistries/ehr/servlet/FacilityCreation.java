@@ -42,7 +42,7 @@ public class FacilityCreation extends HttpServlet {
       query.setParameter(0,name);
       List<Facility> facilityList = query.list();
       session.setAttribute("facility", facilityList.get(0));
-      resp.sendRedirect("facility_patient_display"); 
+      resp.sendRedirect("FacilityPatientDisplay"); 
     doGet(req, resp);
   }
 

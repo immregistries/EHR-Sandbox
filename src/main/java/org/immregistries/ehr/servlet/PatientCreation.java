@@ -73,7 +73,7 @@ public class PatientCreation extends HttpServlet {
 	        Transaction transaction = dataSession.beginTransaction();
           dataSession.save(patient);
           transaction.commit();
-          resp.sendRedirect("facility_patient_display"); 
+          resp.sendRedirect("FacilityPatientDisplay"); 
 	    doGet(req, resp);
 	  }
 
@@ -208,7 +208,7 @@ public class PatientCreation extends HttpServlet {
 	    out.println("<header >\r\n"
 	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
 	    		+ "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
-	    		+ "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+	    		+ "  <a href = \'FacilityPatientDisplay\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
 	    		+ "  <a href = \'silo_creation\' class=\"w3-bar-item w3-button\">Silo creation </a>\r\n"
 	    		+ "</div>"
 	    		+ "    	</header>");

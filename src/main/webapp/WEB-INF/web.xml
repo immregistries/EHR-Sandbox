@@ -14,11 +14,11 @@
   <servlet>
   <display-name>Entry Creation</display-name>
   <servlet-name>entry_creation</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.Entry_creation</servlet-class>
+  <servlet-class>org.immregistries.ehr.servlet.EntryCreation</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>test</servlet-name>
-    <servlet-class>org.immregistries.ehr.servlet.Test_numeromille</servlet-class>
+    <servlet-class>org.immregistries.ehr.servlet.TestNumeromille</servlet-class>
   </servlet>
   <servlet>
   	
@@ -29,12 +29,12 @@
     <servlet>
     <display-name>Facility </display-name>
   <servlet-name> Facility</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.Facility_creation</servlet-class>
+  <servlet-class>org.immregistries.ehr.servlet.FacilityCreation</servlet-class>
   </servlet>
   <servlet>
   	<display-name>patient_record</display-name>
   	<servlet-name>patient_record</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.patient_record</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.PatientRecord</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -48,26 +48,26 @@
   	</description>
   	<display-name>IIS_message</display-name>
   	<servlet-name>IIS_message</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.IIS_message</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.IISMessage</servlet-class>
   </servlet>
   <servlet>
   	<description>
   	</description>
   	<display-name>Silo_creation</display-name>
   	<servlet-name>Silo_creation</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.Silo_creation</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.SiloCreation</servlet-class>
   </servlet>
   <servlet>
   	<display-name>patient_creation</display-name>
   	<servlet-name>patient_creation</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.patient_creation</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.PatientCreation</servlet-class>
   </servlet>
   <servlet>
   	<description>
   	</description>
   	<display-name>facility_patient_display</display-name>
   	<servlet-name>facility_patient_display</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.facility_patient_display</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.FacilityPatientDisplay</servlet-class>
   </servlet>
   <servlet>
   	<description>
