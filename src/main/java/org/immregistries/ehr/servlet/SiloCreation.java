@@ -18,7 +18,7 @@ import org.immregistries.ehr.model.Tester;
 /**
  * Servlet implementation class Silo_creation
  */
-public class Silo_creation extends HttpServlet {
+public class SiloCreation extends HttpServlet {
 	
       public static final String PARAM_SHOW = "show";
 

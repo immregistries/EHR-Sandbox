@@ -17,7 +17,7 @@ import org.immregistries.ehr.model.Clinician;
 /**
  * Servlet implementation class Entry
  */
-public class Entry_creation extends HttpServlet {
+public class EntryCreation extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static final String PARAM_SHOW = "show";
 

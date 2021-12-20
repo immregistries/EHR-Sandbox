@@ -19,7 +19,7 @@ import org.immregistries.ehr.model.Tester;
 /**
  * Servlet implementation class Test_numeromille
  */
-public class Test_numeromille extends HttpServlet {
+public class TestNumeromille extends HttpServlet {
   private static final long serialVersionUID = 1L;
   public static final String PARAM_SHOW = "show";
 

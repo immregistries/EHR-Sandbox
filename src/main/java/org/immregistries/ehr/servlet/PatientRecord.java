@@ -16,7 +16,7 @@ import org.immregistries.ehr.model.Silo;
 /**
  * Servlet implementation class patient_record
  */
-public class patient_record extends HttpServlet {
+public class PatientRecord extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static final String PARAM_SHOW = "show";
 

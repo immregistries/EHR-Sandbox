@@ -16,7 +16,7 @@ import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 
 
-public class Facility_creation extends HttpServlet {
+public class FacilityCreation extends HttpServlet {
   public static final String PARAM_SHOW = "show";
 
   @Override

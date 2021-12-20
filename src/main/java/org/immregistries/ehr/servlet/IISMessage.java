@@ -19,7 +19,7 @@ import org.immregistries.ehr.model.Silo;
 /**
  * Servlet implementation class IIS_message
  */
-public class IIS_message extends HttpServlet {
+public class IISMessage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static final String PARAM_SHOW = "show";
 	
@@ -55,6 +55,44 @@ public class IIS_message extends HttpServlet {
 	  }
 
 	  public static void doHeader(PrintWriter out, HttpSession session,HttpServletRequest req) {
+	    Patient patientTest= new Patient();
+	    patientTest.setAddressCity(PARAM_SHOW);
+	    patientTest.setAddressCountry(PARAM_SHOW);
+	    patientTest.setAddressCountyParish(PARAM_SHOW);
+	    patientTest.setAddressLine1(PARAM_SHOW);
+	    patientTest.setAddressLine2(PARAM_SHOW);
+	    patientTest.setAddressState(PARAM_SHOW);
+	    patientTest.setAddressZip(PARAM_SHOW);
+	    patientTest.setBirthDate(null);
+	    patientTest.setBirthFlag(PARAM_SHOW);
+	    patientTest.setBirthOrder(PARAM_SHOW);
+	    patientTest.setCreatedDate(null);
+	    patientTest.setDeathDate(null);
+	    patientTest.setDeathFlag(PARAM_SHOW);
+	    patientTest.setEmail(PARAM_SHOW);
+	    patientTest.setEthnicity(PARAM_SHOW);
+	    patientTest.setFacility(null);
+	    patientTest.setGuardianFirst(PARAM_SHOW);
+	    patientTest.setGuardianLast(PARAM_SHOW);
+	    patientTest.setGuardianMiddle(PARAM_SHOW);
+	    patientTest.setGuardianRelationship(PARAM_SHOW);
+	    patientTest.setMotherMaiden(PARAM_SHOW);
+	    patientTest.setNameFirst(PARAM_SHOW);
+	    patientTest.setNameLast(PARAM_SHOW);
+	    patientTest.setNameMiddle(PARAM_SHOW);
+	    patientTest.setPatientId(0);
+	    patientTest.setPhone(PARAM_SHOW);
+	    patientTest.setProtectionIndicator(PARAM_SHOW);
+	    patientTest.setProtectionIndicatorDate(null);
+	    patientTest.setPublicityIndicator(PARAM_SHOW);
+	    patientTest.setPublicityIndicatorDate(null);
+	    patientTest.setRace(PARAM_SHOW);
+	    patientTest.setRegistryStatusIndicator(PARAM_SHOW);
+	    patientTest.setRegistryStatusIndicatorDate(null);
+	    patientTest.setSex(PARAM_SHOW);
+	    patientTest.setSilo(null);
+	    patientTest.setUpdatedDate(null);
+	    
 	    List<Patient> patientList = null;
 	    Session dataSession = PopServlet.getDataSession();
 	    Silo silo = new Silo();
