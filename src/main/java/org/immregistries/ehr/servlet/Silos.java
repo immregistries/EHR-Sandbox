@@ -31,12 +31,12 @@ public class Silos extends HttpServlet {
 	    HttpSession session = req.getSession(true);
 	    resp.setContentType("text/html");
 	    PrintWriter out = new PrintWriter(resp.getOutputStream());
+	    Session dataSession = PopServlet.getDataSession();
 	    try {
 	      {
 	        doHeader(out, session);
 	        Tester tester = new Tester();
 	        tester = (Tester) session.getAttribute("tester");
-	        Session dataSession = PopServlet.getDataSession();
 	        List<Silo> siloList = null;
             Query query = dataSession.createQuery(
                 "from Silo where tester=?");
@@ -45,8 +45,9 @@ public class Silos extends HttpServlet {
 	        String show = req.getParameter(PARAM_SHOW);
 	        out.println( "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n");
 	        for(Silo siloDisplay : siloList ) {
+	            String link = "paramSiloId="+siloDisplay.getSiloId();
 	            out.println(
-	                "<a href=\'facility_patient_display'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+	                "<a href=\'facility_patient_display?"+ link +"'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
         			+ siloDisplay.getNameDisplay()
 	        		+"</a>");
 	        }
@@ -55,12 +56,6 @@ public class Silos extends HttpServlet {
 	        		+    "<button onclick=\"location.href=\'silo_creation\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
 	        		//+ "		</div>\r\n" 	
 	        		+"</div\r\n");
-	        String name = "silotest";
-	        query = dataSession.createQuery(
-                "from Silo where nameDisplay=?");
-            query.setParameter(0,name);
-            siloList = query.list();
-            session.setAttribute("silo", siloList.get(0));
 	        doFooter(out, session);
 	      }
 	    } catch (Exception e) {

@@ -73,6 +73,7 @@ public class patient_creation extends HttpServlet {
 	        Transaction transaction = dataSession.beginTransaction();
           dataSession.save(patient);
           transaction.commit();
+          resp.sendRedirect("facility_patient_display"); 
 	    doGet(req, resp);
 	  }
 

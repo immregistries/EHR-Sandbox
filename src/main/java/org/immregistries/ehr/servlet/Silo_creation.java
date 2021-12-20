@@ -43,21 +43,6 @@ public class Silo_creation extends HttpServlet {
           Transaction transaction = dataSession.beginTransaction();
           dataSession.save(newSilo);
           transaction.commit();
-          List<Silo> siloList = null;
-          Query query = dataSession.createQuery(
-              "from Silo where nameDisplay=?");
-          query.setParameter(0,name);
-          siloList = query.list();
-          facility.setSilo(siloList.get(0));
-          Transaction transaction2 = dataSession.beginTransaction();
-          dataSession.save(facility);
-          transaction2.commit();
-          query = dataSession.createQuery(
-              "from Facility where nameDisplay=?");
-          query.setParameter(0,"facilitytest");
-          List<Facility> facilityList = query.list();
-          session.setAttribute("silo", siloList.get(0));
-          session.setAttribute("facility", facilityList.get(0));
           resp.sendRedirect("silos"); 
   	    doGet(req, resp);
 	  }
@@ -77,10 +62,6 @@ public class Silo_creation extends HttpServlet {
 	        out.println("<form method=\"post\" class=\"w3-container\" action=\"silo_creation\">\r\n"
 	        		+ 							"<label class=\"w3-text-green\"><b>Silo name</b></label>"
 	        		+ "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"silo_name\"/>\r\n"
-	        		+						"	<label class=\"w3-text-green\"><b>Location</b></label>"	                	
-	        		+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name= \"location\"/>\r\n"
-	        		
-	        		
 	        		+ "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
 	        		+ "                </form> "
 	        		+ "            </div>");
