@@ -81,7 +81,7 @@ public class FacilityPatientDisplay extends HttpServlet {
 	        for(Facility facilityDisplay : facilityList) {
 	          String link = "paramFacilityId="+facilityDisplay.getFacilityId();
               out.println(
-	        		    "<a href=\'FacilityPatientDisplay?"+ link +"'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
+	        		    "<a href=\'facility_patient_display?"+ link +"'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
         			+ facilityDisplay.getNameDisplay()
 	        		+"</a>");
 	        }
@@ -154,7 +154,7 @@ public class FacilityPatientDisplay extends HttpServlet {
 	    out.println("<header >\r\n"
 	    		+ "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
 	    		+"  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
-	    		+"  <a href = 'FacilityPatientDisplay' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+	    		+"  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
 	    		+ "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
 	    		+ "</div>\r\n"
 	    		+ "    	</header>");
