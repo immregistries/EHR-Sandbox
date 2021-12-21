@@ -24,53 +24,49 @@ public class Authentication extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-	  
-	  HttpSession session = req.getSession(true);
-	  
-	  Session dataSession = PopServlet.getDataSession();
-      Tester newTester = new Tester();
-	  
-	  List<Tester> testerList = null;
-      Query query = dataSession.createQuery(
-              "from Tester where loginUsername= ?");
-      String username = req.getParameter("username") ;
-      String password = req.getParameter("pwd");
-      
-      query.setParameter(0,username);
-      testerList = query.list();
-      
-      if(!testerList.isEmpty()) {
-      	if(testerList.get(0).getLoginPassword().equals(password)) {
+
+    HttpSession session = req.getSession(true);
+
+    Session dataSession = PopServlet.getDataSession();
+    Tester newTester = new Tester();
+
+    List<Tester> testerList = null;
+    Query query = dataSession.createQuery("from Tester where loginUsername= ?");
+    String username = req.getParameter("username");
+    String password = req.getParameter("pwd");
+
+    query.setParameter(0, username);
+    testerList = query.list();
+
+    if (!testerList.isEmpty()) {
+      if (testerList.get(0).getLoginPassword().equals(password)) {
         //on se connecte
         System.out.println("connected");
-        newTester =testerList.get(0);
-      }
-      else {
+        newTester = testerList.get(0);
+      } else {
         //wrong password
         //System.out.println("wrong password"); 
-        
-        
+
+
       }
-      }
-      else {
-        
-        //on crée le nouveau tester
-        newTester.setLoginUsername(username);
-        newTester.setLoginPassword(password);
-        Transaction transaction = dataSession.beginTransaction();
-        dataSession.save(newTester);
-        transaction.commit();
-        query = dataSession.createQuery(
-                "from Tester where loginUsername= ?");
-        query.setParameter(0,username);
-        testerList = query.list();
-        newTester=testerList.get(0);
-        //System.out.println("on est là gars");
-      }
-      
-      session.setAttribute("tester", newTester);
-	  //RequestDispatcher rd=req.getRequestDispatcher("silos");
-	  resp.sendRedirect("silos"); 
+    } else {
+
+      //on crée le nouveau tester
+      newTester.setLoginUsername(username);
+      newTester.setLoginPassword(password);
+      Transaction transaction = dataSession.beginTransaction();
+      dataSession.save(newTester);
+      transaction.commit();
+      query = dataSession.createQuery("from Tester where loginUsername= ?");
+      query.setParameter(0, username);
+      testerList = query.list();
+      newTester = testerList.get(0);
+      //System.out.println("on est là gars");
+    }
+
+    session.setAttribute("tester", newTester);
+    //RequestDispatcher rd=req.getRequestDispatcher("silos");
+    resp.sendRedirect("silos");
     doGet(req, resp);
   }
 
@@ -81,23 +77,23 @@ public class Authentication extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
-        try {
+    try {
       {
-      	doHeader(out, session);
+        doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
-        		+ 							"<label class=\"w3-text-green\"><b>EHR username</b></label>"
-        		+ "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"
-        		+						"	<label class=\"w3-text-green\"><b>password</b></label>"	                	
-        		+ "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
-        		
-        	                
-        		+ "                <button onclick=\"location.href=\'silos\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" name=\"validate_button\" >Validate</button>\r\n"
-        		+ "                </form> "
-        		/*onclick=\"validateOnClick()\"*/
-        		+ "            </div>");
-       
-        
+            + "<label class=\"w3-text-green\"><b>EHR username</b></label>"
+            + "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"
+            + "	<label class=\"w3-text-green\"><b>password</b></label>"
+            + "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
+
+
+            + "                <button onclick=\"location.href=\'silos\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" name=\"validate_button\" >Validate</button>\r\n"
+            + "                </form> "
+            /*onclick=\"validateOnClick()\"*/
+            + "            </div>");
+
+
         doFooter(out, session);
       }
     } catch (Exception e) {
@@ -113,22 +109,19 @@ public class Authentication extends HttpServlet {
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
     out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />"
-    		//+ "<script src =\"inc/Authentication.js\"></script>");
+    //+ "<script src =\"inc/Authentication.js\"></script>");
     );
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println( "    		<h1>Authentication</h1>\r\n"
-    		+ "    	</header>");
-    
-   out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");
+    out.println("    		<h1>Authentication</h1>\r\n" + "    	</header>");
+
+    out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");
 
   }
 
   public static void doFooter(PrintWriter out, HttpSession session) {
-    out.println("</div>\r\n"
-    		+ "    </body>\r\n"
-    		+ "</html>");
+    out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
 

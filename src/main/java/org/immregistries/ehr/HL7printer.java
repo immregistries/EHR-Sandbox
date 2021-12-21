@@ -11,7 +11,7 @@ import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.mqe.hl7util.parser.HL7Reader;
 
 public class HL7printer {
-  
+
   private static final String QBP_Z34 = "Z34";
   private static final String QBP_Z44 = "Z44";
   private static final String RSP_Z42_MATCH_WITH_FORECAST = "Z42";
@@ -23,20 +23,21 @@ public class HL7printer {
   private static final String QUERY_NOT_FOUND = "NF";
   private static final String QUERY_TOO_MANY = "TM";
   private static final String QUERY_APPLICATION_ERROR = "AE";
-  
-  
+
+
   public String buildHL7(Patient vaccination) {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = new CodeMap();
     Patient patientReported = vaccination;
     Patient patient = vaccination; //à retoucher
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-    createMSH( "VXU^VO4^VXU_V04",  "Tom",  sb);
-    sb.append(printQueryPID(patientReported, new StringBuilder(), patient, sdf, 1)+ "\n");
+    createMSH("VXU^VO4^VXU_V04", "Tom", sb);
+    sb.append(printQueryPID(patientReported, new StringBuilder(), patient, sdf, 1) + "\n");
     sb.append(printQueryNK1(patientReported, new StringBuilder(), codeMap));
 
     return sb.toString();
   }
+
   /*public String buildVxu(Vaccine vaccination) {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = CodeMapManager.getCodeMap();
@@ -47,14 +48,14 @@ public class HL7printer {
     createMSH("VXU^V04^VXU_V04", "Z22", sb);
     printQueryPID(patientReported, sb, patient, sdf, 1);
     printQueryNK1(patientReported, sb, codeMap);
-
+  
     int obxSetId = 0;
     int obsSubId = 0;
     {
       Code cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,
           vaccination.getVaccineCvxCode());
       if (cvxCode != null) {
-
+  
         boolean originalReporter =
             vaccinationReported.getPatientReported().getOrgReported().equals(orgAccess.getOrg());
         printORC(orgAccess, sb, vaccination, vaccinationReported, originalReporter);
@@ -157,7 +158,7 @@ public class HL7printer {
           }
           sb.append(printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, null, codeMap));
         }
-
+  
         // RXA-21
         String actionCode = vaccinationReported.getActionCode();
         if (actionCode == null || actionCode.equals("")
@@ -231,8 +232,10 @@ public class HL7printer {
         if (code != null) {
           sb.append("NK1");
           sb.append("|1");
-          sb.append("|" + patientReported.getGuardianLast()==null ?"": patientReported.getGuardianLast() + "^"
-              + patientReported.getGuardianFirst() ==null ?"": patientReported.getGuardianFirst() + "^^^^^L");
+          sb.append("|" + patientReported.getGuardianLast() == null ? ""
+              : patientReported.getGuardianLast() + "^" + patientReported.getGuardianFirst() == null
+                  ? ""
+                  : patientReported.getGuardianFirst() + "^^^^^L");
           sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
           sb.append("\r");
         }
@@ -262,8 +265,8 @@ public class HL7printer {
     String firstName = patient.getNameFirst();
     String middleName = patient.getNameMiddle();
     String lastName = patient.getNameLast();
-    
-    String dateOfBirth =patient.getBirthDate()==null ?"": sdf.format(patient.getBirthDate());
+
+    String dateOfBirth = patient.getBirthDate() == null ? "" : sdf.format(patient.getBirthDate());
 
 
     sb.append("|" + lastName + "^" + firstName + "^" + middleName + "^^^^L");
@@ -271,10 +274,11 @@ public class HL7printer {
     // PID-6
     sb.append("|");
     if (patientReported != null) {
-      sb.append(patientReported.getMotherMaiden()==null ?"": patientReported.getMotherMaiden() + "^^^^^^M");
+      sb.append(patientReported.getMotherMaiden() == null ? ""
+          : patientReported.getMotherMaiden() + "^^^^^^M");
     }
     // PID-7
-    sb.append("|" + dateOfBirth );
+    sb.append("|" + dateOfBirth);
     if (patientReported != null) {
       // PID-8
       {
@@ -290,39 +294,37 @@ public class HL7printer {
       sb.append("|");
       {
         String race = patientReported.getRace();
-      // PID-11
-      sb.append("|" + patientReported.getAddressLine1() + "^"
-          + patientReported.getAddressLine2() + "^" + patientReported.getAddressCity()
-          + "^" + patientReported.getAddressState() + "^"
-          + patientReported.getAddressZip() + "^"
-          + patientReported.getAddressCountry() + "^");
-      // PID-12
-      sb.append("|");
-      // PID-13
-      sb.append("|");
-      String phone = patientReported.getPhone();
-      if (phone.length() == 10) {
-        sb.append("^PRN^PH^^^" + phone.substring(0, 3) + "^" + phone.substring(3, 10));
-      }
-      // PID-14
-      sb.append("|");
-      // PID-15
-      sb.append("|");
-      // PID-16
-      sb.append("|");
-      // PID-17
-      sb.append("|");
-      // PID-18
-      sb.append("|");
-      // PID-19
-      sb.append("|");
-      // PID-20
-      sb.append("|");
-      // PID-21
-      sb.append("|");
-      // PID-22
-      sb.append("|");
-      /*{
+        // PID-11
+        sb.append("|" + patientReported.getAddressLine1() + "^" + patientReported.getAddressLine2()
+            + "^" + patientReported.getAddressCity() + "^" + patientReported.getAddressState() + "^"
+            + patientReported.getAddressZip() + "^" + patientReported.getAddressCountry() + "^");
+        // PID-12
+        sb.append("|");
+        // PID-13
+        sb.append("|");
+        String phone = patientReported.getPhone();
+        if (phone.length() == 10) {
+          sb.append("^PRN^PH^^^" + phone.substring(0, 3) + "^" + phone.substring(3, 10));
+        }
+        // PID-14
+        sb.append("|");
+        // PID-15
+        sb.append("|");
+        // PID-16
+        sb.append("|");
+        // PID-17
+        sb.append("|");
+        // PID-18
+        sb.append("|");
+        // PID-19
+        sb.append("|");
+        // PID-20
+        sb.append("|");
+        // PID-21
+        sb.append("|");
+        // PID-22
+        sb.append("|");
+        /*{
         String ethnicity = patientReported.getEthnicity();
         if (!ethnicity.equals("")) {
           if (processingFlavorSet.contains(ProcessingFlavor.PITAYA)
@@ -341,28 +343,28 @@ public class HL7printer {
             }
           }
         }
-      }*/
-      // PID-23
-      sb.append("|");
-      // PID-24
-      sb.append("|");
-      sb.append(patientReported.getBirthFlag());
-      // PID-25
-      sb.append("|");
-      sb.append(patientReported.getBirthOrder());
+        }*/
+        // PID-23
+        sb.append("|");
+        // PID-24
+        sb.append("|");
+        sb.append(patientReported.getBirthFlag());
+        // PID-25
+        sb.append("|");
+        sb.append(patientReported.getBirthOrder());
 
+      }
+      sb.append("\r");
     }
-    sb.append("\r");
-  }
     return sb.toString();
-}
+  }
 
   public void createMSH(String messageType, String profileId, StringBuilder sb) {
     String sendingApp = "";
     String sendingFac = "";
     String receivingApp = "";
     String receivingFac = "EHR Sandbox";
-    
+
     receivingFac += " v" + SoftwareVersion.VERSION;
 
 
@@ -411,6 +413,7 @@ public class HL7printer {
       return increment;
     }
   }
+
   public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
       String loincLabel, String value) {
     sb.append("OBX");
@@ -445,7 +448,7 @@ public class HL7printer {
     sb.append("\r");
   }
 
-  
+
 
   public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
       String loincLabel, String value, String valueLabel, String valueTable) {
@@ -518,6 +521,7 @@ public class HL7printer {
     sb.append("F");
     sb.append("\r");
   }
+
   public String printCode(String value, CodesetType codesetType, String tableName,
       CodeMap codeMap) {
     if (value != null) {
@@ -539,7 +543,7 @@ public class HL7printer {
       String profileId = Z23_ACKNOWLEDGEMENT;
       createMSH(messageType, profileId, sb);
     }
-
+  
     String sendersUniqueId = "";
     reader.resetPostion();
     if (reader.advanceToSegment("MSH")) {
@@ -557,7 +561,7 @@ public class HL7printer {
         break;
       }
     }
-
+  
     sb.append("MSA|" + overallStatus + "|" + sendersUniqueId + "\r");
     for (ProcessingException pe : processingExceptionList) {
       printERRSegment(pe, sb);
@@ -589,4 +593,4 @@ public class HL7printer {
     sb.append("|" + e.getMessage()); // 8
     sb.append("|\r");
   }*/
-  }
+}

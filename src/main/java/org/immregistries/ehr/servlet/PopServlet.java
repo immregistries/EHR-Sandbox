@@ -46,7 +46,7 @@ public class PopServlet extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
-    
+
   }
 
 }
