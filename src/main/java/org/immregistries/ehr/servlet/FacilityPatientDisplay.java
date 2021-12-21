@@ -39,6 +39,7 @@ public class FacilityPatientDisplay extends HttpServlet {
     try {
 
       doHeader(out, session);
+      session.setAttribute("patient", null);
       Silo silo = new Silo();
       List<Silo> siloList = null;
       String siloId = req.getParameter("paramSiloId");

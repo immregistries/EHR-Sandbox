@@ -8,7 +8,7 @@
     <many-to-one name="administeringClinician" column="administering_clinician_id" class="Clinician"/>
     <many-to-one name="enteringClinician" column="entering_clinician_id" class="Clinician"/>
     <many-to-one name="orderingClinician" column="ordering_clinician_id" class="Clinician"/>
-    <many-to-one name="administeringFacility" column="facility_id" class="Facility"/>
+    <many-to-one name="administeringFacility" column="administering_facility_id" class="Facility"/>
     <many-to-one name="patient" column="patient_id" class="Patient"/>
     <many-to-one name="vaccine" column="vaccine_id" class="Vaccine"/>
     <many-to-one name="log" column="log_id" class="LogsOfModifications"/>

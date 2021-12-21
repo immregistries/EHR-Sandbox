@@ -10,8 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.VaccinationEvent;
+import org.immregistries.ehr.model.Vaccine;
 
 /**
  * Servlet implementation class patient_record
@@ -40,15 +43,31 @@ public class PatientRecord extends HttpServlet {
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = new Patient();
         List<Patient> patientList = null;
+        List<VaccinationEvent> entryList = null;
         Query query = dataSession.createQuery("from Patient where patientId=?");
         query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
         patientList = query.list();
         patient = patientList.get(0);
         session.setAttribute("patient", patient);
+        query = dataSession.createQuery("from VaccinationEvent where patient=?");
+        query.setParameter(0, patient);
+        entryList = query.list();
+        out.println("<label class=\"w3-text-green\"><b>     Current Patient : "
+            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>");
         out.println(
             "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
-                + "<h3>Entries</h3>"
-                + "<a href=\'Entry'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
+                + "<h3>Entries</h3>");
+
+
+        for (VaccinationEvent entryDisplay : entryList) {
+          Vaccine vaccineAdmin = entryDisplay.getVaccine();
+          String link = "paramEntryId=" + entryDisplay.getVaccinationEventId();
+          out.println("<a href=\'patient_record?" + link
+              + "'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
+              + vaccineAdmin.getManufacturer() + "</a>");
+          }
+        out.println(
+           "<a href=\'Entry'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
 
                 + "Entry 1</a>"
                 + "<a href=\'Entry'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
