@@ -2,6 +2,7 @@ package org.immregistries.ehr;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -593,4 +594,19 @@ public class HL7printer {
     sb.append("|" + e.getMessage()); // 8
     sb.append("|\r");
   }*/
+  
+  private static final Random random = new Random();
+  private static final char[] ID_CHARS =
+      {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T',
+          'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+  
+
+  public String generateId() {
+    String patientRegistryId = "";
+    for (int i = 0; i < 12; i++) {
+      patientRegistryId += ID_CHARS[random.nextInt(ID_CHARS.length)];
+    }
+    return patientRegistryId;
+  }
 }
