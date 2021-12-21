@@ -29,11 +29,26 @@ public class FacilityCreation extends HttpServlet {
 
     Silo silo = new Silo();
     silo = (Silo) session.getAttribute("silo");
-
+    String nameParent = req.getParameter("parentFacility");
+    Facility parentFacility = null;
+    if(nameParent!=null) {
+      Query query = dataSession.createQuery("from Facility where nameDisplay=?");
+      query.setParameter(0, nameParent);
+      List<Facility> facilityParentList = query.list();
+      if(facilityParentList.size()>0) {
+      System.out.println("oups1");
+      parentFacility = facilityParentList.get(0);
+      }
+      
+    }
     Facility facility = new Facility();
     facility.setNameDisplay(name);
     facility.setLocation(req.getParameter("location"));
     facility.setSilo(silo);
+    if(parentFacility!=null) {
+      System.out.println("oups");
+      facility.setParentFacility(parentFacility);
+    }
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(facility);
     transaction.commit();
@@ -41,7 +56,7 @@ public class FacilityCreation extends HttpServlet {
     query.setParameter(0, name);
     List<Facility> facilityList = query.list();
     session.setAttribute("facility", facilityList.get(0));
-    resp.sendRedirect("FacilityPatientDisplay");
+    resp.sendRedirect("facility_patient_display");
     doGet(req, resp);
   }
 
@@ -62,7 +77,8 @@ public class FacilityCreation extends HttpServlet {
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"facility_name\"/>\r\n"
             + "   <label class=\"w3-text-green\"><b>Location</b></label>"
             + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name= \"location\"/>\r\n"
-
+            + "   <label class=\"w3-text-green\"><b>Parent Facility</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" size=\"40\" maxlength=\"60\" name= \"parentFacility\"/>\r\n"
 
             + "                <button \" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "            </div>");
