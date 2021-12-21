@@ -71,7 +71,14 @@ public class FacilityPatientDisplay extends HttpServlet {
         showFacility = req.getParameter("paramFacilityId");
       }
       String show = req.getParameter(PARAM_SHOW);
+
+      Facility facility = new Facility();
       if (showFacility == null) {
+        facility = (Facility) session.getAttribute("facility");
+        out.print("<label class=\"w3-text-green\"><b>Current Silo : "+ silo.getNameDisplay()+"</b></label>");
+        if(facility!=null) {
+        out.println("<label class=\"w3-text-green\"><b>     Current Facility : "+facility.getNameDisplay()+"</b></label>");
+        }
         out.println(
             "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
                 + "<h3>Facilities</h3>");
@@ -100,15 +107,30 @@ public class FacilityPatientDisplay extends HttpServlet {
             + "</div\r\n");
       } else {
         patientList = null;
-        facilityList = null;
+        List<Facility> currentFacility = null;
         query = dataSession.createQuery("from Facility where facilityId=?");
         query.setParameter(0, Integer.parseInt(showFacility));
-        facilityList = query.list();
+        currentFacility = query.list();
+        facility = currentFacility.get(0);
+        session.setAttribute("facility", facility);
         query = dataSession.createQuery("from Patient where facility=?");
-        query.setParameter(0, facilityList.get(0));
+        query.setParameter(0, facility);
         patientList = query.list();
+        out.print("<label class=\"w3-text-green\"><b>Current Silo : "+ silo.getNameDisplay()+"</b></label>");
+        if(facility!=null) {
+        out.println("<label class=\"w3-text-green\"><b>     Current Facility : "+facility.getNameDisplay()+"</b></label>");
+        }
         out.println(
-            "  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
+            "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
+                + "<h3>Facilities</h3>");
+        for (Facility facilityDisplay : facilityList) {
+          String link = "paramFacilityId=" + facilityDisplay.getFacilityId();
+          out.println("<a href=\'facility_patient_display?" + link
+              + "'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
+              + facilityDisplay.getNameDisplay() + "</a>");
+        }
+        out.println("</div>"
+            +"  <div class=\"w3-display-middle w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:30% ;height:100%;overflow:auto\">\r\n"
                 + "<h3>Patients</h3>");
         for (Patient patientDisplay : patientList) {
           String link = "paramPatientId=" + patientDisplay.getPatientId();

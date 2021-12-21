@@ -35,6 +35,7 @@ public class Silos extends HttpServlet {
     try {
       {
         doHeader(out, session);
+        session.setAttribute("facility", null);
         Tester tester = new Tester();
         tester = (Tester) session.getAttribute("tester");
         List<Silo> siloList = null;

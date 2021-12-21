@@ -80,6 +80,7 @@ public class Authentication extends HttpServlet {
     try {
       {
         doHeader(out, session);
+        session.setAttribute("silo", null);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
             + "<label class=\"w3-text-green\"><b>EHR username</b></label>"
