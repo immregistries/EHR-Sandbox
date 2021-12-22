@@ -2,17 +2,24 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.Date;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
+import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.VaccinationEvent;
+import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.ehr.model.Clinician;
+import org.immregistries.ehr.model.Facility;
 
 /**
  * Servlet implementation class Entry
@@ -24,12 +31,81 @@ public class EntryCreation extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    Clinician cli = new Clinician();
-    cli.setClinicianId(0);
-    cli.setNameLast(req.getParameter("Clinician"));
+    
+    HttpSession session = req.getSession(true);
+    Session dataSession = PopServlet.getDataSession();
+    
+    
+    //Silo silo = new Silo();
+    Facility facility = new Facility();
+    Patient patient = new Patient();
     VaccinationEvent vacc_ev = new VaccinationEvent();
-    vacc_ev.setAdministeringClinician(cli);
-    //vacc_ev.set
+    Vaccine vaccine = new Vaccine();  
+   /* 
+    String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
+    Query query = dataSession.createQuery(hql);
+    List<Silo> siloList = query.list();
+    silo = siloList.get(0);
+    
+    hql = "SELECT P.facility FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
+    query = dataSession.createQuery(hql);
+    List<Facility> facilityList = query.list();
+    facility = facilityList.get(0);    
+    */
+
+    //silo = (Silo) session.getAttribute("silo");
+    facility = (Facility) session.getAttribute("facility");
+    patient = (Patient) session.getAttribute("patient") ;
+    
+        
+    Clinician admicli = new Clinician();
+    admicli.setNameLast(req.getParameter("administering_cli"));    
+    vacc_ev.setAdministeringClinician(admicli);
+    
+    Clinician ordercli = new Clinician();
+    ordercli.setNameLast(req.getParameter("ordering_cli"));    
+    vacc_ev.setOrderingClinician(ordercli);
+    
+    Clinician entercli = new Clinician();
+    entercli.setNameLast(req.getParameter("entering_cli"));    
+    vacc_ev.setAdministeringClinician(entercli);
+    
+    vacc_ev.setAdministeringFacility(facility);
+    vacc_ev.setPatient(patient);
+    
+    Date updatedDate = new Date();
+    
+    vaccine.setActionCode(req.getParameter("action_code"));
+    vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
+    vaccine.setAdministeredDate(updatedDate);
+    vaccine.setBodyRoute(req.getParameter("body_route"));
+    vaccine.setBodySite(req.getParameter("body_site"));
+    vaccine.setCompletionStatus(req.getParameter("completion_status"));
+    vaccine.setCreatedDate(updatedDate);
+    vaccine.setExpirationDate(updatedDate);
+    vaccine.setFundingEligibility(req.getParameter("funding_eligibility"));
+    vaccine.setFundingSource(req.getParameter("funding_source"));
+    vaccine.setInformationSource(req.getParameter("information_source"));
+    vaccine.setLotnumber(req.getParameter("lot_number"));
+    vaccine.setManufacturer(req.getParameter("manufacturer"));
+    vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
+    vaccine.setUpdatedDate(updatedDate);
+    vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
+    vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
+    vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
+    
+    vacc_ev.setVaccine(vaccine);  
+    
+    Transaction transaction = dataSession.beginTransaction();
+    
+    //dataSession.save(vaccine);
+    dataSession.save(vacc_ev);
+    //dataSession.save(admicli);
+    //dataSession.save(ordercli);
+    //dataSession.save(entercli);    
+    
+    transaction.commit();
+    
     doGet(req, resp);
   }
 
@@ -44,6 +120,24 @@ public class EntryCreation extends HttpServlet {
     try {
       {
         doHeader(out, session);
+        
+        /*Silo silo = new Silo();
+        silo= (Silo) req.getAttribute("silo");
+       */
+        Facility facility = new Facility();
+        Patient patient = new Patient();
+       
+
+        
+        facility = (Facility) session.getAttribute("facility");
+        patient = (Patient) session.getAttribute("patient") ;
+        
+        //System.out.println(silo.getNameDisplay()+"  current silo");
+        
+        System.out.println(facility.getNameDisplay()+"  current facility");
+        System.out.println(patient.getNameFirst()+"  current patient");
+        
+        
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
 

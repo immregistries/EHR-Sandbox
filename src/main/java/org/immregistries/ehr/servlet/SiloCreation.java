@@ -24,7 +24,7 @@ public class SiloCreation extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
+      throws ServletException, IOException {    
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
 

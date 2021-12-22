@@ -66,15 +66,11 @@ public class PatientRecord extends HttpServlet {
               + "'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
               + vaccineAdmin.getManufacturer() + "</a>");
           }
+        String link = "paramPatientId=" + patient.getPatientId();
         out.println(
-           "<a href=\'Entry'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-
-                + "Entry 1</a>"
-                + "<a href=\'Entry'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-
-                + "Entry 2</a>" + "</div>"
+                "</div>"
                 + "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
-                + "<button onclick=\"location.href=\'entry_creation'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
+                + "<button onclick=\"location.href=\'entry_creation?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
                 + "</div\r\n");
         doFooter(out, session);
       }
