@@ -139,7 +139,7 @@ public class EntryCreation extends HttpServlet {
         
         
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"IIS_message\">\r\n"
 
             + "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
             + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
@@ -182,8 +182,6 @@ public class EntryCreation extends HttpServlet {
             + "	<label class=\"w3-text-green\"><b>Expiration_date</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>E-mail</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"email\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Completion status</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
@@ -207,6 +205,7 @@ public class EntryCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
 
             + "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+            +"                  <button onclick=\"location.href=\'IIS_message\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
             + "                </form> " + "</div\r\n");
         doFooter(out, session);
       }

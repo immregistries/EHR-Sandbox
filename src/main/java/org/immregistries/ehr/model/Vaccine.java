@@ -23,9 +23,32 @@ public class Vaccine implements Serializable {
     private String refusalReasonCode = "";
     private String bodySite = "";
     private String bodyRoute = "";
-    private String fundingSource = "";
-    private String fundingEligibility = "";
-
+    private String fundingSource = ""; //obx5
+    private String fundingEligibility = ""; //obx5
+    
+    public Vaccine(int vaccineId, Date administeredDate, String vaccineCvxCode, String vaccineNdcCode, String vaccineMvxCode, String administeredAmount, String manufacturer, String informationSource, String lotnumber, Date expirationDate, String completionStatus, String actionCode, String refusalReasonCode, String bodySite, String bodyRoute, String fundingSource, String fundingEligibility) {
+      this.vaccineId = vaccineId;
+      this.administeredDate = administeredDate;
+      this.vaccineCvxCode = vaccineCvxCode;
+      this.vaccineNdcCode = vaccineNdcCode;
+      this.vaccineMvxCode = vaccineMvxCode;
+      this.administeredAmount =administeredAmount;
+      this.manufacturer = manufacturer;
+      this.informationSource = informationSource;
+      this.lotnumber = lotnumber;
+      this.expirationDate = expirationDate;
+      this.completionStatus = completionStatus;
+      this.actionCode = actionCode;
+      this.refusalReasonCode = refusalReasonCode;
+      this.bodySite = bodySite;
+      this.bodyRoute = bodyRoute;
+      this.fundingSource = fundingSource; //obx5
+      this.fundingEligibility = fundingEligibility; //obx5
+    }
+    
+    public Vaccine() {
+      
+    }
     public int getVaccineId() {
         return vaccineId;
     }
