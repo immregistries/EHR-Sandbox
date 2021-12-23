@@ -142,7 +142,7 @@ public class IISMessage extends HttpServlet {
     out.println(
         "<textarea id=\"story\" name=\"story\"\r\n" + "          rows=\"20\" cols=\"200\">\r\n"
             /*+ new HL7printer().buildHL7(new Patient()).toString() + " \r\n"*/
-            + new HL7printer().buildVxu(new Vaccine()).toString() + " \r\n"
+            + new HL7printer().buildVxu(new Vaccine(),new Patient()).toString() + " \r\n"
             /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
             + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea>");

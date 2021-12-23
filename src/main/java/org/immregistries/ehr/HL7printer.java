@@ -46,10 +46,10 @@ public class HL7printer {
     return sb.toString();
   }
 
-  public String buildVxu(Vaccine vaccination) {
+  public String buildVxu(Vaccine vaccination,Patient patientReported) {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = CodeMapManager.getCodeMap();
-    Patient patientReported = new Patient();
+    
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     /*HL7Reader reader = new HL7Reader(
         "MSH|^~\\&|||AIRA|EHR Sandbox|20120701082240-0500||VXU^V04^VXU_V04|NIST-IZ-001.00|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS\r");*/

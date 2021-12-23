@@ -45,7 +45,7 @@ public class EntryCreation extends HttpServlet {
       {
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"IIS_message\">\r\n"
 
             + "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
             + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
