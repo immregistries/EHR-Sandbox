@@ -20,6 +20,7 @@ import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
+import org.immregistries.ehr.model.LogsOfModifications;
 
 /**
  * Servlet implementation class Entry
@@ -56,26 +57,30 @@ public class EntryCreation extends HttpServlet {
     //silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
-    
-        
+    String nameAdmi = req.getParameter("administering_cli");  
+    String nameOrder = req.getParameter("ordering_cli");  
+    String nameEnter = req.getParameter("entering_cli");  
     Clinician admicli = new Clinician();
-    admicli.setNameLast(req.getParameter("administering_cli"));    
-    vacc_ev.setAdministeringClinician(admicli);
+    admicli.setNameLast(nameAdmi);    
+    admicli.setNameFirst("alan");
+    admicli.setNameMiddle("quentin");
     
     Clinician ordercli = new Clinician();
-    ordercli.setNameLast(req.getParameter("ordering_cli"));    
-    vacc_ev.setOrderingClinician(ordercli);
+    ordercli.setNameLast(nameOrder);    
+    ordercli.setNameFirst("alan");
+    ordercli.setNameMiddle("quentin");
     
     Clinician entercli = new Clinician();
-    entercli.setNameLast(req.getParameter("entering_cli"));    
-    vacc_ev.setAdministeringClinician(entercli);
-    
-    vacc_ev.setAdministeringFacility(facility);
-    vacc_ev.setPatient(patient);
+    entercli.setNameLast(nameEnter); 
+    entercli.setNameFirst("alan");
+    entercli.setNameMiddle("quentin");
     
     Date updatedDate = new Date();
-    
-    vaccine.setActionCode(req.getParameter("action_code"));
+    LogsOfModifications log = new LogsOfModifications();
+    log.setModifDate(updatedDate);
+    log.setModifType("modif");
+    String vaccCode = req.getParameter("action_code");
+    vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
     vaccine.setAdministeredDate(updatedDate);
     vaccine.setBodyRoute(req.getParameter("body_route"));
@@ -94,18 +99,57 @@ public class EntryCreation extends HttpServlet {
     vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
     
-    vacc_ev.setVaccine(vaccine);  
-    
     Transaction transaction = dataSession.beginTransaction();
-    
-    //dataSession.save(vaccine);
-    dataSession.save(vacc_ev);
-    //dataSession.save(admicli);
-    //dataSession.save(ordercli);
-    //dataSession.save(entercli);    
-    
+    dataSession.save(log);
+    dataSession.save(admicli);
+    dataSession.save(ordercli);
+    dataSession.save(entercli);
+    dataSession.save(vaccine);
     transaction.commit();
     
+    List<LogsOfModifications> logList = null;
+    Query query = dataSession.createQuery("from LogsOfModifications where modifType=?");
+    query.setParameter(0, "modif");
+    logList = query.list();
+    log = logList.get(0);
+    
+    List<Clinician> clinicianList1 = null;
+    query = dataSession.createQuery("from Clinician where nameLast=?");
+    query.setParameter(0, nameAdmi);
+    clinicianList1 = query.list();
+    admicli = clinicianList1.get(0);
+    
+    List<Clinician> clinicianList2 = null;
+    query = dataSession.createQuery("from Clinician where nameLast=?");
+    query.setParameter(0, nameOrder);
+    clinicianList2 = query.list();
+    ordercli = clinicianList2.get(0);
+    
+    List<Clinician> clinicianList3 = null;
+    query = dataSession.createQuery("from Clinician where nameLast=?");
+    query.setParameter(0, nameEnter);
+    clinicianList3 = query.list();
+    entercli = clinicianList3.get(0);
+    
+    List<Vaccine> vaccineList = null;
+    query = dataSession.createQuery("from Vaccine where actionCode=?");
+    query.setParameter(0, vaccCode);
+    vaccineList = query.list();
+    vaccine = vaccineList.get(0);
+    
+    System.out.print(entercli.getClinicianId());
+    vacc_ev.setLog(log);
+    vacc_ev.setAdministeringFacility(facility);
+    vacc_ev.setPatient(patient);
+    vacc_ev.setEnteringClinician(entercli);
+    vacc_ev.setOrderingClinician(ordercli);
+    vacc_ev.setAdministeringClinician(admicli);
+    vacc_ev.setVaccine(vaccine);  
+    
+    Transaction transaction2 = dataSession.beginTransaction();
+    dataSession.save(vacc_ev);
+    transaction2.commit();
+    resp.sendRedirect("patient_record");
     doGet(req, resp);
   }
 
@@ -139,16 +183,16 @@ public class EntryCreation extends HttpServlet {
         
         
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"IIS_message\">\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_creation\">\r\n"
 
             + "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
             + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Entering clinician</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"entering_clinician\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"ordering_clinician\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Administered date</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administered_date\" />\r\n"

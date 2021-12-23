@@ -6,6 +6,6 @@
       <generator class="native"/>
     </id>
     <property name="modifType" column="modif_type" type="string"/>
-    <property name="modifDate" column="mdoif_date" type="date"/>
+    <property name="modifDate" column="modif_date" type="date"/>
   </class>
 </hibernate-mapping>
