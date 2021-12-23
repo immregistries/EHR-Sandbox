@@ -61,6 +61,7 @@ public class EntryCreation extends HttpServlet {
     String nameOrder = req.getParameter("ordering_cli");  
     String nameEnter = req.getParameter("entering_cli");  
     Clinician admicli = new Clinician();
+<<<<<<< Updated upstream
     admicli.setNameLast(nameAdmi);    
     admicli.setNameFirst("alan");
     admicli.setNameMiddle("quentin");
@@ -74,6 +75,24 @@ public class EntryCreation extends HttpServlet {
     entercli.setNameLast(nameEnter); 
     entercli.setNameFirst("alan");
     entercli.setNameMiddle("quentin");
+=======
+    admicli.setNameLast(req.getParameter("administering_cli"));    
+    admicli.setClinicianId(0);
+    vacc_ev.setAdministeringClinician(admicli);
+    
+    Clinician ordercli = new Clinician();
+    ordercli.setNameLast(req.getParameter("ordering_cli"));    
+    ordercli.setClinicianId(0);
+    vacc_ev.setOrderingClinician(ordercli);
+    
+    Clinician entercli = new Clinician();
+    entercli.setClinicianId(0);
+    entercli.setNameLast(req.getParameter("entering_cli"));    
+    vacc_ev.setAdministeringClinician(entercli);
+    
+    vacc_ev.setAdministeringFacility(facility);
+    vacc_ev.setPatient(patient);
+>>>>>>> Stashed changes
     
     Date updatedDate = new Date();
     LogsOfModifications log = new LogsOfModifications();
