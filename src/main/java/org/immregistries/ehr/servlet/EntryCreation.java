@@ -88,8 +88,6 @@ public class EntryCreation extends HttpServlet {
             + "	<label class=\"w3-text-green\"><b>Expiration_date</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>E-mail</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"email\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Completion status</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"

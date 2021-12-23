@@ -211,7 +211,7 @@ public class HL7printer {
           }
         }*/
         {
-          Session dataSession = PopServlet.getDataSession();
+          /*Session dataSession = PopServlet.getDataSession();
           Query query = dataSession.createQuery(
               "from ObservationMaster where patient = :patient and vaccination = :vaccination");
           query.setParameter("patient", patientReported);
@@ -223,7 +223,7 @@ public class HL7printer {
               obxSetId++;
               printObx(sb, obxSetId, obsSubId, observation);
             }
-          }
+          }*/
         }
       }
     }

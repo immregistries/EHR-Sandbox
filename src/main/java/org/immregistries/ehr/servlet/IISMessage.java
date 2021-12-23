@@ -129,6 +129,8 @@ public class IISMessage extends HttpServlet {
     if (req.getParameter("paramFacilityId") != null) {
       showFacility = req.getParameter("paramFacilityId");
     }*/
+    Date dateOfBirth = new Date(req.getParameter("administered_date"));
+    Vaccine vaccine=new Vaccine(0,new Date(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),new Date(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
     HL7printer printerhl7 = new HL7printer();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     out.println("<html>");
@@ -142,7 +144,7 @@ public class IISMessage extends HttpServlet {
     out.println(
         "<textarea id=\"story\" name=\"story\"\r\n" + "          rows=\"20\" cols=\"200\">\r\n"
             /*+ new HL7printer().buildHL7(new Patient()).toString() + " \r\n"*/
-            + new HL7printer().buildVxu(new Vaccine(),new Patient()).toString() + " \r\n"
+            + new HL7printer().buildVxu(vaccine,new Patient()).toString() + " \r\n"
             /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
             + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea>");
