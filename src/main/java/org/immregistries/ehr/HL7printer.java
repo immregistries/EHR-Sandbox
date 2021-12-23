@@ -2,13 +2,20 @@ package org.immregistries.ehr;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.ehr.model.Facility;
+import org.immregistries.ehr.model.Observation;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
+import org.immregistries.ehr.servlet.PopServlet;
+import org.immregistries.iis.kernal.model.CodeMapManager;
 import org.immregistries.mqe.hl7util.parser.HL7Reader;
 
 public class HL7printer {
@@ -39,15 +46,15 @@ public class HL7printer {
     return sb.toString();
   }
 
-  /*public String buildVxu(Vaccine vaccination) {
+  public String buildVxu(Vaccine vaccination) {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = CodeMapManager.getCodeMap();
-    Patient patientReported = vaccination.getPatient();
+    Patient patientReported = new Patient();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-    HL7Reader reader = new HL7Reader(
-        "MSH|^~\\&|||AIRA|IIS Sandbox|20120701082240-0500||VXU^V04^VXU_V04|NIST-IZ-001.00|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS\r");
+    /*HL7Reader reader = new HL7Reader(
+        "MSH|^~\\&|||AIRA|EHR Sandbox|20120701082240-0500||VXU^V04^VXU_V04|NIST-IZ-001.00|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS\r");*/
     createMSH("VXU^V04^VXU_V04", "Z22", sb);
-    printQueryPID(patientReported, sb, patient, sdf, 1);
+    printQueryPID(patientReported, sb, patientReported, sdf, 1);
     printQueryNK1(patientReported, sb, codeMap);
   
     int obxSetId = 0;
@@ -56,10 +63,7 @@ public class HL7printer {
       Code cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,
           vaccination.getVaccineCvxCode());
       if (cvxCode != null) {
-  
-        boolean originalReporter =
-            vaccinationReported.getPatientReported().getOrgReported().equals(orgAccess.getOrg());
-        printORC(orgAccess, sb, vaccination, vaccinationReported, originalReporter);
+        printORC(new Facility(), sb, vaccination/*, vaccinationReported, originalReporter*/);
         sb.append("RXA");
         // RXA-1
         sb.append("|0");
@@ -71,24 +75,24 @@ public class HL7printer {
         sb.append("|");
         // RXA-5
         sb.append("|" + cvxCode.getValue() + "^" + cvxCode.getLabel() + "^CVX");
-        if (!vaccinationReported.getVaccineNdcCode().equals("")) {
+        /*if (!vaccinationReported.getVaccineNdcCode().equals("")) {
           Code ndcCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE,
               vaccinationReported.getVaccineNdcCode());
           if (ndcCode != null) {
             sb.append("~" + ndcCode.getValue() + "^" + ndcCode.getLabel() + "^NDC");
           }
-        }
+        }*/
         {
           // RXA-6
           sb.append("|");
           double adminAmount = 0.0;
-          if (!vaccinationReported.getAdministeredAmount().equals("")) {
+          /*if (!vaccinationReported.getAdministeredAmount().equals("")) {
             try {
               adminAmount = Double.parseDouble(vaccinationReported.getAdministeredAmount());
             } catch (NumberFormatException nfe) {
               adminAmount = 0.0;
             }
-          }
+          }*/
           if (adminAmount > 0) {
             sb.append(adminAmount);
           }
@@ -104,10 +108,10 @@ public class HL7printer {
         sb.append("|");
         {
           Code informationCode = null;
-          if (vaccinationReported.getInformationSource() != null) {
+          /*if (vaccinationReported.getInformationSource() != null) {
             informationCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_INFORMATION_SOURCE,
                 vaccinationReported.getInformationSource());
-          }
+          }*/
           if (informationCode != null) {
             sb.append(informationCode.getValue() + "^" + informationCode.getLabel() + "^NIP001");
           }
@@ -117,13 +121,13 @@ public class HL7printer {
         // RXA-11
         sb.append("|");
         sb.append("^^^");
-        if (vaccinationReported.getOrgLocation() == null
+        /*if (vaccinationReported.getOrgLocation() == null
             || vaccinationReported.getOrgLocation().getOrgFacilityCode() == null
             || "".equals(vaccinationReported.getOrgLocation().getOrgFacilityCode())) {
           sb.append("AIRA");
         } else {
           sb.append(vaccinationReported.getOrgLocation().getOrgFacilityCode());
-        }
+        }*/
         // RXA-12
         sb.append("|");
         // RXA-13
@@ -132,43 +136,44 @@ public class HL7printer {
         sb.append("|");
         // RXA-15
         sb.append("|");
-        if (vaccinationReported.getLotnumber() != null) {
+        /*if (vaccinationReported.getLotnumber() != null) {
           sb.append(vaccinationReported.getLotnumber());
-        }
+        }*/
         // RXA-16
         sb.append("|");
-        if (vaccinationReported.getExpirationDate() != null) {
+        /*if (vaccinationReported.getExpirationDate() != null) {
           sb.append(sdf.format(vaccinationReported.getExpirationDate()));
-        }
+        }*/
         // RXA-17
         sb.append("|");
-        sb.append(printCode(vaccinationReported.getVaccineMvxCode(),
-            CodesetType.VACCINATION_MANUFACTURER_CODE, "MVX", codeMap));
+        /*sb.append(printCode(vaccinationReported.getVaccineMvxCode(),
+            CodesetType.VACCINATION_MANUFACTURER_CODE, "MVX", codeMap));*/
         // RXA-18
         sb.append("|");
-        sb.append(printCode(vaccinationReported.getRefusalReasonCode(),
-            CodesetType.VACCINATION_REFUSAL, "NIP002", codeMap));
+        /*sb.append(printCode(vaccinationReported.getRefusalReasonCode(),
+            CodesetType.VACCINATION_REFUSAL, "NIP002", codeMap));*/
         // RXA-19
         sb.append("|");
         // RXA-20
         sb.append("|");
-        if (!processingFlavorSet.contains(ProcessingFlavor.LIME)) {
+        /*if (!processingFlavorSet.contains(ProcessingFlavor.LIME)) {
           String completionStatus = vaccinationReported.getCompletionStatus();
           if (completionStatus == null || completionStatus.equals("")) {
             completionStatus = "CP";
           }
           sb.append(printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, null, codeMap));
-        }
+        }*/
   
         // RXA-21
-        String actionCode = vaccinationReported.getActionCode();
+        /*String actionCode = vaccinationReported.getActionCode();
         if (actionCode == null || actionCode.equals("")
             || (!actionCode.equals("A") && !actionCode.equals("D"))) {
           actionCode = "A";
-        }
-        sb.append("|" + vaccinationReported.getActionCode());
+        }*/
+        sb.append("|" );
+        /*sb.append(vaccinationReported.getActionCode());*/
         sb.append("\r");
-        if (vaccinationReported.getBodyRoute() != null
+        /*if (vaccinationReported.getBodyRoute() != null
             && !vaccinationReported.getBodyRoute().equals("")) {
           sb.append("RXR");
           // RXR-1
@@ -180,8 +185,8 @@ public class HL7printer {
           sb.append(printCode(vaccinationReported.getBodySite(), CodesetType.BODY_SITE, "HL70163",
               codeMap));
           sb.append("\r");
-        }
-        TestEvent testEvent = vaccinationReported.getTestEvent();
+        }*/
+        /*TestEvent testEvent = vaccinationReported.getTestEvent();
         if (testEvent != null && testEvent.getEvaluationActualList() != null) {
           for (EvaluationActual evaluationActual : testEvent.getEvaluationActualList()) {
             obsSubId++;
@@ -204,16 +209,17 @@ public class HL7printer {
               printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
             }
           }
-        }
+        }*/
         {
+          Session dataSession = PopServlet.getDataSession();
           Query query = dataSession.createQuery(
               "from ObservationMaster where patient = :patient and vaccination = :vaccination");
-          query.setParameter("patient", patient);
+          query.setParameter("patient", patientReported);
           query.setParameter("vaccination", vaccination);
-          List<ObservationMaster> observationList = query.list();
+          List<Observation> observationList = query.list();
           if (observationList.size() > 0) {
             obsSubId++;
-            for (ObservationMaster observation : observationList) {
+            for (Observation observation : observationList) {
               obxSetId++;
               printObx(sb, obxSetId, obsSubId, observation);
             }
@@ -222,7 +228,8 @@ public class HL7printer {
       }
     }
     return sb.toString();
-  }*/
+  }
+  
   public String printQueryNK1(Patient patientReported, StringBuilder sb, CodeMap codeMap) {
     if (patientReported != null) {
       if (!patientReported.getGuardianRelationship().equals("")
@@ -393,8 +400,8 @@ public class HL7printer {
     sb.append("2.5.1|");
     sb.append("|");
     sb.append("|");
-    sb.append("NE|");
-    sb.append("NE|");
+    sb.append("ER|");
+    sb.append("AL|");
     sb.append("|");
     sb.append("|");
     sb.append("|");
@@ -608,5 +615,99 @@ public class HL7printer {
       patientRegistryId += ID_CHARS[random.nextInt(ID_CHARS.length)];
     }
     return patientRegistryId;
+  }
+  
+  public void printORC(Facility orgAccess, StringBuilder sb, Vaccine vaccination/*,
+      VaccinationEvent vaccinationReported, boolean originalReporter*/) {
+    
+    sb.append("ORC");
+    // ORC-1
+    sb.append("|RE");
+    // ORC-2
+    sb.append("|");
+    if (vaccination != null) {
+      sb.append(vaccination.getVaccineId() + "^IIS");
+    }
+    // ORC-3
+    sb.append("|");
+    if (vaccination == null) {
+      /*if (processingFlavorSet.contains(ProcessingFlavor.LIME)) {
+        sb.append("999^IIS");
+      } else {
+        sb.append("9999^IIS");
+      }*/
+    } else {
+      /*if (originalReporter) {*/
+        sb.append(/*vaccinationReported.getVaccinationReportedExternalLink() +*/ "^"
+            + orgAccess.getNameDisplay());
+      /*}*/
+    }
+    sb.append("\r");
+  }
+  
+  public void printObx(StringBuilder sb, int obxSetId, int obsSubId,
+      Observation observation) {
+    Observation ob = observation;
+    sb.append("OBX");
+    // OBX-1
+    sb.append("|");
+    sb.append(obxSetId);
+    // OBX-2
+    sb.append("|");
+    sb.append(ob.getValueType());
+    // OBX-3
+    sb.append("|");
+    sb.append(
+        ob.getIdentifierCode() + "^" + ob.getIdentifierLabel() + "^" + ob.getIdentifierTable());
+    // OBX-4
+    sb.append("|");
+    sb.append(obsSubId);
+    // OBX-5
+    sb.append("|");
+    if (ob.getValueTable().equals("")) {
+      sb.append(ob.getValueCode());
+    } else {
+      sb.append(ob.getValueCode() + "^" + ob.getValueLabel() + "^" + ob.getValueTable());
+    }
+    // OBX-6
+    sb.append("|");
+    if (ob.getUnitsTable().equals("")) {
+      sb.append(ob.getUnitsCode());
+    } else {
+      sb.append(ob.getUnitsCode() + "^" + ob.getUnitsLabel() + "^" + ob.getUnitsTable());
+    }
+    // OBX-7
+    sb.append("|");
+    // OBX-8
+    sb.append("|");
+    // OBX-9
+    sb.append("|");
+    // OBX-10
+    sb.append("|");
+    // OBX-11
+    sb.append("|");
+    sb.append(ob.getResultStatus());
+    // OBX-12
+    sb.append("|");
+    // OBX-13
+    sb.append("|");
+    // OBX-14
+    sb.append("|");
+    if (ob.getObservationDate() != null) {
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+      sb.append(sdf.format(ob.getObservationDate()));
+    }
+    // OBX-15
+    sb.append("|");
+    // OBX-16
+    sb.append("|");
+    // OBX-17
+    sb.append("|");
+    if (ob.getMethodTable().equals("")) {
+      sb.append(ob.getMethodCode());
+    } else {
+      sb.append(ob.getMethodCode() + "^" + ob.getMethodLabel() + "^" + ob.getMethodTable());
+    }
+    sb.append("\r");
   }
 }

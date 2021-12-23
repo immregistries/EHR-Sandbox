@@ -23,8 +23,8 @@ public class Vaccine implements Serializable {
     private String refusalReasonCode = "";
     private String bodySite = "";
     private String bodyRoute = "";
-    private String fundingSource = "";
-    private String fundingEligibility = "";
+    private String fundingSource = ""; //obx5
+    private String fundingEligibility = ""; //obx5
 
     public int getVaccineId() {
         return vaccineId;

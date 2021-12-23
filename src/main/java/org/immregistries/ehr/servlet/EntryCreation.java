@@ -113,6 +113,7 @@ public class EntryCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
 
             + "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+            +"                  <button onclick=\"location.href=\'IIS_message\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
             + "                </form> " + "</div\r\n");
         doFooter(out, session);
       }
