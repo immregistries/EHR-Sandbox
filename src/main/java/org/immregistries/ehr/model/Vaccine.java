@@ -10,7 +10,7 @@ public class Vaccine implements Serializable {
     private Date createdDate = null;
     private Date updatedDate = null;
     private Date administeredDate = null;
-    private String vaccineCvxCode = "";
+    private String vaccineCvxCode = ""; //il faut que ce soit un nbr
     private String vaccineNdcCode = "";
     private String vaccineMvxCode = "";
     private String administeredAmount = "";
@@ -19,7 +19,7 @@ public class Vaccine implements Serializable {
     private String lotnumber = "";
     private Date expirationDate = null;
     private String completionStatus = "";
-    private String actionCode = "";
+    private String actionCode = "";// A, D or U
     private String refusalReasonCode = "";
     private String bodySite = "";
     private String bodyRoute = "";
