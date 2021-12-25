@@ -85,14 +85,15 @@ public class Authentication extends HttpServlet {
         out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
             + "<label class=\"w3-text-green\"><b>EHR username</b></label>"
             + "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"
-            + "	<label class=\"w3-text-green\"><b>password</b></label>"
+            + "	<label class=\"w3-text-green\"><b>Password</b></label>"
             + "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
 
 
-            + "                <button onclick=\"location.href=\'silos\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" name=\"validate_button\" >Validate</button>\r\n"
+            + "                <button onclick=\"location.href=\'silos\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" style=\"margin:auto\"name=\"validate_button\" >Validate</button>\r\n"
             + "                </form> "
             /*onclick=\"validateOnClick()\"*/
-            + "            </div>");
+            + "            </div>"
+            + "</div>");
 
 
         doFooter(out, session);
@@ -115,9 +116,10 @@ public class Authentication extends HttpServlet {
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("    		<h1>Authentication</h1>\r\n" + "    	</header>");
+    out.println("    		<h1>Authentication</h1>\r\n" + "    	</header>"
+        + "<div style =\"margin:auto \">");
 
-    out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");
+    out.println("<div class=\"w3-display-container \" style=\"height:20%;width:75%;margin:auto; margin-top:10%;align-items:center \">");
 
   }
 
