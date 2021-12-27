@@ -85,7 +85,7 @@ public class HL7printer {
         {
           // RXA-6
           sb.append("|");
-          double adminAmount = 0.0;
+          double adminAmount = Double.parseDouble(vaccination.getAdministeredAmount());
           /*if (!vaccinationReported.getAdministeredAmount().equals("")) {
             try {
               adminAmount = Double.parseDouble(vaccinationReported.getAdministeredAmount());
@@ -165,27 +165,27 @@ public class HL7printer {
         }*/
   
         // RXA-21
-        /*String actionCode = vaccinationReported.getActionCode();
+        String actionCode = vaccination.getActionCode();
         if (actionCode == null || actionCode.equals("")
             || (!actionCode.equals("A") && !actionCode.equals("D"))) {
           actionCode = "A";
-        }*/
+        }
         sb.append("|" );
-        /*sb.append(vaccinationReported.getActionCode());*/
+        sb.append(vaccination.getActionCode());
         sb.append("\r");
-        /*if (vaccinationReported.getBodyRoute() != null
-            && !vaccinationReported.getBodyRoute().equals("")) {
+        if (vaccination.getBodyRoute() != null
+            && !vaccination.getBodyRoute().equals("")) {
           sb.append("RXR");
           // RXR-1
           sb.append("|");
-          sb.append(printCode(vaccinationReported.getBodyRoute(), CodesetType.BODY_ROUTE, "NCIT",
+          sb.append(printCode(vaccination.getBodyRoute(), CodesetType.BODY_ROUTE, "NCIT",
               codeMap));
           // RXR-2
           sb.append("|");
-          sb.append(printCode(vaccinationReported.getBodySite(), CodesetType.BODY_SITE, "HL70163",
+          sb.append(printCode(vaccination.getBodySite(), CodesetType.BODY_SITE, "HL70163",
               codeMap));
           sb.append("\r");
-        }*/
+        }
         /*TestEvent testEvent = vaccinationReported.getTestEvent();
         if (testEvent != null && testEvent.getEvaluationActualList() != null) {
           for (EvaluationActual evaluationActual : testEvent.getEvaluationActualList()) {
