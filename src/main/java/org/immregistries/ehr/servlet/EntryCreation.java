@@ -85,6 +85,7 @@ public class EntryCreation extends HttpServlet {
     log.setModifDate(updatedDate);
     log.setModifType("modif");
     String vaccCode = req.getParameter("action_code");
+    String manufacturer = req.getParameter("manufacturer");
     vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
     vaccine.setAdministeredDate(updatedDate);
@@ -111,7 +112,6 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(entercli);
     dataSession.save(vaccine);
     transaction.commit();
-    
     List<LogsOfModifications> logList = null;
     Query query = dataSession.createQuery("from LogsOfModifications where modifType=?");
     query.setParameter(0, "modif");
@@ -139,6 +139,7 @@ public class EntryCreation extends HttpServlet {
     List<Vaccine> vaccineList = null;
     query = dataSession.createQuery("from Vaccine where actionCode=?");
     query.setParameter(0, vaccCode);
+    
     vaccineList = query.list();
     vaccine = vaccineList.get(0);
     
@@ -189,45 +190,113 @@ public class EntryCreation extends HttpServlet {
         System.out.println(facility.getNameDisplay()+"  current facility");
         System.out.println(patient.getNameFirst()+"  current patient");
         
-        
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_creation\">\r\n"
-
-            + "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
-            + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
+        out.println("<button onclick=\"location.href=\'entry_creation?testEntry=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_creation\">\r\n");
+        String testAdministering = "";
+        String testEntering = "";
+        String testOrdering = "";
+        String testAdministeredDate = "";
+        String testVaccId = "";
+        Code testCodeCvx= null;
+        String testNdc="";
+        Code testCodeMvx= null;
+        String testAmount="";
+        String testManufacturer="";
+        String testInfSource="";
+        String testLot="";
+        String testExpDate="";
+        String testCompletion="";
+        String testActionCode="";
+        String testRefusal="";
+        String testBodySite="";
+        String testBodyRoute="";
+        String fundingSource="";
+        String fundingRoute="";
+            if(req.getParameter("testEntry")!=null) {
+              int randomN = (int) (Math.random()*9+1);
+              int compteur =0;
+              testAdministering = "John";
+              testEntering = "Lisa";
+              testOrdering = "Maria";
+              testAdministeredDate = "20211228";
+              testVaccId = Integer.toString(randomN);
+              for(Code code : codeListCVX) {
+                testCodeCvx=code;
+                compteur+=1;
+                if(randomN==compteur) {
+                  break;
+                }
+              }
+              testNdc=Integer.toString(randomN*23);
+              for(Code code : codeListMVX) {
+                testCodeMvx=code;
+                compteur+=1;
+                if(randomN==compteur) {
+                  break;
+                }
+              }
+              testAmount=Integer.toString(randomN)+".5";
+              testManufacturer="Pfizer";
+              testInfSource="infSource";
+              testLot=Integer.toString(randomN);
+              testExpDate="20211229";
+              testCompletion="Complete";
+              testActionCode="Add";
+              testRefusal="none";
+              testBodySite="Left Thigh";
+              testBodyRoute="Intradermal";
+              fundingSource="fundS";
+              fundingRoute="fundR";
+              
+              
+            }
+            
+            out.println( "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
+            + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Entering clinician</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Administered date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administered_date\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdministeredDate +"\" size=\"40\" maxlength=\"60\" name=\"administered_date\" />\r\n"
 
 
             + "	<label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testVaccId+"\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
 
 
             + "	<label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
             //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_cvx\"/>\r\n"
             +"  <p>"
-            +"                          <SELECT name=\"vacc_cvx\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+            +"                          <SELECT name=\"vacc_cvx\" size=\"1\">\r\n");
+            if(testCodeCvx!=null) {
+            out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getLabel()+"</Option>\r\n");
+            }
+            else {
+            out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+            }
             for(Code code : codeListCVX) {
               out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
             }
             out.println( "                        </SELECT>\r\n"
             +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
             //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
             +"  <p>"
-            +"                          <SELECT name=\"vacc_mvx\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+            +"                          <SELECT name=\"vacc_mvx\" size=\"1\">\r\n");
+            if(testCodeMvx!=null) {
+              out.println( "                            <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getLabel()+"</Option>\r\n");
+              }
+              else {
+              out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+              }
             for(Code code : codeListMVX) {
               out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
             }
@@ -235,19 +304,19 @@ public class EntryCreation extends HttpServlet {
             +"  </p>"
             
             + "	<label class=\"w3-text-green\"><b>Administered amount</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administered_amount\"/>\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+ testAmount +"\" size=\"40\" maxlength=\"60\" name=\"administered_amount\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Manufacturer</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"manufacturer\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testManufacturer+"\" size=\"40\" maxlength=\"60\" name=\"manufacturer\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Information source</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Lot number</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
 
 
             + "	<label class=\"w3-text-green\"><b>Completion status</b></label>"
@@ -314,12 +383,12 @@ public class EntryCreation extends HttpServlet {
             + "                        </SELECT>\r\n"
             +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Funding source</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Funding eligbility</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
 
-            + "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save Entry</button>\r\n"
             +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
             + "                </form> " + "</div\r\n");
         doFooter(out, session);
