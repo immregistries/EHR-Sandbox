@@ -2,6 +2,7 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ public class IISMessage extends HttpServlet {
     out.close();
   }
 
-  public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) {
+  public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
     /*Patient patientTest = new Patient();
     patientTest.setAddressCity("Nancy");
     patientTest.setAddressCountry("France");
@@ -129,10 +130,11 @@ public class IISMessage extends HttpServlet {
     if (req.getParameter("paramFacilityId") != null) {
       showFacility = req.getParameter("paramFacilityId");
     }*/
-    Date dateOfBirth = new Date(req.getParameter("administered_date"));
-    Vaccine vaccine=new Vaccine(0,new Date(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),new Date(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
-    HL7printer printerhl7 = new HL7printer();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
+    Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
+    HL7printer printerhl7 = new HL7printer();
+    System.out.println(req.getParameter("administered_date"));
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");

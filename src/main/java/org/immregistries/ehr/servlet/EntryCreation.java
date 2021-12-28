@@ -61,7 +61,7 @@ public class EntryCreation extends HttpServlet {
     String nameOrder = req.getParameter("ordering_cli");  
     String nameEnter = req.getParameter("entering_cli");  
     Clinician admicli = new Clinician();
-
+    
     admicli.setNameLast(nameAdmi);    
     admicli.setNameFirst("alan");
     admicli.setNameMiddle("quentin");
@@ -76,7 +76,6 @@ public class EntryCreation extends HttpServlet {
     entercli.setNameFirst("alan");
     entercli.setNameMiddle("quentin");
 
-    
     Date updatedDate = new Date();
     LogsOfModifications log = new LogsOfModifications();
     log.setModifDate(updatedDate);
@@ -239,11 +238,34 @@ public class EntryCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Body site</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
+            +"                          <SELECT name=\"body_site\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"LT\">Left Thigh</Option>\r\n"
+            + "                             <OPTION value=\"LA\">Left Arm</Option>\r\n"
+            + "                             <OPTION value=\"LD\">Left Deltoid</Option>\r\n"
+            + "                             <OPTION value=\"LG\">Left Gluteous Medius</Option>\r\n"
+            + "                             <OPTION value=\"LVL\">Left Vastus Lateralis</Option>\r\n"
+            + "                             <OPTION value=\"LLFA\">Left Lower Forearm</Option>\r\n"
+            + "                             <OPTION value=\"RT\">Right Thigh</Option>\r\n"
+            + "                             <OPTION value=\"RA\">Right Arm</Option>\r\n"
+            + "                             <OPTION value=\"RD\">Right Deltoid</Option>\r\n"
+            + "                             <OPTION value=\"RG\">Right Gluteous Medius</Option>\r\n"
+            + "                             <OPTION value=\"RVL\">Right Vastus Lateralis</Option>\r\n"
+            + "                             <OPTION value=\"RLFA\">Right Lower Forearm</Option>\r\n"
+            + "                        </SELECT>\r\n"
             + "	<label class=\"w3-text-green\"><b>Body route</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
+            +"                          <SELECT name=\"body_route\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"C38238\">Intradermal</Option>\r\n"
+            + "                             <OPTION value=\"C28161\">Intramuscular</Option>\r\n"
+            + "                             <OPTION value=\"C38284\">Nasal</Option>\r\n"
+            + "                             <OPTION value=\"C38276\">Intravenous</Option>\r\n"
+            + "                             <OPTION value=\"C38288\">Oral</Option>\r\n"
+            + "                             <OPTION value=\"C38288\">Other/Miscellaneous</Option>\r\n"
+            + "                             <OPTION value=\"C38276\">Percutaneous</Option>\r\n"
+            + "                             <OPTION value=\"C38299\">Subcutaneous</Option>\r\n"
+            + "                             <OPTION value=\"C38305\">Transdermal</Option>\r\n"
+            + "                        </SELECT>\r\n"
             + "	<label class=\"w3-text-green\"><b>Funding source</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
 
@@ -251,7 +273,7 @@ public class EntryCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
 
             + "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
-            +"                  <button onclick=\"location.href=\'IIS_message\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
+            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
             + "                </form> " + "</div\r\n");
         doFooter(out, session);
       }
