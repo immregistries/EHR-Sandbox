@@ -60,23 +60,36 @@ public class PatientRecord extends HttpServlet {
         Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
         query.setParameter(0, patient);
         entryList = query.list();
-        out.println("<label class=\"w3-text-green\"><b>     Current Patient : "
-            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>");
-        out.println(
-            "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n"
-                + "<h3>Entries</h3>");
+        out.println("<div class=\"w3-margin\"style=\"width:100% height:auto \">"
+            + "<label class=\"w3-text-green w3-margin w3-margin-bottom\"><b class=\"w3-margin\">     Current Patient : "
+            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"
+            + "</div>");
+        out.println( "<div class=\"w3-left\" style=\"width:45%\">"
+            + "<table class=\"w3-table-all\"style=\"width:100% ;overflow:auto\">"
+                + "<thead>"
+                + "<tr class=\"w3-green\">"
+                + "<th> Entries</th>"
+                + "</thead>"
+                + "<tbody>");
 
 
         for (VaccinationEvent entryDisplay : entryList) {
           Vaccine vaccineAdmin = entryDisplay.getVaccine();
           String link = "paramEntryId=" + entryDisplay.getVaccinationEventId();
-          out.println("<a href=\'patient_record?" + link
-              + "'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\" \">"
-              + vaccineAdmin.getManufacturer() + "</a>");
+          out.println("<tr>"
+              +"<td class = \"w3-hover-teal\">"
+              + "<a href=\'patient_record?" + link+"\' style=\"text-decoration:none\">"
+              + "<div style=\"text-decoration:none;height:100%\">"  
+              + vaccineAdmin.getManufacturer() + ""
+              + "</div>"
+              + "</a>"              
+              + "</td>"
+              + "</tr>");
           }
         String link = "paramPatientId=" + patient.getPatientId();
         out.println(
-                "</div>"
+                "</table>"
+                + "</div>"
                 + "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
                 + "<button onclick=\"location.href=\'entry_creation?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
                 + "</div\r\n");

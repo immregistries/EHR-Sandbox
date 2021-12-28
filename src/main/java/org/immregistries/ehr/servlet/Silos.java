@@ -44,7 +44,7 @@ public class Silos extends HttpServlet {
         siloList = query.list();
         String show = req.getParameter(PARAM_SHOW);
         out.println(
-            "  <table class=\"w3-display-topleft w3-table-all w3-margin\"style=\"width:40% ;overflow:auto\">\r\n"
+            "  <table class=\"w3-display-topleft w3-table-all w3-margin\"style=\"width:40% ;overflow:auto\"> \r\n"
             + "<thead>"
             + "<tr class=\"w3-green\">"
             + "<th> Silos</th>"
