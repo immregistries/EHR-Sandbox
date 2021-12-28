@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -14,12 +15,15 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.immregistries.codebase.client.CodeMap;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.Vaccine;
+import org.immregistries.iis.kernal.model.CodeMapManager;
 
 /**
  * Servlet implementation class IIS_message
@@ -130,6 +134,15 @@ public class IISMessage extends HttpServlet {
     if (req.getParameter("paramFacilityId") != null) {
       showFacility = req.getParameter("paramFacilityId");
     }*/
+    
+    Facility facility = new Facility();
+    Patient patient = new Patient();
+    facility = (Facility) session.getAttribute("facility");
+    patient = (Patient) session.getAttribute("patient") ;
+    
+    System.out.println(facility.getNameDisplay()+"  current facility");
+    System.out.println(patient.getNameFirst()+"  current patient");
+    
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
     Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
@@ -146,7 +159,7 @@ public class IISMessage extends HttpServlet {
     out.println(
         "<textarea id=\"story\" name=\"story\"\r\n" + "          rows=\"20\" cols=\"200\">\r\n"
             /*+ new HL7printer().buildHL7(new Patient()).toString() + " \r\n"*/
-            + new HL7printer().buildVxu(vaccine,new Patient()).toString() + " \r\n"
+            + new HL7printer().buildVxu(vaccine,patient,facility).toString() + " \r\n"
             /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
             + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea>");

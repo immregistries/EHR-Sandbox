@@ -46,10 +46,9 @@ public class HL7printer {
     return sb.toString();
   }
 
-  public String buildVxu(Vaccine vaccination,Patient patientReported) {
+  public String buildVxu(Vaccine vaccination,Patient patientReported,Facility facility) {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = CodeMapManager.getCodeMap();
-    
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     /*HL7Reader reader = new HL7Reader(
         "MSH|^~\\&|||AIRA|EHR Sandbox|20120701082240-0500||VXU^V04^VXU_V04|NIST-IZ-001.00|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS\r");*/
@@ -62,8 +61,10 @@ public class HL7printer {
     {
       Code cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,
           vaccination.getVaccineCvxCode());
+      System.out.println(cvxCode);
+      System.out.println(vaccination.getVaccineCvxCode());
       if (cvxCode != null) {
-        printORC(new Facility(), sb, vaccination/*, vaccinationReported, originalReporter*/);
+        printORC(facility, sb, vaccination/*, vaccinationReported, originalReporter*/);
         sb.append("RXA");
         // RXA-1
         sb.append("|0");
@@ -75,24 +76,24 @@ public class HL7printer {
         sb.append("|");
         // RXA-5
         sb.append("|" + cvxCode.getValue() + "^" + cvxCode.getLabel() + "^CVX");
-        /*if (!vaccinationReported.getVaccineNdcCode().equals("")) {
+        if (!vaccination.getVaccineNdcCode().equals("")) {
           Code ndcCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE,
-              vaccinationReported.getVaccineNdcCode());
+              vaccination.getVaccineNdcCode());
           if (ndcCode != null) {
             sb.append("~" + ndcCode.getValue() + "^" + ndcCode.getLabel() + "^NDC");
           }
-        }*/
+        }
         {
           // RXA-6
           sb.append("|");
-          double adminAmount = Double.parseDouble(vaccination.getAdministeredAmount());
-          /*if (!vaccinationReported.getAdministeredAmount().equals("")) {
+          double adminAmount = 0.0;
+          if (!vaccination.getAdministeredAmount().equals("")) {
             try {
-              adminAmount = Double.parseDouble(vaccinationReported.getAdministeredAmount());
+              adminAmount = Double.parseDouble(vaccination.getAdministeredAmount());
             } catch (NumberFormatException nfe) {
               adminAmount = 0.0;
             }
-          }*/
+          }
           if (adminAmount > 0) {
             sb.append(adminAmount);
           }
@@ -108,10 +109,10 @@ public class HL7printer {
         sb.append("|");
         {
           Code informationCode = null;
-          /*if (vaccinationReported.getInformationSource() != null) {
+          if (vaccination.getInformationSource() != null) {
             informationCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_INFORMATION_SOURCE,
-                vaccinationReported.getInformationSource());
-          }*/
+                vaccination.getInformationSource());
+          }
           if (informationCode != null) {
             sb.append(informationCode.getValue() + "^" + informationCode.getLabel() + "^NIP001");
           }
@@ -136,33 +137,33 @@ public class HL7printer {
         sb.append("|");
         // RXA-15
         sb.append("|");
-        /*if (vaccinationReported.getLotnumber() != null) {
-          sb.append(vaccinationReported.getLotnumber());
-        }*/
+        if (vaccination.getLotnumber() != null) {
+          sb.append(vaccination.getLotnumber());
+        }
         // RXA-16
         sb.append("|");
-        /*if (vaccinationReported.getExpirationDate() != null) {
-          sb.append(sdf.format(vaccinationReported.getExpirationDate()));
-        }*/
+        if (vaccination.getExpirationDate() != null) {
+          sb.append(sdf.format(vaccination.getExpirationDate()));
+        }
         // RXA-17
         sb.append("|");
-        /*sb.append(printCode(vaccinationReported.getVaccineMvxCode(),
-            CodesetType.VACCINATION_MANUFACTURER_CODE, "MVX", codeMap));*/
+        sb.append(printCode(vaccination.getVaccineMvxCode(),
+            CodesetType.VACCINATION_MANUFACTURER_CODE, "MVX", codeMap));
         // RXA-18
         sb.append("|");
-        /*sb.append(printCode(vaccinationReported.getRefusalReasonCode(),
-            CodesetType.VACCINATION_REFUSAL, "NIP002", codeMap));*/
+        sb.append(printCode(vaccination.getRefusalReasonCode(),
+            CodesetType.VACCINATION_REFUSAL, "NIP002", codeMap));
         // RXA-19
         sb.append("|");
         // RXA-20
         sb.append("|");
-        /*if (!processingFlavorSet.contains(ProcessingFlavor.LIME)) {
-          String completionStatus = vaccinationReported.getCompletionStatus();
+        /*if (!processingFlavorSet.contains(ProcessingFlavor.LIME)) {*/
+          String completionStatus = vaccination.getCompletionStatus();
           if (completionStatus == null || completionStatus.equals("")) {
             completionStatus = "CP";
           }
           sb.append(printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, null, codeMap));
-        }*/
+        /*}*/
   
         // RXA-21
         String actionCode = vaccination.getActionCode();
@@ -233,8 +234,8 @@ public class HL7printer {
   public String printQueryNK1(Patient patientReported, StringBuilder sb, CodeMap codeMap) {
     if (patientReported != null) {
       if (!patientReported.getGuardianRelationship().equals("")
-          && !patientReported.getGuardianLast().equals("")
-          && !patientReported.getGuardianFirst().equals("")) {
+          && !(patientReported.getGuardianLast()== null ? "": patientReported.getGuardianLast()).equals("")
+          && !(patientReported.getGuardianFirst()== null ? "": patientReported.getGuardianFirst()).equals("")) {
         Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
             patientReported.getGuardianRelationship());
         if (code != null) {
@@ -385,7 +386,7 @@ public class HL7printer {
     {
       uniqueId = "" + System.currentTimeMillis() + nextIncrement();
     }
-    String production = "";
+    String production = "P";
     // build MSH
     sb.append("MSH|^~\\&|");
     sb.append(receivingApp + "|");

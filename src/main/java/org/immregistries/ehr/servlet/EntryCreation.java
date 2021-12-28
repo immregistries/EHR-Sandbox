@@ -2,6 +2,7 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -13,11 +14,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.codebase.client.CodeMap;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
+import org.immregistries.iis.kernal.model.CodeMapManager;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.LogsOfModifications;
@@ -187,7 +191,10 @@ public class EntryCreation extends HttpServlet {
        */
         Facility facility = new Facility();
         Patient patient = new Patient();
-       
+        CodeMap codeMap = CodeMapManager.getCodeMap();
+        Collection<Code>codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
+        Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
+        
 
         
         facility = (Facility) session.getAttribute("facility");
@@ -220,14 +227,29 @@ public class EntryCreation extends HttpServlet {
 
 
             + "	<label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_cvx\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_cvx\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"vacc_cvx\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+            for(Code code : codeListCVX) {
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+            }
+            out.println( "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"vacc_mvx\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+            for(Code code : codeListMVX) {
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+            }
+            out.println( "                        </SELECT>\r\n"
+            +"  </p>"
+            
             + "	<label class=\"w3-text-green\"><b>Administered amount</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"administered_amount\"/>\r\n"
 
@@ -245,16 +267,38 @@ public class EntryCreation extends HttpServlet {
 
 
             + "	<label class=\"w3-text-green\"><b>Completion status</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"completion_status\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"CP\">Complete</Option>\r\n"
+            + "                             <OPTION value=\"RE\">Refused</Option>\r\n"
+            + "                             <OPTION value=\"NA\">Not administered</Option>\r\n"
+            + "                             <OPTION value=\"PA\">Partially administered </Option>\r\n"
+            + "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Action code</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"action_code\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"A\">Add</Option>\r\n"
+            + "                             <OPTION value=\"D\">Delete</Option>\r\n"
+            + "                             <OPTION value=\"U\">Update</Option>\r\n"
+            + "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Refusal reason code</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"refusal_reason_code\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"\">none</Option>\r\n"
+            + "                             <OPTION value=\"00\">Parental decision</Option>\r\n"
+            + "                             <OPTION value=\"01\">Religious exemption</Option>\r\n"
+            + "                             <OPTION value=\"02\">Other</Option>\r\n"
+            + "                             <OPTION value=\"03\">Patient decision </Option>\r\n"
+            + "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Body site</b></label>"
             //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
+            +"  <p>"
             +"                          <SELECT name=\"body_site\" size=\"1\">\r\n"
             + "                             <OPTION value=\"LT\">Left Thigh</Option>\r\n"
             + "                             <OPTION value=\"LA\">Left Arm</Option>\r\n"
@@ -269,8 +313,10 @@ public class EntryCreation extends HttpServlet {
             + "                             <OPTION value=\"RVL\">Right Vastus Lateralis</Option>\r\n"
             + "                             <OPTION value=\"RLFA\">Right Lower Forearm</Option>\r\n"
             + "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Body route</b></label>"
             //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
+            +"  <p>"
             +"                          <SELECT name=\"body_route\" size=\"1\">\r\n"
             + "                             <OPTION value=\"C38238\">Intradermal</Option>\r\n"
             + "                             <OPTION value=\"C28161\">Intramuscular</Option>\r\n"
@@ -282,6 +328,7 @@ public class EntryCreation extends HttpServlet {
             + "                             <OPTION value=\"C38299\">Subcutaneous</Option>\r\n"
             + "                             <OPTION value=\"C38305\">Transdermal</Option>\r\n"
             + "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Funding source</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
 
