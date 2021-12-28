@@ -44,17 +44,32 @@ public class Silos extends HttpServlet {
         siloList = query.list();
         String show = req.getParameter(PARAM_SHOW);
         out.println(
-            "  <div class=\"w3-display-left w3-border-green w3-border w3-bar-block w3-margin\"style=\"width:40% ;height:100%;overflow:auto\">\r\n");
+            "  <table class=\"w3-display-topleft w3-table-all w3-margin\"style=\"width:40% ;overflow:auto\">\r\n"
+            + "<thead>"
+            + "<tr class=\"w3-green\">"
+            + "<th> Silos</th>"
+            + "</thead>"
+            + "<tbody>"
+            + "<tr>");
+            
         for (Silo siloDisplay : siloList) {
           String link = "paramSiloId=" + siloDisplay.getSiloId();
-          out.println("<a href=\'facility_patient_display?" + link
-              + "'\"style=\"text-decoration:none;height:20%\" class=\"w3-bar-item w3-button w3-green w3-hover-teal\"  \">"
-              + siloDisplay.getNameDisplay() + "</a>");
+          out.println("<td class = \"w3-hover-teal\">"     
+              + "<a href=\'facility_patient_display?"+ link+"\'style = \"text-decoration:none \">\r\n"
+              + "<div style=\"text-decoration:none;height:100%\">"  
+              + siloDisplay.getNameDisplay()  
+              + "</div>"
+             + "</a>"              
+              + "</td>");
+              
         }
-        out.println("</div>" + "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
+        out.println("</tr>"
+            + "</tbody>"
+            + "</table>"
+            + "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
             + "<button onclick=\"location.href=\'silo_creation\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
             //+ "		</div>\r\n" 	
-            + "</div\r\n");
+            + "</div>\r\n");
         doFooter(out, session);
       }
     } catch (Exception e) {

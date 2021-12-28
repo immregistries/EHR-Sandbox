@@ -65,8 +65,7 @@ public class EntryCreation extends HttpServlet {
     String nameOrder = req.getParameter("ordering_cli");  
     String nameEnter = req.getParameter("entering_cli");  
     Clinician admicli = new Clinician();
-
-    //----------------------------------------------
+    
     admicli.setNameLast(nameAdmi);    
     admicli.setNameFirst("alan");
     admicli.setNameMiddle("quentin");
@@ -81,21 +80,6 @@ public class EntryCreation extends HttpServlet {
     entercli.setNameFirst("alan");
     entercli.setNameMiddle("quentin");
 
-    admicli.setClinicianId(0);
-    vacc_ev.setAdministeringClinician(admicli);
-    
-
-    ordercli.setClinicianId(0);
-    vacc_ev.setOrderingClinician(ordercli);
-    
-
-    entercli.setClinicianId(0);    
-    vacc_ev.setAdministeringClinician(entercli);
-    
-    vacc_ev.setAdministeringFacility(facility);
-    vacc_ev.setPatient(patient);
-//--------------------------------------------------
-    
     Date updatedDate = new Date();
     LogsOfModifications log = new LogsOfModifications();
     log.setModifDate(updatedDate);
