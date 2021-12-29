@@ -112,6 +112,7 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(entercli);
     dataSession.save(vaccine);
     transaction.commit();
+    /*
     List<LogsOfModifications> logList = null;
     Query query = dataSession.createQuery("from LogsOfModifications where modifType=?");
     query.setParameter(0, "modif");
@@ -142,7 +143,7 @@ public class EntryCreation extends HttpServlet {
     
     vaccineList = query.list();
     vaccine = vaccineList.get(0);
-    
+    */
     System.out.print(entercli.getClinicianId());
     vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);
