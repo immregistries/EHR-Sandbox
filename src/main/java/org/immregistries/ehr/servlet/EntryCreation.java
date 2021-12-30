@@ -151,8 +151,8 @@ public class EntryCreation extends HttpServlet {
         CodeMap codeMap = CodeMapManager.getCodeMap();
         Collection<Code>codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
-        
-
+        Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+        Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         
         facility = (Facility) session.getAttribute("facility");
         patient = (Patient) session.getAttribute("patient") ;
@@ -171,6 +171,8 @@ public class EntryCreation extends HttpServlet {
         String testAdministeredDate = "";
         String testVaccId = "";
         Code testCodeCvx= null;
+        Code testCodeNDC= null;
+        
         String testNdc="";
         Code testCodeMvx= null;
         String testAmount="";
@@ -209,6 +211,14 @@ public class EntryCreation extends HttpServlet {
                   break;
                 }
                 compteur+=1;
+              }
+              compteur = 0;
+              for(Code code : codeListNDC) {
+                testCodeNDC=code;
+                compteur+=1;
+                if(randomN==compteur) {
+                  break;
+                }
               }
               compteur=0;
               testNdc=Integer.toString(randomN*23);
@@ -249,7 +259,7 @@ public class EntryCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Administered date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdministeredDate +"\" size=\"40\" maxlength=\"60\" name=\"administered_date\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdministeredDate +"\" placeholder=\"YYYYMMDD\" size=\"40\" maxlength=\"60\" name=\"administered_date\" />\r\n"
 
 
             + "	<label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
@@ -261,33 +271,44 @@ public class EntryCreation extends HttpServlet {
             +"  <p>"
             +"                          <SELECT name=\"vacc_cvx\" size=\"1\">\r\n");
             if(testCodeCvx!=null) {
-            out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getLabel()+"</Option>\r\n");
+            out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getValue()+" : "+testCodeCvx.getLabel()+"</Option>\r\n");
             }
-            else {
             out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
-            }
+            
             for(Code code : codeListCVX) {
-              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getValue()+" : "+code.getLabel()+"</Option>\r\n");
             }
             out.println( "                        </SELECT>\r\n"
             +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"vacc_ndc\" size=\"1\">\r\n");
+            if(testCodeNDC!=null) {
+            out.println( "                            <OPTION value=\""+testCodeNDC.getValue()+"\">"+testCodeNDC.getValue()+" : "+testCodeNDC.getLabel()+"</Option>\r\n");
+            }
+            out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+            
+            for(Code code : codeListNDC) {
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getValue()+" : "+code.getLabel()+"</Option>\r\n");
+            }
+            out.println( "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
             //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
             +"  <p>"
-            +"                          <SELECT name=\"vacc_mvx\" size=\"1\">\r\n");
+            +"<input list=\"listmvx\" name=\"vacc_mvx\">"
+            +"                          <datalist id=\"listmvx\"  size=\"40\">\r\n");
             if(testCodeMvx!=null) {
-              out.println( "                            <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getLabel()+"</Option>\r\n");
+              out.println( "                            <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getValue()+" : "+testCodeMvx.getLabel()+"</Option>\r\n");
               }
-              else {
-              out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
-              }
+
+            out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+              
             for(Code code : codeListMVX) {
-              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getValue()+" : "+code.getLabel()+"</Option>\r\n");
             }
-            out.println( "                        </SELECT>\r\n"
+            out.println( "                        </datalist>\r\n"
             +"  </p>"
             
             + "	<label class=\"w3-text-green\"><b>Administered amount</b></label>"
@@ -297,13 +318,22 @@ public class EntryCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testManufacturer+"\" size=\"40\" maxlength=\"60\" name=\"manufacturer\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Information source</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"info_source\" size=\"1\">\r\n");
+            if(testInfSource.equals("")) {
+            out.println( "                            <OPTION value=\"00\">"+"00 Administered"+"</Option>\r\n");
+            }
+            for(Code code : codeListInfSource) {
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getValue()+" : "+code.getLabel()+"</Option>\r\n");
+            }
+            out.println( "                        </SELECT>\r\n"
+            +"  </p>"
             + "	<label class=\"w3-text-green\"><b>Lot number</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testExpDate+"\" placeholder=\"YYYYMMDD\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
 
 
             + "	<label class=\"w3-text-green\"><b>Completion status</b></label>"

@@ -121,8 +121,8 @@ public class PatientCreation extends HttpServlet {
             + "	<label class=\"w3-text-green\"><b>State</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"state\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Country</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\"  name=\"country\"/>\r\n"
+            + "	<label class=\"w3-text-green\"><b>Country Code</b></label>"
+            + "	                    	<input type=\"text\" pattern=\"[A-Za-z]{3}\" class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"3\"   name=\"country\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>County/parish</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"county\"/>\r\n"
@@ -137,14 +137,28 @@ public class PatientCreation extends HttpServlet {
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"ethnicity\" />\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Birth flag</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"birth_flag\"/>\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"birth_flag\"/>\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"birth_flag\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"\">Unknown</Option>\r\n"
+            + "                             <OPTION value=\"Y\">Y</Option>\r\n"
+            + "                             <OPTION value=\"N\">N</Option>\r\n"
+            + "                        </SELECT>\r\n"
+            +"  </p>"
+            
             + "	<label class=\"w3-text-green\"><b>Birth order</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"birth_ order\"/>\r\n"
 
             + "	<label class=\"w3-text-green\"><b>Death flag</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"death_flag\" />\r\n"
-
+            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"death_flag\" />\r\n"
+            +"  <p>"
+            +"                          <SELECT name=\"death_flag\" size=\"1\">\r\n"
+            + "                             <OPTION value=\"\">Unknown</Option>\r\n"
+            + "                             <OPTION value=\"Y\">Y</Option>\r\n"
+            + "                             <OPTION value=\"N\">N</Option>\r\n"
+            + "                        </SELECT>\r\n"
+            +"  </p>"
+            
             + "	<label class=\"w3-text-green\"><b>Death date</b></label>"
             + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"DoD\"/>\r\n"
 
