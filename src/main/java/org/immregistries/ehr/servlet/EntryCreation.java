@@ -85,7 +85,6 @@ public class EntryCreation extends HttpServlet {
     log.setModifDate(updatedDate);
     log.setModifType("modif");
     String vaccCode = req.getParameter("action_code");
-    String manufacturer = req.getParameter("manufacturer");
     vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
     vaccine.setAdministeredDate(updatedDate);
@@ -112,38 +111,7 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(entercli);
     dataSession.save(vaccine);
     transaction.commit();
-    /*
-    List<LogsOfModifications> logList = null;
-    Query query = dataSession.createQuery("from LogsOfModifications where modifType=?");
-    query.setParameter(0, "modif");
-    logList = query.list();
-    log = logList.get(0);
-    
-    List<Clinician> clinicianList1 = null;
-    query = dataSession.createQuery("from Clinician where nameLast=?");
-    query.setParameter(0, nameAdmi);
-    clinicianList1 = query.list();
-    admicli = clinicianList1.get(0);
-    
-    List<Clinician> clinicianList2 = null;
-    query = dataSession.createQuery("from Clinician where nameLast=?");
-    query.setParameter(0, nameOrder);
-    clinicianList2 = query.list();
-    ordercli = clinicianList2.get(0);
-    
-    List<Clinician> clinicianList3 = null;
-    query = dataSession.createQuery("from Clinician where nameLast=?");
-    query.setParameter(0, nameEnter);
-    clinicianList3 = query.list();
-    entercli = clinicianList3.get(0);
-    
-    List<Vaccine> vaccineList = null;
-    query = dataSession.createQuery("from Vaccine where actionCode=?");
-    query.setParameter(0, vaccCode);
-    
-    vaccineList = query.list();
-    vaccine = vaccineList.get(0);
-    */
+
     System.out.print(entercli.getClinicianId());
     vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);

@@ -34,11 +34,8 @@ public class SiloCreation extends HttpServlet {
     tester = (Tester) session.getAttribute("tester");
 
     Silo newSilo = new Silo();
-    Facility facility = new Facility();
     newSilo.setNameDisplay(name);
     newSilo.setTester(tester);
-    facility.setNameDisplay("facilityTest");
-    facility.setLocation(req.getParameter("location"));
 
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(newSilo);

@@ -57,10 +57,6 @@ public class Authentication extends HttpServlet {
       Transaction transaction = dataSession.beginTransaction();
       dataSession.save(newTester);
       transaction.commit();
-      query = dataSession.createQuery("from Tester where loginUsername= ?");
-      query.setParameter(0, username);
-      testerList = query.list();
-      newTester = testerList.get(0);
       //System.out.println("on est là gars");
     }
 

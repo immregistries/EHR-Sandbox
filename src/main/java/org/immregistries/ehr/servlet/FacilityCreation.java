@@ -36,7 +36,7 @@ public class FacilityCreation extends HttpServlet {
       query.setParameter(0, nameParent);
       List<Facility> facilityParentList = query.list();
       if(facilityParentList.size()>0) {
-      System.out.println("oups1");
+      //System.out.println("oups1");
       parentFacility = facilityParentList.get(0);
       }
       
@@ -46,16 +46,13 @@ public class FacilityCreation extends HttpServlet {
     facility.setLocation(req.getParameter("location"));
     facility.setSilo(silo);
     if(parentFacility!=null) {
-      System.out.println("oups");
+      //System.out.println("oups");
       facility.setParentFacility(parentFacility);
     }
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(facility);
     transaction.commit();
-    Query query = dataSession.createQuery("from Facility where nameDisplay=?");
-    query.setParameter(0, name);
-    List<Facility> facilityList = query.list();
-    session.setAttribute("facility", facilityList.get(0));
+    session.setAttribute("facility", facility);
     resp.sendRedirect("facility_patient_display");
     doGet(req, resp);
   }
