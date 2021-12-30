@@ -22,6 +22,7 @@ import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
+import com.github.javafaker.Faker;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.LogsOfModifications;
@@ -182,12 +183,16 @@ public class EntryCreation extends HttpServlet {
         String testBodyRoute="";
         String fundingSource="";
         String fundingRoute="";
+        Faker faker = new Faker();
+        
+        String streetAddress = faker.address().streetAddress();
             if(req.getParameter("testEntry")!=null) {
               int randomN = (int) (Math.random()*9+1);
               int compteur =0;
-              testAdministering = "John";
-              testEntering = "Lisa";
-              testOrdering = "Maria";
+              testAdministering = faker.name().firstName();
+              testEntering = faker.name().firstName();
+              testOrdering = faker.name().firstName();
+              System.out.println(faker.date().birthday().toGMTString()); 
               testAdministeredDate = "20211228";
               testVaccId = Integer.toString(randomN);
               for(Code code : codeListCVX) {
