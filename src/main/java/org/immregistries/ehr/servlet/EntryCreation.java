@@ -2,6 +2,8 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -184,37 +186,48 @@ public class EntryCreation extends HttpServlet {
         String fundingSource="";
         String fundingRoute="";
         Faker faker = new Faker();
-        
+        String pattern = "yyyyMMdd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date currentDate = new Date();
         String streetAddress = faker.address().streetAddress();
             if(req.getParameter("testEntry")!=null) {
-              int randomN = (int) (Math.random()*9+1);
+              int randomN = (int) (Math.random()*9);
+              int randDay = (int) (Math.random()*31);
+              int randMonth = (int) (Math.random()*11);
+              int randYear = (int) (Math.random()*20);
               int compteur =0;
               testAdministering = faker.name().firstName();
               testEntering = faker.name().firstName();
               testOrdering = faker.name().firstName();
-              System.out.println(faker.date().birthday().toGMTString()); 
-              testAdministeredDate = "20211228";
+              System.out.println(simpleDateFormat.format(currentDate)); 
+              testAdministeredDate = simpleDateFormat.format(currentDate);
               testVaccId = Integer.toString(randomN);
               for(Code code : codeListCVX) {
                 testCodeCvx=code;
-                compteur+=1;
-                if(randomN==compteur) {
+                
+                if(randDay==compteur) {
                   break;
                 }
+                compteur+=1;
               }
+              compteur=0;
               testNdc=Integer.toString(randomN*23);
               for(Code code : codeListMVX) {
                 testCodeMvx=code;
-                compteur+=1;
-                if(randomN==compteur) {
+                
+                if(randDay==compteur) {
                   break;
                 }
+                compteur+=1;
               }
               testAmount=Integer.toString(randomN)+".5";
               testManufacturer="Pfizer";
               testInfSource="infSource";
               testLot=Integer.toString(randomN);
-              testExpDate="20211229";
+              currentDate.setYear(currentDate.getYear()+randYear+1);
+              currentDate.setMonth(randMonth);
+              currentDate.setDate(randDay);
+              testExpDate=simpleDateFormat.format(currentDate);
               testCompletion="Complete";
               testActionCode="Add";
               testRefusal="none";
