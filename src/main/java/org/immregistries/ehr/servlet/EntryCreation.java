@@ -194,7 +194,7 @@ public class EntryCreation extends HttpServlet {
         String streetAddress = faker.address().streetAddress();
             if(req.getParameter("testEntry")!=null) {
               int randomN = (int) (Math.random()*9);
-              int randDay = (int) (Math.random()*31);
+              int randDay = (int) (Math.random()*30+1);
               int randMonth = (int) (Math.random()*11);
               int randYear = (int) (Math.random()*20);
               int compteur =0;
