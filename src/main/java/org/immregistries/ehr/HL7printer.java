@@ -262,7 +262,7 @@ public class HL7printer {
     // PID-2
     sb.append("|");
     // PID-3
-    sb.append("|" + patient.getPatientId() + "^^^EHR^SR");
+    sb.append("|" + patient.getPatientId() + "^^^EHR^MR");
     /*if (patient != null) {
       sb.append("~" + patient.getExternalLink() + "^^^"
           + patient.getAuthority() + "^"
@@ -306,7 +306,7 @@ public class HL7printer {
         // PID-11
         sb.append("|" + patient.getAddressLine1() + "^" + patient.getAddressLine2()
             + "^" + patient.getAddressCity() + "^" + patient.getAddressState() + "^"
-            + patient.getAddressZip() + "^" + patient.getAddressCountry() + "^");
+            + patient.getAddressZip() + "^" + patient.getAddressCountry() + "^"+"P");
         // PID-12
         sb.append("|");
         // PID-13
