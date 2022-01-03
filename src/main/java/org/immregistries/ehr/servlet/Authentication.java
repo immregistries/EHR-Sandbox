@@ -37,7 +37,7 @@ public class Authentication extends HttpServlet {
 
     query.setParameter(0, username);
     testerList = query.list();
-
+    int dontRedirect = 0;
     if (!testerList.isEmpty()) {
       if (testerList.get(0).getLoginPassword().equals(password)) {
         //on se connecte
@@ -46,7 +46,8 @@ public class Authentication extends HttpServlet {
       } else {
         //wrong password
         //System.out.println("wrong password"); 
-
+        resp.sendRedirect("authentication?wrongId=1");
+        dontRedirect = 1;
 
       }
     } else {
@@ -59,10 +60,11 @@ public class Authentication extends HttpServlet {
       transaction.commit();
       //System.out.println("on est là gars");
     }
-
+    if(dontRedirect==0) {
     session.setAttribute("tester", newTester);
     //RequestDispatcher rd=req.getRequestDispatcher("silos");
     resp.sendRedirect("silos");
+    }
     doGet(req, resp);
   }
 
@@ -78,8 +80,11 @@ public class Authentication extends HttpServlet {
         doHeader(out, session);
         session.setAttribute("silo", null);
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n"
-            + "<label class=\"w3-text-green\"><b>EHR username</b></label>"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n");
+            if(req.getParameter("wrongId")!=null) {
+              out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Username and password don't match</b></label>");
+            }
+        out.println( "<label class=\"w3-text-green\"><b>EHR username</b></label>"
             + "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"
             + "	<label class=\"w3-text-green\"><b>Password</b></label>"
             + "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
