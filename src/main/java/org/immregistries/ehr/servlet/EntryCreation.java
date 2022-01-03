@@ -253,142 +253,189 @@ public class EntryCreation extends HttpServlet {
               
             }
             
-            out.println( "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
-            + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Entering clinician</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Administered date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdministeredDate +"\" size=\"40\" maxlength=\"60\" name=\"administered_date\" />\r\n"
-
-
-            + "	<label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testVaccId+"\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
-
-
-            + "	<label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_cvx\"/>\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"vacc_cvx\" size=\"1\">\r\n");
-            if(testCodeCvx!=null) {
-            out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getLabel()+"</Option>\r\n");
-            }
-            else {
-            out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
-            }
-            for(Code code : codeListCVX) {
-              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
-            }
-            out.println( "                        </SELECT>\r\n"
-            +"  </p>"
-            + "	<label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"vacc_mvx\" size=\"1\">\r\n");
-            if(testCodeMvx!=null) {
-              out.println( "                            <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getLabel()+"</Option>\r\n");
-              }
-              else {
-              out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
-              }
-            for(Code code : codeListMVX) {
-              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
-            }
-            out.println( "                        </SELECT>\r\n"
-            +"  </p>"
-            
-            + "	<label class=\"w3-text-green\"><b>Administered amount</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+ testAmount +"\" size=\"40\" maxlength=\"60\" name=\"administered_amount\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Manufacturer</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testManufacturer+"\" size=\"40\" maxlength=\"60\" name=\"manufacturer\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Information source</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Lot number</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
-
-
-            + "	<label class=\"w3-text-green\"><b>Completion status</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"completion_status\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"CP\">Complete</Option>\r\n"
-            + "                             <OPTION value=\"RE\">Refused</Option>\r\n"
-            + "                             <OPTION value=\"NA\">Not administered</Option>\r\n"
-            + "                             <OPTION value=\"PA\">Partially administered </Option>\r\n"
-            + "                        </SELECT>\r\n"
-            +"  </p>"
-            + "	<label class=\"w3-text-green\"><b>Action code</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"action_code\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"A\">Add</Option>\r\n"
-            + "                             <OPTION value=\"D\">Delete</Option>\r\n"
-            + "                             <OPTION value=\"U\">Update</Option>\r\n"
-            + "                        </SELECT>\r\n"
-            +"  </p>"
-            + "	<label class=\"w3-text-green\"><b>Refusal reason code</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"refusal_reason_code\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"\">none</Option>\r\n"
-            + "                             <OPTION value=\"00\">Parental decision</Option>\r\n"
-            + "                             <OPTION value=\"01\">Religious exemption</Option>\r\n"
-            + "                             <OPTION value=\"02\">Other</Option>\r\n"
-            + "                             <OPTION value=\"03\">Patient decision </Option>\r\n"
-            + "                        </SELECT>\r\n"
-            +"  </p>"
-            + "	<label class=\"w3-text-green\"><b>Body site</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"body_site\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"LT\">Left Thigh</Option>\r\n"
-            + "                             <OPTION value=\"LA\">Left Arm</Option>\r\n"
-            + "                             <OPTION value=\"LD\">Left Deltoid</Option>\r\n"
-            + "                             <OPTION value=\"LG\">Left Gluteous Medius</Option>\r\n"
-            + "                             <OPTION value=\"LVL\">Left Vastus Lateralis</Option>\r\n"
-            + "                             <OPTION value=\"LLFA\">Left Lower Forearm</Option>\r\n"
-            + "                             <OPTION value=\"RT\">Right Thigh</Option>\r\n"
-            + "                             <OPTION value=\"RA\">Right Arm</Option>\r\n"
-            + "                             <OPTION value=\"RD\">Right Deltoid</Option>\r\n"
-            + "                             <OPTION value=\"RG\">Right Gluteous Medius</Option>\r\n"
-            + "                             <OPTION value=\"RVL\">Right Vastus Lateralis</Option>\r\n"
-            + "                             <OPTION value=\"RLFA\">Right Lower Forearm</Option>\r\n"
-            + "                        </SELECT>\r\n"
-            +"  </p>"
-            + "	<label class=\"w3-text-green\"><b>Body route</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
-            +"  <p>"
-            +"                          <SELECT name=\"body_route\" size=\"1\">\r\n"
-            + "                             <OPTION value=\"C38238\">Intradermal</Option>\r\n"
-            + "                             <OPTION value=\"C28161\">Intramuscular</Option>\r\n"
-            + "                             <OPTION value=\"C38284\">Nasal</Option>\r\n"
-            + "                             <OPTION value=\"C38276\">Intravenous</Option>\r\n"
-            + "                             <OPTION value=\"C38288\">Oral</Option>\r\n"
-            + "                             <OPTION value=\"C38288\">Other/Miscellaneous</Option>\r\n"
-            + "                             <OPTION value=\"C38276\">Percutaneous</Option>\r\n"
-            + "                             <OPTION value=\"C38299\">Subcutaneous</Option>\r\n"
-            + "                             <OPTION value=\"C38305\">Transdermal</Option>\r\n"
-            + "                        </SELECT>\r\n"
-            +"  </p>"
-            + "	<label class=\"w3-text-green\"><b>Funding source</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Funding eligbility</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
-
+            out.println( "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 50% ;align-items:center\" "
+               
+                + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
+                + "                         <input type=\"text\"   class = \" w3-margin w3-border\" required value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
+                +"</div>"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"
+                + "                         <input type=\"text\"  class = \" w3-margin w3-border\" required value=\""+ testAmount +"\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
+                +"</div>"
+                
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+                + "<div style =\"width: 30% ;align-items:center\" "
+                + "    <label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
+                +"  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
+                +"                          <SELECT style=\"width : 100%\" name=\"vacc_cvx\" size=\"1\">\r\n");
+                if(testCodeCvx!=null) {
+                out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getLabel()+"</Option>\r\n");
+                }
+                else {
+                out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
+                }
+                for(Code code : codeListCVX) {
+                  out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+                }
+                out.println( "                        </SELECT>\r\n"
+                +"  </p>"
+                +"</div>"
+                + "<div style =\"width: 30% ;align-items:center\" "
+                + " <label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
+                + "                         <input type=\"text\" style=\"width:90%; height:23\" class = \" w3-margin w3-border\" required value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
+                +"</div>"
+                + "<div style =\"width: 30% ;align-items:center\" "
+                + " <label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
+                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
+                +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
+                +"                          <SELECT style =\"width:100%\" name=\"vacc_mvx\" size=\"1\">\r\n");
+                if(testCodeMvx!=null) {
+                    out.println( " <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getLabel()+"</Option>\r\n");
+                  }
+                  else {
+                  out.println( "  OPTION value=\"\">Select a vaccine</Option>\r\n");
+                  }
+                for(Code code : codeListMVX) {
+                  out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+                }
+                out.println( "                        </SELECT>\r\n"
+                +"  </p>"
+                +"</div>"
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;height:auto; display:flex\">"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Lot number</b></label>"
+                + "                         <input type=\"text\"   style=\"width:75% \" class = \" w3-margin w3-border\" required value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
+                +"</div>"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Body route</b></label>"
+                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
+                +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
+                +"                          <SELECT name=\"body_route\" style=\"width:75%\" size=\"1\">\r\n"
+                + "                             <OPTION value=\"C38238\">Intradermal</Option>\r\n"
+                + "                             <OPTION value=\"C28161\">Intramuscular</Option>\r\n"
+                + "                             <OPTION value=\"C38284\">Nasal</Option>\r\n"
+                + "                             <OPTION value=\"C38276\">Intravenous</Option>\r\n"
+                + "                             <OPTION value=\"C38288\">Oral</Option>\r\n"
+                + "                             <OPTION value=\"C38288\">Other/Miscellaneous</Option>\r\n"
+                + "                             <OPTION value=\"C38276\">Percutaneous</Option>\r\n"
+                + "                             <OPTION value=\"C38299\">Subcutaneous</Option>\r\n"
+                + "                             <OPTION value=\"C38305\">Transdermal</Option>\r\n"
+                + "                        </SELECT>\r\n"
+                +"  </p>"
+                +"</div>"
+                + "</div>"
+                
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; height:auto; display:flex\">"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + "    <label class=\"w3-text-green\"><b>Funding source</b></label>"
+                + "                         <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\" required value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
+                +"</div>"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Funding eligbility</b></label>"
+                + "                         <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\" required value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
+                +"</div>"
+                
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; display:flex\">"
+                + "<div style =\"width: 30%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>"               
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\" required value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
+                +"</div>"
+                + "<div style =\"width: 30%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\" required value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
+                +"</div>"
+                + "<div style =\"width: 30%; align-items:center \" "
+                +"<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
+                + "                         <input type=\"text\" style=\"width: 75%\"class = \" w3-margin w3-border \" required value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
+                +"</div>"
+                
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+                
+                
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\" required value=\""+testVaccId+"\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
+                +"</div>"
+                
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Information source</b></label>"
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\" required value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+                +"</div>"
+                
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\" required value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+                +"</div>"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Completion status</b></label>"
+                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
+                +"  <p class=\"w3-margin\" style=\"width:75%\">"
+                +"                          <SELECT style=\"width:75%\" name=\"completion_status\" size=\"1\">\r\n"
+                + "                             <OPTION value=\"CP\">Complete</Option>\r\n"
+                + "                             <OPTION value=\"RE\">Refused</Option>\r\n"
+                + "                             <OPTION value=\"NA\">Not administered</Option>\r\n"
+                + "                             <OPTION value=\"PA\">Partially administered </Option>\r\n"
+                + "                        </SELECT>\r\n"
+                +"  </p>"
+                +"</div>"
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Action code</b></label>"
+                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
+                +"  <p class=\"w3-margin\" style=\"width:75%\">"
+                +"                          <SELECT style=\"width:75%\"name=\"action_code\" size=\"1\">\r\n"
+                + "                             <OPTION value=\"A\">Add</Option>\r\n"
+                + "                             <OPTION value=\"D\">Delete</Option>\r\n"
+                + "                             <OPTION value=\"U\">Update</Option>\r\n"
+                + "                        </SELECT>\r\n"
+                +"  </p>"
+                +"</div>"
+                + "<div style =\"width: 50%; align-items:center \" "
+                + " <label class=\"w3-text-green\"><b>Refusal reason code</b></label>"
+                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
+                +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
+                +"                          <SELECT style=\"width:75%\"name=\"refusal_reason_code\" size=\"1\">\r\n"
+                + "                             <OPTION value=\"\">none</Option>\r\n"
+                + "                             <OPTION value=\"00\">Parental decision</Option>\r\n"
+                + "                             <OPTION value=\"01\">Religious exemption</Option>\r\n"
+                + "                             <OPTION value=\"02\">Other</Option>\r\n"
+                + "                             <OPTION value=\"03\">Patient decision </Option>\r\n"
+                + "                        </SELECT>\r\n"
+                +"  </p>"
+                +"</div>"
+                
+                + "</div>"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+                
+                + " <label class=\"w3-text-green\"><b>Body site</b></label>"
+                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
+                +"  <p class=\"w3-margin\" style=\"width:75%; float:left\">"
+                +"                          <SELECT style=\"width:75%\" name=\"body_site\" size=\"1\">\r\n"
+                + "                             <OPTION value=\"LT\">Left Thigh</Option>\r\n"
+                + "                             <OPTION value=\"LA\">Left Arm</Option>\r\n"
+                + "                             <OPTION value=\"LD\">Left Deltoid</Option>\r\n"
+                + "                             <OPTION value=\"LG\">Left Gluteous Medius</Option>\r\n"
+                + "                             <OPTION value=\"LVL\">Left Vastus Lateralis</Option>\r\n"
+                + "                             <OPTION value=\"LLFA\">Left Lower Forearm</Option>\r\n"
+                + "                             <OPTION value=\"RT\">Right Thigh</Option>\r\n"
+                + "                             <OPTION value=\"RA\">Right Arm</Option>\r\n"
+                + "                             <OPTION value=\"RD\">Right Deltoid</Option>\r\n"
+                + "                             <OPTION value=\"RG\">Right Gluteous Medius</Option>\r\n"
+                + "                             <OPTION value=\"RVL\">Right Vastus Lateralis</Option>\r\n"
+                + "                             <OPTION value=\"RLFA\">Right Lower Forearm</Option>\r\n"
+                + "                        </SELECT>\r\n"
+                +"  </p>"
+                      
+                +"</div>"
+           
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save Entry</button>\r\n"
             +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
             + "                </form> " + "</div\r\n");
