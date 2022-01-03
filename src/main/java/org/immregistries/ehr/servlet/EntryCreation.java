@@ -2,6 +2,8 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
+import com.github.javafaker.Faker;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.LogsOfModifications;
@@ -85,7 +88,6 @@ public class EntryCreation extends HttpServlet {
     log.setModifDate(updatedDate);
     log.setModifType("modif");
     String vaccCode = req.getParameter("action_code");
-    String manufacturer = req.getParameter("manufacturer");
     vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
     vaccine.setAdministeredDate(updatedDate);
@@ -112,38 +114,7 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(entercli);
     dataSession.save(vaccine);
     transaction.commit();
-    /*
-    List<LogsOfModifications> logList = null;
-    Query query = dataSession.createQuery("from LogsOfModifications where modifType=?");
-    query.setParameter(0, "modif");
-    logList = query.list();
-    log = logList.get(0);
-    
-    List<Clinician> clinicianList1 = null;
-    query = dataSession.createQuery("from Clinician where nameLast=?");
-    query.setParameter(0, nameAdmi);
-    clinicianList1 = query.list();
-    admicli = clinicianList1.get(0);
-    
-    List<Clinician> clinicianList2 = null;
-    query = dataSession.createQuery("from Clinician where nameLast=?");
-    query.setParameter(0, nameOrder);
-    clinicianList2 = query.list();
-    ordercli = clinicianList2.get(0);
-    
-    List<Clinician> clinicianList3 = null;
-    query = dataSession.createQuery("from Clinician where nameLast=?");
-    query.setParameter(0, nameEnter);
-    clinicianList3 = query.list();
-    entercli = clinicianList3.get(0);
-    
-    List<Vaccine> vaccineList = null;
-    query = dataSession.createQuery("from Vaccine where actionCode=?");
-    query.setParameter(0, vaccCode);
-    
-    vaccineList = query.list();
-    vaccine = vaccineList.get(0);
-    */
+
     System.out.print(entercli.getClinicianId());
     vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);
@@ -180,8 +151,8 @@ public class EntryCreation extends HttpServlet {
         CodeMap codeMap = CodeMapManager.getCodeMap();
         Collection<Code>codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
-        
-
+        Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+        Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         
         facility = (Facility) session.getAttribute("facility");
         patient = (Patient) session.getAttribute("patient") ;
@@ -200,6 +171,8 @@ public class EntryCreation extends HttpServlet {
         String testAdministeredDate = "";
         String testVaccId = "";
         Code testCodeCvx= null;
+        Code testCodeNDC= null;
+        
         String testNdc="";
         Code testCodeMvx= null;
         String testAmount="";
@@ -214,34 +187,57 @@ public class EntryCreation extends HttpServlet {
         String testBodyRoute="";
         String fundingSource="";
         String fundingRoute="";
+        Faker faker = new Faker();
+        String pattern = "yyyyMMdd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date currentDate = new Date();
+        String streetAddress = faker.address().streetAddress();
             if(req.getParameter("testEntry")!=null) {
-              int randomN = (int) (Math.random()*9+1);
+              int randomN = (int) (Math.random()*9);
+              int randDay = (int) (Math.random()*30+1);
+              int randMonth = (int) (Math.random()*11);
+              int randYear = (int) (Math.random()*20);
               int compteur =0;
-              testAdministering = "John";
-              testEntering = "Lisa";
-              testOrdering = "Maria";
-              testAdministeredDate = "20211228";
+              testAdministering = faker.name().firstName();
+              testEntering = faker.name().firstName();
+              testOrdering = faker.name().firstName();
+              System.out.println(simpleDateFormat.format(currentDate)); 
+              testAdministeredDate = simpleDateFormat.format(currentDate);
               testVaccId = Integer.toString(randomN);
               for(Code code : codeListCVX) {
                 testCodeCvx=code;
+                
+                if(randDay==compteur) {
+                  break;
+                }
+                compteur+=1;
+              }
+              compteur = 0;
+              for(Code code : codeListNDC) {
+                testCodeNDC=code;
                 compteur+=1;
                 if(randomN==compteur) {
                   break;
                 }
               }
+              compteur=0;
               testNdc=Integer.toString(randomN*23);
               for(Code code : codeListMVX) {
                 testCodeMvx=code;
-                compteur+=1;
-                if(randomN==compteur) {
+                
+                if(randDay==compteur) {
                   break;
                 }
+                compteur+=1;
               }
               testAmount=Integer.toString(randomN)+".5";
               testManufacturer="Pfizer";
               testInfSource="infSource";
               testLot=Integer.toString(randomN);
-              testExpDate="20211229";
+              currentDate.setYear(currentDate.getYear()+randYear+1);
+              currentDate.setMonth(randMonth);
+              currentDate.setDate(randDay);
+              testExpDate=simpleDateFormat.format(currentDate);
               testCompletion="Complete";
               testActionCode="Add";
               testRefusal="none";
@@ -253,6 +249,7 @@ public class EntryCreation extends HttpServlet {
               
             }
             
+
             out.println( "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
                 + "<div style =\"width: 50% ;align-items:center\" "
                
@@ -300,7 +297,7 @@ public class EntryCreation extends HttpServlet {
                 for(Code code : codeListMVX) {
                   out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
                 }
-                out.println( "                        </SELECT>\r\n"
+                out.println( "  </SELECT>\r\n"
                 +"  </p>"
                 +"</div>"
                 + "</div>"
@@ -436,6 +433,7 @@ public class EntryCreation extends HttpServlet {
                       
                 +"</div>"
            
+
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save Entry</button>\r\n"
             +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
             + "                </form> " + "</div\r\n");
