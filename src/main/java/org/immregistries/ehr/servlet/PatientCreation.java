@@ -169,112 +169,249 @@ public class PatientCreation extends HttpServlet {
           
         }
         out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
+            
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>First Name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNameFirst+"\" style=\"width:75% \" name=\"first_name\" />\r\n"
 
+           
+            +"</div>"            
+            + "<div style =\"width: 50% ;align-items:center\" "
+           
+            + " <label class=\"w3-text-green\"><b>Last name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNameLast+"\" style=\"width:75% \" name=\"last_name\" />\r\n"
+
+            +"</div>"            
+            + "<div style =\"width: 50% ;align-items:center\" "
+           
+            + "    <label class=\"w3-text-green\"><b>Middle name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testMiddleName+"\" style=\"width:75% \" name=\"middle_name\" />\r\n"
+
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Mother maiden name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testMotherMaidenName+"\" style=\"width:75% \" name=\"mother_maiden_name\" />\r\n"
+
+            +"</div>"
+            +"</div>"
+            
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+           
             + "<label class=\"w3-text-green\"><b>Date of birth</b></label>"
-            + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+testDoB+"\" size=\"40\" maxlength=\"60\" name=\"DoB\" />\r\n"
+            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>First Name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNameFirst+"\" size=\"40\" maxlength=\"60\" name=\"first_name\" />\r\n"
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+           
+            + "    <label class=\"w3-text-green\"><b>Sex (F or M) </b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testSex+"\" style=\"width:75% \" name=\"sex\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Last name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNameLast+"\" size=\"40\" maxlength=\"60\" name=\"last_name\" />\r\n"
+            +"</div>"           
+            +"</div>"
+            
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Address 1</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdress+"\" style=\"width:75% \" name=\"address\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Middle name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testMiddleName+"\" size=\"40\" maxlength=\"60\" name=\"middle_name\" />\r\n"
+            +"</div>"            
+            + "<div style =\"width: 30% ;align-items:center\" "
+           
+            + " <label class=\"w3-text-green\"><b>City</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCity+"\" style=\"width:75% \" name=\"city\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Mother maiden name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testMotherMaidenName+"\" size=\"40\" maxlength=\"60\" name=\"mother_maiden_name\" />\r\n"
+            +"</div>"            
+            + "<div style =\"width: 30% ;align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>State</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" style=\"width:75% \" name=\"state\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Sex (F or M) </b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testSex+"\" size=\"40\" maxlength=\"60\" name=\"sex\"/>\r\n"
+            
+            +"</div>"            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>County/parish</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCountyParish+"\" style=\"width:75% \" name=\"county\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Race</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRace+"\" size=\"40\" maxlength=\"60\" name=\"race\"/>\r\n"
+            +"</div>"            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>Country Code</b></label>"
+            + "                         <input type=\"text\" pattern=\"[A-Za-z]{3}\" class = \"w3-input w3-margin w3-border\" required value=\""+testState+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Address 1</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdress+"\" size=\"40\" maxlength=\"60\" name=\"address\"/>\r\n"
+            +"</div>"            
+            +"</div>"
+            
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "   <label class=\"w3-text-green\"><b>phone</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPhone+"\" style=\"width:75% \"name=\"phone\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>City</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCity+"\" size=\"40\" maxlength=\"60\" name=\"city\"/>\r\n"
+            
+            +"</div>"            
+            + "<div style =\"width: 50% ;align-items:center\" "
+           
+            + " <label class=\"w3-text-green\"><b>E-mail</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEmail+"\" style=\"width:75% \" name=\"email\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>State</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" size=\"40\" maxlength=\"60\" name=\"state\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Country Code</b></label>"
-            + "	                    	<input type=\"text\" pattern=\"[A-Za-z]{3}\" class = \"w3-input w3-margin w3-border\" required value=\""+testState+"\" size=\"3\"   name=\"country\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>County/parish</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCountyParish+"\" size=\"40\" maxlength=\"60\" name=\"county\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>phone</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPhone+"\" size=\"40\" maxlength=\"60\"name=\"phone\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>E-mail</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEmail+"\" size=\"40\" maxlength=\"60\" name=\"email\"/>\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Ethnicity</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEthnicity+"\" size=\"40\" maxlength=\"60\" name=\"ethnicity\" />\r\n"
-
-            + "	<label class=\"w3-text-green\"><b>Birth flag</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"birth_flag\"/>\r\n"
+            +"</div>" 
+            +"</div>"            
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Ethnicity</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEthnicity+"\" style=\"width:75% \" name=\"ethnicity\" />\r\n"
+            
+            
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+             
+            + " <label class=\"w3-text-green\"><b>Race</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRace+"\" style=\"width:75% \" name=\"race\"/>\r\n"
+             
+            +"</div>"
+            
+            +"</div>"
+            
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>Birth flag</b></label>"
+            //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" style=\"width:75% \" name=\"birth_flag\"/>\r\n"
             +"  <p>"
-            +"                          <SELECT name=\"birth_flag\" size=\"1\">\r\n"
+            +"                          <SELECT style=\"width:75% \" name=\"birth_flag\" size=\"1\">\r\n"
             + "                             <OPTION value=\"\">Unknown</Option>\r\n"
             + "                             <OPTION value=\"Y\">Y</Option>\r\n"
             + "                             <OPTION value=\"N\">N</Option>\r\n"
             + "                        </SELECT>\r\n"
             +"  </p>"
             
-            + "	<label class=\"w3-text-green\"><b>Birth order</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testBirthOrder+"\" size=\"40\" maxlength=\"60\" name=\"birth_ order\"/>\r\n"
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Birth order</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testBirthOrder+"\" style=\"width:75% \" name=\"birth_ order\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Death flag</b></label>"
-            //+ "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" name=\"death_flag\" />\r\n"
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Death flag</b></label>"
+            //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" style=\"width:75% \" name=\"death_flag\" />\r\n"
             +"  <p>"
-            +"                          <SELECT name=\"death_flag\" size=\"1\">\r\n"
+            +"                          <SELECT style=\"width:75% \" name=\"death_flag\" size=\"1\">\r\n"
             + "                             <OPTION value=\"\">Unknown</Option>\r\n"
             + "                             <OPTION value=\"Y\">Y</Option>\r\n"
             + "                             <OPTION value=\"N\">N</Option>\r\n"
             + "                        </SELECT>\r\n"
             +"  </p>"
             
-            + "	<label class=\"w3-text-green\"><b>Death date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testDeathDate+"\" size=\"40\" maxlength=\"60\" name=\"DoD\"/>\r\n"
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "   <label class=\"w3-text-green\"><b>Death date</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>publicity indicator</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPubIndic+"\" size=\"40\" maxlength=\"60\"name=\"publicity_indicator\" />\r\n"
+            +"</div>"
+            +"</div>"
 
-            + "	<label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPubIndicDate+"\" size=\"40\" maxlength=\"60\" name=\"publicity_date\"/>\r\n"
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            +"<div style=\"width:100% \">"
+            + "<div style =\" align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>publicity indicator</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPubIndic+"\" style=\"width:75% \"name=\"publicity_indicator\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>protection indicator</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testProtecIndic+"\" size=\"40\" maxlength=\"60\"name=\"protection\" />\r\n"
+            +"</div>"
+            
+            + "<div style =\"align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>protection indicator date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testProtecIndicDate+"\" size=\"40\" maxlength=\"60\"name=\"protection_date\" />\r\n"
+            +"</div>"
+            
+            + "<div style =\"align-items:center\" "
+            
+            + "   <label class=\"w3-text-green\"><b>protection indicator</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testProtecIndic+"\" style=\"width:75% \"name=\"protection\" />\r\n"
+            +"</div>"
+            +"</div>"
+            +"<div style=\"width:100% \">"
+            + "<div style =\"align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>protection indicator date</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Registry indicator date  </b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegIndicDate+"\" size=\"40\" maxlength=\"60\" name=\"registry_indicator_date\"/>\r\n"
+            +"</div>"
+            
+            + "<div style =\"align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Registry indicator date  </b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
+ 
+            +"</div>"
+            
+            + "<div style =\"align-items:center\" "
+           
+            + "    <label class=\"w3-text-green\"><b>registry status indicator</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegStatus+"\" style=\"width:75% \" name=\"registry_status_indicator\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>registry status indicator</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegStatus+"\" size=\"40\" maxlength=\"60\" name=\"registry_status_indicator\"/>\r\n"
+            +"</div>"
+            +"</div>"
+            +"<div style=\"width:100% \">"
+            + "<div style =\"align-items:center\" "
+           
+            + "   <label class=\"w3-text-green\"><b>registry status indicator date</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>registry status indicator date</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegStatusDate+"\" size=\"40\" maxlength=\"60\" name=\"registry_status_indicator_date\"/>\r\n"
+            +"</div>"
+            +"</div>"
+            +"</div>"
 
-            + "	<label class=\"w3-text-green\"><b>Guardian last name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardNameFirst+"\" size=\"40\" maxlength=\"60\"name=\"guardian_last_name\" />\r\n"
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Guardian last name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Guardian first name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardNameLast+"\" size=\"40\" maxlength=\"60\"name=\"guardian_first_name\" />\r\n"
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + "    <label class=\"w3-text-green\"><b>Guardian first name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Guardian middle name</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardMiddleName+"\" size=\"40\" maxlength=\"60\"name=\"guardian_middle_name\" />\r\n"
+            
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>Guardian middle name</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardMiddleName+"\" style=\"width:75% \"name=\"guardian_middle_name\" />\r\n"
 
-            + "	<label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"
-            + "	                    	<input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardRelationship+"\" size=\"40\" maxlength=\"60\"name=\"guardian_relation\" />\r\n"
+            +"</div>"
+            
+            + "<div style =\"width: 50% ;align-items:center\" "
+            
+            + " <label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardRelationship+"\" style=\"width:75% \"name=\"guardian_relation\" />\r\n"
 
+            +"</div>"
+            +"</div>"
 
+           
 
             + "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "</div\r\n");
