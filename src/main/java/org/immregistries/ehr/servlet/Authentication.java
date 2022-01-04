@@ -82,7 +82,7 @@ public class Authentication extends HttpServlet {
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n");
             if(req.getParameter("wrongId")!=null) {
-              out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Username and password don't match</b></label>");
+              out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Username and password don't match</b></label><br/>");
             }
         out.println( "<label class=\"w3-text-green\"><b>EHR username</b></label>"
             + "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"

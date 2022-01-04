@@ -87,7 +87,10 @@ public class PatientCreation extends HttpServlet {
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     try {
-      {
+      { 
+        if(req.getParameter("noFacility")!=null) {
+          resp.sendRedirect("facility_patient_display?chooseFacility=1");
+        }
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<button onclick=\"location.href=\'patient_creation?testPatient=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
@@ -231,7 +234,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 30% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>State</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" style=\"width:75% \" name=\"state\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testState+"\" style=\"width:75% \" name=\"state\" />\r\n"
 
             
             +"</div>"            
@@ -244,7 +247,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Country Code</b></label>"
-            + "                         <input type=\"text\" pattern=\"[A-Za-z]{3}\" class = \"w3-input w3-margin w3-border\" required value=\""+testState+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
+            + "                         <input type=\"text\" pattern=\"[A-Za-z]{3}\" class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
 
             +"</div>"            
             +"</div>"

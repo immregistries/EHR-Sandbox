@@ -72,8 +72,11 @@ public class FacilityPatientDisplay extends HttpServlet {
         showFacility = req.getParameter("paramFacilityId");
       }
       String show = req.getParameter(PARAM_SHOW);
-
+      String noFacility="";
       Facility facility = new Facility();
+      if(req.getParameter("chooseFacility")!=null) {
+        out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Choose a facility</b></label><br/>");
+      }
       if (showFacility == null) {
         facility = (Facility) session.getAttribute("facility");
         out.print("<div class=\"w3-margin\"style=\"width:100% height:auto \" >"
@@ -126,11 +129,14 @@ public class FacilityPatientDisplay extends HttpServlet {
                 + "</td>"
                 + "</tr>");
           }
+          if(session.getAttribute("facility")==null) {
+            noFacility="?noFacility=1";
+          }
           out.println("</tbody>"
               + "</table>"
               + "</div>"
               + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
-              + "<button onclick=\"location.href=\'patient_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
+              + "<button onclick=\"location.href=\'patient_creation"+noFacility+"'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
               + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility </button>"
 
               + "</div\r\n");
@@ -195,11 +201,14 @@ public class FacilityPatientDisplay extends HttpServlet {
               + "</td>"
               + "</tr>");
         }
+        if(session.getAttribute("facility")==null) {
+          noFacility="?noFacility=1";
+        }
         out.println("</tbody>"
             + "</table>"
             + "</div>"
             + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
-            + "<button onclick=\"location.href=\'patient_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
+            + "<button onclick=\"location.href=\'patient_creation"+noFacility+"'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
             + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility </button>"
 
             + "</div\r\n");
