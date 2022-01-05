@@ -155,7 +155,7 @@ public class IISMessage extends HttpServlet {
     out.println("  </head>");
     out.println("  <body>");
     out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("<header>\r\n" + "    		<h1>Message sent to IIS</h1>\r\n" + "    	</header>");
+    out.println("    		<h1>Message sent to IIS</h1>\r\n" + "    	</header>");
     out.println("    <form action=\"https://florence.immregistries.org/iis-sandbox/pop\" method=\"POST\" target=\"_blank\">");
     out.println(
         "<textarea id=\"story\" name=\"MESSAGEDATA\"\r\n" + "          rows=\"20\" cols=\"200\">\r\n"
@@ -164,9 +164,12 @@ public class IISMessage extends HttpServlet {
             /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
             + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea>"
-            +"<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" size=\"40\" maxlength=\"60\" name=\"USERID\"/>\r\n"
-            +"<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" size=\"40\" maxlength=\"60\" name=\"PASSWORD\"/>\r\n"
-            +"<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy Healthcare\" size=\"40\" maxlength=\"60\" name=\"FACILITYID\"/>\r\n"
+            +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" size=\"40\" maxlength=\"60\" name=\"USERID\"/>\r\n"
+            +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" size=\"40\" maxlength=\"60\" name=\"PASSWORD\"/>\r\n"
+            +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy Healthcare\" size=\"40\" maxlength=\"60\" name=\"FACILITYID\"/>\r\n"
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n");
     out.println("    </form>");
     out.println("<div id=\"formulaire\">");

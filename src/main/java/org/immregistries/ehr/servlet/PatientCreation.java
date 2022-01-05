@@ -303,7 +303,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Birth order</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testBirthOrder+"\" style=\"width:75% \" name=\"birth_ order\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testBirthOrder+"\" style=\"width:75% \" name=\"birth_order\"/>\r\n"
 
             +"</div>"
             
