@@ -259,7 +259,7 @@ public class IISMessage extends HttpServlet {
             + new HL7printer().buildVxu(vaccine,patient,facility).toString() + " \r\n"
             /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
             + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
-            + req.getParameter("Obs")*/ + " \r\n" + "</textarea>"
+            + req.getParameter("Obs")*/ + " \r\n" + "</textarea><br/>"
 
             +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
             + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" style =\"width:75%\" name=\"USERID\"/>\r\n"

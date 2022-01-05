@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.immregistries.ehr.model">
-  <class name="User" table="user">
-    <id name="userId" column="user_id">
-      <generator class="native"/>
-    </id>
-    <!--  <many-to-one name="org" column="org_id" class="OrgMaster"/> -->
-    <property name="username" column="username" type="string"/>
-    <property name="password" column="password" type="string"/>
-  </class>
+<hibernate-mapping
+	package="org.immregistries.ehr.model">
+	<class name="User" table="user">
+		<id name="userId" column="user_id">
+			<generator class="native" />
+		</id>
+		<!-- <many-to-one name="org" column="org_id" class="OrgMaster"/> -->
+		<property name="username" column="username" type="string" />
+		<property name="password" column="password" type="string" />
+	</class>
 </hibernate-mapping>
 

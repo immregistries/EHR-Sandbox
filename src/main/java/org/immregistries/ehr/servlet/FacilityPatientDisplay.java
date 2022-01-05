@@ -50,13 +50,13 @@ public class FacilityPatientDisplay extends HttpServlet {
         silo = siloList.get(0);
         session.setAttribute("silo", silo);
       } else {
-        silo = (Silo) session.getAttribute("silo");
-        Tester tester = (Tester) session.getAttribute("tester");
-        if (silo != null) {
-          if (!silo.getTester().getLoginUsername().equals(tester.getLoginUsername())) {
-            silo = null;
-          }
+        if (session.getAttribute("silo")!=null) {
+          silo = (Silo) session.getAttribute("silo");
         }
+        else {
+          resp.sendRedirect("silos?chooseSilo=1");
+        }
+        
       }
       List<Facility> facilityList = null;
       Query query = dataSession.createQuery("from Facility where silo=?");

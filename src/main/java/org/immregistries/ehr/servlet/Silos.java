@@ -51,10 +51,12 @@ public class Silos extends HttpServlet {
             + "</thead>"
             + "<tbody>"
             );
-            
+        if(req.getParameter("chooseSilo")!=null) {
+        out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Choose a silo</b></label><br/>");    
+        }
         for (Silo siloDisplay : siloList) {
           String link = "paramSiloId=" + siloDisplay.getSiloId();
-          out.println("<tr>"
+          out.println("<br/><tr>"
               + "<td class = \"w3-hover-teal\">"     
               + "<a href=\'facility_patient_display?"+ link+"\'style = \"text-decoration:none \">\r\n"
               + "<div style=\"text-decoration:none;height:100%\">"  

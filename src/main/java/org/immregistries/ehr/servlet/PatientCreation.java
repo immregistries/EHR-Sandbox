@@ -177,27 +177,27 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>First Name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNameFirst+"\" style=\"width:75% \" name=\"first_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testNameFirst+"\" style=\"width:75% \" name=\"first_name\" />\r\n"
 
            
             +"</div>"            
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + " <label class=\"w3-text-green\"><b>Last name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testNameLast+"\" style=\"width:75% \" name=\"last_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testNameLast+"\" style=\"width:75% \" name=\"last_name\" />\r\n"
 
             +"</div>"            
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + "    <label class=\"w3-text-green\"><b>Middle name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testMiddleName+"\" style=\"width:75% \" name=\"middle_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testMiddleName+"\" style=\"width:75% \" name=\"middle_name\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Mother maiden name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testMotherMaidenName+"\" style=\"width:75% \" name=\"mother_maiden_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testMotherMaidenName+"\" style=\"width:75% \" name=\"mother_maiden_name\" />\r\n"
 
             +"</div>"
             +"</div>"
@@ -206,14 +206,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + "<label class=\"w3-text-green\"><b>Date of birth</b></label>"
-            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
+            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + "    <label class=\"w3-text-green\"><b>Sex (F or M) </b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testSex+"\" style=\"width:75% \" name=\"sex\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testSex+"\" style=\"width:75% \" name=\"sex\"/>\r\n"
 
             +"</div>"           
             +"</div>"
@@ -222,32 +222,32 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Address 1</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testAdress+"\" style=\"width:75% \" name=\"address\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testAdress+"\" style=\"width:75% \" name=\"address\"/>\r\n"
 
             +"</div>"            
             + "<div style =\"width: 30% ;align-items:center\" "
            
             + " <label class=\"w3-text-green\"><b>City</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCity+"\" style=\"width:75% \" name=\"city\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testCity+"\" style=\"width:75% \" name=\"city\"/>\r\n"
 
             +"</div>"            
             + "<div style =\"width: 30% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>State</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testState+"\" style=\"width:75% \" name=\"state\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testState+"\" style=\"width:75% \" name=\"state\" />\r\n"
 
             
             +"</div>"            
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>County/parish</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testCountyParish+"\" style=\"width:75% \" name=\"county\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testCountyParish+"\" style=\"width:75% \" name=\"county\"/>\r\n"
 
             +"</div>"            
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Country Code</b></label>"
-            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
+            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border\"  value=\""+testCountryCode+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
 
             +"</div>"            
             +"</div>"
@@ -256,14 +256,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "   <label class=\"w3-text-green\"><b>phone</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPhone+"\" style=\"width:75% \"name=\"phone\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPhone+"\" style=\"width:75% \"name=\"phone\" />\r\n"
 
             
             +"</div>"            
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + " <label class=\"w3-text-green\"><b>E-mail</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEmail+"\" style=\"width:75% \" name=\"email\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testEmail+"\" style=\"width:75% \" name=\"email\"/>\r\n"
 
             +"</div>" 
             +"</div>"            
@@ -271,7 +271,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Ethnicity</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testEthnicity+"\" style=\"width:75% \" name=\"ethnicity\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testEthnicity+"\" style=\"width:75% \" name=\"ethnicity\" />\r\n"
             
             
             +"</div>"
@@ -279,7 +279,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
              
             + " <label class=\"w3-text-green\"><b>Race</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRace+"\" style=\"width:75% \" name=\"race\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRace+"\" style=\"width:75% \" name=\"race\"/>\r\n"
              
             +"</div>"
             
@@ -289,7 +289,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Birth flag</b></label>"
-            //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" style=\"width:75% \" name=\"birth_flag\"/>\r\n"
+            //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\"\" style=\"width:75% \" name=\"birth_flag\"/>\r\n"
             +"  <p>"
             +"                          <SELECT style=\"width:75% \" name=\"birth_flag\" size=\"1\">\r\n"
             + "                             <OPTION value=\"\">Unknown</Option>\r\n"
@@ -303,14 +303,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Birth order</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testBirthOrder+"\" style=\"width:75% \" name=\"birth_order\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testBirthOrder+"\" style=\"width:75% \" name=\"birth_order\"/>\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Death flag</b></label>"
-            //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\" style=\"width:75% \" name=\"death_flag\" />\r\n"
+            //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\"\" style=\"width:75% \" name=\"death_flag\" />\r\n"
             +"  <p>"
             +"                          <SELECT style=\"width:75% \" name=\"death_flag\" size=\"1\">\r\n"
             + "                             <OPTION value=\"\">Unknown</Option>\r\n"
@@ -324,7 +324,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "   <label class=\"w3-text-green\"><b>Death date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
 
             +"</div>"
             +"</div>"
@@ -334,42 +334,42 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\" align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>publicity indicator</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPubIndic+"\" style=\"width:75% \"name=\"publicity_indicator\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPubIndic+"\" style=\"width:75% \"name=\"publicity_indicator\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
 
             +"</div>"
             
             + "<div style =\"align-items:center\" "
             
             + "   <label class=\"w3-text-green\"><b>protection indicator</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testProtecIndic+"\" style=\"width:75% \"name=\"protection\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testProtecIndic+"\" style=\"width:75% \"name=\"protection\" />\r\n"
             +"</div>"
             +"</div>"
             +"<div style=\"width:100% \">"
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>protection indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Registry indicator date  </b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
  
             +"</div>"
             
             + "<div style =\"align-items:center\" "
            
             + "    <label class=\"w3-text-green\"><b>registry status indicator</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegStatus+"\" style=\"width:75% \" name=\"registry_status_indicator\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegStatus+"\" style=\"width:75% \" name=\"registry_status_indicator\"/>\r\n"
 
             +"</div>"
             +"</div>"
@@ -377,7 +377,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"align-items:center\" "
            
             + "   <label class=\"w3-text-green\"><b>registry status indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
 
             +"</div>"
             +"</div>"
@@ -387,14 +387,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Guardian last name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Guardian first name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
 
             
             +"</div>"
@@ -402,14 +402,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Guardian middle name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardMiddleName+"\" style=\"width:75% \"name=\"guardian_middle_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardMiddleName+"\" style=\"width:75% \"name=\"guardian_middle_name\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\""+testGuardRelationship+"\" style=\"width:75% \"name=\"guardian_relation\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardRelationship+"\" style=\"width:75% \"name=\"guardian_relation\" />\r\n"
 
             +"</div>"
             +"</div>"
