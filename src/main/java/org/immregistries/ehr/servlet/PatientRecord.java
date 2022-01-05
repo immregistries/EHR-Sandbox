@@ -78,9 +78,9 @@ public class PatientRecord extends HttpServlet {
           String link = "paramEntryId=" + entryDisplay.getVaccinationEventId();
           out.println("<tr>"
               +"<td class = \"w3-hover-teal\">"
-              + "<a href=\'patient_record?" + link+"\' style=\"text-decoration:none\">"
+              + "<a href=\'IIS_message?" + link+"\' style=\"text-decoration:none\">"
               + "<div style=\"text-decoration:none;height:100%\">"  
-              + vaccineAdmin.getManufacturer() + ""
+              + vaccineAdmin.getVaccineCvxCode() + "   "+vaccineAdmin.getVaccineMvxCode()+ "   "+vaccineAdmin.getVaccineNdcCode()
               + "</div>"
               + "</a>"              
               + "</td>"

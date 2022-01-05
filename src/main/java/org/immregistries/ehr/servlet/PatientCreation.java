@@ -247,7 +247,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Country Code</b></label>"
-            + "                         <input type=\"text\" pattern=\"[A-Za-z]{3}\" class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
+            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border\" required value=\""+testCountryCode+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
 
             +"</div>"            
             +"</div>"
@@ -416,7 +416,7 @@ public class PatientCreation extends HttpServlet {
 
            
 
-            + "                <button onclick=\"location.href=\'patient_record\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "</div\r\n");
 
 

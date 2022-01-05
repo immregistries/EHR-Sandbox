@@ -14,14 +14,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
+import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
+import org.immregistries.ehr.model.LogsOfModifications;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 
@@ -36,6 +40,95 @@ public class IISMessage extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
+    
+    HttpSession session = req.getSession(true);
+    Session dataSession = PopServlet.getDataSession();
+    
+    
+    //Silo silo = new Silo();
+    Facility facility = new Facility();
+    Patient patient = new Patient();
+    VaccinationEvent vacc_ev = new VaccinationEvent();
+    Vaccine vaccine = new Vaccine();  
+   /* 
+    String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
+    Query query = dataSession.createQuery(hql);
+    List<Silo> siloList = query.list();
+    silo = siloList.get(0);
+    
+    hql = "SELECT P.facility FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
+    query = dataSession.createQuery(hql);
+    List<Facility> facilityList = query.list();
+    facility = facilityList.get(0);    
+    */
+
+    //silo = (Silo) session.getAttribute("silo");
+    facility = (Facility) session.getAttribute("facility");
+    patient = (Patient) session.getAttribute("patient") ;
+    String nameAdmi = req.getParameter("administering_cli");  
+    String nameOrder = req.getParameter("ordering_cli");  
+    String nameEnter = req.getParameter("entering_cli");  
+    Clinician admicli = new Clinician();
+    
+    admicli.setNameLast(nameAdmi);    
+    admicli.setNameFirst("alan");
+    admicli.setNameMiddle("quentin");
+    
+    Clinician ordercli = new Clinician();
+    ordercli.setNameLast(nameOrder);    
+    ordercli.setNameFirst("alan");
+    ordercli.setNameMiddle("quentin");
+    
+    Clinician entercli = new Clinician();
+    entercli.setNameLast(nameEnter); 
+    entercli.setNameFirst("alan");
+    entercli.setNameMiddle("quentin");
+
+    Date updatedDate = new Date();
+    LogsOfModifications log = new LogsOfModifications();
+    log.setModifDate(updatedDate);
+    log.setModifType("modif");
+    String vaccCode = req.getParameter("action_code");
+    vaccine.setActionCode(vaccCode);
+    vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
+    vaccine.setAdministeredDate(updatedDate);
+    vaccine.setBodyRoute(req.getParameter("body_route"));
+    vaccine.setBodySite(req.getParameter("body_site"));
+    vaccine.setCompletionStatus(req.getParameter("completion_status"));
+    vaccine.setCreatedDate(updatedDate);
+    vaccine.setExpirationDate(updatedDate);
+    vaccine.setFundingEligibility(req.getParameter("funding_eligibility"));
+    vaccine.setFundingSource(req.getParameter("funding_source"));
+    vaccine.setInformationSource(req.getParameter("information_source"));
+    vaccine.setLotnumber(req.getParameter("lot_number"));
+    vaccine.setManufacturer(req.getParameter("manufacturer"));
+    vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
+    vaccine.setUpdatedDate(updatedDate);
+    vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
+    vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
+    vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
+    
+    Transaction transaction = dataSession.beginTransaction();
+    dataSession.save(log);
+    dataSession.save(admicli);
+    dataSession.save(ordercli);
+    dataSession.save(entercli);
+    dataSession.save(vaccine);
+    transaction.commit();
+
+    System.out.print(entercli.getClinicianId());
+    vacc_ev.setLog(log);
+    vacc_ev.setAdministeringFacility(facility);
+    vacc_ev.setPatient(patient);
+    vacc_ev.setEnteringClinician(entercli);
+    vacc_ev.setOrderingClinician(ordercli);
+    vacc_ev.setAdministeringClinician(admicli);
+    vacc_ev.setVaccine(vaccine);  
+    
+    Transaction transaction2 = dataSession.beginTransaction();
+    dataSession.save(vacc_ev);
+    transaction2.commit();
+
     doGet(req, resp);
   }
 
@@ -53,7 +146,6 @@ public class IISMessage extends HttpServlet {
       {
         doHeader(out, session, req);
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<button>send to IIS</button> ");
         doFooter(out, session);
       }
     } catch (Exception e) {
@@ -158,19 +250,23 @@ public class IISMessage extends HttpServlet {
     out.println("    		<h1>Message sent to IIS</h1>\r\n" + "    	</header>");
     out.println("    <form action=\"https://florence.immregistries.org/iis-sandbox/pop\" method=\"POST\" target=\"_blank\">");
     out.println(
-        "<textarea id=\"story\" name=\"MESSAGEDATA\"\r\n" + "          rows=\"20\" cols=\"200\">\r\n"
+        "<div class=\"w3-margin\">"
+        + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"
             /*+ new HL7printer().buildHL7(new Patient()).toString() + " \r\n"*/
             + new HL7printer().buildVxu(vaccine,patient,facility).toString() + " \r\n"
             /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
             + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea>"
+
             +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" size=\"40\" maxlength=\"60\" name=\"USERID\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" style =\"width:75%\" name=\"USERID\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" size=\"40\" maxlength=\"60\" name=\"PASSWORD\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy Healthcare\" size=\"40\" maxlength=\"60\" name=\"FACILITYID\"/>\r\n"
-            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n");
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy Healthcare\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
+            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
+            +"</div>");
+            
     out.println("    </form>");
     out.println("<div id=\"formulaire\">");
 
