@@ -246,8 +246,11 @@ public class IISMessage extends HttpServlet {
     out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
     out.println("  </head>");
     out.println("  <body>");
-    out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("    		<h1>Message sent to IIS</h1>\r\n" + "    	</header>");
+    out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
+        + "</div>\r\n" + "      </header>");
     out.println("    <form action=\"https://florence.immregistries.org/iis-sandbox/pop\" method=\"POST\" target=\"_blank\">");
     out.println(
         "<div class=\"w3-margin\">"
@@ -261,7 +264,7 @@ public class IISMessage extends HttpServlet {
             +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
             + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" style =\"width:75%\" name=\"USERID\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
+            + "<input type=\"password\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
             + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy Healthcare\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
