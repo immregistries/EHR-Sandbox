@@ -195,7 +195,7 @@ public class FacilityPatientDisplay extends HttpServlet {
               + "<td class = \"w3-hover-teal\">"
               + "<a href=\'patient_record?" + link+"\' style=\"text-decoration:none\";>"
               + "<div style=\"text-decoration:none;height:100%\">" 
-              + patientDisplay.getNameFirst() + " " + patientDisplay.getNameLast() + "</a>"
+              + patientDisplay.getNameFirst() + " " + patientDisplay.getNameLast() 
               + "</div>"
               + "</a>"              
               + "</td>"
