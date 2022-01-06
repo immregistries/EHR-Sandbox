@@ -28,6 +28,7 @@ import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
+import io.github.linuxforhealth.hl7.HL7ToFHIRConverter;
 
 /**
  * Servlet implementation class IIS_message
@@ -226,9 +227,11 @@ public class IISMessage extends HttpServlet {
     if (req.getParameter("paramFacilityId") != null) {
       showFacility = req.getParameter("paramFacilityId");
     }*/
-    
+    HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
+    Tester tester = new Tester();
     Facility facility = new Facility();
     Patient patient = new Patient();
+    tester = (Tester) session.getAttribute("tester");
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
     
@@ -240,6 +243,8 @@ public class IISMessage extends HttpServlet {
     Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
     HL7printer printerhl7 = new HL7printer();
     System.out.println(req.getParameter("administered_date"));
+    //String output= ftv.convert(new HL7printer().buildVxu(vaccine,patient,facility).toString());
+    //System.out.println(output);
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
@@ -262,11 +267,11 @@ public class IISMessage extends HttpServlet {
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea><br/>"
 
             +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy\" style =\"width:75%\" name=\"USERID\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+ tester.getLoginUsername()+"\" style =\"width:75%\" name=\"USERID\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-            + "<input type=\"password\"  class = \"w3-input w3-margin w3-border\" hidden value=\"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
+            + "<input type=\"password\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+tester.getLoginPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\"Mercy Healthcare\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+facility.getNameDisplay()+"\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
             +"</div>");
             
