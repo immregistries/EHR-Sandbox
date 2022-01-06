@@ -5,36 +5,30 @@
   <display-name>EHR-Sandbox</display-name>
   
   <welcome-file-list>  
-  	<welcome-file>org.immregistries.ehr.servlet.Authentication</welcome-file></welcome-file-list>
+  	<welcome-file>org.immregistries.ehr.servlet.Authentication</welcome-file>
+  </welcome-file-list>
 
   <servlet>
     <servlet-name>home</servlet-name>
     <servlet-class>org.immregistries.ehr.servlet.HomeServlet</servlet-class>
   </servlet>
   <servlet>
-  <display-name>Entry Creation</display-name>
-  <servlet-name>entry_creation</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.EntryCreation</servlet-class>
-  </servlet>
-  <servlet>
     <servlet-name>test</servlet-name>
-    <servlet-class>org.immregistries.ehr.servlet.TestNumeromille</servlet-class>
+    <servlet-class>org.immregistries.ehr.servlet.Test_numeromille</servlet-class>
   </servlet>
   <servlet>
-  	
-  	<display-name>EntryRecord</display-name>
-  	<servlet-name>entry_record</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.EntryRecord</servlet-class>
-  </servlet>
-    <servlet>
-    <display-name>Facility </display-name>
-  <servlet-name> Facility</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.FacilityCreation</servlet-class>
+  	<description>
+  	</description>
+  	<display-name>Entry</display-name>
+  	<servlet-name>Entry</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Entry</servlet-class>
   </servlet>
   <servlet>
+  	<description>
+  	</description>
   	<display-name>patient_record</display-name>
   	<servlet-name>patient_record</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.PatientRecord</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.patient_record</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -48,26 +42,28 @@
   	</description>
   	<display-name>IIS_message</display-name>
   	<servlet-name>IIS_message</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.IISMessage</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.IIS_message</servlet-class>
   </servlet>
   <servlet>
   	<description>
   	</description>
   	<display-name>Silo_creation</display-name>
   	<servlet-name>Silo_creation</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.SiloCreation</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.Silo_creation</servlet-class>
   </servlet>
   <servlet>
+  	<description>
+  	</description>
   	<display-name>patient_creation</display-name>
   	<servlet-name>patient_creation</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.PatientCreation</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.patient_creation</servlet-class>
   </servlet>
   <servlet>
   	<description>
   	</description>
   	<display-name>facility_patient_display</display-name>
   	<servlet-name>facility_patient_display</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.FacilityPatientDisplay</servlet-class>
+  	<servlet-class>org.immregistries.ehr.servlet.facility_patient_display</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -85,8 +81,8 @@
     <url-pattern>/test</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>entry_record</servlet-name>
-  	<url-pattern>/entry_record</url-pattern>
+  	<servlet-name>Entry</servlet-name>
+  	<url-pattern>/entry</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>patient_record</servlet-name>
@@ -95,10 +91,6 @@
   <servlet-mapping>
   	<servlet-name>Silos</servlet-name>
   	<url-pattern>/silos</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-  <servlet-name>Facility</servlet-name>
-  <url-pattern>/facility_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>IIS_message</servlet-name>
@@ -111,10 +103,6 @@
   <servlet-mapping>
   	<servlet-name>patient_creation</servlet-name>
   	<url-pattern>/patient_creation</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-  <servlet-name>entry_creation</servlet-name>
-  <url-pattern>/entry_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>facility_patient_display</servlet-name>

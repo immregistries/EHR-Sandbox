@@ -32,7 +32,7 @@ import org.immregistries.ehr.model.LogsOfModifications;
 /**
  * Servlet implementation class EntryRecord
  */
-public class EntryCreation extends HttpServlet {
+public class EntryRecord extends HttpServlet {
   private static final long serialVersionUID = 1L;
   public static final String PARAM_SHOW = "show";
 
@@ -138,11 +138,20 @@ public class EntryCreation extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
-
+    Session dataSession = PopServlet.getDataSession();
     try {
       {
         doHeader(out, session);
         
+        Vaccine vaccine=new Vaccine();
+        List<Vaccine> entryList = null;
+        if(req.getParameter("paramEntryId")!=null) {
+        Query query = dataSession.createQuery("from Vaccine where vaccine_Id=?");
+        query.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
+        entryList= query.list();
+        vaccine = entryList.get(0);
+        session.setAttribute("vaccine", vaccine);
+        }
         /*Silo silo = new Silo();
         silo= (Silo) req.getAttribute("silo");
        */
@@ -163,30 +172,29 @@ public class EntryCreation extends HttpServlet {
         System.out.println(patient.getNameFirst()+"  current patient");
         
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<button onclick=\"location.href=\'entry_creation?testEntry=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_creation\">\r\n");
         String testAdministering = "";
         String testEntering = "";
         String testOrdering = "";
-        String testAdministeredDate = "";
-        String testVaccId = "";
+        String testAdministeredDate = ""+vaccine.getAdministeredDate();
+        String testVaccId = ""+vaccine.getVaccineId();
         Code testCodeCvx= null;
         Code testCodeNDC= null;
-        
-        String testNdc="";
+        String testCvx=""+vaccine.getVaccineCvxCode();
+        String testMvx=""+vaccine.getVaccineMvxCode();
+        String testNdc=""+vaccine.getVaccineNdcCode();
         Code testCodeMvx= null;
-        String testAmount="";
+        String testAmount=""+vaccine.getAdministeredAmount();
         String testManufacturer="";
-        String testInfSource="";
-        String testLot="";
-        String testExpDate="";
-        String testCompletion="";
-        String testActionCode="";
-        String testRefusal="";
-        String testBodySite="";
-        String testBodyRoute="";
-        String fundingSource="";
-        String fundingRoute="";
+        String testInfSource=""+vaccine.getInformationSource();
+        String testLot=""+vaccine.getLotnumber();
+        String testExpDate=""+vaccine.getExpirationDate();
+        String testCompletion=""+vaccine.getCompletionStatus();
+        String testActionCode=""+vaccine.getActionCode();
+        String testRefusal=""+vaccine.getRefusalReasonCode();
+        String testBodySite=""+vaccine.getBodySite();
+        String testBodyRoute=""+vaccine.getBodyRoute();
+        String fundingSource=""+vaccine.getFundingSource();
+        String fundingRoute=""+vaccine.getFundingEligibility();
         Faker faker = new Faker();
         String pattern = "yyyyMMdd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -194,7 +202,7 @@ public class EntryCreation extends HttpServlet {
         String streetAddress = faker.address().streetAddress();
             if(req.getParameter("testEntry")!=null) {
               int randomN = (int) (Math.random()*9);
-              int randDay = (int) (Math.random()*30+1);
+              int randDay = (int) (Math.random()*31);
               int randMonth = (int) (Math.random()*11);
               int randYear = (int) (Math.random()*20);
               int compteur =0;
@@ -249,105 +257,74 @@ public class EntryCreation extends HttpServlet {
               
             }
             
-
             out.println( "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
                 + "<div style =\"width: 50% ;align-items:center\" "
                
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
-                + "                         <input type=\"text\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
+                + "                         <input type=\"text\" disabled    class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"
-                + "                         <input type=\"text\"  class = \" w3-margin w3-border\"  value=\""+ testAmount +"\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
+                + "                         <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+ testAmount +"\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 30% ;align-items:center\" "
                 + "    <label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
-                +"  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
-                +"                          <SELECT style=\"width : 100%\" name=\"vacc_cvx\" size=\"1\">\r\n");
-                if(testCodeCvx!=null) {
-                out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getLabel()+"</Option>\r\n");
-                }
-                else {
-                out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
-                }
-                for(Code code : codeListCVX) {
-                  out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
-                }
-                out.println( "                        </SELECT>\r\n"
-                +"  </p>"
+
+
+            + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testCvx+"\" size=\"40\" maxlength=\"60\" name=\"vacc_Cvx\"/>\r\n"
+
                 +"</div>"
                 + "<div style =\"width: 30% ;align-items:center\" "
                 + " <label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
-                + "                         <input type=\"text\" style=\"width:90%; height:23\" class = \" w3-margin w3-border\"  value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:90%; height:23\" class = \" w3-margin w3-border\"  value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
                 +"</div>"
                 + "<div style =\"width: 30% ;align-items:center\" "
                 + " <label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
-                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
-                +"                          <SELECT style =\"width:100%\" name=\"vacc_mvx\" size=\"1\">\r\n");
-                if(testCodeMvx!=null) {
-                    out.println( " <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getLabel()+"</Option>\r\n");
-                  }
-                  else {
-                  out.println( "  OPTION value=\"\">Select a vaccine</Option>\r\n");
-                  }
-                for(Code code : codeListMVX) {
-                  out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
-                }
-                out.println( "  </SELECT>\r\n"
-                +"  </p>"
+                
+               
+                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testMvx+"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
+                
+
                 +"</div>"
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;height:auto; display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Lot number</b></label>"
-                + "                         <input type=\"text\"   style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
+                + "                         <input type=\"text\" disabled    style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Body route</b></label>"
-                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
-                +"                          <SELECT name=\"body_route\" style=\"width:75%\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"C38238\">Intradermal</Option>\r\n"
-                + "                             <OPTION value=\"C28161\">Intramuscular</Option>\r\n"
-                + "                             <OPTION value=\"C38284\">Nasal</Option>\r\n"
-                + "                             <OPTION value=\"C38276\">Intravenous</Option>\r\n"
-                + "                             <OPTION value=\"C38288\">Oral</Option>\r\n"
-                + "                             <OPTION value=\"C38288\">Other/Miscellaneous</Option>\r\n"
-                + "                             <OPTION value=\"C38276\">Percutaneous</Option>\r\n"
-                + "                             <OPTION value=\"C38299\">Subcutaneous</Option>\r\n"
-                + "                             <OPTION value=\"C38305\">Transdermal</Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
+                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testBodyRoute+"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
+                
                 +"</div>"
                 + "</div>"
                 
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; height:auto; display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + "    <label class=\"w3-text-green\"><b>Funding source</b></label>"
-                + "                         <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Funding eligbility</b></label>"
-                + "                         <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; display:flex\">"
                 + "<div style =\"width: 30%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>"               
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 30%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 30%; align-items:center \" "
                 +"<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
-                + "                         <input type=\"text\" style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
                 +"</div>"
                 
                 + "</div>"
@@ -355,89 +332,51 @@ public class EntryCreation extends HttpServlet {
                 
                 
                 + "<div style =\"width: 50%; align-items:center \" "
+
                 + " <label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testVaccId+"\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
+                
+                +"<input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testVaccId+"\" size=\"40\" maxlength=\"20\" name=\"vacc_id\" />\r\n"
+
                 +"</div>"
                 
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Information source</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Completion status</b></label>"
-                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:75%\">"
-                +"                          <SELECT style=\"width:75%\" name=\"completion_status\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"CP\">Complete</Option>\r\n"
-                + "                             <OPTION value=\"RE\">Refused</Option>\r\n"
-                + "                             <OPTION value=\"NA\">Not administered</Option>\r\n"
-                + "                             <OPTION value=\"PA\">Partially administered </Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
+                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testCompletion+"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
+                
                 +"</div>"
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Action code</b></label>"
-                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:75%\">"
-                +"                          <SELECT style=\"width:75%\"name=\"action_code\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"A\">Add</Option>\r\n"
-                + "                             <OPTION value=\"D\">Delete</Option>\r\n"
-                + "                             <OPTION value=\"U\">Update</Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
+                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testActionCode+"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
+                
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Refusal reason code</b></label>"
-                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
-                +"                          <SELECT style=\"width:75%\"name=\"refusal_reason_code\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"\">none</Option>\r\n"
-                + "                             <OPTION value=\"00\">Parental decision</Option>\r\n"
-                + "                             <OPTION value=\"01\">Religious exemption</Option>\r\n"
-                + "                             <OPTION value=\"02\">Other</Option>\r\n"
-                + "                             <OPTION value=\"03\">Patient decision </Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
+                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+(testRefusal==""? "none":testRefusal)+"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
+                
                 +"</div>"
                 
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 
                 + " <label class=\"w3-text-green\"><b>Body site</b></label>"
-                //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:75%; float:left\">"
-                +"                          <SELECT style=\"width:75%\" name=\"body_site\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"LT\">Left Thigh</Option>\r\n"
-                + "                             <OPTION value=\"LA\">Left Arm</Option>\r\n"
-                + "                             <OPTION value=\"LD\">Left Deltoid</Option>\r\n"
-                + "                             <OPTION value=\"LG\">Left Gluteous Medius</Option>\r\n"
-                + "                             <OPTION value=\"LVL\">Left Vastus Lateralis</Option>\r\n"
-                + "                             <OPTION value=\"LLFA\">Left Lower Forearm</Option>\r\n"
-                + "                             <OPTION value=\"RT\">Right Thigh</Option>\r\n"
-                + "                             <OPTION value=\"RA\">Right Arm</Option>\r\n"
-                + "                             <OPTION value=\"RD\">Right Deltoid</Option>\r\n"
-                + "                             <OPTION value=\"RG\">Right Gluteous Medius</Option>\r\n"
-                + "                             <OPTION value=\"RVL\">Right Vastus Lateralis</Option>\r\n"
-                + "                             <OPTION value=\"RLFA\">Right Lower Forearm</Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
+                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testBodySite+"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
+                
                       
-                +"</div>"
-           
-
-            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
-            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
-            + "                </form> " + "</div\r\n");
-        doFooter(out, session);
+                +"</div>");
+                doFooter(out, session);
       }
     } catch (Exception e) {
       e.printStackTrace(System.err);
@@ -452,21 +391,24 @@ public class EntryCreation extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
     out.println("  </head>");
     out.println("  <body>");
+    // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
-        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
-        + "</div>\r\n" + "      </header>");
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = \'silo_creation\' class=\"w3-bar-item w3-button\">Silo creation </a>\r\n"
+        + "</div>" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
-
   }
+
 
   public static void doFooter(PrintWriter out, HttpSession session) {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
+
+
 
 
 }
