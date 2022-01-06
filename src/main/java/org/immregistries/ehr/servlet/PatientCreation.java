@@ -3,6 +3,7 @@ package org.immregistries.ehr.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,9 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.immregistries.codebase.client.CodeMap;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 
 /**
@@ -54,9 +59,9 @@ public class PatientCreation extends HttpServlet {
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setEmail(req.getParameter("email"));
     patient.setEthnicity(req.getParameter("ethnicity"));
-    patient.setGuardianFirst(req.getParameter("guardian_first"));
-    patient.setGuardianLast(req.getParameter("guardian_last"));
-    patient.setGuardianMiddle(req.getParameter("guardian_middle"));
+    patient.setGuardianFirst(req.getParameter("guardian_first_name"));
+    patient.setGuardianLast(req.getParameter("guardian_last_name"));
+    patient.setGuardianMiddle(req.getParameter("guardian_middle_name"));
     patient.setGuardianRelationship(req.getParameter("guardian_relation"));
     patient.setMotherMaiden(req.getParameter("mother_maiden"));
     patient.setPhone(req.getParameter("phone"));
@@ -86,6 +91,8 @@ public class PatientCreation extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
+    CodeMap codeMap = CodeMapManager.getCodeMap();
+    Collection<Code> codeListRelation =codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
     try {
       { 
         if(req.getParameter("noFacility")!=null) {
@@ -168,7 +175,7 @@ public class PatientCreation extends HttpServlet {
           testGuardNameFirst=faker.name().firstName();
           testGuardNameLast=testNameLast;
           testGuardMiddleName=faker.name().firstName();
-          testGuardRelationship="Parent";
+          testGuardRelationship="BRO";
           
         }
         out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
@@ -409,8 +416,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + " <label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardRelationship+"\" style=\"width:75% \"name=\"guardian_relation\" />\r\n"
-
+            //+ "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardRelationship+"\" style=\"width:75% \"name=\"guardian_relation\" />\r\n"
+            +"  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
+            +"                          <SELECT style=\"width : 100%\" name=\"guardian_relation\" size=\"1\">\r\n");
+            for(Code code : codeListRelation) {
+              out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+            }
+            out.println( "                        </SELECT>\r\n"
+            +"  </p>"
             +"</div>"
             +"</div>"
 
