@@ -155,7 +155,7 @@ public class PatientCreation extends HttpServlet {
           testEmail=testNameFirst+ randDay +"@gmail.com";
           testEthnicity="Indian";
           testBirthFlag="";
-          testBirthOrder="O";
+          testBirthOrder="";
           testDeathFlag="";
           testDeathDate="O";
           testPubIndic="O";
