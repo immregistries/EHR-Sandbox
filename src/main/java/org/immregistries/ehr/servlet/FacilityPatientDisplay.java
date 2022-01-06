@@ -136,8 +136,8 @@ public class FacilityPatientDisplay extends HttpServlet {
               + "</table>"
               + "</div>"
               + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
-              + "<button onclick=\"location.href=\'patient_creation"+noFacility+"'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
               + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility </button>"
+              + "<button onclick=\"location.href=\'patient_creation"+noFacility+"'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
 
               + "</div\r\n");
       } else {
@@ -208,8 +208,8 @@ public class FacilityPatientDisplay extends HttpServlet {
             + "</table>"
             + "</div>"
             + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
+            + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
             + "<button onclick=\"location.href=\'patient_creation"+noFacility+"'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
-            + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility </button>"
 
             + "</div\r\n");
       }
