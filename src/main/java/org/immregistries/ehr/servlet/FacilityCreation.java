@@ -49,11 +49,21 @@ public class FacilityCreation extends HttpServlet {
       //System.out.println("oups");
       facility.setParentFacility(parentFacility);
     }
-    Transaction transaction = dataSession.beginTransaction();
-    dataSession.save(facility);
-    transaction.commit();
-    session.setAttribute("facility", facility);
-    resp.sendRedirect("facility_patient_display");
+
+    Object oldSilo = null;
+    Query query = dataSession.createQuery("from Facility where silo_id=? and name_display=?");
+    query.setParameter(0, silo.getSiloId());
+    query.setParameter(1, name);
+    oldSilo = query.uniqueResult() ;
+    if (oldSilo != null){
+      req.setAttribute("duplicate_error", 1);
+    } else {
+      Transaction transaction = dataSession.beginTransaction();
+      dataSession.save(facility);
+      transaction.commit();
+      session.setAttribute("facility", facility);
+      resp.sendRedirect("facility_patient_display");
+    }
     doGet(req, resp);
   }
 
@@ -78,6 +88,9 @@ public class FacilityCreation extends HttpServlet {
             + "                <button \" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "            </div>"
                 + "</div>");
+        if(req.getAttribute("duplicate_error") != null){
+        out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Facility name already used for this silo</b></label><br/>");
+        }
 
         doFooter(out, session);
       }
