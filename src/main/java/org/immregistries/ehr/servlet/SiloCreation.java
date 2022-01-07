@@ -64,16 +64,17 @@ public class SiloCreation extends HttpServlet {
     try {
       {
         doHeader(out, session);
+                
+        if(req.getAttribute("duplicate_error") != null){
+          out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Name already used by the current user</b></label><br/>");
+        }
+
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"silo_creation\">\r\n"
             + "<label class=\"w3-text-green\"><b>Silo name</b></label>"
             + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"silo_name\"/>\r\n"
             + "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "            </div>");
-        
-        if(req.getAttribute("duplicate_error") != null){
-        out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Name already used by the current user</b></label><br/>");
-        }
 
         doFooter(out, session);
       }
