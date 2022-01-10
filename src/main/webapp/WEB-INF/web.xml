@@ -5,7 +5,8 @@
   <display-name>EHR-Sandbox</display-name>
   
   <welcome-file-list>  
-  	<welcome-file>org.immregistries.ehr.servlet.Authentication</welcome-file></welcome-file-list>
+  	<welcome-file>authentication</welcome-file>
+  </welcome-file-list>
 
   <servlet>
     <servlet-name>home</servlet-name>
