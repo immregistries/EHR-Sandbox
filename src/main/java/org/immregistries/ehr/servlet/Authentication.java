@@ -16,6 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
+import org.mindrot.jbcrypt.BCrypt;
 
 @SuppressWarnings("serial")
 public class Authentication extends HttpServlet {
@@ -40,7 +41,8 @@ public class Authentication extends HttpServlet {
     testerList = query.list();
     int dontRedirect = 0;
     if (!testerList.isEmpty()) {
-      if (testerList.get(0).getLoginPassword().equals(password)) {
+      // Checking if password matches hash
+      if (BCrypt.checkpw(password, testerList.get(0).getLoginPassword())) {
         newTester = testerList.get(0);
       } else {
         //wrong password 
@@ -50,6 +52,8 @@ public class Authentication extends HttpServlet {
       }
     } else {
 
+      // hashing new password
+      password = BCrypt.hashpw(password, BCrypt.gensalt(5));
       // Creating new tester/user
       newTester.setLoginUsername(username);
       newTester.setLoginPassword(password);
