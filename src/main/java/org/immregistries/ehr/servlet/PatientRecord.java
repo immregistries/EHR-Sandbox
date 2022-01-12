@@ -45,7 +45,7 @@ public class PatientRecord extends HttpServlet {
         List<Patient> patientList = null;
         List<VaccinationEvent> entryList = null;
         if(req.getParameter("paramPatientId")!=null) {
-        Query query = dataSession.createQuery("from Patient where patientId=? and facilityId");
+        Query query = dataSession.createQuery("from Patient where patientId=?");
         query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
         patientList = query.list();
         patient = patientList.get(0);
