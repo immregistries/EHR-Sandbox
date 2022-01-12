@@ -205,6 +205,12 @@
   			<artifactId>hl7v2-fhir-converter</artifactId>
   			<version>1.0.10</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
