@@ -49,11 +49,21 @@ public class FacilityCreation extends HttpServlet {
       //System.out.println("oups");
       facility.setParentFacility(parentFacility);
     }
-    Transaction transaction = dataSession.beginTransaction();
-    dataSession.save(facility);
-    transaction.commit();
-    session.setAttribute("facility", facility);
-    resp.sendRedirect("facility_patient_display");
+
+    Object oldSilo = null;
+    Query query = dataSession.createQuery("from Facility where silo_id=? and name_display=?");
+    query.setParameter(0, silo.getSiloId());
+    query.setParameter(1, name);
+    oldSilo = query.uniqueResult() ;
+    if (oldSilo != null){
+      req.setAttribute("duplicate_error", 1);
+    } else {
+      Transaction transaction = dataSession.beginTransaction();
+      dataSession.save(facility);
+      transaction.commit();
+      session.setAttribute("facility", facility);
+      resp.sendRedirect("facility_patient_display");
+    }
     doGet(req, resp);
   }
 
@@ -69,6 +79,9 @@ public class FacilityCreation extends HttpServlet {
       {
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
+        if(req.getAttribute("duplicate_error") != null){
+          out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Facility name already used for this silo</b></label><br/>");
+        }
         out.println("<form method=\"post\" class=\"w3-container\" action=\"facility_creation\">\r\n"
             + "<label class=\"w3-text-green\"><b>Facility name</b></label>"
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\"  name=\"facility_name\"/>\r\n"

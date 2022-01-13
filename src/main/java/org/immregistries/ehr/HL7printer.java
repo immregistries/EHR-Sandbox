@@ -237,14 +237,14 @@ public class HL7printer {
           && !(patient.getGuardianLast()== null ? "": patient.getGuardianLast()).equals("")
           && !(patient.getGuardianFirst()== null ? "": patient.getGuardianFirst()).equals("")) {
         Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
-            patient.getGuardianRelationship());
+            (patient.getGuardianRelationship()==null ? "":patient.getGuardianRelationship()));
         if (code != null) {
           sb.append("NK1");
           sb.append("|1");
-          sb.append("|" + patient.getGuardianLast() == null ? ""
-              : patient.getGuardianLast() + "^" + patient.getGuardianFirst() == null
+          sb.append("|" + (patient.getGuardianLast() == null ? ""
+              : patient.getGuardianLast()) + "^" + (patient.getGuardianFirst() == null
                   ? ""
-                  : patient.getGuardianFirst() + "^^^^^L");
+                  : patient.getGuardianFirst()) + "^^^^^L");
           sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
           sb.append("\r");
         }

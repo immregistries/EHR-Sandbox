@@ -67,21 +67,21 @@ public class EntryCreation extends HttpServlet {
     String nameAdmi = req.getParameter("administering_cli");  
     String nameOrder = req.getParameter("ordering_cli");  
     String nameEnter = req.getParameter("entering_cli");  
-    Clinician admicli = new Clinician();
+     Clinician admicli = new Clinician();
     
-    admicli.setNameLast(nameAdmi);    
-    admicli.setNameFirst("alan");
-    admicli.setNameMiddle("quentin");
+    admicli.setNameLast(nameAdmi.split(" ")[0]);    
+    admicli.setNameFirst(nameAdmi.split(" ").length>1? nameAdmi.split(" ")[1]:"");
+    admicli.setNameMiddle(nameAdmi.split(" ").length>2 ? nameAdmi.split(" ")[2]:"");
     
     Clinician ordercli = new Clinician();
-    ordercli.setNameLast(nameOrder);    
-    ordercli.setNameFirst("alan");
-    ordercli.setNameMiddle("quentin");
+    ordercli.setNameLast(nameOrder.split(" ")[0]);    
+    ordercli.setNameFirst(nameOrder.split(" ").length>1 ? nameOrder.split(" ")[1]:"");
+    ordercli.setNameMiddle(nameOrder.split(" ").length>2 ? nameOrder.split(" ")[2]:"");
     
     Clinician entercli = new Clinician();
-    entercli.setNameLast(nameEnter); 
-    entercli.setNameFirst("alan");
-    entercli.setNameMiddle("quentin");
+    entercli.setNameLast(nameEnter.split(" ")[0]); 
+    entercli.setNameFirst(nameEnter.split(" ").length>1 ? nameEnter.split(" ")[1]:"");
+    entercli.setNameMiddle(nameEnter.split(" ").length>2 ? nameEnter.split(" ")[2]:"");
 
     Date updatedDate = new Date();
     LogsOfModifications log = new LogsOfModifications();

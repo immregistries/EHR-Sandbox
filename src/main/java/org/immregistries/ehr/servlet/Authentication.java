@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
+import org.mindrot.jbcrypt.BCrypt;
 
 @SuppressWarnings("serial")
 public class Authentication extends HttpServlet {
@@ -25,7 +27,7 @@ public class Authentication extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
 
-    HttpSession session = req.getSession(true);
+    HttpSession session;
 
     Session dataSession = PopServlet.getDataSession();
     Tester newTester = new Tester();
@@ -39,31 +41,45 @@ public class Authentication extends HttpServlet {
     testerList = query.list();
     int dontRedirect = 0;
     if (!testerList.isEmpty()) {
-      if (testerList.get(0).getLoginPassword().equals(password)) {
-        //on se connecte
-        System.out.println("connected");
+      // Checking if password matches hash
+      if (BCrypt.checkpw(password, testerList.get(0).getLoginPassword())) {
         newTester = testerList.get(0);
       } else {
-        //wrong password
-        //System.out.println("wrong password"); 
+        //wrong password 
         resp.sendRedirect("authentication?wrongId=1");
         dontRedirect = 1;
 
       }
     } else {
 
-      //on crée le nouveau tester
+      // hashing new password
+      password = BCrypt.hashpw(password, BCrypt.gensalt(5));
+      // Creating new tester/user
       newTester.setLoginUsername(username);
       newTester.setLoginPassword(password);
       Transaction transaction = dataSession.beginTransaction();
       dataSession.save(newTester);
       transaction.commit();
-      //System.out.println("on est là gars");
+
     }
     if(dontRedirect==0) {
-    session.setAttribute("tester", newTester);
-    //RequestDispatcher rd=req.getRequestDispatcher("silos");
-    resp.sendRedirect("silos");
+      //get the old session and invalidate
+      HttpSession oldSession = req.getSession(false);
+      if (oldSession != null) {
+          oldSession.invalidate();
+      }
+      //generate a new session
+      session = req.getSession(true);
+
+      //setting session to expiry in 15 mins
+      session.setMaxInactiveInterval(15*60);
+
+      // Cookie message = new Cookie("message", "Welcome");
+      // resp.addCookie(message);
+
+      session.setAttribute("tester", newTester);
+
+      resp.sendRedirect("silos");
     }
     doGet(req, resp);
   }

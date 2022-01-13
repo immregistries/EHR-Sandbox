@@ -36,11 +36,20 @@ public class SiloCreation extends HttpServlet {
     Silo newSilo = new Silo();
     newSilo.setNameDisplay(name);
     newSilo.setTester(tester);
-
-    Transaction transaction = dataSession.beginTransaction();
-    dataSession.save(newSilo);
-    transaction.commit();
-    resp.sendRedirect("silos");
+    
+    Object oldSilo = null;
+    Query query = dataSession.createQuery("from Silo where tester=? and name_display=?");
+    query.setParameter(0, tester);
+    query.setParameter(1, name);
+    oldSilo = query.uniqueResult() ;
+    if (oldSilo != null){
+      req.setAttribute("duplicate_error", 1);
+    } else {
+      Transaction transaction = dataSession.beginTransaction();
+      dataSession.save(newSilo);
+      transaction.commit();
+      resp.sendRedirect("silos");
+    }
     doGet(req, resp);
   }
 
@@ -55,6 +64,11 @@ public class SiloCreation extends HttpServlet {
     try {
       {
         doHeader(out, session);
+                
+        if(req.getAttribute("duplicate_error") != null){
+          out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Name already used by the current user</b></label><br/>");
+        }
+
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"silo_creation\">\r\n"
             + "<label class=\"w3-text-green\"><b>Silo name</b></label>"
