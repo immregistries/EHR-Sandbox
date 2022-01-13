@@ -81,8 +81,7 @@ public class PatientCreation extends HttpServlet {
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
-    //FhirPatientCreation fhirpatient = new FhirPatientCreation();
-    //fhirpatient.dbPatientToFhirPatient(patient,);
+    System.out.println(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
     resp.sendRedirect("facility_patient_display");
     
     doGet(req, resp);

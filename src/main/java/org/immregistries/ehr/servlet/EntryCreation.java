@@ -198,9 +198,9 @@ public class EntryCreation extends HttpServlet {
               int randMonth = (int) (Math.random()*11);
               int randYear = (int) (Math.random()*20);
               int compteur =0;
-              testAdministering = faker.name().firstName();
-              testEntering = faker.name().firstName();
-              testOrdering = faker.name().firstName();
+              testAdministering = faker.name().firstName()+" "+faker.name().firstName()+" "+faker.name().lastName();
+              testEntering = faker.name().firstName()+" "+faker.name().firstName()+" "+faker.name().lastName();
+              testOrdering = faker.name().firstName()+" "+faker.name().firstName()+" "+faker.name().lastName();
               System.out.println(simpleDateFormat.format(currentDate)); 
               testAdministeredDate = simpleDateFormat.format(currentDate);
               testVaccId = Integer.toString(randomN);
