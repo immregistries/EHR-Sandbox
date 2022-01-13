@@ -20,6 +20,7 @@ import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
+import org.immregistries.ehr.FhirPatientCreation;
 
 /**
  * Servlet implementation class patient_creation
@@ -80,7 +81,10 @@ public class PatientCreation extends HttpServlet {
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
+    //FhirPatientCreation fhirpatient = new FhirPatientCreation();
+    //fhirpatient.dbPatientToFhirPatient(patient,);
     resp.sendRedirect("facility_patient_display");
+    
     doGet(req, resp);
   }
 
