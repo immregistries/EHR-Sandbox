@@ -122,39 +122,9 @@ public class FacilityPatientDisplay extends HttpServlet {
               + "\">");
         }
 
-<<<<<<< HEAD
-        out.println( "</tbody>"
-            + "</table>"
-            + "</div>"
-            + "  <div class=\"w3-right \"style=\"width:45%\">"
-            + "<table class=\" w3-table-all  \">\r\n"
-            + "<thead>"
-            + "<tr class=\"w3-green\">"
-            + "<th>Patients </th>"
-            + "</thead>"
-            + "<tbody>");
-        for (Patient patientDisplay : patientList) {
-          String link = "paramPatientId=" + patientDisplay.getPatientId();
-          out.println("<tr>"
-              + "<td class = \"w3-hover-teal\">"
-              + "<a href=\'patient_record?" + link+"\' style=\"text-decoration:none\";>"
-              + "<div style=\"text-decoration:none;height:100%\">" 
-              + patientDisplay.getNameFirst() + " " + patientDisplay.getNameLast() 
-              + "</div>"
-              + "</a>"              
-              + "</td>"
-              + "</tr>");
-        }
-        if(session.getAttribute("facility")==null) {
-          noFacility="?noFacility=1";
-        }
-        out.println("</tbody>"
-            + "</table>"
-=======
         out.println("<a href=\'facility_patient_display?" + link + "\' style=\"text-decoration:none\">"
             + "<div style=\"text-decoration:none;height:100%\">"
             + facilityDisplay.getNameDisplay()
->>>>>>> ee94a59462596a3eca502998062885b24c8ea06b
             + "</div>"
             + "</a>"
             + "</td>"
@@ -217,7 +187,7 @@ public class FacilityPatientDisplay extends HttpServlet {
         + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
         + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
-        + "</div>\r\n" + "    	</header>");
+        + "</div>\r\n" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
 
