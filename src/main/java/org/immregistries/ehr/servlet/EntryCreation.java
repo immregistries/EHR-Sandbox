@@ -49,17 +49,6 @@ public class EntryCreation extends HttpServlet {
     Patient patient = new Patient();
     VaccinationEvent vacc_ev = new VaccinationEvent();
     Vaccine vaccine = new Vaccine();  
-   /* 
-    String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    Query query = dataSession.createQuery(hql);
-    List<Silo> siloList = query.list();
-    silo = siloList.get(0);
-    
-    hql = "SELECT P.facility FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    query = dataSession.createQuery(hql);
-    List<Facility> facilityList = query.list();
-    facility = facilityList.get(0);    
-    */
 
     //silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
@@ -142,10 +131,7 @@ public class EntryCreation extends HttpServlet {
     try {
       {
         doHeader(out, session);
-        
-        /*Silo silo = new Silo();
-        silo= (Silo) req.getAttribute("silo");
-       */
+      
         Facility facility = new Facility();
         Patient patient = new Patient();
         CodeMap codeMap = CodeMapManager.getCodeMap();
@@ -157,7 +143,7 @@ public class EntryCreation extends HttpServlet {
         facility = (Facility) session.getAttribute("facility");
         patient = (Patient) session.getAttribute("patient") ;
         
-        //System.out.println(silo.getNameDisplay()+"  current silo");
+
         
         System.out.println(facility.getNameDisplay()+"  current facility");
         System.out.println(patient.getNameFirst()+"  current patient");

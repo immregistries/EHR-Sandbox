@@ -71,19 +71,19 @@ public class IISMessage extends HttpServlet {
     String nameEnter = req.getParameter("entering_cli");  
     Clinician admicli = new Clinician();
     
-    admicli.setNameLast(nameAdmi);    
-    admicli.setNameFirst("alan");
-    admicli.setNameMiddle("quentin");
+    admicli.setNameLast(nameAdmi.split(" ")[0]);    
+    admicli.setNameFirst(nameAdmi.split(" ").length>1? nameAdmi.split(" ")[1]:"");
+    admicli.setNameMiddle(nameAdmi.split(" ").length>2 ? nameAdmi.split(" ")[2]:"");
     
     Clinician ordercli = new Clinician();
-    ordercli.setNameLast(nameOrder);    
-    ordercli.setNameFirst("alan");
-    ordercli.setNameMiddle("quentin");
+    ordercli.setNameLast(nameOrder.split(" ")[0]);    
+    ordercli.setNameFirst(nameOrder.split(" ").length>1 ? nameOrder.split(" ")[1]:"");
+    ordercli.setNameMiddle(nameOrder.split(" ").length>2 ? nameOrder.split(" ")[2]:"");
     
     Clinician entercli = new Clinician();
-    entercli.setNameLast(nameEnter); 
-    entercli.setNameFirst("alan");
-    entercli.setNameMiddle("quentin");
+    entercli.setNameLast(nameEnter.split(" ")[0]); 
+    entercli.setNameFirst(nameEnter.split(" ").length>1 ? nameEnter.split(" ")[1]:"");
+    entercli.setNameMiddle(nameEnter.split(" ").length>2 ? nameEnter.split(" ")[2]:"");
 
     Date updatedDate = new Date();
     LogsOfModifications log = new LogsOfModifications();
@@ -157,76 +157,7 @@ public class IISMessage extends HttpServlet {
   }
 
   public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    /*Patient patientTest = new Patient();
-    patientTest.setAddressCity("Nancy");
-    patientTest.setAddressCountry("France");
-    patientTest.setAddressCountyParish("County");
-    patientTest.setAddressLine1("43 rue de la commanderie");
-    patientTest.setAddressLine2("adresseline2");
-    patientTest.setAddressState("state");
-    patientTest.setAddressZip("adresseZip");
-    patientTest.setBirthDate(new Date());
-    patientTest.setBirthFlag(PARAM_SHOW);
-    patientTest.setBirthOrder(PARAM_SHOW);
-    patientTest.setCreatedDate(null);
-    patientTest.setDeathDate(null);
-    patientTest.setDeathFlag(PARAM_SHOW);
-    patientTest.setEmail(PARAM_SHOW);
-    patientTest.setEthnicity(PARAM_SHOW);
-    patientTest.setFacility(null);
-    patientTest.setGuardianFirst(PARAM_SHOW);
-    patientTest.setGuardianLast(PARAM_SHOW);
-    patientTest.setGuardianMiddle(PARAM_SHOW);
-    patientTest.setGuardianRelationship(PARAM_SHOW);
-    patientTest.setMotherMaiden(PARAM_SHOW);
-    patientTest.setNameFirst(PARAM_SHOW);
-    patientTest.setNameLast(PARAM_SHOW);
-    patientTest.setNameMiddle(PARAM_SHOW);
-    patientTest.setPatientId(0);
-    patientTest.setPhone(PARAM_SHOW);
-    patientTest.setProtectionIndicator(PARAM_SHOW);
-    patientTest.setProtectionIndicatorDate(null);
-    patientTest.setPublicityIndicator(PARAM_SHOW);
-    patientTest.setPublicityIndicatorDate(null);
-    patientTest.setRace(PARAM_SHOW);
-    patientTest.setRegistryStatusIndicator(PARAM_SHOW);
-    patientTest.setRegistryStatusIndicatorDate(null);
-    patientTest.setSex(PARAM_SHOW);
-    patientTest.setSilo(null);
-    patientTest.setUpdatedDate(null);*/
     
-    /*Session dataSession = PopServlet.getDataSession();
-    Silo silo = new Silo();
-    List<Silo> siloList = null;
-    String siloId = req.getParameter("paramSiloId");
-    if (siloId != null) {
-      Query query = dataSession.createQuery("from Silo where siloId=?");
-      query.setParameter(0, Integer.parseInt(siloId));
-      siloList = query.list();
-      silo = siloList.get(0);
-      session.setAttribute("silo", silo);
-    } else {
-      silo = (Silo) session.getAttribute("silo");
-      Tester tester = (Tester) session.getAttribute("tester");
-      if (silo != null) {
-        if (!silo.getTester().getLoginUsername().equals(tester.getLoginUsername())) {
-          silo = null;
-        }
-      }
-    }
-    List<Facility> facilityList = null;
-    Query query = dataSession.createQuery("from Facility where silo=?");
-    query.setParameter(0, silo);
-    facilityList = query.list();
-
-    List<Patient> patientList = null;
-    query = dataSession.createQuery("from Patient where silo=?");
-    query.setParameter(0, silo);
-    patientList = query.list();
-    String showFacility = null;
-    if (req.getParameter("paramFacilityId") != null) {
-      showFacility = req.getParameter("paramFacilityId");
-    }*/
     HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
     Tester tester = new Tester();
     Facility facility = new Facility();
