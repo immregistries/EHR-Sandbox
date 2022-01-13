@@ -44,12 +44,14 @@ public class PatientRecord extends HttpServlet {
         Patient patient = new Patient();
         List<Patient> patientList = null;
         List<VaccinationEvent> entryList = null;
-        if(req.getParameter("paramPatientId")!=null) {
-        Query query = dataSession.createQuery("from Patient where patientId=?");
-        query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
-        patientList = query.list();
-        patient = patientList.get(0);
-        session.setAttribute("patient", patient);
+        Silo silo = (Silo) session.getAttribute("silo");
+        if(req.getParameter("paramPatientId")!=null && silo!=null) {
+          Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+          query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
+          query.setParameter(1, silo.getSiloId());
+          patientList = query.list();
+          patient = patientList.get(0);
+          session.setAttribute("patient", patient);
         }
         if(session.getAttribute("patient")!=null) {
           patient = (Patient) session.getAttribute("patient");

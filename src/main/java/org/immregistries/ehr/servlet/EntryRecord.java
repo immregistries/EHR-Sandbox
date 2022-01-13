@@ -45,8 +45,8 @@ public class EntryRecord extends HttpServlet {
     
     
     //Silo silo = new Silo();
-    Facility facility = new Facility();
-    Patient patient = new Patient();
+    Facility facility = (Facility) session.getAttribute("facility");
+    Patient patient = (Patient) session.getAttribute("patient");
     VaccinationEvent vacc_ev = new VaccinationEvent();
     Vaccine vaccine = new Vaccine();  
    /* 
@@ -62,8 +62,6 @@ public class EntryRecord extends HttpServlet {
     */
 
     //silo = (Silo) session.getAttribute("silo");
-    facility = (Facility) session.getAttribute("facility");
-    patient = (Patient) session.getAttribute("patient") ;
     String nameAdmi = req.getParameter("administering_cli");  
     String nameOrder = req.getParameter("ordering_cli");  
     String nameEnter = req.getParameter("entering_cli");  
@@ -147,30 +145,30 @@ public class EntryRecord extends HttpServlet {
         VaccinationEvent vaccination=new VaccinationEvent();
         List<VaccinationEvent>vaccinationList=null;
         List<Vaccine> entryList = null;
-        if(req.getParameter("paramEntryId")!=null) {
-        Query queryVaccination = dataSession.createQuery("from VaccinationEvent where vaccination_event_Id=?");
-        queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
-        vaccinationList= queryVaccination.list();
-        vaccination=vaccinationList.get(0);
-        vaccine = vaccination.getVaccine();
-        session.setAttribute("vaccine", vaccine);
-        Clinician ordering=vaccination.getOrderingClinician();
-        Clinician entering=vaccination.getEnteringClinician();
-        Clinician administrating=vaccination.getAdministeringClinician();
+        Patient patient = (Patient) session.getAttribute("patient");
+        Facility facility = (Facility) session.getAttribute("facility");
+
+        if(req.getParameter("paramEntryId")!=null && patient != null) {
+          Query queryVaccination = dataSession.createQuery("from VaccinationEvent where vaccination_event_Id=? and patient_id=?");
+          queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
+          queryVaccination.setParameter(1, patient.getPatientId());
+          vaccinationList= queryVaccination.list();
+          vaccination=vaccinationList.get(0);
+          vaccine = vaccination.getVaccine();
+          session.setAttribute("vaccine", vaccine);
+          Clinician ordering=vaccination.getOrderingClinician();
+          Clinician entering=vaccination.getEnteringClinician();
+          Clinician administrating=vaccination.getAdministeringClinician();
         }
         /*Silo silo = new Silo();
         silo= (Silo) req.getAttribute("silo");
        */
-        Facility facility = new Facility();
-        Patient patient = new Patient();
         CodeMap codeMap = CodeMapManager.getCodeMap();
         Collection<Code>codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
         Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
         Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         
-        facility = (Facility) session.getAttribute("facility");
-        patient = (Patient) session.getAttribute("patient") ;
         
         //System.out.println(silo.getNameDisplay()+"  current silo");
         
