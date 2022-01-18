@@ -75,7 +75,7 @@ public class FhirPatientCreation {
     String username = "default";
     String password = "default"; 
     String response;
-    
+
     response = ResourceClient.write(fhirPatient, tenantId, username, password);
         
     return response;
