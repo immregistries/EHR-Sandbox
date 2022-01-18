@@ -1,10 +1,13 @@
 package org.immregistries.ehr.servlet;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +84,9 @@ public class PatientCreation extends HttpServlet {
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
-    System.out.println(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
+    ServletContext context = getServletContext( );
+    context.log(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
+    
     resp.sendRedirect("facility_patient_display");
     
     doGet(req, resp);
