@@ -84,8 +84,10 @@ public class PatientCreation extends HttpServlet {
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
+
     ServletContext context = getServletContext( );
     // context.log(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
+
     
     resp.sendRedirect("facility_patient_display");
     
