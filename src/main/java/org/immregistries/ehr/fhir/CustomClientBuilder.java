@@ -27,7 +27,7 @@ public class CustomClientBuilder {
     // Needs to be static object and built only one time in whole project
     private static final FhirContext CTX = FhirContext.forR4();
 
-    private IGenericClient client = CTX.newRestfulGenericClient(LOCALHOST_9091);
+    private IGenericClient client = CTX.newRestfulGenericClient(FLORENCE);
     private UrlTenantSelectionInterceptor tenantSelection;
     private IClientInterceptor authInterceptor;
     private LoggingInterceptor loggingInterceptor;
