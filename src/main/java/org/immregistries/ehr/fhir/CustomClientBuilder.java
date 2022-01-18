@@ -41,7 +41,7 @@ public class CustomClientBuilder {
     }
 
     public CustomClientBuilder( String tenantId, String username, String password){
-        this(LOCALHOST_9091, tenantId, username, password);
+        this(FLORENCE, tenantId, username, password);
     }
 
     public CustomClientBuilder(String serverURL, String tenantId, String username, String password){

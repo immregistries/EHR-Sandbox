@@ -15,10 +15,12 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import ca.uhn.fhir.parser.IParser;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
+import org.immregistries.ehr.fhir.CustomClientBuilder;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.LogsOfModifications;
@@ -227,10 +229,10 @@ public class IISMessage extends HttpServlet {
     if (req.getParameter("paramFacilityId") != null) {
       showFacility = req.getParameter("paramFacilityId");
     }*/
-    HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
     Tester tester = new Tester();
     Facility facility = new Facility();
     Patient patient = new Patient();
+    IParser parser = CustomClientBuilder.getCTX().newXmlParser();
     tester = (Tester) session.getAttribute("tester");
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
@@ -243,8 +245,6 @@ public class IISMessage extends HttpServlet {
     Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
     HL7printer printerhl7 = new HL7printer();
     System.out.println(req.getParameter("administered_date"));
-    //String output= ftv.convert(new HL7printer().buildVxu(vaccine,patient,facility).toString());
-    //System.out.println(output);
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
