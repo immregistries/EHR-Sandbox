@@ -69,7 +69,7 @@ public class FhirPatientCreation {
     String password = "default"; 
     String response;
     FhirContext ctx = FhirContext.forR4();
-    String serverbase = "https://florence.immregistries.org/iis-sandbox/fhir/" + tenantId;
+    String serverbase = "https://florence.immregistries.org/iis-sandbox/fhir/";
     
     IGenericClient client = ctx.newRestfulGenericClient(serverbase);
     
@@ -78,12 +78,13 @@ public class FhirPatientCreation {
     loggingInterceptor.setLogRequestBody(true);
     
     client.registerInterceptor(loggingInterceptor);
-    UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
     loggingInterceptor.setLogRequestSummary(true);
     loggingInterceptor.setLogRequestBody(true);
     client.registerInterceptor(loggingInterceptor);
     
     // Register a tenancy interceptor to add /$tenantid to the url
+    UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
+
     tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
     client.registerInterceptor(tenantSelection);
     // Create an HTTP basic auth interceptor
