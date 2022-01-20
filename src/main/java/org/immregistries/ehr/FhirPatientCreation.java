@@ -35,7 +35,7 @@ import org.immregistries.ehr.fhir.ResourceClient;
 public class FhirPatientCreation {
   
   
-  public static String dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient,String tenantId) {
+  public static Patient dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient) {
     Patient fhirPatient = new Patient();
 
     Identifier identifier = new Identifier();
@@ -72,12 +72,12 @@ public class FhirPatientCreation {
         fhirPatient.setGender(AdministrativeGender.FEMALE);
       }
       
-    String username = "default";
-    String password = "default"; 
-    String response;
+    // String username = "default";
+    // String password = "default"; 
+    // String response;
 
-    response = ResourceClient.write(fhirPatient, tenantId, username, password);
+    // response = ResourceClient.write(fhirPatient, tenantId, username, password);
         
-    return response;
+    return fhirPatient;
   }
 }
