@@ -43,12 +43,32 @@ public class EntryRecord extends HttpServlet {
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
     
-    
+    Transaction transaction = dataSession.beginTransaction();
     //Silo silo = new Silo();
     Facility facility = (Facility) session.getAttribute("facility");
     Patient patient = (Patient) session.getAttribute("patient");
-    VaccinationEvent vacc_ev = new VaccinationEvent();
-    Vaccine vaccine = new Vaccine();  
+    
+    VaccinationEvent vacc_ev = new VaccinationEvent(); //(VaccinationEvent) session.getAttribute("vacc_ev");
+    Vaccine vaccine = new Vaccine();
+    
+    int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"))+1;
+    
+    System.out.println(paramEntry+ " paramentry + 1");
+    
+    vaccine = (Vaccine) dataSession.load(vaccine.getClass(),paramEntry);//(Vaccine) session.getAttribute("vaccine"); 
+   
+    Query query = dataSession.createQuery("From VaccinationEvent");
+    List<VaccinationEvent> list = query.list();
+    for(VaccinationEvent vaccEv : list) {
+      System.out.println("vacc Id " + vaccEv.getVaccine().getVaccineId());
+      
+      if (vaccEv.getVaccine().getVaccineId() == paramEntry) {
+        
+        vacc_ev = vaccEv;
+      }
+    }
+    
+    System.out.println(vacc_ev.getVaccine().getVaccineId() + " Vacc Id from Vacc_ev");
    /* 
     String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
     Query query = dataSession.createQuery(hql);
@@ -105,12 +125,13 @@ public class EntryRecord extends HttpServlet {
     vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
     
-    Transaction transaction = dataSession.beginTransaction();
+    
     dataSession.save(log);
     dataSession.save(admicli);
     dataSession.save(ordercli);
     dataSession.save(entercli);
-    dataSession.save(vaccine);
+    dataSession.update(vaccine);
+    
     transaction.commit();
 
     System.out.print(entercli.getClinicianId());
@@ -123,7 +144,7 @@ public class EntryRecord extends HttpServlet {
     vacc_ev.setVaccine(vaccine);  
     
     Transaction transaction2 = dataSession.beginTransaction();
-    dataSession.save(vacc_ev);
+    dataSession.update(vacc_ev);
     transaction2.commit();
     resp.sendRedirect("patient_record");
     doGet(req, resp);
@@ -140,7 +161,7 @@ public class EntryRecord extends HttpServlet {
     try {
       {
         doHeader(out, session);
-        
+        System.out.println(req.getParameter("paramEntryId"));
         Vaccine vaccine=new Vaccine();
         VaccinationEvent vaccination=new VaccinationEvent();
         List<VaccinationEvent>vaccinationList=null;
@@ -156,6 +177,7 @@ public class EntryRecord extends HttpServlet {
           vaccination=vaccinationList.get(0);
           vaccine = vaccination.getVaccine();
           session.setAttribute("vaccine", vaccine);
+          session.setAttribute("vacc_ev", vaccination);
           Clinician ordering=vaccination.getOrderingClinician();
           Clinician entering=vaccination.getEnteringClinician();
           Clinician administrating=vaccination.getAdministeringClinician();
@@ -267,15 +289,16 @@ public class EntryRecord extends HttpServlet {
               
             }
             
-            out.println( "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
                 + "<div style =\"width: 50% ;align-items:center\" "
                
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
-                + "                         <input type=\"text\" disabled    class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
+                + "                         <input type=\"text\"     class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"
-                + "                         <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+ testAmount +"\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
+                + "                         <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+ testAmount +"\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
@@ -284,18 +307,18 @@ public class EntryRecord extends HttpServlet {
                 + "    <label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
 
 
-            + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testCvx+"\" size=\"40\" maxlength=\"60\" name=\"vacc_Cvx\"/>\r\n"
+            + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testCvx+"\" size=\"40\" maxlength=\"60\" name=\"vacc_cvx\"/>\r\n"
 
                 +"</div>"
                 + "<div style =\"width: 30% ;align-items:center\" "
                 + " <label class=\"w3-text-green\"><b>Vaccine NDC code</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width:90%; height:23\" class = \" w3-margin w3-border\"  value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
+                + "                         <input type=\"text\"   style=\"width:90%; height:23\" class = \" w3-margin w3-border\"  value=\""+testNdc+"\" size=\"40\" maxlength=\"60\" name=\"vacc_ndc\"/>\r\n"
                 +"</div>"
                 + "<div style =\"width: 30% ;align-items:center\" "
                 + " <label class=\"w3-text-green\"><b>Vaccine MVX code</b></label>"
                 
                
-                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testMvx+"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
+                + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testMvx+"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
                 
 
                 +"</div>"
@@ -303,11 +326,11 @@ public class EntryRecord extends HttpServlet {
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;height:auto; display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Lot number</b></label>"
-                + "                         <input type=\"text\" disabled    style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
+                + "                         <input type=\"text\"     style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+testLot+"\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Body route</b></label>"
-                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testBodyRoute+"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
+                + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testBodyRoute+"\" size=\"40\" maxlength=\"60\" name=\"body_route\"/>\r\n"
                 
                 +"</div>"
                 + "</div>"
@@ -315,26 +338,26 @@ public class EntryRecord extends HttpServlet {
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; height:auto; display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + "    <label class=\"w3-text-green\"><b>Funding source</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
+                + "                         <input type=\"text\"   style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingSource+"\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Funding eligbility</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
+                + "                         <input type=\"text\"   style=\"width:75% \" class = \" w3-margin w3-border\"  value=\""+fundingRoute+"\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; display:flex\">"
                 + "<div style =\"width: 30%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>"               
-                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
+                + "                         <input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 30%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
+                + "                         <input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 30%; align-items:center \" "
                 +"<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
+                + "                         <input type=\"text\"   style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
                 +"</div>"
                 
                 + "</div>"
@@ -345,36 +368,36 @@ public class EntryRecord extends HttpServlet {
 
                 + " <label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
                 
-                +"<input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testVaccId+"\" size=\"40\" maxlength=\"20\" name=\"vacc_id\" />\r\n"
+                +"<input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testVaccId+"\" size=\"40\" maxlength=\"20\" name=\"vacc_id\" />\r\n"
 
                 +"</div>"
                 
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Information source</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+                + "                         <input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-                + "                         <input type=\"text\" disabled  style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+                + "                         <input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Completion status</b></label>"
-                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testCompletion+"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
+                + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testCompletion+"\" size=\"40\" maxlength=\"60\" name=\"completion_status\" />\r\n"
                 
                 +"</div>"
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Action code</b></label>"
-                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testActionCode+"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
+                + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testActionCode+"\" size=\"40\" maxlength=\"60\" name=\"action_code\"/>\r\n"
                 
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Refusal reason code</b></label>"
-                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+(testRefusal==""? "none":testRefusal)+"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
+                + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+(testRefusal==""? "none":testRefusal)+"\" size=\"40\" maxlength=\"60\" name=\"refusal_reason_code\"/>\r\n"
                 
                 +"</div>"
                 
@@ -382,10 +405,12 @@ public class EntryRecord extends HttpServlet {
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 
                 + " <label class=\"w3-text-green\"><b>Body site</b></label>"
-                + "                           <input type=\"text\" disabled   class = \" w3-margin w3-border\"  value=\""+testBodySite+"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
-                
-                      
-                +"</div>");
+                + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testBodySite+"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
+                +" <input type=\"hidden\" id=\"paramEntry\" name=\"paramEntry\" value="+req.getParameter("paramEntryId")+">"
+                   
+                +"</div>"
+                + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+                + "                </form> " + "</div\r\n");
                 doFooter(out, session);
       }
     } catch (Exception e) {
