@@ -363,7 +363,7 @@ public class EntryCreation extends HttpServlet {
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+                + "                         <input type=\"date\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Completion status</b></label>"

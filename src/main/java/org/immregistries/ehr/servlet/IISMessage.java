@@ -47,7 +47,6 @@ public class IISMessage extends HttpServlet {
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
     
-    
     //Silo silo = new Silo();
     Facility facility = new Facility();
     Patient patient = new Patient();
