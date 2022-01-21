@@ -198,9 +198,9 @@ public class EntryCreation extends HttpServlet {
               int randMonth = (int) (Math.random()*11);
               int randYear = (int) (Math.random()*20);
               int compteur =0;
-              testAdministering = faker.name().firstName();
-              testEntering = faker.name().firstName();
-              testOrdering = faker.name().firstName();
+              testAdministering = faker.name().firstName()+" "+faker.name().firstName()+" "+faker.name().lastName();
+              testEntering = faker.name().firstName()+" "+faker.name().firstName()+" "+faker.name().lastName();
+              testOrdering = faker.name().firstName()+" "+faker.name().firstName()+" "+faker.name().lastName();
               System.out.println(simpleDateFormat.format(currentDate)); 
               testAdministeredDate = simpleDateFormat.format(currentDate);
               testVaccId = Integer.toString(randomN);
@@ -435,7 +435,8 @@ public class EntryCreation extends HttpServlet {
            
 
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
-            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
+            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+            + "<button onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "                </form> " + "</div\r\n");
         doFooter(out, session);
       }
