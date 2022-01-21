@@ -52,18 +52,7 @@ public class IISMessage extends HttpServlet {
     Facility facility = new Facility();
     Patient patient = new Patient();
     VaccinationEvent vacc_ev = new VaccinationEvent();
-    Vaccine vaccine = new Vaccine();  
-   /* 
-    String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    Query query = dataSession.createQuery(hql);
-    List<Silo> siloList = query.list();
-    silo = siloList.get(0);
-    
-    hql = "SELECT P.facility FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    query = dataSession.createQuery(hql);
-    List<Facility> facilityList = query.list();
-    facility = facilityList.get(0);    
-    */
+    Vaccine vaccine = new Vaccine();
 
     //silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
@@ -159,92 +148,17 @@ public class IISMessage extends HttpServlet {
   }
 
   public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    /*Patient patientTest = new Patient();
-    patientTest.setAddressCity("Nancy");
-    patientTest.setAddressCountry("France");
-    patientTest.setAddressCountyParish("County");
-    patientTest.setAddressLine1("43 rue de la commanderie");
-    patientTest.setAddressLine2("adresseline2");
-    patientTest.setAddressState("state");
-    patientTest.setAddressZip("adresseZip");
-    patientTest.setBirthDate(new Date());
-    patientTest.setBirthFlag(PARAM_SHOW);
-    patientTest.setBirthOrder(PARAM_SHOW);
-    patientTest.setCreatedDate(null);
-    patientTest.setDeathDate(null);
-    patientTest.setDeathFlag(PARAM_SHOW);
-    patientTest.setEmail(PARAM_SHOW);
-    patientTest.setEthnicity(PARAM_SHOW);
-    patientTest.setFacility(null);
-    patientTest.setGuardianFirst(PARAM_SHOW);
-    patientTest.setGuardianLast(PARAM_SHOW);
-    patientTest.setGuardianMiddle(PARAM_SHOW);
-    patientTest.setGuardianRelationship(PARAM_SHOW);
-    patientTest.setMotherMaiden(PARAM_SHOW);
-    patientTest.setNameFirst(PARAM_SHOW);
-    patientTest.setNameLast(PARAM_SHOW);
-    patientTest.setNameMiddle(PARAM_SHOW);
-    patientTest.setPatientId(0);
-    patientTest.setPhone(PARAM_SHOW);
-    patientTest.setProtectionIndicator(PARAM_SHOW);
-    patientTest.setProtectionIndicatorDate(null);
-    patientTest.setPublicityIndicator(PARAM_SHOW);
-    patientTest.setPublicityIndicatorDate(null);
-    patientTest.setRace(PARAM_SHOW);
-    patientTest.setRegistryStatusIndicator(PARAM_SHOW);
-    patientTest.setRegistryStatusIndicatorDate(null);
-    patientTest.setSex(PARAM_SHOW);
-    patientTest.setSilo(null);
-    patientTest.setUpdatedDate(null);*/
-    
-    /*Session dataSession = PopServlet.getDataSession();
-    Silo silo = new Silo();
-    List<Silo> siloList = null;
-    String siloId = req.getParameter("paramSiloId");
-    if (siloId != null) {
-      Query query = dataSession.createQuery("from Silo where siloId=?");
-      query.setParameter(0, Integer.parseInt(siloId));
-      siloList = query.list();
-      silo = siloList.get(0);
-      session.setAttribute("silo", silo);
-    } else {
-      silo = (Silo) session.getAttribute("silo");
-      Tester tester = (Tester) session.getAttribute("tester");
-      if (silo != null) {
-        if (!silo.getTester().getLoginUsername().equals(tester.getLoginUsername())) {
-          silo = null;
-        }
-      }
-    }
-    List<Facility> facilityList = null;
-    Query query = dataSession.createQuery("from Facility where silo=?");
-    query.setParameter(0, silo);
-    facilityList = query.list();
-
-    List<Patient> patientList = null;
-    query = dataSession.createQuery("from Patient where silo=?");
-    query.setParameter(0, silo);
-    patientList = query.list();
-    String showFacility = null;
-    if (req.getParameter("paramFacilityId") != null) {
-      showFacility = req.getParameter("paramFacilityId");
-    }*/
     Tester tester = new Tester();
     Facility facility = new Facility();
     Patient patient = new Patient();
-    IParser parser = CustomClientBuilder.getCTX().newXmlParser();
     tester = (Tester) session.getAttribute("tester");
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
-    
-    System.out.println(facility.getNameDisplay()+"  current facility");
-    System.out.println(patient.getNameFirst()+"  current patient");
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
     Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
     HL7printer printerhl7 = new HL7printer();
-    System.out.println(req.getParameter("administered_date"));
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
