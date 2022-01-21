@@ -21,6 +21,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
@@ -117,6 +118,14 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(vacc_ev);
     transaction2.commit();
     resp.sendRedirect("patient_record");
+    Tester tester = new Tester();
+    tester = (Tester) session.getAttribute("tester");
+    facility = (Facility) session.getAttribute("facility");
+    patient = (Patient) session.getAttribute("patient") ;
+    req.setAttribute("MESSAGEDATA",  new HL7printer().buildVxu(vaccine,patient,facility).toString());
+    req.setAttribute("USERID",tester.getLoginUsername());
+    req.setAttribute("PASSWORD",tester.getLoginPassword());
+    req.setAttribute("FACILITYID",facility.getNameDisplay());;
     doGet(req, resp);
   }
 
