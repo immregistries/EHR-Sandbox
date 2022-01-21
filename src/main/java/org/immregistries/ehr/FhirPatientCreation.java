@@ -2,6 +2,11 @@ package org.immregistries.ehr;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.Quota.Resource;
+
+import com.mysql.cj.log.Log;
+
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
@@ -24,11 +29,13 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import org.immregistries.ehr.fhir.CustomClientBuilder;
+import org.immregistries.ehr.fhir.ResourceClient;
 
 public class FhirPatientCreation {
   
   
-  public static String dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient,String tenantId) {
+  public static Patient dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient) {
     Patient fhirPatient = new Patient();
 
     Identifier identifier = new Identifier();
@@ -65,44 +72,12 @@ public class FhirPatientCreation {
         fhirPatient.setGender(AdministrativeGender.FEMALE);
       }
       
-    String username = "default";
-    String password = "default"; 
-    String response;
-    FhirContext ctx = FhirContext.forR4();
-    String serverbase = "https://florence.immregistries.org/iis-sandbox/fhir/" + tenantId;
-    
-    IGenericClient client = ctx.newRestfulGenericClient(serverbase);
-    
-    LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
-    loggingInterceptor.setLogRequestSummary(true);
-    loggingInterceptor.setLogRequestBody(true);
-    
-    client.registerInterceptor(loggingInterceptor);
-    UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
-    loggingInterceptor.setLogRequestSummary(true);
-    loggingInterceptor.setLogRequestBody(true);
-    client.registerInterceptor(loggingInterceptor);
-    
-    // Register a tenancy interceptor to add /$tenantid to the url
-    tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
-    client.registerInterceptor(tenantSelection);
-    // Create an HTTP basic auth interceptor
-    IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
-    client.registerInterceptor(authInterceptor);
-    try {
-    MethodOutcome outcome = client.create()
-        .resource(fhirPatient)
-        .prettyPrint()
-        .encodedXml()
-        .execute();
-    
-    IIdType id = outcome.getId();
-    response = "Created resource, got ID: " + id;
-    } catch (DataFormatException e) {
-      response = "ERROR Writing Patient";
-      e.printStackTrace();
-   }
+    // String username = "default";
+    // String password = "default"; 
+    // String response;
+
+    // response = ResourceClient.write(fhirPatient, tenantId, username, password);
         
-    return response;
+    return fhirPatient;
   }
 }

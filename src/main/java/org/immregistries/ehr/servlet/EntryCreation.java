@@ -43,7 +43,7 @@ public class EntryCreation extends HttpServlet {
     
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
-    
+   
     
     //Silo silo = new Silo();
     Facility facility = new Facility();
@@ -430,7 +430,8 @@ public class EntryCreation extends HttpServlet {
            
 
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
-            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >See message</button>\r\n"
+            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+            + "<button onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "                </form> " + "</div\r\n");
         doFooter(out, session);
       }

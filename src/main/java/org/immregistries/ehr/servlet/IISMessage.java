@@ -15,10 +15,12 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import ca.uhn.fhir.parser.IParser;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
+import org.immregistries.ehr.fhir.CustomClientBuilder;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.LogsOfModifications;
@@ -50,18 +52,7 @@ public class IISMessage extends HttpServlet {
     Facility facility = new Facility();
     Patient patient = new Patient();
     VaccinationEvent vacc_ev = new VaccinationEvent();
-    Vaccine vaccine = new Vaccine();  
-   /* 
-    String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    Query query = dataSession.createQuery(hql);
-    List<Silo> siloList = query.list();
-    silo = siloList.get(0);
-    
-    hql = "SELECT P.facility FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    query = dataSession.createQuery(hql);
-    List<Facility> facilityList = query.list();
-    facility = facilityList.get(0);    
-    */
+    Vaccine vaccine = new Vaccine();
 
     //silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
@@ -157,6 +148,7 @@ public class IISMessage extends HttpServlet {
   }
 
   public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+
     
     HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
     Tester tester = new Tester();
@@ -166,16 +158,10 @@ public class IISMessage extends HttpServlet {
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
     
-    System.out.println(facility.getNameDisplay()+"  current facility");
-    System.out.println(patient.getNameFirst()+"  current patient");
-    
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
     Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
     HL7printer printerhl7 = new HL7printer();
-    System.out.println(req.getParameter("administered_date"));
-    //String output= ftv.convert(new HL7printer().buildVxu(vaccine,patient,facility).toString());
-    //System.out.println(output);
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");

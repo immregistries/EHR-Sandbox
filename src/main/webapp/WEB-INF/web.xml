@@ -80,6 +80,13 @@
   	<servlet-name>Authentication</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.Authentication</servlet-class>
   </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>FHIR_messaging</display-name>
+  	<servlet-name>FHIR_messaging</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.FhirMessaging</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>home</servlet-name>
     <url-pattern>/home</url-pattern>
@@ -127,6 +134,10 @@
   <servlet-mapping>
   	<servlet-name>Authentication</servlet-name>
   	<url-pattern>/authentication</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>FHIR_messaging</servlet-name>
+    <url-pattern>/FHIR_messaging</url-pattern>
   </servlet-mapping>
 
   <filter>
