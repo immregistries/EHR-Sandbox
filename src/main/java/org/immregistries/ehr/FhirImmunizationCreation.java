@@ -13,12 +13,12 @@ import org.immregistries.ehr.model.Vaccine;
 
 public class FhirImmunizationCreation {
   
-  public static Immunization getImmunization(VaccinationEvent dbVaccination) {
+  public static String dbVaccinationToFhirVaccination(org.immregistries.ehr.model.VaccinationEvent dbVaccination, String tenantId) {
     
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
-    
+    String response = "";
     i.setId(""+vaccine.getVaccineId());
     i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotnumber());
@@ -34,7 +34,7 @@ public class FhirImmunizationCreation {
     Location location = i.getLocationTarget();
     location.setName(facility.getNameDisplay());
 
-    return i;
+    return response;
     
   }
   
