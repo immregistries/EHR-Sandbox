@@ -78,7 +78,7 @@ public abstract class ResourceClient {
            outcome = client.create().resource(resource).execute();
            // Log the ID that the server assigned
            IIdType id = outcome.getId();
-           response = "Created resource, got ID: " + id;
+           response = "Created resource, got ID: " + id.getIdPart();
         } catch (DataFormatException e) {
            response = "ERROR Writing Patient";
            e.printStackTrace();
