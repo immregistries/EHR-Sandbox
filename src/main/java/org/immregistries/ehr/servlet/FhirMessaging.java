@@ -199,21 +199,21 @@ public class FhirMessaging extends HttpServlet {
   }
 
   private static void doImmunizationForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    VaccinationEvent vEvent = new VaccinationEvent();
+    VaccinationEvent vacc_ev = new VaccinationEvent();
 
 
     String fhirImmunizationResponse = " ";
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
 
 
-    vEvent = (VaccinationEvent) session.getAttribute("entry");
+    vacc_ev = (VaccinationEvent) session.getAttribute("vacc_ev");
     fhirImmunizationResponse = (String) session.getAttribute("fhirImmunizationResponse");
     String fhirImmunizationString = "";
     if (req.getAttribute("fhirImmunizationString") != null) {
       fhirImmunizationString = req.getParameter("fhirImmunizationString");
     } else {
       try {
-        fhirImmunizationString = parser.encodeResourceToString(FhirImmunizationCreation.dbVaccinationToFhirVaccination(vEvent));
+        fhirImmunizationString = parser.encodeResourceToString(FhirImmunizationCreation.dbVaccinationToFhirVaccination(vacc_ev));
       } catch (Exception e) {
         fhirImmunizationResponse = "Invalid Resource";
       }

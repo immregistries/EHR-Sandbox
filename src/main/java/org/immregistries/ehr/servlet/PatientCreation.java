@@ -23,7 +23,6 @@ import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.FhirPatientCreation;
 
 /**
  * Servlet implementation class patient_creation
