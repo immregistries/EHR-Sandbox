@@ -78,9 +78,13 @@ public abstract class ResourceClient {
            outcome = client.create().resource(resource).execute();
            // Log the ID that the server assigned
            IIdType id = outcome.getId();
-           response = "Created resource, got ID: " + id.getIdPart();
+           if (id != null){
+                response = "Created resource, got ID: " + id.getIdPart();
+           }else {
+               response = "Response includes no id";
+           }
         } catch (DataFormatException e) {
-           response = "ERROR Writing Patient";
+           response = "ERROR Writing FHIR Resource";
            e.printStackTrace();
         }
         return response;

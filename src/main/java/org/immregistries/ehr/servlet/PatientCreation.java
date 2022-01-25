@@ -86,9 +86,7 @@ public class PatientCreation extends HttpServlet {
     transaction.commit();
 
     ServletContext context = getServletContext( );
-    // context.log(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
 
-    System.out.println(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
     resp.sendRedirect("facility_patient_display");
     
     doGet(req, resp);

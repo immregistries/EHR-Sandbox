@@ -98,7 +98,7 @@ public class FacilityPatientDisplay extends HttpServlet {
           + silo.getNameDisplay() + "</b></label>");
       if (facility != null) {
         out.println(
-            "<label class=\"w3-text-green w3-margin w3-margin-bottom\"><b class=\"w3-margin\">     Current Facility : "
+            "<label class=\"w3-text-green w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Current Facility : "
                 + facility.getNameDisplay() + "</b></label>");
       }
       out.println(
