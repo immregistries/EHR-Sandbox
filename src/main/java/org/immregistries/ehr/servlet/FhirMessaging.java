@@ -13,10 +13,10 @@ import javax.servlet.http.HttpSession;
 import ca.uhn.fhir.parser.IParser;
 
 import org.hl7.fhir.r4.model.Immunization;
-import org.immregistries.ehr.FhirImmunizationCreation;
-import org.immregistries.ehr.FhirPatientCreation;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.fhir.CustomClientBuilder;
+import org.immregistries.ehr.fhir.FhirImmunizationCreation;
+import org.immregistries.ehr.fhir.FhirPatientCreation;
 import org.immregistries.ehr.fhir.ResourceClient;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
@@ -70,7 +70,7 @@ public class FhirMessaging extends HttpServlet {
     
           fhirImmunizationResponse = ResourceClient.write(fhirImmunization);
         } catch (Exception e) {
-          // TODO: handle exception
+          e.printStackTrace();
           fhirImmunizationResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
         session.setAttribute("fhirImmunizationResponse", fhirImmunizationResponse);
@@ -228,7 +228,7 @@ public class FhirMessaging extends HttpServlet {
         + fhirImmunizationString
         + "</textarea><br/>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"patient\">send FHIR Immunization to IIS</button>\r\n");
+        + " type=\"submit\"  name=\"resourceType\" value=\"immunization\">send FHIR Immunization to IIS</button>\r\n");
       if (fhirImmunizationResponse != null) {
         out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
           + fhirImmunizationResponse + "</label><br/>");
