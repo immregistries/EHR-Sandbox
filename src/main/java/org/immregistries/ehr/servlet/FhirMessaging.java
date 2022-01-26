@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ca.uhn.fhir.parser.IParser;
 
+import org.hl7.fhir.r4.model.Immunization;
 import org.immregistries.ehr.FhirImmunizationCreation;
 import org.immregistries.ehr.FhirPatientCreation;
 import org.immregistries.ehr.HL7printer;
@@ -54,7 +55,7 @@ public class FhirMessaging extends HttpServlet {
           fhirPatientResponse = ResourceClient.write(fhirPatient);
         } catch (Exception e) {
           // TODO: handle exception
-          fhirPatientResponse = "LOCAL PARSING ERROR : Invalid Resource" + fhirPatientString;
+          fhirPatientResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
         session.setAttribute("fhirPatientResponse", fhirPatientResponse);
         break;
@@ -70,7 +71,7 @@ public class FhirMessaging extends HttpServlet {
           fhirImmunizationResponse = ResourceClient.write(fhirImmunization);
         } catch (Exception e) {
           // TODO: handle exception
-          fhirImmunizationResponse = "LOCAL PARSING ERROR : Invalid Resource" + fhirImmunizationString;
+          fhirImmunizationResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
         session.setAttribute("fhirImmunizationResponse", fhirImmunizationResponse);
         break;
@@ -101,7 +102,7 @@ public class FhirMessaging extends HttpServlet {
         doPatientForm(out, session, req);
         out.println("</div>");
 
-        if (req.getHeader("patientOnly") != "1") { // Immunization
+        if (req.getHeader("paramEntryId") == null) { // Immunization
           out.println("<div class=\"w3-margin w3-right\" style=\"width:45%\">");
           doImmunizationForm(out, session, req);
           out.println("</div>");
@@ -212,9 +213,11 @@ public class FhirMessaging extends HttpServlet {
     if (req.getAttribute("fhirImmunizationString") != null) {
       fhirImmunizationString = req.getParameter("fhirImmunizationString");
     } else {
-      try {
-        fhirImmunizationString = parser.encodeResourceToString(FhirImmunizationCreation.dbVaccinationToFhirVaccination(vacc_ev));
+      try { 
+        Immunization immunization = FhirImmunizationCreation.dbVaccinationToFhirVaccination(vacc_ev);
+        fhirImmunizationString = parser.encodeResourceToString(immunization);
       } catch (Exception e) {
+        e.printStackTrace();
         fhirImmunizationResponse = "Invalid Resource";
       }
     }

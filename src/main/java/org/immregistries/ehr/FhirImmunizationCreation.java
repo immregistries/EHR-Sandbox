@@ -18,7 +18,6 @@ public class FhirImmunizationCreation {
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
-    String response = "";
     i.setId(""+vaccine.getVaccineId());
     i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotnumber());
@@ -26,11 +25,35 @@ public class FhirImmunizationCreation {
     i.setDoseQuantity(new Quantity());
     i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
     i.setExpirationDate(vaccine.getExpirationDate());
-    i.setStatus(Immunization.ImmunizationStatus.valueOf(vaccine.getCompletionStatus()));
+    if (vaccine.getActionCode() == "D") {
+      i.setStatus(Immunization.ImmunizationStatus.ENTEREDINERROR);
+    } else {
+      switch(vaccine.getCompletionStatus()) {
+        case "CP" : {
+          i.setStatus(Immunization.ImmunizationStatus.COMPLETED);
+          break;
+        }
+        case "NA" : {
+          i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
+          break;
+        }
+        case "PA" : {
+          i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
+          break;
+        }
+        case "RE" : {
+          i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
+          break;
+        }
+        case "" : {
+          i.setStatus(Immunization.ImmunizationStatus.NULL);
+          break;
+        }
+      }
+    }
     i.addReasonCode().addCoding().setCode(vaccine.getRefusalReasonCode());
     i.getVaccineCode().addCoding().setCode(vaccine.getVaccineCvxCode());
-    /*i.setPatient(new Reference(.getFhirServerBase() + "/Patient/"
-       + dbVaccination.getPatient().getPatientId()));*/
+    i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getPatientId()));
     Location location = i.getLocationTarget();
     location.setName(facility.getNameDisplay());
 

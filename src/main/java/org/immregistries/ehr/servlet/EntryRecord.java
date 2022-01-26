@@ -178,7 +178,7 @@ public class EntryRecord extends HttpServlet {
           vaccination=vaccinationList.get(0);
           vaccine = vaccination.getVaccine();
           session.setAttribute("vaccine", vaccine);
-          // session.setAttribute("vacc_ev", vaccination);
+          session.setAttribute("vacc_ev", vaccination);
           Clinician ordering=vaccination.getOrderingClinician();
           Clinician entering=vaccination.getEnteringClinician();
           Clinician administrating=vaccination.getAdministeringClinician();
@@ -412,7 +412,8 @@ public class EntryRecord extends HttpServlet {
                 + "</div>"
                 + "<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\">Validate</button>\r\n"
                 + "</form>" 
-                + "<button onclick=\"location.href='FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging</button>\r\n"
+                + "<button onclick=\"location.href='FHIR_messaging?paramEntryId=" + req.getParameter("paramEntryId") + "'\" " 
+                + "class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging</button>\r\n"
                 + "</div\r\n");
                 doFooter(out, session);
       }
