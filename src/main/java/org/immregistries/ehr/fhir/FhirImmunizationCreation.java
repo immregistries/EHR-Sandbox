@@ -1,7 +1,11 @@
 package org.immregistries.ehr.fhir;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Location;
@@ -13,12 +17,19 @@ import org.immregistries.ehr.model.Vaccine;
 
 public class FhirImmunizationCreation {
   
-  public static Immunization dbVaccinationToFhirVaccination(org.immregistries.ehr.model.VaccinationEvent dbVaccination) {
+  public static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
     
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
-    i.setId(""+vaccine.getVaccineId());
+
+    // i.setId(""+vaccine.getVaccineId());
+    Identifier identifier = new Identifier();
+    identifier.setValue(""+dbVaccination.getVaccinationEventId());
+    List<Identifier> li = new ArrayList<>();
+    li.add(identifier);
+    i.setIdentifier(li);
+
     i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotnumber());
     i.getOccurrenceDateTimeType().setValue(vaccine.getAdministeredDate());
