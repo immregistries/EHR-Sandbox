@@ -4,13 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.StringType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
@@ -23,7 +21,7 @@ public class FhirImmunizationCreation {
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
 
-    // i.setId(""+vaccine.getVaccineId());
+    i.setId(""+vaccine.getVaccineId());
     Identifier identifier = new Identifier();
     identifier.setValue(""+dbVaccination.getVaccinationEventId());
     List<Identifier> li = new ArrayList<>();

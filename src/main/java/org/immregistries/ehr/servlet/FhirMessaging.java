@@ -3,8 +3,8 @@ package org.immregistries.ehr.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,22 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ca.uhn.fhir.parser.IParser;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hl7.fhir.r4.model.Immunization;
-import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.fhir.CustomClientBuilder;
 import org.immregistries.ehr.fhir.FhirImmunizationCreation;
 import org.immregistries.ehr.fhir.FhirPatientCreation;
 import org.immregistries.ehr.fhir.ResourceClient;
-import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.LogsOfModifications;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
-import org.immregistries.ehr.model.Vaccine;
-import org.immregistries.iis.kernal.model.CodeMapManager;
-import io.github.linuxforhealth.hl7.HL7ToFHIRConverter;
 
 /**
  * Servlet implementation class FHIR_messaging
@@ -44,7 +39,7 @@ public class FhirMessaging extends HttpServlet {
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
     String resourceType = req.getParameter("resourceType");
     switch(resourceType){
-      case "patient":{
+      case "Patient":{
         String fhirPatientString = req.getParameter("fhirPatientString");
         String fhirPatientResponse = "";
         try {
@@ -60,7 +55,7 @@ public class FhirMessaging extends HttpServlet {
         session.setAttribute("fhirPatientResponse", fhirPatientResponse);
         break;
       }
-      case "immunization":{
+      case "Immunization":{
         String fhirImmunizationString = req.getParameter("fhirImmunizationString");
         String fhirImmunizationResponse = "";
         try {
@@ -102,7 +97,7 @@ public class FhirMessaging extends HttpServlet {
         doPatientForm(out, session, req);
         out.println("</div>");
 
-        if (req.getHeader("paramEntryId") == null) { // Immunization
+        if (req.getParameter("paramEntryId") != null) { // Immunization
           out.println("<div class=\"w3-margin w3-right\" style=\"width:45%\">");
           doImmunizationForm(out, session, req);
           out.println("</div>");
@@ -138,12 +133,17 @@ public class FhirMessaging extends HttpServlet {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
-  private static void doLoginForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    Tester tester = new Tester();
-    Facility facility = new Facility();
+  protected static void doLoginForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+    Tester tester;
+    Facility facility;
 
     tester = (Tester) session.getAttribute("tester");
     facility = (Facility) session.getAttribute("facility");
+
+    if (facility == null) {
+      facility = new Facility();
+      facility.setNameDisplay(" ");;
+    }
     
     out.println("<div>");
     out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
@@ -191,7 +191,7 @@ public class FhirMessaging extends HttpServlet {
         + fhirPatientString
         + "</textarea><br/>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"patient\">send FHIR Patient to IIS</button>\r\n");
+        + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">send FHIR Patient to IIS</button>\r\n");
       if (fhirPatientResponse != null) {
         out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
           + fhirPatientResponse + "</label><br/>");
@@ -201,13 +201,20 @@ public class FhirMessaging extends HttpServlet {
 
   private static void doImmunizationForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
     VaccinationEvent vacc_ev = new VaccinationEvent();
+    Patient patient = (Patient) session.getAttribute("patient");
+    Session dataSession = PopServlet.getDataSession();
+    
+    Query queryVaccination = dataSession.createQuery("from VaccinationEvent where vaccination_event_Id=? and patient_id=?");
+    queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
+    queryVaccination.setParameter(1, patient.getPatientId());
+
+    List<VaccinationEvent> vaccinationList = queryVaccination.list();
+    vacc_ev=vaccinationList.get(0);
 
 
     String fhirImmunizationResponse = " ";
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
 
-
-    vacc_ev = (VaccinationEvent) session.getAttribute("vacc_ev");
     fhirImmunizationResponse = (String) session.getAttribute("fhirImmunizationResponse");
     String fhirImmunizationString = "";
     if (req.getAttribute("fhirImmunizationString") != null) {
@@ -228,7 +235,7 @@ public class FhirMessaging extends HttpServlet {
         + fhirImmunizationString
         + "</textarea><br/>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"immunization\">send FHIR Immunization to IIS</button>\r\n");
+        + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">send FHIR Immunization to IIS</button>\r\n");
       if (fhirImmunizationResponse != null) {
         out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
           + fhirImmunizationResponse + "</label><br/>");

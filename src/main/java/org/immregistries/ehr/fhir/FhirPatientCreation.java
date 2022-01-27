@@ -35,7 +35,8 @@ public class FhirPatientCreation {
   
   public static Patient dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient) {
     Patient fhirPatient = new Patient();
-
+    fhirPatient.setId("" + dbPatient.getPatientId());
+    
     Identifier identifier = new Identifier();
     identifier.setValue(""+dbPatient.getPatientId());
     List<Identifier> li = new ArrayList<>();
