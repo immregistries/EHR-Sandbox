@@ -45,14 +45,14 @@ public class FhirMessaging extends HttpServlet {
         try {
           org.hl7.fhir.r4.model.Patient fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
               .parseResource(fhirPatientString);
-          fhirPatientResponse = (String) session.getAttribute("fhirPatientResponse");
+          fhirPatientResponse = (String) req.getAttribute("fhirPatientResponse");
     
           fhirPatientResponse = ResourceClient.write(fhirPatient);
         } catch (Exception e) {
           // TODO: handle exception
           fhirPatientResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
-        session.setAttribute("fhirPatientResponse", fhirPatientResponse);
+        req.setAttribute("fhirPatientResponse", fhirPatientResponse);
         break;
       }
       case "Immunization":{
@@ -61,17 +61,18 @@ public class FhirMessaging extends HttpServlet {
         try {
           org.hl7.fhir.r4.model.Immunization fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
               .parseResource(fhirImmunizationString);
-          fhirImmunizationResponse = (String) session.getAttribute("fhirImmunizationResponse");
+          fhirImmunizationResponse = (String) req.getAttribute("fhirImmunizationResponse");
     
           fhirImmunizationResponse = ResourceClient.write(fhirImmunization);
         } catch (Exception e) {
           e.printStackTrace();
           fhirImmunizationResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
-        session.setAttribute("fhirImmunizationResponse", fhirImmunizationResponse);
+        req.setAttribute("fhirImmunizationResponse", fhirImmunizationResponse);
         break;
       }
     }
+
     doGet(req, resp);
   }
 
@@ -89,7 +90,7 @@ public class FhirMessaging extends HttpServlet {
         doHeader(out, session, req);
 
         out.println("<div id=\"formulaire\">");
-        out.println("<form method=\"POST\"  target=\"FHIR_Messaging\">");
+        out.println("<form method=\"POST\">");
         // IIS authentication form
         doLoginForm(out, session, req);
 
@@ -173,7 +174,7 @@ public class FhirMessaging extends HttpServlet {
 
 
     patient = (Patient) session.getAttribute("patient");
-    fhirPatientResponse = (String) session.getAttribute("fhirPatientResponse");
+    fhirPatientResponse = (String) req.getAttribute("fhirPatientResponse");
     String fhirPatientString = "";
     if (req.getAttribute("fhirPatientString") != null) {
       fhirPatientString = req.getParameter("fhirPatientString");
@@ -215,7 +216,7 @@ public class FhirMessaging extends HttpServlet {
     String fhirImmunizationResponse = " ";
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
 
-    fhirImmunizationResponse = (String) session.getAttribute("fhirImmunizationResponse");
+    fhirImmunizationResponse = (String) req.getAttribute("fhirImmunizationResponse");
     String fhirImmunizationString = "";
     if (req.getAttribute("fhirImmunizationString") != null) {
       fhirImmunizationString = req.getParameter("fhirImmunizationString");
