@@ -204,7 +204,7 @@ public class FhirMessaging extends HttpServlet {
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
         + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">send FHIR Patient to IIS</button>\r\n");
         if (!fhirPatientResponseList.isEmpty()) {
-          out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"\r\n"
+          out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
             + "rows=\"8\" cols=\"200\" readonly>\r\n");
           for (String fhirImmunizationResponse : fhirPatientResponseList) {
             out.println(fhirImmunizationResponse);
@@ -254,8 +254,8 @@ public class FhirMessaging extends HttpServlet {
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
         + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">send FHIR Immunization to IIS</button>\r\n");
       if (!fhirImmunizationResponseList.isEmpty()) {
-        out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"\r\n"
-          + "rows=\"8\" cols=\"200\" readonly>\r\n");
+        out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
+          + "rows=\"8\" cols=\"200\" readonly>");
         for (String fhirImmunizationResponse : fhirImmunizationResponseList) {
           out.println(fhirImmunizationResponse);
         }
