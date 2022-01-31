@@ -13,8 +13,6 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Resource;
 import org.immregistries.ehr.model.Tester;
 
 
@@ -78,9 +76,13 @@ public abstract class ResourceClient {
            outcome = client.create().resource(resource).execute();
            // Log the ID that the server assigned
            IIdType id = outcome.getId();
-           response = "Created resource, got ID: " + id;
+           if (id != null){
+                response = "Created resource, got ID: " + id.getIdPart();
+           }else {
+               response = "Response includes no id";
+           }
         } catch (DataFormatException e) {
-           response = "ERROR Writing Patient";
+           response = "ERROR Writing FHIR Resource";
            e.printStackTrace();
         }
         return response;
@@ -91,6 +93,21 @@ public abstract class ResourceClient {
         IGenericClient client = new CustomClientBuilder(tenantId, username, password).getClient();
         String response;
         MethodOutcome outcome = client.delete().resourceById(new IdType(resourceType, resourceId)).execute();
+
+        OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
+        if (opeOutcome != null) {
+            response = opeOutcome.getIssueFirstRep().getDetails().getCodingFirstRep().getCode();
+        }
+        else{
+            response = "Resource not found";
+        }
+        return response;
+    }
+
+    public static String update(IBaseResource resource, String resourceId, String tenantId, String username, String password) {
+        IGenericClient client = new CustomClientBuilder(tenantId, username, password).getClient();
+        String response;
+        MethodOutcome outcome = client.update().resource(resource).execute();
 
         OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
         if (opeOutcome != null) {

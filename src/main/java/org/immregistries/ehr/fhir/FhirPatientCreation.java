@@ -1,4 +1,4 @@
-package org.immregistries.ehr;
+package org.immregistries.ehr.fhir;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +29,14 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
-import org.immregistries.ehr.fhir.CustomClientBuilder;
-import org.immregistries.ehr.fhir.ResourceClient;
 
 public class FhirPatientCreation {
   
   
   public static Patient dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient) {
     Patient fhirPatient = new Patient();
-
+    fhirPatient.setId("" + dbPatient.getPatientId());
+    
     Identifier identifier = new Identifier();
     identifier.setValue(""+dbPatient.getPatientId());
     List<Identifier> li = new ArrayList<>();

@@ -2,6 +2,7 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -73,7 +74,17 @@ public class EntryCreation extends HttpServlet {
     entercli.setNameFirst(nameEnter.split(" ").length>1 ? nameEnter.split(" ")[1]:"");
     entercli.setNameMiddle(nameEnter.split(" ").length>2 ? nameEnter.split(" ")[2]:"");
 
-    Date updatedDate = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    Date administeredDate=new Date();
+    Date updatedDate=new Date();
+    Date expiredDate=new Date();
+    try {
+      administeredDate = sdf.parse(req.getParameter("administered_date"));
+      expiredDate = sdf.parse(req.getParameter("expiration_date"));
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     LogsOfModifications log = new LogsOfModifications();
     log.setModifDate(updatedDate);
     log.setModifType("modif");
@@ -183,7 +194,7 @@ public class EntryCreation extends HttpServlet {
         String fundingSource="";
         String fundingRoute="";
         Faker faker = new Faker();
-        String pattern = "yyyyMMdd";
+        String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date currentDate = new Date();
         String streetAddress = faker.address().streetAddress();
@@ -249,7 +260,7 @@ public class EntryCreation extends HttpServlet {
                 + "<div style =\"width: 50% ;align-items:center\" "
                
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
-                + "                         <input type=\"text\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
+                + "                         <input type=\"date\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"

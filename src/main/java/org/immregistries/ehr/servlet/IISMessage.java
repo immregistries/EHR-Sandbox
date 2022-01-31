@@ -74,15 +74,27 @@ public class IISMessage extends HttpServlet {
     entercli.setNameLast(nameEnter.split(" ")[0]); 
     entercli.setNameFirst(nameEnter.split(" ").length>1 ? nameEnter.split(" ")[1]:"");
     entercli.setNameMiddle(nameEnter.split(" ").length>2 ? nameEnter.split(" ")[2]:"");
-
-    Date updatedDate = new Date();
+    System.out.println(req.getParameter("administered_date"));
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    Date administeredDate=new Date();
+    Date updatedDate=new Date();
+    Date expiredDate=new Date();
+    try {
+      administeredDate = sdf.parse(req.getParameter("administered_date"));
+      expiredDate = sdf.parse(req.getParameter("expiration_date"));
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
     LogsOfModifications log = new LogsOfModifications();
     log.setModifDate(updatedDate);
     log.setModifType("modif");
+
     String vaccCode = req.getParameter("action_code");
     vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
-    vaccine.setAdministeredDate(updatedDate);
+    vaccine.setAdministeredDate(administeredDate);
     vaccine.setBodyRoute(req.getParameter("body_route"));
     vaccine.setBodySite(req.getParameter("body_site"));
     vaccine.setCompletionStatus(req.getParameter("completion_status"));
@@ -94,7 +106,7 @@ public class IISMessage extends HttpServlet {
     vaccine.setLotnumber(req.getParameter("lot_number"));
     vaccine.setManufacturer(req.getParameter("manufacturer"));
     vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
-    vaccine.setUpdatedDate(updatedDate);
+    vaccine.setUpdatedDate(expiredDate);
     vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
     vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
@@ -157,8 +169,9 @@ public class IISMessage extends HttpServlet {
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
     
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
+    System.out.println(req.getParameter("administered_date")+" "+sdf.parse(req.getParameter("administered_date")));
     Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
     HL7printer printerhl7 = new HL7printer();
     out.println("<html>");
