@@ -48,19 +48,18 @@ public class EntryRecord extends HttpServlet {
     Facility facility = (Facility) session.getAttribute("facility");
     Patient patient = (Patient) session.getAttribute("patient");
     
-    VaccinationEvent vacc_ev = new VaccinationEvent(); //(VaccinationEvent) session.getAttribute("vacc_ev");
+    VaccinationEvent vacc_ev = new VaccinationEvent(); 
     Vaccine vaccine = new Vaccine();
     
     int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"))+1;
     
-    System.out.println(paramEntry+ " paramentry + 1");
     
-    vaccine = (Vaccine) dataSession.load(vaccine.getClass(),paramEntry);//(Vaccine) session.getAttribute("vaccine"); 
+    vaccine = (Vaccine) dataSession.load(vaccine.getClass(),paramEntry);
    
     Query query = dataSession.createQuery("From VaccinationEvent");
     List<VaccinationEvent> list = query.list();
     for(VaccinationEvent vaccEv : list) {
-      System.out.println("vacc Id " + vaccEv.getVaccine().getVaccineId());
+      
       
       if (vaccEv.getVaccine().getVaccineId() == paramEntry) {
         
@@ -80,26 +79,36 @@ public class EntryRecord extends HttpServlet {
     List<Facility> facilityList = query.list();
     facility = facilityList.get(0);    
     */
-
+    
     //silo = (Silo) session.getAttribute("silo");
     String nameAdmi = req.getParameter("administering_cli");  
     String nameOrder = req.getParameter("ordering_cli");  
-    String nameEnter = req.getParameter("entering_cli");  
+    String nameEnter = req.getParameter("entering_cli"); 
     Clinician admicli = new Clinician();
-    
-    admicli.setNameLast(nameAdmi.split(" ")[0]);    
-    admicli.setNameFirst(nameAdmi.split(" ").length>1 ? "":nameAdmi.split(" ")[1]);
-    admicli.setNameMiddle(nameAdmi.split(" ").length>2 ? "":nameAdmi.split(" ")[2]);
-    
     Clinician ordercli = new Clinician();
-    ordercli.setNameLast(nameOrder.split(" ")[0]);    
-    ordercli.setNameFirst(nameOrder.split(" ").length>1 ? "":nameOrder.split(" ")[1]);
-    ordercli.setNameMiddle(nameOrder.split(" ").length>2 ? "":nameOrder.split(" ")[2]);
-    
     Clinician entercli = new Clinician();
-    entercli.setNameLast(nameEnter.split(" ")[0]); 
-    entercli.setNameFirst(nameEnter.split(" ").length>1 ? "":nameEnter.split(" ")[1]);
-    entercli.setNameMiddle(nameEnter.split(" ").length>2 ? "":nameEnter.split(" ")[2]);
+    
+    admicli =  (Clinician) dataSession.load(admicli.getClass(), vacc_ev.getAdministeringClinician().getClinicianId()); 
+    ordercli =  (Clinician) dataSession.load(ordercli.getClass(), vacc_ev.getOrderingClinician().getClinicianId()); 
+    entercli =  (Clinician) dataSession.load(entercli.getClass(), vacc_ev.getEnteringClinician().getClinicianId()); 
+    
+    
+    admicli.setNameLast(nameAdmi.split("").length>0 ? nameAdmi.split(" ")[0]:" ");    
+    admicli.setNameFirst(nameAdmi.split(" ").length>1 ? nameAdmi.split(" ")[1]: " ");
+    admicli.setNameMiddle(nameAdmi.split(" ").length>2 ? nameAdmi.split(" ")[2]:" ");
+    
+    
+    ordercli.setNameLast(nameOrder.split(" ").length>0 ? nameOrder.split(" ")[0]:" ");    
+    ordercli.setNameFirst(nameOrder.split(" ").length>1 ? nameOrder.split(" ")[1]:" ");
+    ordercli.setNameMiddle(nameOrder.split(" ").length>2 ? nameOrder.split(" ")[2]:" ");
+    
+    
+    
+    entercli.setNameLast(nameEnter.split(" ").length>0 ? nameEnter.split(" ")[0]:" "); 
+    entercli.setNameFirst(nameEnter.split(" ").length>1 ? nameEnter.split(" ")[1]:" ");
+    entercli.setNameMiddle(nameEnter.split(" ").length>2 ? nameEnter.split(" ")[2]:" ");
+    System.out.println(nameEnter.split(" ")[0]);
+    System.out.println(entercli.getNameFirst()+" entercli First name after set");
 
     Date updatedDate = new Date();
     LogsOfModifications log = new LogsOfModifications();
@@ -124,17 +133,8 @@ public class EntryRecord extends HttpServlet {
     vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
     vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
+   
     
-    
-    dataSession.save(log);
-    dataSession.save(admicli);
-    dataSession.save(ordercli);
-    dataSession.save(entercli);
-    dataSession.update(vaccine);
-    
-    transaction.commit();
-
-    System.out.print(entercli.getClinicianId());
     vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);
     vacc_ev.setPatient(patient);
@@ -143,11 +143,16 @@ public class EntryRecord extends HttpServlet {
     vacc_ev.setAdministeringClinician(admicli);
     vacc_ev.setVaccine(vaccine);  
     
-    Transaction transaction2 = dataSession.beginTransaction();
+    
+    dataSession.save(log);
+    dataSession.update(admicli);
+    dataSession.update(ordercli);
+    dataSession.update(entercli);
+    dataSession.update(vaccine);
     dataSession.update(vacc_ev);
-    transaction2.commit();
+    transaction.commit();
     resp.sendRedirect("patient_record");
-    doGet(req, resp);
+   // doGet(req, resp);
   }
 
   @Override
@@ -374,7 +379,7 @@ public class EntryRecord extends HttpServlet {
                 
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Information source</b></label>"
-                + "                         <input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+                + "                         <input type=\"text\"   style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"information_source\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"

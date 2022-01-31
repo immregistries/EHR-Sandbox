@@ -361,7 +361,7 @@ public class EntryCreation extends HttpServlet {
                 
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Information source</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"information_source\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
