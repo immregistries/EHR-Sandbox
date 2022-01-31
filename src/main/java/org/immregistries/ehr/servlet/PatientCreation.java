@@ -4,9 +4,12 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
-
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -142,17 +145,17 @@ public class PatientCreation extends HttpServlet {
         String testGuardMiddleName="";
         String testGuardRelationship="";
         Faker faker = new Faker();
-        String pattern = "yyyyMMdd";
+        String pattern = "yyyy/MM/dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date birthDate = new Date();
         int randDay = (int) (Math.random()*30+1);
         int randMonth = (int) (Math.random()*11);
         int randYear = (int) (Math.random()*121+1900);
-        birthDate.setDate(randDay);
-        birthDate.setMonth(randMonth);
-        birthDate.setYear(randYear);
+        //birthDate.setDate(randDay);
+        //birthDate.setMonth(randMonth);
+        //birthDate.setYear(randYear);
         if(req.getParameter("testPatient")!=null) {
-          testDoB=simpleDateFormat.format(birthDate);;
+          testDoB=simpleDateFormat.format(birthDate);
           testNameFirst=faker.name().firstName();
           testNameLast=faker.name().lastName();
           testMiddleName=faker.name().firstName();
@@ -161,7 +164,37 @@ public class PatientCreation extends HttpServlet {
             testSex="F";
           }else {
             testSex="M";
+          }     
+          
+          long aDay = TimeUnit.DAYS.toMillis(1);
+          long now = new Date().getTime();
+          Date twoYearsAgo = new Date(now - aDay * 365 * 2);
+          
+          Date eightyYearsAgo = new Date(now - aDay * 365 * 80);
+          Date fourtyYearsAgo = new Date(now - aDay * 365 * 40);
+          Date tenDaysAgo = new Date(now - aDay * 10);
+          Date fourYearsAgo = new Date(now - aDay*365*4);
+         
+          testDoB = simpleDateFormat.format(between(eightyYearsAgo, fourtyYearsAgo));
+          
+          Random rand = new Random();
+          
+       
+          int randomDecision = rand.nextInt(100);
+          if(randomDecision<30) {
+            testDeathDate = simpleDateFormat.format(between(fourYearsAgo,tenDaysAgo ));
           }
+          else {
+            testDeathDate = "";
+          }
+          
+          
+          testDeathDate = simpleDateFormat.format(between(fourYearsAgo,tenDaysAgo ));
+          testPubIndicDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
+          testProtecIndicDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
+          testRegIndicDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
+          testRegStatusDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
+          
           testRace="Asian";
           testAdress=faker.address().buildingNumber()+faker.address().streetName();
           testCity=faker.address().city();
@@ -174,14 +207,9 @@ public class PatientCreation extends HttpServlet {
           testBirthFlag="";
           testBirthOrder="";
           testDeathFlag="";
-          testDeathDate="O";
           testPubIndic="O";
-          testPubIndicDate="O";
           testProtecIndic="O";
-          testProtecIndicDate="O";
-          testRegIndicDate="O";
           testRegStatus="O";
-          testRegStatusDate="O";
           testGuardNameFirst=faker.name().firstName();
           testGuardNameLast=testNameLast;
           testGuardMiddleName=faker.name().firstName();
@@ -471,5 +499,14 @@ public class PatientCreation extends HttpServlet {
   public static void doFooter(PrintWriter out, HttpSession session) {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
+  
+  public static Date between(Date startInclusive, Date endExclusive) {
+    long startMillis = startInclusive.getTime();
+    long endMillis = endExclusive.getTime();
+    long randomMillisSinceEpoch = ThreadLocalRandom
+      .current()
+      .nextLong(startMillis, endMillis);
 
+    return new Date(randomMillisSinceEpoch);
+}
 }

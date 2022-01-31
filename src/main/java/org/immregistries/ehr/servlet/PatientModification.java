@@ -133,12 +133,15 @@ public class PatientModification extends HttpServlet{
         String testBirthFlag=""+patient.getBirthFlag();
         String testBirthOrder=""+patient.getBirthOrder();
         String testDeathFlag=""+patient.getDeathFlag();
-        String testDeathDate=""+sdf.format(patient.getDeathDate());
+        String testDeathDate = null; 
+        if(patient.getDeathDate()!=null) {
+           testDeathDate=""+sdf.format(patient.getDeathDate());
+        }
         String testPubIndic=""+patient.getPublicityIndicator();
         String testPubIndicDate=""+patient.getPublicityIndicatorDate();
         String testProtecIndic=""+patient.getProtectionIndicator();
         String testProtecIndicDate=""+patient.getProtectionIndicatorDate();
-        String testRegIndicDate=""+patient.getRegistryStatusIndicatorDate().toString();
+        String testRegIndicDate=""+sdf.format(patient.getRegistryStatusIndicatorDate());
         String testRegStatus=""+patient.getRegistryStatusIndicator();
         String testRegStatusDate=""+patient.getRegistryStatusIndicatorDate();
         String testGuardNameFirst=""+patient.getGuardianFirst();
