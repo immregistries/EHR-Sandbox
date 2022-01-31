@@ -3,6 +3,7 @@ package org.immregistries.ehr.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -41,6 +42,8 @@ public class FhirMessaging extends HttpServlet {
     switch(resourceType){
       case "Patient":{
         String fhirPatientString = req.getParameter("fhirPatientString");
+        List<String> fhirPatientResponseList = (List<String>) session.getAttribute("fhirPatientResponseList");
+
         String fhirPatientResponse = "";
         try {
           org.hl7.fhir.r4.model.Patient fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
@@ -52,11 +55,14 @@ public class FhirMessaging extends HttpServlet {
           // TODO: handle exception
           fhirPatientResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
-        req.setAttribute("fhirPatientResponse", fhirPatientResponse);
+        fhirPatientResponseList.add(fhirPatientResponse);
+        session.setAttribute("fhirPatientResponseList", fhirPatientResponseList);
         break;
       }
       case "Immunization":{
         String fhirImmunizationString = req.getParameter("fhirImmunizationString");
+        List<String> fhirImmunizationResponseList = (List<String>) session.getAttribute("fhirImmunizationResponseList");
+
         String fhirImmunizationResponse = "";
         try {
           org.hl7.fhir.r4.model.Immunization fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
@@ -68,7 +74,8 @@ public class FhirMessaging extends HttpServlet {
           e.printStackTrace();
           fhirImmunizationResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
-        req.setAttribute("fhirImmunizationResponse", fhirImmunizationResponse);
+        fhirImmunizationResponseList.add(fhirImmunizationResponse);
+        session.setAttribute("fhirImmunizationResponseList", fhirImmunizationResponseList);
         break;
       }
     }
@@ -169,12 +176,15 @@ public class FhirMessaging extends HttpServlet {
     Facility facility = new Facility();
     Patient patient = new Patient();
 
-    String fhirPatientResponse = " ";
+    List<String> fhirPatientResponseList = (List<String>) session.getAttribute("fhirPatientResponseList");
+    if (fhirPatientResponseList == null){
+      fhirPatientResponseList = new ArrayList<String>();
+      session.setAttribute("fhirPatientResponseList", fhirPatientResponseList);
+    }
+
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
 
-
     patient = (Patient) session.getAttribute("patient");
-    fhirPatientResponse = (String) req.getAttribute("fhirPatientResponse");
     String fhirPatientString = "";
     if (req.getAttribute("fhirPatientString") != null) {
       fhirPatientString = req.getParameter("fhirPatientString");
@@ -182,7 +192,7 @@ public class FhirMessaging extends HttpServlet {
       try {
         fhirPatientString = parser.encodeResourceToString(FhirPatientCreation.dbPatientToFhirPatient(patient));
       } catch (Exception e) {
-        fhirPatientResponse = "Invalid Resource";
+        fhirPatientResponseList.add("Parsing Error : Invalid Resource");
       }
     }
 
@@ -193,10 +203,14 @@ public class FhirMessaging extends HttpServlet {
         + "</textarea><br/>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
         + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">send FHIR Patient to IIS</button>\r\n");
-      if (fhirPatientResponse != null) {
-        out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
-          + fhirPatientResponse + "</label><br/>");
-      }
+        if (!fhirPatientResponseList.isEmpty()) {
+          out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"\r\n"
+            + "rows=\"8\" cols=\"200\" readonly>\r\n");
+          for (String fhirImmunizationResponse : fhirPatientResponseList) {
+            out.println(fhirImmunizationResponse);
+          }
+          out.println("</textarea><br/>");
+        }
     }
   }
 
@@ -212,11 +226,13 @@ public class FhirMessaging extends HttpServlet {
     List<VaccinationEvent> vaccinationList = queryVaccination.list();
     vacc_ev=vaccinationList.get(0);
 
+    List<String> fhirImmunizationResponseList = (List<String>) session.getAttribute("fhirImmunizationResponseList");
+    if (fhirImmunizationResponseList == null){
+      fhirImmunizationResponseList = new ArrayList<String>();
+      session.setAttribute("fhirImmunizationResponseList", fhirImmunizationResponseList);
+    }
 
-    String fhirImmunizationResponse = " ";
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
-
-    fhirImmunizationResponse = (String) req.getAttribute("fhirImmunizationResponse");
     String fhirImmunizationString = "";
     if (req.getAttribute("fhirImmunizationString") != null) {
       fhirImmunizationString = req.getParameter("fhirImmunizationString");
@@ -226,20 +242,24 @@ public class FhirMessaging extends HttpServlet {
         fhirImmunizationString = parser.encodeResourceToString(immunization);
       } catch (Exception e) {
         e.printStackTrace();
-        fhirImmunizationResponse = "Invalid Resource";
+        fhirImmunizationResponseList.add("Invalid Resource");
       }
     }
 
-    { // Patient
+    { // Immunization
       out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\" name=\"fhirImmunizationString\"\r\n"
         + "rows=\"20\" cols=\"200\">\r\n"
         + fhirImmunizationString
         + "</textarea><br/>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
         + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">send FHIR Immunization to IIS</button>\r\n");
-      if (fhirImmunizationResponse != null) {
-        out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
-          + fhirImmunizationResponse + "</label><br/>");
+      if (!fhirImmunizationResponseList.isEmpty()) {
+        out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"\r\n"
+          + "rows=\"8\" cols=\"200\" readonly>\r\n");
+        for (String fhirImmunizationResponse : fhirImmunizationResponseList) {
+          out.println(fhirImmunizationResponse);
+        }
+        out.println("</textarea><br/>");
       }
     }
 
