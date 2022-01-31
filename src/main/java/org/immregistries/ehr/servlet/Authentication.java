@@ -35,7 +35,7 @@ public class Authentication extends HttpServlet {
     ImmunizationRegistry newIR = new ImmunizationRegistry();
     List<Tester> testerList = null;
     List<ImmunizationRegistry> IRList = null;
-    Query query = dataSession.createQuery("from Tester where loginUsername= ?");
+    Query query = dataSession.createQuery("from Tester where loginUsername=?");
     String username = req.getParameter("username");
     String password = req.getParameter("pwd");
     String passwordIR = password;
@@ -46,8 +46,8 @@ public class Authentication extends HttpServlet {
       // Checking if password matches hash
       if (BCrypt.checkpw(password, testerList.get(0).getLoginPassword())) {
         newTester = testerList.get(0);
-        query = dataSession.createQuery("from ImmunizationRegistry where testerId= ?");
-        query.setParameter(0, newTester.getTesterId());
+        query = dataSession.createQuery("from ImmunizationRegistry where tester=?");
+        query.setParameter(0,newTester);
         IRList = query.list();
         newIR = IRList.get(0);
       } else {
@@ -70,7 +70,7 @@ public class Authentication extends HttpServlet {
       transaction.commit();
       newIR.setIisFacilityId("Mercy Healthcare");
       newIR.setIisUrl("https://florence.immregistries.org/iis-sandbox/");
-      newIR.setTesterId(newTester);
+      newIR.setTester(newTester);
       Transaction transaction2 = dataSession.beginTransaction();
       dataSession.save(newIR);
       transaction2.commit();

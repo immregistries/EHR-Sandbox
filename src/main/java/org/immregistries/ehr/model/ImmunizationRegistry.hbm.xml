@@ -6,7 +6,7 @@
 		<id name="immunizationRegistryId" column="immunization_registry_id">
 			<generator class="native" />
 		</id>
-		<many-to-one name="testerId" column="tester_id"
+		<many-to-one name="tester" column="tester_id"
 			class="Tester" />
 		<property name="iisUrl" column="iis_url" type="string" />
 		<property name="iisUsername" column="iis_username"
