@@ -7,6 +7,9 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.servlet.http.HttpSession;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -86,7 +89,9 @@ public abstract class ResourceClient {
            // Log the ID that the server assigned
            IIdType id = outcome.getId();
            if (id != null){
-                response = "Created resource, got ID: " + id.getIdPart();
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+                LocalDateTime now = LocalDateTime.now();  
+                response = dtf.format(now) + " Created resource, got ID: " + id.getIdPart();
            }else {
                response = "Response includes no id";
            }
