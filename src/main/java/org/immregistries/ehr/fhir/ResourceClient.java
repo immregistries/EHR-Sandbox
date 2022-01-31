@@ -35,6 +35,10 @@ public abstract class ResourceClient {
         return delete(resourceType, resourceId, TENANT_B, TENANT_B, TENANT_B);
     }
 
+    public static String update(IBaseResource resource, String resourceId){
+        return update(resource, resourceId, TENANT_B, TENANT_B, TENANT_B);
+    }
+
     public static String read(String resourceType, String resourceId, HttpSession session){
         Tester tester = (Tester) session.getAttribute("tester");
         return read(resourceType, resourceId, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
@@ -48,6 +52,11 @@ public abstract class ResourceClient {
     public static String delete(String resourceType, String resourceId, HttpSession session){
         Tester tester = (Tester) session.getAttribute("tester");
         return delete(resourceType, resourceId, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
+    }
+
+    public static String update(IBaseResource resource, String resourceId, HttpSession session){
+        Tester tester = (Tester) session.getAttribute("tester");
+        return update(resource, resourceId, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
     }
   
   
