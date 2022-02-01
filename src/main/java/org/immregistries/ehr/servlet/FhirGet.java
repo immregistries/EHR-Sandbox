@@ -80,7 +80,7 @@ public class FhirGet extends HttpServlet {
         out.println("<div id=\"formulaire\">");
         out.println("<form method=\"POST\"  target=\"FHIR_get\">");
         // IIS authentication form
-        doLoginForm(out, session, req);
+        // doLoginForm(out, session, req);
 
         out.println("<div class=\"w3-margin w3-left\" style=\"width:45%\">");
         doPatientForm(out, session, req);

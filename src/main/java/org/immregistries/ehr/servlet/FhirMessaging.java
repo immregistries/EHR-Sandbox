@@ -205,9 +205,9 @@ public class FhirMessaging extends HttpServlet {
         + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">send FHIR Patient to IIS</button>\r\n");
         if (!fhirPatientResponseList.isEmpty()) {
           out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
-            + "rows=\"8\" cols=\"200\" readonly>\r\n");
-          for (String fhirImmunizationResponse : fhirPatientResponseList) {
-            out.println(fhirImmunizationResponse);
+            + "rows=\"3\" cols=\"200\" readonly>\r\n");
+          for (int i = fhirPatientResponseList.size() - 1; i >= 0; i--) {
+            out.println(fhirPatientResponseList.get(i));
           }
           out.println("</textarea><br/>");
         }
@@ -255,9 +255,9 @@ public class FhirMessaging extends HttpServlet {
         + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">send FHIR Immunization to IIS</button>\r\n");
       if (!fhirImmunizationResponseList.isEmpty()) {
         out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
-          + "rows=\"8\" cols=\"200\" readonly>");
-        for (String fhirImmunizationResponse : fhirImmunizationResponseList) {
-          out.println(fhirImmunizationResponse);
+          + "rows=\"3\" cols=\"200\" readonly>");
+        for (int i = fhirImmunizationResponseList.size() - 1; i >= 0; i--) {
+          out.println(fhirImmunizationResponseList.get(i));
         }
         out.println("</textarea><br/>");
       }
