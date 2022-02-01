@@ -53,19 +53,9 @@ public class EntryRecord extends HttpServlet {
     int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"))+1;
     
     
-    vaccine = (Vaccine) dataSession.load(vaccine.getClass(),paramEntry);
+    vacc_ev = (VaccinationEvent) dataSession.load(vacc_ev.getClass(),paramEntry);
    
-    Query query = dataSession.createQuery("From VaccinationEvent");
-    List<VaccinationEvent> list = query.list();
-    for(VaccinationEvent vaccEv : list) {
-      
-      
-      if (vaccEv.getVaccine().getVaccineId() == paramEntry) {
-        
-        vacc_ev = vaccEv;
-        session.setAttribute("vacc_ev", vacc_ev);
-      }
-    }
+    vaccine = vacc_ev.getVaccine();
     
     //System.out.println(vacc_ev.getVaccine().getVaccineId() + " Vacc Id from Vacc_ev");
    /* 
