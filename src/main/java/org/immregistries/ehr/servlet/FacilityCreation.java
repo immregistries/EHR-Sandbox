@@ -43,7 +43,6 @@ public class FacilityCreation extends HttpServlet {
     }
     Facility facility = new Facility();
     facility.setNameDisplay(name);
-    facility.setLocation(req.getParameter("location"));
     facility.setSilo(silo);
     if(parentFacility!=null) {
       //System.out.println("oups");

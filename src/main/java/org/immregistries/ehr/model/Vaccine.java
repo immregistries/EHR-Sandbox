@@ -14,7 +14,6 @@ public class Vaccine implements Serializable {
     private String vaccineNdcCode = "";
     private String vaccineMvxCode = "";
     private String administeredAmount = "";
-    private String manufacturer = "";
     private String informationSource = "";
     private String lotnumber = "";
     private Date expirationDate = null;
@@ -33,7 +32,6 @@ public class Vaccine implements Serializable {
       this.vaccineNdcCode = vaccineNdcCode;
       this.vaccineMvxCode = vaccineMvxCode;
       this.administeredAmount =administeredAmount;
-      this.manufacturer = manufacturer;
       this.informationSource = informationSource;
       this.lotnumber = lotnumber;
       this.expirationDate = expirationDate;
@@ -111,14 +109,6 @@ public class Vaccine implements Serializable {
 
     public void setAdministeredAmount(String administeredAmount) {
         this.administeredAmount = administeredAmount;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
     }
 
     public String getInformationSource() {

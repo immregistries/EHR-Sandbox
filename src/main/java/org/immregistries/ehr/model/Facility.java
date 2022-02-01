@@ -10,7 +10,6 @@ public class Facility implements Serializable {
     private Silo silo = null;
     private Facility parentFacility = null;
     private String nameDisplay = "";
-    private String location = "";
 
     public int getFacilityId() {
         return facilityId;
@@ -42,13 +41,5 @@ public class Facility implements Serializable {
 
     public void setNameDisplay(String nameDisplay) {
         this.nameDisplay = nameDisplay;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 }

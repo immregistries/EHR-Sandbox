@@ -11,6 +11,5 @@
 			column="parent_facility_id" class="Facility" />
 		<property name="nameDisplay" column="name_display"
 			type="string" />
-		<property name="location" column="location" type="string" />
 	</class>
 </hibernate-mapping>
