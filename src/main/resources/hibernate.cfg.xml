@@ -22,7 +22,6 @@
     <mapping resource="org/immregistries/ehr/model/Silo.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/Patient.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/NextOfKin.hbm.xml"/>
-    <mapping resource="org/immregistries/ehr/model/LogsOfModifications.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/ImmunizationRegistry.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/Facility.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/Clinician.hbm.xml"/>

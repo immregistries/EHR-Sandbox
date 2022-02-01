@@ -20,8 +20,6 @@
 			type="string" />
 		<property name="administeredAmount"
 			column="administered_amount" type="string" />
-		<property name="manufacturer" column="manufacturer"
-			type="string" />
 		<property name="informationSource"
 			column="information_source" type="string" />
 		<property name="lotnumber" column="lot_number" type="string" />

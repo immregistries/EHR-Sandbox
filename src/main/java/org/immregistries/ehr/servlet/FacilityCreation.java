@@ -43,7 +43,6 @@ public class FacilityCreation extends HttpServlet {
     }
     Facility facility = new Facility();
     facility.setNameDisplay(name);
-    facility.setLocation(req.getParameter("location"));
     facility.setSilo(silo);
     if(parentFacility!=null) {
       //System.out.println("oups");
@@ -103,8 +102,8 @@ public class FacilityCreation extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
-        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+        
     out.println("  </head>");
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");

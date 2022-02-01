@@ -27,7 +27,6 @@ import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.LogsOfModifications;
 
 /**
  * Servlet implementation class EntryRecord
@@ -54,21 +53,11 @@ public class EntryRecord extends HttpServlet {
     int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"))+1;
     
     
-    vaccine = (Vaccine) dataSession.load(vaccine.getClass(),paramEntry);
+    vacc_ev = (VaccinationEvent) dataSession.load(vacc_ev.getClass(),paramEntry);
    
-    Query query = dataSession.createQuery("From VaccinationEvent");
-    List<VaccinationEvent> list = query.list();
-    for(VaccinationEvent vaccEv : list) {
-      
-      
-      if (vaccEv.getVaccine().getVaccineId() == paramEntry) {
-        
-        vacc_ev = vaccEv;
-        session.setAttribute("vacc_ev", vacc_ev);
-      }
-    }
+    vaccine = vacc_ev.getVaccine();
     
-    System.out.println(vacc_ev.getVaccine().getVaccineId() + " Vacc Id from Vacc_ev");
+    //System.out.println(vacc_ev.getVaccine().getVaccineId() + " Vacc Id from Vacc_ev");
    /* 
     String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
     Query query = dataSession.createQuery(hql);
@@ -112,9 +101,7 @@ public class EntryRecord extends HttpServlet {
     System.out.println(entercli.getNameFirst()+" entercli First name after set");
 
     Date updatedDate = new Date();
-    LogsOfModifications log = new LogsOfModifications();
-    log.setModifDate(updatedDate);
-    log.setModifType("modif");
+
     String vaccCode = req.getParameter("action_code");
     vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
@@ -128,7 +115,6 @@ public class EntryRecord extends HttpServlet {
     vaccine.setFundingSource(req.getParameter("funding_source"));
     vaccine.setInformationSource(req.getParameter("information_source"));
     vaccine.setLotnumber(req.getParameter("lot_number"));
-    vaccine.setManufacturer(req.getParameter("manufacturer"));
     vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
     vaccine.setUpdatedDate(updatedDate);
     vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
@@ -136,7 +122,6 @@ public class EntryRecord extends HttpServlet {
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
    
     
-    vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);
     vacc_ev.setPatient(patient);
     vacc_ev.setEnteringClinician(entercli);
@@ -145,7 +130,6 @@ public class EntryRecord extends HttpServlet {
     vacc_ev.setVaccine(vaccine);  
     
     
-    dataSession.save(log);
     dataSession.update(admicli);
     dataSession.update(ordercli);
     dataSession.update(entercli);
@@ -439,8 +423,8 @@ public class EntryRecord extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
-        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+        
     out.println("  </head>");
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");

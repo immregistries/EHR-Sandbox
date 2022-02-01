@@ -13,7 +13,6 @@ public class VaccinationEvent implements Serializable {
     private Facility administeringFacility = null;
     private Patient patient = null;
     private Vaccine vaccine = null;
-    private LogsOfModifications log = null;
 
     public int getVaccinationEventId() {
         return vaccinationEventId;
@@ -71,11 +70,4 @@ public class VaccinationEvent implements Serializable {
         this.vaccine = vaccine;
     }
 
-    public LogsOfModifications getLog() {
-        return log;
-    }
-
-    public void setLog(LogsOfModifications log) {
-        this.log = log;
-    }
 }
