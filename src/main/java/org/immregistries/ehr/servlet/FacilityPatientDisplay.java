@@ -79,7 +79,9 @@ public class FacilityPatientDisplay extends HttpServlet {
       Facility facility = new Facility();
       if (req.getParameter("chooseFacility") != null) {
         out.println(
-            "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Choose a facility</b></label><br/>");
+                "<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"+
+                "<label class=\"w3-text-red w3-margin-bottom \"><b>Choose a facility</b></label><br/>"
+               +"</div>" );
       }
       if (showFacility != null) {
         patientList = null;
@@ -93,12 +95,12 @@ public class FacilityPatientDisplay extends HttpServlet {
         query.setParameter(0, facility);
         patientList = query.list();
       }
-      out.print("<div class=\"w3-margin\"style=\"width:100% height:auto \" >"
-          + "<label class=\"w3-text-green w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Current Silo : "
+      out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+          + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Silo : "
           + silo.getNameDisplay() + "</b></label>");
       if (facility != null) {
         out.println(
-            "<label class=\"w3-text-green w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Current Facility : "
+            "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
                 + facility.getNameDisplay() + "</b></label>");
       }
       out.println(
@@ -179,8 +181,8 @@ public class FacilityPatientDisplay extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
-        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+       
     out.println("  </head>");
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");

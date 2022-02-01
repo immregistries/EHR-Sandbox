@@ -126,8 +126,7 @@ public class FhirMessaging extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
-        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
     out.println("  </head>");
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
