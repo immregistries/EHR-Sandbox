@@ -7,7 +7,7 @@ public class ImmunizationRegistry implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int immunizationRegistryId = 0;
-    private Tester testerId = null;
+    private Tester tester = null;
     private String iisUrl = "";
     private String iisUsername = "";
     private String iisFacilityId = "";
@@ -21,12 +21,12 @@ public class ImmunizationRegistry implements Serializable {
         this.immunizationRegistryId = immunizationRegistryId;
     }
 
-    public Tester getTesterId() {
-        return testerId;
+    public Tester getTester() {
+        return tester;
     }
 
-    public void setTesterId(Tester testerId) {
-        this.testerId = testerId;
+    public void setTester(Tester tester) {
+        this.tester = tester;
     }
 
     public String getIisUrl() {

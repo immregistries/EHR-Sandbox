@@ -92,10 +92,12 @@ public class PatientRecord extends HttpServlet {
         out.println(
                 "</table>"
                 + "</div>"
-                + "  <div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
+                + "<div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
                 + "<button onclick=\"location.href=\'entry_creation?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
+
                 + "<button onclick=\"location.href=\'patient_modification?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Modify patient</button>"
                 + "<button onclick=\"location.href=\'FHIR_messaging?patientOnly=1'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
+
                 + "</div\r\n");
         doFooter(out, session);
       }

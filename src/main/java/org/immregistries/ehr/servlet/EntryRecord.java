@@ -64,6 +64,7 @@ public class EntryRecord extends HttpServlet {
       if (vaccEv.getVaccine().getVaccineId() == paramEntry) {
         
         vacc_ev = vaccEv;
+        session.setAttribute("vacc_ev", vacc_ev);
       }
     }
     
@@ -409,13 +410,20 @@ public class EntryRecord extends HttpServlet {
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 
-                + " <label class=\"w3-text-green\"><b>Body site</b></label>"
+                + "<label class=\"w3-text-green\"><b>Body site</b></label>"
                 + "                           <input type=\"text\"    class = \" w3-margin w3-border\"  value=\""+testBodySite+"\" size=\"40\" maxlength=\"60\" name=\"body_site\" />\r\n"
-                +" <input type=\"hidden\" id=\"paramEntry\" name=\"paramEntry\" value="+req.getParameter("paramEntryId")+">"
+                + "<input type=\"hidden\" id=\"paramEntry\" name=\"paramEntry\" value="+req.getParameter("paramEntryId")+">"
                    
-                +"</div>"
-                + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
-                + "                </form> " + "</div\r\n");
+
+                + "</div>"
+                + "<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\">Validate</button>\r\n"
+                +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+                + "</form>" 
+                
+                + "<button onclick=\"location.href='FHIR_messaging?paramEntryId=" + req.getParameter("paramEntryId") + "'\" " 
+                + "class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging</button>\r\n"
+                + "</div\r\n");
+
                 doFooter(out, session);
       }
     } catch (Exception e) {

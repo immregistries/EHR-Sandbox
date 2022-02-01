@@ -187,6 +187,29 @@ public class HL7printer {
               codeMap));
           sb.append("\r");
         }
+        Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,vaccination.getVaccineCvxCode());
+        obsSubId++;
+        obxSetId++;
+        String loinc = "64994-7";
+        String loincLabel = "Vaccine funding program eligibility category";
+        String value = "V02";
+        String valueLabel = "VFC eligible - Medicaid/Medicaid Managed Care";
+        String valueTable = "HL70064";
+        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+        obxSetId++;
+        loinc = "30956-7";
+        loincLabel = "Vaccine type";
+        value = codeVacc.getValue();
+        valueLabel = codeVacc.getLabel();
+        valueTable = "CVX";
+        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+        obxSetId++;
+        loinc = "59781-5";
+        loincLabel = "Dose validity";
+        value = vaccination.getAdministeredAmount();
+        valueLabel = value; //don't know what to put here
+        valueTable = "99107";
+        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
         /*TestEvent testEvent = vaccinationReported.getTestEvent();
         if (testEvent != null && testEvent.getEvaluationActualList() != null) {
           for (EvaluationActual evaluationActual : testEvent.getEvaluationActualList()) {
@@ -494,8 +517,7 @@ public class HL7printer {
   }
 
 
-  public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
-      String loincLabel, Date value) {
+  public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,String loincLabel, Date value) {
     sb.append("OBX");
     // OBX-1
     sb.append("|");
@@ -710,5 +732,9 @@ public class HL7printer {
       sb.append(ob.getMethodCode() + "^" + ob.getMethodLabel() + "^" + ob.getMethodTable());
     }
     sb.append("\r");
+  }
+  
+  public void printObxEHR(){
+
   }
 }

@@ -2,6 +2,7 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
@@ -49,17 +51,6 @@ public class EntryCreation extends HttpServlet {
     Patient patient = new Patient();
     VaccinationEvent vacc_ev = new VaccinationEvent();
     Vaccine vaccine = new Vaccine();  
-   /* 
-    String hql = "SELECT P.silo FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    Query query = dataSession.createQuery(hql);
-    List<Silo> siloList = query.list();
-    silo = siloList.get(0);
-    
-    hql = "SELECT P.facility FROM Patient P WHERE P.id = "+req.getParameter("paramPatientId");
-    query = dataSession.createQuery(hql);
-    List<Facility> facilityList = query.list();
-    facility = facilityList.get(0);    
-    */
 
     //silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
@@ -83,7 +74,17 @@ public class EntryCreation extends HttpServlet {
     entercli.setNameFirst(nameEnter.split(" ").length>1 ? nameEnter.split(" ")[1]:"");
     entercli.setNameMiddle(nameEnter.split(" ").length>2 ? nameEnter.split(" ")[2]:"");
 
-    Date updatedDate = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    Date administeredDate=new Date();
+    Date updatedDate=new Date();
+    Date expiredDate=new Date();
+    try {
+      administeredDate = sdf.parse(req.getParameter("administered_date"));
+      expiredDate = sdf.parse(req.getParameter("expiration_date"));
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     LogsOfModifications log = new LogsOfModifications();
     log.setModifDate(updatedDate);
     log.setModifType("modif");
@@ -128,6 +129,14 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(vacc_ev);
     transaction2.commit();
     resp.sendRedirect("patient_record");
+    Tester tester = new Tester();
+    tester = (Tester) session.getAttribute("tester");
+    facility = (Facility) session.getAttribute("facility");
+    patient = (Patient) session.getAttribute("patient") ;
+    req.setAttribute("MESSAGEDATA",  new HL7printer().buildVxu(vaccine,patient,facility).toString());
+    req.setAttribute("USERID",tester.getLoginUsername());
+    req.setAttribute("PASSWORD",tester.getLoginPassword());
+    req.setAttribute("FACILITYID",facility.getNameDisplay());;
     doGet(req, resp);
   }
 
@@ -142,10 +151,7 @@ public class EntryCreation extends HttpServlet {
     try {
       {
         doHeader(out, session);
-        
-        /*Silo silo = new Silo();
-        silo= (Silo) req.getAttribute("silo");
-       */
+      
         Facility facility = new Facility();
           
         CodeMap codeMap = CodeMapManager.getCodeMap();
@@ -157,7 +163,7 @@ public class EntryCreation extends HttpServlet {
         facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient") ;
         
-        //System.out.println(silo.getNameDisplay()+"  current silo");
+
         
         System.out.println(facility.getNameDisplay()+"  current facility");
         System.out.println(patient.getNameFirst()+"  current patient");
@@ -188,7 +194,7 @@ public class EntryCreation extends HttpServlet {
         String fundingSource="";
         String fundingRoute="";
         Faker faker = new Faker();
-        String pattern = "yyyyMMdd";
+        String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date currentDate = new Date();
         String streetAddress = faker.address().streetAddress();
@@ -254,7 +260,7 @@ public class EntryCreation extends HttpServlet {
                 + "<div style =\"width: 50% ;align-items:center\" "
                
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
-                + "                         <input type=\"text\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
+                + "                         <input type=\"date\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"
@@ -368,7 +374,7 @@ public class EntryCreation extends HttpServlet {
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+                + "                         <input type=\"date\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testExpDate+"\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Completion status</b></label>"

@@ -28,7 +28,6 @@ import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.FhirPatientCreation;
 
 /**
  * Servlet implementation class patient_creation
@@ -43,6 +42,8 @@ public class PatientCreation extends HttpServlet {
 
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
+    String pattern = "yyyy-MM-dd";
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
     Silo silo = new Silo();
     Facility facility = new Facility();
@@ -78,10 +79,23 @@ public class PatientCreation extends HttpServlet {
     patient.setAddressCountyParish(req.getParameter("county"));
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setAddressState(req.getParameter("state"));
-    
+
+    try {
+      patient.setBirthDate(simpleDateFormat.parse(req.getParameter("DoB")));
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     patient.setBirthFlag(req.getParameter("birth_flag"));
     patient.setBirthOrder(req.getParameter("birth_order"));
-    
+    //patient.setDeathDate(null);
+    try {
+      patient.setDeathDate(simpleDateFormat.parse(req.getParameter("DoD")));
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setEmail(req.getParameter("email"));
     patient.setEthnicity(req.getParameter("ethnicity"));
@@ -102,15 +116,13 @@ public class PatientCreation extends HttpServlet {
     Date updatedDate = new Date();
     patient.setUpdatedDate(updatedDate);
     patient.setCreatedDate(updatedDate);
-    
+
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
 
     ServletContext context = getServletContext( );
-    // context.log(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
 
-    
     resp.sendRedirect("facility_patient_display");
     
     doGet(req, resp);
@@ -233,9 +245,11 @@ public class PatientCreation extends HttpServlet {
           testBirthFlag="";
           testBirthOrder="";
           testDeathFlag="";
+
           testPubIndic="O";
           testProtecIndic="O";
           testRegStatus="O";
+
           testGuardNameFirst=faker.name().firstName();
           testGuardNameLast=testNameLast;
           testGuardMiddleName=faker.name().firstName();
@@ -277,7 +291,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + "<label class=\"w3-text-green\"><b>Date of birth</b></label>"
-            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
+            + "                         <input type=\"date\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
 
             +"</div>"
             
@@ -395,7 +409,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "   <label class=\"w3-text-green\"><b>Death date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
 
             +"</div>"
             +"</div>"
@@ -412,7 +426,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
 
             +"</div>"
             
@@ -426,14 +440,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>protection indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Registry indicator date  </b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
  
             +"</div>"
             
@@ -448,7 +462,7 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"align-items:center\" "
            
             + "   <label class=\"w3-text-green\"><b>registry status indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
 
             +"</div>"
             +"</div>"
