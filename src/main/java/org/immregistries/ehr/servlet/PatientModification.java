@@ -7,8 +7,10 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.codebase.client.CodeMap;
@@ -38,17 +41,25 @@ public class PatientModification extends HttpServlet{
 
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
-
+    Transaction transaction = dataSession.beginTransaction();
     Silo silo = new Silo();
     Facility facility = new Facility();
-    Patient patient = new Patient();
+    Patient patienttest = new  Patient();
+    
 
     silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
 
-    patient.setSilo(silo);
-    patient.setFacility(facility);
-
+    
+    SimpleDateFormat format  = new SimpleDateFormat("yyyy-mm-dd");
+    int paramPatientId =  Integer.parseInt(req.getParameter("paramPatientId"));
+    
+    
+    Patient patient  = (Patient) dataSession.load(patienttest.getClass(),paramPatientId);
+    //patient.setSilo(silo);
+    //patient.setFacility(facility);
+    System.out.println(patient.getPatientId()+" patient ID after load" );
+    
     patient.setNameFirst(req.getParameter("first_name"));
     patient.setNameLast(req.getParameter("last_name"));
     patient.setNameMiddle(req.getParameter("middle_name"));
@@ -56,10 +67,10 @@ public class PatientModification extends HttpServlet{
     patient.setAddressCountry(req.getParameter("country"));
     patient.setAddressCountyParish(req.getParameter("county"));
     patient.setAddressState(req.getParameter("state"));
-    //patient.setBirthDate(req.getParameter("DoB"));
+    
     patient.setBirthFlag(req.getParameter("birth_flag"));
     patient.setBirthOrder(req.getParameter("birth_order"));
-    //patient.setDeathDate(null);
+    
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setEmail(req.getParameter("email"));
     patient.setEthnicity(req.getParameter("ethnicity"));
@@ -70,19 +81,31 @@ public class PatientModification extends HttpServlet{
     patient.setMotherMaiden(req.getParameter("mother_maiden"));
     patient.setPhone(req.getParameter("phone"));
     patient.setProtectionIndicator(req.getParameter("protection_indicator"));
-    patient.setProtectionIndicatorDate(null);
+    
     patient.setPublicityIndicator(req.getParameter("publicity_indicator"));
-    patient.setPublicityIndicatorDate(null);
+    
     patient.setRace(req.getParameter("race"));
     patient.setRegistryStatusIndicator(req.getParameter("registry_status_indicator"));
-    patient.setRegistryStatusIndicatorDate(null);
+    
+    try {
+      patient.setBirthDate(format.parse(req.getParameter("DoB")));
+      patient.setDeathDate(format.parse(req.getParameter("DoD")));
+      patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
+      patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
+      patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
+      
+    } catch (ParseException e) {
+      
+      e.printStackTrace();
+    }
+    
     patient.setSex(req.getParameter("sex"));
     Date updatedDate = new Date();
     patient.setUpdatedDate(updatedDate);
-    patient.setCreatedDate(updatedDate);
+    //patient.setCreatedDate(updatedDate);
     patient.setBirthDate(updatedDate);
-    Transaction transaction = dataSession.beginTransaction();
-    dataSession.save(patient);
+    
+    dataSession.update(patient);
     transaction.commit();
 
     //ServletContext context = getServletContext( );
@@ -113,7 +136,8 @@ public class PatientModification extends HttpServlet{
         
         String show = req.getParameter(PARAM_SHOW);
         
-        SimpleDateFormat sdf = new SimpleDateFormat(); 
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern); 
         
         String testDoB=""+sdf.format(patient.getBirthDate());
         String testNameFirst=""+patient.getNameFirst();
@@ -137,6 +161,7 @@ public class PatientModification extends HttpServlet{
         if(patient.getDeathDate()!=null) {
            testDeathDate=""+sdf.format(patient.getDeathDate());
         }
+        
         String testPubIndic=""+patient.getPublicityIndicator();
         String testPubIndicDate=""+patient.getPublicityIndicatorDate();
         String testProtecIndic=""+patient.getProtectionIndicator();
@@ -149,7 +174,7 @@ public class PatientModification extends HttpServlet{
         String testGuardMiddleName=""+patient.getGuardianMiddle();
         String testGuardRelationship=""+patient.getGuardianRelationship();
         Faker faker = new Faker();
-        String pattern = "yyyyMMdd";
+        //String pattern = "yyyy/MM/dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date birthDate = new Date();
         int randDay = (int) (Math.random()*30+1);
@@ -196,7 +221,7 @@ public class PatientModification extends HttpServlet{
           testGuardRelationship="BRO";
           
         }
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_creation\">\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_modification\">\r\n"
             
             + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
             + "<div style =\"width: 50% ;align-items:center\" "
@@ -412,14 +437,14 @@ public class PatientModification extends HttpServlet{
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Guardian last name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Guardian first name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
 
             
             +"</div>"
@@ -444,7 +469,7 @@ public class PatientModification extends HttpServlet{
             +"  </p>"
             +"</div>"
             +"</div>"
-
+            +" <input type=\"hidden\" id=\"paramPatientId\" name=\"paramPatientId\" value="+req.getParameter("paramPatientId")+">"  
            
 
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"

@@ -3,6 +3,7 @@ package org.immregistries.ehr.servlet;
 import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 import org.immregistries.ehr.FhirPatientCreation;
@@ -49,8 +51,24 @@ public class PatientCreation extends HttpServlet {
     silo = (Silo) session.getAttribute("silo");
     facility = (Facility) session.getAttribute("facility");
 
-    patient.setSilo(silo);
-    patient.setFacility(facility);
+    
+    
+   SimpleDateFormat format  = new SimpleDateFormat("yyyy-mm-dd");
+   patient.setSilo(silo);
+   patient.setFacility(facility);
+   
+   try {
+     patient.setBirthDate(format.parse(req.getParameter("DoB")));
+     patient.setDeathDate(format.parse(req.getParameter("DoD")));
+     patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
+     patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
+     patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
+     
+   } catch (ParseException e) {
+     
+     e.printStackTrace();
+   }
+    
 
     patient.setNameFirst(req.getParameter("first_name"));
     patient.setNameLast(req.getParameter("last_name"));
@@ -58,11 +76,12 @@ public class PatientCreation extends HttpServlet {
     patient.setAddressCity(req.getParameter("city"));
     patient.setAddressCountry(req.getParameter("country"));
     patient.setAddressCountyParish(req.getParameter("county"));
+    patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setAddressState(req.getParameter("state"));
-    //patient.setBirthDate(req.getParameter("DoB"));
+    
     patient.setBirthFlag(req.getParameter("birth_flag"));
     patient.setBirthOrder(req.getParameter("birth_order"));
-    //patient.setDeathDate(null);
+    
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setEmail(req.getParameter("email"));
     patient.setEthnicity(req.getParameter("ethnicity"));
@@ -70,20 +89,20 @@ public class PatientCreation extends HttpServlet {
     patient.setGuardianLast(req.getParameter("guardian_last_name"));
     patient.setGuardianMiddle(req.getParameter("guardian_middle_name"));
     patient.setGuardianRelationship(req.getParameter("guardian_relation"));
-    patient.setMotherMaiden(req.getParameter("mother_maiden"));
+    patient.setMotherMaiden(req.getParameter("mother_maiden_name"));
     patient.setPhone(req.getParameter("phone"));
     patient.setProtectionIndicator(req.getParameter("protection_indicator"));
-    patient.setProtectionIndicatorDate(null);
+    
     patient.setPublicityIndicator(req.getParameter("publicity_indicator"));
-    patient.setPublicityIndicatorDate(null);
+    
     patient.setRace(req.getParameter("race"));
     patient.setRegistryStatusIndicator(req.getParameter("registry_status_indicator"));
-    patient.setRegistryStatusIndicatorDate(null);
+    
     patient.setSex(req.getParameter("sex"));
     Date updatedDate = new Date();
     patient.setUpdatedDate(updatedDate);
     patient.setCreatedDate(updatedDate);
-    patient.setBirthDate(updatedDate);
+    
     Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
@@ -145,7 +164,7 @@ public class PatientCreation extends HttpServlet {
         String testGuardMiddleName="";
         String testGuardRelationship="";
         Faker faker = new Faker();
-        String pattern = "yyyy/MM/dd";
+        String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date birthDate = new Date();
         int randDay = (int) (Math.random()*30+1);
@@ -189,11 +208,18 @@ public class PatientCreation extends HttpServlet {
           }
           
           
-          testDeathDate = simpleDateFormat.format(between(fourYearsAgo,tenDaysAgo ));
-          testPubIndicDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
-          testProtecIndicDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
-          testRegIndicDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
-          testRegStatusDate = simpleDateFormat.format(between(twoYearsAgo, tenDaysAgo));
+          Date DeathDate = between(fourYearsAgo,tenDaysAgo );
+          Date PubIndicDate = between(twoYearsAgo, tenDaysAgo);
+          Date ProtecIndicDate = between(twoYearsAgo, tenDaysAgo);
+          Date RegIndicDate = between(twoYearsAgo, tenDaysAgo);
+          Date RegStatusDate = between(twoYearsAgo, tenDaysAgo);
+          
+          
+          testDeathDate = simpleDateFormat.format(DeathDate);
+          testPubIndicDate = simpleDateFormat.format(PubIndicDate);
+          testProtecIndicDate = simpleDateFormat.format(ProtecIndicDate);
+          testRegIndicDate = simpleDateFormat.format(RegIndicDate);
+          testRegStatusDate = simpleDateFormat.format(RegStatusDate);
           
           testRace="Asian";
           testAdress=faker.address().buildingNumber()+faker.address().streetName();

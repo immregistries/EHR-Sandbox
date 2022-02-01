@@ -147,7 +147,7 @@ public class EntryCreation extends HttpServlet {
         silo= (Silo) req.getAttribute("silo");
        */
         Facility facility = new Facility();
-        Patient patient = new Patient();
+          
         CodeMap codeMap = CodeMapManager.getCodeMap();
         Collection<Code>codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
@@ -155,7 +155,7 @@ public class EntryCreation extends HttpServlet {
         Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         
         facility = (Facility) session.getAttribute("facility");
-        patient = (Patient) session.getAttribute("patient") ;
+        Patient patient = (Patient) session.getAttribute("patient") ;
         
         //System.out.println(silo.getNameDisplay()+"  current silo");
         
