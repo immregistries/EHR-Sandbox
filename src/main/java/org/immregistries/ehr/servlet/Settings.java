@@ -40,7 +40,7 @@ public class Settings extends HttpServlet {
     IR.setIisUrl(URL);
     dataSession.update(IR);
     transaction.commit();
-    
+    resp.sendRedirect(req.getParameter("previousPage").split("/")[req.getParameter("previousPage").split("/").length-1]);
     doGet(req, resp);
   }
 
@@ -64,7 +64,8 @@ public class Settings extends HttpServlet {
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+IR.getIisPassword()+"\" size=\"40\" maxlength=\"60\" name=\"IIS Password\"/>\r\n"
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+IR.getIisFacilityId()+"\" size=\"40\" maxlength=\"60\" name=\"IIS Facility\"/>\r\n"
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+IR.getIisUrl()+"\" size=\"40\" maxlength=\"60\" name=\"IIS URL\"/>\r\n"
-            + "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
+            + "                <button onclick=\"location.href=\'settings\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save</button>\r\n"
+            +" <input type=\"hidden\" id=\"previousPage\" name=\"previousPage\" value="+req.getHeader("referer")+">" 
             + "                </form> " + "            </div>");
 
         doFooter(out, session);

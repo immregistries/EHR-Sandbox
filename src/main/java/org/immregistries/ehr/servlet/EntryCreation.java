@@ -29,7 +29,6 @@ import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.LogsOfModifications;
 
 /**
  * Servlet implementation class EntryRecord
@@ -85,9 +84,7 @@ public class EntryCreation extends HttpServlet {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    LogsOfModifications log = new LogsOfModifications();
-    log.setModifDate(updatedDate);
-    log.setModifType("modif");
+
     String vaccCode = req.getParameter("action_code");
     vaccine.setActionCode(vaccCode);
     vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
@@ -101,7 +98,6 @@ public class EntryCreation extends HttpServlet {
     vaccine.setFundingSource(req.getParameter("funding_source"));
     vaccine.setInformationSource(req.getParameter("information_source"));
     vaccine.setLotnumber(req.getParameter("lot_number"));
-    vaccine.setManufacturer(req.getParameter("manufacturer"));
     vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
     vaccine.setUpdatedDate(updatedDate);
     vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
@@ -109,7 +105,6 @@ public class EntryCreation extends HttpServlet {
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
     
     Transaction transaction = dataSession.beginTransaction();
-    dataSession.save(log);
     dataSession.save(admicli);
     dataSession.save(ordercli);
     dataSession.save(entercli);
@@ -117,7 +112,6 @@ public class EntryCreation extends HttpServlet {
     transaction.commit();
 
     System.out.print(entercli.getClinicianId());
-    vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);
     vacc_ev.setPatient(patient);
     vacc_ev.setEnteringClinician(entercli);

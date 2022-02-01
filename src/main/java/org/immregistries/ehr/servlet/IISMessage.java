@@ -23,7 +23,7 @@ import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.fhir.CustomClientBuilder;
 import org.immregistries.ehr.model.Clinician;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.LogsOfModifications;
+import org.immregistries.ehr.model.ImmunizationRegistry;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
@@ -87,9 +87,6 @@ public class IISMessage extends HttpServlet {
       e.printStackTrace();
     }
     
-    LogsOfModifications log = new LogsOfModifications();
-    log.setModifDate(updatedDate);
-    log.setModifType("modif");
 
     String vaccCode = req.getParameter("action_code");
     vaccine.setActionCode(vaccCode);
@@ -104,7 +101,6 @@ public class IISMessage extends HttpServlet {
     vaccine.setFundingSource(req.getParameter("funding_source"));
     vaccine.setInformationSource(req.getParameter("information_source"));
     vaccine.setLotnumber(req.getParameter("lot_number"));
-    vaccine.setManufacturer(req.getParameter("manufacturer"));
     vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
     vaccine.setUpdatedDate(expiredDate);
     vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
@@ -112,7 +108,6 @@ public class IISMessage extends HttpServlet {
     vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
     
     Transaction transaction = dataSession.beginTransaction();
-    dataSession.save(log);
     dataSession.save(admicli);
     dataSession.save(ordercli);
     dataSession.save(entercli);
@@ -120,7 +115,6 @@ public class IISMessage extends HttpServlet {
     transaction.commit();
 
     System.out.print(entercli.getClinicianId());
-    vacc_ev.setLog(log);
     vacc_ev.setAdministeringFacility(facility);
     vacc_ev.setPatient(patient);
     vacc_ev.setEnteringClinician(entercli);
@@ -165,6 +159,8 @@ public class IISMessage extends HttpServlet {
     Tester tester = new Tester();
     Facility facility = new Facility();
     Patient patient = new Patient();
+    ImmunizationRegistry IR = new ImmunizationRegistry();
+    IR = (ImmunizationRegistry) session.getAttribute("IR");
     tester = (Tester) session.getAttribute("tester");
     facility = (Facility) session.getAttribute("facility");
     patient = (Patient) session.getAttribute("patient") ;
@@ -197,11 +193,11 @@ public class IISMessage extends HttpServlet {
             + req.getParameter("Obs")*/ + " \r\n" + "</textarea><br/>"
 
             +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+ tester.getLoginUsername()+"\" style =\"width:75%\" name=\"USERID\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+ IR.getIisUsername()+"\" style =\"width:75%\" name=\"USERID\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-            + "<input type=\"password\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+tester.getLoginPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
+            + "<input type=\"password\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+facility.getNameDisplay()+"\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisFacilityId()+"\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
             +"</div>");
             
