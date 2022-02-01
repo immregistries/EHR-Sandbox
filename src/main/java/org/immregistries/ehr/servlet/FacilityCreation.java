@@ -85,8 +85,6 @@ public class FacilityCreation extends HttpServlet {
         out.println("<form method=\"post\" class=\"w3-container\" action=\"facility_creation\">\r\n"
             + "<label class=\"w3-text-green\"><b>Facility name</b></label>"
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\"  name=\"facility_name\"/>\r\n"
-            + "   <label class=\"w3-text-green\"><b>Location</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\" required value=\"\"  name= \"location\"/>\r\n"
            
             + "                <button \" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "            </div>"
@@ -105,16 +103,18 @@ public class FacilityCreation extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
     out.println("  </head>");
     out.println("  <body>");
-    out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("          <h1>Facility creation</h1>\r\n" + "     </header>"
-         + "<div style =\"margin:auto \">");
-
-    out.println("<div class=\"w3-display-container \" style=\"height:20%;width:75%;margin:auto; margin-top:10%;align-items:center \">");
-
+    // out.println("<div class=\"w3-container \">");
+    out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
+        + "</div>\r\n" + "      </header>");
+    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
+
 
 
   public static void doFooter(PrintWriter out, HttpSession session) {
