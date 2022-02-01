@@ -122,10 +122,6 @@ public class FhirGet extends HttpServlet {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
-  private static void doLoginForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    FhirMessaging.doLoginForm(out, session, req);
-  }
-
   private static void doPatientForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
     Facility facility = new Facility();
     Patient patient = new Patient();
