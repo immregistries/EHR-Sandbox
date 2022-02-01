@@ -29,7 +29,7 @@ import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.FhirPatientCreation;
+import org.immregistries.ehr.fhir.FhirPatientCreation;
 
 public class PatientModification extends HttpServlet{
   private static final long serialVersionUID = 1L;
@@ -78,7 +78,7 @@ public class PatientModification extends HttpServlet{
     patient.setGuardianLast(req.getParameter("guardian_last_name"));
     patient.setGuardianMiddle(req.getParameter("guardian_middle_name"));
     patient.setGuardianRelationship(req.getParameter("guardian_relation"));
-    patient.setMotherMaiden(req.getParameter("mother_maiden"));
+    patient.setMotherMaiden(req.getParameter("mother_maiden_name"));
     patient.setPhone(req.getParameter("phone"));
     patient.setProtectionIndicator(req.getParameter("protection_indicator"));
     
