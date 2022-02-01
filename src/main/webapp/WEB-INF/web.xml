@@ -55,6 +55,11 @@
   	<servlet-class>org.immregistries.ehr.servlet.IISMessage</servlet-class>
   </servlet>
   <servlet>
+  <display-name>Patient modification</display-name>
+  <servlet-name>PatientModification</servlet-name>
+  <servlet-class>org.immregistries.ehr.servlet.PatientModification</servlet-class>
+  </servlet>
+  <servlet>
   	<description>
   	</description>
   	<display-name>Silo_creation</display-name>
@@ -90,6 +95,10 @@
   <servlet-mapping>
     <servlet-name>home</servlet-name>
     <url-pattern>/home</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>PatientModification</servlet-name>
+    <url-pattern>/patient_modification</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>test</servlet-name>
