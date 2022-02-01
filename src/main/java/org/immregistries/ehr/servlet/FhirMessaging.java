@@ -21,6 +21,7 @@ import org.immregistries.ehr.fhir.FhirImmunizationCreation;
 import org.immregistries.ehr.fhir.FhirPatientCreation;
 import org.immregistries.ehr.fhir.ResourceClient;
 import org.immregistries.ehr.model.Facility;
+import org.immregistries.ehr.model.ImmunizationRegistry;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
@@ -121,20 +122,22 @@ public class FhirMessaging extends HttpServlet {
     out.close();
   }
 
-  public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+  public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
+        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
     out.println("  </head>");
     out.println("  <body>");
+    // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
-        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
-        + "</div>\r\n" 
-        + "</header>");
-
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        
+        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "</div>" + "      </header>");
+    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
 
   public static void doFooter(PrintWriter out, HttpSession session) {
@@ -144,10 +147,11 @@ public class FhirMessaging extends HttpServlet {
   protected static void doLoginForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
     Tester tester;
     Facility facility;
-
+    ImmunizationRegistry IR;
+    IR = (ImmunizationRegistry) session.getAttribute("IR");
     tester = (Tester) session.getAttribute("tester");
     facility = (Facility) session.getAttribute("facility");
-
+    
     if (facility == null) {
       facility = new Facility();
       facility.setNameDisplay(" ");;
@@ -157,17 +161,17 @@ public class FhirMessaging extends HttpServlet {
     out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
         + " <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
         + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""
-        + tester.getLoginUsername()
+        + IR.getIisUsername()
         + "\" style=\"width:75%\" name=\"USERID\"/>\r\n</div>");
     out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
         + " <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-        + "<input type=\"password\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
-        + tester.getLoginPassword()
+        + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
+        + IR.getIisPassword()
         + "\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n</div>");
     out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
         + " <label class=\"w3-text-green\"><b>Facility ID</b></label>"
         + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
-        + facility.getNameDisplay()
+        + IR.getIisFacilityId()
         + "\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n</div>");
     out.println("</div>");
   }

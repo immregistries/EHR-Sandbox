@@ -89,14 +89,18 @@ public class SiloCreation extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
+        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
     out.println("  </head>");
     out.println("  <body>");
-    out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("    		<h1>Silo creation</h1>\r\n" + "    	</header>");
-
-    out.println("<div class=\"w3-display-container w3-margin \" style=\"height:200px;\">");
-
+    // out.println("<div class=\"w3-container \">");
+    out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        
+        + "  <a href = \'Settings\' class=\"w3-bar-item w3-button w3-right\">Settings </a>\r\n"
+        + "</div>" + "      </header>");
+    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
 
 

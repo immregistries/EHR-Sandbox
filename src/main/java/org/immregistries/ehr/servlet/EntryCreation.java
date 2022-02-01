@@ -153,7 +153,7 @@ public class EntryCreation extends HttpServlet {
         doHeader(out, session);
       
         Facility facility = new Facility();
-        Patient patient = new Patient();
+          
         CodeMap codeMap = CodeMapManager.getCodeMap();
         Collection<Code>codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
@@ -161,7 +161,7 @@ public class EntryCreation extends HttpServlet {
         Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         
         facility = (Facility) session.getAttribute("facility");
-        patient = (Patient) session.getAttribute("patient") ;
+        Patient patient = (Patient) session.getAttribute("patient") ;
         
 
         
@@ -367,7 +367,7 @@ public class EntryCreation extends HttpServlet {
                 
                 + "<div style =\"width: 50%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Information source</b></label>"
-                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"info_source\"/>\r\n"
+                + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testInfSource+"\" size=\"40\" maxlength=\"60\"  name=\"information_source\"/>\r\n"
                 +"</div>"
                 
                 + "</div>"
@@ -459,17 +459,20 @@ public class EntryCreation extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />");
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">"
+        + "<script type=\"text/javascript\" src=\"inc/Silos.js\"></script>");
     out.println("  </head>");
     out.println("  <body>");
+    // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
-        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
-        + "</div>\r\n" + "      </header>");
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        
+        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "</div>" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
-
   }
+
 
   public static void doFooter(PrintWriter out, HttpSession session) {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");

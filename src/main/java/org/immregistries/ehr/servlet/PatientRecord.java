@@ -94,7 +94,10 @@ public class PatientRecord extends HttpServlet {
                 + "</div>"
                 + "<div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
                 + "<button onclick=\"location.href=\'entry_creation?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
-                + "<button onclick=\"location.href=\'FHIR_messaging\'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
+
+                + "<button onclick=\"location.href=\'patient_modification?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Modify patient</button>"
+                + "<button onclick=\"location.href=\'FHIR_messaging?patientOnly=1'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
+
                 + "</div\r\n");
         doFooter(out, session);
       }
@@ -117,6 +120,7 @@ public class PatientRecord extends HttpServlet {
         + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
         + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         + "  <a href = \'silo_creation\' class=\"w3-bar-item w3-button\">Silo creation </a>\r\n"
+        + "  <a href = \'Settings\' class=\"w3-bar-item w3-button\">Settings </a>\r\n"
         + "</div>" + "    	</header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }

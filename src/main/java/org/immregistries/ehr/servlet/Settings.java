@@ -28,7 +28,7 @@ public class Settings extends HttpServlet {
       throws ServletException, IOException {    
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
-
+    Transaction transaction = dataSession.beginTransaction();
     String username = req.getParameter("IIS Username");
     String password = req.getParameter("IIS Password");
     String facility = req.getParameter("IIS Facility");
@@ -38,6 +38,8 @@ public class Settings extends HttpServlet {
     IR.setIisPassword(password);
     IR.setIisFacilityId(facility);
     IR.setIisUrl(URL);
+    dataSession.update(IR);
+    transaction.commit();
     
     doGet(req, resp);
   }

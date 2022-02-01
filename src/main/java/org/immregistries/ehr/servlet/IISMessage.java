@@ -181,10 +181,11 @@ public class IISMessage extends HttpServlet {
     out.println("  </head>");
     out.println("  <body>");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of silos </a>"
-        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = 'silo_creation' class=\"w3-bar-item w3-button\">Silo creation </a> \r\n"
-        + "</div>\r\n" + "      </header>");
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        
+        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "</div>" + "      </header>");
     out.println("    <form action=\"https://florence.immregistries.org/iis-sandbox/pop\" method=\"POST\" target=\"_blank\">");
     out.println(
         "<div class=\"w3-margin\">"
