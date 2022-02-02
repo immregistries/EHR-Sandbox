@@ -71,7 +71,7 @@ public class SiloCreation extends HttpServlet {
 
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"silo_creation\">\r\n"
-            + "<label class=\"w3-text-green\"><b>Silo name</b></label>"
+            + "<label class=\"w3-text-green\"><b>Tenant name</b></label>"
             + "  						<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" name=\"silo_name\"/>\r\n"
             + "                <button onclick=\"location.href=\'silos\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
             + "                </form> " + "            </div>");
@@ -95,7 +95,7 @@ public class SiloCreation extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
         + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         
         + "  <a href = \'Settings\' class=\"w3-bar-item w3-button w3-right\">Settings </a>\r\n"

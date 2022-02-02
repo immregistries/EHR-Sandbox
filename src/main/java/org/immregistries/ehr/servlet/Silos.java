@@ -47,13 +47,13 @@ public class Silos extends HttpServlet {
             "  <table class=\"w3-display-topleft w3-table-all w3-margin\"style=\"width:40% ;overflow:auto\"> \r\n"
             + "<thead>"
             + "<tr class=\"w3-green\">"
-            + "<th> Silos</th>"
+            + "<th> Tenant</th>"
             + "</thead>"
             + "<tbody>"
             );
         if(req.getParameter("chooseSilo")!=null) {
         out.println("<div class = \" w3-margin\">"
-            + "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Choose a silo</b></label><br/>"
+            + "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Choose a tenant</b></label><br/>"
             +"</div>"
             + "<div class = \"w3-left\">");    
         }
@@ -75,7 +75,7 @@ public class Silos extends HttpServlet {
              + "</tbody>"
             + "</table>"
             + "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
-            + "<button onclick=\"location.href=\'silo_creation\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
+            + "<button onclick=\"location.href=\'silo_creation\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new tenant</button>"
             //+ "		</div>\r\n" 	
             + "</div>\r\n");
         doFooter(out, session);
@@ -97,7 +97,7 @@ public class Silos extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
         + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         
         + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
