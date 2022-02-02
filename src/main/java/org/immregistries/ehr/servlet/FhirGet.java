@@ -80,7 +80,7 @@ public class FhirGet extends HttpServlet {
         out.println("<div id=\"formulaire\">");
         out.println("<form method=\"POST\"  target=\"FHIR_get\">");
         // IIS authentication form
-        doLoginForm(out, session, req);
+        // doLoginForm(out, session, req);
 
         out.println("<div class=\"w3-margin w3-left\" style=\"width:45%\">");
         doPatientForm(out, session, req);
@@ -120,10 +120,6 @@ public class FhirGet extends HttpServlet {
 
   public static void doFooter(PrintWriter out, HttpSession session) {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
-  }
-
-  private static void doLoginForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    FhirMessaging.doLoginForm(out, session, req);
   }
 
   private static void doPatientForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {

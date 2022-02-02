@@ -40,47 +40,53 @@ public class FhirMessaging extends HttpServlet {
 
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
     String resourceType = req.getParameter("resourceType");
+    String operationType = req.getParameter("operationType");
+
+    String fhirResponse = "";
+    String fhirResourceString = req.getParameter("fhir"+ resourceType +"String");
+
     switch(resourceType){
       case "Patient":{
-        String fhirPatientString = req.getParameter("fhirPatientString");
-        List<String> fhirPatientResponseList = (List<String>) session.getAttribute("fhirPatientResponseList");
-
-        String fhirPatientResponse = "";
         try {
           org.hl7.fhir.r4.model.Patient fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
-              .parseResource(fhirPatientString);
-          fhirPatientResponse = (String) req.getAttribute("fhirPatientResponse");
-    
-          fhirPatientResponse = ResourceClient.write(fhirPatient);
+              .parseResource(fhirResourceString);
+          switch (operationType) {
+            case "POST":
+              fhirResponse = ResourceClient.write(fhirPatient);
+              break;
+            case "PUT" :
+              fhirResponse = ResourceClient.update(fhirPatient, fhirPatient.getId());
+              break;
+          }
         } catch (Exception e) {
-          // TODO: handle exception
-          fhirPatientResponse = "LOCAL PARSING ERROR : Invalid Resource";
+          e.printStackTrace(); // TODO Deal with more errors
+          fhirResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
-        fhirPatientResponseList.add(fhirPatientResponse);
-        session.setAttribute("fhirPatientResponseList", fhirPatientResponseList);
         break;
       }
       case "Immunization":{
-        String fhirImmunizationString = req.getParameter("fhirImmunizationString");
-        List<String> fhirImmunizationResponseList = (List<String>) session.getAttribute("fhirImmunizationResponseList");
-
-        String fhirImmunizationResponse = "";
         try {
           org.hl7.fhir.r4.model.Immunization fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
-              .parseResource(fhirImmunizationString);
-          fhirImmunizationResponse = (String) req.getAttribute("fhirImmunizationResponse");
-    
-          fhirImmunizationResponse = ResourceClient.write(fhirImmunization);
+              .parseResource(fhirResourceString);
+            switch (operationType) {
+              case "POST":
+                fhirResponse = ResourceClient.write(fhirImmunization);
+                break;
+              case "PUT" :
+                fhirResponse = ResourceClient.update(fhirImmunization, fhirImmunization.getId());
+                break;
+            }
         } catch (Exception e) {
           e.printStackTrace();
-          fhirImmunizationResponse = "LOCAL PARSING ERROR : Invalid Resource";
+          fhirResponse = "LOCAL PARSING ERROR : Invalid Resource";
         }
-        fhirImmunizationResponseList.add(fhirImmunizationResponse);
-        session.setAttribute("fhirImmunizationResponseList", fhirImmunizationResponseList);
         break;
       }
     }
-
+    List<String> fhirResponseList = (List<String>) session.getAttribute("fhir"+ resourceType +"ResponseList");
+    fhirResponseList.add(fhirResponse);
+    session.setAttribute("fhir"+ resourceType +"ResponseList", fhirResponseList);
+    // resp.sendRedirect(req.getHeader("referer"));
     doGet(req, resp);
   }
 
@@ -98,9 +104,6 @@ public class FhirMessaging extends HttpServlet {
         doHeader(out, session, req);
 
         out.println("<div id=\"formulaire\">");
-        out.println("<form method=\"POST\">");
-        // IIS authentication form
-        doLoginForm(out, session, req);
 
         out.println("<div class=\"w3-margin w3-left\" style=\"width:45%\">");
         doPatientForm(out, session, req);
@@ -112,7 +115,7 @@ public class FhirMessaging extends HttpServlet {
           out.println("</div>");
         }
 
-        out.println("</form></div>");
+        out.println("</div>");
         doFooter(out, session);
       }
     } catch (Exception e) {
@@ -143,39 +146,11 @@ public class FhirMessaging extends HttpServlet {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
-  protected static void doLoginForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    Tester tester;
-    Facility facility;
-    ImmunizationRegistry IR;
-    IR = (ImmunizationRegistry) session.getAttribute("IR");
-    tester = (Tester) session.getAttribute("tester");
-    facility = (Facility) session.getAttribute("facility");
-    
-    if (facility == null) {
-      facility = new Facility();
-      facility.setNameDisplay(" ");;
-    }
-    
-    out.println("<div>");
-    out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
-        + " <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
-        + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""
-        + IR.getIisUsername()
-        + "\" style=\"width:75%\" name=\"USERID\"/>\r\n</div>");
-    out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
-        + " <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-        + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
-        + IR.getIisPassword()
-        + "\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n</div>");
-    out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
-        + " <label class=\"w3-text-green\"><b>Facility ID</b></label>"
-        + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
-        + IR.getIisFacilityId()
-        + "\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n</div>");
-    out.println("</div>");
-  }
 
   private static void doPatientForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+    out.println("<form method=\"POST\">");
+    out.println("<input type=\"hidden\" name=\"resourceType\" value=\"Patient\">");
+
     Facility facility = new Facility();
     Patient patient = new Patient();
 
@@ -184,7 +159,6 @@ public class FhirMessaging extends HttpServlet {
       fhirPatientResponseList = new ArrayList<String>();
       session.setAttribute("fhirPatientResponseList", fhirPatientResponseList);
     }
-
     IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
 
     patient = (Patient) session.getAttribute("patient");
@@ -204,20 +178,26 @@ public class FhirMessaging extends HttpServlet {
         + "rows=\"20\" cols=\"200\">\r\n"
         + fhirPatientString
         + "</textarea><br/>");
+        out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
+        + " type=\"submit\"  name=\"operationType\" value=\"POST\">Send Patient to IIS</button>\r\n");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">send FHIR Patient to IIS</button>\r\n");
-        if (!fhirPatientResponseList.isEmpty()) {
-          out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
-            + "rows=\"8\" cols=\"200\" readonly>\r\n");
-          for (String fhirImmunizationResponse : fhirPatientResponseList) {
-            out.println(fhirImmunizationResponse);
-          }
-          out.println("</textarea><br/>");
+        + " type=\"submit\"  name=\"operationType\" value=\"PUT\">Update Patient in IIS</button>\r\n");
+      if (!fhirPatientResponseList.isEmpty()) {
+        out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
+          + "rows=\"3\" cols=\"200\" readonly>");
+        for (int i = fhirPatientResponseList.size() - 1; i >= 0; i--) {
+          out.println(fhirPatientResponseList.get(i));
         }
+        out.println("</textarea><br/>");
+      }
     }
+    out.println("</form>");
   }
 
   private static void doImmunizationForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+    out.println("<form method=\"POST\">");
+    out.println("<input type=\"hidden\" name=\"resourceType\" value=\"Immunization\">");
+
     VaccinationEvent vacc_ev = new VaccinationEvent();
     Patient patient = (Patient) session.getAttribute("patient");
     Session dataSession = PopServlet.getDataSession();
@@ -225,7 +205,6 @@ public class FhirMessaging extends HttpServlet {
     Query queryVaccination = dataSession.createQuery("from VaccinationEvent where vaccination_event_Id=? and patient_id=?");
     queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
     queryVaccination.setParameter(1, patient.getPatientId());
-
     List<VaccinationEvent> vaccinationList = queryVaccination.list();
     vacc_ev=vaccinationList.get(0);
 
@@ -255,17 +234,19 @@ public class FhirMessaging extends HttpServlet {
         + fhirImmunizationString
         + "</textarea><br/>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">send FHIR Immunization to IIS</button>\r\n");
+        + " type=\"submit\"  name=\"operationType\" value=\"POST\">Send Immunization to IIS</button>\r\n");
+      out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
+        + " type=\"submit\"  name=\"operationType\" value=\"PUT\">Update Immunization in IIS</button>\r\n");
       if (!fhirImmunizationResponseList.isEmpty()) {
         out.println("<textarea class =\"w3-border w3-border-red\" id=\"story\" style=\"width:75%\"\r\n"
-          + "rows=\"8\" cols=\"200\" readonly>");
-        for (String fhirImmunizationResponse : fhirImmunizationResponseList) {
-          out.println(fhirImmunizationResponse);
+          + "rows=\"3\" cols=\"200\" readonly>");
+        for (int i = fhirImmunizationResponseList.size() - 1; i >= 0; i--) {
+          out.println(fhirImmunizationResponseList.get(i));
         }
         out.println("</textarea><br/>");
       }
     }
-
+    out.println("</form>");
   }
 
 
