@@ -167,6 +167,7 @@
     <servlet-name>FHIR_get</servlet-name>
     <url-pattern>/FHIR_get</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
     <servlet-name>Settings</servlet-name>
     <url-pattern>/Settings</url-pattern>
   </servlet-mapping>

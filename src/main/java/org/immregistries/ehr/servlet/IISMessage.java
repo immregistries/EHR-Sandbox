@@ -182,7 +182,7 @@ public class IISMessage extends HttpServlet {
         
         + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "      </header>");
-    out.println("    <form action=\"https://florence.immregistries.org/iis-sandbox/pop\" method=\"POST\" target=\"_blank\">");
+    out.println("    <form action=\""+IR.getIisUrl()+"\" method=\"POST\" target=\"_blank\">");
     out.println(
         "<div class=\"w3-margin\">"
         + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"
@@ -195,7 +195,7 @@ public class IISMessage extends HttpServlet {
             +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
             + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+ IR.getIisUsername()+"\" style =\"width:75%\" name=\"USERID\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-            + "<input type=\"password\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
+            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
             +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
             + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisFacilityId()+"\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
