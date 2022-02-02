@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 
@@ -62,8 +63,9 @@ public class PatientRecord extends HttpServlet {
         Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
         query.setParameter(0, patient);
         entryList = query.list();
-        out.println("<div class=\"w3-margin\"style=\"width:100% height:auto \">"
-            + "<label class=\"w3-text-green w3-margin w3-margin-bottom\"><b class=\"w3-margin\">     Current Patient : "
+        breadCrumbs(req,resp);
+        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \">"
+            + "<label class=\"w3-text-green  \"><b class=\"w3-margin\">     Current Patient : "
             + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"
             + "</div>");
         out.println( "<div class=\"w3-left\" style=\"width:45%\">"
@@ -129,4 +131,62 @@ public class PatientRecord extends HttpServlet {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
+  public static void breadCrumbs(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    HttpSession session = req.getSession(true);
+    resp.setContentType("text/html");
+    PrintWriter out = new PrintWriter(resp.getOutputStream());
+    Session dataSession = PopServlet.getDataSession();
+    Tester tester = (Tester) session.getAttribute("tester");
+    Silo silo = new Silo();
+    List<Silo> siloList = null;
+    String siloId = req.getParameter("paramSiloId");
+    if (siloId != null) {
+      Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+      query.setParameter(0, Integer.parseInt(siloId));
+      query.setParameter(1, tester.getTesterId());
+      siloList = query.list();
+      silo = siloList.get(0);
+      session.setAttribute("silo", silo);
+    } else {
+      if (session.getAttribute("silo")!=null) {
+        silo = (Silo) session.getAttribute("silo");
+      }
+      else {
+        resp.sendRedirect("silos?chooseSilo=1");
+      }
+      
+    }
+    List<Facility> facilityList = null;
+    Query query = dataSession.createQuery("from Facility where silo=?");
+    query.setParameter(0, silo);
+    facilityList = query.list();
+  
+  String showFacility = null;
+  if (req.getParameter("paramFacilityId") != null) {
+    showFacility = req.getParameter("paramFacilityId");
+    
+    out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+        + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Silo : "
+        + silo.getNameDisplay() + "</b></label>");
+    Facility facility = new Facility();
+    if (showFacility != null) {
+      
+      List<Facility> currentFacility = null;
+      query = dataSession.createQuery("from Facility where facilityId=?");
+      query.setParameter(0, Integer.parseInt(showFacility));
+      currentFacility = query.list();
+      facility = currentFacility.get(0);
+      session.setAttribute("facility", facility);
+      query = dataSession.createQuery("from Patient where facility=?");
+      query.setParameter(0, facility);
+      
+    }
+    if (facility != null) {
+      out.println(
+          "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+              + facility.getNameDisplay() + "</b></label>");
+    }
+  }
+  }
+  
 }
