@@ -69,7 +69,7 @@ public class Authentication extends HttpServlet {
       dataSession.save(newTester);
       transaction.commit();
       newIR.setIisFacilityId("Mercy Healthcare");
-      newIR.setIisUrl("https://florence.immregistries.org/iis-sandbox/");
+      newIR.setIisUrl("https://florence.immregistries.org/iis-sandbox/pop");
       newIR.setTester(newTester);
       Transaction transaction2 = dataSession.beginTransaction();
       dataSession.save(newIR);

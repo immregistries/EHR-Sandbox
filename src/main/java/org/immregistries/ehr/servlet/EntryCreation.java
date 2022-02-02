@@ -459,7 +459,7 @@ public class EntryCreation extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of silos </a>\r\n"
+        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
         + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         
         + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
