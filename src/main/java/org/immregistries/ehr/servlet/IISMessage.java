@@ -182,7 +182,7 @@ public class IISMessage extends HttpServlet {
         
         + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "      </header>");
-    out.println("    <form action=\""+IR.getIisUrl()+"\" method=\"POST\" target=\"_blank\">");
+    out.println("    <form action=\""+IR.getIisHL7Url()+"\" method=\"POST\" target=\"_blank\">");
     out.println(
         "<div class=\"w3-margin\">"
         + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"

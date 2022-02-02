@@ -23,7 +23,8 @@ CREATE TABLE `tester` (
 CREATE TABLE `immunization_registry` (
   `immunization_registry_id` int(11) NOT NULL AUTO_INCREMENT,
   `tester_id` int(11) NOT NULL,
-  `iis_url` varchar(250) NOT NULL,
+  `iis_HL7_url` varchar(250) NOT NULL,
+  `iis_FHIR_url` varchar(250) NOT NULL,
   `iis_username` varchar(250) NOT NULL,
   `iis_facility_id` varchar(250) NOT NULL,
   `iis_password` varchar(250) NOT NULL,

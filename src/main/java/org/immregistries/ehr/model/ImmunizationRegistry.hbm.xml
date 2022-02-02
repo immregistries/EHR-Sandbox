@@ -8,7 +8,8 @@
 		</id>
 		<many-to-one name="tester" column="tester_id"
 			class="Tester" />
-		<property name="iisUrl" column="iis_url" type="string" />
+		<property name="iisHL7Url" column="iis_HL7_url" type="string" />
+		<property name="iisFHIRUrl" column="iis_FHIR_url" type="string" />
 		<property name="iisUsername" column="iis_username"
 			type="string" />
 		<property name="iisFacilityId" column="iis_facility_id"

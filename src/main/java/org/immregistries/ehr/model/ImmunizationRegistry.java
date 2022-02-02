@@ -8,7 +8,8 @@ public class ImmunizationRegistry implements Serializable {
 
     private int immunizationRegistryId = 0;
     private Tester tester = null;
-    private String iisUrl = "";
+    private String iisHL7Url = "";
+    private String iisFHIRUrl = "";
     private String iisUsername = "";
     private String iisFacilityId = "";
     private String iisPassword = "";
@@ -29,14 +30,22 @@ public class ImmunizationRegistry implements Serializable {
         this.tester = tester;
     }
 
-    public String getIisUrl() {
-        return iisUrl;
+    public String getIisHL7Url() {
+        return iisHL7Url;
     }
 
-    public void setIisUrl(String iisUrl) {
-        this.iisUrl = iisUrl;
+    public void setIisHL7Url(String iisHL7Url) {
+        this.iisHL7Url = iisHL7Url;
+    }
+    
+    public String getIisFHIRUrl() {
+      return iisFHIRUrl;
     }
 
+    public void setIisFHIRUrl(String iisFHIRUrl) {
+      this.iisFHIRUrl = iisFHIRUrl;
+    }
+  
     public String getIisUsername() {
         return iisUsername;
     }
