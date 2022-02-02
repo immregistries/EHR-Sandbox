@@ -50,7 +50,7 @@ public class EntryRecord extends HttpServlet {
     VaccinationEvent vacc_ev = new VaccinationEvent(); 
     Vaccine vaccine = new Vaccine();
     
-    int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"))+1;
+    int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"));
     
     
     vacc_ev = (VaccinationEvent) dataSession.load(vacc_ev.getClass(),paramEntry);
