@@ -43,23 +43,28 @@ public class Silos extends HttpServlet {
         query.setParameter(0, tester);
         siloList = query.list();
         String show = req.getParameter(PARAM_SHOW);
-        out.println(
-            "  <table class=\"w3-display-topleft w3-table-all w3-margin\"style=\"width:40% ;overflow:auto\"> \r\n"
+        if(req.getParameter("chooseSilo")!=null) {
+          out.println("<div class = \" w3-margin-bottom\">"
+              + "<label class=\"w3-text-red  w3-margin-bottom\"><b>Choose a silo</b></label><br/>"
+              +"</div>");
+              
+          }else {
+            out.println("<div class = \" w3-margin-bottom\">"
+                + "<label hidden class=\"w3-text-red  w3-margin-bottom\"><b>Choose a silo</b></label><br/>"
+                +"</div>");
+          }
+        out.println( "<div class = \"w3-left\" style=\"width:100%\">" 
+            +"  <table class=\" w3-table-all \"style=\"width:45% ;overflow:auto\"> \r\n"
             + "<thead>"
             + "<tr class=\"w3-green\">"
             + "<th> Silos</th>"
             + "</thead>"
             + "<tbody>"
             );
-        if(req.getParameter("chooseSilo")!=null) {
-        out.println("<div class = \" w3-margin\">"
-            + "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Choose a silo</b></label><br/>"
-            +"</div>"
-            + "<div class = \"w3-left\">");    
-        }
+        
         for (Silo siloDisplay : siloList) {
           String link = "paramSiloId=" + siloDisplay.getSiloId();
-          out.println("<br/><tr>"
+          out.println("<tr>"
               + "<td class = \"w3-hover-teal\">"     
               + "<a href=\'facility_patient_display?"+ link+"\'style = \"text-decoration:none \">\r\n"
               + "<div style=\"text-decoration:none;height:100%\">"  
@@ -71,9 +76,10 @@ public class Silos extends HttpServlet {
               
         }
         out.println(
-             "</div>"
-             + "</tbody>"
+             
+              "</tbody>"
             + "</table>"
+            + "</div>"
             + "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
             + "<button onclick=\"location.href=\'silo_creation\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new silo</button>"
             //+ "		</div>\r\n" 	

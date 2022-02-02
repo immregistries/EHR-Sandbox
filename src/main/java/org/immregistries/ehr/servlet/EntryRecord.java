@@ -50,7 +50,7 @@ public class EntryRecord extends HttpServlet {
     VaccinationEvent vacc_ev = new VaccinationEvent(); 
     Vaccine vaccine = new Vaccine();
     
-    int paramEntry =  Integer.parseInt(req.getParameter("paramEntry"));
+    int paramEntry =  Integer.parseInt(req.getParameter("paramEntryId"));
     
     
     vacc_ev = (VaccinationEvent) dataSession.load(vacc_ev.getClass(),paramEntry);
@@ -188,6 +188,8 @@ public class EntryRecord extends HttpServlet {
         System.out.println(patient.getNameFirst()+"  current patient");
         
         String show = req.getParameter(PARAM_SHOW);
+        out.println("<button onclick=\"location.href=\'entry_creation?testEntry=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n");
         String testAdministering = ""+vaccination.getAdministeringClinician().getNameFirst()+" "
             +vaccination.getAdministeringClinician().getNameMiddle()+" "
             +vaccination.getAdministeringClinician().getNameLast();
@@ -461,6 +463,8 @@ public class EntryRecord extends HttpServlet {
                 +"  </p>"
                       
                 +"</div>"
+                +" <input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value="+req.getParameter("paramEntryId")+">"
+                    + "</input>"
            
 
             + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
