@@ -122,15 +122,17 @@ public class EntryCreation extends HttpServlet {
     Transaction transaction2 = dataSession.beginTransaction();
     dataSession.save(vacc_ev);
     transaction2.commit();
-    resp.sendRedirect("patient_record");
-    Tester tester = new Tester();
-    tester = (Tester) session.getAttribute("tester");
-    facility = (Facility) session.getAttribute("facility");
-    patient = (Patient) session.getAttribute("patient") ;
-    req.setAttribute("MESSAGEDATA",  new HL7printer().buildVxu(vaccine,patient,facility).toString());
-    req.setAttribute("USERID",tester.getLoginUsername());
-    req.setAttribute("PASSWORD",tester.getLoginPassword());
-    req.setAttribute("FACILITYID",facility.getNameDisplay());;
+    switch(req.getParameter("nextPage")) {
+      case "patient_record":
+        resp.sendRedirect("patient_record");
+      case "IIS_message":
+        resp.sendRedirect("IIS_message");
+      case "FHIR_messaging":
+        resp.sendRedirect("FHIR_messaging");
+    }
+    
+   
+
     doGet(req, resp);
   }
 
@@ -450,10 +452,10 @@ public class EntryCreation extends HttpServlet {
                 +"</div>"
            
 
-            + "                <button type=\"submit\" formaction=\"entry_creation\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
+            + "                <button type=\"submit\"  name=\"nextPage\" value=\"patient_record\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
              
-            +"                  <button type=\"submit\" formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
-            + "<button type=\"button\" onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
+            +"                  <button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+            + "<button type=\"submit\"  name=\"nextPage\" value=\"FHIR_messaging\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "</form>"
             + "</div\r\n");
         doFooter(out, session);
