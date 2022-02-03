@@ -58,7 +58,9 @@ public abstract class ResourceClient {
             // resource = client.read().resource(Patient.class).withId(resourceId).execute();
             response = CTX.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
           } catch (ResourceNotFoundException e) {
-            response = "Resource not found";
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+            LocalDateTime now = LocalDateTime.now();  
+            response = dtf.format(now) + "Resource not found";
             e.printStackTrace();
           }
         return response;
@@ -109,10 +111,18 @@ public abstract class ResourceClient {
         String response;
         MethodOutcome outcome = client.update().resource(resource).execute();
 
-        OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
-        if (opeOutcome != null) {
-            response = opeOutcome.getIssueFirstRep().getDetails().getCodingFirstRep().getCode();
+        IIdType id = outcome.getId();
+
+        if (id != null){
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+            LocalDateTime now = LocalDateTime.now();  
+            response = dtf.format(now) + " Created resource, got ID: " + id.getIdPart();
         }
+        // OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
+
+        // if (opeOutcome != null) {
+        //     response = opeOutcome.getIssueFirstRep().getDetails().getCodingFirstRep().getCode();
+        // }
         else{
             response = "Resource not found";
         }

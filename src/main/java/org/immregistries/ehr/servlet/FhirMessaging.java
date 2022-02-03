@@ -108,10 +108,11 @@ public class FhirMessaging extends HttpServlet {
         break;
       }
     }
-    List<String> fhirResponseList = (List<String>) session.getAttribute("fhir"+ resourceType +"ResponseList");
-    fhirResponseList.add(fhirResponse);
-    session.setAttribute("fhir"+ resourceType +"ResponseList", fhirResponseList);
-    // resp.sendRedirect(req.getHeader("referer"));
+    if (fhirResponse.length() > 0){
+      List<String> fhirResponseList = (List<String>) session.getAttribute("fhir"+ resourceType +"ResponseList");
+      fhirResponseList.add(fhirResponse);
+      session.setAttribute("fhir"+ resourceType +"ResponseList", fhirResponseList);
+    }
     doGet(req, resp);
   }
 
