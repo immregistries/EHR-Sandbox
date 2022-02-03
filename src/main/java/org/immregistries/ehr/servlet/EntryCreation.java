@@ -125,10 +125,13 @@ public class EntryCreation extends HttpServlet {
     switch(req.getParameter("nextPage")) {
       case "patient_record":
         resp.sendRedirect("patient_record");
+        return;
       case "IIS_message":
         resp.sendRedirect("IIS_message");
+        return;
       case "FHIR_messaging":
         resp.sendRedirect("FHIR_messaging");
+        return;
     }
     
    
