@@ -33,7 +33,7 @@ public class Settings extends HttpServlet {
     String password = req.getParameter("IIS Password");
     String facility = req.getParameter("IIS Facility");
     String HL7URL = req.getParameter("HL7 URL");
-    String FHIRURL = req.getParameter("HL7 URL");
+    String FHIRURL = req.getParameter("FHIR URL");
     ImmunizationRegistry IR = (ImmunizationRegistry) session.getAttribute("IR");
     IR.setIisUsername(username);
     IR.setIisPassword(password);
@@ -62,7 +62,6 @@ public class Settings extends HttpServlet {
         
         String show = req.getParameter(PARAM_SHOW);
         out.println("<form method=\"post\" class=\"w3-container\" action=\"Settings\">\r\n"
-            + "<label class=\"w3-text-green\"><b>IIS credentials</b></label>"
             + " <label class=\"w3-text-green\"><b>IIS username</b></label>"
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+IR.getIisUsername()+"\" size=\"40\" maxlength=\"60\" name=\"IIS Username\"/>\r\n"
             + " <label class=\"w3-text-green\"><b>IIS password</b></label>"

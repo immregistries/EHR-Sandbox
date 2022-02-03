@@ -27,6 +27,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 import org.immregistries.ehr.fhir.FhirPatientCreation;
@@ -126,6 +127,7 @@ public class PatientModification extends HttpServlet{
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     CodeMap codeMap = CodeMapManager.getCodeMap();
     Collection<Code> codeListRelation =codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
+    Session dataSession = PopServlet.getDataSession();
     try {
       { 
         if(req.getParameter("noFacility")!=null) {
@@ -135,6 +137,30 @@ public class PatientModification extends HttpServlet{
          Patient patient = (Patient) session.getAttribute("patient");
         
         String show = req.getParameter(PARAM_SHOW);
+        
+        Facility facility = (Facility) session.getAttribute("facility");
+        
+        
+        Silo silo = (Silo) session.getAttribute("silo");
+        
+        Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
+          
+        resp.setContentType("text/html");
+        
+        Tester tester = (Tester) session.getAttribute("tester");
+       
+        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+            + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
+            + silo.getNameDisplay() + "</b></label>");
+        
+          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+                  + facility.getNameDisplay() + "</b></label>");
+        
+        
+        out.println(
+             "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
+            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
+            );
         
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern); 

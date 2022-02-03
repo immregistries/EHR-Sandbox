@@ -39,7 +39,7 @@ public class PatientRecord extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     Session dataSession = PopServlet.getDataSession();
     try {
-      {
+      
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = new Patient();
@@ -63,11 +63,62 @@ public class PatientRecord extends HttpServlet {
         Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
         query.setParameter(0, patient);
         entryList = query.list();
-        breadCrumbs(req,resp);
-        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \">"
-            + "<label class=\"w3-text-green  \"><b class=\"w3-margin\">     Current Patient : "
-            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"
-            + "</div>");
+        
+        
+       
+        resp.setContentType("text/html");
+        
+        
+        Tester tester = (Tester) session.getAttribute("tester");
+        
+        List<Silo> siloList = null;
+        String siloId = req.getParameter("paramSiloId");
+        if (siloId != null) {
+          query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+          query.setParameter(0, Integer.parseInt(siloId));
+          query.setParameter(1, tester.getTesterId());
+          siloList = query.list();
+          silo = siloList.get(0);
+          session.setAttribute("silo", silo);
+        } else {
+          if (session.getAttribute("silo")!=null) {
+            silo = (Silo) session.getAttribute("silo");
+          }
+          else {
+            resp.sendRedirect("silos?chooseSilo=1");
+          }
+          
+        }
+        List<Facility> facilityList = null;
+        query = dataSession.createQuery("from Facility where silo=?");
+        query.setParameter(0, silo);
+        facilityList = query.list();
+      
+      
+        
+        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+            + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
+            + silo.getNameDisplay() + "</b></label>");
+        Facility facility = new Facility();
+        
+          
+          List<Facility> currentFacility = null;
+          query = dataSession.createQuery("from Facility where facilityId=?");
+          query.setParameter(0, facilityList.get(0).getFacilityId());
+          currentFacility = query.list();
+          facility = currentFacility.get(0);
+          session.setAttribute("facility", facility);
+          query = dataSession.createQuery("from Patient where facility=?");
+          query.setParameter(0, facility);
+          
+          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+                  + facility.getNameDisplay() + "</b></label>");
+        
+        
+        out.println(
+             "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
+            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
+            );
         out.println( "<div class=\"w3-left\" style=\"width:45%\">"
             + "<table class=\"w3-table-all\"style=\"width:100% ;overflow:auto\">"
                 + "<thead>"
@@ -102,7 +153,8 @@ public class PatientRecord extends HttpServlet {
 
                 + "</div\r\n");
         doFooter(out, session);
-      }
+      
+      
     } catch (Exception e) {
       e.printStackTrace(System.err);
     }
@@ -131,7 +183,10 @@ public class PatientRecord extends HttpServlet {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
-  public static void breadCrumbs(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  public static String breadCrumbs(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    
+    String html = "";
+    
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
@@ -165,9 +220,9 @@ public class PatientRecord extends HttpServlet {
   if (req.getParameter("paramFacilityId") != null) {
     showFacility = req.getParameter("paramFacilityId");
     
-    out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+    html+="<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
         + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Silo : "
-        + silo.getNameDisplay() + "</b></label>");
+        + silo.getNameDisplay() + "</b></label>";
     Facility facility = new Facility();
     if (showFacility != null) {
       
@@ -182,11 +237,12 @@ public class PatientRecord extends HttpServlet {
       
     }
     if (facility != null) {
-      out.println(
+      html+=
           "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-              + facility.getNameDisplay() + "</b></label>");
+              + facility.getNameDisplay() + "</b></label>";
     }
   }
+  return html;
   }
   
 }

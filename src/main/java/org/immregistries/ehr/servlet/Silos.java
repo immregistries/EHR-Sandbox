@@ -45,7 +45,7 @@ public class Silos extends HttpServlet {
         String show = req.getParameter(PARAM_SHOW);
         if(req.getParameter("chooseSilo")!=null) {
           out.println("<div class = \" w3-margin-bottom\">"
-              + "<label class=\"w3-text-red  w3-margin-bottom\"><b>Choose a silo</b></label><br/>"
+              + "<label class=\"w3-text-red  w3-margin-bottom\"><b>Choose a tenant</b></label><br/>"
               +"</div>");
               
           }else {

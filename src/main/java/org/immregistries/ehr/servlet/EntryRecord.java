@@ -21,6 +21,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
@@ -188,6 +189,20 @@ public class EntryRecord extends HttpServlet {
         System.out.println(patient.getNameFirst()+"  current patient");
         
         String show = req.getParameter(PARAM_SHOW);
+        Silo silo = (Silo) session.getAttribute("silo");
+       
+        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+            + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
+            + silo.getNameDisplay() + "</b></label>");
+        
+          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+                  + facility.getNameDisplay() + "</b></label>");
+        
+        
+        out.println(
+             "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
+            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
+            );
         out.println("<button onclick=\"location.href=\'entry_creation?testEntry=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
         out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n");
         String testAdministering = ""+vaccination.getAdministeringClinician().getNameFirst()+" "
@@ -467,10 +482,11 @@ public class EntryRecord extends HttpServlet {
                     + "</input>"
            
 
-            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
+               + " <button type=\"submit\" formaction=\"entry_creation\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
+ 
+            +"                  <button type=\"submit\" formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+            + "<button type=\"button\" onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "</form> "
-            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
-            + "<button onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
              + "</div\r\n");
 
                 doFooter(out, session);

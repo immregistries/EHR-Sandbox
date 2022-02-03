@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.codebase.client.CodeMap;
@@ -25,6 +27,8 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
@@ -135,6 +139,7 @@ public class PatientCreation extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
+    Session dataSession = PopServlet.getDataSession();
     CodeMap codeMap = CodeMapManager.getCodeMap();
     Collection<Code> codeListRelation =codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
     try {
@@ -144,6 +149,74 @@ public class PatientCreation extends HttpServlet {
         }
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
+        Patient patient = new Patient();
+        List<Patient> patientList = null;
+        List<VaccinationEvent> entryList = null;
+        Silo silo = (Silo) session.getAttribute("silo");
+        if(req.getParameter("paramPatientId")!=null && silo!=null) {
+          Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+          query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
+          query.setParameter(1, silo.getSiloId());
+          patientList = query.list();
+          patient = patientList.get(0);
+          session.setAttribute("patient", patient);
+        }
+        if(session.getAttribute("patient")!=null) {
+          patient = (Patient) session.getAttribute("patient");
+        }
+        if(session.getAttribute("facility")==null) {
+          session.setAttribute("facility", patient.getFacility());         
+        }
+        
+        resp.setContentType("text/html");
+        
+        Query query;
+        
+        Tester tester = (Tester) session.getAttribute("tester");
+        
+        List<Silo> siloList = null;
+        String siloId = req.getParameter("paramSiloId");
+        if (siloId != null) {
+          query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+          query.setParameter(0, Integer.parseInt(siloId));
+          query.setParameter(1, tester.getTesterId());
+          siloList = query.list();
+          silo = siloList.get(0);
+          session.setAttribute("silo", silo);
+        } else {
+          if (session.getAttribute("silo")!=null) {
+            silo = (Silo) session.getAttribute("silo");
+          }
+          else {
+            resp.sendRedirect("silos?chooseSilo=1");
+          }
+          
+        }
+        List<Facility> facilityList = null;
+        query = dataSession.createQuery("from Facility where silo=?");
+        query.setParameter(0, silo);
+        facilityList = query.list();
+      
+      
+        
+        out.println("<div class=\"w3-margin\"style=\"width:100% height:auto \" >"
+            + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
+            + silo.getNameDisplay() + "</b></label>");
+        Facility facility = new Facility();
+        
+          
+          List<Facility> currentFacility = null;
+          query = dataSession.createQuery("from Facility where facilityId=?");
+          query.setParameter(0, facilityList.get(0).getFacilityId());
+          currentFacility = query.list();
+          facility = currentFacility.get(0);
+          session.setAttribute("facility", facility);
+          query = dataSession.createQuery("from Patient where facility=?");
+          query.setParameter(0, facility);
+          
+          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+                  + facility.getNameDisplay() + "</b></label>"
+                      + "</div>");
         out.println("<button onclick=\"location.href=\'patient_creation?testPatient=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
         String testDoB="";
         String testNameFirst="";
