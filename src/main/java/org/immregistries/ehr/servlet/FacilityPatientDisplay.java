@@ -96,7 +96,7 @@ public class FacilityPatientDisplay extends HttpServlet {
         patientList = query.list();
       }
       out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
-          + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Silo : "
+          + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Tenant : "
           + silo.getNameDisplay() + "</b></label>");
       if (facility != null) {
         out.println(

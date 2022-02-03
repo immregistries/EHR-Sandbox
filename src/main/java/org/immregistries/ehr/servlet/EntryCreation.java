@@ -141,7 +141,7 @@ public class EntryCreation extends HttpServlet {
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
-
+    Session dataSession = PopServlet.getDataSession();
     try {
       {
         doHeader(out, session);
@@ -154,17 +154,32 @@ public class EntryCreation extends HttpServlet {
         Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
         Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         
+        String show = req.getParameter(PARAM_SHOW);
+        
         facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient") ;
         
-
+        Silo silo = (Silo) session.getAttribute("silo");
         
-        System.out.println(facility.getNameDisplay()+"  current facility");
-        System.out.println(patient.getNameFirst()+"  current patient");
+        Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
+          
+        resp.setContentType("text/html");
         
-        String show = req.getParameter(PARAM_SHOW);
+        Tester tester = (Tester) session.getAttribute("tester");
+       
+        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
+            + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
+            + silo.getNameDisplay() + "</b></label>");
+        
+          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+                  + facility.getNameDisplay() + "</b></label>");
+        
+        
+        out.println(
+             "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
+            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
+            );
         out.println("<button onclick=\"location.href=\'entry_creation?testEntry=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_creation\">\r\n");
         String testAdministering = "";
         String testEntering = "";
         String testOrdering = "";
@@ -250,7 +265,8 @@ public class EntryCreation extends HttpServlet {
             }
             
 
-            out.println( "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            out.println( "<form action=\"entry_creation\" method=\"POST\">"
+                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
                 + "<div style =\"width: 50% ;align-items:center\" "
                
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
@@ -434,10 +450,11 @@ public class EntryCreation extends HttpServlet {
                 +"</div>"
            
 
-            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
+            + "                <button type=\"submit\" formaction=\"entry_creation\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
+             
+            +"                  <button type=\"submit\" formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+            + "<button type=\"button\" onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "</form>"
-            +"                  <button formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
-            + "<button onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "</div\r\n");
         doFooter(out, session);
       }
