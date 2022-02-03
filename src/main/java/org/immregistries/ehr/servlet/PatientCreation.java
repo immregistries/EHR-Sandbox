@@ -312,7 +312,7 @@ public class PatientCreation extends HttpServlet {
           testCountryCode=faker.address().countryCode();
           testState=faker.address().state();
           testCountyParish="county";
-          testPhone=faker.phoneNumber().phoneNumber();
+          testPhone=faker.phoneNumber().subscriberNumber(10);
           testEmail=testNameFirst+ randDay +"@gmail.com";
           testEthnicity="Indian";
           testBirthFlag="";
