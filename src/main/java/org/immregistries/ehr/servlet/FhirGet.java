@@ -9,17 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import ca.uhn.fhir.parser.IParser;
 
-import org.hl7.fhir.r4.model.Immunization;
-import org.immregistries.ehr.fhir.CustomClientBuilder;
-import org.immregistries.ehr.fhir.FhirImmunizationCreation;
-import org.immregistries.ehr.fhir.FhirPatientCreation;
 import org.immregistries.ehr.fhir.ResourceClient;
-import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Tester;
-import org.immregistries.ehr.model.VaccinationEvent;
 
 /**
  * Servlet implementation class FHIR_Get
@@ -32,36 +23,34 @@ public class FhirGet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     HttpSession session = req.getSession(true);
-    String id;
 
+    String fhirGetResponse = "";
     String resourceType = req.getParameter("resourceType");
+    String id = req.getParameter("fhir"+ resourceType +"Id");
+
     switch(resourceType){
       case "Patient":{
-        id = req.getParameter("fhirPatientId");
-        String fhirPatientResponse = "";
         try {
-          fhirPatientResponse = ResourceClient.read(resourceType, id);
+          fhirGetResponse = ResourceClient.read(resourceType, id, session);
         } catch (Exception e) {
           e.printStackTrace();
-          fhirPatientResponse = "ERROR";
+          fhirGetResponse = "ERROR";
         }
-        session.setAttribute("fhirPatientResponse", fhirPatientResponse);
         break;
       }
       case "Immunization":{
-        id = req.getParameter("fhirImmunizationId");
-        String fhirImmunizationResponse = "";
         try {    
-          fhirImmunizationResponse = ResourceClient.read(resourceType, id);
+          fhirGetResponse = ResourceClient.read(resourceType, id, session);
         } catch (Exception e) {
           e.printStackTrace();
-          fhirImmunizationResponse = "ERROR";
+          fhirGetResponse = "ERROR";
         }
-        session.setAttribute("fhirImmunizationResponse", fhirImmunizationResponse);
         break;
       }
     }
-    doGet(req, resp);
+    
+    req.setAttribute("fhir"+ resourceType + "GetResponse", fhirGetResponse);
+    resp.sendRedirect(req.getHeader("referer"));
   }
 
   @Override
@@ -78,9 +67,6 @@ public class FhirGet extends HttpServlet {
         doHeader(out, session, req);
 
         out.println("<div id=\"formulaire\">");
-        out.println("<form method=\"POST\"  target=\"FHIR_get\">");
-        // IIS authentication form
-        // doLoginForm(out, session, req);
 
         out.println("<div class=\"w3-margin w3-left\" style=\"width:45%\">");
         doPatientForm(out, session, req);
@@ -90,7 +76,7 @@ public class FhirGet extends HttpServlet {
         doImmunizationForm(out, session, req);
         out.println("</div>");
 
-        out.println("</form></div>");
+        out.println("</div>");
         doFooter(out, session);
       }
     } catch (Exception e) {
@@ -122,54 +108,43 @@ public class FhirGet extends HttpServlet {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
-  private static void doPatientForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    Facility facility = new Facility();
-    Patient patient = new Patient();
-
-    String fhirPatientResponse = " ";
-
-    patient = (Patient) session.getAttribute("patient");
-    fhirPatientResponse = (String) session.getAttribute("fhirPatientResponse");
-    String fhirPatientId = "";
+  protected static void doPatientForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+    out.println("<form method=\"POST\" action='FHIR_get'>");
+    String fhirPatientGetResponse = (String) req.getAttribute("fhirPatientGetResponse");
+    String fhirPatientId = req.getParameter("fhirPatientId");
 
     { // Patient
-      out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\" name=\"fhirPatientId\"\r\n"
-        + "rows=\"1\" cols=\"12\">\r\n"
+      out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:20%\" name=\"fhirPatientId\"\r\n"
+        + "rows=\"1\" cols=\"12\" placeholder=\"id\">\r\n"
         + fhirPatientId
         + "</textarea>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">GET</button>\r\n");
-      if (fhirPatientResponse != null) {
+        + " type=\"submit\"  name=\"resourceType\" value=\"Patient\">Visualise Patient</button>\r\n");
+      if (fhirPatientGetResponse != null) {
         out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
-          + fhirPatientResponse + "</label>");
+          + fhirPatientGetResponse + "</label>");
       }
     }
+    out.println("</form>");
   }
 
-  private static void doImmunizationForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
-    VaccinationEvent vacc_ev = new VaccinationEvent();
-
-
-    String fhirImmunizationResponse = " ";
-    IParser parser = CustomClientBuilder.getCTX().newXmlParser().setPrettyPrint(true);
-
-
-    vacc_ev = (VaccinationEvent) session.getAttribute("vacc_ev");
-    fhirImmunizationResponse = (String) session.getAttribute("fhirImmunizationResponse");
+  protected static void doImmunizationForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
+    out.println("<form method=\"POST\" target='FHIR_get'>");
+    String fhirImmunizationGetResponse = (String) req.getAttribute("fhirImmunizationGetResponse");
     String fhirImmunizationId = "";
 
-    { // Patient
-      out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\" name=\"fhirImmunizationId\"\r\n"
-        + "rows=\"1\" cols=\"12\">\r\n"
+    { // Immunization
+      out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:20%\" name=\"fhirImmunizationId\"\r\n"
+        + "rows=\"1\" cols=\"12\" placeholder=\"id\">\r\n"
         + fhirImmunizationId
         + "</textarea>");
       out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\"" 
-        + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">GET</button>\r\n");
-      if (fhirImmunizationResponse != null) {
+        + " type=\"submit\"  name=\"resourceType\" value=\"Immunization\">Visualise Immunization</button>\r\n");
+      if (fhirImmunizationGetResponse != null) {
         out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\">"
-          + fhirImmunizationResponse + "</label>");
+          + fhirImmunizationGetResponse + "</label>");
       }
     }
-
+    out.println("</form>");
   }
 }

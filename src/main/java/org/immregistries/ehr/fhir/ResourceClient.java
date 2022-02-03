@@ -16,6 +16,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
+import org.immregistries.ehr.model.ImmunizationRegistry;
 import org.immregistries.ehr.model.Tester;
 
 
@@ -26,45 +27,30 @@ public abstract class ResourceClient {
 
     private ResourceClient(){}
 
-    public static String read(String resourceType, String resourceId){
-        return read(resourceType, resourceId, TENANT_B, TENANT_B, TENANT_B);
-    }
-
-    public static String write(IBaseResource resource){
-        return write(resource, TENANT_B, TENANT_B, TENANT_B);
-    }
-
-    public static String delete(String resourceType, String resourceId){
-        return delete(resourceType, resourceId, TENANT_B, TENANT_B, TENANT_B);
-    }
-
-    public static String update(IBaseResource resource, String resourceId){
-        return update(resource, resourceId, TENANT_B, TENANT_B, TENANT_B);
-    }
 
     public static String read(String resourceType, String resourceId, HttpSession session){
-        Tester tester = (Tester) session.getAttribute("tester");
-        return read(resourceType, resourceId, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
+        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+        return read(resourceType, resourceId, ir.getIisFHIRUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
     public static String write(IBaseResource resource, HttpSession session){
-        Tester tester = (Tester) session.getAttribute("tester");
-        return write(resource, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
+        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+        return write(resource, ir.getIisFHIRUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
     public static String delete(String resourceType, String resourceId, HttpSession session){
-        Tester tester = (Tester) session.getAttribute("tester");
-        return delete(resourceType, resourceId, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
+        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+        return delete(resourceType, resourceId, ir.getIisFHIRUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
     public static String update(IBaseResource resource, String resourceId, HttpSession session){
-        Tester tester = (Tester) session.getAttribute("tester");
-        return update(resource, resourceId, tester.getLoginUsername(), tester.getLoginUsername(), tester.getLoginPassword());
+        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+        return update(resource, resourceId, ir.getIisFHIRUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
   
   
-    public static String read(String resourceType, String resourceId, String tenantId, String username, String password) {
-        IGenericClient client = new CustomClientBuilder(tenantId, username, password).getClient();
+    public static String read(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
+        IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         IBaseResource resource;
         String response;
         try {
@@ -79,8 +65,8 @@ public abstract class ResourceClient {
     }
   
   
-    public static String write(IBaseResource resource,  String tenantId, String username, String password) {
-        IGenericClient client = new CustomClientBuilder(tenantId, username, password).getClient();
+    public static String write(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
+        IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome;
         String response;
         try {
@@ -103,8 +89,8 @@ public abstract class ResourceClient {
     }
 
   
-    public static String delete(String resourceType, String resourceId, String tenantId, String username, String password) {
-        IGenericClient client = new CustomClientBuilder(tenantId, username, password).getClient();
+    public static String delete(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
+        IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         String response;
         MethodOutcome outcome = client.delete().resourceById(new IdType(resourceType, resourceId)).execute();
 
@@ -118,8 +104,8 @@ public abstract class ResourceClient {
         return response;
     }
 
-    public static String update(IBaseResource resource, String resourceId, String tenantId, String username, String password) {
-        IGenericClient client = new CustomClientBuilder(tenantId, username, password).getClient();
+    public static String update(IBaseResource resource, String iisUrl, String resourceId, String tenantId, String username, String password) {
+        IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         String response;
         MethodOutcome outcome = client.update().resource(resource).execute();
 

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import ca.uhn.fhir.context.ConfigurationException;
 import ca.uhn.fhir.parser.IParser;
 
 import org.hibernate.Query;
@@ -44,6 +46,8 @@ public class FhirMessaging extends HttpServlet {
 
     String fhirResponse = "";
     String fhirResourceString = req.getParameter("fhir"+ resourceType +"String");
+    req.setAttribute("fhir"+ resourceType +"String", fhirResourceString);
+
 
     switch(resourceType){
       case "Patient":{
@@ -52,15 +56,18 @@ public class FhirMessaging extends HttpServlet {
               .parseResource(fhirResourceString);
           switch (operationType) {
             case "POST":
-              fhirResponse = ResourceClient.write(fhirPatient);
+              fhirResponse = ResourceClient.write(fhirPatient, session);
               break;
             case "PUT" :
-              fhirResponse = ResourceClient.update(fhirPatient, fhirPatient.getId());
+              fhirResponse = ResourceClient.update(fhirPatient, fhirPatient.getId(), session);
               break;
           }
-        } catch (Exception e) {
-          e.printStackTrace(); // TODO Deal with more errors
+        } catch (ConfigurationException ce) {
+          ce.printStackTrace(); // TODO Deal with more errors
           fhirResponse = "LOCAL PARSING ERROR : Invalid Resource";
+        } catch (Exception e) {
+          e.printStackTrace();
+          fhirResponse = "Error";
         }
         break;
       }
@@ -70,15 +77,18 @@ public class FhirMessaging extends HttpServlet {
               .parseResource(fhirResourceString);
             switch (operationType) {
               case "POST":
-                fhirResponse = ResourceClient.write(fhirImmunization);
+                fhirResponse = ResourceClient.write(fhirImmunization, session);
                 break;
               case "PUT" :
-                fhirResponse = ResourceClient.update(fhirImmunization, fhirImmunization.getId());
+                fhirResponse = ResourceClient.update(fhirImmunization, fhirImmunization.getId(), session);
                 break;
             }
-        } catch (Exception e) {
-          e.printStackTrace();
+        } catch (ConfigurationException ce) {
+          ce.printStackTrace(); // TODO Deal with more errors
           fhirResponse = "LOCAL PARSING ERROR : Invalid Resource";
+        } catch (Exception e) {
+          e.printStackTrace();            
+          fhirResponse = "Error";
         }
         break;
       }
@@ -107,14 +117,15 @@ public class FhirMessaging extends HttpServlet {
 
         out.println("<div class=\"w3-margin w3-left\" style=\"width:45%\">");
         doPatientForm(out, session, req);
+        FhirGet.doPatientForm(out, session, req);
         out.println("</div>");
 
+        out.println("<div class=\"w3-margin w3-right\" style=\"width:45%\">");
         if (req.getParameter("paramEntryId") != null) { // Immunization
-          out.println("<div class=\"w3-margin w3-right\" style=\"width:45%\">");
           doImmunizationForm(out, session, req);
-          out.println("</div>");
         }
-
+        FhirGet.doImmunizationForm(out, session, req);
+        out.println("</div>");
         out.println("</div>");
         doFooter(out, session);
       }
