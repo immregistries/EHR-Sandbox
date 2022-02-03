@@ -110,7 +110,8 @@ public class EntryCreation extends HttpServlet {
     dataSession.save(entercli);
     dataSession.save(vaccine);
     transaction.commit();
-
+     session.setAttribute("vaccine", vaccine);
+     
     System.out.print(entercli.getClinicianId());
     vacc_ev.setAdministeringFacility(facility);
     vacc_ev.setPatient(patient);

@@ -137,6 +137,8 @@ public class EntryRecord extends HttpServlet {
     dataSession.update(vaccine);
     dataSession.update(vacc_ev);
     transaction.commit();
+    
+    session.setAttribute("vaccine", vaccine);
     switch(req.getParameter("nextPage")) {
       case "patient_record":
         resp.sendRedirect("patient_record");
