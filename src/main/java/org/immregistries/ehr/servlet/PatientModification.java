@@ -282,6 +282,7 @@ public class PatientModification extends HttpServlet{
             + "<div style =\"width: 50% ;align-items:center\" "
            
             + "<label class=\"w3-text-green\"><b>Date of birth</b></label>"
+            + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
 
             +"</div>"
