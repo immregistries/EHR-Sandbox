@@ -30,6 +30,8 @@ import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
+import org.immregistries.smm.tester.connectors.Connector;
+import org.immregistries.smm.tester.connectors.SoapConnector;
 import io.github.linuxforhealth.hl7.HL7ToFHIRConverter;
 
 /**
@@ -43,10 +45,24 @@ public class IISMessage extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    
+    System.out.println(req.getParameter("FACILITYID")+" a "+req.getParameter("USERID")+" b "+req.getParameter("PASSWORD")+" c ");
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
-    
+    System.out.println(req.getParameter("FACILITYID")+" a "+req.getParameter("USERID")+" b "+req.getParameter("PASSWORD")+" c ");
+
+    Connector connector=null;
+    try {
+      connector = new SoapConnector("Test", "https://florence.immregistries.org/iis-sandbox/soap");
+      connector.setUserid(req.getParameter("USERID"));
+      connector.setPassword(req.getParameter("PASSWORD"));
+      connector.setFacilityid(req.getParameter("FACILITYID"));
+      System.out.println(req.getParameter("FACILITYID")+" a "+req.getParameter("USERID")+" b "+req.getParameter("PASSWORD")+" c "+connector.submitMessage(req.getParameter("MESSAGEDATA"), false));
+      
+    } catch (Exception e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    /*
     //Silo silo = new Silo();
     Facility facility = new Facility();
     Patient patient = new Patient();
@@ -125,7 +141,7 @@ public class IISMessage extends HttpServlet {
     Transaction transaction2 = dataSession.beginTransaction();
     dataSession.save(vacc_ev);
     transaction2.commit();
-
+    */
     doGet(req, resp);
   }
 
@@ -142,6 +158,45 @@ public class IISMessage extends HttpServlet {
     try {
       {
         doHeader(out, session, req);
+        HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
+        Tester tester = new Tester();
+        Facility facility = new Facility();
+        Patient patient = new Patient();
+        ImmunizationRegistry IR = new ImmunizationRegistry();
+        IR = (ImmunizationRegistry) session.getAttribute("IR");
+        tester = (Tester) session.getAttribute("tester");
+        facility = (Facility) session.getAttribute("facility");
+        patient = (Patient) session.getAttribute("patient") ;
+        
+        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        //Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
+        //System.out.println(req.getParameter("administered_date")+" "+sdf.parse(req.getParameter("administered_date")));
+        //Vaccine vaccine2=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
+        Vaccine vaccine=(Vaccine) session.getAttribute("vaccine");
+        HL7printer printerhl7 = new HL7printer();
+        
+        out.println("    <form action=\"IIS_message\" method=\"POST\" target=\"_blank\">");
+        out.println(
+            "<div class=\"w3-margin\">"
+            + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"
+                /*+ new HL7printer().buildHL7(new Patient()).toString() + " \r\n"*/
+                + new HL7printer().buildVxu(vaccine,patient,facility).toString() + " \r\n"
+                /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
+                + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
+                + req.getParameter("Obs")*/ + " \r\n" + "</textarea><br/>"
+
+                +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
+                + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" value=\""+ IR.getIisUsername()+"\" style =\"width:75%\" name=\"USERID\"/>\r\n"
+                +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
+                + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" value=\""+IR.getIisPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
+                +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
+                + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" value=\""+IR.getIisFacilityId()+"\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
+                + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
+                +"</div>");
+                
+        out.println("    </form>");
+        out.println("<div id=\"formulaire\">");
+
         String show = req.getParameter(PARAM_SHOW);
         doFooter(out, session);
       }
@@ -154,22 +209,6 @@ public class IISMessage extends HttpServlet {
 
   public static void doHeader(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
 
-    
-    HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
-    Tester tester = new Tester();
-    Facility facility = new Facility();
-    Patient patient = new Patient();
-    ImmunizationRegistry IR = new ImmunizationRegistry();
-    IR = (ImmunizationRegistry) session.getAttribute("IR");
-    tester = (Tester) session.getAttribute("tester");
-    facility = (Facility) session.getAttribute("facility");
-    patient = (Patient) session.getAttribute("patient") ;
-    
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    Date dateOfBirth = sdf.parse(req.getParameter("administered_date"));
-    System.out.println(req.getParameter("administered_date")+" "+sdf.parse(req.getParameter("administered_date")));
-    Vaccine vaccine=new Vaccine(0,sdf.parse(req.getParameter("administered_date")),req.getParameter("vacc_cvx"),req.getParameter("vacc_ndc"),req.getParameter("vacc_mvx"),req.getParameter("administered_amount"),req.getParameter("manufacturer"),req.getParameter("info_source"),req.getParameter("lot_number"),sdf.parse(req.getParameter("expiration_date")),req.getParameter("completion_status"),req.getParameter("action_code"),req.getParameter("refusal_reason_code"),req.getParameter("body_site"),req.getParameter("body_route"),req.getParameter("funding_source"),req.getParameter("funding_eligibility"));
-    HL7printer printerhl7 = new HL7printer();
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
@@ -182,28 +221,7 @@ public class IISMessage extends HttpServlet {
         
         + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "      </header>");
-    out.println("    <form action=\""+IR.getIisHL7Url()+"\" method=\"POST\" target=\"_blank\">");
-    out.println(
-        "<div class=\"w3-margin\">"
-        + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"
-            /*+ new HL7printer().buildHL7(new Patient()).toString() + " \r\n"*/
-            + new HL7printer().buildVxu(vaccine,patient,facility).toString() + " \r\n"
-            /*+ req.getParameter("OrdPhy") + " \r\n" + req.getParameter("manufacturer") + " \r\n"
-            + req.getParameter("AdmDate") + " \r\n" + req.getParameter("EHRuid") + " \r\n"
-            + req.getParameter("Obs")*/ + " \r\n" + "</textarea><br/>"
-
-            +" <label class=\"w3-text-green\"><b>IIS UserID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+ IR.getIisUsername()+"\" style =\"width:75%\" name=\"USERID\"/>\r\n"
-            +" <label class=\"w3-text-green\"><b>IIS Password</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisPassword()+"\" style =\"width:75%\" name=\"PASSWORD\"/>\r\n"
-            +" <label class=\"w3-text-green\"><b>Facility ID</b></label>"
-            + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""+IR.getIisFacilityId()+"\" style =\"width:75%\" name=\"FACILITYID\"/>\r\n"
-            + "                <button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >send to IIS</button>\r\n"
-            +"</div>");
-            
-    out.println("    </form>");
-    out.println("<div id=\"formulaire\">");
-
+    
   }
 
   public static void doFooter(PrintWriter out, HttpSession session) {
