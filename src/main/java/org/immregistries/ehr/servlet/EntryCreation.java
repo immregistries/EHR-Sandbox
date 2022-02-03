@@ -276,6 +276,7 @@ public class EntryCreation extends HttpServlet {
                 + "<div style =\"width: 50% ;align-items:center\" "
                
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
+                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> " 
                 + "                         <input type=\"date\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
@@ -287,6 +288,7 @@ public class EntryCreation extends HttpServlet {
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
                 + "<div style =\"width: 30% ;align-items:center\" "
                 + "    <label class=\"w3-text-green\"><b>Vaccine CVX code </b></label>"
+                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
                 +"  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
                 +"                          <SELECT style=\"width : 100%\" name=\"vacc_cvx\" size=\"1\">\r\n");
                 if(testCodeCvx!=null) {
@@ -360,15 +362,18 @@ public class EntryCreation extends HttpServlet {
                 + "</div>"
                 + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; display:flex\">"
                 + "<div style =\"width: 30%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>"               
+                + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>" 
+                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
                 + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testEntering +"\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 30%; align-items:center \" "
                 + " <label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
+                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
                 + "                         <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\""+testOrdering +"\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 30%; align-items:center \" "
                 +"<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
+                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
                 + "                         <input type=\"text\" style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\""+testAdministering +"\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
                 +"</div>"
                 

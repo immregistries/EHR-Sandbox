@@ -312,7 +312,7 @@ public class PatientCreation extends HttpServlet {
           testCountryCode=faker.address().countryCode();
           testState=faker.address().state();
           testCountyParish="county";
-          testPhone=faker.phoneNumber().phoneNumber();
+          testPhone=faker.phoneNumber().subscriberNumber(10);
           testEmail=testNameFirst+ randDay +"@gmail.com";
           testEthnicity="Indian";
           testBirthFlag="";
@@ -363,7 +363,8 @@ public class PatientCreation extends HttpServlet {
             + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
             + "<div style =\"width: 50% ;align-items:center\" "
            
-            + "<label class=\"w3-text-green\"><b>Date of birth</b></label>"
+            + "<label class=\"w3-text-green\"><b>Date of birth</b></label> "
+            + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
             + "                         <input type=\"date\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
 
             +"</div>"

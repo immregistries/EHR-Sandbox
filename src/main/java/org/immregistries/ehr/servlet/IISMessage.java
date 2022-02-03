@@ -45,11 +45,10 @@ public class IISMessage extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    System.out.println(req.getParameter("FACILITYID")+" a "+req.getParameter("USERID")+" b "+req.getParameter("PASSWORD")+" c ");
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
     
-    System.out.println(req.getParameter("FACILITYID")+" a "+req.getParameter("USERID")+" b "+req.getParameter("PASSWORD")+" c ");
+    
 
     Connector connector=null;
     try {
@@ -64,7 +63,9 @@ public class IISMessage extends HttpServlet {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
-    doGet(req, resp);
+    resp.sendRedirect("IIS_message?response=1");
+    
+    //doGet(req, resp);
   }
 
   @Override
@@ -93,7 +94,7 @@ public class IISMessage extends HttpServlet {
         Vaccine vaccine=(Vaccine) session.getAttribute("vaccine");
         HL7printer printerhl7 = new HL7printer();
         
-        out.println("    <form action=\"IIS_message\" method=\"POST\" target=\"_blank\">");
+        out.println("    <form action=\"IIS_message\" method=\"POST\" ");
         out.println(
             "<div class=\"w3-margin\">"
             + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"
@@ -112,7 +113,10 @@ public class IISMessage extends HttpServlet {
                 
         out.println("    </form>");
         out.println("<div id=\"formulaire\">");
-        out.println(responseSoap==null ? "": responseSoap);
+        if(req.getParameter("response")!=null) {
+          out.println(responseSoap==null ? "": responseSoap);
+        }
+        
         String show = req.getParameter(PARAM_SHOW);
         doFooter(out, session);
       }
