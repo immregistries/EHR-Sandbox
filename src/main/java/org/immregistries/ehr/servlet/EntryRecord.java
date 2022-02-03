@@ -137,7 +137,17 @@ public class EntryRecord extends HttpServlet {
     dataSession.update(vaccine);
     dataSession.update(vacc_ev);
     transaction.commit();
-    resp.sendRedirect("patient_record");
+    switch(req.getParameter("nextPage")) {
+      case "patient_record":
+        resp.sendRedirect("patient_record");
+        return;
+      case "IIS_message":
+        resp.sendRedirect("IIS_message");
+        return;
+      case "FHIR_messaging":
+        resp.sendRedirect("FHIR_messaging");
+        return;
+    }
    // doGet(req, resp);
   }
 
@@ -482,10 +492,10 @@ public class EntryRecord extends HttpServlet {
                     + "</input>"
            
 
-               + " <button type=\"submit\" formaction=\"entry_creation\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
+ + "                <button type=\"submit\"  name=\"nextPage\" value=\"patient_record\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n"
  
-            +"                  <button type=\"submit\" formaction=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
-            + "<button type=\"button\" onclick=\"location.href=\'FHIR_messaging'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
+            +"                  <button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n"
+            + "<button type=\"submit\"  name=\"nextPage\" value=\"FHIR_messaging\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n"
             + "</form> "
              + "</div\r\n");
 
