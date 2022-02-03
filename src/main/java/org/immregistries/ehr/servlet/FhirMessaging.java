@@ -23,9 +23,7 @@ import org.immregistries.ehr.fhir.FhirImmunizationCreation;
 import org.immregistries.ehr.fhir.FhirPatientCreation;
 import org.immregistries.ehr.fhir.ResourceClient;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.ImmunizationRegistry;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 
 /**
@@ -48,18 +46,27 @@ public class FhirMessaging extends HttpServlet {
     String fhirResourceString = req.getParameter("fhir"+ resourceType +"String");
     req.setAttribute("fhir"+ resourceType +"String", fhirResourceString);
 
+    String id = req.getParameter("fhir"+ resourceType +"Id");
 
     switch(resourceType){
       case "Patient":{
         try {
-          org.hl7.fhir.r4.model.Patient fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
-              .parseResource(fhirResourceString);
+          org.hl7.fhir.r4.model.Patient fhirPatient;
           switch (operationType) {
             case "POST":
+              fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
+                .parseResource(fhirResourceString);
               fhirResponse = ResourceClient.write(fhirPatient, session);
               break;
             case "PUT" :
+              fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
+                .parseResource(fhirResourceString);
               fhirResponse = ResourceClient.update(fhirPatient, fhirPatient.getId(), session);
+              break;
+            case "GET" :
+              fhirResponse = ResourceClient.read(resourceType, id, session);
+              req.setAttribute("fhir"+ resourceType + "GetResponse", fhirResponse);
+              fhirResponse = "";
               break;
           }
         } catch (ConfigurationException ce) {
@@ -73,14 +80,22 @@ public class FhirMessaging extends HttpServlet {
       }
       case "Immunization":{
         try {
-          org.hl7.fhir.r4.model.Immunization fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
-              .parseResource(fhirResourceString);
+          org.hl7.fhir.r4.model.Immunization fhirImmunization;
             switch (operationType) {
               case "POST":
+                fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
+                  .parseResource(fhirResourceString);
                 fhirResponse = ResourceClient.write(fhirImmunization, session);
                 break;
               case "PUT" :
+                fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
+                  .parseResource(fhirResourceString);
                 fhirResponse = ResourceClient.update(fhirImmunization, fhirImmunization.getId(), session);
+                break;
+              case "GET" :
+                fhirResponse = ResourceClient.read(resourceType, id, session);
+                req.setAttribute("fhir"+ resourceType + "GetResponse", fhirResponse);
+                fhirResponse = "";
                 break;
             }
         } catch (ConfigurationException ce) {

@@ -85,8 +85,8 @@ public class Authentication extends HttpServlet {
       //generate a new session
       session = req.getSession(true);
 
-      //setting session to expiry in 15 mins
-      session.setMaxInactiveInterval(15*60);
+      //setting session to expiry in 30 mins
+      session.setMaxInactiveInterval(30*60);
 
       // Cookie message = new Cookie("message", "Welcome");
       // resp.addCookie(message);

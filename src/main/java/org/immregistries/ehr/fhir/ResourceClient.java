@@ -49,7 +49,7 @@ public abstract class ResourceClient {
     }
   
   
-    public static String read(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
+    public static String read(String resourceType, String resourceId, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         IBaseResource resource;
         String response;
@@ -104,7 +104,7 @@ public abstract class ResourceClient {
         return response;
     }
 
-    public static String update(IBaseResource resource, String iisUrl, String resourceId, String tenantId, String username, String password) {
+    public static String update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         String response;
         MethodOutcome outcome = client.update().resource(resource).execute();
