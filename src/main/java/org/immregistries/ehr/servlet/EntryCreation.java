@@ -131,7 +131,7 @@ public class EntryCreation extends HttpServlet {
         resp.sendRedirect("IIS_message");
         return;
       case "FHIR_messaging":
-        resp.sendRedirect("FHIR_messaging");
+        resp.sendRedirect("FHIR_messaging?paramEntryId=" + vacc_ev.getVaccinationEventId());
         return;
     }
     

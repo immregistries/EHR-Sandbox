@@ -111,7 +111,7 @@ public class FhirGet extends HttpServlet {
   protected static void doPatientForm(PrintWriter out, HttpSession session, HttpServletRequest req) throws ParseException {
     out.println("<form method=\"POST\" action='FHIR_get'>");
     String fhirPatientGetResponse = (String) req.getAttribute("fhirPatientGetResponse");
-    String fhirPatientId = req.getParameter("fhirPatientId");
+    String fhirPatientId = req.getParameter("");
 
     { // Patient
       out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:20%\" name=\"fhirPatientId\"\r\n"
