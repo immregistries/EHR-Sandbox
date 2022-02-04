@@ -50,8 +50,6 @@ public class HL7printer {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = CodeMapManager.getCodeMap();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-    /*HL7Reader reader = new HL7Reader(
-        "MSH|^~\\&|||AIRA|EHR Sandbox|20120701082240-0500||VXU^V04^VXU_V04|NIST-IZ-001.00|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS\r");*/
     createMSH("VXU^V04^VXU_V04", "Z22", sb);
     printQueryPID(patient, sb, sdf, 1);
     printQueryNK1(patient, sb, codeMap);
@@ -64,7 +62,7 @@ public class HL7printer {
       System.out.println(cvxCode);
       System.out.println(vaccination.getVaccineCvxCode());
       if (cvxCode != null) {
-        printORC(facility, sb, vaccination/*, vaccinationReported, originalReporter*/);
+        printORC(facility, sb, vaccination);
         sb.append("RXA");
         // RXA-1
         sb.append("|0");
@@ -122,13 +120,6 @@ public class HL7printer {
         // RXA-11
         sb.append("|");
         sb.append("^^^");
-        /*if (vaccinationReported.getOrgLocation() == null
-            || vaccinationReported.getOrgLocation().getOrgFacilityCode() == null
-            || "".equals(vaccinationReported.getOrgLocation().getOrgFacilityCode())) {
-          sb.append("AIRA");
-        } else {
-          sb.append(vaccinationReported.getOrgLocation().getOrgFacilityCode());
-        }*/
         // RXA-12
         sb.append("|");
         // RXA-13
@@ -157,13 +148,11 @@ public class HL7printer {
         sb.append("|");
         // RXA-20
         sb.append("|");
-        /*if (!processingFlavorSet.contains(ProcessingFlavor.LIME)) {*/
           String completionStatus = vaccination.getCompletionStatus();
           if (completionStatus == null || completionStatus.equals("")) {
             completionStatus = "CP";
           }
           sb.append(printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, null, codeMap));
-        /*}*/
   
         // RXA-21
         String actionCode = vaccination.getActionCode();
@@ -210,45 +199,6 @@ public class HL7printer {
         valueLabel = value; //don't know what to put here
         valueTable = "99107";
         printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
-        /*TestEvent testEvent = vaccinationReported.getTestEvent();
-        if (testEvent != null && testEvent.getEvaluationActualList() != null) {
-          for (EvaluationActual evaluationActual : testEvent.getEvaluationActualList()) {
-            obsSubId++;
-            {
-              obxSetId++;
-              String loinc = "30956-7";
-              String loincLabel = "Vaccine type";
-              String value = evaluationActual.getVaccineCvx();
-              String valueLabel = evaluationActual.getVaccineCvx();
-              String valueTable = "CVX";
-              printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
-            }
-            {
-              obxSetId++;
-              String loinc = "59781-5";
-              String loincLabel = "Dose validity";
-              String value = evaluationActual.getDoseValid();
-              String valueLabel = value;
-              String valueTable = "99107";
-              printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
-            }
-          }
-        }*/
-        {
-          /*Session dataSession = PopServlet.getDataSession();
-          Query query = dataSession.createQuery(
-              "from ObservationMaster where patient = :patient and vaccination = :vaccination");
-          query.setParameter("patient", patient);
-          query.setParameter("vaccination", vaccination);
-          List<Observation> observationList = query.list();
-          if (observationList.size() > 0) {
-            obsSubId++;
-            for (Observation observation : observationList) {
-              obxSetId++;
-              printObx(sb, obxSetId, obsSubId, observation);
-            }
-          }*/
-        }
       }
     }
     return sb.toString();
@@ -286,11 +236,6 @@ public class HL7printer {
     sb.append("|");
     // PID-3
     sb.append("|" + patient.getPatientId() + "^^^EHR^MR");
-    /*if (patient != null) {
-      sb.append("~" + patient.getExternalLink() + "^^^"
-          + patient.getAuthority() + "^"
-          + patient.getType());
-    }*/
     // PID-4
     sb.append("|");
     // PID-5
@@ -567,63 +512,6 @@ public class HL7printer {
     return "";
   }
 
-  /*public String buildAck(HL7Reader reader, List<ProcessingException> processingExceptionList) {
-    StringBuilder sb = new StringBuilder();
-    {
-      String messageType = "ACK^V04^ACK";
-      String profileId = Z23_ACKNOWLEDGEMENT;
-      createMSH(messageType, profileId, sb);
-    }
-  
-    String sendersUniqueId = "";
-    reader.resetPostion();
-    if (reader.advanceToSegment("MSH")) {
-      sendersUniqueId = reader.getValue(10);
-    } else {
-      sendersUniqueId = "MSH NOT FOUND";
-    }
-    if (sendersUniqueId.equals("")) {
-      sendersUniqueId = "MSH-10 NOT VALUED";
-    }
-    String overallStatus = "AA";
-    for (ProcessingException pe : processingExceptionList) {
-      if (pe.isError() || pe.isWarning()) {
-        overallStatus = "AE";
-        break;
-      }
-    }
-  
-    sb.append("MSA|" + overallStatus + "|" + sendersUniqueId + "\r");
-    for (ProcessingException pe : processingExceptionList) {
-      printERRSegment(pe, sb);
-    }
-    return sb.toString();
-  }*/
-
-  /*public void printERRSegment(ProcessingException e, StringBuilder sb) {
-    sb.append("ERR|");
-    sb.append("|"); // 2
-    if (e.getSegmentId() != null && !e.getSegmentId().equals("")) {
-      sb.append(e.getSegmentId() + "^" + e.getSegmentRepeat());
-      if (e.getFieldPosition() > 0) {
-        sb.append("^" + e.getFieldPosition());
-      }
-    }
-    sb.append("|101^Required field missing^HL70357"); // 3
-    sb.append("|"); // 4
-    if (e.isError()) {
-      sb.append("E");
-    } else if (e.isWarning()) {
-      sb.append("W");
-    } else if (e.isInformation()) {
-      sb.append("I");
-    }
-    sb.append("|"); // 5
-    sb.append("|"); // 6
-    sb.append("|"); // 7
-    sb.append("|" + e.getMessage()); // 8
-    sb.append("|\r");
-  }*/
   
   private static final Random random = new Random();
   private static final char[] ID_CHARS =
@@ -660,10 +548,8 @@ public class HL7printer {
         sb.append("9999^IIS");
       }*/
     } else {
-      /*if (originalReporter) {*/
         sb.append(orgAccess.getFacilityId() + "^"
             + orgAccess.getNameDisplay());
-      /*}*/
     }
     sb.append("\r");
   }
