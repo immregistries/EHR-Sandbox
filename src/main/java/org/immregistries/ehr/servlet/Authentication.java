@@ -69,7 +69,7 @@ public class Authentication extends HttpServlet {
       dataSession.save(newTester);
       transaction.commit();
       newIR.setIisFacilityId(username);
-      newIR.setIisHL7Url("https://florence.immregistries.org/iis-sandbox/pop");
+      newIR.setIisHL7Url("https://florence.immregistries.org/iis-sandbox/soap");
       newIR.setIisFHIRUrl("https://florence.immregistries.org/iis-sandbox/fhir");
       newIR.setTester(newTester);
       Transaction transaction2 = dataSession.beginTransaction();

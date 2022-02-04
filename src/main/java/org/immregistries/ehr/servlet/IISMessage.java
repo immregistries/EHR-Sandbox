@@ -52,18 +52,19 @@ public class IISMessage extends HttpServlet {
 
     Connector connector=null;
     try {
-      connector = new SoapConnector("Test", "https://florence.immregistries.org/iis-sandbox/soap");
+      connector = new SoapConnector("Test", ((ImmunizationRegistry) session.getAttribute("IR")).getIisHL7Url());
       connector.setUserid(req.getParameter("USERID"));
       connector.setPassword(req.getParameter("PASSWORD"));
       connector.setFacilityid(req.getParameter("FACILITYID"));
       session.setAttribute("SoapResponse", connector.submitMessage(req.getParameter("MESSAGEDATA"), false));
-
+      resp.sendRedirect("IIS_message?response=1");
       
     } catch (Exception e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
+      resp.sendRedirect("IIS_message?response=0");
     }
-    resp.sendRedirect("IIS_message?response=1");
+    
     
     //doGet(req, resp);
   }
@@ -113,8 +114,18 @@ public class IISMessage extends HttpServlet {
                 
         out.println("    </form>");
         out.println("<div id=\"formulaire\">");
-        if(req.getParameter("response")!=null) {
+        if(req.getParameter("response").equals("1")) {
+          out.println("<p>");
+          out.println("Message sent");
+          out.println("</p>");
+          out.println("<p>");
           out.println(responseSoap==null ? "": responseSoap);
+          out.println("</p>");
+        }
+        if(req.getParameter("response").equals("0")) {
+          out.println("<p>");
+          out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Message not sent</b></label><br/>");
+          out.println("</p>");
         }
         
         String show = req.getParameter(PARAM_SHOW);
