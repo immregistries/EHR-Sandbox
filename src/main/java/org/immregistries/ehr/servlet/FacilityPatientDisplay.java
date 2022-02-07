@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
@@ -69,40 +71,44 @@ public class FacilityPatientDisplay extends HttpServlet {
       query = dataSession.createQuery("from Patient where silo=?");
       query.setParameter(0, silo);
       patientList = query.list();
-      String showFacility = null;
+      String facilityId = null;
+      Facility facility = null;
 
       if (req.getParameter("paramFacilityId") != null) {
-        showFacility = req.getParameter("paramFacilityId");
+        facilityId = req.getParameter("paramFacilityId");
+        patientList = null;
+        List<Facility> facilityListQuery = null;
+        query = dataSession.createQuery("from Facility where facilityId=?");
+        query.setParameter(0, Integer.parseInt(facilityId));
+
+        facilityListQuery = query.list();
+
+        facility = facilityListQuery.get(0);
+        session.setAttribute("facility", facility);
+        query = dataSession.createQuery("from Patient where facility=?");
+        query.setParameter(0, facility);
+        patientList = query.list();
       }
+
       String show = req.getParameter(PARAM_SHOW);
       String noFacility = "";
-      Facility facility = new Facility();
       if (req.getParameter("chooseFacility") != null) {
         out.println(
                 "<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"+
                 "<label class=\"w3-text-red w3-margin-bottom \"><b>Choose a facility</b></label><br/>"
                +"</div>" );
       }
-      if (showFacility != null) {
-        patientList = null;
-        List<Facility> currentFacility = null;
-        query = dataSession.createQuery("from Facility where facilityId=?");
-        query.setParameter(0, Integer.parseInt(showFacility));
-        currentFacility = query.list();
-        facility = currentFacility.get(0);
-        session.setAttribute("facility", facility);
-        query = dataSession.createQuery("from Patient where facility=?");
-        query.setParameter(0, facility);
-        patientList = query.list();
-      }
+      
       out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
           + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Tenant : "
           + silo.getNameDisplay() + "</b></label>");
-      if (facility != null) {
-        out.println(
-            "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-                + facility.getNameDisplay() + "</b></label>");
-      }
+      // if (facility != null) {
+      //   out.println(
+      //       "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+      //           + facility.getNameDisplay() + "</b></label>");
+      // }
+
+// ---------------- Facility list ------------------
       out.println(
               "</div>"
               + "<div class=\"w3-left \"style=\"width:45%\">"
@@ -132,7 +138,7 @@ public class FacilityPatientDisplay extends HttpServlet {
             + "</td>"
             + "</tr>");
       }
-
+// ---------------- Patient list ------------------
       out.println("</tbody>"
           + "</table>"
           + "</div>"
@@ -163,7 +169,7 @@ public class FacilityPatientDisplay extends HttpServlet {
           + "</div>"
           + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
           + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
-          + "<button onclick=\"location.href=\'patient_creation" + noFacility
+          + "<button onclick=\"location.href=\'patient_creation"
           + "'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
 
           + "</div\r\n");

@@ -192,27 +192,13 @@ public class PatientCreation extends HttpServlet {
           }
           
         }
-        List<Facility> facilityList = null;
-        query = dataSession.createQuery("from Facility where silo=?");
-        query.setParameter(0, silo);
-        facilityList = query.list();
       
       
         
         out.println("<div class=\"w3-margin\"style=\"width:100% height:auto \" >"
             + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
             + silo.getNameDisplay() + "</b></label>");
-        Facility facility = new Facility();
-        
-          
-          List<Facility> currentFacility = null;
-          query = dataSession.createQuery("from Facility where facilityId=?");
-          query.setParameter(0, facilityList.get(0).getFacilityId());
-          currentFacility = query.list();
-          facility = currentFacility.get(0);
-          session.setAttribute("facility", facility);
-          query = dataSession.createQuery("from Patient where facility=?");
-          query.setParameter(0, facility);
+        Facility facility = (Facility) session.getAttribute("facility");;
           
           out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
                   + facility.getNameDisplay() + "</b></label>"

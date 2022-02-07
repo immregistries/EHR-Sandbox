@@ -116,7 +116,7 @@ public abstract class ResourceClient {
         if (id != null){
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
             LocalDateTime now = LocalDateTime.now();  
-            response = dtf.format(now) + " Created resource, got ID: " + id.getIdPart();
+            response = dtf.format(now) + "  Updated resource, got ID: " + id.getIdPart();
         }
         // OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
 
