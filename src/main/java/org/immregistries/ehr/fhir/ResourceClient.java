@@ -17,7 +17,7 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.immregistries.ehr.model.ImmunizationRegistry;
-import org.immregistries.ehr.model.Tester;
+
 
 
 
@@ -27,6 +27,11 @@ public abstract class ResourceClient {
 
     private ResourceClient(){}
 
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private static String add_timestamp(String message){
+        LocalDateTime now = LocalDateTime.now();  
+        return dtf.format(now) + " " + message;
+    }
 
     public static String read(String resourceType, String resourceId, HttpSession session){
         ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
@@ -76,10 +81,8 @@ public abstract class ResourceClient {
            outcome = client.create().resource(resource).execute();
            // Log the ID that the server assigned
            IIdType id = outcome.getId();
-           if (id != null){
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-                LocalDateTime now = LocalDateTime.now();  
-                response = dtf.format(now) + " Created resource, got ID: " + id.getIdPart();
+           if (id != null){  
+                response = "Created resource, got ID: " + id.getIdPart();
            }else {
                response = "Response includes no id";
            }
@@ -87,7 +90,7 @@ public abstract class ResourceClient {
            response = "ERROR Writing FHIR Resource";
            e.printStackTrace();
         }
-        return response;
+        return add_timestamp(response);
     }
 
   
@@ -103,7 +106,7 @@ public abstract class ResourceClient {
         else{
             response = "Resource not found";
         }
-        return response;
+        return add_timestamp(response);
     }
 
     public static String update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
@@ -114,9 +117,7 @@ public abstract class ResourceClient {
         IIdType id = outcome.getId();
 
         if (id != null){
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-            LocalDateTime now = LocalDateTime.now();  
-            response = dtf.format(now) + "  Updated resource, got ID: " + id.getIdPart();
+            response = "Updated resource, got ID: " + id.getIdPart();
         }
         // OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
 
@@ -126,7 +127,7 @@ public abstract class ResourceClient {
         else{
             response = "Resource not found";
         }
-        return response;
+        return add_timestamp(response);
     }
     
 }
