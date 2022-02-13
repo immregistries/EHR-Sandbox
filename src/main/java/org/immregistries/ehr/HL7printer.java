@@ -2,21 +2,16 @@ package org.immregistries.ehr;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
-import org.hibernate.Query;
-import org.hibernate.Session;
+
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Observation;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
-import org.immregistries.ehr.servlet.PopServlet;
 import org.immregistries.iis.kernal.model.CodeMapManager;
-import org.immregistries.mqe.hl7util.parser.HL7Reader;
 
 public class HL7printer {
 

@@ -1,7 +1,6 @@
 package org.immregistries.ehr.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;

@@ -1,10 +1,7 @@
 package org.immregistries.ehr.fhir;
 
-import org.hl7.fhir.r4.formats.IParser;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
-import ca.uhn.fhir.rest.client.impl.RestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
@@ -28,9 +25,6 @@ public class CustomClientBuilder {
     private static final FhirContext CTX = FhirContext.forR4();
 
     private IGenericClient client = CTX.newRestfulGenericClient(FLORENCE);
-    private UrlTenantSelectionInterceptor tenantSelection;
-    private IClientInterceptor authInterceptor;
-    private LoggingInterceptor loggingInterceptor;
 
     public CustomClientBuilder(){
         this(FLORENCE, TENANT_A, TENANT_A, TENANT_A);
@@ -51,16 +45,16 @@ public class CustomClientBuilder {
         this.client = CTX.newRestfulGenericClient(serverURL);
 
         // Register a logging interceptor
-        this.loggingInterceptor = new LoggingInterceptor();
-        this.loggingInterceptor.setLogRequestSummary(true);
-        this.loggingInterceptor.setLogRequestBody(true);
-        this.client.registerInterceptor(this.loggingInterceptor);
+        LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLogRequestSummary(true);
+        loggingInterceptor.setLogRequestBody(true);
+        this.client.registerInterceptor(loggingInterceptor);
 
         // Register a tenancy interceptor to add /$tenantid to the url
-        this.tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
+        UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
         this.client.registerInterceptor(tenantSelection);
         // Create an HTTP basic auth interceptor
-        this.authInterceptor = new BasicAuthInterceptor(username, password);
+        IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
         this.client.registerInterceptor(authInterceptor);
     }
 

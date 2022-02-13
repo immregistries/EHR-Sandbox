@@ -1,11 +1,9 @@
 package org.immregistries.ehr.servlet;
 
-import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +27,6 @@ import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
-import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 

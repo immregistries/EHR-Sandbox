@@ -13,7 +13,6 @@ import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
-import org.immregistries.ehr.model.Tester;
 
 
 /**

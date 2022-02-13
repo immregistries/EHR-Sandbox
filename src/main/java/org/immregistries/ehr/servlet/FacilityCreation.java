@@ -13,7 +13,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Silo;
-import org.immregistries.ehr.model.Tester;
 
 
 public class FacilityCreation extends HttpServlet {

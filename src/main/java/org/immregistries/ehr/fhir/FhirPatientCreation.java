@@ -3,31 +3,13 @@ package org.immregistries.ehr.fhir;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.Quota.Resource;
-
-import com.mysql.cj.log.Log;
-
-import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Patient;
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.DataFormatException;
-import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IClientInterceptor;
-import ca.uhn.fhir.rest.client.impl.RestfulClientFactory;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
-import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
-import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import ca.uhn.fhir.rest.client.interceptor.UrlTenantSelectionInterceptor;
-import ca.uhn.fhir.rest.client.api.IClientInterceptor;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 
-import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 
 public class FhirPatientCreation {

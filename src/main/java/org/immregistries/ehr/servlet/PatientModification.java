@@ -1,18 +1,12 @@
 package org.immregistries.ehr.servlet;
 
 
-import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.time.format.DateTimeFormatter;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +24,6 @@ import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.fhir.FhirPatientCreation;
 
 public class PatientModification extends HttpServlet{
   private static final long serialVersionUID = 1L;

@@ -42,14 +42,8 @@ public class FhirImmunizationCreation {
           i.setStatus(Immunization.ImmunizationStatus.COMPLETED);
           break;
         }
-        case "NA" : {
-          i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
-          break;
-        }
-        case "PA" : {
-          i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
-          break;
-        }
+        case "NA" :
+        case "PA" :
         case "RE" : {
           i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
           break;

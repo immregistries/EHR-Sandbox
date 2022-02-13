@@ -1,6 +1,5 @@
 package org.immregistries.ehr.model;
 import java.io.Serializable;
-import java.util.Date;
 
 public class Facility implements Serializable {
 
