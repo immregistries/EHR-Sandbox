@@ -228,12 +228,25 @@ public class EntryRecord extends HttpServlet {
             +vaccination.getOrderingClinician().getNameLast();
         String testAdministeredDate = ""+vaccine.getAdministeredDate();
         String testVaccId = ""+vaccine.getVaccineId();
-        Code testCodeCvx= null;
-        Code testCodeNDC= null;
+        
         String testCvx=""+vaccine.getVaccineCvxCode();
         String testMvx=""+vaccine.getVaccineMvxCode();
         String testNdc=""+vaccine.getVaccineNdcCode();
+        Code testCodeCvx= null;
+        Code testCodeNDC= null;
         Code testCodeMvx= null;
+        for(Code code : codeListCVX) {
+          if (code.getValue().equals(testCvx)) {
+            testCodeCvx=code;
+            break;
+          }
+        }
+        for(Code code : codeListMVX) {
+          if (code.getValue().equals(testMvx)) {
+            testCodeMvx=code;
+            break;
+          }
+        }
         String testAmount=""+vaccine.getAdministeredAmount();
         String testManufacturer="";
         String testInfSource=""+vaccine.getInformationSource();
@@ -326,12 +339,9 @@ public class EntryRecord extends HttpServlet {
                 + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
                 +"  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
                 +"                          <SELECT style=\"width : 100%\" name=\"vacc_cvx\" size=\"1\">\r\n");
-                if(testCodeCvx!=null) {
+                
                 out.println( "                            <OPTION value=\""+testCodeCvx.getValue()+"\">"+testCodeCvx.getLabel()+"</Option>\r\n");
-                }
-                else {
-                out.println( "                             <OPTION value=\"\">Select a vaccine</Option>\r\n");
-                }
+                
                 for(Code code : codeListCVX) {
                   out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
                 }
@@ -347,12 +357,9 @@ public class EntryRecord extends HttpServlet {
                 //+ "                           <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"\" size=\"40\" maxlength=\"60\" name=\"vacc_mvx\"/>\r\n"
                 +"  <p class=\"w3-margin\" style=\"width:40% height:5%\">"
                 +"                          <SELECT style =\"width:100%\" name=\"vacc_mvx\" size=\"1\">\r\n");
-                if(testCodeMvx!=null) {
+                
                     out.println( " <OPTION value=\""+testCodeMvx.getValue()+"\">"+testCodeMvx.getLabel()+"</Option>\r\n");
-                  }
-                  else {
-                  out.println( "  OPTION value=\"\">Select a vaccine</Option>\r\n");
-                  }
+                
                 for(Code code : codeListMVX) {
                   out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
                 }
