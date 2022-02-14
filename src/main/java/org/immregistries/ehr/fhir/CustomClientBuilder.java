@@ -24,7 +24,7 @@ public class CustomClientBuilder {
     // Needs to be static object and built only one time in whole project
     private static final FhirContext CTX = FhirContext.forR4();
 
-    private IGenericClient client = CTX.newRestfulGenericClient(FLORENCE);
+    private IGenericClient client;
 
     public CustomClientBuilder(){
         this(FLORENCE, TENANT_A, TENANT_A, TENANT_A);

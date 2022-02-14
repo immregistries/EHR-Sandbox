@@ -49,7 +49,7 @@ public class EntryRecord extends HttpServlet {
     Patient patient = (Patient) session.getAttribute("patient");
     
     VaccinationEvent vacc_ev = new VaccinationEvent(); 
-    Vaccine vaccine = new Vaccine();
+    Vaccine vaccine;
     
     int paramEntry =  Integer.parseInt(req.getParameter("paramEntryId"));
     
@@ -142,13 +142,13 @@ public class EntryRecord extends HttpServlet {
     switch(req.getParameter("nextPage")) {
       case "patient_record":
         resp.sendRedirect("patient_record");
-        return;
+        break;
       case "IIS_message":
         resp.sendRedirect("IIS_message");
-        return;
+        break;
       case "FHIR_messaging":
         resp.sendRedirect("FHIR_messaging?paramEntryId=" + vacc_ev.getVaccinationEventId());
-        return;
+        break;
     }
    // doGet(req, resp);
   }
@@ -167,7 +167,7 @@ public class EntryRecord extends HttpServlet {
         System.out.println(req.getParameter("paramEntryId"));
         Vaccine vaccine=new Vaccine();
         VaccinationEvent vaccination=new VaccinationEvent();
-        List<VaccinationEvent>vaccinationList=null;
+        List<VaccinationEvent>vaccinationList;
         List<Vaccine> entryList = null;
         Patient patient = (Patient) session.getAttribute("patient");
         Facility facility = (Facility) session.getAttribute("facility");
@@ -215,7 +215,7 @@ public class EntryRecord extends HttpServlet {
              "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
             + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
             );
-        out.println("<button onclick=\"location.href=\'entry_creation?testEntry=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
+        out.println("<button onclick=\"location.href='entry_creation?testEntry=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
         out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n");
         String testAdministering = ""+vaccination.getAdministeringClinician().getNameFirst()+" "
             +vaccination.getAdministeringClinician().getNameMiddle()+" "
@@ -533,10 +533,10 @@ public class EntryRecord extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         
-        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }

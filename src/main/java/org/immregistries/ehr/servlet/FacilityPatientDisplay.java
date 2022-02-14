@@ -129,7 +129,7 @@ public class FacilityPatientDisplay extends HttpServlet {
               + "\">");
         }
 
-        out.println("<a href=\'facility_patient_display?" + link + "\' style=\"text-decoration:none\">"
+        out.println("<a href='facility_patient_display?" + link + "' style=\"text-decoration:none\">"
             + "<div style=\"text-decoration:none;height:100%\">"
             + facilityDisplay.getNameDisplay()
             + "</div>"
@@ -152,7 +152,7 @@ public class FacilityPatientDisplay extends HttpServlet {
         String link = "paramPatientId=" + patientDisplay.getPatientId();
         out.println("<tr>"
             + "<td class = \"w3-hover-teal\">"
-            + "<a href=\'patient_record?" + link + "\' style=\"text-decoration:none\";>"
+            + "<a href='patient_record?" + link + "' style=\"text-decoration:none\";>"
             + "<div style=\"text-decoration:none;height:100%\">"
             + patientDisplay.getNameFirst() + " " + patientDisplay.getNameLast()
             + "</div>"
@@ -167,8 +167,8 @@ public class FacilityPatientDisplay extends HttpServlet {
           + "</table>"
           + "</div>"
           + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
-          + "<button onclick=\"location.href=\'facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
-          + "<button onclick=\"location.href=\'patient_creation"
+          + "<button onclick=\"location.href='facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
+          + "<button onclick=\"location.href='patient_creation"
           + "'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
 
           + "</div\r\n");
@@ -192,10 +192,10 @@ public class FacilityPatientDisplay extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">List of patients</a>\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">List of patients</a>\r\n"
         
-        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }

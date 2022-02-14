@@ -30,8 +30,8 @@ public class Authentication extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     Tester newTester = new Tester();
     ImmunizationRegistry newIR = new ImmunizationRegistry();
-    List<Tester> testerList = null;
-    List<ImmunizationRegistry> IRList = null;
+    List<Tester> testerList;
+    List<ImmunizationRegistry> IRList;
     Query query = dataSession.createQuery("from Tester where loginUsername=?");
     String username = req.getParameter("username");
     String password = req.getParameter("pwd");
@@ -118,7 +118,7 @@ public class Authentication extends HttpServlet {
             + "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
 
 
-            + "                <button onclick=\"location.href=\'silos\'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" style=\"margin:auto\"name=\"validate_button\" >Validate</button>\r\n"
+            + "                <button onclick=\"location.href='silos'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" style=\"margin:auto\"name=\"validate_button\" >Validate</button>\r\n"
             + "                </form> "
             /*onclick=\"validateOnClick()\"*/
             + "            </div>"

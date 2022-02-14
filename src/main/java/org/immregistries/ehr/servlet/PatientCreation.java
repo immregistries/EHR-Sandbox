@@ -55,7 +55,7 @@ public class PatientCreation extends HttpServlet {
 
     
     
-   SimpleDateFormat format  = new SimpleDateFormat("yyyy-mm-dd");
+   SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
    patient.setSilo(silo);
    patient.setFacility(facility);
    
@@ -200,7 +200,7 @@ public class PatientCreation extends HttpServlet {
           out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
                   + facility.getNameDisplay() + "</b></label>"
                       + "</div>");
-        out.println("<button onclick=\"location.href=\'patient_creation?testPatient=1\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
+        out.println("<button onclick=\"location.href='patient_creation?testPatient=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
         String testDoB="";
         String testNameFirst="";
         String testNameLast="";
@@ -586,9 +586,9 @@ public class PatientCreation extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "    	</header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }

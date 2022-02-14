@@ -133,7 +133,7 @@ public class PatientRecord extends HttpServlet {
           String link = "paramEntryId=" + entryDisplay.getVaccinationEventId();
           out.println("<tr>"
               +"<td class = \"w3-hover-teal\">"
-              + "<a href=\'entry_record?" + link+"\' style=\"text-decoration:none\">"
+              + "<a href='entry_record?" + link+ "' style=\"text-decoration:none\">"
               + "<div style=\"text-decoration:none;height:100%\">"  
               + vaccineAdmin.getVaccineCvxCode() + "   "+vaccineAdmin.getVaccineMvxCode()+ "   "+vaccineAdmin.getVaccineNdcCode()
               + "</div>"
@@ -146,10 +146,10 @@ public class PatientRecord extends HttpServlet {
                 "</table>"
                 + "</div>"
                 + "<div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
-                + "<button onclick=\"location.href=\'entry_creation?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
+                + "<button onclick=\"location.href='entry_creation?" +link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
 
-                + "<button onclick=\"location.href=\'patient_modification?"+link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Modify patient</button>"
-                + "<button onclick=\"location.href=\'FHIR_messaging?patientOnly=1'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
+                + "<button onclick=\"location.href='patient_modification?" +link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Modify patient</button>"
+                + "<button onclick=\"location.href='FHIR_messaging?patientOnly=1'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
 
                 + "</div\r\n");
         doFooter(out, session);
@@ -171,9 +171,9 @@ public class PatientRecord extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "    	</header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }

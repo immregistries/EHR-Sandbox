@@ -68,7 +68,7 @@ public class Settings extends HttpServlet {
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+IR.getIisHL7Url()+"\" size=\"40\" maxlength=\"60\" name=\"HL7 URL\"/>\r\n"
             + " <label class=\"w3-text-green\"><b>FHIR URL</b></label>"
             + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\""+IR.getIisFHIRUrl()+"\" size=\"40\" maxlength=\"60\" name=\"FHIR URL\"/>\r\n"
-            + "                <button onclick=\"location.href=\'settings\'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save</button>\r\n"
+            + "                <button onclick=\"location.href='settings'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save</button>\r\n"
             +" <input type=\"hidden\" id=\"previousPage\" name=\"previousPage\" value="+req.getHeader("referer")+">" 
             + "                </form> " + "            </div>");
 
@@ -90,8 +90,8 @@ public class Settings extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         
         + "</div>" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");

@@ -26,8 +26,7 @@ public class FacilityCreation extends HttpServlet {
 
     String name = req.getParameter("facility_name");
 
-    Silo silo = new Silo();
-    silo = (Silo) session.getAttribute("silo");
+    Silo silo = (Silo) session.getAttribute("silo");
     String nameParent = req.getParameter("parentFacility");
     Facility parentFacility = null;
     if(nameParent!=null) {
@@ -48,7 +47,7 @@ public class FacilityCreation extends HttpServlet {
       facility.setParentFacility(parentFacility);
     }
 
-    Object oldSilo = null;
+    Object oldSilo;
     Query query = dataSession.createQuery("from Facility where silo_id=? and name_display=?");
     query.setParameter(0, silo.getSiloId());
     query.setParameter(1, name);
@@ -107,10 +106,10 @@ public class FacilityCreation extends HttpServlet {
     out.println("  <body>");
     // out.println("<div class=\"w3-container \">");
     out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = \'silos \' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = \'facility_patient_display\' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
+        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
+        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         
-        + "  <a href = \'Settings\' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
+        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
         + "</div>" + "      </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
