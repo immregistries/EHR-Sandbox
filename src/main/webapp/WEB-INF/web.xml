@@ -27,7 +27,7 @@
   </servlet>
   <servlet>
     <display-name>Facility Creation</display-name>
-    <servlet-name>Facility</servlet-name>
+    <servlet-name>facility_creation</servlet-name>
     <servlet-class>org.immregistries.ehr.servlet.FacilityCreation</servlet-class>
   </servlet>
   <servlet>
@@ -50,13 +50,8 @@
   	<servlet-class>org.immregistries.ehr.servlet.IISMessage</servlet-class>
   </servlet>
   <servlet>
-  <display-name>Patient modification</display-name>
-  <servlet-name>PatientModification</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.PatientModification</servlet-class>
-  </servlet>
-  <servlet>
     <display-name>Patient form</display-name>
-    <servlet-name>PatientForm</servlet-name>
+    <servlet-name>patient_form</servlet-name>
     <servlet-class>org.immregistries.ehr.servlet.PatientForm</servlet-class>
 </servlet>
   <servlet>
@@ -65,11 +60,6 @@
   	<display-name>Silo_creation</display-name>
   	<servlet-name>Silo_creation</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.SiloCreation</servlet-class>
-  </servlet>
-  <servlet>
-  	<display-name>Patient creation</display-name>
-  	<servlet-name>patient_creation</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.PatientCreation</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -112,10 +102,6 @@
     <url-pattern>/home</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>PatientModification</servlet-name>
-    <url-pattern>/patient_modification</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
   	<servlet-name>entry_record</servlet-name>
   	<url-pattern>/entry_record</url-pattern>
   </servlet-mapping>
@@ -128,7 +114,7 @@
   	<url-pattern>/silos</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  <servlet-name>Facility</servlet-name>
+  <servlet-name>facility_creation</servlet-name>
   <url-pattern>/facility_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
@@ -140,11 +126,7 @@
   	<url-pattern>/silo_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>patient_creation</servlet-name>
-  	<url-pattern>/patient_creation</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-      <servlet-name>PatientForm</servlet-name>
+      <servlet-name>patient_form</servlet-name>
       <url-pattern>/patient_form</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
