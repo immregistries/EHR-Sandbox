@@ -1,6 +1,5 @@
 package org.immregistries.ehr.servlet;
 
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -37,33 +36,34 @@ public class PatientModification extends HttpServlet{
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
+    Boolean creation = false;
 
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
     Transaction transaction = dataSession.beginTransaction();
 
-    Patient patienttest = new  Patient();
-    
-
     Silo silo = (Silo) session.getAttribute("silo");
     Facility facility = (Facility) session.getAttribute("facility");
 
-    
     SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
-    int paramPatientId =  Integer.parseInt(req.getParameter("paramPatientId"));
-    
-    
-    Patient patient  = (Patient) dataSession.load(patienttest.getClass(),paramPatientId);
-    //patient.setSilo(silo);
-    //patient.setFacility(facility);
-    System.out.println(patient.getPatientId()+" patient ID after load" );
-    
+
+    Patient patient;
+    if (req.getParameter("paramPatientId") != null) {
+      int paramPatientId =  Integer.parseInt(req.getParameter("paramPatientId"));
+      patient = (Patient) dataSession.load(new Patient().getClass(),paramPatientId);
+    } else{
+      patient = new Patient();
+      patient.setSilo(silo);
+      patient.setFacility(facility);
+    }
+
     patient.setNameFirst(req.getParameter("first_name"));
     patient.setNameLast(req.getParameter("last_name"));
     patient.setNameMiddle(req.getParameter("middle_name"));
     patient.setAddressCity(req.getParameter("city"));
     patient.setAddressCountry(req.getParameter("country"));
     patient.setAddressCountyParish(req.getParameter("county"));
+    patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setAddressState(req.getParameter("state"));
     
     patient.setBirthFlag(req.getParameter("birth_flag"));
@@ -91,17 +91,16 @@ public class PatientModification extends HttpServlet{
       patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
       patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
       patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
-      
+
     } catch (ParseException e) {
-      
+
       e.printStackTrace();
     }
-    
+
     patient.setSex(req.getParameter("sex"));
     Date updatedDate = new Date();
     patient.setUpdatedDate(updatedDate);
     //patient.setCreatedDate(updatedDate);
-    patient.setBirthDate(updatedDate);
     
     dataSession.update(patient);
     transaction.commit();
@@ -109,7 +108,7 @@ public class PatientModification extends HttpServlet{
     //ServletContext context = getServletContext( );
     // context.log(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
 
-    
+
     resp.sendRedirect("facility_patient_display");
     
     doGet(req, resp);

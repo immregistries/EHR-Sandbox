@@ -26,13 +26,9 @@ import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
-import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 import com.github.javafaker.Faker;
 
-/**
- * Servlet implementation class patient_creation
- */
 public class PatientCreation extends HttpServlet {
   private static final long serialVersionUID = 1L;
   public static final String PARAM_SHOW = "show";
@@ -43,30 +39,16 @@ public class PatientCreation extends HttpServlet {
 
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
-    String pattern = "yyyy-MM-dd";
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+    Transaction transaction = dataSession.beginTransaction();
 
     Silo silo = (Silo) session.getAttribute("silo");
     Facility facility = (Facility) session.getAttribute("facility");
 
-    Patient patient = new Patient();
-
     SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
-   patient.setSilo(silo);
-   patient.setFacility(facility);
-   
-   try {
-     patient.setBirthDate(format.parse(req.getParameter("DoB")));
-     patient.setDeathDate(format.parse(req.getParameter("DoD")));
-     patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
-     patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
-     patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
-     
-   } catch (ParseException e) {
-     
-     e.printStackTrace();
-   }
-    
+
+    Patient patient = new Patient();
+    patient.setSilo(silo);
+    patient.setFacility(facility);
 
     patient.setNameFirst(req.getParameter("first_name"));
     patient.setNameLast(req.getParameter("last_name"));
@@ -77,21 +59,8 @@ public class PatientCreation extends HttpServlet {
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setAddressState(req.getParameter("state"));
 
-    try {
-      patient.setBirthDate(simpleDateFormat.parse(req.getParameter("DoB")));
-    } catch (ParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
     patient.setBirthFlag(req.getParameter("birth_flag"));
     patient.setBirthOrder(req.getParameter("birth_order"));
-    //patient.setDeathDate(null);
-    try {
-      patient.setDeathDate(simpleDateFormat.parse(req.getParameter("DoD")));
-    } catch (ParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
 
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setEmail(req.getParameter("email"));
@@ -109,19 +78,29 @@ public class PatientCreation extends HttpServlet {
     patient.setRace(req.getParameter("race"));
     patient.setRegistryStatusIndicator(req.getParameter("registry_status_indicator"));
     
+    try {
+      patient.setBirthDate(format.parse(req.getParameter("DoB")));
+      patient.setDeathDate(format.parse(req.getParameter("DoD")));
+      patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
+      patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
+      patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
+
+    } catch (ParseException e) {
+
+      e.printStackTrace();
+    }
+
     patient.setSex(req.getParameter("sex"));
     Date updatedDate = new Date();
     patient.setUpdatedDate(updatedDate);
     patient.setCreatedDate(updatedDate);
 
-    Transaction transaction = dataSession.beginTransaction();
     dataSession.save(patient);
     transaction.commit();
 
-    ServletContext context = getServletContext( );
+
 
     resp.sendRedirect("facility_patient_display");
-    
     doGet(req, resp);
   }
 
