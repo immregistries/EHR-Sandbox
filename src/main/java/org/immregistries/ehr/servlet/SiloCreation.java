@@ -28,18 +28,16 @@ public class SiloCreation extends HttpServlet {
 
     String name = req.getParameter("silo_name");
 
-    Tester tester = new Tester();
-    tester = (Tester) session.getAttribute("tester");
+    Tester tester = (Tester) session.getAttribute("tester");
 
     Silo newSilo = new Silo();
     newSilo.setNameDisplay(name);
     newSilo.setTester(tester);
-    
-    Object oldSilo = null;
+
     Query query = dataSession.createQuery("from Silo where tester=? and name_display=?");
     query.setParameter(0, tester);
     query.setParameter(1, name);
-    oldSilo = query.uniqueResult() ;
+    Silo oldSilo = (Silo) query.uniqueResult();
     if (oldSilo != null){
       req.setAttribute("duplicate_error", 1);
     } else {

@@ -3,10 +3,15 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,20 +34,19 @@ public class PatientModification extends HttpServlet{
   private static final long serialVersionUID = 1L;
   public static final String PARAM_SHOW = "show";
 
-  
+  @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
 
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
     Transaction transaction = dataSession.beginTransaction();
-    Silo silo = new Silo();
-    Facility facility = new Facility();
+
     Patient patienttest = new  Patient();
     
 
-    silo = (Silo) session.getAttribute("silo");
-    facility = (Facility) session.getAttribute("facility");
+    Silo silo = (Silo) session.getAttribute("silo");
+    Facility facility = (Facility) session.getAttribute("facility");
 
     
     SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
@@ -274,9 +278,9 @@ public class PatientModification extends HttpServlet{
             + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
             + "<div style =\"width: 50% ;align-items:center\" "
            
-            + "<label class=\"w3-text-green\"><b>Date of birth</b></label>"
+            + "<label class=\"w3-text-green\"><b>Date of birth</b></label> "
             + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
-            + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
+            + "                         <input type=\"date\" class = \"w3-input w3-margin w3-border \"  value=\""+testDoB+"\" style=\"width:75% \" name=\"DoB\" />\r\n"
 
             +"</div>"
             
@@ -394,7 +398,7 @@ public class PatientModification extends HttpServlet{
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "   <label class=\"w3-text-green\"><b>Death date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testDeathDate+"\" style=\"width:75% \" name=\"DoD\"/>\r\n"
 
             +"</div>"
             +"</div>"
@@ -411,7 +415,7 @@ public class PatientModification extends HttpServlet{
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testPubIndicDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
 
             +"</div>"
             
@@ -425,14 +429,14 @@ public class PatientModification extends HttpServlet{
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>protection indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testProtecIndicDate+"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Registry indicator date  </b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegIndicDate+"\" style=\"width:75% \" name=\"registry_indicator_date\"/>\r\n"
  
             +"</div>"
             
@@ -447,7 +451,7 @@ public class PatientModification extends HttpServlet{
             + "<div style =\"align-items:center\" "
            
             + "   <label class=\"w3-text-green\"><b>registry status indicator date</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
+            + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+testRegStatusDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
 
             +"</div>"
             +"</div>"
@@ -517,7 +521,7 @@ public class PatientModification extends HttpServlet{
         + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
         + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
-        + "</div>" + "      </header>");
+        + "</div>" + "    </header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
 

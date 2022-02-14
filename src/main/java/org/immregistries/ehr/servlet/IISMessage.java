@@ -36,7 +36,7 @@ public class IISMessage extends HttpServlet {
     
     
 
-    Connector connector=null;
+    Connector connector;
     try {
       connector = new SoapConnector("Test", ((ImmunizationRegistry) session.getAttribute("IR")).getIisHL7Url());
       connector.setUserid(req.getParameter("USERID"));
@@ -69,14 +69,10 @@ public class IISMessage extends HttpServlet {
       {
         doHeader(out, session, req);
         HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
-        Tester tester = new Tester();
-        Facility facility = new Facility();
-        Patient patient = new Patient();
-        ImmunizationRegistry IR = new ImmunizationRegistry();
-        IR = (ImmunizationRegistry) session.getAttribute("IR");
-        tester = (Tester) session.getAttribute("tester");
-        facility = (Facility) session.getAttribute("facility");
-        patient = (Patient) session.getAttribute("patient") ;
+        Tester tester = (Tester) session.getAttribute("tester");
+        Facility facility = (Facility) session.getAttribute("facility");
+        Patient patient = (Patient) session.getAttribute("patient") ;
+        ImmunizationRegistry IR = (ImmunizationRegistry) session.getAttribute("IR");
         
         Vaccine vaccine=(Vaccine) session.getAttribute("vaccine");
         HL7printer printerhl7 = new HL7printer();

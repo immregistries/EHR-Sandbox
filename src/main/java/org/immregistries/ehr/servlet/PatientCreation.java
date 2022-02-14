@@ -46,16 +46,12 @@ public class PatientCreation extends HttpServlet {
     String pattern = "yyyy-MM-dd";
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
-    Silo silo = new Silo();
-    Facility facility = new Facility();
+    Silo silo = (Silo) session.getAttribute("silo");
+    Facility facility = (Facility) session.getAttribute("facility");
+
     Patient patient = new Patient();
 
-    silo = (Silo) session.getAttribute("silo");
-    facility = (Facility) session.getAttribute("facility");
-
-    
-    
-   SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
    patient.setSilo(silo);
    patient.setFacility(facility);
    
@@ -147,8 +143,7 @@ public class PatientCreation extends HttpServlet {
         doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = new Patient();
-        List<Patient> patientList = null;
-        List<VaccinationEvent> entryList = null;
+        List<Patient> patientList;
         Silo silo = (Silo) session.getAttribute("silo");
         if(req.getParameter("paramPatientId")!=null && silo!=null) {
           Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
@@ -529,14 +524,14 @@ public class PatientCreation extends HttpServlet {
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Guardian last name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
 
             +"</div>"
             
             + "<div style =\"width: 50% ;align-items:center\" "
             
             + "    <label class=\"w3-text-green\"><b>Guardian first name</b></label>"
-            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameLast+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
+            + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+testGuardNameFirst+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
 
             
             +"</div>"
