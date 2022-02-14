@@ -55,6 +55,11 @@
   <servlet-class>org.immregistries.ehr.servlet.PatientModification</servlet-class>
   </servlet>
   <servlet>
+    <display-name>Patient form</display-name>
+    <servlet-name>PatientForm</servlet-name>
+    <servlet-class>org.immregistries.ehr.servlet.PatientForm</servlet-class>
+</servlet>
+  <servlet>
   	<description>
   	</description>
   	<display-name>Silo_creation</display-name>
@@ -137,6 +142,10 @@
   <servlet-mapping>
   	<servlet-name>patient_creation</servlet-name>
   	<url-pattern>/patient_creation</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+      <servlet-name>PatientForm</servlet-name>
+      <url-pattern>/patient_form</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   <servlet-name>entry_creation</servlet-name>

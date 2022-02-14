@@ -36,7 +36,6 @@ public class PatientModification extends HttpServlet{
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    Boolean creation = false;
 
     HttpSession session = req.getSession(true);
     Session dataSession = PopServlet.getDataSession();
@@ -48,10 +47,10 @@ public class PatientModification extends HttpServlet{
     SimpleDateFormat format  = new SimpleDateFormat("yyyy-MM-dd");
 
     Patient patient;
-    if (req.getParameter("paramPatientId") != null) {
+    if (req.getParameter("paramPatientId") != null) { // Modifying existing patient
       int paramPatientId =  Integer.parseInt(req.getParameter("paramPatientId"));
       patient = (Patient) dataSession.load(new Patient().getClass(),paramPatientId);
-    } else{
+    } else{ // creating new patient
       patient = new Patient();
       patient.setSilo(silo);
       patient.setFacility(facility);
@@ -65,10 +64,10 @@ public class PatientModification extends HttpServlet{
     patient.setAddressCountyParish(req.getParameter("county"));
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setAddressState(req.getParameter("state"));
-    
+
     patient.setBirthFlag(req.getParameter("birth_flag"));
     patient.setBirthOrder(req.getParameter("birth_order"));
-    
+
     patient.setDeathFlag(req.getParameter("death_flag"));
     patient.setEmail(req.getParameter("email"));
     patient.setEthnicity(req.getParameter("ethnicity"));
@@ -84,130 +83,183 @@ public class PatientModification extends HttpServlet{
     
     patient.setRace(req.getParameter("race"));
     patient.setRegistryStatusIndicator(req.getParameter("registry_status_indicator"));
-    
+
     try {
       patient.setBirthDate(format.parse(req.getParameter("DoB")));
-      patient.setDeathDate(format.parse(req.getParameter("DoD")));
-      patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
-      patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
-      patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
-
+      if (!req.getParameter("DoD").equals("")){
+        patient.setDeathDate(format.parse(req.getParameter("DoD")));
+      }
+      if (!req.getParameter("protection_date").equals("")){
+        patient.setProtectionIndicatorDate(format.parse(req.getParameter("protection_date")));
+      }
+      if (!req.getParameter("publicity_date").equals("")){
+        patient.setPublicityIndicatorDate(format.parse(req.getParameter("publicity_date")));
+      }
+      if (!req.getParameter("registry_status_indicator_date").equals("")){
+        patient.setRegistryStatusIndicatorDate(format.parse(req.getParameter("registry_status_indicator_date")));
+      }
     } catch (ParseException e) {
-
       e.printStackTrace();
     }
 
     patient.setSex(req.getParameter("sex"));
     Date updatedDate = new Date();
     patient.setUpdatedDate(updatedDate);
-    //patient.setCreatedDate(updatedDate);
-    
-    dataSession.update(patient);
+
+    if (req.getParameter("paramPatientId") != null) { // Modifying existing patient
+      dataSession.update(patient);
+    }else {
+      patient.setCreatedDate(updatedDate);
+      dataSession.save(patient);
+    }
     transaction.commit();
 
-    //ServletContext context = getServletContext( );
-    // context.log(FhirPatientCreation.dbPatientToFhirPatient(patient,"default"));
-
-
     resp.sendRedirect("facility_patient_display");
-    
     doGet(req, resp);
   }
 
-  
+  @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-
+    Boolean creation = false;
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
+    Session dataSession = PopServlet.getDataSession();
     CodeMap codeMap = CodeMapManager.getCodeMap();
     Collection<Code> codeListRelation =codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
-    Session dataSession = PopServlet.getDataSession();
     try {
-      { 
+      {
         if(req.getParameter("noFacility")!=null) {
           resp.sendRedirect("facility_patient_display?chooseFacility=1");
         }
         doHeader(out, session);
-         Patient patient = (Patient) session.getAttribute("patient");
-        
-        String show = req.getParameter(PARAM_SHOW);
-        
+
         Facility facility = (Facility) session.getAttribute("facility");
-        
-        
         Silo silo = (Silo) session.getAttribute("silo");
-        
-        Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
-          
+        Patient patient;
+        if(req.getParameter("paramPatientId")!=null && silo!=null) {
+          Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+          query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
+          query.setParameter(1, silo.getSiloId());
+          List<Patient> patientList = query.list();
+          patient = patientList.get(0);
+          session.setAttribute("patient", patient);
+
+          facility = patient.getFacility();
+          session.setAttribute("facility", facility);
+        } else if (req.getParameter("paramPatientId") != null){
+          patient = (Patient) session.getAttribute("patient");
+        } else {
+          patient = new Patient();
+          creation = true;
+        }
+        String show = req.getParameter(PARAM_SHOW);
+
         resp.setContentType("text/html");
         
+        Query query;
+
         Tester tester = (Tester) session.getAttribute("tester");
-       
+
         out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
             + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
             + silo.getNameDisplay() + "</b></label>");
-        
-          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-                  + facility.getNameDisplay() + "</b></label>");
-        
-        
-        out.println(
-             "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
-            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
-            );
-        
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern); 
-        
-        String testDoB=""+sdf.format(patient.getBirthDate());
-        String testNameFirst=""+patient.getNameFirst();
-        String testNameLast=""+patient.getNameLast();
-        String testMiddleName=""+patient.getNameMiddle();
-        String testMotherMaidenName=""+patient.getMotherMaiden();
-        String testSex=""+patient.getSex();
-        String testRace=""+patient.getRace();
-        String testAdress=""+patient.getAddressLine1();
-        String testCity=""+patient.getAddressCity();
-        String testCountryCode=""+patient.getAddressCountry();
-        String testState=""+patient.getAddressState();
-        String testCountyParish=""+patient.getAddressCountyParish();
-        String testPhone=""+patient.getPhone();
-        String testEmail=""+patient.getEmail();
-        String testEthnicity=""+patient.getEthnicity();
-        String testBirthFlag=""+patient.getBirthFlag();
-        String testBirthOrder=""+patient.getBirthOrder();
-        String testDeathFlag=""+patient.getDeathFlag();
-        String testDeathDate = null; 
-        if(patient.getDeathDate()!=null) {
-           testDeathDate=""+sdf.format(patient.getDeathDate());
+
+        out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+            + facility.getNameDisplay() + "</b></label>");
+
+
+        if (!creation){
+          out.println("<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
+                  + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>");
+          out.println("</div>");
+        }else{
+          out.println("</div>");
+          out.println("<button onclick=\"location.href='patient_form?testPatient=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
         }
-        
-        String testPubIndic=""+patient.getPublicityIndicator();
-        String testPubIndicDate=""+patient.getPublicityIndicatorDate();
-        String testProtecIndic=""+patient.getProtectionIndicator();
-        String testProtecIndicDate=""+patient.getProtectionIndicatorDate();
-        String testRegIndicDate=""+sdf.format(patient.getRegistryStatusIndicatorDate());
-        String testRegStatus=""+patient.getRegistryStatusIndicator();
-        String testRegStatusDate=""+patient.getRegistryStatusIndicatorDate();
-        String testGuardNameFirst=""+patient.getGuardianFirst();
-        String testGuardNameLast=""+patient.getGuardianLast();
-        String testGuardMiddleName=""+patient.getGuardianMiddle();
-        String testGuardRelationship=""+patient.getGuardianRelationship();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String testDoB="";
+        String testNameFirst="";
+        String testNameLast="";
+        String testMiddleName="";
+        String testMotherMaidenName="";
+        String testSex="";
+        String testRace="";
+        String testAdress="";
+        String testCity="";
+        String testCountryCode="";
+        String testState="";
+        String testCountyParish="";
+        String testPhone="";
+        String testEmail="";
+        String testEthnicity="";
+        String testBirthFlag="";
+        String testBirthOrder="";
+        String testDeathFlag="";
+        String testDeathDate="";
+        String testPubIndic="";
+        String testPubIndicDate="";
+        String testProtecIndic="";
+        String testProtecIndicDate="";
+        String testRegIndicDate="";
+        String testRegStatus="";
+        String testRegStatusDate="";
+        String testGuardNameFirst="";
+        String testGuardNameLast="";
+        String testGuardMiddleName="";
+        String testGuardRelationship="";
+        if(!creation){
+          testDoB=""+sdf.format(patient.getBirthDate());
+          testNameFirst=""+patient.getNameFirst();
+          testNameLast=""+patient.getNameLast();
+          testMiddleName=""+patient.getNameMiddle();
+          testMotherMaidenName=""+patient.getMotherMaiden();
+          testSex=""+patient.getSex();
+          testRace=""+patient.getRace();
+          testAdress=""+patient.getAddressLine1();
+          testCity=""+patient.getAddressCity();
+          testCountryCode=""+patient.getAddressCountry();
+          testState=""+patient.getAddressState();
+          testCountyParish=""+patient.getAddressCountyParish();
+          testPhone=""+patient.getPhone();
+          testEmail=""+patient.getEmail();
+          testEthnicity=""+patient.getEthnicity();
+          testBirthFlag=""+patient.getBirthFlag();
+          testBirthOrder=""+patient.getBirthOrder();
+          testDeathFlag=""+patient.getDeathFlag();
+          testDeathDate = null;
+          if(patient.getDeathDate()!=null && patient.getDeathDate().equals("")) {
+            testDeathDate=""+sdf.format(patient.getDeathDate());
+          }
+          testPubIndic=""+patient.getPublicityIndicator();
+          testPubIndicDate=""+patient.getPublicityIndicatorDate();
+          testProtecIndic=""+patient.getProtectionIndicator();
+          testProtecIndicDate=""+patient.getProtectionIndicatorDate();
+          testRegIndicDate=""+sdf.format(patient.getRegistryStatusIndicatorDate());
+          testRegStatus=""+patient.getRegistryStatusIndicator();
+          testRegStatusDate=""+patient.getRegistryStatusIndicatorDate();
+          testGuardNameFirst=""+patient.getGuardianFirst();
+          testGuardNameLast=""+patient.getGuardianLast();
+          testGuardMiddleName=""+patient.getGuardianMiddle();
+          testGuardRelationship=""+patient.getGuardianRelationship();
+        }
+
         Faker faker = new Faker();
-        //String pattern = "yyyy/MM/dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date birthDate = new Date();
         int randDay = (int) (Math.random()*30+1);
         int randMonth = (int) (Math.random()*11);
         int randYear = (int) (Math.random()*121+1900);
-        birthDate.setDate(randDay);
-        birthDate.setMonth(randMonth);
-        birthDate.setYear(randYear);
-        
+        if (!creation){
+          birthDate.setDate(randDay);
+          birthDate.setMonth(randMonth);
+          birthDate.setYear(randYear);
+        }
+
+        // TEST generation
         if(req.getParameter("testPatient")!=null) {
-          testDoB=simpleDateFormat.format(birthDate);;
+          testDoB=sdf.format(birthDate);
           testNameFirst=faker.name().firstName();
           testNameLast=faker.name().lastName();
           testMiddleName=faker.name().firstName();
@@ -217,6 +269,44 @@ public class PatientModification extends HttpServlet{
           }else {
             testSex="M";
           }
+
+          long aDay = TimeUnit.DAYS.toMillis(1);
+          long now = new Date().getTime();
+          Date twoYearsAgo = new Date(now - aDay * 365 * 2);
+
+          Date eightyYearsAgo = new Date(now - aDay * 365 * 80);
+          Date fourtyYearsAgo = new Date(now - aDay * 365 * 40);
+          Date tenDaysAgo = new Date(now - aDay * 10);
+          Date fourYearsAgo = new Date(now - aDay*365*4);
+
+          testDoB = sdf.format(between(eightyYearsAgo, fourtyYearsAgo));
+
+          Random rand = new Random();
+
+
+          int randomDecision = rand.nextInt(100);
+          if(randomDecision<30) {
+            testDeathDate = sdf.format(between(fourYearsAgo,tenDaysAgo ));
+          }
+          else {
+            testDeathDate = "";
+          }
+
+          Date DeathDate = between(fourYearsAgo,tenDaysAgo );
+          Date PubIndicDate = between(twoYearsAgo, tenDaysAgo);
+          Date ProtecIndicDate = between(twoYearsAgo, tenDaysAgo);
+          Date RegIndicDate = between(twoYearsAgo, tenDaysAgo);
+          Date RegStatusDate = between(twoYearsAgo, tenDaysAgo);
+
+
+          testDeathDate = sdf.format(DeathDate);
+          testPubIndicDate = sdf.format(PubIndicDate);
+          testProtecIndicDate = sdf.format(ProtecIndicDate);
+          testRegIndicDate = sdf.format(RegIndicDate);
+          testRegStatusDate = sdf.format(RegStatusDate);
+
+
+
           testRace="Asian";
           testAdress=faker.address().buildingNumber()+faker.address().streetName();
           testCity=faker.address().city();
@@ -243,7 +333,7 @@ public class PatientModification extends HttpServlet{
           testGuardRelationship="BRO";
           
         }
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_modification\">\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_form\">\r\n"
             
             + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
             + "<div style =\"width: 50% ;align-items:center\" "
@@ -520,11 +610,21 @@ public class PatientModification extends HttpServlet{
         + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
         + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
         + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
-        + "</div>" + "    </header>");
+        + "</div>" + "    	</header>");
     out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
   }
 
   public static void doFooter(PrintWriter out, HttpSession session) {
     out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
+
+  public static Date between(Date startInclusive, Date endExclusive) {
+    long startMillis = startInclusive.getTime();
+    long endMillis = endExclusive.getTime();
+    long randomMillisSinceEpoch = ThreadLocalRandom
+      .current()
+      .nextLong(startMillis, endMillis);
+
+    return new Date(randomMillisSinceEpoch);
+}
 }
