@@ -12,7 +12,7 @@ import org.hl7.fhir.r4.model.Patient;
 
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 
-public class FhirPatientCreation {
+public class PatientHandler {
   
   
   public static Patient dbPatientToFhirPatient(org.immregistries.ehr.model.Patient dbPatient) {

@@ -614,8 +614,5 @@ public class HL7printer {
     }
     sb.append("\r");
   }
-  
-  public void printObxEHR(){
 
-  }
 }

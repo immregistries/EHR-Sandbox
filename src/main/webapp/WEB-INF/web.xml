@@ -16,27 +16,22 @@
     <servlet-class>org.immregistries.ehr.servlet.HomeServlet</servlet-class>
   </servlet>
   <servlet>
-  <display-name>Entry Creation</display-name>
-  <servlet-name>entry_creation</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.EntryCreation</servlet-class>
+      <display-name>Entry Creation</display-name>
+      <servlet-name>entry_creation</servlet-name>
+      <servlet-class>org.immregistries.ehr.servlet.EntryCreation</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>test</servlet-name>
-    <servlet-class>org.immregistries.ehr.servlet.TestNumeromille</servlet-class>
-  </servlet>
-  <servlet>
-  	
-  	<display-name>EntryRecord</display-name>
+  	<display-name>Entry Record</display-name>
   	<servlet-name>entry_record</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.EntryRecord</servlet-class>
   </servlet>
-    <servlet>
-    <display-name>Facility </display-name>
-  <servlet-name> Facility</servlet-name>
-  <servlet-class>org.immregistries.ehr.servlet.FacilityCreation</servlet-class>
+  <servlet>
+    <display-name>Facility Creation</display-name>
+    <servlet-name>Facility</servlet-name>
+    <servlet-class>org.immregistries.ehr.servlet.FacilityCreation</servlet-class>
   </servlet>
   <servlet>
-  	<display-name>patient_record</display-name>
+  	<display-name>Patient Record</display-name>
   	<servlet-name>patient_record</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.PatientRecord</servlet-class>
   </servlet>
@@ -50,7 +45,7 @@
   <servlet>
   	<description>
   	</description>
-  	<display-name>IIS_message</display-name>
+  	<display-name>IIS message</display-name>
   	<servlet-name>IIS_message</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.IISMessage</servlet-class>
   </servlet>
@@ -67,14 +62,14 @@
   	<servlet-class>org.immregistries.ehr.servlet.SiloCreation</servlet-class>
   </servlet>
   <servlet>
-  	<display-name>patient_creation</display-name>
+  	<display-name>Patient creation</display-name>
   	<servlet-name>patient_creation</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.PatientCreation</servlet-class>
   </servlet>
   <servlet>
   	<description>
   	</description>
-  	<display-name>facility_patient_display</display-name>
+  	<display-name>Patients List</display-name>
   	<servlet-name>facility_patient_display</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.FacilityPatientDisplay</servlet-class>
   </servlet>
@@ -88,7 +83,7 @@
   <servlet>
   	<description>
   	</description>
-  	<display-name>FHIR_messaging</display-name>
+  	<display-name>FHIR messaging</display-name>
   	<servlet-name>FHIR_messaging</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.FhirMessaging</servlet-class>
   </servlet>
@@ -114,10 +109,6 @@
   <servlet-mapping>
     <servlet-name>PatientModification</servlet-name>
     <url-pattern>/patient_modification</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>test</servlet-name>
-    <url-pattern>/test</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>entry_record</servlet-name>

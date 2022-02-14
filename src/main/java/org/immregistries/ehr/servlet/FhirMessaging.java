@@ -19,8 +19,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hl7.fhir.r4.model.Immunization;
 import org.immregistries.ehr.fhir.CustomClientBuilder;
-import org.immregistries.ehr.fhir.FhirImmunizationCreation;
-import org.immregistries.ehr.fhir.FhirPatientCreation;
+import org.immregistries.ehr.fhir.ImmunizationHandler;
+import org.immregistries.ehr.fhir.PatientHandler;
 import org.immregistries.ehr.fhir.ResourceClient;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
@@ -194,7 +194,7 @@ public class FhirMessaging extends HttpServlet {
       fhirPatientString = req.getParameter("fhirPatientString");
     } else {
       try {
-        fhirPatientString = parser.encodeResourceToString(FhirPatientCreation.dbPatientToFhirPatient(patient));
+        fhirPatientString = parser.encodeResourceToString(PatientHandler.dbPatientToFhirPatient(patient));
       } catch (Exception e) {
         fhirPatientResponseList.add("Parsing Error : Invalid Resource");
       }
@@ -247,7 +247,7 @@ public class FhirMessaging extends HttpServlet {
       fhirImmunizationString = req.getParameter("fhirImmunizationString");
     } else {
       try { 
-        Immunization immunization = FhirImmunizationCreation.dbVaccinationToFhirVaccination(vacc_ev);
+        Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vacc_ev);
         fhirImmunizationString = parser.encodeResourceToString(immunization);
       } catch (Exception e) {
         e.printStackTrace();

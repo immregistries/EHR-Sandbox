@@ -13,7 +13,7 @@ import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 
-public class FhirImmunizationCreation {
+public class ImmunizationHandler {
   
   public static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
     
@@ -34,7 +34,7 @@ public class FhirImmunizationCreation {
     i.setDoseQuantity(new Quantity());
     i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
     i.setExpirationDate(vaccine.getExpirationDate());
-    if (vaccine.getActionCode() == "D") {
+    if (vaccine.getActionCode().equals("D")) {
       i.setStatus(Immunization.ImmunizationStatus.ENTEREDINERROR);
     } else {
       switch(vaccine.getCompletionStatus()) {

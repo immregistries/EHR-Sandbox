@@ -22,7 +22,6 @@ import org.immregistries.ehr.model.ImmunizationRegistry;
 
 public abstract class ResourceClient {
     private static final FhirContext CTX = CustomClientBuilder.getCTX();
-    private static final String TENANT_B = "default";
 
     private ResourceClient(){}
 
