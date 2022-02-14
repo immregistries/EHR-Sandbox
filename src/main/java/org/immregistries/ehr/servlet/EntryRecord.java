@@ -3,7 +3,6 @@ package org.immregistries.ehr.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +17,8 @@ import org.hibernate.Transaction;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
-import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
-import org.immregistries.ehr.model.Tester;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
@@ -163,7 +160,7 @@ public class EntryRecord extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       {
-        doHeader(out, session);
+        ServletHelper.doStandardHeader(out, session);
         System.out.println(req.getParameter("paramEntryId"));
         Vaccine vaccine=new Vaccine();
         VaccinationEvent vaccination=new VaccinationEvent();
@@ -512,7 +509,7 @@ public class EntryRecord extends HttpServlet {
             + "</form> "
              + "</div\r\n");
 
-                doFooter(out, session);
+                ServletHelper.doStandardFooter(out, session);
       }
     } catch (Exception e) {
       e.printStackTrace(System.err);
@@ -520,33 +517,5 @@ public class EntryRecord extends HttpServlet {
     out.flush();
     out.close();
   }
-
-
-
-  public static void doHeader(PrintWriter out, HttpSession session) {
-    out.println("<html>");
-    out.println("  <head>");
-    out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
-        
-    out.println("  </head>");
-    out.println("  <body>");
-    // out.println("<div class=\"w3-container \">");
-    out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        
-        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
-        + "</div>" + "      </header>");
-    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
-  }
-
-
-  public static void doFooter(PrintWriter out, HttpSession session) {
-    out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
-  }
-
-
-
 
 }

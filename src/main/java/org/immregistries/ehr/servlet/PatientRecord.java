@@ -40,7 +40,7 @@ public class PatientRecord extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       
-        doHeader(out, session);
+        ServletHelper.doStandardHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = new Patient();
         List<Patient> patientList = null;
@@ -152,7 +152,7 @@ public class PatientRecord extends HttpServlet {
                 + "<button onclick=\"location.href='FHIR_messaging?patientOnly=1'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
 
                 + "</div\r\n");
-        doFooter(out, session);
+        ServletHelper.doStandardFooter(out, session);
       
       
     } catch (Exception e) {
@@ -160,27 +160,6 @@ public class PatientRecord extends HttpServlet {
     }
     out.flush();
     out.close();
-  }
-
-  public static void doHeader(PrintWriter out, HttpSession session) {
-    out.println("<html>");
-    out.println("  <head>");
-    out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
-    out.println("  </head>");
-    out.println("  <body>");
-    // out.println("<div class=\"w3-container \">");
-    out.println("<header >\r\n" + "<div class=\"w3-bar w3-green w3-margin-bottom\">\r\n"
-        + "  <a href = 'silos ' class=\"w3-bar-item w3-button\">List of tenants </a>\r\n"
-        + "  <a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">Facilities/patients list</a>\r\n"
-        + "  <a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings </a>\r\n"
-        + "</div>" + "    	</header>");
-    out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
-  }
-
-
-  public static void doFooter(PrintWriter out, HttpSession session) {
-    out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
   }
 
   public static String breadCrumbs(HttpServletRequest req, HttpServletResponse resp) throws IOException {
