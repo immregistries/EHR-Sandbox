@@ -1,4 +1,6 @@
 package org.immregistries.ehr.model;
+import com.github.javafaker.Faker;
+
 import java.io.Serializable;
 
 public class Clinician implements Serializable {
@@ -40,6 +42,16 @@ public class Clinician implements Serializable {
 
   public void setNameFirst(String nameFirst) {
     this.nameFirst = nameFirst;
+  }
+
+  public static Clinician random(){
+    Faker faker = new Faker();
+    Clinician clinician = new Clinician();
+    clinician.setNameFirst(faker.name().firstName());
+    clinician.setNameLast(faker.name().lastName());
+//    clinician.setNameMiddle(faker.name());
+
+    return clinician;
   }
 
 }

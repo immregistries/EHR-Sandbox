@@ -1,5 +1,12 @@
 package org.immregistries.ehr.model;
+import org.immregistries.codebase.client.CodeMap;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.iis.kernal.model.CodeMapManager;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 public class Vaccine implements Serializable {
@@ -189,5 +196,69 @@ public class Vaccine implements Serializable {
 
     public void setFundingEligibility(String fundingEligibility) {
         this.fundingEligibility = fundingEligibility;
+    }
+
+    public static Vaccine random(){
+        CodeMap codeMap = CodeMapManager.getCodeMap();
+        Collection<Code> codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
+        Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
+        Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+        Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
+
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date currentDate = new Date();
+        int randomN = (int) (Math.random()*9);
+        int randDay = (int) (Math.random()*31);
+        int randMonth = (int) (Math.random()*11);
+        int randYear = (int) (Math.random()*20);
+        Date randomDate = new Date((int) (currentDate.getTime()+randYear+1), randMonth, randDay);
+
+
+        Vaccine vaccine = new Vaccine();
+
+        vaccine.setAdministeredDate(currentDate);
+        vaccine.setCreatedDate(currentDate);
+        vaccine.setExpirationDate(randomDate);
+        vaccine.setUpdatedDate(currentDate);
+
+        vaccine.setVaccineId(randomN);
+
+        vaccine.setAdministeredAmount(Integer.toString(randomN)+".5");
+        vaccine.setActionCode("Add");
+        vaccine.setBodyRoute("Intradermal");
+        vaccine.setBodySite("Left Thigh");
+        vaccine.setCompletionStatus("Complete");
+        vaccine.setFundingEligibility("fundR");
+        vaccine.setFundingSource("fundS");
+        vaccine.setInformationSource("infSource");
+        vaccine.setLotnumber(Integer.toString(randomN));
+        vaccine.setRefusalReasonCode("none");
+
+        int count =0;
+        for(Code code : codeListCVX) {
+            vaccine.setVaccineCvxCode(code.getValue());
+            count+=1;
+            if(randDay==count) {
+                break;
+            }
+        }
+        count = 0;
+        for(Code code : codeListNDC) {
+            vaccine.setVaccineNdcCode(code.getValue());
+            count+=1;
+            if(randomN==count) {
+                break;
+            }
+        }
+        for(Code code : codeListMVX) {
+            vaccine.setVaccineMvxCode(code.getValue());
+            count+=1;
+            if(randDay==count) {
+                break;
+            }
+        }
+
+        return vaccine;
     }
 }

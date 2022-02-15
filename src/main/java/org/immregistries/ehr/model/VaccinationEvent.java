@@ -1,5 +1,7 @@
 package org.immregistries.ehr.model;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class VaccinationEvent implements Serializable {
 
@@ -67,6 +69,25 @@ public class VaccinationEvent implements Serializable {
 
     public void setVaccine(Vaccine vaccine) {
         this.vaccine = vaccine;
+    }
+
+    public static VaccinationEvent random(Patient patient, Facility facility){
+        VaccinationEvent vacc_ev = new VaccinationEvent();
+        vacc_ev.setPatient(patient);
+        Vaccine vaccine = Vaccine.random();
+        vacc_ev.setVaccine(vaccine);
+
+        Clinician admicli = Clinician.random();
+        Clinician ordercli = Clinician.random();
+        Clinician entercli = Clinician.random();
+
+        vacc_ev.setAdministeringFacility(facility);
+        vacc_ev.setPatient(patient);
+        vacc_ev.setEnteringClinician(entercli);
+        vacc_ev.setOrderingClinician(ordercli);
+        vacc_ev.setAdministeringClinician(admicli);
+        vacc_ev.setVaccine(vaccine);
+        return vacc_ev;
     }
 
 }

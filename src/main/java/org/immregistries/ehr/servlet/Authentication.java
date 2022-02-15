@@ -85,9 +85,6 @@ public class Authentication extends HttpServlet {
       //setting session to expiry in 30 mins
       session.setMaxInactiveInterval(30*60);
 
-      // Cookie message = new Cookie("message", "Welcome");
-      // resp.addCookie(message);
-
       session.setAttribute("tester", newTester);
       session.setAttribute("IR", newIR);
 
