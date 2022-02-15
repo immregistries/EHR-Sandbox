@@ -156,7 +156,9 @@ public class FacilityPatientDisplay extends HttpServlet {
       }
 
       out.println("</tbody></table>");
-      out.println("<button onclick=\"location.href='patient_form'\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>");
+      if(facility!=null){
+        out.println("<button onclick=\"location.href='patient_form'\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>");
+      }
       out.println("</div>");
 
       out.println("<div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">");
