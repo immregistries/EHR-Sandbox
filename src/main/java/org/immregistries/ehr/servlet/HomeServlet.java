@@ -30,7 +30,7 @@ public class HomeServlet extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     try {
       {
-        ServletHelper.doStandardHeader(out, session);
+        doHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
         out.println("    <div class=\"w3-container w3-half w3-margin-top\">");
         if (show == null) {
@@ -77,7 +77,7 @@ public class HomeServlet extends HttpServlet {
 
   }
 
-  public static void ServletHelper.doStandardFooter(PrintWriter out, HttpSession session) {
+  public static void doFooter(PrintWriter out, HttpSession session) {
     out.println("  </div>");
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 

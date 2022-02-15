@@ -42,70 +42,64 @@ public class FacilityPatientDisplay extends HttpServlet {
       ServletHelper.doStandardHeader(out, session);
       session.setAttribute("patient", null);
       Tester tester = (Tester) session.getAttribute("tester");
-      Silo silo = new Silo();
-      List<Silo> siloList = null;
+
+      Silo silo = (Silo) session.getAttribute("silo");
       String siloId = req.getParameter("paramSiloId");
       if (siloId != null) {
         Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
         query.setParameter(0, Integer.parseInt(siloId));
         query.setParameter(1, tester.getTesterId());
-        siloList = query.list();
+        List<Silo> siloList = query.list();
         silo = siloList.get(0);
         session.setAttribute("silo", silo);
       } else {
-        if (session.getAttribute("silo")!=null) {
-          silo = (Silo) session.getAttribute("silo");
-        }
-        else {
+        if (session.getAttribute("silo")==null) {
           resp.sendRedirect("silos?chooseSilo=1");
         }
-        
       }
-      List<Facility> facilityList = null;
+
       Query query = dataSession.createQuery("from Facility where silo=?");
       query.setParameter(0, silo);
-      facilityList = query.list();
+      List<Facility> facilityList = query.list();
 
-      List<Patient> patientList = null;
       query = dataSession.createQuery("from Patient where silo=?");
       query.setParameter(0, silo);
-      patientList = query.list();
-      String facilityId = null;
-      Facility facility = null;
+      List<Patient> patientList = query.list();
+      String facilityId =  req.getParameter("paramFacilityId");
 
-      if (req.getParameter("paramFacilityId") != null) {
-        facilityId = req.getParameter("paramFacilityId");
-        patientList = null;
-        List<Facility> facilityListQuery = null;
-        query = dataSession.createQuery("from Facility where facilityId=?");
+      Facility facility;
+      if (facilityId != null) { // if facilityId parameter specified i.e. facility selected
+        query = dataSession.createQuery("from Facility where facilityId=? and silo=?");
         query.setParameter(0, Integer.parseInt(facilityId));
+        query.setParameter(1, silo);
+        facility = (Facility) query.uniqueResult();
 
-        facilityListQuery = query.list();
-
-        facility = facilityListQuery.get(0);
         session.setAttribute("facility", facility);
+      } else {
+        facility = (Facility) session.getAttribute("facility");
+      }
+
+      if (facility != null){
         query = dataSession.createQuery("from Patient where facility=?");
         query.setParameter(0, facility);
         patientList = query.list();
       }
 
       String show = req.getParameter(PARAM_SHOW);
-      String noFacility = "";
       if (req.getParameter("chooseFacility") != null) {
-        out.println(
-                "<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"+
+        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"+
                 "<label class=\"w3-text-red w3-margin-bottom \"><b>Choose a facility</b></label><br/>"
                +"</div>" );
       }
-      
+
       out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
           + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Tenant : "
           + silo.getNameDisplay() + "</b></label>");
-      // if (facility != null) {
-      //   out.println(
-      //       "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-      //           + facility.getNameDisplay() + "</b></label>");
-      // }
+       if (facility != null) {
+         out.println(
+             "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
+                 + facility.getNameDisplay() + "</b></label>");
+       }
 
 // ---------------- Facility list ------------------
       out.println(
@@ -160,9 +154,7 @@ public class FacilityPatientDisplay extends HttpServlet {
             + "</td>"
             + "</tr>");
       }
-      if (session.getAttribute("facility") == null) {
-        noFacility = "?noFacility=1";
-      }
+
       out.println("</tbody>"
           + "</table>"
           + "</div>"

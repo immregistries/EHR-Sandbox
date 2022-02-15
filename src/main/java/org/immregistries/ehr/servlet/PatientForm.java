@@ -129,7 +129,7 @@ public class PatientForm extends HttpServlet {
 
             Facility facility = (Facility) session.getAttribute("facility");
             Silo silo = (Silo) session.getAttribute("silo");
-            Patient patient;
+            Patient patient = null;
             if(req.getParameter("paramPatientId")!=null && silo!=null) {
                 Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
                 query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
@@ -142,7 +142,9 @@ public class PatientForm extends HttpServlet {
                 session.setAttribute("facility", facility);
             } else if (req.getParameter("paramPatientId") != null){
                 patient = (Patient) session.getAttribute("patient");
-            } else {
+            } else if (facility == null) {
+                resp.sendRedirect("facility_patient_display?chooseFacility=1");
+            } else{
                 patient = new Patient();
                 creation = true;
             }
