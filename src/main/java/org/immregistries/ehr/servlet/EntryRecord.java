@@ -82,7 +82,7 @@ public class EntryRecord extends HttpServlet {
         administeredDate = sdf.parse(req.getParameter("administered_date"));
         expiredDate = sdf.parse(req.getParameter("expiration_date"));
       } catch (ParseException e) {
-        System.out.println(req.getParameter("administered_date"));
+        System.err.println(req.getParameter("administered_date"));
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -179,6 +179,8 @@ public class EntryRecord extends HttpServlet {
 
         Boolean vaccinationPreLoaded = false;
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
         if(req.getParameter("paramEntryId")!=null && !req.getParameter("paramEntryId").equals("null") && patient != null) {
           creation = false;
           vaccinationPreLoaded = true;
@@ -241,14 +243,14 @@ public class EntryRecord extends HttpServlet {
           testOrdering = ""+vaccination.getOrderingClinician().getNameFirst()+" "
                   +vaccination.getOrderingClinician().getNameLast()+" "
                   +vaccination.getOrderingClinician().getNameMiddle();
-          testAdministeredDate = ""+vaccine.getAdministeredDate();
+          testAdministeredDate = sdf.format(vaccine.getAdministeredDate());
           testVaccId = ""+vaccine.getVaccineId();
 
           testAmount=""+vaccine.getAdministeredAmount();
           testManufacturer="";
           testInfSource=""+vaccine.getInformationSource();
           testLot=""+vaccine.getLotnumber();
-          testExpDate=""+vaccine.getExpirationDate();
+          testExpDate=sdf.format(vaccine.getExpirationDate());
           testCompletion=""+vaccine.getCompletionStatus();
           testActionCode=""+vaccine.getActionCode();
           testRefusal=""+vaccine.getRefusalReasonCode();
