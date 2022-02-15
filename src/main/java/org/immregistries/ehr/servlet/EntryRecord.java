@@ -35,6 +35,7 @@ public class EntryRecord extends HttpServlet {
   private static final long serialVersionUID = 1L;
   public static final String PARAM_SHOW = "show";
 
+  @SuppressWarnings("UnusedAssignment")
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
@@ -81,6 +82,7 @@ public class EntryRecord extends HttpServlet {
         administeredDate = sdf.parse(req.getParameter("administered_date"));
         expiredDate = sdf.parse(req.getParameter("expiration_date"));
       } catch (ParseException e) {
+        System.out.println(req.getParameter("administered_date"));
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -177,7 +179,7 @@ public class EntryRecord extends HttpServlet {
 
         Boolean vaccinationPreLoaded = false;
 
-        if(req.getParameter("paramEntryId")!=null && patient != null) {
+        if(req.getParameter("paramEntryId")!=null && !req.getParameter("paramEntryId").equals("null") && patient != null) {
           creation = false;
           vaccinationPreLoaded = true;
           Query queryVaccination = dataSession.createQuery("from VaccinationEvent where vaccination_event_Id=? and patient_id=?");
@@ -231,14 +233,14 @@ public class EntryRecord extends HttpServlet {
           session.setAttribute("vacc_ev", vaccination);
 
           testAdministering = ""+vaccination.getAdministeringClinician().getNameFirst()+" "
-                  +vaccination.getAdministeringClinician().getNameMiddle()+" "
-                  +vaccination.getAdministeringClinician().getNameLast();
+                  +vaccination.getAdministeringClinician().getNameLast()+" "
+                  +vaccination.getAdministeringClinician().getNameMiddle();
           testEntering = ""+vaccination.getEnteringClinician().getNameFirst()+" "
-                  +vaccination.getEnteringClinician().getNameMiddle()+" "
-                  +vaccination.getEnteringClinician().getNameLast();
+                  +vaccination.getEnteringClinician().getNameLast()+" "
+                  +vaccination.getEnteringClinician().getNameMiddle();
           testOrdering = ""+vaccination.getOrderingClinician().getNameFirst()+" "
-                  +vaccination.getOrderingClinician().getNameMiddle()+" "
-                  +vaccination.getOrderingClinician().getNameLast();
+                  +vaccination.getOrderingClinician().getNameLast()+" "
+                  +vaccination.getOrderingClinician().getNameMiddle();
           testAdministeredDate = ""+vaccine.getAdministeredDate();
           testVaccId = ""+vaccine.getVaccineId();
 
@@ -291,7 +293,9 @@ public class EntryRecord extends HttpServlet {
                 "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
                         + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
         );
-        out.println("<button onclick=\"location.href='entry_creation?testEntry=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
+        if (creation){
+          out.println("<button onclick=\"location.href='entry_record?testEntry=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
+        }
         out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n");
 
 
@@ -299,6 +303,7 @@ public class EntryRecord extends HttpServlet {
                 + "<div style =\"width: 50% ;align-items:center\" "
 
                 + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
+                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
                 + "                         <input type=\"date\"   class = \" w3-margin w3-border\"  value=\""+testAdministeredDate +"\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
                 +"</div>"
                 + "<div style =\"width: 50%; align-items:center \" "
@@ -479,9 +484,7 @@ public class EntryRecord extends HttpServlet {
                 + "                        </SELECT>\r\n"
                 + "</p></div>");
 
-        if (creation) {
-          out.println(" <input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value="+req.getParameter("paramEntryId")+"></input>");
-        }
+        out.println(" <input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value="+req.getParameter("paramEntryId")+"></input>");
         out.println("<button type=\"submit\"  name=\"nextPage\" value=\"patient_record\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n");
         out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n");
         out.println("<button type=\"submit\"  name=\"nextPage\" value=\"FHIR_messaging\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n");

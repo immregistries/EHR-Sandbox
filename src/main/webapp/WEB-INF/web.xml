@@ -16,11 +16,6 @@
     <servlet-class>org.immregistries.ehr.servlet.HomeServlet</servlet-class>
   </servlet>
   <servlet>
-      <display-name>Entry Creation</display-name>
-      <servlet-name>entry_creation</servlet-name>
-      <servlet-class>org.immregistries.ehr.servlet.EntryCreation</servlet-class>
-  </servlet>
-  <servlet>
   	<display-name>Entry Record</display-name>
   	<servlet-name>entry_record</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.EntryRecord</servlet-class>
@@ -128,10 +123,6 @@
   <servlet-mapping>
       <servlet-name>patient_form</servlet-name>
       <url-pattern>/patient_form</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-  <servlet-name>entry_creation</servlet-name>
-  <url-pattern>/entry_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>facility_patient_display</servlet-name>

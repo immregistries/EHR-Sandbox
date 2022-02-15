@@ -205,14 +205,12 @@ public class Vaccine implements Serializable {
         Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
         Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
 
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date currentDate = new Date();
         int randomN = (int) (Math.random()*9);
         int randDay = (int) (Math.random()*31);
         int randMonth = (int) (Math.random()*11);
         int randYear = (int) (Math.random()*20);
-        Date randomDate = new Date((int) (currentDate.getTime()+randYear+1), randMonth, randDay);
+        Date randomDate = new Date((int) (currentDate.getYear()+randYear+1), randMonth, randDay);
 
 
         Vaccine vaccine = new Vaccine();
