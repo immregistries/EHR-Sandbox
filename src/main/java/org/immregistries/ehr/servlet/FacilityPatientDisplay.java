@@ -131,11 +131,11 @@ public class FacilityPatientDisplay extends HttpServlet {
             + "</td>"
             + "</tr>");
       }
+      out.println("</tbody></table>");
+      out.println("<button onclick=\"location.href='facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal w3-left\">Create new facility</button>");
+      out.println("</div>");
 // ---------------- Patient list ------------------
-      out.println("</tbody>"
-          + "</table>"
-          + "</div>"
-          + "<div class=\"w3-right \"style=\"width:45%\">"
+      out.println("<div class=\"w3-right \"style=\"width:45%\">"
           + "<table class=\" w3-table-all  \">\r\n"
           + "<thead>"
           + "<tr class=\"w3-green\">"
@@ -155,15 +155,12 @@ public class FacilityPatientDisplay extends HttpServlet {
             + "</tr>");
       }
 
-      out.println("</tbody>"
-          + "</table>"
-          + "</div>"
-          + "  <div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">\r\n "
-          + "<button onclick=\"location.href='facility_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new facility</button>"
-          + "<button onclick=\"location.href='patient_form'\" "
-          + "class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>"
+      out.println("</tbody></table>");
+      out.println("<button onclick=\"location.href='patient_form'\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new patient </button>");
+      out.println("</div>");
 
-          + "</div\r\n");
+      out.println("<div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">");
+      out.println("</div\r\n");
 
       ServletHelper.doStandardFooter(out, session);
 
