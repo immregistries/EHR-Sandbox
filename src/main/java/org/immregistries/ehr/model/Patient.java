@@ -1,6 +1,12 @@
 package org.immregistries.ehr.model;
+import com.github.javafaker.Faker;
+
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class Patient implements Serializable {
 
@@ -329,5 +335,95 @@ public class Patient implements Serializable {
 
     public void setGuardianRelationship(String guardianRelationship) {
         this.guardianRelationship = guardianRelationship;
+    }
+
+    public static Patient random(Silo silo, Facility facility){
+        Faker faker = new Faker();
+        Date birthDate = new Date();
+        int randDay = (int) (Math.random()*30+1);
+        int randMonth = (int) (Math.random()*11);
+        int randYear = (int) (Math.random()*121+1900);
+        birthDate.setDate(randDay);
+        birthDate.setMonth(randMonth);
+        birthDate.setYear(randYear);
+
+        Random rand = new Random();
+
+        long aDay = TimeUnit.DAYS.toMillis(1);
+        long now = new Date().getTime();
+        Date twoYearsAgo = new Date(now - aDay * 365 * 2);
+
+        Date eightyYearsAgo = new Date(now - aDay * 365 * 80);
+        Date fourtyYearsAgo = new Date(now - aDay * 365 * 40);
+        Date tenDaysAgo = new Date(now - aDay * 10);
+        Date fourYearsAgo = new Date(now - aDay*365*4);
+
+        Date deathDate = between(fourYearsAgo,tenDaysAgo );
+        Date pubIndicDate = between(twoYearsAgo, tenDaysAgo);
+        Date protecIndicDate = between(twoYearsAgo, tenDaysAgo);
+        Date regIndicDate = between(twoYearsAgo, tenDaysAgo);
+        Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
+
+        Patient patient = new Patient();
+        patient.setSilo(silo);
+        patient.setFacility(facility);
+
+        patient.setNameFirst(faker.name().firstName());
+        patient.setNameLast(faker.name().lastName());
+        patient.setNameMiddle(faker.name().firstName());
+
+        patient.setBirthDate(birthDate);
+        if(randMonth%2==0) {
+            patient.setSex("F");
+        }else {
+            patient.setSex("M");
+        }
+
+        patient.setAddressCity(faker.address().city());
+        patient.setAddressCountry(faker.address().country());
+        patient.setAddressCountyParish("county");
+        patient.setAddressState(faker.address().state());
+
+        patient.setPhone(faker.phoneNumber().phoneNumber());
+        patient.setEmail(patient.getNameFirst() + randDay +"@email.com");
+
+        patient.setBirthFlag("");
+        patient.setBirthOrder("");
+
+        patient.setDeathFlag("");
+        int randomDecision = rand.nextInt(100);
+        if(randomDecision<30) {
+            patient.setDeathDate(deathDate);
+        }
+
+        patient.setEthnicity("Indian");
+        patient.setRace("Asian");
+
+        patient.setGuardianFirst(faker.name().firstName());
+        patient.setGuardianLast(faker.name().lastName());
+        patient.setGuardianMiddle(faker.name().firstName());
+        patient.setGuardianRelationship("BRO");
+        patient.setMotherMaiden(faker.name().lastName());
+
+        patient.setProtectionIndicator("0");
+        patient.setPublicityIndicator("0");
+        patient.setRegistryStatusIndicator("0");
+        patient.setProtectionIndicatorDate(protecIndicDate);
+        patient.setPublicityIndicatorDate(pubIndicDate);
+//        patient.setRegistryStatusIndicatorDate(regIndicDate);
+        patient.setRegistryStatusIndicatorDate(new Date());
+
+        patient.setUpdatedDate(new Date());
+        return patient;
+    }
+
+    private static Date between(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+
+        return new Date(randomMillisSinceEpoch);
     }
 }

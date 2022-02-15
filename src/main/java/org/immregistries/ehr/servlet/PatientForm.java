@@ -200,7 +200,14 @@ public class PatientForm extends HttpServlet {
             String testGuardNameLast="";
             String testGuardMiddleName="";
             String testGuardRelationship="";
-            if(!creation){
+
+            if(req.getParameter("testPatient")!=null && creation) {
+                // TEST generation
+                patient = Patient.random(silo, facility);
+            }
+
+            if(!creation || req.getParameter("testPatient")!=null){
+                // Load existing Patient in the form
                 testDoB=""+sdf.format(patient.getBirthDate());
                 testNameFirst=""+patient.getNameFirst();
                 testNameLast=""+patient.getNameLast();
@@ -220,7 +227,7 @@ public class PatientForm extends HttpServlet {
                 testBirthOrder=""+patient.getBirthOrder();
                 testDeathFlag=""+patient.getDeathFlag();
                 testDeathDate = null;
-                if(patient.getDeathDate()!=null && patient.getDeathDate().equals("")) {
+                if(patient.getDeathDate()!=null && !patient.getDeathDate().equals("")) {
                     testDeathDate=""+sdf.format(patient.getDeathDate());
                 }
                 testPubIndic=""+patient.getPublicityIndicator();
@@ -236,88 +243,6 @@ public class PatientForm extends HttpServlet {
                 testGuardRelationship=""+patient.getGuardianRelationship();
             }
 
-            Faker faker = new Faker();
-            Date birthDate = new Date();
-            int randDay = (int) (Math.random()*30+1);
-            int randMonth = (int) (Math.random()*11);
-            int randYear = (int) (Math.random()*121+1900);
-            if (!creation){
-                birthDate.setDate(randDay);
-                birthDate.setMonth(randMonth);
-                birthDate.setYear(randYear);
-            }
-
-            // TEST generation
-            if(req.getParameter("testPatient")!=null && creation) {
-                testDoB=sdf.format(birthDate);
-                testNameFirst=faker.name().firstName();
-                testNameLast=faker.name().lastName();
-                testMiddleName=faker.name().firstName();
-                testMotherMaidenName=faker.name().lastName();
-                if(randMonth%2==0) {
-                    testSex="F";
-                }else {
-                    testSex="M";
-                }
-
-                long aDay = TimeUnit.DAYS.toMillis(1);
-                long now = new Date().getTime();
-                Date twoYearsAgo = new Date(now - aDay * 365 * 2);
-
-                Date eightyYearsAgo = new Date(now - aDay * 365 * 80);
-                Date fourtyYearsAgo = new Date(now - aDay * 365 * 40);
-                Date tenDaysAgo = new Date(now - aDay * 10);
-                Date fourYearsAgo = new Date(now - aDay*365*4);
-
-                testDoB = sdf.format(between(eightyYearsAgo, fourtyYearsAgo));
-
-                Random rand = new Random();
-
-
-                int randomDecision = rand.nextInt(100);
-                if(randomDecision<30) {
-                    testDeathDate = sdf.format(between(fourYearsAgo,tenDaysAgo ));
-                }
-                else {
-                    testDeathDate = "";
-                }
-
-
-                Date DeathDate = between(fourYearsAgo,tenDaysAgo );
-                Date PubIndicDate = between(twoYearsAgo, tenDaysAgo);
-                Date ProtecIndicDate = between(twoYearsAgo, tenDaysAgo);
-                Date RegIndicDate = between(twoYearsAgo, tenDaysAgo);
-                Date RegStatusDate = between(twoYearsAgo, tenDaysAgo);
-
-
-                testDeathDate = sdf.format(DeathDate);
-                testPubIndicDate = sdf.format(PubIndicDate);
-                testProtecIndicDate = sdf.format(ProtecIndicDate);
-                testRegIndicDate = sdf.format(RegIndicDate);
-                testRegStatusDate = sdf.format(RegStatusDate);
-
-                testRace="Asian";
-                testAdress=faker.address().buildingNumber()+faker.address().streetName();
-                testCity=faker.address().city();
-                testCountryCode=faker.address().countryCode();
-                testState=faker.address().state();
-                testCountyParish="county";
-                testPhone=faker.phoneNumber().subscriberNumber(10);
-                testEmail=testNameFirst+ randDay +"@gmail.com";
-                testEthnicity="Indian";
-                testBirthFlag="";
-                testBirthOrder="";
-                testDeathFlag="";
-
-                testPubIndic="O";
-                testProtecIndic="O";
-                testRegStatus="O";
-
-                testGuardNameFirst=faker.name().firstName();
-                testGuardNameLast=testNameLast;
-                testGuardMiddleName=faker.name().firstName();
-                testGuardRelationship="BRO";
-            }
             out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_form\">\r\n"
 
                     + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
@@ -592,4 +517,6 @@ public class PatientForm extends HttpServlet {
 
         return new Date(randomMillisSinceEpoch);
     }
+
+
 }
