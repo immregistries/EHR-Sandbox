@@ -69,20 +69,15 @@ public class Silos extends HttpServlet {
               + "<div style=\"text-decoration:none;height:100%\">"  
               + siloDisplay.getNameDisplay()  
               + "</div>"
-             + "</a>"              
+              + "</a>"
               + "</td>"
-             +"</tr>");
+              +"</tr>");
               
         }
-        out.println(
-             
-              "</tbody>"
-            + "</table>"
-            + "</div>"
-            + "  <div class=\"w3-display-right\" style=\"width=15%\">\r\n "
-            + "<button onclick=\"location.href='silo_creation'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal\">Create new tenant</button>"
-            //+ "		</div>\r\n" 	
-            + "</div>\r\n");
+        out.println("</tbody>"
+                + "</table>"
+                + "<button onclick=\"location.href='silo_creation'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal w3-left\">Create new tenant</button>"
+                + "</div>");
         ServletHelper.doStandardFooter(out, session);
       }
     } catch (Exception e) {

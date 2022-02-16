@@ -199,19 +199,12 @@ public class Vaccine implements Serializable {
     }
 
     public static Vaccine random(){
-        CodeMap codeMap = CodeMapManager.getCodeMap();
-        Collection<Code> codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
-        Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
-        Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
-        Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
-
         Date currentDate = new Date();
         int randomN = (int) (Math.random()*9);
         int randDay = (int) (Math.random()*31);
         int randMonth = (int) (Math.random()*11);
         int randYear = (int) (Math.random()*20);
         Date randomDate = new Date((int) (currentDate.getYear()+randYear+1), randMonth, randDay);
-
 
         Vaccine vaccine = new Vaccine();
 
@@ -223,15 +216,26 @@ public class Vaccine implements Serializable {
         vaccine.setVaccineId(randomN);
 
         vaccine.setAdministeredAmount(Integer.toString(randomN)+".5");
-        vaccine.setActionCode("Add");
-        vaccine.setBodyRoute("Intradermal");
-        vaccine.setBodySite("Left Thigh");
-        vaccine.setCompletionStatus("Complete");
+        vaccine.setActionCode("A");
+        vaccine.setCompletionStatus("CP");
         vaccine.setFundingEligibility("fundR");
         vaccine.setFundingSource("fundS");
         vaccine.setInformationSource("infSource");
         vaccine.setLotnumber(Integer.toString(randomN));
-        vaccine.setRefusalReasonCode("none");
+        vaccine.setRefusalReasonCode("");
+
+        CodeMap codeMap = CodeMapManager.getCodeMap();
+        Collection<Code> codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
+        Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
+        Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+        Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
+        Collection<Code>codeListBodyRoute=codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
+        Collection<Code>codeListBodySite=codeMap.getCodesForTable(CodesetType.BODY_SITE);
+        Collection<Code>codeListActionCode=codeMap.getCodesForTable(CodesetType.VACCINATION_ACTION_CODE);
+        Collection<Code>codeListCompletionStatus=codeMap.getCodesForTable(CodesetType.VACCINATION_COMPLETION);
+
+
+
 
         int count =0;
         for(Code code : codeListCVX) {
@@ -249,8 +253,25 @@ public class Vaccine implements Serializable {
                 break;
             }
         }
+        count = 0;
         for(Code code : codeListMVX) {
             vaccine.setVaccineMvxCode(code.getValue());
+            count+=1;
+            if(randDay==count) {
+                break;
+            }
+        }
+        count = 0;
+        for(Code code : codeListBodyRoute) {
+            vaccine.setBodyRoute(code.getValue());
+            count+=1;
+            if(randDay==count) {
+                break;
+            }
+        }
+        count = 0;
+        for(Code code : codeListBodySite) {
+            vaccine.setBodySite(code.getValue());
             count+=1;
             if(randDay==count) {
                 break;

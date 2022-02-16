@@ -1,8 +1,13 @@
 package org.immregistries.ehr.model;
 import com.github.javafaker.Faker;
+import org.immregistries.codebase.client.CodeMap;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.iis.kernal.model.CodeMapManager;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -339,13 +344,10 @@ public class Patient implements Serializable {
 
     public static Patient random(Silo silo, Facility facility){
         Faker faker = new Faker();
-        Date birthDate = new Date();
+
         int randDay = (int) (Math.random()*30+1);
         int randMonth = (int) (Math.random()*11);
         int randYear = (int) (Math.random()*121+1900);
-        birthDate.setDate(randDay);
-        birthDate.setMonth(randMonth);
-        birthDate.setYear(randYear);
 
         Random rand = new Random();
 
@@ -358,6 +360,10 @@ public class Patient implements Serializable {
         Date tenDaysAgo = new Date(now - aDay * 10);
         Date fourYearsAgo = new Date(now - aDay*365*4);
 
+        CodeMap codeMap = CodeMapManager.getCodeMap();
+        Collection<Code> codeListGuardian=codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
+
+        Date birthDate = between(eightyYearsAgo,tenDaysAgo );
         Date deathDate = between(fourYearsAgo,tenDaysAgo );
         Date pubIndicDate = between(twoYearsAgo, tenDaysAgo);
         Date protecIndicDate = between(twoYearsAgo, tenDaysAgo);
@@ -379,6 +385,7 @@ public class Patient implements Serializable {
             patient.setSex("M");
         }
 
+        patient.setAddressLine1(faker.address().streetAddress());
         patient.setAddressCity(faker.address().city());
         patient.setAddressCountry(faker.address().country());
         patient.setAddressCountyParish("county");
@@ -402,16 +409,22 @@ public class Patient implements Serializable {
         patient.setGuardianFirst(faker.name().firstName());
         patient.setGuardianLast(faker.name().lastName());
         patient.setGuardianMiddle(faker.name().firstName());
-        patient.setGuardianRelationship("BRO");
         patient.setMotherMaiden(faker.name().lastName());
+        int count = 0;
+        for(Code code : codeListGuardian) {
+            patient.setGuardianRelationship(code.getValue());
+            count+=1;
+            if(randDay==count) {
+                break;
+            }
+        }
 
         patient.setProtectionIndicator("0");
         patient.setPublicityIndicator("0");
         patient.setRegistryStatusIndicator("0");
         patient.setProtectionIndicatorDate(protecIndicDate);
         patient.setPublicityIndicatorDate(pubIndicDate);
-//        patient.setRegistryStatusIndicatorDate(regIndicDate);
-        patient.setRegistryStatusIndicatorDate(new Date());
+        patient.setRegistryStatusIndicatorDate(regIndicDate);
 
         patient.setUpdatedDate(new Date());
         return patient;
