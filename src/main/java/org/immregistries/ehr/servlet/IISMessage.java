@@ -77,29 +77,28 @@ public class IISMessage extends HttpServlet {
         Vaccine vaccine=(Vaccine) session.getAttribute("vaccine");
         HL7printer printerhl7 = new HL7printer();
         
-        out.println("<form action=\"IIS_message\" method=\"POST\" ");
-        out.println("<div class=\"w3-margin\">"
-                + "<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\"\r\n" + "     rows=\"20\" cols=\"200\">\r\n"
-                + new HL7printer().buildVxu(vaccine,patient,facility) + " \r\n"
-                +" \r\n" + "</textarea><br/>");
-
+        out.println("<form action=\"IIS_message\" method=\"POST\">");
+        out.println("<div class=\"w3-margin\">");
         out.println("<div>");
-        out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
+        out.println("<div class=\"w3-left\" style=\"width:30%\">"
                 + "<label class=\"w3-text-green\"><b>IIS UserID</b></label>"
                 + "<input type=\"text\"  class = \"w3-input w3-margin w3-border\" hidden value=\""
                 + IR.getIisUsername()
                 + "\" style=\"width:75%\" name=\"USERID\"/></div>");
-        out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
+        out.println("<div class=\"w3-left\" style=\"width:30%\">"
                 + " <label class=\"w3-text-green\"><b>IIS Password</b></label>"
                 + "<input type=\"password\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
                 + IR.getIisPassword()
                 + "\" style =\"width:75%\" name=\"PASSWORD\"/></div>");
-        out.println("<div class=\"w3-margin w3-left\" style=\"width:30%\">"
+        out.println("<div class=\"w3-left\" style=\"width:30%\">"
                 + " <label class=\"w3-text-green\"><b>Facility ID</b></label>"
                 + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\" hidden value=\""
                 + IR.getIisFacilityId()
                 + "\" style =\"width:75%\" name=\"FACILITYID\"/></div>");
         out.println("</div>");
+
+        out.println("<textarea class =\"w3-border w3-border-green\" id=\"story\" style=\"width:75%\"name=\"MESSAGEDATA\" rows=\"15\" cols=\"200\">\r\n"
+                + new HL7printer().buildVxu(vaccine,patient,facility) + "\r\n\r\n" + "</textarea><br/>");
 
         out.println("<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin\">send to IIS</button>\r\n"
                 +"</div>");
