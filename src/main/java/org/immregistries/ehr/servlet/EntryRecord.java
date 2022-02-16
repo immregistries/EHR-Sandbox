@@ -175,81 +175,28 @@ public class EntryRecord extends HttpServlet {
         VaccinationEvent vaccinationEvent = new VaccinationEvent();
         vaccinationEvent.setVaccine(v);
 
-        Boolean vaccinationPreLoaded = false;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Boolean preloaded = false;
 
         if(req.getParameter("paramEntryId")!=null && !req.getParameter("paramEntryId").equals("null") && patient != null) {
           creation = false;
-          vaccinationPreLoaded = true;
           Query queryVaccination = dataSession.createQuery("from VaccinationEvent where vaccination_event_Id=? and patient_id=?");
           queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
           queryVaccination.setParameter(1, patient.getPatientId());
           vaccinationEvent = (VaccinationEvent) queryVaccination.uniqueResult();
           v = vaccinationEvent.getVaccine();
+          preloaded = true;
+          session.setAttribute("vaccine", v);
+          session.setAttribute("vacc_ev", vaccinationEvent);
         } else {
           creation = true;
           if(req.getParameter("testEntry")!=null) { // Generate random test vaccination
-            vaccinationPreLoaded = true;
+            preloaded = true;
             vaccinationEvent = VaccinationEvent.random(patient,facility);
             v = vaccinationEvent.getVaccine();
+            session.setAttribute("vaccine", v);
+            session.setAttribute("vacc_ev", vaccinationEvent);
           }
         }
-
-
-        String administering = "";
-        String  entering = "";
-        String  ordering = "";
-        String administeredDate = "";
-
-        String expirationDate="";
-        String testCompletion="";
-        String testActionCode="";
-        String testRefusal="";
-        String testBodySite="";
-        String testBodyRoute="";
-        String fundingSource="";
-        String fundingEligibility="";
-        String testManufacturer;
-
-        if (vaccinationPreLoaded){ // Load Vaccination info in form
-          session.setAttribute("vaccine", v);
-          session.setAttribute("vacc_ev", vaccinationEvent);
-
-          administering = "" + vaccinationEvent.getAdministeringClinician().getNameFirst() + " "
-                  + vaccinationEvent.getAdministeringClinician().getNameLast() + " "
-                  + vaccinationEvent.getAdministeringClinician().getNameMiddle();
-          entering = "" + vaccinationEvent.getEnteringClinician().getNameFirst() + " "
-                  + vaccinationEvent.getEnteringClinician().getNameLast() + " "
-                  + vaccinationEvent.getEnteringClinician().getNameMiddle();
-          ordering = "" + vaccinationEvent.getOrderingClinician().getNameFirst() + " "
-                  + vaccinationEvent.getOrderingClinician().getNameLast() + " "
-                  + vaccinationEvent.getOrderingClinician().getNameMiddle();
-          administeredDate = sdf.format(v.getAdministeredDate());
-
-          testManufacturer="";
-          expirationDate=sdf.format(v.getExpirationDate());
-          testCompletion="" + v.getCompletionStatus();
-          testActionCode="" + v.getActionCode();
-          testRefusal="" + v.getRefusalReasonCode();
-          testBodySite="" + v.getBodySite();
-          testBodyRoute="" + v.getBodyRoute();
-          fundingSource="" + v.getFundingSource();
-          fundingEligibility="" + v.getFundingEligibility();
-
-        }
-
-        CodeMap codeMap = CodeMapManager.getCodeMap();
-        Collection<Code> codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
-        Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
-        Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
-        Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
-        Collection<Code>codeListBodyRoute=codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
-        Collection<Code>codeListBodySite=codeMap.getCodesForTable(CodesetType.BODY_SITE);
-        Collection<Code>codeListActionCode=codeMap.getCodesForTable(CodesetType.VACCINATION_ACTION_CODE);
-        Collection<Code>codeListCompletionStatus=codeMap.getCodesForTable(CodesetType.VACCINATION_COMPLETION);
-        Collection<Code>codeListRefusalReasonCode=codeMap.getCodesForTable(CodesetType.VACCINATION_REFUSAL);
-
         resp.setContentType("text/html");
         out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
                 + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
@@ -264,101 +211,9 @@ public class EntryRecord extends HttpServlet {
         if (creation){
           out.println("<button onclick=\"location.href='entry_record?testEntry=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
         }
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n");
 
 
-        out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
-                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
-                + "    <input type=\"date\"   class = \" w3-margin w3-border\"  value=\"" + administeredDate + "\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
-                + "</div>"
-                + "<div style =\"width: 50%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"
-                + "    <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"" + v.getAdministeredAmount() + "\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
-                + "</div>"
-
-                + "</div>");
-
-        out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">");
-        printSelectForm(out, v.getVaccineCvxCode(), codeListCVX, "vacc_cvx", "Vaccine CVX code");
-        printSelectForm(out, v.getVaccineNdcCode(), codeListNDC, "vacc_ndc", "Vaccine NDC code");
-        printSelectForm(out, v.getVaccineMvxCode(), codeListMVX, "vacc_mvx", "Vaccine MVX code");
-        out.println("</div>");
-
-        out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;height:auto; display:flex\">");
-        out.println("<div style =\"width: 50%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Lot number</b></label>"
-                + "    <input type=\"text\"   style=\"width:75% \" class = \" w3-margin w3-border\"  value=\"" + v.getLotnumber() + "\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>"
-                + "</div>");
-        printSelectForm(out, v.getBodyRoute(), codeListBodyRoute, "body_route", "Body route");
-        out.println("</div>");
-
-        out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; height:auto; display:flex\">"
-                + "<div style =\"width: 50%; align-items:center \" "
-                + "    <label class=\"w3-text-green\"><b>Funding source</b></label>"
-                + "    <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\"  value=\"" + v.getLotnumber() + "\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
-                + "</div>"
-                + "<div style =\"width: 50%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Funding eligibility</b></label>"
-                + "    <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\"  value=\"" + v.getFundingEligibility() + "\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
-                + "</div>"
-                + "</div>"
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; display:flex\">"
-                + "<div style =\"width: 30%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>"
-                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
-                + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + entering + "\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
-                + "</div>"
-                + "<div style =\"width: 30%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
-                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
-                + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + ordering + "\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
-                + "</div>"
-                + "<div style =\"width: 30%; align-items:center \" "
-                + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
-                + "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
-                + "    <input type=\"text\" style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\"" + administering + "\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
-                + "</div>"
-                + "</div>"
-
-
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
-                + "<div style =\"width: 50%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
-                + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + v.getVaccineId() + "\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
-                + "</div>"
-
-                + "<div style =\"width: 50%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Information source</b></label>"
-                + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + v.getInformationSource() + "\" size=\"40\" maxlength=\"60\"  name=\"information_source\"/>\r\n"
-                + "</div>"
-
-                + "</div>"
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
-                + "<div style =\"width: 50%; align-items:center \" "
-                + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
-                + "    <input type=\"date\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + expirationDate + "\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
-                + "</div>");
-        printSelectForm(out, v.getCompletionStatus(), codeListCompletionStatus, "completion_status", "Completion Status");
-        out.println("</div>");
-
-
-        out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">");
-        printSelectForm(out, v.getActionCode(), codeListActionCode, "action_code", "Action code");
-        printSelectForm(out, v.getRefusalReasonCode(), codeListRefusalReasonCode, "refusal_reason_code", "Refusal reason code");
-        out.println("</div>");
-
-        out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">");
-        printSelectForm(out, v.getBodySite(), codeListBodySite, "body_site", "Body site");
-        out.println("</div>");
-
-        out.println("<input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value=" +req.getParameter("paramEntryId") + "></input>");
-        out.println("<button type=\"submit\"  name=\"nextPage\" value=\"patient_record\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n");
-        out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n");
-        out.println("<button type=\"submit\"  name=\"nextPage\" value=\"FHIR_messaging\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n");
-        out.println("</form></div>");
+        printEntryForm(req, out, v, vaccinationEvent, preloaded);
         ServletHelper.doStandardFooter(out, session);
       }
     } catch (Exception e) {
@@ -366,6 +221,155 @@ public class EntryRecord extends HttpServlet {
     }
     out.flush();
     out.close();
+  }
+
+  private void printEntryForm(HttpServletRequest req,  PrintWriter out, Vaccine v, VaccinationEvent vaccinationEvent, Boolean preloaded) {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    String administering = "";
+    String  entering = "";
+    String  ordering = "";
+
+    String administeredDate = "";
+    String expirationDate="";
+
+
+    if (preloaded){ // Load Vaccination info in form
+      administering = "" + vaccinationEvent.getAdministeringClinician().getNameFirst() + " "
+              + vaccinationEvent.getAdministeringClinician().getNameLast() + " "
+              + vaccinationEvent.getAdministeringClinician().getNameMiddle();
+      entering = "" + vaccinationEvent.getEnteringClinician().getNameFirst() + " "
+              + vaccinationEvent.getEnteringClinician().getNameLast() + " "
+              + vaccinationEvent.getEnteringClinician().getNameMiddle();
+      ordering = "" + vaccinationEvent.getOrderingClinician().getNameFirst() + " "
+              + vaccinationEvent.getOrderingClinician().getNameLast() + " "
+              + vaccinationEvent.getOrderingClinician().getNameMiddle();
+      if (v.getAdministeredDate() != null){
+        administeredDate = sdf.format(v.getAdministeredDate());
+      }
+      if (v.getExpirationDate() != null){
+        expirationDate= sdf.format(v.getExpirationDate());
+      }
+    }
+
+    CodeMap codeMap = CodeMapManager.getCodeMap();
+    Collection<Code> codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
+    Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
+    Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+    Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
+    Collection<Code>codeListBodyRoute=codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
+    Collection<Code>codeListBodySite=codeMap.getCodesForTable(CodesetType.BODY_SITE);
+    Collection<Code>codeListActionCode=codeMap.getCodesForTable(CodesetType.VACCINATION_ACTION_CODE);
+    Collection<Code>codeListCompletionStatus=codeMap.getCodesForTable(CodesetType.VACCINATION_COMPLETION);
+    Collection<Code>codeListRefusalReasonCode=codeMap.getCodesForTable(CodesetType.VACCINATION_REFUSAL);
+
+
+    out.println("<form method=\"post\" class=\"w3-container\" action=\"entry_record\">\r\n");
+
+
+    out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
+            + "<div style =\"width: 50% ;align-items:center\" "
+
+            + " <label class=\"w3-text-green\"><b>Administered date</b></label>"
+            + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
+            + "    <input type=\"date\"   class = \" w3-margin w3-border\"  value=\"" + administeredDate + "\" style=\"width:75% \"  name=\"administered_date\" />\r\n"
+            + "</div>"
+            + "<div style =\"width: 50%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Administered amount</b></label>"
+            + "    <input type=\"text\"  class = \" w3-margin w3-border\"  value=\"" + v.getAdministeredAmount() + "\" style=\"width:75% \"  name=\"administered_amount\"/>\r\n"
+            + "</div>"
+
+            + "</div>");
+
+    out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">");
+    printSelectForm(out, v.getVaccineCvxCode(), codeListCVX, "vacc_cvx", "Vaccine CVX code");
+    printSelectForm(out, v.getVaccineNdcCode(), codeListNDC, "vacc_ndc", "Vaccine NDC code");
+    printSelectForm(out, v.getVaccineMvxCode(), codeListMVX, "vacc_mvx", "Vaccine MVX code");
+    out.println("</div>");
+
+    out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;height:auto; display:flex\">");
+    out.println("<div style =\"width: 50%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Lot number</b></label>"
+            + "    <input type=\"text\"   style=\"width:75% \" class = \" w3-margin w3-border\"  value=\"" + v.getLotnumber() + "\" size=\"40\" maxlength=\"60\" name=\"lot_number\"/>"
+            + "</div>");
+    printSelectForm(out, v.getBodyRoute(), codeListBodyRoute, "body_route", "Body route");
+    out.println("</div>");
+
+    out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; height:auto; display:flex\">"
+            + "<div style =\"width: 50%; align-items:center \" "
+            + "    <label class=\"w3-text-green\"><b>Funding source</b></label>"
+            + "    <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\"  value=\"" + v.getLotnumber() + "\" size=\"40\" maxlength=\"60\"name=\"funding_source\" />\r\n"
+            + "</div>"
+            + "<div style =\"width: 50%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Funding eligibility</b></label>"
+            + "    <input type=\"text\" style=\"width:75% \" class = \" w3-margin w3-border\"  value=\"" + v.getFundingEligibility() + "\" size=\"40\" maxlength=\"60\" name=\"funding_eligibility\"/>\r\n"
+            + "</div>"
+            + "</div>"
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100%; display:flex\">"
+            + "<div style =\"width: 30%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Entering clinician</b></label>"
+            + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
+            + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + entering + "\" size=\"40\" maxlength=\"60\" name=\"entering_cli\" />\r\n"
+            + "</div>"
+            + "<div style =\"width: 30%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Ordering clinician</b></label>"
+            + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
+            + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + ordering + "\" size=\"40\" maxlength=\"60\" name=\"ordering_cli\" />\r\n"
+            + "</div>"
+            + "<div style =\"width: 30%; align-items:center \" "
+            + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
+            + "<label class=\"w3-text-green\"><b>Administering clinician</b></label>"
+            + "    <input type=\"text\" style=\"width: 75%\"class = \" w3-margin w3-border \"  value=\"" + administering + "\" size=\"40\" maxlength=\"60\" name=\"administering_cli\" />\r\n"
+            + "</div>"
+            + "</div>"
+
+
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+            + "<div style =\"width: 50%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Vaccine ID</b></label>"
+            + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + v.getVaccineId() + "\" size=\"40\" maxlength=\"60\" name=\"vacc_id\" />\r\n"
+            + "</div>"
+
+            + "<div style =\"width: 50%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Information source</b></label>"
+            + "    <input type=\"text\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + v.getInformationSource() + "\" size=\"40\" maxlength=\"60\"  name=\"information_source\"/>\r\n"
+            + "</div>"
+
+            + "</div>"
+            + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">"
+            + "<div style =\"width: 50%; align-items:center \" "
+            + " <label class=\"w3-text-green\"><b>Expiration_date</b></label>"
+            + "    <input type=\"date\" style=\"width:75%\" class = \" w3-margin w3-border\"  value=\"" + expirationDate + "\" size=\"40\" maxlength=\"60\"name=\"expiration_date\" />\r\n"
+            + "</div>");
+    printSelectForm(out, v.getCompletionStatus(), codeListCompletionStatus, "completion_status", "Completion Status");
+    out.println("</div>");
+
+
+    out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">");
+    printSelectForm(out, v.getActionCode(), codeListActionCode, "action_code", "Action code");
+    printSelectForm(out, v.getRefusalReasonCode(), codeListRefusalReasonCode, "refusal_reason_code", "Refusal reason code");
+    out.println("</div>");
+
+    out.println("<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ;display:flex\">");
+    printSelectForm(out, v.getBodySite(), codeListBodySite, "body_site", "Body site");
+    out.println("</div>");
+
+    out.println("<input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value=" + req.getParameter("paramEntryId") + "></input>");
+    out.println("<button type=\"submit\"  name=\"nextPage\" value=\"patient_record\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Save EntryRecord</button>\r\n");
+    out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >HL7v2 messaging</button>\r\n");
+    out.println("<button type=\"submit\"  name=\"nextPage\" value=\"FHIR_messaging\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>\r\n");
+    out.println("</form></div>");
+  }
+
+  private void printSelectForm(PrintWriter out, String value, Collection<Code> codeList, String fieldName, String label) {
+    Code code = null;
+    for(Code codeItem : codeList) {
+      if (codeItem.getValue().equals(value)) {
+        code=codeItem;
+        break;
+      }
+    }
+    printSelectCodeForm(out,code,codeList,fieldName,label);
   }
 
   private void printSelectCodeForm(PrintWriter out, Code code, Collection<Code> codeList, String fieldName, String label) {
@@ -384,14 +388,5 @@ public class EntryRecord extends HttpServlet {
     out.println( "</SELECT></p></div>");
   }
 
-  private void printSelectForm(PrintWriter out, String value, Collection<Code> codeList, String fieldName, String label) {
-    Code code = null;
-    for(Code codeItem : codeList) {
-      if (codeItem.getValue().equals(value)) {
-        code=codeItem;
-        break;
-      }
-    }
-    printSelectCodeForm(out,code,codeList,fieldName,label);
-  }
+
 }

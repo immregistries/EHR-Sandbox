@@ -32,7 +32,7 @@ public class Vaccine implements Serializable {
     private String fundingSource = ""; //obx5
     private String fundingEligibility = ""; //obx5
     
-    public Vaccine(int vaccineId, Date administeredDate, String vaccineCvxCode, String vaccineNdcCode, String vaccineMvxCode, String administeredAmount, String manufacturer, String informationSource, String lotnumber, Date expirationDate, String completionStatus, String actionCode, String refusalReasonCode, String bodySite, String bodyRoute, String fundingSource, String fundingEligibility) {
+    public Vaccine(int vaccineId, Date administeredDate, String vaccineCvxCode, String vaccineNdcCode, String vaccineMvxCode, String administeredAmount, String informationSource, String lotnumber, Date expirationDate, String completionStatus, String actionCode, String refusalReasonCode, String bodySite, String bodyRoute, String fundingSource, String fundingEligibility) {
       this.vaccineId = vaccineId;
       this.administeredDate = administeredDate;
       this.vaccineCvxCode = vaccineCvxCode;
@@ -233,9 +233,6 @@ public class Vaccine implements Serializable {
         Collection<Code>codeListBodySite=codeMap.getCodesForTable(CodesetType.BODY_SITE);
         Collection<Code>codeListActionCode=codeMap.getCodesForTable(CodesetType.VACCINATION_ACTION_CODE);
         Collection<Code>codeListCompletionStatus=codeMap.getCodesForTable(CodesetType.VACCINATION_COMPLETION);
-
-
-
 
         int count =0;
         for(Code code : codeListCVX) {
