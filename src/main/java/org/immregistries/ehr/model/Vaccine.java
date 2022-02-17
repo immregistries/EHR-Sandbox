@@ -215,11 +215,10 @@ public class Vaccine implements Serializable {
 
         vaccine.setVaccineId(randomN);
 
-        vaccine.setAdministeredAmount(Integer.toString(randomN)+".5");
+        vaccine.setAdministeredAmount(randomN +".5");
         vaccine.setActionCode("A");
         vaccine.setCompletionStatus("CP");
         vaccine.setFundingEligibility("fundR");
-        vaccine.setFundingSource("fundS");
         vaccine.setInformationSource("infSource");
         vaccine.setLotnumber(Integer.toString(randomN));
         vaccine.setRefusalReasonCode("");
@@ -231,8 +230,7 @@ public class Vaccine implements Serializable {
         Collection<Code>codeListInfSource=codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         Collection<Code>codeListBodyRoute=codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
         Collection<Code>codeListBodySite=codeMap.getCodesForTable(CodesetType.BODY_SITE);
-        Collection<Code>codeListActionCode=codeMap.getCodesForTable(CodesetType.VACCINATION_ACTION_CODE);
-        Collection<Code>codeListCompletionStatus=codeMap.getCodesForTable(CodesetType.VACCINATION_COMPLETION);
+        Collection<Code>codeListFundingSource=codeMap.getCodesForTable(CodesetType.VACCINATION_FUNDING_SOURCE);
 
         int count =0;
         for(Code code : codeListCVX) {
@@ -254,7 +252,7 @@ public class Vaccine implements Serializable {
         for(Code code : codeListMVX) {
             vaccine.setVaccineMvxCode(code.getValue());
             count+=1;
-            if(randDay==count) {
+            if(randomN==count) {
                 break;
             }
         }
@@ -262,7 +260,7 @@ public class Vaccine implements Serializable {
         for(Code code : codeListBodyRoute) {
             vaccine.setBodyRoute(code.getValue());
             count+=1;
-            if(randDay==count) {
+            if(randomN==count) {
                 break;
             }
         }
@@ -270,7 +268,24 @@ public class Vaccine implements Serializable {
         for(Code code : codeListBodySite) {
             vaccine.setBodySite(code.getValue());
             count+=1;
-            if(randDay==count) {
+            if(randomN==count) {
+                break;
+            }
+        }
+//        count = 0;
+//        for(Code code : codeListInfSource) {
+//            vaccine.setInformationSource(code.getValue());
+//            count+=1;
+//            if(randDay==count) {
+//                break;
+//            }
+//        }
+        vaccine.setInformationSource("00");
+        count = 0;
+        for(Code code : codeListFundingSource) {
+            vaccine.setFundingSource(code.getValue());
+            count+=1;
+            if(randomN==count) {
                 break;
             }
         }
