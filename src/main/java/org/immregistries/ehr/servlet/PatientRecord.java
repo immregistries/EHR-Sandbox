@@ -42,91 +42,47 @@ public class PatientRecord extends HttpServlet {
       
         ServletHelper.doStandardHeader(out, session);
         String show = req.getParameter(PARAM_SHOW);
-        Patient patient = new Patient();
-        List<Patient> patientList = null;
-        List<VaccinationEvent> entryList = null;
+        Patient patient = (Patient) session.getAttribute("patient");
         Silo silo = (Silo) session.getAttribute("silo");
-        if(req.getParameter("paramPatientId")!=null && silo!=null) {
-          Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
-          query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
-          query.setParameter(1, silo.getSiloId());
-          patientList = query.list();
-          patient = patientList.get(0);
-          session.setAttribute("patient", patient);
+        if (session.getAttribute("silo")==null)  {
+            resp.sendRedirect("silos?chooseSilo=1");
         }
-        if(session.getAttribute("patient")!=null) {
-          patient = (Patient) session.getAttribute("patient");
+
+        String patientId = req.getParameter("paramPatientId");
+        if (patientId != null) {
+            if (patient != null) {
+                if (Integer.parseInt(patientId) != patient.getPatientId()){
+                    Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+                    query.setParameter(0, Integer.parseInt(patientId));
+                    query.setParameter(1, silo.getSiloId());
+                    patient = (Patient) query.uniqueResult();
+                    session.setAttribute("patient", patient);
+                    session.setAttribute("facility", patient.getFacility());
+                    resp.sendRedirect("patient_record?paramPatientId=" + patientId);
+                }
+            } else {
+                Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+                query.setParameter(0, Integer.parseInt(patientId));
+                query.setParameter(1, silo.getSiloId());
+                patient = (Patient) query.uniqueResult();
+                session.setAttribute("patient", patient);
+                session.setAttribute("facility", patient.getFacility());
+                resp.sendRedirect("patient_record?paramPatientId=" + patientId);
+            }
         }
-        if(session.getAttribute("facility")==null) {
-          session.setAttribute("facility", patient.getFacility());         
-        }
+
         Query query = dataSession.createQuery("from VaccinationEvent where patient=?");
         query.setParameter(0, patient);
-        entryList = query.list();
-        
-        
-       
+        List<VaccinationEvent> entryList = query.list();
+
         resp.setContentType("text/html");
-        
-        
-        Tester tester = (Tester) session.getAttribute("tester");
-        
-        List<Silo> siloList = null;
-        String siloId = req.getParameter("paramSiloId");
-        if (siloId != null) {
-          query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
-          query.setParameter(0, Integer.parseInt(siloId));
-          query.setParameter(1, tester.getTesterId());
-          siloList = query.list();
-          silo = siloList.get(0);
-          session.setAttribute("silo", silo);
-        } else {
-          if (session.getAttribute("silo")!=null) {
-            silo = (Silo) session.getAttribute("silo");
-          }
-          else {
-            resp.sendRedirect("silos?chooseSilo=1");
-          }
-          
-        }
-        List<Facility> facilityList = null;
-        query = dataSession.createQuery("from Facility where silo=?");
-        query.setParameter(0, silo);
-        facilityList = query.list();
-      
-      
-        
-        out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
-            + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
-            + silo.getNameDisplay() + "</b></label>");
-        Facility facility = new Facility();
-        
-          
-          List<Facility> currentFacility = null;
-          query = dataSession.createQuery("from Facility where facilityId=?");
-          query.setParameter(0, facilityList.get(0).getFacilityId());
-          currentFacility = query.list();
-          facility = currentFacility.get(0);
-          session.setAttribute("facility", facility);
-          query = dataSession.createQuery("from Patient where facility=?");
-          query.setParameter(0, facility);
-          
-          out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-                  + facility.getNameDisplay() + "</b></label>");
-        
-        
-        out.println(
-             "<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
-            + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>"+"</div>"
-            );
         out.println( "<div class=\"w3-left\" style=\"width:45%\">"
-            + "<table class=\"w3-table-all\"style=\"width:100% ;overflow:auto\">"
+            + "<table class=\"w3-table-all\">"
                 + "<thead>"
                 + "<tr class=\"w3-green\">"
-                + "<th> Entries</th>"
+                + "<th> Vaccination History</th>"
                 + "</thead>"
                 + "<tbody>");
-
 
         for (VaccinationEvent entryDisplay : entryList) {
           Vaccine vaccineAdmin = entryDisplay.getVaccine();
@@ -142,16 +98,15 @@ public class PatientRecord extends HttpServlet {
               + "</tr>");
           }
         String link = "paramPatientId=" + patient.getPatientId();
-        out.println(
-                "</table>"
-                + "</div>"
-                + "<div class=\"w3-display-right w3-margin\"style=\"width:15%\">\r\n "
-                + "<button onclick=\"location.href='entry_record?" +link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Create new entry </button>"
+        out.println("</tbody></table>"
+                + "<button onclick=\"location.href='entry_record?" +link+"'\"  class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal w3-left\">Create vaccination entry </button>"
+                + "</div>");
 
+        out.println("<div class=\"w3-display-right w3-margin\"style=\"width:15%\">"
                 + "<button onclick=\"location.href='patient_form?" +link+"'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">Modify patient</button>"
                 + "<button onclick=\"location.href='FHIR_messaging?patientOnly=1'\" style=\"width:100%;height:20%\" class=\"w3-button w3-margin w3-round-large w3-green w3-hover-teal\">FHIR Messaging</button>"
 
-                + "</div\r\n");
+                + "</div>");
         ServletHelper.doStandardFooter(out, session);
       
       

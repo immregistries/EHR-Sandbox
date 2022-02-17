@@ -44,18 +44,34 @@ public class FacilityPatientDisplay extends HttpServlet {
       Tester tester = (Tester) session.getAttribute("tester");
 
       Silo silo = (Silo) session.getAttribute("silo");
+
       String siloId = req.getParameter("paramSiloId");
       if (siloId != null) {
-        Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
-        query.setParameter(0, Integer.parseInt(siloId));
-        query.setParameter(1, tester.getTesterId());
-        List<Silo> siloList = query.list();
-        silo = siloList.get(0);
-        session.setAttribute("silo", silo);
-      } else {
-        if (session.getAttribute("silo")==null) {
-          resp.sendRedirect("silos?chooseSilo=1");
+        if (silo != null) {
+          if (silo.getSiloId() != Integer.parseInt(siloId)){
+            Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+            query.setParameter(0, Integer.parseInt(siloId));
+            query.setParameter(1, tester.getTesterId());
+            silo = (Silo) query.uniqueResult();
+            session.setAttribute("silo", silo);
+            // Reload page to update header
+            resp.sendRedirect("facility_patient_display?paramSiloId=" + siloId);
+          }
+        } else {
+          Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+          query.setParameter(0, Integer.parseInt(siloId));
+          query.setParameter(1, tester.getTesterId());
+          silo = (Silo) query.uniqueResult();
+          session.setAttribute("silo", silo);
+          // Reload page to update header
+          resp.sendRedirect("facility_patient_display?paramSiloId=" + siloId);
         }
+      }else {
+        resp.sendRedirect("facility_patient_display?paramSiloId=" + silo.getSiloId());
+      }
+
+      if (silo == null) {
+        resp.sendRedirect("silos?chooseSilo=1");
       }
 
       Query query = dataSession.createQuery("from Facility where silo=?");
@@ -67,16 +83,25 @@ public class FacilityPatientDisplay extends HttpServlet {
       List<Patient> patientList = query.list();
       String facilityId =  req.getParameter("paramFacilityId");
 
-      Facility facility;
+      Facility facility = (Facility) session.getAttribute("facility");
       if (facilityId != null) { // if facilityId parameter specified i.e. facility selected
-        query = dataSession.createQuery("from Facility where facilityId=? and silo=?");
-        query.setParameter(0, Integer.parseInt(facilityId));
-        query.setParameter(1, silo);
-        facility = (Facility) query.uniqueResult();
-
-        session.setAttribute("facility", facility);
-      } else {
-        facility = (Facility) session.getAttribute("facility");
+        if (facility != null) {
+          if (facility.getFacilityId() != Integer.parseInt(facilityId)){
+            query = dataSession.createQuery("from Facility where facilityId=? and silo=?");
+            query.setParameter(0, Integer.parseInt(facilityId));
+            query.setParameter(1, silo);
+            facility = (Facility) query.uniqueResult();
+            session.setAttribute("facility", facility);
+            resp.sendRedirect("facility_patient_display?paramFacilityId=" + facilityId);
+          }
+        } else {
+          query = dataSession.createQuery("from Facility where facilityId=? and silo=?");
+          query.setParameter(0, Integer.parseInt(facilityId));
+          query.setParameter(1, silo);
+          facility = (Facility) query.uniqueResult();
+          session.setAttribute("facility", facility);
+          resp.sendRedirect("facility_patient_display?paramFacilityId=" + facilityId);
+        }
       }
 
       if (facility != null){
@@ -92,19 +117,9 @@ public class FacilityPatientDisplay extends HttpServlet {
                +"</div>" );
       }
 
-      out.print("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
-          + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Tenant : "
-          + silo.getNameDisplay() + "</b></label>");
-       if (facility != null) {
-         out.println(
-             "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-                 + facility.getNameDisplay() + "</b></label>");
-       }
 
 // ---------------- Facility list ------------------
-      out.println(
-              "</div>"
-              + "<div class=\"w3-left \"style=\"width:45%\">"
+      out.println("<div class=\"w3-left \"style=\"width:45%\">"
               + "<table class=\"  w3-table-all \" >"
               + "<thead>"
               + "<tr class=\"w3-green\">"
@@ -136,7 +151,7 @@ public class FacilityPatientDisplay extends HttpServlet {
       out.println("</div>");
 // ---------------- Patient list ------------------
       out.println("<div class=\"w3-right \"style=\"width:45%\">"
-          + "<table class=\" w3-table-all  \">\r\n"
+          + "<table class=\"w3-table-all\">"
           + "<thead>"
           + "<tr class=\"w3-green\">"
           + "<th>Patients </th>"
@@ -162,7 +177,7 @@ public class FacilityPatientDisplay extends HttpServlet {
       out.println("</div>");
 
       out.println("<div class=\"w3-display-bottommiddle w3-margin\"style=\"height:5%\">");
-      out.println("</div\r\n");
+      out.println("</div>");
 
       ServletHelper.doStandardFooter(out, session);
 

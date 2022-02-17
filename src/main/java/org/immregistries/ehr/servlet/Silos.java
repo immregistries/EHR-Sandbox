@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.Tester;
 
@@ -21,6 +22,11 @@ public class Silos extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
+    // Fetches selected tenant  and puts it in session object
+    HttpSession session = req.getSession();
+
+
+
     doGet(req, resp);
   }
 
@@ -32,6 +38,27 @@ public class Silos extends HttpServlet {
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     Session dataSession = PopServlet.getDataSession();
+
+    String siloId = req.getParameter("siloId");
+    if (siloId != null) {
+      Silo silo;
+      Facility facility = (Facility) session.getAttribute("facility");
+      Tester tester = (Tester) session.getAttribute("tester");
+      Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+      query.setParameter(0, Integer.parseInt(siloId));
+      query.setParameter(1, tester.getTesterId());
+      silo = (Silo) query.uniqueResult();
+      session.setAttribute("silo", silo);
+      // reset facility selection
+      if (facility != null){
+        if (facility.getSilo().getSiloId() != Integer.parseInt(siloId)){
+          session.setAttribute("facility", null);
+          session.setAttribute("patient", null);
+        }
+      }
+      resp.sendRedirect("facility_patient_display");
+    }
+
     try {
       {
         ServletHelper.doStandardHeader(out, session);
@@ -53,7 +80,7 @@ public class Silos extends HttpServlet {
                 +"</div>");
           }
         out.println( "<div class = \"w3-left\" style=\"width:100%\">" 
-            +"  <table class=\" w3-table-all \"style=\"width:45% ;overflow:auto\"> \r\n"
+            +"  <table class=\" w3-table-all \"style=\"width:45% ;overflow:auto\">"
             + "<thead>"
             + "<tr class=\"w3-green\">"
             + "<th> Tenant</th>"
@@ -62,17 +89,15 @@ public class Silos extends HttpServlet {
             );
 
         for (Silo siloDisplay : siloList) {
-          String link = "paramSiloId=" + siloDisplay.getSiloId();
           out.println("<tr>"
-              + "<td class = \"w3-hover-teal\">"     
-              + "<a href='facility_patient_display?" + link+ "'style = \"text-decoration:none \">\r\n"
-              + "<div style=\"text-decoration:none;height:100%\">"  
-              + siloDisplay.getNameDisplay()  
+                  + "<td class = \"w3-hover-teal\">"
+                  + "<a href=\"silos?siloId=" + siloDisplay.getSiloId() + "\" style =\"text-decoration:none \">"
+                  + "<div style=\"text-decoration:none;height:100%\">"
+                  + siloDisplay.getNameDisplay()
               + "</div>"
               + "</a>"
               + "</td>"
               +"</tr>");
-              
         }
         out.println("</tbody>"
                 + "</table>"
