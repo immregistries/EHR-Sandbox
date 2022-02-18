@@ -4,19 +4,20 @@ import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Silo;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 
 public class ServletHelper {
 
-    public static void doStandardHeader(PrintWriter out, HttpSession session) {
+    public static void doStandardHeader(PrintWriter out, HttpSession session, HttpServletRequest req) {
         Silo silo = (Silo) session.getAttribute("silo");
         Facility facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient");
         out.println("<html>");
         out.println("  <head>");
         out.println("    <title>EHR Sandbox</title>");
-        out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+        out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + req.getContextPath() + "/inc/style.css\">");
         out.println("  </head>");
         out.println("  <body>");
         // out.println("<div class=\"w3-container \">");

@@ -2,7 +2,6 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +66,7 @@ public class IISMessage extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     try {
       {
-        ServletHelper.doStandardHeader(out, session);
+        ServletHelper.doStandardHeader(out, session, req);
         HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
         Tester tester = (Tester) session.getAttribute("tester");
         Facility facility = (Facility) session.getAttribute("facility");

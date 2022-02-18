@@ -39,7 +39,7 @@ public class FacilityPatientDisplay extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
 
-      ServletHelper.doStandardHeader(out, session);
+      ServletHelper.doStandardHeader(out, session, req);
       session.setAttribute("patient", null);
       Tester tester = (Tester) session.getAttribute("tester");
 

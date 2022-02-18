@@ -18,7 +18,6 @@ import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Silo;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.iis.kernal.model.CodeMapManager;
@@ -163,7 +162,7 @@ public class EntryRecord extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       {
-        ServletHelper.doStandardHeader(out, session);
+        ServletHelper.doStandardHeader(out, session, req);
         Boolean creation = true;
 
 
@@ -213,14 +212,10 @@ public class EntryRecord extends HttpServlet {
   }
 
   public static void printEntryForm(HttpServletRequest req,  PrintWriter out, Vaccine vaccine, VaccinationEvent vaccinationEvent, Boolean preloaded) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     String administering = "";
     String  entering = "";
     String  ordering = "";
-
-    String administeredDate = "";
-    String expirationDate="";
 
     if (preloaded){ // Load Vaccination info in form
       administering = "" + vaccinationEvent.getAdministeringClinician().getNameFirst() + " "
@@ -232,12 +227,6 @@ public class EntryRecord extends HttpServlet {
       ordering = "" + vaccinationEvent.getOrderingClinician().getNameFirst() + " "
               + vaccinationEvent.getOrderingClinician().getNameLast() + " "
               + vaccinationEvent.getOrderingClinician().getNameMiddle();
-      if (vaccine.getAdministeredDate() != null){
-        administeredDate = sdf.format(vaccine.getAdministeredDate());
-      }
-      if (vaccine.getExpirationDate() != null){
-        expirationDate= sdf.format(vaccine.getExpirationDate());
-      }
     }
 
     CodeMap codeMap = CodeMapManager.getCodeMap();
@@ -252,90 +241,63 @@ public class EntryRecord extends HttpServlet {
     Collection<Code>codeListRefusalReasonCode=codeMap.getCodesForTable(CodesetType.VACCINATION_REFUSAL);
     Collection<Code>codeListFundingSource=codeMap.getCodesForTable(CodesetType.VACCINATION_FUNDING_SOURCE);
 
-    out.println("<form method=\"post\" class=\"w3-container w3-center\" action=\"entry_record\">");
+    out.println("<form method=\"post\"  action=\"entry_record\" " +
+            "class=\"\"" +
+            "style=\"" +
+            " display:flex ;" +
+            " flex-flow: wrap ;" +
+            " justify-content : space-around ;" +
+            " gap: 20px 20px ;" +
+            "\">");
 
-    out.println("<div class=\"w3-center\" style=\"width:100% ; display:flex\">");
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:50% ; display:flex\">");
-    out.println("<div style=\"width: 50% ; align-items:left\">"
-            + "<label class=\"w3-text-green w3-left\"><b>Administered date <b class=\"w3-text-red\">*</b></b></label>"
-            + "<input type=\"date\" class=\"w3-margin w3-border\"  value=\"" + administeredDate + "\" name=\"administered_date\"/>"
-            + "</div>");
-    out.println("<div style=\"width: 50% ; align-items:left \"> "
-            + "<label class=\"w3-text-green w3-left\"><b>Administered amount</b></label>"
-            + "<input type=\"text\" class=\"w3-margin w3-border\"  value=\"" + vaccine.getAdministeredAmount() + "\" name=\"administered_amount\"/>"
-            + "</div>");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:47% ; display:flex\">");
+    printDateInput(out, vaccine.getAdministeredDate(),"administered_date", "Administered date", 50 , true);
+    printSimpleInput(out, vaccine.getAdministeredAmount(),"administered_amount", "Administered amount", 50 , false);
     out.println("</div>");
 
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:50% ; display:flex\">");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:47% ; display:flex\">");
     printSelectForm(out, vaccine.getVaccineCvxCode(), codeListCVX, "vacc_cvx", "Vaccine CVX code", 45);
     printSelectForm(out, vaccine.getVaccineNdcCode(), codeListNDC, "vacc_ndc", "Vaccine NDC code", 45);
     out.println("</div>");
-    out.println("</div>");
 
-
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:75% ; display:flex\">");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:75% ; display:flex ; flex-direction: row\">");
     printSelectForm(out, vaccine.getVaccineMvxCode(), codeListMVX, "vacc_mvx", "Vaccine MVX code", 30);
-    out.println("<div style=\"width: 30% align-items:left\">"
-            + "<label class=\"w3-text-green w3-left\"><b>Lot number</b></label>"
-            + "<input type=\"text\" style=\"width:95%\" value=\"" + vaccine.getLotnumber() + "\" class=\"w3-margin w3-border\"  name=\"lot_number\"/>"
-            + "</div>");
-    out.println("<div style=\"width: 30% align-items:left\"> "
-            + "<label class=\"w3-text-green w3-left\"><b>Expiration date</b></label>"
-            + "<input type=\"date\" style=\"width:95%\" value=\"" + expirationDate + "\" class=\"w3-margin w3-border\"  name=\"expiration_date\"/>"
-            + "</div>");
+    printSimpleInput(out, vaccine.getLotnumber(),"lot_number", "Lot number", 30 , false);
+    printDateInput(out, vaccine.getExpirationDate(),"expiration_date", "Expiration date", 30 , false);
     out.println("</div>");
 
-    out.println("<div class='w3-center' style=\"width:100% ; display:flex\">");
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:75% ; display:flex\">");
-    out.println("<div style=\"width: 30%; align-items:center \"> "
-            + "<label class=\"w3-text-green w3-left\"><b>Entering clinician <b class=\"w3-text-red\">*</b></b></label>"
-            + "<input type=\"text\" style=\"width:95%\" class=\"w3-margin w3-border\"  value=\"" + entering + "\" name=\"entering_cli\"/>"
-            + "</div>");
-    out.println("<div style=\"width: 30%; align-items:center \"> "
-            + "<label class=\"w3-text-green w3-left\"><b>Ordering clinician <b class=\"w3-text-red\">*</b></b></label>"
-            + "<input type=\"text\" style=\"width:95%\" class=\"w3-margin w3-border\"  value=\"" + ordering + "\" name=\"ordering_cli\"/>"
-            + "</div>");
-    out.println("<div style=\"width: 30%; align-items:center \"> "
-            + "<label class=\"w3-text-green w3-left\"><b>Administering clinician <b class=\"w3-text-red\">*</b></b></label>"
-            + "<input type=\"text\" style=\"width:95%\" class=\"w3-margin w3-border\"  value=\"" + administering + "\" name=\"administering_cli\"/>"
-            + "</div>");
-    out.println("</div>");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:75% ; display:flex\">");
+    printSimpleInput(out,entering,"entering_cli", "Entering clinician", 30 , true);
+    printSimpleInput(out,ordering,"ordering_cli", "Ordering clinician", 30 , true);
+    printSimpleInput(out,administering,"administering_cli", "Administering clinician", 30 , true);
     out.println("</div>");
 
-
-    out.println("<div class='w3-center' style=\"width:100% ; display:flex\">");
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:50% ; display:flex\">");
-    printSelectForm(out, vaccine.getFundingSource(), codeListFundingSource, "funding_source", "Funding source", 50);
-    out.println("<div style=\"width: 50%; align-items:center\">"
-            + "<label class=\"w3-text-green w3-left\"><b>Funding eligibility</b></label>"
-            + "<input type=\"text\" class=\"w3-margin w3-border\" value=\"" + vaccine.getFundingEligibility() + "\" name=\"funding_eligibility\"/>"
-            + "</div>");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:47% ; display:flex ; flex-direction: row\">");
+    printSelectForm(out, vaccine.getFundingSource(), codeListFundingSource, "funding_source", "Funding source", 45);
+    printSimpleInput(out,vaccine.getFundingEligibility(),"funding_eligibility", "Funding eligibility", 50 , false);
     out.println("</div>");
 
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:50% ; display:flex\">");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:47% ; display:flex ; flex-direction: row\">");
     printSelectForm(out, vaccine.getBodyRoute(), codeListBodyRoute, "body_route", "Body route", 45);
     printSelectForm(out, vaccine.getBodySite(), codeListBodySite, "body_site", "Body site", 45);
     out.println("</div>");
-    out.println("</div>");
 
 
-    out.println("<div class='w3-center' style=\"width:100% ; display:flex\">");
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:50% ; display:flex\">");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:47% ; display:flex\">");
     printSelectForm(out, vaccine.getInformationSource(), codeListInfSource, "information_source", "Information source", 45);
     printSelectForm(out, vaccine.getActionCode(), codeListActionCode, "action_code", "Action code", 45);
     out.println("</div>");
 
-    out.println("<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:50% ; display:flex\">");
+    out.println("<div class=\"w3-container w3-light-gray\" style=\"width:47% ; display:flex\">");
     printSelectForm(out, vaccine.getCompletionStatus(), codeListCompletionStatus, "completion_status", "Completion status",45);
     printSelectForm(out, vaccine.getRefusalReasonCode(), codeListRefusalReasonCode, "refusal_reason_code", "Refusal reason code",45);
-    out.println("</div>");
     out.println("</div>");
 
 
     out.println("<input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value=" + req.getParameter("paramEntryId") + "></input>");
-    out.println("<button type=\"submit\" name=\"nextPage\" value=\"patient_record\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">Save EntryRecord</button>");
-    out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">HL7v2 messaging</button>");
-    out.println("<button type=\"submit\" name=\"nextPage\" value=\"FHIR_messaging\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \">FHIR Messaging </button>");
+    out.println("<button type=\"submit\" name=\"nextPage\" value=\"patient_record\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">Save EntryRecord</button>");
+    out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">HL7v2 messaging</button>");
+    out.println("<button type=\"submit\" name=\"nextPage\" value=\"FHIR_messaging\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">FHIR Messaging </button>");
     out.println("</form></div>");
   }
 
@@ -347,17 +309,52 @@ public class EntryRecord extends HttpServlet {
         break;
       }
     }
-    out.println("<div style=\"width: " + width + "% ; align-items:center\">"
-            + "<label class=\"w3-text-green w3-left\"><b>" + label + "</b></label>"
-            + "<SELECT style=\"width:95%\"  class=\"w3-margin w3-border\" name=\"" + fieldName + "\" size=\"1\">");
-    if(code == null) {
-      out.println( "<OPTION value=\"\">Select " + label + "</Option>");
-    } else {
-      out.println( "<OPTION value=\"" + code.getValue() + "\">" + code.getLabel() + "</Option>");
-    }
+    out.println("<div style=\"width: " + width + "% ; align-items:center\" class=\"w3-margin\">"
+            + "<label class=\"w3-text-green w3-left\"><b>"
+              + label + "</b></label>"
+            + "<SELECT style=\"width:95%\"  class=\"w3-select\" name=\"" + fieldName + "\" size=\"1\">");
+    out.println( "<OPTION value=\"\" "
+            + (code == null ? "selected" : "")
+            + ">Select " + label + "</Option>");
     for(Code codeItem : codeList) {
-      out.println("<OPTION value=\"" + codeItem.getValue() + "\">" /* + codeItem.getValue()*/ + codeItem.getLabel() + "</Option>");
+      out.println("<OPTION value=\""
+              + codeItem.getValue() + "\" "
+              + (codeItem.equals(code) ? "selected" : "")
+              + " >" /* + codeItem.getValue()*/
+              + codeItem.getLabel() + "</Option>");
     }
     out.println( "</SELECT></div>");
+  }
+
+  public static void printSimpleInput(PrintWriter out, String input, String fieldName, String label, int width, boolean required){
+    out.println("<div style=\"width: "+ width +"% ;align-items:center\" class=\"w3-margin\">"
+            + "<label class=\"w3-text-green w3-left\"><b>"
+            + label + (required? "<b class=\"w3-text-red\">*</b>" : "")
+            + "</b></label>"
+            + "<input type=\"text\""
+            + " class=\"w3-input w3-border\" "
+            + " value=\"" + input + "\""
+            + " name=\"" + fieldName + "\""
+            + "/>"
+            + "</div>");
+  }
+
+  public static void printDateInput(PrintWriter out, Date dateInput, String fieldName, String label, int width, boolean required){
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String input = "";
+    if (dateInput != null){
+      input= sdf.format(dateInput);
+    }
+    out.println("<div style=\"width: "+ width +"% ; align-items:center\""
+              + " class=\"w3-margin\">"
+            + "<label class=\"w3-text-green w3-left\"><b>"
+            + label + (required? "<b class=\"w3-text-red\">*</b>" : "")
+            + "</b></label>"
+            + "<input type=\"date\""
+            + " class=\"w3-input w3-border\" "
+            + " value=\"" + input + "\""
+            + " name=\"" + fieldName + "\""
+            + "/>"
+            + "</div>");
   }
 }

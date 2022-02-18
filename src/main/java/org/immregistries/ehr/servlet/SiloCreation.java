@@ -59,7 +59,7 @@ public class SiloCreation extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       {
-        ServletHelper.doStandardHeader(out, session);
+        ServletHelper.doStandardHeader(out, session, req);
                 
         if(req.getAttribute("duplicate_error") != null){
           out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Name already used by the current user</b></label><br/>");

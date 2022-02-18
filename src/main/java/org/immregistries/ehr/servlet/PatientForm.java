@@ -1,6 +1,5 @@
 package org.immregistries.ehr.servlet;
 
-import com.github.javafaker.Faker;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -23,9 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 public class PatientForm extends HttpServlet {
 
@@ -125,7 +121,7 @@ public class PatientForm extends HttpServlet {
         Session dataSession = PopServlet.getDataSession();
 
         try {
-            ServletHelper.doStandardHeader(out, session);
+            ServletHelper.doStandardHeader(out, session, req);
 
             Facility facility = (Facility) session.getAttribute("facility");
             Silo silo = (Silo) session.getAttribute("silo");
@@ -198,264 +194,228 @@ public class PatientForm extends HttpServlet {
         if (preloaded){
             birthDate = sdf.format(patient.getBirthDate());
             if(patient.getDeathDate()!=null) {
-                deathDate=""+ sdf.format(patient.getDeathDate());
+                deathDate="" + sdf.format(patient.getDeathDate());
             }
             if(patient.getPublicityIndicatorDate()!=null) {
-                publicityIndicatorDate=""+ sdf.format(patient.getPublicityIndicatorDate());
+                publicityIndicatorDate="" + sdf.format(patient.getPublicityIndicatorDate());
             }
             if(patient.getProtectionIndicatorDate()!=null) {
-                protectionIndicatorDate=""+ sdf.format(patient.getProtectionIndicatorDate());
+                protectionIndicatorDate="" + sdf.format(patient.getProtectionIndicatorDate());
             }
             if(patient.getRegistryStatusIndicatorDate()!=null) {
-                registryStatusIndicatorDate=""+ sdf.format(patient.getRegistryStatusIndicatorDate());
+                registryStatusIndicatorDate="" + sdf.format(patient.getRegistryStatusIndicatorDate());
             }
         }
 
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_form\">\r\n"
+        out.println("<form method=\"post\" class=\"w3-container\" action=\"patient_form\">"
 
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>First Name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getNameFirst()+ "\" name=\"first_name\" />"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Last name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getNameLast()+ "\" name=\"last_name\" />"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Middle name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getNameMiddle()+ "\" name=\"middle_name\" />"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Mother maiden name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getMotherMaiden()+ "\" name=\"mother_maiden_name\" />"
+                + "</div>"
+                + "</div>"
 
-                + "    <label class=\"w3-text-green\"><b>First Name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getNameFirst()+"\" style=\"width:75% \" name=\"first_name\" />\r\n"
-
-
-                +"</div>"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>Last name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getNameLast()+"\" style=\"width:75% \" name=\"last_name\" />\r\n"
-
-                +"</div>"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Middle name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getNameMiddle()+"\" style=\"width:75% \" name=\"middle_name\" />\r\n"
-
-                +"</div>"
-
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Mother maiden name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getMotherMaiden()+"\" style=\"width:75% \" name=\"mother_maiden_name\" />\r\n"
-
-                +"</div>"
-                +"</div>"
-
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:30% ; display:flex \">"
+                + "<div style =\"align-items:center\">"
                 + "<label class=\"w3-text-green\"><b>Date of birth</b></label> "
                 + "<label class=\"w3-text-red w3-margin-right\"><b>*</b></label> "
-                + "                         <input type=\"date\" class = \"w3-input w3-margin w3-border \"  value=\""+birthDate+"\" style=\"width:75% \" name=\"birth_date\" />\r\n"
+                + "<input type=\"date\" class =\"w3-margin\" value=\""
+                + birthDate + "\" name=\"birth_date\"/>"
+                + "</div>"
+                + "<div style =\"align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Sex (F or M) </b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getSex()+ "\" name=\"sex\"/>"
+                + "</div>"
+                + "</div>"
 
-                +"</div>"
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 20% ; align-items:center\""
+                + "<label class=\"w3-text-green\"><b>Address 1</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getAddressLine1()+ "\" style=\"width:75% \" name=\"address\"/>"
+                + "</div>"
+                + "<div style =\"width: 20% ; align-items:center\" "
+                + "<label class=\"w3-text-green\"><b>City</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\""
+                + patient.getAddressCity()+ "\" style=\"width:75% \" name=\"city\"/>"
+                + "</div>"
+                + "<div style =\"width: 20% ; align-items:center\" "
+                + "<label class=\"w3-text-green\"><b>State</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getAddressState()+ "\" style=\"width:75% \" name=\"state\" />"
+                + "</div>"
+                + "<div style =\"width: 20% ; align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>County</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getAddressCountyParish()+ "\" style=\"width:75% \" name=\"county\"/>"
+                + "</div>"
+                + "<div style =\"width: 20% ; align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Country Code</b></label>"
+                + "<input type=\"text\" class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getAddressCountry()+ "\" style=\"width:75% \"   name=\"country\"/>"
+                + "</div>"
+                + "</div>"
 
-                + "<div style =\"width: 50% ;align-items:center\" "
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>phone</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getPhone()+ "\" style=\"width:75% \"name=\"phone\" />"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>E-mail</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getEmail()+ "\" style=\"width:75% \" name=\"email\"/>"
+                + "</div>"
+                + "</div>"
 
-                + "    <label class=\"w3-text-green\"><b>Sex (F or M) </b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getSex()+"\" style=\"width:75% \" name=\"sex\"/>\r\n"
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Ethnicity</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getEthnicity()+ "\" style=\"width:75% \" name=\"ethnicity\" />"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Race</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getRace()+ "\" style=\"width:75% \" name=\"race\"/>"
+                + "</div>"
+                + "</div>"
 
-                +"</div>"
-                +"</div>"
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Birth flag</b></label>"
+                + "<p>"
+                + "<SELECT style=\"width:75% \" name=\"birth_flag\" size=\"1\">"
+                + "<OPTION value=\"\">Unknown</Option>"
+                + "<OPTION value=\"Y\">Y</Option>"
+                + "<OPTION value=\"N\">N</Option>"
+                + "</SELECT>"
+                + "</p>"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Birth order</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getBirthOrder()+ "\" style=\"width:75% \" name=\"birth_order\"/>"
+                + "</div>"
+                + "<div style =\"width: 50% ;align-items:center\">"
+                + "<label class=\"w3-text-green\"><b>Death flag</b></label>"
+                + "<p>"
+                + "<SELECT style=\"width:75% \" name=\"death_flag\" size=\"1\">"
+                + "<OPTION value=\"\">Unknown</Option>"
+                + "<OPTION value=\"Y\">Y</Option>"
+                + "<OPTION value=\"N\">N</Option>"
+                + "</SELECT>"
+                + "</p>"
+                + "</div>"
 
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"align-items:center\" "
+                + "<div style =\"width: 50% ;align-items:center\">"
 
-                + "    <label class=\"w3-text-green\"><b>Address 1</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getAddressLine1()+"\" style=\"width:75% \" name=\"address\"/>\r\n"
+                + "<label class=\"w3-text-green\"><b>Death date</b></label>"
+                + "<input type=\"date\"  class=\"w3-input w3-margin w3-border\"  value=\"" +deathDate+ "\" style=\"width:75% \" name=\"death_date\"/>"
 
-                +"</div>"
-                + "<div style =\"width: 30% ;align-items:center\" "
+                + "</div>"
+                + "</div>"
 
-                + " <label class=\"w3-text-green\"><b>City</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getAddressCity()+"\" style=\"width:75% \" name=\"city\"/>\r\n"
-
-                +"</div>"
-                + "<div style =\"width: 30% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>State</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getAddressState()+"\" style=\"width:75% \" name=\"state\" />\r\n"
-
-
-                +"</div>"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>County/parish</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getAddressCountyParish()+"\" style=\"width:75% \" name=\"county\"/>\r\n"
-
-                +"</div>"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>Country Code</b></label>"
-                + "                         <input type=\"text\" class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getAddressCountry()+"\" style=\"width:75% \"   name=\"country\"/>\r\n"
-
-                +"</div>"
-                +"</div>"
-
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "   <label class=\"w3-text-green\"><b>phone</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getPhone()+"\" style=\"width:75% \"name=\"phone\" />\r\n"
-
-
-                +"</div>"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>E-mail</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getEmail()+"\" style=\"width:75% \" name=\"email\"/>\r\n"
-
-                +"</div>"
-                +"</div>"
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Ethnicity</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getEthnicity()+"\" style=\"width:75% \" name=\"ethnicity\" />\r\n"
-
-
-                +"</div>"
-
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>Race</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getRace()+"\" style=\"width:75% \" name=\"race\"/>\r\n"
-
-                +"</div>"
-
-                +"</div>"
-
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + " <label class=\"w3-text-green\"><b>Birth flag</b></label>"
-                //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\"\" style=\"width:75% \" name=\"birth_flag\"/>\r\n"
-                +"  <p>"
-                +"                          <SELECT style=\"width:75% \" name=\"birth_flag\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"\">Unknown</Option>\r\n"
-                + "                             <OPTION value=\"Y\">Y</Option>\r\n"
-                + "                             <OPTION value=\"N\">N</Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
-
-                +"</div>"
-
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Birth order</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getBirthOrder()+"\" style=\"width:75% \" name=\"birth_order\"/>\r\n"
-
-                +"</div>"
-
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Death flag</b></label>"
-                //+ "                           <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\"\" style=\"width:75% \" name=\"death_flag\" />\r\n"
-                +"  <p>"
-                +"                          <SELECT style=\"width:75% \" name=\"death_flag\" size=\"1\">\r\n"
-                + "                             <OPTION value=\"\">Unknown</Option>\r\n"
-                + "                             <OPTION value=\"Y\">Y</Option>\r\n"
-                + "                             <OPTION value=\"N\">N</Option>\r\n"
-                + "                        </SELECT>\r\n"
-                +"  </p>"
-
-                +"</div>"
-
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "   <label class=\"w3-text-green\"><b>Death date</b></label>"
-                + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+deathDate+"\" style=\"width:75% \" name=\"death_date\"/>\r\n"
-
-                +"</div>"
-                +"</div>"
-
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                +"<div style=\"width:100% \">"
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style=\"width:100% \">"
                 + "<div style =\" align-items:center\" "
 
-                + " <label class=\"w3-text-green\"><b>publicity indicator</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getPublicityIndicator()+"\" style=\"width:75% \"name=\"publicity_indicator\" />\r\n"
+                + "<label class=\"w3-text-green\"><b>publicity indicator</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getPublicityIndicator()+ "\" style=\"width:75% \"name=\"publicity_indicator\" />"
 
-                +"</div>"
-
-                + "<div style =\"align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
-                + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+publicityIndicatorDate+"\" style=\"width:75% \" name=\"publicity_date\"/>\r\n"
-
-                +"</div>"
+                + "</div>"
 
                 + "<div style =\"align-items:center\" "
 
-                + "   <label class=\"w3-text-green\"><b>protection indicator</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getProtectionIndicator()+"\" style=\"width:75% \"name=\"protection\" />\r\n"
-                +"</div>"
-                +"</div>"
-                +"<div style=\"width:100% \">"
-                + "<div style =\"align-items:center\" "
+                + "<label class=\"w3-text-green\"><b>publicity indicator date</b></label>"
+                + "<input type=\"date\"  class=\"w3-input w3-margin w3-border\"  value=\"" +publicityIndicatorDate+ "\" style=\"width:75% \" name=\"publicity_date\"/>"
+                + "</div>"
+                + "</div>"
 
-                + "    <label class=\"w3-text-green\"><b>protection indicator date</b></label>"
-                + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+ protectionIndicatorDate +"\" style=\"width:75% \"name=\"protection_date\" />\r\n"
-
-                +"</div>"
+                + "<div style=\"width:100%\">"
 
                 + "<div style =\"align-items:center\" "
 
-                + "    <label class=\"w3-text-green\"><b>Registry status indicator</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getRegistryStatusIndicator()+"\" style=\"width:75% \" name=\"registry_status_indicator\"/>\r\n"
-
-                +"</div>"
-                +"</div>"
-                +"<div style=\"width:100% \">"
+                + "<label class=\"w3-text-green\"><b>protection indicator</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getProtectionIndicator()+ "\" style=\"width:75% \"name=\"protection\" />"
+                + "</div>"
                 + "<div style =\"align-items:center\" "
 
-                + "   <label class=\"w3-text-green\"><b>Registry status indicator date</b></label>"
-                + "                         <input type=\"date\"  class = \"w3-input w3-margin w3-border\"  value=\""+registryStatusIndicatorDate+"\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>\r\n"
+                + "<label class=\"w3-text-green\"><b>protection indicator date</b></label>"
+                + "<input type=\"date\"  class=\"w3-input w3-margin w3-border\"  value=\"" + protectionIndicatorDate + "\" style=\"width:75% \"name=\"protection_date\" />"
 
-                +"</div>"
-                +"</div>"
-                +"</div>"
-
-                + "<div class = \"w3-margin w3-border w3-border-green\" style=\"width:100% ; display:flex \">"
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Guardian last name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getGuardianLast()+"\" style=\"width:75% \"name=\"guardian_last_name\" />\r\n"
-
-                +"</div>"
-
-                + "<div style =\"width: 50% ;align-items:center\" "
-
-                + "    <label class=\"w3-text-green\"><b>Guardian first name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getGuardianFirst()+"\" style=\"width:75% \"name=\"guardian_first_name\" />\r\n"
+                + "</div>"
 
 
-                +"</div>"
+                + "</div>"
+                + "<div style=\"width:100% \">"
+                + "<div style =\"align-items:center\" "
 
-                + "<div style =\"width: 50% ;align-items:center\" "
+                + "<label class=\"w3-text-green\"><b>Registry status indicator</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getRegistryStatusIndicator()+ "\" style=\"width:75% \" name=\"registry_status_indicator\"/>"
 
-                + " <label class=\"w3-text-green\"><b>Guardian middle name</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getGuardianMiddle()+"\" style=\"width:75% \"name=\"guardian_middle_name\" />\r\n"
+                + "</div>"
+                + "<div style =\"align-items:center\" "
 
-                +"</div>"
+                + "<label class=\"w3-text-green\"><b>Registry status indicator date</b></label>"
+                + "<input type=\"date\"  class=\"w3-input w3-margin w3-border\"  value=\"" +registryStatusIndicatorDate+ "\" style=\"width:75% \" name=\"registry_status_indicator_date\"/>"
 
-                + "<div style =\"width: 50% ;align-items:center\" "
+                + "</div>"
+                + "</div>"
+                + "</div>"
 
-                + " <label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"
-                + "                         <input type=\"text\"  class = \"w3-input w3-margin w3-border\"  value=\""+ patient.getGuardianRelationship()+"\" style=\"width:75% \"name=\"guardian_relation\" />\r\n"
-                +"  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
-                +"                          <SELECT style=\"width : 100%\" name=\"guardian_relation\" size=\"1\">\r\n");
+                + "<div class=\"w3-margin w3-container w3-light-gray w3-center\" style=\"width:100% ; display:flex \">"
+                + "<div style =\"width: 50% ;align-items:center\">"
+
+                + "<label class=\"w3-text-green\"><b>Guardian last name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getGuardianLast()+ "\" style=\"width:75% \"name=\"guardian_last_name\" />"
+
+                + "</div>"
+
+                + "<div style =\"width: 50% ;align-items:center\">"
+
+                + "<label class=\"w3-text-green\"><b>Guardian first name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getGuardianFirst()+ "\" style=\"width:75% \"name=\"guardian_first_name\" />"
+
+
+                + "</div>"
+
+                + "<div style =\"width: 50% ;align-items:center\">"
+
+                + "<label class=\"w3-text-green\"><b>Guardian middle name</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getGuardianMiddle()+ "\" style=\"width:75% \"name=\"guardian_middle_name\" />"
+
+                + "</div>"
+
+                + "<div style =\"width: 50% ;align-items:center\">"
+
+                + "<label class=\"w3-text-green\"><b>Guardian relationship to patient</b></label>"
+                + "<input type=\"text\"  class=\"w3-input w3-margin w3-border\"  value=\"" + patient.getGuardianRelationship()+ "\" style=\"width:75% \"name=\"guardian_relation\" />"
+                + "  <p class=\"w3-margin\" style=\"width:30% height:5%\">"
+                + " <SELECT style=\"width : 100%\" name=\"guardian_relation\" size=\"1\">");
         for(Code code : codeListRelation) {
-            out.println("                             <OPTION value=\""+code.getValue()+"\">"+code.getLabel()+"</Option>\r\n");
+            out.println("<OPTION value=\"" + code.getValue()+ "\">" + code.getLabel()+ "</Option>");
         }
-        out.println( "</SELECT>\r\n"
+        out.println( "</SELECT>"
                 + "</p>"
                 + "</div>"
                 + "</div>"
-                + "<input type=\"hidden\" id=\"paramPatientId\" name=\"paramPatientId\" value="+ req.getParameter("paramPatientId")+">"
-                + "<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>\r\n"
-                + "</form> " + "</div\r\n");
+                + "<input type=\"hidden\" id=\"paramPatientId\" name=\"paramPatientId\" value=" + req.getParameter("paramPatientId")+ ">"
+                + "<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>"
+                + "</form> " + "</div");
     }
+
+
 
 }
