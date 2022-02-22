@@ -54,4 +54,22 @@ public class Clinician implements Serializable {
     return clinician;
   }
 
+  public Clinician() {
+
+  }
+
+  public  void fillFromFullname(String fullName) {
+    String[] array = fullName.split(" ");
+    int length = array.length;
+    if (length>0){
+      this.setNameFirst(array[0]);
+      int i = 1;
+      while ( i < length -1) {
+        this.setNameMiddle(this.getNameMiddle() +  (i == 1 ? "": " ") + array[i] );
+        i++;
+      }
+      this.setNameLast(length>1 ? array[length-1] : "");
+    }
+  }
+
 }
