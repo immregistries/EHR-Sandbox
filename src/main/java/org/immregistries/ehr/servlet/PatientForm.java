@@ -197,70 +197,70 @@ public class PatientForm extends HttpServlet {
                 " justify-content : space-around ;" +
                 " gap: 20px 20px ;" +
                 "\">");
-        EntryRecord.printOpenContainer(out, 75, "row");
-        EntryRecord.printSimpleInput(out, patient.getNameFirst(), "first_name", "First name", false, 20);
-        EntryRecord.printSimpleInput(out, patient.getNameMiddle(), "middle_name", "Middle name", false, 20);
-        EntryRecord.printSimpleInput(out, patient.getNameLast(), "last_name", "Last name", false, 20);
+        ServletHelper.printOpenContainer(out, 75, "row");
+        ServletHelper.printSimpleInput(out, patient.getNameFirst(), "first_name", "First name", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getNameMiddle(), "middle_name", "Middle name", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getNameLast(), "last_name", "Last name", false, 20);
 
-        EntryRecord.printSimpleInput(out, patient.getMotherMaiden(), "mother_maiden_name", "Mother maiden name", false, 20);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printSimpleInput(out, patient.getMotherMaiden(), "mother_maiden_name", "Mother maiden name", false, 20);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 50, "row");
-        EntryRecord.printDateInput(out, patient.getBirthDate(), "birth_date", "Birth date", true);
-        EntryRecord.printSimpleInput(out, patient.getBirthOrder(), "birth_order", "Birth order", false, 2);
-        EntryRecord.printSelectYesNo(out, patient.getBirthFlag(),"birth_flag", "Birth Flag");
-        EntryRecord.printSimpleInput(out, patient.getSex(), "sex", "Sex (F/M)", false, 1);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 50, "row");
+        ServletHelper.printDateInput(out, patient.getBirthDate(), "birth_date", "Birth date", true);
+        ServletHelper.printSimpleInput(out, patient.getBirthOrder(), "birth_order", "Birth order", false, 2);
+        ServletHelper.printSelectYesNo(out, patient.getBirthFlag(),"birth_flag", "Birth Flag");
+        ServletHelper.printSimpleInput(out, patient.getSex(), "sex", "Sex (F/M)", false, 1);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 40, "row");
-        EntryRecord.printSimpleInput(out, patient.getPhone(), "phone", "Phone number", false, 16);
-        EntryRecord.printSimpleInput(out, patient.getEmail(), "email", "E-mail", false, 35);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 40, "row");
+        ServletHelper.printSimpleInput(out, patient.getPhone(), "phone", "Phone number", false, 16);
+        ServletHelper.printSimpleInput(out, patient.getEmail(), "email", "E-mail", false, 35);
+        ServletHelper.printCloseContainer(out);
 
 
 
-        EntryRecord.printOpenContainer(out, 40, "row");
-        EntryRecord.printSimpleInput(out, patient.getAddressLine1(), "address_line_1", "Address line 1", false, 25);
-        EntryRecord.printSimpleInput(out, patient.getAddressLine2(), "address_line_2", "Address line 2", false, 25);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 40, "row");
+        ServletHelper.printSimpleInput(out, patient.getAddressLine1(), "address_line_1", "Address line 1", false, 25);
+        ServletHelper.printSimpleInput(out, patient.getAddressLine2(), "address_line_2", "Address line 2", false, 25);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 55, "row");
-        EntryRecord.printSimpleInput(out, patient.getAddressCity(), "city", "City", false, 20);
-        EntryRecord.printSimpleInput(out, patient.getAddressCountyParish(), "county", "County", false, 20);
-        EntryRecord.printSimpleInput(out, patient.getAddressCountry(), "country", "Country Code", false, 20);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 55, "row");
+        ServletHelper.printSimpleInput(out, patient.getAddressCity(), "city", "City", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getAddressCountyParish(), "county", "County", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getAddressCountry(), "country", "Country Code", false, 20);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 15, "column");
-        EntryRecord.printSimpleInput(out, patient.getEthnicity(), "ethnicity", "Ethnicity", false, 15);
-        EntryRecord.printSimpleInput(out, patient.getRace(), "race", "Race", false, 15);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 15, "column");
+        ServletHelper.printSimpleInput(out, patient.getEthnicity(), "ethnicity", "Ethnicity", false, 15);
+        ServletHelper.printSimpleInput(out, patient.getRace(), "race", "Race", false, 15);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 15, "column");
-        EntryRecord.printSelectYesNo(out, patient.getDeathFlag(),"death_flag", "Death Flag");
-        EntryRecord.printDateInput(out, patient.getDeathDate(), "death_date", "Death date", false);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 15, "column");
+        ServletHelper.printSelectYesNo(out, patient.getDeathFlag(),"death_flag", "Death Flag");
+        ServletHelper.printDateInput(out, patient.getDeathDate(), "death_date", "Death date", false);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 55, "row");
+        ServletHelper.printOpenContainer(out, 55, "row");
         out.println("<div style=\"width:100% \">");
-        EntryRecord.printSimpleInput(out, patient.getPublicityIndicator(), "publicity_indicator", "Publicity indicator", false, 5);
-        EntryRecord.printDateInput(out, patient.getPublicityIndicatorDate(), "publicity_date", "Publicity indicator date", false);
+        ServletHelper.printSimpleInput(out, patient.getPublicityIndicator(), "publicity_indicator", "Publicity indicator", false, 5);
+        ServletHelper.printDateInput(out, patient.getPublicityIndicatorDate(), "publicity_date", "Publicity indicator date", false);
         out.println("</div>");
         out.println("<div style=\"width:100% \">");
-        EntryRecord.printSimpleInput(out, patient.getProtectionIndicator(), "protection_indicator", "Protection indicator", false, 5);
-        EntryRecord.printDateInput(out, patient.getProtectionIndicatorDate(), "protection_date", "Protection indicator date", false);
+        ServletHelper.printSimpleInput(out, patient.getProtectionIndicator(), "protection_indicator", "Protection indicator", false, 5);
+        ServletHelper.printDateInput(out, patient.getProtectionIndicatorDate(), "protection_date", "Protection indicator date", false);
         out.println("</div>");
         out.println("<div style=\"width:100% \">");
-        EntryRecord.printSimpleInput(out, patient.getRegistryStatusIndicator(), "registry_status_indicator", "Registry status indicator", false, 5);
-        EntryRecord.printDateInput(out, patient.getRegistryStatusIndicatorDate(), "registry_status_indicator_date", "Registry status date", false);
+        ServletHelper.printSimpleInput(out, patient.getRegistryStatusIndicator(), "registry_status_indicator", "Registry status indicator", false, 5);
+        ServletHelper.printDateInput(out, patient.getRegistryStatusIndicatorDate(), "registry_status_indicator_date", "Registry status date", false);
         out.println("</div>");
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printCloseContainer(out);
 
-        EntryRecord.printOpenContainer(out, 100, "row");
-        EntryRecord.printSimpleInput(out, patient.getGuardianFirst(), "guardian_first_name", "Guardian first name", false, 30);
-        EntryRecord.printSimpleInput(out, patient.getGuardianMiddle(), "guardian_middle_name", "Guardian middle name", false, 30);
-        EntryRecord.printSimpleInput(out, patient.getGuardianLast(), "guardian_last_name", "Guardian last name", false, 30);
-        EntryRecord.printSelectForm(out, patient.getGuardianRelationship(), codeListRelationship, "guardian_relationship", "Guardian relationship to patient", 150);
-        EntryRecord.printCloseContainer(out);
+        ServletHelper.printOpenContainer(out, 100, "row");
+        ServletHelper.printSimpleInput(out, patient.getGuardianFirst(), "guardian_first_name", "Guardian first name", false, 30);
+        ServletHelper.printSimpleInput(out, patient.getGuardianMiddle(), "guardian_middle_name", "Guardian middle name", false, 30);
+        ServletHelper.printSimpleInput(out, patient.getGuardianLast(), "guardian_last_name", "Guardian last name", false, 30);
+        ServletHelper.printSelectForm(out, patient.getGuardianRelationship(), codeListRelationship, "guardian_relationship", "Guardian relationship to patient", 150);
+        ServletHelper.printCloseContainer(out);
 
         out.println("<input type=\"hidden\" id=\"paramPatientId\" name=\"paramPatientId\" value=" + req.getParameter("paramPatientId")+ ">"
                 + "<button class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Validate</button>"

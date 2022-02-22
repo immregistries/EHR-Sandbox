@@ -239,140 +239,53 @@ public class EntryRecord extends HttpServlet {
             " justify-content: space-around ;" +
             " gap: 20px 20px ;" +
             "\">");
-    printOpenContainer(out, 40, "row");
-    printDateInput(out, vaccine.getAdministeredDate(),"administered_date", "Administered date", true);
-    printSimpleInput(out, vaccine.getAdministeredAmount(),"administered_amount", "Administered amount", false, 4);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 40, "row");
+    ServletHelper.printDateInput(out, vaccine.getAdministeredDate(),"administered_date", "Administered date", true);
+    ServletHelper.printSimpleInput(out, vaccine.getAdministeredAmount(),"administered_amount", "Administered amount", false, 4);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 47, "row");
-    printSelectForm(out, vaccine.getVaccineCvxCode(), codeListCVX, "vacc_cvx", "Vaccine CVX code", 240);
-    printSelectForm(out, vaccine.getVaccineNdcCode(), codeListNDC, "vacc_ndc", "Vaccine NDC code", 240);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 47, "row");
+    ServletHelper.printSelectForm(out, vaccine.getVaccineCvxCode(), codeListCVX, "vacc_cvx", "Vaccine CVX code", 240);
+    ServletHelper.printSelectForm(out, vaccine.getVaccineNdcCode(), codeListNDC, "vacc_ndc", "Vaccine NDC code", 240);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 50, "row");
-    printSelectForm(out, vaccine.getVaccineMvxCode(), codeListMVX, "vacc_mvx", "Vaccine MVX code", 240);
-    printSimpleInput(out, vaccine.getLotnumber(),"lot_number", "Lot number", false, 5);
-    printDateInput(out, vaccine.getExpirationDate(),"expiration_date", "Expiration date", false);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 50, "row");
+    ServletHelper.printSelectForm(out, vaccine.getVaccineMvxCode(), codeListMVX, "vacc_mvx", "Vaccine MVX code", 240);
+    ServletHelper.printSimpleInput(out, vaccine.getLotnumber(),"lot_number", "Lot number", false, 5);
+    ServletHelper.printDateInput(out, vaccine.getExpirationDate(),"expiration_date", "Expiration date", false);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 80, "row");
-    printSimpleInput(out,entering,"entering_cli", "Entering clinician", true, 35);
-    printSimpleInput(out,ordering,"ordering_cli", "Ordering clinician", true, 35);
-    printSimpleInput(out,administering,"administering_cli", "Administering clinician", true, 35);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 80, "row");
+    ServletHelper.printSimpleInput(out,entering,"entering_cli", "Entering clinician", true, 35);
+    ServletHelper.printSimpleInput(out,ordering,"ordering_cli", "Ordering clinician", true, 35);
+    ServletHelper.printSimpleInput(out,administering,"administering_cli", "Administering clinician", true, 35);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 47, "row");
-    printSelectForm(out, vaccine.getFundingSource(), codeListFundingSource, "funding_source", "Funding source", 240);
-    printSimpleInput(out,vaccine.getFundingEligibility(),"funding_eligibility", "Funding eligibility", false, 10);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 47, "row");
+    ServletHelper.printSelectForm(out, vaccine.getFundingSource(), codeListFundingSource, "funding_source", "Funding source", 240);
+    ServletHelper.printSimpleInput(out,vaccine.getFundingEligibility(),"funding_eligibility", "Funding eligibility", false, 10);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 47, "row");
-    printSelectForm(out, vaccine.getBodyRoute(), codeListBodyRoute, "body_route", "Body route", 240);
-    printSelectForm(out, vaccine.getBodySite(), codeListBodySite, "body_site", "Body site", 240);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 47, "row");
+    ServletHelper.printSelectForm(out, vaccine.getBodyRoute(), codeListBodyRoute, "body_route", "Body route", 240);
+    ServletHelper.printSelectForm(out, vaccine.getBodySite(), codeListBodySite, "body_site", "Body site", 240);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 47, "row");
-    printSelectForm(out, vaccine.getInformationSource(), codeListInfSource, "information_source", "Information source", 240);
-    printSelectForm(out, vaccine.getActionCode(), codeListActionCode, "action_code", "Action code", 140);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 47, "row");
+    ServletHelper.printSelectForm(out, vaccine.getInformationSource(), codeListInfSource, "information_source", "Information source", 240);
+    ServletHelper.printSelectForm(out, vaccine.getActionCode(), codeListActionCode, "action_code", "Action code", 140);
+    ServletHelper.printCloseContainer(out);
 
-    printOpenContainer(out, 47, "row");
-    printSelectForm(out, vaccine.getCompletionStatus(), codeListCompletionStatus, "completion_status", "Completion status",240);
-    printSelectForm(out, vaccine.getRefusalReasonCode(), codeListRefusalReasonCode, "refusal_reason_code", "Refusal reason",240);
-    printCloseContainer(out);
+    ServletHelper.printOpenContainer(out, 47, "row");
+    ServletHelper.printSelectForm(out, vaccine.getCompletionStatus(), codeListCompletionStatus, "completion_status", "Completion status",240);
+    ServletHelper.printSelectForm(out, vaccine.getRefusalReasonCode(), codeListRefusalReasonCode, "refusal_reason_code", "Refusal reason",240);
+    ServletHelper.printCloseContainer(out);
 
     out.println("<input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value=" + req.getParameter("paramEntryId") + "></input>");
     out.println("<button type=\"submit\" name=\"nextPage\" value=\"patient_record\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">Save EntryRecord</button>");
     out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">HL7v2 messaging</button>");
     out.println("<button type=\"submit\" name=\"nextPage\" value=\"FHIR_messaging\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">FHIR Messaging </button>");
     out.println("</form></div>");
-  }
-
-  public static void printOpenContainer(PrintWriter out, int width, String direction) {
-    out.println("<div class=\"w3-container w3-light-gray\" " +
-            "style=\"width:" + width + "% ;" +
-            "display:flex ;" +
-//            "flex-flow: wrap ;" +
-            "justify-content: space-around ;" +
-            "flex-direction: " + direction + "\">");
-  }
-  public static void printCloseContainer(PrintWriter out) {
-    out.println("</div>");
-  }
-
-  public static void printSelectForm(PrintWriter out, String value, Collection<Code> codeList, String fieldName, String label, int width) {
-    Code code = null;
-    for(Code codeItem : codeList) {
-      if (codeItem.getValue().equals(value)) {
-        code=codeItem;
-        break;
-      }
-    }
-    out.println("<div class=\"w3-margin\">"
-            + "<label class=\"w3-text-green\"><b>" + label + "</b></label>"
-            + "<SELECT style=\"width:" + width + "px\" "
-              + "class=\"w3-margin w3-border\" size=\"1\" "
-              + "name=\"" + fieldName + "\">");
-    out.println( "<OPTION value=\"\" "
-            + (code == null ? "selected" : "")
-            + ">-Select " + label + "-</Option>");
-    for(Code codeItem : codeList) {
-      out.println("<OPTION value=\""
-              + codeItem.getValue() + "\" "
-              + (codeItem.equals(code) ? "selected" : "")
-              + " >" /* + codeItem.getValue() */
-              + codeItem.getLabel() + "</Option>");
-    }
-    out.println( "</SELECT></div>");
-  }
-
-  public static void printSelectYesNo(PrintWriter out, String value, String fieldName, String label) {
-    out.println("<div class=\"w3-margin\">"
-            + "<label class=\"w3-text-green\"><b>" + label + "</b></label>"
-            + "<SELECT style=\"width:100px\" "
-            +   "class=\"w3-margin w3-border\" size=\"1\" "
-            +   "name=\"" + fieldName + "\">");
-    out.println("<OPTION value=\"\""
-            + (value.equals("") ? "selected" : "")
-            + ">Unknown</Option>"
-            + "<OPTION value=\"Y\" "
-            + (value.equals("Y") ? "selected" : "")
-            + ">Y</Option>"
-            + "<OPTION value=\"N\">N</Option>");
-    out.println( "</SELECT></div>");
-  }
-
-  public static void printSimpleInput(PrintWriter out, String input, String fieldName, String label, boolean required, int size){
-    out.println("<div class=\"w3-margin\">"
-            + "<label class=\"w3-text-green\"><b>"
-            + label + (required? "<b class=\"w3-text-red\">*</b>" : "")
-            + "</b></label>"
-            + "<input type=\"text\""
-            + " class=\"w3-margin w3-border\" "
-            + " value=\"" + input + "\""
-            + " name=\"" + fieldName + "\""
-            + " size=\"" + size + "\""
-            + "/>"
-            + "</div>");
-  }
-
-  public static void printDateInput(PrintWriter out, Date dateInput, String fieldName, String label, boolean required){
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    String input = "";
-    if (dateInput != null){
-      input= sdf.format(dateInput);
-    }
-    out.println("<div class=\"w3-margin\">"
-            + "<label class=\"w3-text-green\"><b>"
-            + label + (required? "<b class=\"w3-text-red\">*</b>" : "")
-            + "</b></label>"
-            + "<input type=\"date\""
-            + " class=\"w3-margin w3-border\" "
-            + " value=\"" + input + "\""
-            + " name=\"" + fieldName + "\""
-            + " size=\"12\""
-            + "/>"
-            + "</div>");
   }
 
 
