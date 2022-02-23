@@ -64,7 +64,8 @@ public class Clinician implements Serializable {
     if (length>0){
       this.setNameFirst(array[0]);
       int i = 1;
-      while ( i < length -1) {
+      this.setNameMiddle("");
+      while ( i < length - 1) {
         this.setNameMiddle(this.getNameMiddle() +  (i == 1 ? "": " ") + array[i] );
         i++;
       }

@@ -22,26 +22,33 @@ public class ServletHelper {
         out.println("  <head>");
         out.println("    <title>EHR Sandbox</title>");
         out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + req.getContextPath() + "/inc/style.css\">");
+        out.println("<link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">");
         out.println("  </head>");
         out.println("  <body>");
         // out.println("<div class=\"w3-container \">");
-        out.println("<header >" + "<div class=\"w3-bar w3-pale-green w3-text-shadow w3-margin-bottom\">"
-                + "<a href = 'silos' class=\"w3-bar-item w3-button\">"
-                + (silo == null ? "List of Tenants" : "Tenant : " + silo.getNameDisplay())
+        out.println("<header >" + "<div class=\"w3-bar w3-light-grey w3-text-shadow w3-margin-bottom\">"
+                + "<a href='silos' class=\"w3-bar-item w3-button\">"
+                + (silo == null ? "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder</i> Tenants"
+                    : "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder_open</i> "
+                        + silo.getNameDisplay())
                 + "</a>"
 
                 +  (facility == null ? ""
-                : "<a href = 'facility_patient_display' class=\"w3-bar-item w3-button\">"
-                + "Facility : " + facility.getNameDisplay())
-                + "</a>"
+                : "<a href='facility_patient_display' class=\"w3-bar-item w3-button\">"
+                    + "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >business</i> "
+                    + facility.getNameDisplay())
+                    + "</a>"
 
                 + (patient == null ? ""
-                    : "<a href = 'patient_record?paramPatientId=" + patient.getPatientId() + "' class=\"w3-bar-item w3-button\">"
-                    +   "Patient : " + patient.getNameFirst() + " " + patient.getNameMiddle() + " " + patient.getNameLast()
+                    : "<a href='patient_record?paramPatientId=" + patient.getPatientId() + "' class=\"w3-bar-item w3-button\">"
+                    + "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >person</i> "
+                    + "" + patient.getNameFirst() + " " + patient.getNameMiddle() + " " + patient.getNameLast()
                     + "</a>")
 
-                + "<a href = 'Settings' class=\"w3-bar-item w3-right w3-button\">Settings</a>"
-
+                + "<a href='authentication' class=\"w3-bar-item w3-right w3-button\">"
+                + "<i class=\"material-icons\" style=\"font-size:23px ; vertical-align: bottom\">exit_to_app</i>"
+                + "</a>"
+                + "<a href='Settings' class=\"w3-bar-item w3-right w3-button w3-green\">Settings</a>"
                 + "</div>" + "</header>");
         out.println("<div class=\"w3-display-container w3-margin\" style=\"height:600px;\">");
     }
@@ -52,7 +59,7 @@ public class ServletHelper {
 
 
     public static void printOpenContainer(PrintWriter out, int width, String direction) {
-      out.println("<div class=\"w3-container w3-light-gray\" " +
+      out.println("<div class=\"w3-container w3-sand\" " +
               "style=\"width:" + width + "% ;" +
               "display:flex ;" +
   //            "flex-flow: wrap ;" +

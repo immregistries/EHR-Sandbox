@@ -2,6 +2,7 @@ package org.immregistries.ehr.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.immregistries.ehr.SoftwareVersion;
 import org.immregistries.ehr.model.ImmunizationRegistry;
 import org.immregistries.ehr.model.Tester;
 import org.mindrot.jbcrypt.BCrypt;
@@ -105,21 +107,53 @@ public class Authentication extends HttpServlet {
         doHeader(out, session);
         session.setAttribute("silo", null);
         String show = req.getParameter(PARAM_SHOW);
-        out.println("<form method=\"post\" class=\"w3-container\" action=\"authentication\">\r\n");
-            if(req.getParameter("wrongId")!=null) {
-              out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Username and password don't match</b></label><br/>");
-            }
-        out.println( "<label class=\"w3-text-green\"><b>EHR username</b></label>"
-            + "  					<input type=\"text\" class = \"w3-input w3-margin w3-border \" required value=\"\" size=\"40\" maxlength=\"60\" id =\"username\" name=\"username\" />\r\n"
-            + "	<label class=\"w3-text-green\"><b>Password</b></label>"
-            + "	                   	<input type=\"password\"  class = \"w3-input w3-margin w3-border\" required value=\"\" size=\"40\" maxlength=\"60\" id = \"pwd\" name=\"pwd\"/>\r\n"
+        out.println("<div class=\"w3-container w3-half w3-margin-top\">");
+        if (show == null) {
 
 
-            + "                <button onclick=\"location.href='silos'\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \" style=\"margin:auto\"name=\"validate_button\" >Validate</button>\r\n"
-            + "                </form> "
-            /*onclick=\"validateOnClick()\"*/
-            + "            </div>"
-            + "</div>");
+          out.println("<h2>EHR Sandbox</h2>");
+          out.println(" The EHR Sandbox is a testing tool developed by AIRA and NIST along with the IIS Sandbox tool. " +
+                  "It's purpose is to simulate the behaviour of a Electronic health record (EHR).");
+
+          out.println("<h6 class=\"w3-margin-top\"><a href=\"https://github.com/immregistries/EHR-Sandbox\">Github Repository</a></h6>");
+
+
+          out.println("<h4 class=\"w3-margin-top\">Some functionalities :</h4>");
+
+          out.println("<ul class=\"w3-ul \">");
+          out.println("<li>Input of patient and immunization data</li>");
+          out.println("<li>Generation of testing data</li>");
+          out.println("<li>Send data to IIS through Hl7v2 messages</li>");
+          out.println("<li>Send data to IIS through FHIR messages</li>");
+          out.println("</ul>");
+
+          out.println( "<div class=\"w3-panel w3-yellow\"><p class=\"w3-left-align\">"
+                  + "This system is for test purposes only. "
+                  + "Do not submit production data. This system is not secured for safely holding personally identifiable health information."
+                  + "</p></div>");
+        }
+        out.println(" </div>");
+
+
+        out.println("<div class=\"w3-container w3-right w3-margin-top\">");
+        out.println("<h3>Sign in</h3>");
+        out.println("To sign up : sign in with a new username");
+        out.println("<form method=\"post\" class=\"w3-container w3-margin-top\" action=\"authentication\">");
+        if(req.getParameter("wrongId")!=null) {
+          out.println( "<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Username and password don't match</b></label><br/>");
+        }
+        out.println( "<label class=\"w3-text-green\"><b>Username</b></label>"
+                + "<input type=\"text\" class=\"w3-input w3-margin w3-border\" required id=\"username\" name=\"username\"" +
+                "style=\"width:90%\"/>"
+
+                + "<label class=\"w3-text-green\"><b>Password</b></label>"
+                + "<input type=\"password\" class = \"w3-input w3-margin w3-border\" required id=\"pwd\" name=\"pwd\"" +
+                "style=\"width:90%\"/>"
+
+                + "<button type=\"submit\"  class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin w3-right\" style=\"margin:auto\" name=\"validate_button\" >Sign in</button>"
+                + "</form> ");
+
+        out.println("</div>");
 
 
         doFooter(out, session);
@@ -136,21 +170,29 @@ public class Authentication extends HttpServlet {
     out.println("<html>");
     out.println("  <head>");
     out.println("    <title>EHR Sandbox</title>");
-    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\" />"
-    //+ "<script src =\"inc/Authentication.js\"></script>");
-    );
+    out.println("<link rel=\"stylesheet\" href=\"https://www.w3schools.com/w3css/4/w3.css\">");
+    out.println("<link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">");
     out.println("  </head>");
     out.println("  <body>");
-    out.println("    <header class=\"w3-container w3-light-grey\">");
-    out.println("    		<h1>Authentication</h1>\r\n" + "    	</header>"
-        + "<div style =\"margin:auto \">");
+    out.println("    <header>");
+    out.println("      <div class=\"w3-bar w3-light-grey\">");
+    out.println( "<a href=\"authentication\" class=\"w3-bar-item w3-button w3-green\">EHR Sandbox</a>");
 
-    out.println("<div class=\"w3-display-container \" style=\"height:20%;width:75%;margin:auto; margin-top:10%;align-items:center \">");
+    out.println("      </div>");
+    out.println("    </header>");
+    out.println("    <div class=\"w3-container\">");
 
   }
 
   public static void doFooter(PrintWriter out, HttpSession session) {
-    out.println("</div>\r\n" + "    </body>\r\n" + "</html>");
+    out.println("  </div>");
+    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    out.println("  <div class=\"w3-container w3-green w3-bottom\">");
+    out.println("<p> EHR Sandbox v" + SoftwareVersion.VERSION + " - Current Time "
+            + sdf.format(System.currentTimeMillis()) + "</p>");
+    out.println("  </div>");
+    out.println("  </body>");
+    out.println("</html>");
   }
 
 
