@@ -34,7 +34,7 @@ public class ServletHelper {
                 + "</a>"
 
                 +  (facility == null ? ""
-                : "<a href='facility_patient_display' class=\"w3-bar-item w3-button\">"
+                : "<a href='facility_patient_display?paramFacilityId="+ facility.getFacilityId() +"' class=\"w3-bar-item w3-button\">"
                     + "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >business</i> "
                     + facility.getNameDisplay())
                     + "</a>"

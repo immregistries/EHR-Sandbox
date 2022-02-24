@@ -36,6 +36,9 @@ public class Silos extends HttpServlet {
 
     HttpSession session = req.getSession(true);
     resp.setContentType("text/html");
+    session.setAttribute("patient", null);
+    session.setAttribute("facility", null);
+
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     Session dataSession = PopServlet.getDataSession();
 

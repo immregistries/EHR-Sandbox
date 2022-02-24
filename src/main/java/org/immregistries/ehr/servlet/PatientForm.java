@@ -151,20 +151,9 @@ public class PatientForm extends HttpServlet {
 
             resp.setContentType("text/html");
 
-            out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
-                    + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current tenant : "
-                    + silo.getNameDisplay() + "</b></label>");
+            out.println("<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >");
 
-            out.println( "<label class=\"w3-text-green w3-margin-left w3-margin-bottom\"><b>Current Facility : "
-                    + facility.getNameDisplay() + "</b></label>");
-
-
-            if (!creation){
-                out.println("<label class=\"w3-text-green w3-margin-left \"><b>     Current Patient : "
-                        + patient.getNameFirst() + "  " + patient.getNameLast() + "</b></label>");
-                out.println("</div>");
-            }else{
-                out.println("</div>");
+            if (creation){
                 out.println("<button onclick=\"location.href='patient_form?testPatient=1'\" class=\"w3-button w3-round-large w3-green w3-hover-teal w3-margin \"  >Fill with test informations</button><br/>");
             }
 
