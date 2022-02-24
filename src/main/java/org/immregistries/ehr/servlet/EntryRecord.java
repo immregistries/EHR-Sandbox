@@ -152,16 +152,16 @@ public class EntryRecord extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       {
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "Vaccination form");
         Boolean creation = true;
 
 
         Patient patient = (Patient) session.getAttribute("patient");
         Facility facility = (Facility) session.getAttribute("facility");
 
-        Vaccine v = new Vaccine();
+        Vaccine vaccine = new Vaccine();
         VaccinationEvent vaccinationEvent = new VaccinationEvent();
-        vaccinationEvent.setVaccine(v);
+        vaccinationEvent.setVaccine(vaccine);
 
         Boolean preloaded = false;
 
@@ -171,17 +171,17 @@ public class EntryRecord extends HttpServlet {
           queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
           queryVaccination.setParameter(1, patient.getPatientId());
           vaccinationEvent = (VaccinationEvent) queryVaccination.uniqueResult();
-          v = vaccinationEvent.getVaccine();
+          vaccine = vaccinationEvent.getVaccine();
           preloaded = true;
-          session.setAttribute("vaccine", v);
+          session.setAttribute("vaccine", vaccine);
           session.setAttribute("vacc_ev", vaccinationEvent);
         } else {
           creation = true;
           if(req.getParameter("testEntry")!=null) { // Generate random test vaccination
             preloaded = true;
             vaccinationEvent = VaccinationEvent.random(patient,facility);
-            v = vaccinationEvent.getVaccine();
-            session.setAttribute("vaccine", v);
+            vaccine = vaccinationEvent.getVaccine();
+            session.setAttribute("vaccine", vaccine);
             session.setAttribute("vacc_ev", vaccinationEvent);
           }
         }
@@ -191,7 +191,7 @@ public class EntryRecord extends HttpServlet {
         }
 
 
-        printEntryForm(req, out, v, vaccinationEvent, preloaded);
+        printEntryForm(req, out, vaccine, vaccinationEvent, preloaded);
         ServletHelper.doStandardFooter(out, session);
       }
     } catch (Exception e) {

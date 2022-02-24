@@ -127,7 +127,7 @@ public class FhirMessaging extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     try {
       {
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "FHIR messaging");
 
         out.println("<div id=\"formulaire\">");
 

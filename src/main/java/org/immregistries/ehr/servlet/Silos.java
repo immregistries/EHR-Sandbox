@@ -64,7 +64,7 @@ public class Silos extends HttpServlet {
 
     try {
       {
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "Tenant selection");
         session.setAttribute("facility", null);
         Tester tester = (Tester) session.getAttribute("tester");
         List<Silo> siloList;

@@ -176,8 +176,8 @@ public class Authentication extends HttpServlet {
     out.println("  <body>");
     out.println("    <header>");
     out.println("      <div class=\"w3-bar w3-light-grey\">");
-    out.println( "<a href=\"authentication\" class=\"w3-bar-item w3-button w3-green\">EHR Sandbox</a>");
-
+    out.println( "<b  class=\"w3-bar-item  w3-green\">EHR Sandbox</b>");
+//    out.println("<b class=\"w3-bar-item w3-display-topmiddle w3-green\">EHR Sandbox</b>");
     out.println("      </div>");
     out.println("    </header>");
     out.println("    <div class=\"w3-container\">");

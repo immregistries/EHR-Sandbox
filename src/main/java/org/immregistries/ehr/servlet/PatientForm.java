@@ -124,7 +124,7 @@ public class PatientForm extends HttpServlet {
         Session dataSession = PopServlet.getDataSession();
 
         try {
-            ServletHelper.doStandardHeader(out, session, req);
+            ServletHelper.doStandardHeader(out, req, "Patient form");
 
             Facility facility = (Facility) session.getAttribute("facility");
             Silo silo = (Silo) session.getAttribute("silo");

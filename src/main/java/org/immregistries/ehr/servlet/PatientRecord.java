@@ -40,7 +40,7 @@ public class PatientRecord extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "Patient details");
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = (Patient) session.getAttribute("patient");
         Silo silo = (Silo) session.getAttribute("silo");

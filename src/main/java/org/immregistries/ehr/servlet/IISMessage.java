@@ -66,7 +66,7 @@ public class IISMessage extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     try {
       {
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "IIS messaging");
         HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
         Tester tester = (Tester) session.getAttribute("tester");
         Facility facility = (Facility) session.getAttribute("facility");

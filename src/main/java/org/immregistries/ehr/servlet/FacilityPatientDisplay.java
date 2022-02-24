@@ -39,7 +39,7 @@ public class FacilityPatientDisplay extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
 
-      ServletHelper.doStandardHeader(out, session, req);
+      ServletHelper.doStandardHeader(out, req, "Facility and patient selection");
       session.setAttribute("patient", null);
       Tester tester = (Tester) session.getAttribute("tester");
 
@@ -154,7 +154,7 @@ public class FacilityPatientDisplay extends HttpServlet {
           + "<table class=\"w3-table-all\">"
           + "<thead>"
           + "<tr class=\"w3-green\">"
-          + "<th>Patients </th>"
+          + "<th>" + (facility == null ? "All Patients" : facility.getNameDisplay() + "'s patients" )  + "</th>"
           + "</thead>"
           + "<tbody>");
       for (Patient patientDisplay : patientList) {

@@ -14,19 +14,19 @@ import java.util.Date;
 
 public class ServletHelper {
 
-    public static void doStandardHeader(PrintWriter out, HttpSession session, HttpServletRequest req) {
+    public static void doStandardHeader(PrintWriter out, HttpServletRequest req, String title) {
+        HttpSession session =  req.getSession();
         Silo silo = (Silo) session.getAttribute("silo");
         Facility facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient");
-        out.println("<html>");
-        out.println("  <head>");
-        out.println("    <title>EHR Sandbox</title>");
+        out.println("<html><head>");
+        out.println("<title>EHR Sandbox : " + title + "</title>");
         out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + req.getContextPath() + "/inc/style.css\">");
         out.println("<link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\">");
-        out.println("  </head>");
-        out.println("  <body>");
+        out.println("</head>");
+        out.println("<body>");
         // out.println("<div class=\"w3-container \">");
-        out.println("<header >" + "<div class=\"w3-bar w3-light-grey w3-text-shadow w3-margin-bottom\">"
+        out.println("<header>" + "<div class=\"w3-bar w3-light-grey w3-text-shadow w3-margin-bottom\">"
                 + "<a href='silos' class=\"w3-bar-item w3-button\">"
                 + (silo == null ? "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder</i> Tenants"
                     : "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder_open</i> "
@@ -44,6 +44,9 @@ public class ServletHelper {
                     + "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >person</i> "
                     + "" + patient.getNameFirst() + " " + patient.getNameMiddle() + " " + patient.getNameLast()
                     + "</a>")
+//                + "<div style=\"\">"
+//                + "<b class=\"w3-bar-item w3-display-topmiddle w3-green\">" + title + "</b>"
+//                + "</div>"
 
                 + "<a href='authentication' class=\"w3-bar-item w3-right w3-button\">"
                 + "<i class=\"material-icons\" style=\"font-size:23px ; vertical-align: bottom\">exit_to_app</i>"

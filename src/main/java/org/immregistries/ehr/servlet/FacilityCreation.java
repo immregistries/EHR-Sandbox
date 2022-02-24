@@ -74,7 +74,7 @@ public class FacilityCreation extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       {
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "Facility creation");
         String show = req.getParameter(PARAM_SHOW);
         if(req.getAttribute("duplicate_error") != null){
           out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Facility name already used for this silo</b></label><br/>");

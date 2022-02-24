@@ -53,7 +53,7 @@ public class Settings extends HttpServlet {
     Session dataSession = PopServlet.getDataSession();
     try {
       {
-        ServletHelper.doStandardHeader(out, session, req);
+        ServletHelper.doStandardHeader(out, req, "Settings");
         ImmunizationRegistry IR = (ImmunizationRegistry) session.getAttribute("IR");
         
         String show = req.getParameter(PARAM_SHOW);
