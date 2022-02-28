@@ -21,7 +21,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 public class PatientForm extends HttpServlet {
 
@@ -104,20 +103,23 @@ public class PatientForm extends HttpServlet {
 
         if (!creation) { // Modifying existing patient
             dataSession.update(patient);
+            transaction.commit();
+            session.setAttribute("patient", patient);
+            resp.sendRedirect("patientRecord?paramPatientId=" + patient.getPatientId());
         }else {
             patient.setCreatedDate(updatedDate);
             dataSession.save(patient);
-        }
-        transaction.commit();
+            transaction.commit();
+            resp.sendRedirect("facility_patient_display");
 
-        resp.sendRedirect("facility_patient_display");
+        }
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         Boolean creation = false;
-        Boolean preloaded = false;
         HttpSession session = req.getSession(true);
         resp.setContentType("text/html");
         PrintWriter out = new PrintWriter(resp.getOutputStream());
@@ -128,24 +130,20 @@ public class PatientForm extends HttpServlet {
 
             Facility facility = (Facility) session.getAttribute("facility");
             Silo silo = (Silo) session.getAttribute("silo");
-            Patient patient = null;
+            Patient patient = new Patient();
             if(req.getParameter("paramPatientId")!=null && silo!=null) {
                 Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
                 query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
                 query.setParameter(1, silo.getSiloId());
-                List<Patient> patientList = query.list();
-                patient = patientList.get(0);
-                preloaded = true;
+                patient = (Patient) query.uniqueResult();
                 session.setAttribute("patient", patient);
                 facility = patient.getFacility();
                 session.setAttribute("facility", facility);
             } else if (req.getParameter("paramPatientId") != null){
                 patient = (Patient) session.getAttribute("patient");
-                preloaded = true;
             } else if (facility == null) {
                 resp.sendRedirect("facility_patient_display?chooseFacility=1");
             } else{
-                patient = new Patient();
                 creation = true;
             }
 
@@ -161,9 +159,8 @@ public class PatientForm extends HttpServlet {
             if(req.getParameter("testPatient")!=null && creation) {
                 // TEST generation
                 patient = Patient.random(silo, facility);
-                preloaded = true;
             }
-            printPatientForm(req, out, patient, preloaded);
+            printPatientForm(req, out, patient);
             ServletHelper.doStandardFooter(out, session);
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -172,7 +169,7 @@ public class PatientForm extends HttpServlet {
         out.close();
     }
 
-    private void printPatientForm(HttpServletRequest req, PrintWriter out, Patient patient, Boolean preloaded) {
+    private void printPatientForm(HttpServletRequest req, PrintWriter out, Patient patient) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setLenient(true);
         CodeMap codeMap = CodeMapManager.getCodeMap();
