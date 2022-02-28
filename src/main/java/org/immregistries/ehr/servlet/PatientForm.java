@@ -41,7 +41,7 @@ public class PatientForm extends HttpServlet {
         Patient patient;
         if (req.getParameter("paramPatientId")!=null && !req.getParameter("paramPatientId").equals("null")) { // Modifying existing patient
             int paramPatientId =  Integer.parseInt(req.getParameter("paramPatientId"));
-            patient = (Patient) dataSession.load(new Patient().getClass(),paramPatientId);
+            patient = (Patient) dataSession.load(Patient.class,paramPatientId);
         } else{ // creating new patient
             patient = new Patient();
             patient.setSilo(silo);
@@ -49,50 +49,50 @@ public class PatientForm extends HttpServlet {
             creation = true;
         }
 
-        patient.setNameFirst(req.getParameter("first_name"));
-        patient.setNameLast(req.getParameter("last_name"));
-        patient.setNameMiddle(req.getParameter("middle_name"));
+        patient.setNameFirst(req.getParameter("nameFirst"));
+        patient.setNameLast(req.getParameter("nameLast"));
+        patient.setNameMiddle(req.getParameter("nameMiddle"));
         patient.setAddressCity(req.getParameter("city"));
         patient.setAddressCountry(req.getParameter("country"));
-        patient.setAddressCountyParish(req.getParameter("county"));
-        patient.setDeathFlag(req.getParameter("death_flag"));
+        patient.setAddressCountyParish(req.getParameter("countyParish"));
+        patient.setDeathFlag(req.getParameter("deathFlag"));
         patient.setAddressState(req.getParameter("state"));
-        patient.setAddressLine1(req.getParameter("address_line_1"));
-        patient.setAddressLine2(req.getParameter("address_line_2"));
+        patient.setAddressLine1(req.getParameter("addressLine1"));
+        patient.setAddressLine2(req.getParameter("addressLine2"));
 
 
-        patient.setBirthFlag(req.getParameter("birth_flag"));
-        patient.setBirthOrder(req.getParameter("birth_order"));
+        patient.setBirthFlag(req.getParameter("birthFlag"));
+        patient.setBirthOrder(req.getParameter("birthOrder"));
 
-        patient.setDeathFlag(req.getParameter("death_flag"));
+        patient.setDeathFlag(req.getParameter("deathFlag"));
         patient.setEmail(req.getParameter("email"));
         patient.setEthnicity(req.getParameter("ethnicity"));
-        patient.setGuardianFirst(req.getParameter("guardian_first_name"));
-        patient.setGuardianLast(req.getParameter("guardian_last_name"));
-        patient.setGuardianMiddle(req.getParameter("guardian_middle_name"));
-        patient.setGuardianRelationship(req.getParameter("guardian_relationship"));
-        patient.setMotherMaiden(req.getParameter("mother_maiden_name"));
+        patient.setGuardianFirst(req.getParameter("guardianFirst"));
+        patient.setGuardianLast(req.getParameter("guardianLast"));
+        patient.setGuardianMiddle(req.getParameter("guardianMiddle"));
+        patient.setGuardianRelationship(req.getParameter("guardianRelationship"));
+        patient.setMotherMaiden(req.getParameter("motherMaiden"));
         patient.setPhone(req.getParameter("phone"));
-        patient.setProtectionIndicator(req.getParameter("protection_indicator"));
+        patient.setProtectionIndicator(req.getParameter("protectionIndicator"));
 
-        patient.setPublicityIndicator(req.getParameter("publicity_indicator"));
+        patient.setPublicityIndicator(req.getParameter("publicityIndicator"));
 
         patient.setRace(req.getParameter("race"));
-        patient.setRegistryStatusIndicator(req.getParameter("registry_status_indicator"));
+        patient.setRegistryStatusIndicator(req.getParameter("registryStatusIndicator"));
 
         try {
-            patient.setBirthDate(sdf.parse(req.getParameter("birth_date")));
-            if (!req.getParameter("death_date").equals("")){
-                patient.setDeathDate(sdf.parse(req.getParameter("death_date")));
+            patient.setBirthDate(sdf.parse(req.getParameter("birthDate")));
+            if (!req.getParameter("deathDate").equals("")){
+                patient.setDeathDate(sdf.parse(req.getParameter("deathDate")));
             }
-            if (!req.getParameter("protection_date").equals("")){
-                patient.setProtectionIndicatorDate(sdf.parse(req.getParameter("protection_date")));
+            if (!req.getParameter("protectionIndicatorDate").equals("")){
+                patient.setProtectionIndicatorDate(sdf.parse(req.getParameter("protectionIndicatorDate")));
             }
-            if (!req.getParameter("publicity_date").equals("")){
-                patient.setPublicityIndicatorDate(sdf.parse(req.getParameter("publicity_date")));
+            if (!req.getParameter("publicityIndicatorDate").equals("")){
+                patient.setPublicityIndicatorDate(sdf.parse(req.getParameter("publicityIndicatorDate")));
             }
-            if (!req.getParameter("registry_status_indicator_date").equals("")){
-                patient.setRegistryStatusIndicatorDate(sdf.parse(req.getParameter("registry_status_indicator_date")));
+            if (!req.getParameter("registryStatusIndicatorDate").equals("")){
+                patient.setRegistryStatusIndicatorDate(sdf.parse(req.getParameter("registryStatusIndicatorDate")));
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -187,17 +187,17 @@ public class PatientForm extends HttpServlet {
                 " gap: 20px 20px ;" +
                 "\">");
         ServletHelper.printOpenContainer(out, 75, "row");
-        ServletHelper.printSimpleInput(out, patient.getNameFirst(), "first_name", "First name", false, 20);
-        ServletHelper.printSimpleInput(out, patient.getNameMiddle(), "middle_name", "Middle name", false, 20);
-        ServletHelper.printSimpleInput(out, patient.getNameLast(), "last_name", "Last name", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getNameFirst(), "nameFirst", "First name", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getNameMiddle(), "nameMiddle", "Middle name", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getNameLast(), "nameLast", "Last name", false, 20);
 
-        ServletHelper.printSimpleInput(out, patient.getMotherMaiden(), "mother_maiden_name", "Mother maiden name", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getMotherMaiden(), "motherMaiden", "Mother maiden name", false, 20);
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 50, "row");
-        ServletHelper.printDateInput(out, patient.getBirthDate(), "birth_date", "Birth date", true);
-        ServletHelper.printSimpleInput(out, patient.getBirthOrder(), "birth_order", "Birth order", false, 2);
-        ServletHelper.printSelectYesNo(out, patient.getBirthFlag(),"birth_flag", "Birth Flag");
+        ServletHelper.printDateInput(out, patient.getBirthDate(), "birthDate", "Birth date", true);
+        ServletHelper.printSimpleInput(out, patient.getBirthOrder(), "birthOrder", "Birth order", false, 2);
+        ServletHelper.printSelectYesNo(out, patient.getBirthFlag(),"birthFlag", "Birth Flag");
         ServletHelper.printSimpleInput(out, patient.getSex(), "sex", "Sex (F/M)", false, 1);
         ServletHelper.printCloseContainer(out);
 
@@ -209,13 +209,13 @@ public class PatientForm extends HttpServlet {
 
 
         ServletHelper.printOpenContainer(out, 40, "row");
-        ServletHelper.printSimpleInput(out, patient.getAddressLine1(), "address_line_1", "Address line 1", false, 25);
-        ServletHelper.printSimpleInput(out, patient.getAddressLine2(), "address_line_2", "Address line 2", false, 25);
+        ServletHelper.printSimpleInput(out, patient.getAddressLine1(), "addressLine1", "Address line 1", false, 25);
+        ServletHelper.printSimpleInput(out, patient.getAddressLine2(), "addressLine2", "Address line 2", false, 25);
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 55, "row");
         ServletHelper.printSimpleInput(out, patient.getAddressCity(), "city", "City", false, 20);
-        ServletHelper.printSimpleInput(out, patient.getAddressCountyParish(), "county", "County", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getAddressCountyParish(), "countyParish", "County", false, 20);
         ServletHelper.printSimpleInput(out, patient.getAddressCountry(), "country", "Country Code", false, 20);
         ServletHelper.printCloseContainer(out);
 
@@ -225,30 +225,30 @@ public class PatientForm extends HttpServlet {
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 15, "column");
-        ServletHelper.printSelectYesNo(out, patient.getDeathFlag(),"death_flag", "Death Flag");
-        ServletHelper.printDateInput(out, patient.getDeathDate(), "death_date", "Death date", false);
+        ServletHelper.printSelectYesNo(out, patient.getDeathFlag(),"deathFlag", "Death Flag");
+        ServletHelper.printDateInput(out, patient.getDeathDate(), "deathDate", "Death date", false);
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 55, "row");
         out.println("<div style=\"width:100% \">");
-        ServletHelper.printSimpleInput(out, patient.getPublicityIndicator(), "publicity_indicator", "Publicity indicator", false, 5);
-        ServletHelper.printDateInput(out, patient.getPublicityIndicatorDate(), "publicity_date", "Publicity indicator date", false);
+        ServletHelper.printSimpleInput(out, patient.getPublicityIndicator(), "publicityIndicator", "Publicity indicator", false, 5);
+        ServletHelper.printDateInput(out, patient.getPublicityIndicatorDate(), "publicityIndicatorDate", "Publicity indicator date", false);
         out.println("</div>");
         out.println("<div style=\"width:100% \">");
-        ServletHelper.printSimpleInput(out, patient.getProtectionIndicator(), "protection_indicator", "Protection indicator", false, 5);
-        ServletHelper.printDateInput(out, patient.getProtectionIndicatorDate(), "protection_date", "Protection indicator date", false);
+        ServletHelper.printSimpleInput(out, patient.getProtectionIndicator(), "protectionIndicator", "Protection indicator", false, 5);
+        ServletHelper.printDateInput(out, patient.getProtectionIndicatorDate(), "protectionIndicatorDate", "Protection indicator date", false);
         out.println("</div>");
         out.println("<div style=\"width:100% \">");
-        ServletHelper.printSimpleInput(out, patient.getRegistryStatusIndicator(), "registry_status_indicator", "Registry status indicator", false, 5);
-        ServletHelper.printDateInput(out, patient.getRegistryStatusIndicatorDate(), "registry_status_indicator_date", "Registry status date", false);
+        ServletHelper.printSimpleInput(out, patient.getRegistryStatusIndicator(), "registryStatusIndicator", "Registry status indicator", false, 5);
+        ServletHelper.printDateInput(out, patient.getRegistryStatusIndicatorDate(), "registryStatusIndicatorDate", "Registry status date", false);
         out.println("</div>");
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 100, "row");
-        ServletHelper.printSimpleInput(out, patient.getGuardianFirst(), "guardian_first_name", "Guardian first name", false, 30);
-        ServletHelper.printSimpleInput(out, patient.getGuardianMiddle(), "guardian_middle_name", "Guardian middle name", false, 30);
-        ServletHelper.printSimpleInput(out, patient.getGuardianLast(), "guardian_last_name", "Guardian last name", false, 30);
-        ServletHelper.printSelectForm(out, patient.getGuardianRelationship(), codeListRelationship, "guardian_relationship", "Guardian relationship to patient", 150);
+        ServletHelper.printSimpleInput(out, patient.getGuardianFirst(), "guardianFirst", "Guardian first name", false, 30);
+        ServletHelper.printSimpleInput(out, patient.getGuardianMiddle(), "guardianMiddle", "Guardian middle name", false, 30);
+        ServletHelper.printSimpleInput(out, patient.getGuardianLast(), "guardianLast", "Guardian last name", false, 30);
+        ServletHelper.printSelectForm(out, patient.getGuardianRelationship(), codeListRelationship, "guardianRelationship", "Guardian relationship to patient", 150);
         ServletHelper.printCloseContainer(out);
 
         out.println("<input type=\"hidden\" id=\"paramPatientId\" name=\"paramPatientId\" value=" + req.getParameter("paramPatientId")+ ">"

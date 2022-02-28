@@ -17,7 +17,7 @@ public class Vaccine implements Serializable {
     private Date createdDate = null;
     private Date updatedDate = null;
     private Date administeredDate = null;
-    private String vaccineCvxCode = ""; //il faut que ce soit un nbr
+    private String vaccineCvxCode = ""; // Code value
     private String vaccineNdcCode = "";
     private String vaccineMvxCode = "";
     private String administeredAmount = "";

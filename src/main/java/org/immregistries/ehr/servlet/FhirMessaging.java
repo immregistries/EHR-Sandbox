@@ -203,7 +203,7 @@ public class FhirMessaging extends HttpServlet {
     out.println("<form method=\"POST\">");
     out.println("<input type=\"hidden\" name=\"resourceType\" value=\"Immunization\">");
 
-    VaccinationEvent vacc_ev = new VaccinationEvent();
+    VaccinationEvent vaccinationEvent = new VaccinationEvent();
     Patient patient = (Patient) session.getAttribute("patient");
     Session dataSession = PopServlet.getDataSession();
     
@@ -211,7 +211,7 @@ public class FhirMessaging extends HttpServlet {
     queryVaccination.setParameter(0, Integer.parseInt(req.getParameter("paramEntryId")));
     queryVaccination.setParameter(1, patient.getPatientId());
     List<VaccinationEvent> vaccinationList = queryVaccination.list();
-    vacc_ev=vaccinationList.get(0);
+    vaccinationEvent=vaccinationList.get(0);
 
     List<String> fhirImmunizationResponseList = (List<String>) session.getAttribute("fhirImmunizationResponseList");
     if (fhirImmunizationResponseList == null){
@@ -225,7 +225,7 @@ public class FhirMessaging extends HttpServlet {
       fhirImmunizationString = req.getParameter("fhirImmunizationString");
     } else {
       try { 
-        Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vacc_ev);
+        Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent);
         fhirImmunizationString = parser.encodeResourceToString(immunization);
       } catch (Exception e) {
         e.printStackTrace();

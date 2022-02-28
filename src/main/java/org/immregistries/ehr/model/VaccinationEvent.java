@@ -72,22 +72,22 @@ public class VaccinationEvent implements Serializable {
     }
 
     public static VaccinationEvent random(Patient patient, Facility facility){
-        VaccinationEvent vacc_ev = new VaccinationEvent();
-        vacc_ev.setPatient(patient);
+        VaccinationEvent vaccinationEvent = new VaccinationEvent();
+        vaccinationEvent.setPatient(patient);
         Vaccine vaccine = Vaccine.random();
-        vacc_ev.setVaccine(vaccine);
+        vaccinationEvent.setVaccine(vaccine);
 
         Clinician admicli = Clinician.random();
         Clinician ordercli = Clinician.random();
         Clinician entercli = Clinician.random();
 
-        vacc_ev.setAdministeringFacility(facility);
-        vacc_ev.setPatient(patient);
-        vacc_ev.setEnteringClinician(entercli);
-        vacc_ev.setOrderingClinician(ordercli);
-        vacc_ev.setAdministeringClinician(admicli);
-        vacc_ev.setVaccine(vaccine);
-        return vacc_ev;
+        vaccinationEvent.setAdministeringFacility(facility);
+        vaccinationEvent.setPatient(patient);
+        vaccinationEvent.setEnteringClinician(entercli);
+        vaccinationEvent.setOrderingClinician(ordercli);
+        vaccinationEvent.setAdministeringClinician(admicli);
+        vaccinationEvent.setVaccine(vaccine);
+        return vaccinationEvent;
     }
 
 }

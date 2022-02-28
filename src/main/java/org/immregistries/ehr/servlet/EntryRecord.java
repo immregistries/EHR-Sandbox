@@ -45,11 +45,11 @@ public class EntryRecord extends HttpServlet {
     Patient patient = (Patient) session.getAttribute("patient");
     int paramEntry;
 
-    VaccinationEvent vacc_ev;
+    VaccinationEvent vaccinationEvent;
     Vaccine vaccine;
-    String nameAdmi = req.getParameter("administering_cli");
-    String nameOrder = req.getParameter("ordering_cli");
-    String nameEnter = req.getParameter("entering_cli");
+    String nameAdmi = req.getParameter("administeringClinician");
+    String nameOrder = req.getParameter("orderingClinician");
+    String nameEnter = req.getParameter("enteringClinician");
     Clinician administrating = new Clinician();
     Clinician ordering = new Clinician();
     Clinician entering = new Clinician();
@@ -62,23 +62,23 @@ public class EntryRecord extends HttpServlet {
     if(req.getParameter("paramEntryId")!=null && !req.getParameter("paramEntryId").equals("null")){
       paramEntry =  Integer.parseInt(req.getParameter("paramEntryId"));
       creation = false;
-      vacc_ev = (VaccinationEvent) dataSession.load(VaccinationEvent.class,paramEntry);
-      vaccine = vacc_ev.getVaccine();
+      vaccinationEvent = (VaccinationEvent) dataSession.load(VaccinationEvent.class,paramEntry);
+      vaccine = vaccinationEvent.getVaccine();
 
-      administrating =  (Clinician) dataSession.load(administrating.getClass(), vacc_ev.getAdministeringClinician().getClinicianId());
-      ordering =  (Clinician) dataSession.load(ordering.getClass(), vacc_ev.getOrderingClinician().getClinicianId());
-      entering =  (Clinician) dataSession.load(entering.getClass(), vacc_ev.getEnteringClinician().getClinicianId());
+      administrating =  (Clinician) dataSession.load(administrating.getClass(), vaccinationEvent.getAdministeringClinician().getClinicianId());
+      ordering =  (Clinician) dataSession.load(ordering.getClass(), vaccinationEvent.getOrderingClinician().getClinicianId());
+      entering =  (Clinician) dataSession.load(entering.getClass(), vaccinationEvent.getEnteringClinician().getClinicianId());
 
     } else {
       creation = true;
       vaccine = new Vaccine();
-      vacc_ev = new VaccinationEvent();
+      vaccinationEvent = new VaccinationEvent();
 
       try {
-        administeredDate = sdf.parse(req.getParameter("administered_date"));
-        expiredDate = sdf.parse(req.getParameter("expiration_date"));
+        administeredDate = sdf.parse(req.getParameter("administeredDate"));
+        expiredDate = sdf.parse(req.getParameter("expirationDate"));
       } catch (ParseException e) {
-        System.err.println(req.getParameter("administered_date"));
+        System.err.println(req.getParameter("administeredDate"));
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -87,43 +87,43 @@ public class EntryRecord extends HttpServlet {
     ordering.fillFromFullname(nameOrder);
     entering.fillFromFullname(nameEnter);
 
-    vaccine.setActionCode(req.getParameter("action_code"));
-    vaccine.setAdministeredAmount(req.getParameter("administered_amount"));
+    vaccine.setActionCode(req.getParameter("actionCode"));
+    vaccine.setAdministeredAmount(req.getParameter("administeredAmount"));
     vaccine.setAdministeredDate(updatedDate);
-    vaccine.setBodyRoute(req.getParameter("body_route"));
-    vaccine.setBodySite(req.getParameter("body_site"));
-    vaccine.setCompletionStatus(req.getParameter("completion_status"));
+    vaccine.setBodyRoute(req.getParameter("bodyRoute"));
+    vaccine.setBodySite(req.getParameter("bodySite"));
+    vaccine.setCompletionStatus(req.getParameter("completionStatus"));
     vaccine.setCreatedDate(updatedDate);
     vaccine.setExpirationDate(updatedDate);
-    vaccine.setFundingEligibility(req.getParameter("funding_eligibility"));
-    vaccine.setFundingSource(req.getParameter("funding_source"));
-    vaccine.setInformationSource(req.getParameter("information_source"));
-    vaccine.setLotnumber(req.getParameter("lot_number"));
-    vaccine.setRefusalReasonCode(req.getParameter("refusal_reason_code"));    
+    vaccine.setFundingEligibility(req.getParameter("fundingEligibility"));
+    vaccine.setFundingSource(req.getParameter("fundingSource"));
+    vaccine.setInformationSource(req.getParameter("informationSource"));
+    vaccine.setLotnumber(req.getParameter("lotNumber"));
+    vaccine.setRefusalReasonCode(req.getParameter("refusalReasonCode"));
     vaccine.setUpdatedDate(updatedDate);
-    vaccine.setVaccineCvxCode(req.getParameter("vacc_cvx"));
-    vaccine.setVaccineMvxCode(req.getParameter("vacc_mvx"));
-    vaccine.setVaccineNdcCode(req.getParameter("vacc_ndc"));
+    vaccine.setVaccineCvxCode(req.getParameter("vaccineCvxCode"));
+    vaccine.setVaccineMvxCode(req.getParameter("vaccineMvxCode"));
+    vaccine.setVaccineNdcCode(req.getParameter("vaccineNdcCode"));
 
 
-    vacc_ev.setAdministeringFacility(facility);
-    vacc_ev.setPatient(patient);
-    vacc_ev.setEnteringClinician(entering);
-    vacc_ev.setOrderingClinician(ordering);
-    vacc_ev.setAdministeringClinician(administrating);
-    vacc_ev.setVaccine(vaccine);
+    vaccinationEvent.setAdministeringFacility(facility);
+    vaccinationEvent.setPatient(patient);
+    vaccinationEvent.setEnteringClinician(entering);
+    vaccinationEvent.setOrderingClinician(ordering);
+    vaccinationEvent.setAdministeringClinician(administrating);
+    vaccinationEvent.setVaccine(vaccine);
     if(creation) {
       dataSession.save(administrating);
       dataSession.save(ordering);
       dataSession.save(entering);
       dataSession.save(vaccine);
-      dataSession.save(vacc_ev);
+      dataSession.save(vaccinationEvent);
     } else {
       dataSession.update(administrating);
       dataSession.update(ordering);
       dataSession.update(entering);
       dataSession.update(vaccine);
-      dataSession.update(vacc_ev);
+      dataSession.update(vaccinationEvent);
     }
     transaction.commit();
 
@@ -136,7 +136,7 @@ public class EntryRecord extends HttpServlet {
         resp.sendRedirect("IIS_message");
         break;
       case "FHIR_messaging":
-        resp.sendRedirect("FHIR_messaging?paramEntryId=" + vacc_ev.getVaccinationEventId());
+        resp.sendRedirect("FHIR_messaging?paramEntryId=" + vaccinationEvent.getVaccinationEventId());
         break;
     }
     doGet(req, resp);
@@ -174,7 +174,7 @@ public class EntryRecord extends HttpServlet {
           vaccine = vaccinationEvent.getVaccine();
           preloaded = true;
           session.setAttribute("vaccine", vaccine);
-          session.setAttribute("vacc_ev", vaccinationEvent);
+          session.setAttribute("vaccinationEvent", vaccinationEvent);
         } else {
           creation = true;
           if(req.getParameter("testEntry")!=null) { // Generate random test vaccination
@@ -182,7 +182,7 @@ public class EntryRecord extends HttpServlet {
             vaccinationEvent = VaccinationEvent.random(patient,facility);
             vaccine = vaccinationEvent.getVaccine();
             session.setAttribute("vaccine", vaccine);
-            session.setAttribute("vacc_ev", vaccinationEvent);
+            session.setAttribute("vaccinationEvent", vaccinationEvent);
           }
         }
         resp.setContentType("text/html");
@@ -240,45 +240,45 @@ public class EntryRecord extends HttpServlet {
             " gap: 20px 20px ;" +
             "\">");
     ServletHelper.printOpenContainer(out, 40, "row");
-    ServletHelper.printDateInput(out, vaccine.getAdministeredDate(),"administered_date", "Administered date", true);
-    ServletHelper.printSimpleInput(out, vaccine.getAdministeredAmount(),"administered_amount", "Administered amount", false, 4);
+    ServletHelper.printDateInput(out, vaccine.getAdministeredDate(),"administeredDate", "Administered date", true);
+    ServletHelper.printSimpleInput(out, vaccine.getAdministeredAmount(),"administeredAmount", "Administered amount", false, 4);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 47, "row");
-    ServletHelper.printSelectForm(out, vaccine.getVaccineCvxCode(), codeListCVX, "vacc_cvx", "Vaccine CVX code", 240);
-    ServletHelper.printSelectForm(out, vaccine.getVaccineNdcCode(), codeListNDC, "vacc_ndc", "Vaccine NDC code", 240);
+    ServletHelper.printSelectForm(out, vaccine.getVaccineCvxCode(), codeListCVX, "vaccineCvxCode", "Vaccine CVX code", 240);
+    ServletHelper.printSelectForm(out, vaccine.getVaccineNdcCode(), codeListNDC, "vaccineNdcCode", "Vaccine NDC code", 240);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 50, "row");
-    ServletHelper.printSelectForm(out, vaccine.getVaccineMvxCode(), codeListMVX, "vacc_mvx", "Vaccine MVX code", 240);
-    ServletHelper.printSimpleInput(out, vaccine.getLotnumber(),"lot_number", "Lot number", false, 5);
-    ServletHelper.printDateInput(out, vaccine.getExpirationDate(),"expiration_date", "Expiration date", false);
+    ServletHelper.printSelectForm(out, vaccine.getVaccineMvxCode(), codeListMVX, "vaccineMvxCode", "Vaccine MVX code", 240);
+    ServletHelper.printSimpleInput(out, vaccine.getLotnumber(),"lotNumber", "Lot number", false, 5);
+    ServletHelper.printDateInput(out, vaccine.getExpirationDate(),"expirationDate", "Expiration date", false);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 80, "row");
-    ServletHelper.printSimpleInput(out,entering,"entering_cli", "Entering clinician", true, 35);
-    ServletHelper.printSimpleInput(out,ordering,"ordering_cli", "Ordering clinician", true, 35);
-    ServletHelper.printSimpleInput(out,administering,"administering_cli", "Administering clinician", true, 35);
+    ServletHelper.printSimpleInput(out,entering,"enteringClinician", "Entering clinician", true, 35);
+    ServletHelper.printSimpleInput(out,ordering,"orderingClinician", "Ordering clinician", true, 35);
+    ServletHelper.printSimpleInput(out,administering,"administeringClinician", "Administering clinician", true, 35);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 47, "row");
-    ServletHelper.printSelectForm(out, vaccine.getFundingSource(), codeListFundingSource, "funding_source", "Funding source", 240);
-    ServletHelper.printSimpleInput(out,vaccine.getFundingEligibility(),"funding_eligibility", "Funding eligibility", false, 10);
+    ServletHelper.printSelectForm(out, vaccine.getFundingSource(), codeListFundingSource, "fundingSource", "Funding source", 240);
+    ServletHelper.printSimpleInput(out,vaccine.getFundingEligibility(),"fundingEligibility", "Funding eligibility", false, 10);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 47, "row");
-    ServletHelper.printSelectForm(out, vaccine.getBodyRoute(), codeListBodyRoute, "body_route", "Body route", 240);
-    ServletHelper.printSelectForm(out, vaccine.getBodySite(), codeListBodySite, "body_site", "Body site", 240);
+    ServletHelper.printSelectForm(out, vaccine.getBodyRoute(), codeListBodyRoute, "bodyRoute", "Body route", 240);
+    ServletHelper.printSelectForm(out, vaccine.getBodySite(), codeListBodySite, "bodySite", "Body site", 240);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 47, "row");
-    ServletHelper.printSelectForm(out, vaccine.getInformationSource(), codeListInfSource, "information_source", "Information source", 240);
-    ServletHelper.printSelectForm(out, vaccine.getActionCode(), codeListActionCode, "action_code", "Action code", 140);
+    ServletHelper.printSelectForm(out, vaccine.getInformationSource(), codeListInfSource, "informationSource", "Information source", 240);
+    ServletHelper.printSelectForm(out, vaccine.getActionCode(), codeListActionCode, "actionCode", "Action code", 140);
     ServletHelper.printCloseContainer(out);
 
     ServletHelper.printOpenContainer(out, 47, "row");
-    ServletHelper.printSelectForm(out, vaccine.getCompletionStatus(), codeListCompletionStatus, "completion_status", "Completion status",240);
-    ServletHelper.printSelectForm(out, vaccine.getRefusalReasonCode(), codeListRefusalReasonCode, "refusal_reason_code", "Refusal reason",240);
+    ServletHelper.printSelectForm(out, vaccine.getCompletionStatus(), codeListCompletionStatus, "completionStatus", "Completion status",240);
+    ServletHelper.printSelectForm(out, vaccine.getRefusalReasonCode(), codeListRefusalReasonCode, "refusalReasonCode", "Refusal reason",240);
     ServletHelper.printCloseContainer(out);
 
     out.println("<input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value=" + req.getParameter("paramEntryId") + "></input>");
