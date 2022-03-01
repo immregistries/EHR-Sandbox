@@ -19,7 +19,7 @@
     <mapping resource="org/immregistries/ehr/model/Vaccine.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/VaccinationEvent.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/Tester.hbm.xml"/>
-    <mapping resource="org/immregistries/ehr/model/Silo.hbm.xml"/>
+    <mapping resource="org/immregistries/ehr/model/Tenant.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/Patient.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/NextOfKin.hbm.xml"/>
     <mapping resource="org/immregistries/ehr/model/ImmunizationRegistry.hbm.xml"/>

@@ -32,7 +32,7 @@ public class PatientForm extends HttpServlet {
         Session dataSession = PopServlet.getDataSession();
         Transaction transaction = dataSession.beginTransaction();
 
-        Tenant tenant = (Tenant) session.getAttribute("silo");
+        Tenant tenant = (Tenant) session.getAttribute("tenant");
         Facility facility = (Facility) session.getAttribute("facility");
 
         SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,10 +129,10 @@ public class PatientForm extends HttpServlet {
             ServletHelper.doStandardHeader(out, req, "Patient form");
 
             Facility facility = (Facility) session.getAttribute("facility");
-            Tenant tenant = (Tenant) session.getAttribute("silo");
+            Tenant tenant = (Tenant) session.getAttribute("tenant");
             Patient patient = new Patient();
             if(req.getParameter("paramPatientId")!=null && tenant !=null) {
-                Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+                Query query = dataSession.createQuery("from Patient where patient_id=? and tenant_id=?");
                 query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
                 query.setParameter(1, tenant.getTenantId());
                 patient = (Patient) query.uniqueResult();

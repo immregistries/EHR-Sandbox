@@ -26,7 +26,7 @@ public class FacilityCreation extends HttpServlet {
 
     String name = req.getParameter("facility_name");
 
-    Tenant tenant = (Tenant) session.getAttribute("silo");
+    Tenant tenant = (Tenant) session.getAttribute("tenant");
     String nameParent = req.getParameter("parentFacility");
     Facility parentFacility = null;
     if(nameParent!=null) {
@@ -47,12 +47,12 @@ public class FacilityCreation extends HttpServlet {
       facility.setParentFacility(parentFacility);
     }
 
-    Object oldSilo;
-    Query query = dataSession.createQuery("from Facility where silo_id=? and name_display=?");
+    Tenant oldTenant;
+    Query query = dataSession.createQuery("from Facility where tenant_id=? and name_display=?");
     query.setParameter(0, tenant.getTenantId());
     query.setParameter(1, name);
-    oldSilo = query.uniqueResult() ;
-    if (oldSilo != null){
+    oldTenant = (Tenant) query.uniqueResult() ;
+    if (oldTenant != null){
       req.setAttribute("duplicate_error", 1);
     } else {
       Transaction transaction = dataSession.beginTransaction();
@@ -77,7 +77,7 @@ public class FacilityCreation extends HttpServlet {
         ServletHelper.doStandardHeader(out, req, "Facility creation");
         String show = req.getParameter(PARAM_SHOW);
         if(req.getAttribute("duplicate_error") != null){
-          out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Facility name already used for this silo</b></label><br/>");
+          out.println("<label class=\"w3-text-red w3-margin w3-margin-bottom\"><b class=\"w3-margin\">Facility name already used for this tenant</b></label><br/>");
         }
         out.println("<form method=\"post\" class=\"w3-container\" action=\"facility_creation\">\r\n"
             + "<label class=\"w3-text-green\"><b>Facility name</b></label>"

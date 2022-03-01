@@ -39,16 +39,16 @@ public class PatientRecord extends HttpServlet {
         ServletHelper.doStandardHeader(out, req, "Patient details");
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = (Patient) session.getAttribute("patient");
-        Tenant tenant = (Tenant) session.getAttribute("silo");
-        if (session.getAttribute("silo")==null)  {
-            resp.sendRedirect("silos?chooseSilo=1");
+        Tenant tenant = (Tenant) session.getAttribute("tenant");
+        if (session.getAttribute("tenant")==null)  {
+            resp.sendRedirect("tenants?chooseTenant=1");
         }
 
         String patientId = req.getParameter("paramPatientId");
         if (patientId != null) {
             if (patient != null) {
                 if (Integer.parseInt(patientId) != patient.getPatientId()){
-                    Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+                    Query query = dataSession.createQuery("from Patient where patient_id=? and tenant_id=?");
                     query.setParameter(0, Integer.parseInt(patientId));
                     query.setParameter(1, tenant.getTenantId());
                     patient = (Patient) query.uniqueResult();
@@ -57,7 +57,7 @@ public class PatientRecord extends HttpServlet {
                     resp.sendRedirect("patient_record?paramPatientId=" + patientId);
                 }
             } else {
-                Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
+                Query query = dataSession.createQuery("from Patient where patient_id=? and tenant_id=?");
                 query.setParameter(0, Integer.parseInt(patientId));
                 query.setParameter(1, tenant.getTenantId());
                 patient = (Patient) query.uniqueResult();
@@ -124,20 +124,20 @@ public class PatientRecord extends HttpServlet {
     Tester tester = (Tester) session.getAttribute("tester");
     Tenant tenant = new Tenant();
     List<Tenant> tenantList = null;
-    String siloId = req.getParameter("paramSiloId");
-    if (siloId != null) {
-      Query query = dataSession.createQuery("from Tenant where siloId=? and tester_id=?");
-      query.setParameter(0, Integer.parseInt(siloId));
+    String tenantId = req.getParameter("paramTenantId");
+    if (tenantId != null) {
+      Query query = dataSession.createQuery("from Tenant where tenantId=? and tester_id=?");
+      query.setParameter(0, Integer.parseInt(tenantId));
       query.setParameter(1, tester.getTesterId());
       tenantList = query.list();
       tenant = tenantList.get(0);
-      session.setAttribute("silo", tenant);
+      session.setAttribute("tenant", tenant);
     } else {
-      if (session.getAttribute("silo")!=null) {
-        tenant = (Tenant) session.getAttribute("silo");
+      if (session.getAttribute("tenant")!=null) {
+        tenant = (Tenant) session.getAttribute("tenant");
       }
       else {
-        resp.sendRedirect("silos?chooseSilo=1");
+        resp.sendRedirect("tenants?chooseTenant=1");
       }
       
     }

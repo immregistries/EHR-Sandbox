@@ -16,7 +16,7 @@ public class ServletHelper {
 
     public static void doStandardHeader(PrintWriter out, HttpServletRequest req, String title) {
         HttpSession session =  req.getSession();
-        Tenant tenant = (Tenant) session.getAttribute("silo");
+        Tenant tenant = (Tenant) session.getAttribute("tenant");
         Facility facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient");
         out.println("<html><head>");
@@ -27,7 +27,7 @@ public class ServletHelper {
         out.println("<body>");
         // out.println("<div class=\"w3-container \">");
         out.println("<header>" + "<div class=\"w3-bar w3-light-grey w3-text-shadow w3-margin-bottom\">"
-                + "<a href='silos' class=\"w3-bar-item w3-button\">"
+                + "<a href='tenants' class=\"w3-bar-item w3-button\">"
                 + (tenant == null ? "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder</i> Tenants"
                     : "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder_open</i> "
                         + tenant.getNameDisplay())

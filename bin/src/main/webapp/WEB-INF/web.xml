@@ -33,9 +33,9 @@
   <servlet>
   	<description>
   	</description>
-  	<display-name>Silos</display-name>
-  	<servlet-name>Silos</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.Silos</servlet-class>
+  	<display-name>Tenants</display-name>
+  	<servlet-name>Tenants</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Tenants</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -47,9 +47,9 @@
   <servlet>
   	<description>
   	</description>
-  	<display-name>Silo_creation</display-name>
-  	<servlet-name>Silo_creation</servlet-name>
-  	<servlet-class>org.immregistries.ehr.servlet.Silo_creation</servlet-class>
+  	<display-name>Tenant_creation</display-name>
+  	<servlet-name>Tenant_creation</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Tenant_creation</servlet-class>
   </servlet>
   <servlet>
   	<description>
@@ -89,16 +89,16 @@
   	<url-pattern>/patient_record</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>Silos</servlet-name>
-  	<url-pattern>/silos</url-pattern>
+  	<servlet-name>Tenants</servlet-name>
+  	<url-pattern>/tenants</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>IIS_message</servlet-name>
   	<url-pattern>/IIS_message</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>Silo_creation</servlet-name>
-  	<url-pattern>/silo_creation</url-pattern>
+  	<servlet-name>tenant_creation</servlet-name>
+  	<url-pattern>/tenant_creation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>patient_creation</servlet-name>

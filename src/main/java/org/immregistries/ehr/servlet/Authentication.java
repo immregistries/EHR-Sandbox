@@ -90,7 +90,7 @@ public class Authentication extends HttpServlet {
       session.setAttribute("tester", newTester);
       session.setAttribute("IR", newIR);
 
-      resp.sendRedirect("silos");
+      resp.sendRedirect("tenants");
     }
     doGet(req, resp);
   }
@@ -105,7 +105,7 @@ public class Authentication extends HttpServlet {
     try {
       {
         doHeader(out, session);
-        session.setAttribute("silo", null);
+        session.setAttribute("tenant", null);
         String show = req.getParameter(PARAM_SHOW);
         out.println("<div class=\"w3-container w3-half w3-margin-top\">");
         if (show == null) {
@@ -161,7 +161,7 @@ public class Authentication extends HttpServlet {
     } catch (Exception e) {
       e.printStackTrace(System.err);
     }
-    //resp.sendRedirect("/silos");
+    //resp.sendRedirect("/tenants");
     out.flush();
     out.close();
   }
