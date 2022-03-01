@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tenant;
 import org.immregistries.ehr.model.Tester;
 
 /**
@@ -30,19 +30,19 @@ public class SiloCreation extends HttpServlet {
 
     Tester tester = (Tester) session.getAttribute("tester");
 
-    Silo newSilo = new Silo();
-    newSilo.setNameDisplay(name);
-    newSilo.setTester(tester);
+    Tenant newTenant = new Tenant();
+    newTenant.setNameDisplay(name);
+    newTenant.setTester(tester);
 
-    Query query = dataSession.createQuery("from Silo where tester=? and name_display=?");
+    Query query = dataSession.createQuery("from Tenant where tester=? and name_display=?");
     query.setParameter(0, tester);
     query.setParameter(1, name);
-    Silo oldSilo = (Silo) query.uniqueResult();
-    if (oldSilo != null){
+    Tenant oldTenant = (Tenant) query.uniqueResult();
+    if (oldTenant != null){
       req.setAttribute("duplicate_error", 1);
     } else {
       Transaction transaction = dataSession.beginTransaction();
-      dataSession.save(newSilo);
+      dataSession.save(newTenant);
       transaction.commit();
       resp.sendRedirect("silos");
     }

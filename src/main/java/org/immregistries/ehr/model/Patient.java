@@ -6,7 +6,6 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
@@ -19,7 +18,7 @@ public class Patient implements Serializable {
 
     private int patientId = 0;
     private Facility facility = null;
-    private Silo silo = null;
+    private Tenant tenant = null;
     private Date createdDate = null;
     private Date updatedDate = null;
     private Date birthDate = null;
@@ -70,12 +69,12 @@ public class Patient implements Serializable {
         this.facility = facility;
     }
 
-    public Silo getSilo() {
-        return silo;
+    public Tenant getTenant() {
+        return tenant;
     }
 
-    public void setSilo(Silo silo) {
-        this.silo = silo;
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
     }
 
     public Date getCreatedDate() {
@@ -342,7 +341,7 @@ public class Patient implements Serializable {
         this.guardianRelationship = guardianRelationship;
     }
 
-    public static Patient random(Silo silo, Facility facility){
+    public static Patient random(Tenant tenant, Facility facility){
         Faker faker = new Faker();
 
         int randDay = (int) (Math.random()*30+1);
@@ -371,7 +370,7 @@ public class Patient implements Serializable {
         Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
 
         Patient patient = new Patient();
-        patient.setSilo(silo);
+        patient.setTenant(tenant);
         patient.setFacility(facility);
 
         patient.setNameFirst(faker.name().firstName());

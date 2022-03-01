@@ -145,12 +145,26 @@
     <url-pattern>/Settings</url-pattern>
   </servlet-mapping>
 
-  <filter>
-        <filter-name>loginFilter</filter-name>
-        <filter-class>org.immregistries.ehr.LoginFilter</filter-class>
-  </filter>
-  <filter-mapping>
-      <filter-name>loginFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <servlet>
+        <servlet-name>Api</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Api</servlet-name>
+        <url-pattern>/api</url-pattern>
+    </servlet-mapping>
+
+
+<!--  <filter>-->
+<!--        <filter-name>loginFilter</filter-name>-->
+<!--        <filter-class>org.immregistries.ehr.LoginFilter</filter-class>-->
+<!--  </filter>-->
+<!--  <filter-mapping>-->
+<!--      <filter-name>loginFilter</filter-name>-->
+<!--      <url-pattern>/*</url-pattern>-->
+<!--  </filter-mapping>-->
 </web-app>

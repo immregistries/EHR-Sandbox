@@ -13,7 +13,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tenant;
 import org.immregistries.ehr.model.Tester;
 
 /**
@@ -43,43 +43,43 @@ public class FacilityPatientDisplay extends HttpServlet {
       session.setAttribute("patient", null);
       Tester tester = (Tester) session.getAttribute("tester");
 
-      Silo silo = (Silo) session.getAttribute("silo");
+      Tenant tenant = (Tenant) session.getAttribute("silo");
 
       String siloId = req.getParameter("paramSiloId");
       if (siloId != null) {
-        if (silo != null) {
-          if (silo.getSiloId() != Integer.parseInt(siloId)){
-            Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+        if (tenant != null) {
+          if (tenant.getTenantId() != Integer.parseInt(siloId)){
+            Query query = dataSession.createQuery("from Tenant where siloId=? and tester_id=?");
             query.setParameter(0, Integer.parseInt(siloId));
             query.setParameter(1, tester.getTesterId());
-            silo = (Silo) query.uniqueResult();
-            session.setAttribute("silo", silo);
+            tenant = (Tenant) query.uniqueResult();
+            session.setAttribute("silo", tenant);
             // Reload page to update header
             resp.sendRedirect("facility_patient_display?paramSiloId=" + siloId);
           }
         } else {
-          Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+          Query query = dataSession.createQuery("from Tenant where siloId=? and tester_id=?");
           query.setParameter(0, Integer.parseInt(siloId));
           query.setParameter(1, tester.getTesterId());
-          silo = (Silo) query.uniqueResult();
-          session.setAttribute("silo", silo);
+          tenant = (Tenant) query.uniqueResult();
+          session.setAttribute("silo", tenant);
           // Reload page to update header
           resp.sendRedirect("facility_patient_display?paramSiloId=" + siloId);
         }
       }else {
-        resp.sendRedirect("facility_patient_display?paramSiloId=" + silo.getSiloId());
+        resp.sendRedirect("facility_patient_display?paramSiloId=" + tenant.getTenantId());
       }
 
-      if (silo == null) {
+      if (tenant == null) {
         resp.sendRedirect("silos?chooseSilo=1");
       }
 
-      Query query = dataSession.createQuery("from Facility where silo=?");
-      query.setParameter(0, silo);
+      Query query = dataSession.createQuery("from Facility where tenant=?");
+      query.setParameter(0, tenant);
       List<Facility> facilityList = query.list();
 
-      query = dataSession.createQuery("from Patient where silo=?");
-      query.setParameter(0, silo);
+      query = dataSession.createQuery("from Patient where tenant=?");
+      query.setParameter(0, tenant);
       List<Patient> patientList = query.list();
       String facilityId =  req.getParameter("paramFacilityId");
 
@@ -87,17 +87,17 @@ public class FacilityPatientDisplay extends HttpServlet {
       if (facilityId != null) { // if facilityId parameter specified i.e. facility selected
         if (facility != null) {
           if (facility.getFacilityId() != Integer.parseInt(facilityId)){
-            query = dataSession.createQuery("from Facility where facilityId=? and silo=?");
+            query = dataSession.createQuery("from Facility where facilityId=? and tenant=?");
             query.setParameter(0, Integer.parseInt(facilityId));
-            query.setParameter(1, silo);
+            query.setParameter(1, tenant);
             facility = (Facility) query.uniqueResult();
             session.setAttribute("facility", facility);
             resp.sendRedirect("facility_patient_display?paramFacilityId=" + facilityId);
           }
         } else {
-          query = dataSession.createQuery("from Facility where facilityId=? and silo=?");
+          query = dataSession.createQuery("from Facility where facilityId=? and tenant=?");
           query.setParameter(0, Integer.parseInt(facilityId));
-          query.setParameter(1, silo);
+          query.setParameter(1, tenant);
           facility = (Facility) query.uniqueResult();
           session.setAttribute("facility", facility);
           resp.sendRedirect("facility_patient_display?paramFacilityId=" + facilityId);

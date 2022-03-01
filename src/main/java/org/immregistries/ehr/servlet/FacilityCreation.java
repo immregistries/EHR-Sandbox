@@ -12,7 +12,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tenant;
 
 
 public class FacilityCreation extends HttpServlet {
@@ -26,7 +26,7 @@ public class FacilityCreation extends HttpServlet {
 
     String name = req.getParameter("facility_name");
 
-    Silo silo = (Silo) session.getAttribute("silo");
+    Tenant tenant = (Tenant) session.getAttribute("silo");
     String nameParent = req.getParameter("parentFacility");
     Facility parentFacility = null;
     if(nameParent!=null) {
@@ -41,7 +41,7 @@ public class FacilityCreation extends HttpServlet {
     }
     Facility facility = new Facility();
     facility.setNameDisplay(name);
-    facility.setSilo(silo);
+    facility.setTenant(tenant);
     if(parentFacility!=null) {
       //System.out.println("oups");
       facility.setParentFacility(parentFacility);
@@ -49,7 +49,7 @@ public class FacilityCreation extends HttpServlet {
 
     Object oldSilo;
     Query query = dataSession.createQuery("from Facility where silo_id=? and name_display=?");
-    query.setParameter(0, silo.getSiloId());
+    query.setParameter(0, tenant.getTenantId());
     query.setParameter(1, name);
     oldSilo = query.uniqueResult() ;
     if (oldSilo != null){

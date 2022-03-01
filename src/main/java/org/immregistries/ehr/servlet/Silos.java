@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tenant;
 import org.immregistries.ehr.model.Tester;
 
 public class Silos extends HttpServlet {
@@ -44,17 +44,17 @@ public class Silos extends HttpServlet {
 
     String siloId = req.getParameter("siloId");
     if (siloId != null) {
-      Silo silo;
+      Tenant tenant;
       Facility facility = (Facility) session.getAttribute("facility");
       Tester tester = (Tester) session.getAttribute("tester");
-      Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+      Query query = dataSession.createQuery("from Tenant where siloId=? and tester_id=?");
       query.setParameter(0, Integer.parseInt(siloId));
       query.setParameter(1, tester.getTesterId());
-      silo = (Silo) query.uniqueResult();
-      session.setAttribute("silo", silo);
+      tenant = (Tenant) query.uniqueResult();
+      session.setAttribute("silo", tenant);
       // reset facility selection
       if (facility != null){
-        if (facility.getSilo().getSiloId() != Integer.parseInt(siloId)){
+        if (facility.getTenant().getTenantId() != Integer.parseInt(siloId)){
           session.setAttribute("facility", null);
           session.setAttribute("patient", null);
         }
@@ -67,10 +67,10 @@ public class Silos extends HttpServlet {
         ServletHelper.doStandardHeader(out, req, "Tenant selection");
         session.setAttribute("facility", null);
         Tester tester = (Tester) session.getAttribute("tester");
-        List<Silo> siloList;
-        Query query = dataSession.createQuery("from Silo where tester=?");
+        List<Tenant> tenantList;
+        Query query = dataSession.createQuery("from Tenant where tester=?");
         query.setParameter(0, tester);
-        siloList = query.list();
+        tenantList = query.list();
         String show = req.getParameter(PARAM_SHOW);
         if(req.getParameter("chooseSilo")!=null) {
           out.println("<div class = \" w3-margin-bottom\">"
@@ -91,12 +91,12 @@ public class Silos extends HttpServlet {
             + "<tbody>"
             );
 
-        for (Silo siloDisplay : siloList) {
+        for (Tenant tenantDisplay : tenantList) {
           out.println("<tr>"
                   + "<td class = \"w3-hover-teal\">"
-                  + "<a href=\"silos?siloId=" + siloDisplay.getSiloId() + "\" style =\"text-decoration:none \">"
+                  + "<a href=\"silos?siloId=" + tenantDisplay.getTenantId() + "\" style =\"text-decoration:none \">"
                   + "<div style=\"text-decoration:none;height:100%\">"
-                  + siloDisplay.getNameDisplay()
+                  + tenantDisplay.getNameDisplay()
               + "</div>"
               + "</a>"
               + "</td>"

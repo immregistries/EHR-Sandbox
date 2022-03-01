@@ -6,7 +6,7 @@
 		<id name="facilityId" column="facility_id">
 			<generator class="native" />
 		</id>
-		<many-to-one name="silo" column="silo_id" class="Silo" />
+		<many-to-one name="tenant" column="tenant_id" class="Tenant" />
 		<many-to-one name="parentFacility"
 			column="parent_facility_id" class="Facility" />
 		<property name="nameDisplay" column="name_display"

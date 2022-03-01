@@ -1,20 +1,20 @@
 package org.immregistries.ehr.model;
 import java.io.Serializable;
 
-public class Silo implements Serializable {
+public class Tenant implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private int siloId = 0;
+    private int tenantId = 0;
     private Tester tester = null;
     private String nameDisplay = "";
 
-    public int getSiloId() {
-        return siloId;
+    public int getTenantId() {
+        return tenantId;
     }
 
-    public void setSiloId(int siloId) {
-        this.siloId = siloId;
+    public void setTenantId(int tenantId) {
+        this.tenantId = tenantId;
     }
 
     public Tester getTester() {

@@ -8,7 +8,7 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tenant;
 import org.immregistries.iis.kernal.model.CodeMapManager;
 
 import javax.servlet.http.HttpServlet;
@@ -32,7 +32,7 @@ public class PatientForm extends HttpServlet {
         Session dataSession = PopServlet.getDataSession();
         Transaction transaction = dataSession.beginTransaction();
 
-        Silo silo = (Silo) session.getAttribute("silo");
+        Tenant tenant = (Tenant) session.getAttribute("silo");
         Facility facility = (Facility) session.getAttribute("facility");
 
         SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd");
@@ -43,7 +43,7 @@ public class PatientForm extends HttpServlet {
             patient = (Patient) dataSession.load(Patient.class,paramPatientId);
         } else{ // creating new patient
             patient = new Patient();
-            patient.setSilo(silo);
+            patient.setTenant(tenant);
             patient.setFacility(facility);
             creation = true;
         }
@@ -129,12 +129,12 @@ public class PatientForm extends HttpServlet {
             ServletHelper.doStandardHeader(out, req, "Patient form");
 
             Facility facility = (Facility) session.getAttribute("facility");
-            Silo silo = (Silo) session.getAttribute("silo");
+            Tenant tenant = (Tenant) session.getAttribute("silo");
             Patient patient = new Patient();
-            if(req.getParameter("paramPatientId")!=null && silo!=null) {
+            if(req.getParameter("paramPatientId")!=null && tenant !=null) {
                 Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
                 query.setParameter(0, Integer.parseInt(req.getParameter("paramPatientId")));
-                query.setParameter(1, silo.getSiloId());
+                query.setParameter(1, tenant.getTenantId());
                 patient = (Patient) query.uniqueResult();
                 session.setAttribute("patient", patient);
                 facility = patient.getFacility();
@@ -158,7 +158,7 @@ public class PatientForm extends HttpServlet {
 
             if(req.getParameter("testPatient")!=null && creation) {
                 // TEST generation
-                patient = Patient.random(silo, facility);
+                patient = Patient.random(tenant, facility);
             }
             printPatientForm(req, out, patient);
             ServletHelper.doStandardFooter(out, session);

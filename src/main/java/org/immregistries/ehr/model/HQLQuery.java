@@ -16,29 +16,29 @@ public class HQLQuery {
   }
   
   
-  public Silo getSiloFromSiloID(String siloID) {
-    Silo silo = new Silo();
-    List<Silo> siloList = null;
-    Query query = dataSession.createQuery("from Silo where siloId=?");
-    query.setParameter(0, Integer.parseInt(siloID));
-    siloList = query.list();
-    silo = siloList.get(0);    
-    return silo;
+  public Tenant getTenantFromTenantID(String tenantID) {
+    Tenant tenant = new Tenant();
+    List<Tenant> tenantList = null;
+    Query query = dataSession.createQuery("from Tenant where tenantId=?");
+    query.setParameter(0, Integer.parseInt(tenantID));
+    tenantList = query.list();
+    tenant = tenantList.get(0);
+    return tenant;
   }
   
-  public List<Facility> getFacilityListFromSiloID(String siloID){
+  public List<Facility> getFacilityListFromTenantID(String tenantID){
     List<Facility> facilities=null;
-    Silo silo = getSiloFromSiloID(siloID);    
-    Query query = this.dataSession.createQuery("from Facility where silo=?");
-    query.setParameter(0, silo);
+    Tenant tenant = getTenantFromTenantID(tenantID);
+    Query query = this.dataSession.createQuery("from Facility where tenant=?");
+    query.setParameter(0, tenant);
     facilities = query.list();
     return facilities;
   }
   
-  public List<Patient> getPatientListFromSilo(Silo silo){
+  public List<Patient> getPatientListFromTenant(Tenant tenant){
     List<Patient> patientList = null;
-    Query query = this.dataSession.createQuery("from Patient where silo=?");
-    query.setParameter(0, silo);
+    Query query = this.dataSession.createQuery("from Patient where tenant=?");
+    query.setParameter(0, tenant);
     patientList = query.list();
     return patientList;
   }

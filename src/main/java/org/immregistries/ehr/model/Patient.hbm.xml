@@ -8,7 +8,7 @@
 		</id>
 		<many-to-one name="facility" column="facility_id"
 			class="Facility" />
-		<many-to-one name="silo" column="silo_id" class="Silo" />
+		<many-to-one name="tenant" column="tenant_id" class="Tenant" />
 		<property name="createdDate" column="created_date"
 			type="date" />
 		<property name="updatedDate" column="updated_date"

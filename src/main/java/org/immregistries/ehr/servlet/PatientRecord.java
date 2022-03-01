@@ -10,12 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.immregistries.ehr.model.Facility;
-import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Silo;
-import org.immregistries.ehr.model.Tester;
-import org.immregistries.ehr.model.VaccinationEvent;
-import org.immregistries.ehr.model.Vaccine;
+import org.immregistries.ehr.model.*;
+import org.immregistries.ehr.model.Tenant;
 
 /**
  * Servlet implementation class patient_record
@@ -43,7 +39,7 @@ public class PatientRecord extends HttpServlet {
         ServletHelper.doStandardHeader(out, req, "Patient details");
         String show = req.getParameter(PARAM_SHOW);
         Patient patient = (Patient) session.getAttribute("patient");
-        Silo silo = (Silo) session.getAttribute("silo");
+        Tenant tenant = (Tenant) session.getAttribute("silo");
         if (session.getAttribute("silo")==null)  {
             resp.sendRedirect("silos?chooseSilo=1");
         }
@@ -54,7 +50,7 @@ public class PatientRecord extends HttpServlet {
                 if (Integer.parseInt(patientId) != patient.getPatientId()){
                     Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
                     query.setParameter(0, Integer.parseInt(patientId));
-                    query.setParameter(1, silo.getSiloId());
+                    query.setParameter(1, tenant.getTenantId());
                     patient = (Patient) query.uniqueResult();
                     session.setAttribute("patient", patient);
                     session.setAttribute("facility", patient.getFacility());
@@ -63,7 +59,7 @@ public class PatientRecord extends HttpServlet {
             } else {
                 Query query = dataSession.createQuery("from Patient where patient_id=? and silo_id=?");
                 query.setParameter(0, Integer.parseInt(patientId));
-                query.setParameter(1, silo.getSiloId());
+                query.setParameter(1, tenant.getTenantId());
                 patient = (Patient) query.uniqueResult();
                 session.setAttribute("patient", patient);
                 session.setAttribute("facility", patient.getFacility());
@@ -126,19 +122,19 @@ public class PatientRecord extends HttpServlet {
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     Session dataSession = PopServlet.getDataSession();
     Tester tester = (Tester) session.getAttribute("tester");
-    Silo silo = new Silo();
-    List<Silo> siloList = null;
+    Tenant tenant = new Tenant();
+    List<Tenant> tenantList = null;
     String siloId = req.getParameter("paramSiloId");
     if (siloId != null) {
-      Query query = dataSession.createQuery("from Silo where siloId=? and tester_id=?");
+      Query query = dataSession.createQuery("from Tenant where siloId=? and tester_id=?");
       query.setParameter(0, Integer.parseInt(siloId));
       query.setParameter(1, tester.getTesterId());
-      siloList = query.list();
-      silo = siloList.get(0);
-      session.setAttribute("silo", silo);
+      tenantList = query.list();
+      tenant = tenantList.get(0);
+      session.setAttribute("silo", tenant);
     } else {
       if (session.getAttribute("silo")!=null) {
-        silo = (Silo) session.getAttribute("silo");
+        tenant = (Tenant) session.getAttribute("silo");
       }
       else {
         resp.sendRedirect("silos?chooseSilo=1");
@@ -146,8 +142,8 @@ public class PatientRecord extends HttpServlet {
       
     }
     List<Facility> facilityList = null;
-    Query query = dataSession.createQuery("from Facility where silo=?");
-    query.setParameter(0, silo);
+    Query query = dataSession.createQuery("from Facility where tenant=?");
+    query.setParameter(0, tenant);
     facilityList = query.list();
   
   String showFacility = null;
@@ -155,8 +151,8 @@ public class PatientRecord extends HttpServlet {
     showFacility = req.getParameter("paramFacilityId");
     
     html+="<div class=\"w3-margin-bottom\"style=\"width:100% height:auto \" >"
-        + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Silo : "
-        + silo.getNameDisplay() + "</b></label>";
+        + "<label class=\"w3-text-green w3-margin-right w3-margin-bottom\"><b>Current Tenant : "
+        + tenant.getNameDisplay() + "</b></label>";
     Facility facility = new Facility();
     if (showFacility != null) {
       

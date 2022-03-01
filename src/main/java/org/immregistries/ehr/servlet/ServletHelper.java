@@ -3,7 +3,7 @@ package org.immregistries.ehr.servlet;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Silo;
+import org.immregistries.ehr.model.Tenant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -16,7 +16,7 @@ public class ServletHelper {
 
     public static void doStandardHeader(PrintWriter out, HttpServletRequest req, String title) {
         HttpSession session =  req.getSession();
-        Silo silo = (Silo) session.getAttribute("silo");
+        Tenant tenant = (Tenant) session.getAttribute("silo");
         Facility facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient");
         out.println("<html><head>");
@@ -28,9 +28,9 @@ public class ServletHelper {
         // out.println("<div class=\"w3-container \">");
         out.println("<header>" + "<div class=\"w3-bar w3-light-grey w3-text-shadow w3-margin-bottom\">"
                 + "<a href='silos' class=\"w3-bar-item w3-button\">"
-                + (silo == null ? "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder</i> Tenants"
+                + (tenant == null ? "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder</i> Tenants"
                     : "<i class=\"material-icons\" style=\"font-size:22px ; vertical-align: bottom\" >folder_open</i> "
-                        + silo.getNameDisplay())
+                        + tenant.getNameDisplay())
                 + "</a>"
 
                 +  (facility == null ? ""
