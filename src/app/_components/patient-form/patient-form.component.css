@@ -1,0 +1,23 @@
+.grid-container {
+  margin: 5x;
+}
+
+.dashboard-card {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+.dashboard-card-content {
+  text-align: center;
+}
+
+mat-form-field {
+  padding-right: 8px;
+}
+
+mat-raised-button {
+  padding: 15px;
+}
