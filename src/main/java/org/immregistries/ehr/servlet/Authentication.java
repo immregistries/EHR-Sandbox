@@ -121,8 +121,8 @@ public class Authentication extends HttpServlet {
           out.println("<h4 class=\"w3-margin-top\">Some functionalities :</h4>");
 
           out.println("<ul class=\"w3-ul \">");
-          out.println("<li>Input of patient and immunization data</li>");
-          out.println("<li>Generation of testing data</li>");
+          out.println("<li>Input and generation of patient information</li>");
+          out.println("<li>Input and generation of vaccination history</li>");
           out.println("<li>Send data to IIS through Hl7v2 messages</li>");
           out.println("<li>Send data to IIS through FHIR messages</li>");
           out.println("</ul>");
