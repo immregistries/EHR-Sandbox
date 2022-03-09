@@ -71,7 +71,7 @@ public class PatientForm extends HttpServlet {
         patient.setGuardianMiddle(req.getParameter("guardianMiddle"));
         patient.setGuardianRelationship(req.getParameter("guardianRelationship"));
         patient.setMotherMaiden(req.getParameter("motherMaiden"));
-        patient.setPhone(req.getParameter("phone"));
+        patient.setPhone(  req.getParameter("phone"));
         patient.setProtectionIndicator(req.getParameter("protectionIndicator"));
 
         patient.setPublicityIndicator(req.getParameter("publicityIndicator"));
@@ -105,7 +105,7 @@ public class PatientForm extends HttpServlet {
             dataSession.update(patient);
             transaction.commit();
             session.setAttribute("patient", patient);
-            resp.sendRedirect("patientRecord?paramPatientId=" + patient.getPatientId());
+            resp.sendRedirect("patient_record?paramPatientId=" + patient.getPatientId());
         }else {
             patient.setCreatedDate(updatedDate);
             dataSession.save(patient);
@@ -211,9 +211,10 @@ public class PatientForm extends HttpServlet {
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 55, "row");
-        ServletHelper.printSimpleInput(out, patient.getAddressCity(), "city", "City", false, 20);
-        ServletHelper.printSimpleInput(out, patient.getAddressCountyParish(), "countyParish", "County", false, 20);
-        ServletHelper.printSimpleInput(out, patient.getAddressCountry(), "country", "Country Code", false, 20);
+        ServletHelper.printSimpleInput(out, patient.getAddressCity(), "city", "City", false, 13);
+        ServletHelper.printSimpleInput(out, patient.getAddressCountyParish(), "countyParish", "County", false, 13);
+        ServletHelper.printSimpleInput(out, patient.getAddressState(), "state", "State", false, 13);
+        ServletHelper.printSimpleInput(out, patient.getAddressCountry(), "country", "Country Code", false, 13);
         ServletHelper.printCloseContainer(out);
 
         ServletHelper.printOpenContainer(out, 15, "column");

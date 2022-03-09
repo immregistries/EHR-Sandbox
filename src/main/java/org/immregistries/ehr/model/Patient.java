@@ -386,11 +386,11 @@ public class Patient implements Serializable {
 
         patient.setAddressLine1(faker.address().streetAddress());
         patient.setAddressCity(faker.address().city());
-        patient.setAddressCountry(faker.address().country());
+        patient.setAddressCountry("USA");
         patient.setAddressCountyParish("county");
-        patient.setAddressState(faker.address().state());
+        patient.setAddressState("MD");
 
-        patient.setPhone(faker.phoneNumber().phoneNumber());
+        patient.setPhone(faker.phoneNumber().cellPhone());
         patient.setEmail(patient.getNameFirst() + randDay +"@email.com");
 
         patient.setBirthFlag("");
@@ -409,11 +409,11 @@ public class Patient implements Serializable {
         patient.setGuardianLast(faker.name().lastName());
         patient.setGuardianMiddle(faker.name().firstName());
         patient.setMotherMaiden(faker.name().lastName());
-        int count = 0;
+//        int count = 0;
         for(Code code : codeListGuardian) {
             patient.setGuardianRelationship(code.getValue());
-            count+=1;
-            if(randDay==count) {
+//            count+=1;
+            if(code.getValue().equals("MTH")) {
                 break;
             }
         }

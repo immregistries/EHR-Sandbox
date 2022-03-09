@@ -12,10 +12,6 @@
   </welcome-file-list>
 
   <servlet>
-    <servlet-name>home</servlet-name>
-    <servlet-class>org.immregistries.ehr.servlet.HomeServlet</servlet-class>
-  </servlet>
-  <servlet>
   	<display-name>Entry Record</display-name>
   	<servlet-name>entry_record</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.EntryRecord</servlet-class>
@@ -79,7 +75,6 @@
   </servlet>
   <servlet>
   	<description>
-      Temporary test client
   	</description>
   	<display-name>FHIR_get</display-name>
   	<servlet-name>FHIR_get</servlet-name>
@@ -92,10 +87,6 @@
   	<servlet-name>Settings</servlet-name>
   	<servlet-class>org.immregistries.ehr.servlet.Settings</servlet-class>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>home</servlet-name>
-    <url-pattern>/home</url-pattern>
-  </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>entry_record</servlet-name>
   	<url-pattern>/entry_record</url-pattern>
@@ -145,26 +136,13 @@
     <url-pattern>/Settings</url-pattern>
   </servlet-mapping>
 
-    <servlet>
-        <servlet-name>Api</servlet-name>
-        <servlet-class>
-            org.springframework.web.servlet.DispatcherServlet
-        </servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
 
-    <servlet-mapping>
-        <servlet-name>Api</servlet-name>
-        <url-pattern>/api</url-pattern>
-    </servlet-mapping>
-
-
-<!--  <filter>-->
-<!--        <filter-name>loginFilter</filter-name>-->
-<!--        <filter-class>org.immregistries.ehr.LoginFilter</filter-class>-->
-<!--  </filter>-->
-<!--  <filter-mapping>-->
-<!--      <filter-name>loginFilter</filter-name>-->
-<!--      <url-pattern>/*</url-pattern>-->
-<!--  </filter-mapping>-->
+  <filter>
+        <filter-name>loginFilter</filter-name>
+        <filter-class>org.immregistries.ehr.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+      <filter-name>loginFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>

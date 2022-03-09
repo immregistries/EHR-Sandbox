@@ -282,7 +282,7 @@ public class EntryRecord extends HttpServlet {
     ServletHelper.printCloseContainer(out);
 
     out.println("<input type=\"hidden\" id=\"paramEntryId\" name=\"paramEntryId\" value=" + req.getParameter("paramEntryId") + "></input>");
-    out.println("<button type=\"submit\" name=\"nextPage\" value=\"patient_record\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">Save EntryRecord</button>");
+    out.println("<button type=\"submit\" name=\"nextPage\" value=\"patient_record\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">Save</button>");
     out.println("<button type=\"submit\" name=\"nextPage\" value=\"IIS_message\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">HL7v2 messaging</button>");
     out.println("<button type=\"submit\" name=\"nextPage\" value=\"FHIR_messaging\" style=\"height:5%\" class=\"w3-button w3-round-large w3-green w3-hover-teal \">FHIR Messaging </button>");
     out.println("</form></div>");
