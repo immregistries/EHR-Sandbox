@@ -4,17 +4,17 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class SettingsService {
-  apiUrl;
+  private apiUrl: string;
 
   constructor() {
-    this.apiUrl = "localhost:9091/ehr-sandbox"
+    this.apiUrl = "http://localhost:8080"
   }
 
-  getApiUrl() {
+  public getApiUrl(): string {
     return this.apiUrl
   }
 
-  setApiUrl(url: string) {
+  public setApiUrl(url: string) {
     this.apiUrl = url
     return this.apiUrl
   }

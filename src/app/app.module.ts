@@ -19,15 +19,25 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthenticationFormComponent } from './_components/authentication-form/authentication-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SettingsService } from './_services/settings.service';
+import { PatientFormComponent } from './_components/patient-form/patient-form.component';
+import { PatientService } from './_services/patient.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatNativeDateModule } from '@angular/material/core';
+import { TenantListComponent } from './_components/_lists/tenant-list/tenant-list.component';
+import { FacilityListComponent } from './_components/_lists/facility-list/facility-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationComponent,
     DashboardComponent,
-    AuthenticationFormComponent
+    AuthenticationFormComponent,
+    PatientFormComponent,
+    TenantListComponent,
+    FacilityListComponent
   ],
   imports: [
     BrowserModule,
@@ -45,9 +55,13 @@ import { SettingsService } from './_services/settings.service';
     MatGridListModule,
     MatCardModule,
     MatMenuModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule,
+    MatTabsModule,
+    MatSnackBarModule,
+    MatNativeDateModule,
   ],
-  providers: [SettingsService],
+  providers: [SettingsService, PatientService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
