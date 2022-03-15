@@ -14,7 +14,7 @@ import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Patient;
 import org.immregistries.ehr.model.Tenant;
-import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.User;
 
 /**
  * Servlet implementation class FacilityPatientDisplay
@@ -41,7 +41,7 @@ public class FacilityPatientDisplay extends HttpServlet {
 
       ServletHelper.doStandardHeader(out, req, "Facility and patient selection");
       session.setAttribute("patient", null);
-      Tester tester = (Tester) session.getAttribute("tester");
+      User user = (User) session.getAttribute("user");
 
       Tenant tenant = (Tenant) session.getAttribute("tenant");
 
@@ -49,18 +49,18 @@ public class FacilityPatientDisplay extends HttpServlet {
       if (tenantId != null) {
         if (tenant != null) {
           if (tenant.getTenantId() != Integer.parseInt(tenantId)){
-            Query query = dataSession.createQuery("from Tenant where tenantId=? and tester_id=?");
+            Query query = dataSession.createQuery("from Tenant where tenantId=? and user_id=?");
             query.setParameter(0, Integer.parseInt(tenantId));
-            query.setParameter(1, tester.getTesterId());
+            query.setParameter(1, user.getUserId());
             tenant = (Tenant) query.uniqueResult();
             session.setAttribute("tenant", tenant);
             // Reload page to update header
             resp.sendRedirect("facility_patient_display?paramTenantId=" + tenantId);
           }
         } else {
-          Query query = dataSession.createQuery("from Tenant where tenantId=? and tester_id=?");
+          Query query = dataSession.createQuery("from Tenant where tenantId=? and user_id=?");
           query.setParameter(0, Integer.parseInt(tenantId));
-          query.setParameter(1, tester.getTesterId());
+          query.setParameter(1, user.getUserId());
           tenant = (Tenant) query.uniqueResult();
           session.setAttribute("tenant", tenant);
           // Reload page to update header

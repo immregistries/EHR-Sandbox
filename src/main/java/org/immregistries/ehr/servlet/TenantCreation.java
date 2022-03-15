@@ -11,7 +11,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.ehr.model.Tenant;
-import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.User;
 
 /**
  * Servlet implementation class Tenant_creation
@@ -28,14 +28,14 @@ public class TenantCreation extends HttpServlet {
 
     String name = req.getParameter("tenant_name");
 
-    Tester tester = (Tester) session.getAttribute("tester");
+    User user = (User) session.getAttribute("user");
 
     Tenant newTenant = new Tenant();
     newTenant.setNameDisplay(name);
-    newTenant.setTester(tester);
+    newTenant.setUser(user);
 
-    Query query = dataSession.createQuery("from Tenant where tester=? and name_display=?");
-    query.setParameter(0, tester);
+    Query query = dataSession.createQuery("from Tenant where user=? and name_display=?");
+    query.setParameter(0, user);
     query.setParameter(1, name);
     Tenant oldTenant = (Tenant) query.uniqueResult();
     if (oldTenant != null){

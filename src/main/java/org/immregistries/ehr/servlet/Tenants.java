@@ -12,7 +12,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.Tenant;
-import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.User;
 
 public class Tenants extends HttpServlet {
 
@@ -46,10 +46,10 @@ public class Tenants extends HttpServlet {
     if (tenantId != null) {
       Tenant tenant;
       Facility facility = (Facility) session.getAttribute("facility");
-      Tester tester = (Tester) session.getAttribute("tester");
-      Query query = dataSession.createQuery("from Tenant where tenantId=? and tester_id=?");
+      User user = (User) session.getAttribute("user");
+      Query query = dataSession.createQuery("from Tenant where tenantId=? and user_id=?");
       query.setParameter(0, Integer.parseInt(tenantId));
-      query.setParameter(1, tester.getTesterId());
+      query.setParameter(1, user.getUserId());
       tenant = (Tenant) query.uniqueResult();
       session.setAttribute("tenant", tenant);
       // reset facility selection
@@ -66,10 +66,10 @@ public class Tenants extends HttpServlet {
       {
         ServletHelper.doStandardHeader(out, req, "Tenant selection");
         session.setAttribute("facility", null);
-        Tester tester = (Tester) session.getAttribute("tester");
+        User user = (User) session.getAttribute("user");
         List<Tenant> tenantList;
-        Query query = dataSession.createQuery("from Tenant where tester=?");
-        query.setParameter(0, tester);
+        Query query = dataSession.createQuery("from Tenant where user=?");
+        query.setParameter(0, user);
         tenantList = query.list();
         String show = req.getParameter(PARAM_SHOW);
         if(req.getParameter("chooseTenant")!=null) {

@@ -121,14 +121,14 @@ public class PatientRecord extends HttpServlet {
     resp.setContentType("text/html");
     PrintWriter out = new PrintWriter(resp.getOutputStream());
     Session dataSession = PopServlet.getDataSession();
-    Tester tester = (Tester) session.getAttribute("tester");
+    User user = (User) session.getAttribute("user");
     Tenant tenant = new Tenant();
     List<Tenant> tenantList = null;
     String tenantId = req.getParameter("paramTenantId");
     if (tenantId != null) {
-      Query query = dataSession.createQuery("from Tenant where tenantId=? and tester_id=?");
+      Query query = dataSession.createQuery("from Tenant where tenantId=? and user_id=?");
       query.setParameter(0, Integer.parseInt(tenantId));
-      query.setParameter(1, tester.getTesterId());
+      query.setParameter(1, user.getUserId());
       tenantList = query.list();
       tenant = tenantList.get(0);
       session.setAttribute("tenant", tenant);

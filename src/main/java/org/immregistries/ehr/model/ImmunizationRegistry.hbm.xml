@@ -6,8 +6,8 @@
 		<id name="immunizationRegistryId" column="immunization_registry_id">
 			<generator class="native" />
 		</id>
-		<many-to-one name="tester" column="tester_id"
-			class="Tester" />
+		<many-to-one name="user" column="user_id"
+			class="User" />
 		<property name="iisHL7Url" column="iis_HL7_url" type="string" />
 		<property name="iisFHIRUrl" column="iis_FHIR_url" type="string" />
 		<property name="iisUsername" column="iis_username"

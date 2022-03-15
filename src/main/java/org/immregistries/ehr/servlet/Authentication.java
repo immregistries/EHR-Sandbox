@@ -15,7 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.immregistries.ehr.SoftwareVersion;
 import org.immregistries.ehr.model.ImmunizationRegistry;
-import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 @SuppressWarnings("serial")
@@ -30,23 +30,23 @@ public class Authentication extends HttpServlet {
     HttpSession session;
 
     Session dataSession = PopServlet.getDataSession();
-    Tester newTester = new Tester();
+    User newUser = new User();
     ImmunizationRegistry newIR = new ImmunizationRegistry();
-    List<Tester> testerList;
+    List<User> userList;
     List<ImmunizationRegistry> IRList;
-    Query query = dataSession.createQuery("from Tester where loginUsername=?");
+    Query query = dataSession.createQuery("from User where username=?");
     String username = req.getParameter("username");
     String password = req.getParameter("pwd");
     String passwordIR = password;
     query.setParameter(0, username);
-    testerList = query.list();
+    userList = query.list();
     int dontRedirect = 0;
-    if (!testerList.isEmpty()) {
+    if (!userList.isEmpty()) {
       // Checking if password matches hash
-      if (BCrypt.checkpw(password, testerList.get(0).getLoginPassword())) {
-        newTester = testerList.get(0);
-        query = dataSession.createQuery("from ImmunizationRegistry where tester=?");
-        query.setParameter(0,newTester);
+      if (BCrypt.checkpw(password, userList.get(0).getPassword())) {
+        newUser = userList.get(0);
+        query = dataSession.createQuery("from ImmunizationRegistry where user=?");
+        query.setParameter(0,newUser);
         IRList = query.list();
         newIR = IRList.get(0);
       } else {
@@ -59,18 +59,18 @@ public class Authentication extends HttpServlet {
 
       // hashing new password
       password = BCrypt.hashpw(password, BCrypt.gensalt(5));
-      // Creating new tester/user
+      // Creating new user/user
       newIR.setIisUsername(username);
       newIR.setIisPassword(passwordIR);
-      newTester.setLoginUsername(username);
-      newTester.setLoginPassword(password);
+      newUser.setUsername(username);
+      newUser.setPassword(password);
       Transaction transaction = dataSession.beginTransaction();
-      dataSession.save(newTester);
+      dataSession.save(newUser);
       transaction.commit();
       newIR.setIisFacilityId(username);
       newIR.setIisHL7Url("https://florence.immregistries.org/iis-sandbox/soap");
       newIR.setIisFHIRUrl("https://florence.immregistries.org/iis-sandbox/fhir");
-      newIR.setTester(newTester);
+      newIR.setUser(newUser);
       Transaction transaction2 = dataSession.beginTransaction();
       dataSession.save(newIR);
       transaction2.commit();
@@ -87,7 +87,7 @@ public class Authentication extends HttpServlet {
       //setting session to expiry in 30 mins
       session.setMaxInactiveInterval(30*60);
 
-      session.setAttribute("tester", newTester);
+      session.setAttribute("user", newUser);
       session.setAttribute("IR", newIR);
 
       resp.sendRedirect("tenants");

@@ -6,7 +6,7 @@ public class ImmunizationRegistry implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int immunizationRegistryId = 0;
-    private Tester tester = null;
+    private User user = null;
     private String iisHL7Url = "";
     private String iisFHIRUrl = "";
     private String iisUsername = "";
@@ -21,12 +21,12 @@ public class ImmunizationRegistry implements Serializable {
         this.immunizationRegistryId = immunizationRegistryId;
     }
 
-    public Tester getTester() {
-        return tester;
+    public User getUser() {
+        return user;
     }
 
-    public void setTester(Tester tester) {
-        this.tester = tester;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getIisHL7Url() {

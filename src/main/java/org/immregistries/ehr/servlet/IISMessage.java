@@ -13,7 +13,7 @@ import org.immregistries.ehr.HL7printer;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.ImmunizationRegistry;
 import org.immregistries.ehr.model.Patient;
-import org.immregistries.ehr.model.Tester;
+import org.immregistries.ehr.model.User;
 import org.immregistries.ehr.model.Vaccine;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
@@ -68,7 +68,7 @@ public class IISMessage extends HttpServlet {
       {
         ServletHelper.doStandardHeader(out, req, "IIS messaging");
         HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
-        Tester tester = (Tester) session.getAttribute("tester");
+        User user = (User) session.getAttribute("user");
         Facility facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient") ;
         ImmunizationRegistry IR = (ImmunizationRegistry) session.getAttribute("IR");

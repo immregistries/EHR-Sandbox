@@ -6,7 +6,7 @@ public class Tenant implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int tenantId = 0;
-    private Tester tester = null;
+    private User user = null;
     private String nameDisplay = "";
 
     public int getTenantId() {
@@ -17,12 +17,12 @@ public class Tenant implements Serializable {
         this.tenantId = tenantId;
     }
 
-    public Tester getTester() {
-        return tester;
+    public User getUser() {
+        return user;
     }
 
-    public void setTester(Tester tester) {
-        this.tester = tester;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getNameDisplay() {

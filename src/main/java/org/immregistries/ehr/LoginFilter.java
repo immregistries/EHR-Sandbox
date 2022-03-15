@@ -29,7 +29,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
         String path =  request.getRequestURI();
-        if ((session == null || session.getAttribute("tester") == null) && !path.endsWith("authentication") ) {
+        if ((session == null || session.getAttribute("user") == null) && !path.endsWith("authentication") ) {
             response.sendRedirect(request.getContextPath() + "/authentication"); 
             // No logged-in user found, so redirect to login page.
         } else {

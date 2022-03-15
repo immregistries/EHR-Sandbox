@@ -13,33 +13,33 @@ CREATE TABLE `clinician` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE `tester` (
-  `tester_id` int(11) NOT NULL AUTO_INCREMENT,
-  `login_username` varchar(250) NOT NULL,
-  `login_password` varchar(250) NOT NULL,
-  PRIMARY KEY (`tester_id`)
+CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(250) NOT NULL,
+  `password` varchar(250) NOT NULL,
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `immunization_registry` (
   `immunization_registry_id` int(11) NOT NULL AUTO_INCREMENT,
-  `tester_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `iis_HL7_url` varchar(250) NOT NULL,
   `iis_FHIR_url` varchar(250) NOT NULL,
   `iis_username` varchar(250) NOT NULL,
   `iis_facility_id` varchar(250) NOT NULL,
   `iis_password` varchar(250) NOT NULL,
   PRIMARY KEY (`immunization_registry_id`),
-  KEY `tester_id` (`tester_id`),
-  CONSTRAINT `tester_ibfk_1` FOREIGN KEY (`tester_id`) REFERENCES `tester` (`tester_id`)
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `silo` (
   `silo_id` int(11) NOT NULL AUTO_INCREMENT,
-  `tester_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `name_display` varchar(250) NOT NULL,
   PRIMARY KEY (`silo_id`),
-  KEY `tester_id` (`tester_id`),
-  CONSTRAINT `silo_ibfk_1` FOREIGN KEY (`tester_id`) REFERENCES `tester` (`tester_id`)
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `silo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `facility` (
