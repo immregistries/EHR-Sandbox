@@ -1,5 +1,5 @@
 <div class="grid-container">
-  <mat-grid-list cols="2" rowHeight="350px">
+  <mat-grid-list cols="4" rowHeight="800px">
     <mat-grid-tile *ngFor="let card of cards | async" [colspan]="card.cols" [rowspan]="card.rows">
       <mat-card class="dashboard-card">
         <mat-card-header>
@@ -16,6 +16,9 @@
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
           <app-authentication-form *ngIf="card.title=='Authentication'"></app-authentication-form>
+          <app-tenant-list *ngIf="card.title=='Tenants'"></app-tenant-list>
+          <app-facility-list *ngIf="card.title=='Facilities'"></app-facility-list>
+          <app-patient-list *ngIf="card.title=='Patients'"></app-patient-list>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

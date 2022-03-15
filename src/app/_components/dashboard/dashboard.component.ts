@@ -14,17 +14,17 @@ export class DashboardComponent {
       if (matches) {
         return [
           { title: 'Authentication', cols: 1, rows: 1 },
-          { title: 'Card 2', cols: 1, rows: 1 },
-          { title: 'Card 3', cols: 1, rows: 1 },
-          { title: 'Card 4', cols: 1, rows: 1 }
+          { title: 'Tenants', cols: 1, rows: 1 },
+          { title: 'Facilities', cols: 1, rows: 1 },
+          { title: 'Patients', cols: 1, rows: 1 }
         ];
       }
 
       return [
         { title: 'Authentication', cols: 1, rows: 1 },
-        { title: 'Card 2', cols: 1, rows: 1 },
-        { title: 'Card 3', cols: 1, rows: 2 },
-        { title: 'Card 4', cols: 1, rows: 1 }
+        { title: 'Tenants', cols: 1, rows: 1 },
+        { title: 'Facilities', cols: 1, rows: 1 },
+        { title: 'Patients', cols: 1, rows: 1 }
       ];
     })
   );

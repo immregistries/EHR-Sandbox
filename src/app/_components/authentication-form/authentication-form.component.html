@@ -1,9 +1,9 @@
-<form class="example-form" [formGroup]="authFormGroup" (ngSubmit)="onSubmit(authFormGroup.value)">
+<form class="example-form" [formGroup]="authFormGroup" (ngSubmit)="onSubmit()">
   <div>
 
     <mat-form-field  appearance="fill">
       <mat-label>Username</mat-label>
-      <input matInput type=text  formControlName="username">
+      <input matInput type=text  formControlName="username" [ngModel]="currentUsername">
     </mat-form-field>
   </div>
   <div>
@@ -12,6 +12,7 @@
       <input matInput type=password formControlName="password" >
     </mat-form-field>
   </div>
-  <button mat-button type=submit > Sign in </button>
+  <button mat-raised-button type=submit (submit)="onSubmit()" > Sign in </button>
 </form>
 
+<a *ngIf="currentUsername">Current User : {{currentUsername}}</a>

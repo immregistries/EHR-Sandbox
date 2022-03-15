@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Facility, Tenant } from '../_model/rest';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { SettingsService } from './settings.service';
 
 const httpOptions = {
@@ -14,25 +14,46 @@ const httpOptions = {
 })
 export class FacilityService {
 
-  constructor(private http: HttpClient, private settings: SettingsService ) { }
+  private facility: BehaviorSubject<Facility>;
 
-  getFacilities(): Observable<Facility> {
-    return this.http.get<Facility>(
-      this.settings.getApiUrl() + '/facilities', httpOptions);
+  public getObservableTenant(): Observable<Facility> {
+    return this.facility.asObservable();
   }
 
-  getFacility(tenantId: number, facilityId: number): Observable<Facility> {
-    return this.http.get<Facility>(
-      this.settings.getApiUrl()
-      + '/tenants/' + tenantId
-      + '/facilities/' + facilityId, httpOptions);
+  public getFacility(): Facility {
+    return this.facility.value
   }
 
-  postFacility(tenantId: number, facility: Facility): Observable<Facility> {
-    return this.http.post<Facility>(
-      this.settings.getApiUrl()
-      + '/tenants/' + tenantId
-      + '/facilities',
+  public getFacilityId(): number {
+    return this.facility.value.id
+  }
+
+  public setFacility(facility: Facility) {
+    this.facility.next(facility)
+  }
+
+  constructor(private http: HttpClient, private settings: SettingsService ) {
+    this.facility= new BehaviorSubject<Facility>({id:-1})
+   }
+
+  readFacilities(tenantId: number): Observable<Facility[]> {
+    if (tenantId > 0){
+      return this.http.get<Facility[]>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
+        httpOptions);
+    }
+    return of([])
+  }
+
+  readFacility(tenantId: number, facilityId: number): Observable<Facility> {
+    return this.http.get<Facility>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}`,
+      httpOptions);
+  }
+
+  postFacility(tenantId: number, facility: Facility): Observable<string> {
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
       facility, httpOptions);
   }
 }

@@ -28,7 +28,13 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TenantListComponent } from './_components/_lists/tenant-list/tenant-list.component';
 import { FacilityListComponent } from './_components/_lists/facility-list/facility-list.component';
-
+import {MatDialogModule} from '@angular/material/dialog';
+import { TenantCreationComponent } from './_components/_dialogs/tenant-creation/tenant-creation.component';
+import { authInterceptorProviders } from './_interceptors/auth.interceptor';
+import { TenantService } from './_services/tenant.service';
+import { FacilityService } from './_services/facility.service';
+import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
+import { PatientListComponent } from './_components/_lists/patient-list/patient-list.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +43,10 @@ import { FacilityListComponent } from './_components/_lists/facility-list/facili
     AuthenticationFormComponent,
     PatientFormComponent,
     TenantListComponent,
-    FacilityListComponent
+    FacilityListComponent,
+    TenantCreationComponent,
+    FacilityCreationComponent,
+    PatientListComponent
   ],
   imports: [
     BrowserModule,
@@ -60,8 +69,9 @@ import { FacilityListComponent } from './_components/_lists/facility-list/facili
     MatTabsModule,
     MatSnackBarModule,
     MatNativeDateModule,
+    MatDialogModule,
   ],
-  providers: [SettingsService, PatientService],
+  providers: [SettingsService, PatientService, TenantService, FacilityService, authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

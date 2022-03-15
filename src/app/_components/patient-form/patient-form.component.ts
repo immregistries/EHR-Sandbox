@@ -28,7 +28,7 @@ export class PatientFormComponent implements OnInit {
    }
 
   fillRandom(): void {
-    this.patientService.getRandom().subscribe((res) => this.patient = res)
+    this.patientService.readRandom().subscribe((res) => this.patient = res)
   }
 
   save(): void {
@@ -36,32 +36,33 @@ export class PatientFormComponent implements OnInit {
       this._snackBar.open("Tenant Missing", "close")
     } else if (!this.facility) {
       this._snackBar.open("Facility Missing", "close")
-
     } else {
-      this.patientService.postPatient(this.tenant,this.facility, this.patient);
+      this.patientService.postPatient(this.tenant.id, this.facility.id, this.patient);
     }
-
   }
 
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
 
   ngOnInit(): void {
-    this.patientService.getEmpty().subscribe((res) => this.patient = res)
+    this.patientService.readEmpty().subscribe((res) => this.patient = res)
   }
 
 
   formCards: FormCard[] =  [
-    {title: 'Name',  cols: 2, rows: 2, forms: [
+    {title: 'Name',  cols: 3, rows: 1, forms: [
       {type: formType.text, title: 'First name', attribute: 'nameFirst'},
       {type: formType.text, title: 'Middle name', attribute: 'nameMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'nameLast'},
+
+    ]},
+    {title: 'Birth',  cols: 3, rows: 1, forms: [
       {type: formType.date, title: 'Birth date', attribute: 'birthDate'},
       {type: formType.text, title: 'Birth order', attribute: 'birthOrder'},
       {type: formType.text, title: 'Birth flag', attribute: 'birthFlag'},
 
     ]},
-    {title: 'Address', cols: 4, rows: 2, forms: [
+    {title: 'Address', cols: 3, rows: 2, forms: [
       {type: formType.text, title: 'Line 1', attribute: 'addressLine1'},
       {type: formType.text, title: 'Line 2', attribute: 'addressLine2'},
       {type: formType.text, title: 'Zip code', attribute: 'addressCity'},
