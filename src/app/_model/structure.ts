@@ -10,6 +10,7 @@ export interface FormCard {
 export enum formType {
   text = 'text',
   date = 'date',
+  short = 'short',
   boolean = 'boolean',
   textarea = 'textarea',
 }

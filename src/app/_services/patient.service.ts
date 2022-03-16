@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { Facility, Patient, Tenant } from '../_model/rest';
+import { Patient} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 
@@ -87,21 +87,21 @@ export class PatientService {
    * @param patient
    * @returns Post patient Response
    */
-  quickPostPatient(patient: Patient): Observable<Patient>  {
+  quickPostPatient(patient: Patient): Observable<string>  {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.postPatient(tenantId,facilityId,patient)
   }
 
-  postPatient(tenantId: number, facilityId: number, patient: Patient): Observable<Patient> {
-    if (tenantId > 0 && facilityId > 0){
-      return this.http.post<Patient>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
-        patient, httpOptions);
-    } else {
-      throw throwError(() => new Error("No facility selected"))
-    }
-  }
+  // postPatient(tenantId: number, facilityId: number, patient: Patient): Observable<string> {
+  //   if (tenantId > 0 && facilityId > 0){
+  //     return this.http.post<string>(
+  //       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
+  //       patient, httpOptions);
+  //   } else {
+  //     throw throwError(() => new Error("No facility selected"))
+  //   }
+  // }
 
   putPatient(tenantId: number, facilityId: number, patient: Patient,): Observable<Patient> {
     return this.http.put<Patient>(

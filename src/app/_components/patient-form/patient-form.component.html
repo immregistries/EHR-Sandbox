@@ -12,19 +12,24 @@
             <mat-card-content class="dashboard-card-content">
               <ng-container *ngFor="let form of card.forms" [ngSwitch]="form.type">
 
-                <mat-form-field  appearance="fill" style="max-width: 46%" *ngSwitchCase="'text'">
+                <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput  type="{{form.type}}"  [(ngModel)]="patient[form.attribute]">
                 </mat-form-field>
 
-                <mat-form-field  appearance="fill" style="max-width: 46%" *ngSwitchCase="'date'">
+                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
                   <mat-label>{{form.title}}</mat-label>
-                  <input matInput [matDatepicker]="picker" [ngModel]="asDate(patient[form.attribute])" (ngModelChange)="patient[form.attribute] = $event" >
+                  <input matInput [matDatepicker]="picker" [(ngModel)]="asDate(patient[form.attribute])" (ngModelChange)="patient[form.attribute] = $event" >
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
 
-                <mat-form-field  appearance="fill" style="max-width: 46%" *ngSwitchDefault>
+                <div *ngSwitchCase="'short'">
+                  <mat-label class="short-label">{{form.title}} </mat-label>
+                  <input  class="short-text-field" [(ngModel)]="patient[form.attribute]">
+                </div>
+
+                <mat-form-field  appearance="fill" class="text-field"  *ngSwitchDefault>
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput  [(ngModel)]="patient[form.attribute]">
                 </mat-form-field>
@@ -34,21 +39,19 @@
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="1">
+        <!-- <mat-grid-tile [colspan]="2" [rowspan]="1">
           <mat-card>
             <mat-card-content class="dashboard-card-content">
               <button mat-raised-button (click)="fillRandom()">Fill with test information</button>
               <button mat-raised-button (click)="save()">Save</button>
             </mat-card-content>
           </mat-card>
-        </mat-grid-tile>
+        </mat-grid-tile> -->
       </mat-grid-list>
     </div>
   </mat-tab>
-
-
-  <mat-tab label="Form type 2"><app-dashboard></app-dashboard></mat-tab>
-  <mat-tab label="Uncontrained patient form"> Form 3 </mat-tab>
+  <mat-tab label="Form type 2">test</mat-tab>
+  <mat-tab label="Unconstrained patient form"> Form 3 </mat-tab>
 </mat-tab-group>
 
 
