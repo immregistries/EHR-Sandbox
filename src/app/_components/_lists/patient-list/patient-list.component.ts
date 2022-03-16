@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { switchMap } from 'rxjs';
 import { Facility, Patient } from 'src/app/_model/rest';
 import { FacilityService } from 'src/app/_services/facility.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { TenantService } from 'src/app/_services/tenant.service';
-import { PatientFormComponent } from '../../patient-form/patient-form.component';
+import { PatientCreationComponent } from '../../_dialogs/patient-creation/patient-creation.component';
 
 @Component({
   selector: 'app-patient-list',
@@ -13,8 +14,8 @@ import { PatientFormComponent } from '../../patient-form/patient-form.component'
 })
 export class PatientListComponent implements OnInit {
 
-  @Input() list?: Patient[];
-  @Input() facility: Facility = {id: -1};
+  @Input() public list?: Patient[];
+  @Input() facility?: Facility;
 
   selectedOption?: Patient;
 
@@ -25,30 +26,23 @@ export class PatientListComponent implements OnInit {
     private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.tenantService.getObservableTenant().subscribe(tenant => {
-      this.patientService.readAllPatients(this.tenantService.getTenantId()).subscribe((res) => {
-        this.list = res
-      })
-    })
-    this.facilityService.getObservableTenant().subscribe(facility =>{
+    this.facilityService.getObservableTenant().pipe(switchMap(facility =>{
       this.facility = facility
-      if (!facility){
-        this.tenantService.getObservableTenant().subscribe(tenant => {
-          this.patientService.readAllPatients(this.tenantService.getTenantId()).subscribe((res) => {
-            this.list = res
-          })
+      if (!facility || facility.id <= 0){
+        this.tenantService.getObservableTenant().subscribe((tenant) => {
+          return this.patientService.readAllPatients(this.tenantService.getTenantId())
         })
+        return this.patientService.readAllPatients(this.tenantService.getTenantId())
       } else {
-        this.patientService.readPatients(this.tenantService.getTenantId(), facility.id).subscribe((res) => {
-          this.list = res
-        })
+        return this.patientService.readPatients(this.tenantService.getTenantId(), facility.id)
       }
+    })).subscribe((res) => {
+      this.list = res
     })
-    // this.tenantService.readTenants().subscribe((res) => {this.list = res})
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(PatientFormComponent, {
+    const dialogRef = this.dialog.open(PatientCreationComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '90%',
@@ -56,8 +50,13 @@ export class PatientListComponent implements OnInit {
       panelClass: 'full-screen-modal'
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-      this.ngOnInit();
+      // console.log(`Dialog result: ${result}`);
+      if (this.facility){
+        console.log(`Facility: ${this.facility.id}`);
+        this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((res) => {
+          this.list = res
+        })
+      }
     });
   }
 

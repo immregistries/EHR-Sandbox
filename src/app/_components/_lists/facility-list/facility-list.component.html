@@ -1,5 +1,5 @@
-<mat-selection-list #facilities  [multiple]="false">
-  <mat-list-option *ngFor="let facility of list" (click)="onSelection(facility)">
+<mat-selection-list #facilities  [multiple]="false" [ngModel]="[selectedOption?.id]">
+  <mat-list-option *ngFor="let facility of list" (click)="onSelection(facility)" [value]="facility.id">
     {{facility.nameDisplay}}
     <mat-divider></mat-divider>
   </mat-list-option>

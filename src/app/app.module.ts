@@ -35,6 +35,7 @@ import { TenantService } from './_services/tenant.service';
 import { FacilityService } from './_services/facility.service';
 import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
 import { PatientListComponent } from './_components/_lists/patient-list/patient-list.component';
+import { PatientCreationComponent } from './_components/_dialogs/patient-creation/patient-creation.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,7 +47,8 @@ import { PatientListComponent } from './_components/_lists/patient-list/patient-
     FacilityListComponent,
     TenantCreationComponent,
     FacilityCreationComponent,
-    PatientListComponent
+    PatientListComponent,
+    PatientCreationComponent
   ],
   imports: [
     BrowserModule,
@@ -71,7 +73,13 @@ import { PatientListComponent } from './_components/_lists/patient-list/patient-
     MatNativeDateModule,
     MatDialogModule,
   ],
-  providers: [SettingsService, PatientService, TenantService, FacilityService, authInterceptorProviders],
+  providers: [
+    SettingsService,
+    PatientService,
+    TenantService,
+    FacilityService,
+    authInterceptorProviders,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

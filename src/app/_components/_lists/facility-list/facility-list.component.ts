@@ -14,38 +14,39 @@ export class FacilityListComponent implements OnInit {
 
   @Input() list?: Facility[];
 
-  constructor(public facilityService: FacilityService, public tenantService: TenantService, public dialog: MatDialog) { }
+  constructor(public facilityService: FacilityService,
+    public tenantService: TenantService,
+    public dialog: MatDialog) { }
 
   private tenant?: Tenant;
 
-  selectedOption?: Facility;
+  private selectedOption?: Facility;
 
   ngOnInit(): void {
-    this.tenant = this.tenantService.getTenant()
-    this.facilityService.readFacilities(this.tenant.id)
-        .subscribe((res) => {this.list = res})
     this.tenantService.getObservableTenant().subscribe(tenant => {
       this.tenant = tenant
-      this.facilityService.readFacilities(tenant.id)
-        .subscribe((res) => {this.list = res})
+      this.selectedOption = undefined
+      this.facilityService.setFacility({id: -1})
+      this.facilityService.readFacilities(tenant.id).subscribe((res) => {
+          this.list = res
+        })
     });
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(FacilityCreationComponent);
-
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
       this.ngOnInit();
     });
   }
 
   onSelection(event: Facility) {
     if (this.facilityService.getFacilityId() == event.id) { // unselect
-      this.facilityService.setFacility({id: -1})
+      this.selectedOption = {id: -1}
     } else {
-      this.facilityService.setFacility(event)
+      this.selectedOption = event
     }
+    this.facilityService.setFacility(this.selectedOption)
   }
 
 }

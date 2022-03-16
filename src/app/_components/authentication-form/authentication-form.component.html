@@ -1,9 +1,8 @@
 <form class="example-form" [formGroup]="authFormGroup" (ngSubmit)="onSubmit()">
   <div>
-
     <mat-form-field  appearance="fill">
       <mat-label>Username</mat-label>
-      <input matInput type=text  formControlName="username" [ngModel]="currentUsername">
+      <input matInput type=text  formControlName="username">
     </mat-form-field>
   </div>
   <div>
