@@ -12,7 +12,9 @@ import { TenantService } from 'src/app/_services/tenant.service';
 })
 export class TenantCreationComponent implements OnInit {
 
-  constructor(private tenantService: TenantService, private _snackBar: MatSnackBar, public _dialogRef: MatDialogRef<TenantCreationComponent>) { }
+  constructor(private tenantService: TenantService,
+    private _snackBar: MatSnackBar,
+    public _dialogRef: MatDialogRef<TenantCreationComponent>) { }
 
   ngOnInit(): void {
   }
