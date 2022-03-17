@@ -93,15 +93,15 @@ export class PatientService {
     return this.postPatient(tenantId,facilityId,patient)
   }
 
-  // postPatient(tenantId: number, facilityId: number, patient: Patient): Observable<string> {
-  //   if (tenantId > 0 && facilityId > 0){
-  //     return this.http.post<string>(
-  //       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
-  //       patient, httpOptions);
-  //   } else {
-  //     throw throwError(() => new Error("No facility selected"))
-  //   }
-  // }
+  postPatient(tenantId: number, facilityId: number, patient: Patient): Observable<string> {
+    if (tenantId > 0 && facilityId > 0){
+      return this.http.post<string>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
+        patient, httpOptions);
+    } else {
+      throw throwError(() => new Error("No facility selected"))
+    }
+  }
 
   putPatient(tenantId: number, facilityId: number, patient: Patient,): Observable<Patient> {
     return this.http.put<Patient>(

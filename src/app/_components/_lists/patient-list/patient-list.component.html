@@ -3,7 +3,9 @@
     {{patient.nameFirst + " " + patient.nameLast}}
     <mat-divider></mat-divider>
   </mat-list-option>
-    <button mat-mini-fab *ngIf=" facility.id > 0" (click)="openDialog()" color="primary" >
+  <div *ngIf="facility" >
+    <button mat-mini-fab *ngIf="facility.id > 0" (click)="openDialog()" color="primary" >
       <mat-icon>add</mat-icon>
     </button>
+  </div >
 </mat-selection-list>

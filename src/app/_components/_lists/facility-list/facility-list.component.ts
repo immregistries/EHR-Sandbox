@@ -20,7 +20,7 @@ export class FacilityListComponent implements OnInit {
 
   private tenant?: Tenant;
 
-  private selectedOption?: Facility;
+  selectedOption?: Facility;
 
   ngOnInit(): void {
     this.tenantService.getObservableTenant().subscribe(tenant => {
