@@ -21,6 +21,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTableModule} from '@angular/material/table';
 
 import { TenantService } from './_services/tenant.service';
 import { FacilityService } from './_services/facility.service';
@@ -41,6 +42,7 @@ import { TenantListComponent } from './_components/_lists/tenant-list/tenant-lis
 import { FacilityListComponent } from './_components/_lists/facility-list/facility-list.component';
 import { PatientListComponent } from './_components/_lists/patient-list/patient-list.component';
 import { VaccinationFormComponent } from './_components/_forms/vaccination-form/vaccination-form.component';
+import { PatientFreeFormComponent } from './_components/_forms/patient-free-form/patient-free-form.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,8 @@ import { VaccinationFormComponent } from './_components/_forms/vaccination-form/
     FacilityCreationComponent,
     PatientListComponent,
     PatientCreationComponent,
-    VaccinationFormComponent
+    VaccinationFormComponent,
+    PatientFreeFormComponent
   ],
   imports: [
     BrowserModule,
@@ -79,6 +82,7 @@ import { VaccinationFormComponent } from './_components/_forms/vaccination-form/
     MatSnackBarModule,
     MatNativeDateModule,
     MatDialogModule,
+    MatTableModule,
   ],
   providers: [
     SettingsService,

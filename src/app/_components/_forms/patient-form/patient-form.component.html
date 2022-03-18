@@ -1,7 +1,7 @@
 <mat-tab-group>
   <mat-tab label="Patient information">
     <div class="grid-container">
-      <mat-grid-list cols="6" rowHeight="150px">
+      <mat-grid-list cols="6" rowHeight="170px">
         <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header *ngIf="card.title">
@@ -51,7 +51,7 @@
     </div>
   </mat-tab>
   <mat-tab label="Form type 2">test</mat-tab>
-  <mat-tab label="Unconstrained patient form"> Form 3 </mat-tab>
+  <mat-tab label="Patient free form"> <app-patient-free-form [(patient)]="patient" [formCards]="formCards"></app-patient-free-form> </mat-tab>
 </mat-tab-group>
 
 

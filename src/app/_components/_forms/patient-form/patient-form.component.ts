@@ -3,9 +3,7 @@ import { Facility, Patient, Tenant } from 'src/app/_model/rest';
 import { FormCard, formType } from 'src/app/_model/structure';
 import { PatientService } from 'src/app/_services/patient.service';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-patient-form',
@@ -54,12 +52,12 @@ export class PatientFormComponent implements OnInit {
       {type: formType.short, title: 'Order', attribute: 'birthOrder'},
       {type: formType.short, title: 'Flag', attribute: 'birthFlag'},
     ]},
-    {title: 'identity',cols: 2, rows: 1, forms: [
+    {title: 'Identity',cols: 1, rows: 1, forms: [
       {type: formType.short, title: 'Sex', attribute: 'sex'},
       {type: formType.text, title: 'Ethnicity', attribute: 'ethnicity'},
-      {type: formType.text, title: 'race', attribute: 'race'},
+      {type: formType.text, title: 'Race', attribute: 'race'},
     ]},
-    {title: 'Address', cols: 3, rows: 2, forms: [
+    {title: 'Address', cols: 1, rows: 2, forms: [
       {type: formType.text, title: 'Line 1', attribute: 'addressLine1'},
       {type: formType.text, title: 'Line 2', attribute: 'addressLine2'},
       {type: formType.text, title: 'Zip code', attribute: 'addressCity'},
