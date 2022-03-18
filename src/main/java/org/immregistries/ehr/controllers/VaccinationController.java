@@ -24,15 +24,15 @@ public class VaccinationController {
     @Autowired
     PatientRepository patientRepository;
 
-    @GetMapping("/{vaccinationEventId}")
-    public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() int patientId,
-                                                       @PathVariable() int vaccinationEventId){
-        return vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationEventId);
-    }
 
     @GetMapping()
-    public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() int patientId){
+    public Iterable<VaccinationEvent> vaccinationEvents(@PathVariable() int patientId) {
         return vaccinationEventRepository.findByPatientId(patientId);
+    }
+
+    @GetMapping("/{vaccinationId}")
+    public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() int vaccinationId) {
+        return  vaccinationEventRepository.findById(vaccinationId);
     }
 
     @PostMapping()
