@@ -28,7 +28,7 @@ import { PatientService } from './_services/patient.service';
 import { SettingsService } from './_services/settings.service';
 import { authInterceptorProviders } from './_interceptors/auth.interceptor';
 
-import { PatientFormComponent } from './_components/patient-form/patient-form.component';
+import { PatientFormComponent } from './_components/_forms/patient-form/patient-form.component';
 import { DashboardComponent } from './_components/dashboard/dashboard.component';
 import { AuthenticationFormComponent } from './_components/authentication-form/authentication-form.component';
 import { NavigationComponent } from './_components/navigation/navigation.component';
@@ -40,6 +40,7 @@ import { TenantCreationComponent } from './_components/_dialogs/tenant-creation/
 import { TenantListComponent } from './_components/_lists/tenant-list/tenant-list.component';
 import { FacilityListComponent } from './_components/_lists/facility-list/facility-list.component';
 import { PatientListComponent } from './_components/_lists/patient-list/patient-list.component';
+import { VaccinationFormComponent } from './_components/_forms/vaccination-form/vaccination-form.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { PatientListComponent } from './_components/_lists/patient-list/patient-
     TenantCreationComponent,
     FacilityCreationComponent,
     PatientListComponent,
-    PatientCreationComponent
+    PatientCreationComponent,
+    VaccinationFormComponent
   ],
   imports: [
     BrowserModule,

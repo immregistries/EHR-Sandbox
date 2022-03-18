@@ -18,7 +18,7 @@ export class FacilityListComponent implements OnInit {
     public tenantService: TenantService,
     public dialog: MatDialog) { }
 
-  private tenant?: Tenant;
+  tenant?: Tenant;
 
   selectedOption?: Facility;
 

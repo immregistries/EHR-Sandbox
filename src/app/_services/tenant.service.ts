@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Tenant } from '../_model/rest';
 import { BehaviorSubject, EMPTY, from, Observable } from 'rxjs';
 import { SettingsService } from './settings.service';
@@ -50,10 +50,10 @@ export class TenantService {
       `${this.settings.getApiUrl()}/tenants/${tenantId}`, httpOptions);
   }
 
-  postTenant(tenant: Tenant): Observable<Tenant> {
-    return this.http.post<Tenant>(
+  postTenant(tenant: Tenant): Observable<HttpResponse<string>> {
+    return this.http.post<string>(
       this.settings.getApiUrl()
       + '/tenants',
-      tenant, httpOptions);
+      tenant, {observe: 'response'});
   }
 }

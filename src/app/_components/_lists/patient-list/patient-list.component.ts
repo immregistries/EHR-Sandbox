@@ -50,9 +50,7 @@ export class PatientListComponent implements OnInit {
       panelClass: 'full-screen-modal'
     });
     dialogRef.afterClosed().subscribe(result => {
-      // console.log(`Dialog result: ${result}`);
       if (this.facility){
-        console.log(`Facility: ${this.facility.id}`);
         this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((res) => {
           this.list = res
         })

@@ -3,7 +3,10 @@
     {{facility.nameDisplay}}
     <mat-divider></mat-divider>
   </mat-list-option>
-  <button mat-mini-fab (click)="openDialog()" color="primary" >
-    <mat-icon>add</mat-icon>
-  </button>
+  <div *ngIf="tenant">
+    <button mat-mini-fab *ngIf="tenant.id > 0" (click)="openDialog()" color="primary" >
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
 </mat-selection-list>

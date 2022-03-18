@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,10 +23,18 @@ export class PatientCreationComponent implements OnInit {
   }
 
   save(): void {
-    this.patientService.quickPostPatient( this.patient).subscribe(
-      (res: string) => {
-      this._snackBar.open(`${res}`, 'close')
-      this._dialogRef.close(true)
+    this.patientService.quickPostPatient( this.patient).subscribe({
+      next: (res: HttpResponse<string>) => {
+        console.log(res)
+        if (res.body) {
+          this._snackBar.open(res.body, 'close')
+        }
+        this._dialogRef.close(true)
+      },
+      error: (err) => {
+        console.log(err.error)
+        this._snackBar.open(`Error : ${err.error.error}`, 'close')
+      }
     });
   }
 

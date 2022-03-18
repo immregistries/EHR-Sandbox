@@ -33,7 +33,6 @@ export class AuthenticationFormComponent implements OnInit {
   onSubmit(){
     this.user.username = this.authFormGroup.value['username']
     this.user.password = this.authFormGroup.value['password']
-    console.log(this.user)
     this.authService.login(this.user).subscribe({
       next: (data) => {
         this.tokenStorage.saveToken(data.accessToken);

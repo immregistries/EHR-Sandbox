@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -27,15 +28,17 @@ export class FacilityCreationComponent implements OnInit {
   create() {
     this.newFacility = {id: -1, nameDisplay: this.newFacilityForm.value}
     this.facilityService.postFacility(this.tenantService.getTenantId(), this.newFacility).subscribe({
-      next: (res) => {
-        this._snackBar.open(`${res}`, 'close')
+      next: (res: HttpResponse<string>) => {
+        if (res.body) {
+          this._snackBar.open(res.body, 'close')
+        }
         this._dialogRef.close(true)
       },
       error: (err) => {
+        console.log(err.error)
         this._snackBar.open(`Error : ${err.error.error}`, 'close')
-        console.error(err.error.error)
       }
-    })
+    });
   }
 
 }

@@ -1,5 +1,5 @@
-<mat-selection-list #patients  [multiple]="false">
-  <mat-list-option *ngFor="let patient of list" (click)="onSelection(patient)">
+<mat-selection-list #patients  [multiple]="false" [ngModel]="[selectedOption?.id]">
+  <mat-list-option *ngFor="let patient of list" (click)="onSelection(patient)" [value]="patient.id">
     {{patient.nameFirst + " " + patient.nameLast}}
     <mat-divider></mat-divider>
   </mat-list-option>

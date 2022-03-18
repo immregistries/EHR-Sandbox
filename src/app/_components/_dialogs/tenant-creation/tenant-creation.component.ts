@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -25,15 +26,21 @@ export class TenantCreationComponent implements OnInit {
     this.newTenant = {id: -1, nameDisplay: this.newTenantForm.value}
     // this.tenantService.getTenant(1).subscribe((res) => {this._snackBar.open(`${res}`)})
     this.tenantService.postTenant(this.newTenant).subscribe({
-      next: (res) => {
-        this._snackBar.open(`${res}`, 'close')
+      next: (res: HttpResponse<string>) => {
+        if (res.body) {
+          this._snackBar.open(res.body, 'close')
+        }
         this._dialogRef.close(true)
       },
       error: (err) => {
-        this._snackBar.open(`Error : ${err.error.error}`, 'close')
-        console.error(err.error.error)
+        console.log(err)
+        if (err.error.error) {
+          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+        } else {
+          this._snackBar.open(`Error : ${err.message}`, 'close')
+        }
       }
-    })
+    });
   }
 
 }

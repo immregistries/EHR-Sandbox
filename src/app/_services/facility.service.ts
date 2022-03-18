@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Facility, Tenant } from '../_model/rest';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -51,9 +51,9 @@ export class FacilityService {
       httpOptions);
   }
 
-  postFacility(tenantId: number, facility: Facility): Observable<string> {
+  postFacility(tenantId: number, facility: Facility): Observable<HttpResponse<string>> {
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
-      facility, httpOptions);
+      facility, {observe: 'response'})
   }
 }
