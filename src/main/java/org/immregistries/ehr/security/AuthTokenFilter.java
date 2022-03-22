@@ -48,10 +48,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
-                authorized = isAuthorizedURI(request.getContextPath().toString());
+                authorized = isAuthorizedURI(request.getContextPath());
 
             } else { // for registration no authorization needed
-                filterChain.doFilter(request, response);
+                authorized = true;
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
@@ -87,10 +87,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
                 if (!tenantRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
                     return  false;
-//                  throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id");
                 }
                 break;
             }
+        }
+        if (i == path.length){
+            return true;
         }
         int j;
         for (j=i; j < path.length; j++) {
