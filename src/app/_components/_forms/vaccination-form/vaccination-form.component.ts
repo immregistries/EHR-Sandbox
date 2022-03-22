@@ -4,6 +4,7 @@ import { Code, FormCard, formType } from 'src/app/_model/structure';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
+import { VaccinationService } from 'src/app/_services/vaccination.service';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -19,7 +20,12 @@ export class VaccinationFormComponent implements OnInit {
   vaccinationChange = new EventEmitter<VaccinationEvent>();
 
   constructor(private breakpointObserver: BreakpointObserver,
-    private _snackBar: MatSnackBar, public codeMapsService: CodeMapsService) {this.refreshCodeMaps()}
+    private _snackBar: MatSnackBar,
+    public codeMapsService: CodeMapsService,
+    private vaccinationService: VaccinationService,
+    ) {
+      this.refreshCodeMaps()
+    }
 
   ngOnInit(): void {
     this.codeMapsService.refreshCodeMaps()
@@ -38,6 +44,12 @@ export class VaccinationFormComponent implements OnInit {
   getCodes() {
     this.codeMapsService.readCodeMaps().subscribe((res) => {
       console.log(res)
+    })
+  }
+
+  fillRandom(): void {
+    this.vaccinationService.readRandom().subscribe((res) => {
+      this.vaccination=res
     })
   }
 

@@ -32,7 +32,7 @@ import { authInterceptorProviders } from './_interceptors/auth.interceptor';
 
 import { PatientFormComponent } from './_components/_forms/patient-form/patient-form.component';
 import { DashboardComponent } from './_components/dashboard/dashboard.component';
-import { AuthenticationFormComponent } from './_components/authentication-form/authentication-form.component';
+import { AuthenticationFormComponent } from './_components/_forms/authentication-form/authentication-form.component';
 import { NavigationComponent } from './_components/navigation/navigation.component';
 
 import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
@@ -45,6 +45,8 @@ import { PatientListComponent } from './_components/_lists/patient-list/patient-
 import { VaccinationFormComponent } from './_components/_forms/vaccination-form/vaccination-form.component';
 import { PatientFreeFormComponent } from './_components/_forms/patient-free-form/patient-free-form.component';
 import { CodeMapsService, CodeMapsServiceFactory } from './_services/code-maps.service';
+import { VaccinationCreationComponent } from './_components/_dialogs/vaccination-creation/vaccination-creation.component';
+import { VaccinationTableComponent } from './_components/_lists/vaccination-table/vaccination-table.component';
 
 
 @NgModule({
@@ -61,7 +63,9 @@ import { CodeMapsService, CodeMapsServiceFactory } from './_services/code-maps.s
     PatientListComponent,
     PatientCreationComponent,
     VaccinationFormComponent,
-    PatientFreeFormComponent
+    PatientFreeFormComponent,
+    VaccinationCreationComponent,
+    VaccinationTableComponent
   ],
   imports: [
     BrowserModule,

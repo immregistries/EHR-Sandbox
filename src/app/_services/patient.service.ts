@@ -7,8 +7,7 @@ import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }
-  )
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 const postOptions = {
   observe: 'response'

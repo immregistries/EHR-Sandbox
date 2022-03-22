@@ -1,10 +1,9 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Patient } from 'src/app/_model/rest';
 import { PatientService } from 'src/app/_services/patient.service';
-
 @Component({
   selector: 'app-patient-creation',
   templateUrl: './patient-creation.component.html',
@@ -16,7 +15,8 @@ export class PatientCreationComponent implements OnInit {
 
   constructor(private patientService: PatientService,
     private _snackBar: MatSnackBar,
-    public _dialogRef: MatDialogRef<PatientCreationComponent>) { }
+    public _dialogRef: MatDialogRef<PatientCreationComponent>,) {
+     }
 
   fillRandom(): void {
     this.patientService.readRandom().subscribe((res) => this.patient = res)
