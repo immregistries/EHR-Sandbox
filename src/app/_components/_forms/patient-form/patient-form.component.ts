@@ -41,23 +41,23 @@ export class PatientFormComponent implements OnInit {
 
 
   formCards: FormCard[] =  [
-    {title: 'Name',  cols: 3, rows: 1, forms: [
+    {title: 'Name',  cols: 3, rows: 1, patientForms: [
       {type: formType.text, title: 'First name', attribute: 'nameFirst'},
       {type: formType.text, title: 'Middle name', attribute: 'nameMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'nameLast'},
       {type: formType.text, title: 'Mother maiden name', attribute: 'motherMaiden'},
     ]},
-    {title: 'Birth',  cols: 1, rows: 1, forms: [
+    {title: 'Birth',  cols: 1, rows: 1, patientForms: [
       {type: formType.date, title: 'Birth date', attribute: 'birthDate'},
       {type: formType.short, title: 'Order', attribute: 'birthOrder'},
       {type: formType.short, title: 'Flag', attribute: 'birthFlag'},
     ]},
-    {title: 'Identity',cols: 1, rows: 1, forms: [
+    {title: 'Identity',cols: 1, rows: 1, patientForms: [
       {type: formType.short, title: 'Sex', attribute: 'sex'},
       {type: formType.text, title: 'Ethnicity', attribute: 'ethnicity'},
       {type: formType.text, title: 'Race', attribute: 'race'},
     ]},
-    {title: 'Address', cols: 1, rows: 2, forms: [
+    {title: 'Address', cols: 1, rows: 2, patientForms: [
       {type: formType.text, title: 'Line 1', attribute: 'addressLine1'},
       {type: formType.text, title: 'Line 2', attribute: 'addressLine2'},
       {type: formType.text, title: 'Zip code', attribute: 'addressCity'},
@@ -66,27 +66,27 @@ export class PatientFormComponent implements OnInit {
       {type: formType.text, title: 'State', attribute: 'addressState'},
       {type: formType.text, title: 'Country', attribute: 'addressCountry'},
     ]},
-    {title: 'Contact', cols: 1, rows: 1, forms: [
+    {title: 'Contact', cols: 1, rows: 1, patientForms: [
       {type: formType.text, title: 'Phone', attribute: 'phone'},
       {type: formType.text, title: 'Email', attribute: 'email'},
     ]},
-    {title: 'Death', cols: 1, rows: 1, forms: [
+    {title: 'Death', cols: 1, rows: 1, patientForms: [
       {type: formType.short, title: 'Death flag', attribute: 'deathFlag'},
       {type: formType.date, title: 'Death date', attribute: 'deathDate'},
     ]},
-    {title: 'Protection', cols: 1, rows: 1, forms: [
+    {title: 'Protection', cols: 1, rows: 1, patientForms: [
       {type: formType.short, title: 'Indicator', attribute: 'deathFlag'},
       {type: formType.date, title: 'Date', attribute: 'deathDate'},
     ]},
-    {title: 'Registry', cols: 1, rows: 1, forms: [
+    {title: 'Registry', cols: 1, rows: 1, patientForms: [
       {type: formType.short, title: 'Indicator', attribute: 'deathFlag'},
       {type: formType.date, title: 'Date', attribute: 'deathDate'},
     ]},
-    {title: 'Publicity', cols: 1, rows: 1, forms: [
+    {title: 'Publicity', cols: 1, rows: 1, patientForms: [
       {type: formType.short, title: 'Indicator', attribute: 'deathFlag'},
       {type: formType.date, title: 'Date', attribute: 'deathDate'},
     ]},
-    {title: 'Guardian',cols: 3, rows: 1, forms: [
+    {title: 'Guardian',cols: 3, rows: 1, patientForms: [
       {type: formType.text, title: 'First name', attribute: 'guardianFirst'},
       {type: formType.text, title: 'Middle name', attribute: 'guardianMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'guardianLast'},

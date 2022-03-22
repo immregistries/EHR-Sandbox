@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +22,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
+import {MatSelectModule} from '@angular/material/select';
 
 import { TenantService } from './_services/tenant.service';
 import { FacilityService } from './_services/facility.service';
@@ -43,6 +44,8 @@ import { FacilityListComponent } from './_components/_lists/facility-list/facili
 import { PatientListComponent } from './_components/_lists/patient-list/patient-list.component';
 import { VaccinationFormComponent } from './_components/_forms/vaccination-form/vaccination-form.component';
 import { PatientFreeFormComponent } from './_components/_forms/patient-free-form/patient-free-form.component';
+import { CodeMapsService, CodeMapsServiceFactory } from './_services/code-maps.service';
+
 
 @NgModule({
   declarations: [
@@ -83,12 +86,15 @@ import { PatientFreeFormComponent } from './_components/_forms/patient-free-form
     MatNativeDateModule,
     MatDialogModule,
     MatTableModule,
+    MatSelectModule,
   ],
   providers: [
     SettingsService,
     PatientService,
     TenantService,
     FacilityService,
+    CodeMapsService,
+    // { provide: APP_INITIALIZER, useFactory: CodeMapsServiceFactory, deps: [CodeMapsService], multi: true },
     authInterceptorProviders,
   ],
   bootstrap: [AppComponent]

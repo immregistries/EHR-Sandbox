@@ -10,7 +10,7 @@
               </mat-card-title>
             </mat-card-header>
             <mat-card-content class="dashboard-card-content">
-              <ng-container *ngFor="let form of card.forms" [ngSwitch]="form.type">
+              <ng-container *ngFor="let form of card.patientForms" [ngSwitch]="form.type">
 
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>

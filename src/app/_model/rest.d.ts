@@ -102,10 +102,10 @@ export interface User {
 
 export interface VaccinationEvent {
   id?: number;
-  enteringClinician?: Clinician;
-  orderingClinician?: Clinician;
-  administeringClinician?: Clinician;
-  vaccine?: Vaccine;
+  enteringClinician: Clinician;
+  orderingClinician: Clinician;
+  administeringClinician: Clinician;
+  vaccine: Vaccine;
 }
 
 export interface Vaccine {
