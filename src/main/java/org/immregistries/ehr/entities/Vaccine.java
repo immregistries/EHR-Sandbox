@@ -1,6 +1,7 @@
 package org.immregistries.ehr.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "vaccine")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Vaccine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

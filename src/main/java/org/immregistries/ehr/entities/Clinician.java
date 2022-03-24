@@ -1,7 +1,8 @@
 package org.immregistries.ehr.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.github.javafaker.Faker;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "clinician")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Clinician {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,15 +27,18 @@ public class Clinician {
     private String nameFirst = "";
 
     @OneToMany(mappedBy = "enteringClinician")
-    @JsonBackReference
+//    @JsonManagedReference("enteringClinician")
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "orderingClinician")
-    @JsonBackReference
+//    @JsonManagedReference("orderingClinician")
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsOrdering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "administeringClinician")
-    @JsonBackReference
+//    @JsonManagedReference("administeringClinician")
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     public Set<VaccinationEvent> getVaccinationEvents() {

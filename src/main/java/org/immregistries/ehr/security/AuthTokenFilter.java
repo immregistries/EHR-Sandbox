@@ -59,6 +59,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         if (authorized) {
             filterChain.doFilter(request, response);
         } else {
+            logger.error("Unauthorized request");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
         }
     }
@@ -79,32 +80,38 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         int vaccinationId = -1;
         // Parsing the URI
         int i;
+//        return true;
         for (i = 0; i < path.length; i++) {
             if ( path[i].equals("tenants")){
                 try {
                     tenantId = Integer.parseInt(path[i+1]);
-                } catch (NumberFormatException | NullPointerException e) {
+                    if (!tenantRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
+                        return  false;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    break;
+                } catch (NullPointerException e){ // If uri stops at /tenants
+                    return true;
                 }
-                if (!tenantRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
-                    return  false;
-                }
-                break;
             }
-        }
-        if (i == path.length){
-            return true;
         }
         int j;
         for (j=i; j < path.length; j++) {
             if ( path[i].equals("facilities")){
                 try {
                     facilityId = Integer.parseInt(path[j+1]);
-                } catch (NumberFormatException | NullPointerException e) {
+                    if (!facilityRepository.existsByTenantIdAndId(tenantId,facilityId)){
+                        return  false;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    logger.error(e.getMessage());
+                    break;
+                } catch (NullPointerException e){ // If uri stops at /facilities
+                    logger.error(e.getMessage());
+                    return true;
                 }
-                if (!facilityRepository.existsByTenantIdAndId(tenantId,facilityId)){
-                    return  false;
-                }
-                break;
             }
         }
         int k;
@@ -112,12 +119,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if ( path[i].equals("patients")){
                 try {
                     patientId = Integer.parseInt(path[k+1]);
-                } catch (NumberFormatException | NullPointerException e) {
+                    if (!patientRepository.existsByFacilityIdAndId(facilityId,patientId)){
+                        return  false;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    logger.error(e.getMessage());
+                    break;
+                } catch (NullPointerException e){ // If uri stops at /patients
+                    logger.error(e.getMessage());
+                    return true;
                 }
-                if (!patientRepository.existsByFacilityIdAndId(facilityId,patientId)){
-                    return  false;
-                }
-                break;
             }
         }
         int l;
@@ -125,12 +137,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if ( path[i].equals("vaccinations")){
                 try {
                     vaccinationId = Integer.parseInt(path[l+1]);
-                } catch (NumberFormatException | NullPointerException e) {
+                    if (!vaccinationEventRepository.existsByPatientIdAndId(patientId,vaccinationId)){
+                        return  false;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    break;
+                } catch (NullPointerException e){ // If uri stops at /patients
+                    return true;
                 }
-                if (!vaccinationEventRepository.existsByPatientIdAndId(patientId,vaccinationId)){
-                    return  false;
-                }
-                break;
             }
         }
         return true;

@@ -83,4 +83,24 @@ public class PatientController {
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
     }
 
+    @PutMapping("")
+    public Patient putPatient(@PathVariable() int tenantId,
+                              @PathVariable() int facilityId,
+                              @RequestBody Patient patient) {
+        // patient data check + flavours
+        Optional<Tenant> tenant = tenantRepository.findById(tenantId);
+        Optional<Facility> facility = facilityRepository.findById(facilityId);
+        Optional<Patient> oldPatient = patientRepository.findByFacilityIdAndId(facilityId,patient.getId());
+        if (!tenant.isPresent() || !facility.isPresent() || !oldPatient.isPresent()){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
+        }
+//        patient.setTenant(tenant.get());
+//        patient.setFacility(facility.get());
+        patient.setUpdatedDate(new Date());
+        Patient newEntity = patientRepository.save(patient);
+        return newEntity;
+//        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
+    }
+
 }

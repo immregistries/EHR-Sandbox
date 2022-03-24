@@ -29,6 +29,7 @@ public class Facility {
     private String nameDisplay = "";
 
     @OneToMany(mappedBy = "administeringFacility")
+//    @JsonManagedReference("facility-vaccinationEvent")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 

@@ -135,7 +135,7 @@ public class Patient {
     private String guardianRelationship = "";
 
     @OneToMany(mappedBy = "patient")
-    @JsonIgnore
+    @JsonIgnore()
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "patient")

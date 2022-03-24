@@ -38,7 +38,7 @@ public class MainController {
     public String codeMaps() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CodeMap codeMap = CodeMapManager.getCodeMap();
-        logger.info("Code Maps fetched");
+//        logger.info("Code Maps fetched");
         return gson.toJson(codeMap);
     }
 }
