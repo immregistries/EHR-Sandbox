@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Facility, Tenant } from '../_model/rest';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { SettingsService } from './settings.service';
+import { PatientService } from './patient.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -16,7 +17,7 @@ export class FacilityService {
 
   private facility: BehaviorSubject<Facility>;
 
-  public getObservableTenant(): Observable<Facility> {
+  public getObservableFacility(): Observable<Facility> {
     return this.facility.asObservable();
   }
 
@@ -32,8 +33,10 @@ export class FacilityService {
     this.facility.next(facility)
   }
 
-  constructor(private http: HttpClient, private settings: SettingsService ) {
-    this.facility= new BehaviorSubject<Facility>({id:-1})
+  constructor(private http: HttpClient,
+    private settings: SettingsService,
+    ) {
+    this.facility = new BehaviorSubject<Facility>({id:-1})
    }
 
   readFacilities(tenantId: number): Observable<Facility[]> {

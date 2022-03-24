@@ -1,7 +1,7 @@
 <mat-tab-group>
   <mat-tab label="New entry">
     <div class="grid-container">
-      <mat-grid-list cols="5" rowHeight="160px">
+      <mat-grid-list cols="5" rowHeight="190px">
         <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header *ngIf="card.title">
@@ -16,12 +16,12 @@
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </mat-form-field>
-                <mat-form-field  appearance="outline"  *ngSwitchCase="'select'">
+                <mat-form-field  appearance="outline"  class="select-field" *ngSwitchCase="'select'">
                   <mat-label>{{form.title}}</mat-label>
                   <mat-select  [(ngModel)]="vaccination.vaccine[form.attribute]">
                     <mat-option [value]="null">-{{form.title}}-</mat-option>
                     <mat-option *ngFor="let option of codeMapsService.getCodeMap(form.codeMapLabel) | keyvalue" [value]="option.key" >
-                      {{option.value.value + ': ' + option.value.label}}
+                      {{option.value.label + ' -- ' + form.codeLabel + ': ' + option.value.value}}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -35,50 +35,39 @@
                   <mat-label class="short-label">{{form.title}} </mat-label>
                   <input  class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </div>
-
-                <mat-form-field  appearance="fill" class="text-field"  *ngSwitchDefault>
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput  [(ngModel)]="vaccination.vaccine[form.attribute]">
-                </mat-form-field>
-
+                <div *ngSwitchDefault></div>
               </ng-container>
-              <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
 
+              <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination[form.role][form.attribute]">
                 </mat-form-field>
-
-
-
                 <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput [matDatepicker]="picker" [ngModel]="asDate(vaccination[form.role][form.attribute])" (ngModelChange)="vaccination[form.role][form.attribute] = $event" >
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
-
                 <div *ngSwitchCase="'short'">
                   <mat-label class="short-label">{{form.title}} </mat-label>
                   <input  class="short-text-field" [(ngModel)]="vaccination[form.role][form.attribute]">
                 </div>
-
                 <div *ngSwitchDefault></div>
-
               </ng-container>
 
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="1">
+        <!-- <mat-grid-tile [colspan]="1" [rowspan]="1">
           <mat-card>
             <mat-card-content class="dashboard-card-content">
               <button mat-raised-button (click)="getCodes()">codemaps</button>
               <button mat-raised-button (click)="fillRandom()">fill</button>
-              <!-- <button mat-raised-button (click)="save()">Save</button> -->
+              <button mat-raised-button (click)="save()">Save</button>
             </mat-card-content>
           </mat-card>
-        </mat-grid-tile>
+        </mat-grid-tile> -->
       </mat-grid-list>
     </div>
   </mat-tab>

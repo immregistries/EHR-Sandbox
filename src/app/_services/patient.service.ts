@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { Patient} from '../_model/rest';
 import { FacilityService } from './facility.service';
@@ -20,10 +20,37 @@ const postOptions = {
  */
 export class PatientService {
 
+  private patient: BehaviorSubject<Patient>;
+
+  public getObservablePatient(): Observable<Patient> {
+    return this.patient.asObservable();
+  }
+
+  public getPatient(): Patient {
+    return this.patient.value
+  }
+
+  public getPatientId(): number {
+    if (this.patient.value.id) {
+      return this.patient.value.id
+    } else {
+      return -1
+    }
+  }
+
+  public setPatient(patient: Patient) {
+    this.patient.next(patient)
+  }
+
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) { }
+    private tenantService: TenantService ) {
+      this.patient = new BehaviorSubject<Patient>({id:-1})
+      this.facilityService.getObservableFacility().subscribe((facility) => {
+        this.setPatient({})
+      })
+    }
 
   /**
    *
@@ -107,10 +134,20 @@ export class PatientService {
     }
   }
 
+  quickPutPatient(patient: Patient): Observable<Patient>  {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.putPatient(tenantId,facilityId,patient)
+  }
+
   putPatient(tenantId: number, facilityId: number, patient: Patient,): Observable<Patient> {
-    return this.http.put<Patient>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
-      patient, httpOptions);
+    if (tenantId > 0 && facilityId > 0 ){
+      return this.http.put<Patient>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
+        patient, httpOptions);
+    } else {
+      throw throwError(() => new Error("No facility selected"))
+    }
   }
 
 

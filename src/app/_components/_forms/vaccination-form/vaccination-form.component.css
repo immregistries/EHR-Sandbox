@@ -33,6 +33,11 @@ mat-raised-button {
   max-width: 10em;
 }
 
+.select-field {
+  /* max-width: 125px; */
+  width: 100%;
+}
+
 .text-field {
   max-width: 45%;
   min-width: 10em;

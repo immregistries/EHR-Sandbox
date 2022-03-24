@@ -60,7 +60,7 @@ export class PatientFormComponent implements OnInit {
     {title: 'Address', cols: 1, rows: 2, patientForms: [
       {type: formType.text, title: 'Line 1', attribute: 'addressLine1'},
       {type: formType.text, title: 'Line 2', attribute: 'addressLine2'},
-      {type: formType.text, title: 'Zip code', attribute: 'addressCity'},
+      {type: formType.text, title: 'Zip code', attribute: 'addressZip'},
       {type: formType.text, title: 'City', attribute: 'addressCity'},
       {type: formType.text, title: 'County', attribute: 'addressCountyParish'},
       {type: formType.text, title: 'State', attribute: 'addressState'},

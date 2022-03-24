@@ -26,6 +26,12 @@ export class VaccinationService {
       this.settings.getApiUrl() + '/random_vaccination', httpOptions);
   }
 
+  quickReadVaccinations(patientId: number): Observable<VaccinationEvent[]>{
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.readVaccinations(tenantId,facilityId,patientId)
+  }
+
   readVaccinations(tenantId: number, facilityId: number, patientId: number): Observable<VaccinationEvent[]>{
     if (tenantId > 0 && facilityId > 0 && patientId > 0){
       return this.http.get<VaccinationEvent[]>(
@@ -62,4 +68,21 @@ export class VaccinationService {
       throw throwError(() => new Error("No patient selected"))
     }
   }
+
+  quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent>  {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.putVaccination(tenantId,facilityId,patientId,vaccination)
+  }
+
+  putVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent>   {
+    if (tenantId > 0 && facilityId > 0 && patientId > 0){
+      return this.http.put<VaccinationEvent>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
+        vaccination, httpOptions);
+    } else {
+      throw throwError(() => new Error("No patient selected"))
+    }
+  }
+
 }

@@ -1,5 +1,4 @@
 import { Clinician, Patient, VaccinationEvent, Vaccine } from "./rest";
-
 export interface Code {
   "value": string,
   "label": string,
@@ -11,12 +10,11 @@ export interface Code {
   "conceptType"?: string,
   "testAge"?: string
 }
-
 export interface FormCard {
   title?: string,
-  cols?: number,
+  cols?: number, // dimensions of the card
   rows?: number,
-  patientForms?: PatientForm[],
+  patientForms?: PatientForm[],  // form fields for each specific objects
   vaccinationForms?: VaccinationForm[],
   vaccineForms?: VaccineForm[],
   clinicianForms?: ClinicianForm[],
@@ -30,15 +28,13 @@ export enum formType {
   select = 'select',
   textarea = 'textarea',
 }
-
 export interface Form {
   type: formType,
   title: string,
-  // options?: string[],
   attribute: string,
   codeMapLabel?: string,
+  codeLabel?: string,
 }
-
 export interface PatientForm extends Form{
   attribute: keyof Patient,
 }

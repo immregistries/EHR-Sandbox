@@ -28,7 +28,9 @@ export class TenantService {
   }
 
   public setTenant(tenant: Tenant) {
-    this.facilityService.setFacility({id: -1})
+    if (tenant.id != this.tenant.value.id){
+      this.facilityService.setFacility({id: -1})
+    }
     this.tenant.next(tenant)
   }
 

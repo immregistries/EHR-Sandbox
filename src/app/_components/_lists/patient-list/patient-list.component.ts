@@ -26,10 +26,10 @@ export class PatientListComponent implements OnInit {
     private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.facilityService.getObservableTenant().pipe(switchMap(facility =>{
+    this.facilityService.getObservableFacility().pipe(switchMap(facility =>{
       this.facility = facility
       if (!facility || facility.id <= 0){
-        this.tenantService.getObservableTenant().subscribe((tenant) => {
+        this.tenantService.getObservableTenant().subscribe(() => {
           return this.patientService.readAllPatients(this.tenantService.getTenantId())
         })
         return this.patientService.readAllPatients(this.tenantService.getTenantId())
@@ -43,11 +43,11 @@ export class PatientListComponent implements OnInit {
 
   openDialog() {
     const dialogRef = this.dialog.open(PatientCreationComponent, {
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      height: '90%',
-      width: '90%',
-      panelClass: 'full-screen-modal'
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'full-screen-modal',
     });
     dialogRef.afterClosed().subscribe(result => {
       if (this.facility){
@@ -59,7 +59,14 @@ export class PatientListComponent implements OnInit {
   }
 
   onSelection(event: Patient) {
-    this.selectedOption = event
+    if (this.selectedOption && this.selectedOption.id == event.id){
+      this.selectedOption = undefined
+      this.patientService.setPatient({})
+    } else {
+      this.selectedOption = event
+      this.patientService.setPatient(event)
+    }
+
   }
 
 }

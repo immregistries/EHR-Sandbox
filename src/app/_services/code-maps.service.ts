@@ -62,7 +62,7 @@ export class CodeMapsService {
   }
 
   load() {
-    this.codeBaseMap= new BehaviorSubject<{[key:string]: {[key:string]: Code}}>({})
+    this.codeBaseMap = new BehaviorSubject<{[key:string]: {[key:string]: Code}}>({})
     return new Promise((resolve, reject) => {
       this.refreshCodeMaps()
     })

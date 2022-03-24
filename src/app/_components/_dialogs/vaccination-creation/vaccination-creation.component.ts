@@ -19,15 +19,20 @@ export class VaccinationCreationComponent implements OnInit {
   }
   public patientId: number = -1
 
+  public isEditionMode: boolean = false
+
   constructor(private _snackBar: MatSnackBar,
     public _dialogRef: MatDialogRef<VaccinationCreationComponent>,
     private vaccinationService: VaccinationService,
-    @Inject(MAT_DIALOG_DATA) public data: {patientId: number}) {
+    @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent}) {
       this.patientId = data.patientId;
+      if (data.vaccination){
+        this.vaccination=data.vaccination
+        this.isEditionMode = true
+      }
   }
 
   ngOnInit(): void {
-
   }
 
   fillRandom(): void {
@@ -37,19 +42,35 @@ export class VaccinationCreationComponent implements OnInit {
   }
 
   save(): void {
-    this.vaccinationService.quickPostVaccination( this.patientId, this.vaccination).subscribe({
-      next: (res: HttpResponse<string>) => {
-        console.log(res)
-        if (res.body) {
-          this._snackBar.open(res.body, 'close')
+    // todo if is edition
+    if (this.isEditionMode == true){
+      // TODO PUT implementation
+      this.vaccinationService.quickPutVaccination( this.patientId, this.vaccination).subscribe({
+        next: (res: VaccinationEvent) => {
+          console.log(res)
+          this._dialogRef.close(true)
+        },
+        error: (err) => {
+          console.log(err.error)
+          this._snackBar.open(`Error : ${err.error.error}`, 'close')
         }
-        this._dialogRef.close(true)
-      },
-      error: (err) => {
-        console.log(err.error)
-        this._snackBar.open(`Error : ${err.error.error}`, 'close')
-      }
-    });
+      });
+    } else {
+      this.vaccinationService.quickPostVaccination( this.patientId, this.vaccination).subscribe({
+        next: (res: HttpResponse<string>) => {
+          console.log(res)
+          if (res.body) {
+            this._snackBar.open(res.body, 'close')
+          }
+          this._dialogRef.close(true)
+        },
+        error: (err) => {
+          console.log(err.error)
+          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+        }
+      });
+    }
+
   }
 
 }
