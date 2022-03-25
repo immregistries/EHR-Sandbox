@@ -1,7 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FacilityService } from 'src/app/_services/facility.service';
 import { Hl7Service } from 'src/app/_services/hl7.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
 

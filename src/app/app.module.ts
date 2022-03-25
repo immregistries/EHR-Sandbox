@@ -48,6 +48,7 @@ import { CodeMapsService, CodeMapsServiceFactory } from './_services/code-maps.s
 import { VaccinationCreationComponent } from './_components/_dialogs/vaccination-creation/vaccination-creation.component';
 import { VaccinationTableComponent } from './_components/_lists/vaccination-table/vaccination-table.component';
 import { Hl7MessagingComponent } from './_components/_dialogs/hl7-messaging/hl7-messaging.component';
+import { FhirMessagingComponent } from './_components/_dialogs/fhir-messaging/fhir-messaging.component';
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import { Hl7MessagingComponent } from './_components/_dialogs/hl7-messaging/hl7-
     PatientFreeFormComponent,
     VaccinationCreationComponent,
     VaccinationTableComponent,
-    Hl7MessagingComponent
+    Hl7MessagingComponent,
+    FhirMessagingComponent
   ],
   imports: [
     BrowserModule,

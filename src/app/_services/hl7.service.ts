@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { VaccinationEvent} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 

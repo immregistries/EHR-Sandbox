@@ -1,0 +1,29 @@
+<mat-grid-list cols="2" rowHeight="100%">
+  <mat-grid-tile>
+    <mat-form-field style="width: 100%;" appearance="fill">
+      <mat-label>Patient Fhir Resource</mat-label>
+      <textarea matInput style="height: 90%;" placeholder="Ex. It makes me feel..." [(ngModel)]="patientResource"> </textarea>
+    </mat-form-field>
+    <p>{{patientAnswer}}</p>
+    <p style="color: red;">{{patientError}}</p>
+    <mat-dialog-actions align="end">
+      <button mat-raised-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
+    </mat-dialog-actions>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field style="width: 100%;" appearance="fill">
+      <mat-label>Vaccination Fhir Resource</mat-label>
+      <textarea matInput style="height: 90%;" placeholder="Ex. It makes me feel..." [(ngModel)]="vaccinationResource"> </textarea>
+    </mat-form-field>
+    <p>{{vaccinationAnswer}}</p>
+    <p style="color: red;">{{vaccinationError}}</p>
+    <mat-dialog-actions align="end">
+      <button mat-raised-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
+    </mat-dialog-actions>
+  </mat-grid-tile>
+</mat-grid-list>
+
+
+
