@@ -1,19 +1,29 @@
 package org.immregistries.ehr.controllers;
 
 
-import org.immregistries.ehr.entities.Patient;
-import org.immregistries.ehr.entities.VaccinationEvent;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
+import org.hl7.fhir.r4.model.Immunization;
+import org.immregistries.ehr.EhrApiApplication;
+import org.immregistries.ehr.entities.*;
+import org.immregistries.ehr.logic.HL7printer;
+import org.immregistries.ehr.logic.ImmunizationHandler;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.repositories.ClinicianRepository;
-import org.immregistries.ehr.repositories.PatientRepository;
-import org.immregistries.ehr.repositories.VaccinationEventRepository;
-import org.immregistries.ehr.repositories.VaccineRepository;
+import org.immregistries.ehr.repositories.*;
+import org.immregistries.ehr.security.AuthTokenFilter;
+import org.immregistries.ehr.security.UserDetailsServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import org.immregistries.smm.tester.connectors.Connector;
+import org.immregistries.smm.tester.connectors.SoapConnector;
 
 import java.net.URI;
 import java.util.Optional;
@@ -31,8 +41,12 @@ public class VaccinationController {
     ClinicianRepository clinicianRepository;
     @Autowired
     VaccineRepository vaccineRepository;
+    @Autowired
+    ImmunizationRegistryRepository immunizationRegistryRepository;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
-
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @GetMapping()
     public Iterable<VaccinationEvent> vaccinationEvents(@PathVariable() int patientId) {
@@ -75,6 +89,61 @@ public class VaccinationController {
                 .buildAndExpand(newEntity.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/{vaccinationId}/vxu")
+    public ResponseEntity<String> hl7v2(@PathVariable() int vaccinationId) {
+        GsonJsonParser gson = new GsonJsonParser();
+        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
+        if (!vaccinationEvent.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
+        }
+        Vaccine vaccine = vaccinationEvent.get().getVaccine();
+        Patient patient = vaccinationEvent.get().getPatient();
+        Facility facility = vaccinationEvent.get().getAdministeringFacility();
+        String vxu = new HL7printer().buildVxu(vaccine,patient,facility);
+        return ResponseEntity.ok( vxu );
+    }
+
+    @PostMapping("/{vaccinationId}/vxu")
+    public ResponseEntity<String>  hl7v2Send(@RequestBody String message) {
+        Connector connector;
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        try {
+            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
+            connector.setUserid(immunizationRegistry.getIisUsername());
+            connector.setPassword(immunizationRegistry.getIisPassword());
+            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
+            return ResponseEntity.ok(connector.submitMessage(message, false));
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            return ResponseEntity.ok("SOAP Error");
+        }
+    }
+
+    @GetMapping("/{vaccinationId}/fhir")
+    public ResponseEntity<String> fhir(@PathVariable() int vaccinationId) {
+        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
+        FhirContext ctx = EhrApiApplication.fhirContext;
+        IParser parser = ctx.newXmlParser().setPrettyPrint(true);
+        if (!vaccinationEvent.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
+        }
+        org.hl7.fhir.r4.model.Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get()) ;
+        String resource = parser.encodeResourceToString(immunization);
+        return ResponseEntity.ok(resource);
+    }
+
+    @PostMapping("/{vaccinationId}/fhir")
+    public ResponseEntity<String>  fhirSend(@RequestBody String message) {
+        IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
+        Immunization immunization = parser.parseResource(Immunization.class,message);
+        //
+        return ResponseEntity.ok(message);
+
     }
 
 

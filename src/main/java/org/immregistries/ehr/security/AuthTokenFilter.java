@@ -57,6 +57,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             logger.error("Cannot set user authentication: {}", e);
         }
         if (authorized) {
+//            logger.error("Authorized request");
             filterChain.doFilter(request, response);
         } else {
             logger.error("Unauthorized request");
@@ -90,6 +91,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     }
                     break;
                 } catch (NumberFormatException e) {
+                    if (i != path.length - 1){
+                        return false;
+                    }
                     break;
                 } catch (NullPointerException e){ // If uri stops at /tenants
                     return true;
@@ -107,10 +111,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     break;
                 } catch (NumberFormatException e) {
                     logger.error(e.getMessage());
+                    if (j != path.length - 1){
+                        return false;
+                    }
                     break;
                 } catch (NullPointerException e){ // If uri stops at /facilities
                     logger.error(e.getMessage());
-                    return true;
+                    break;
                 }
             }
         }
@@ -125,10 +132,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     break;
                 } catch (NumberFormatException e) {
                     logger.error(e.getMessage());
+                    if (k != path.length - 1){
+                        return false;
+                    }
                     break;
                 } catch (NullPointerException e){ // If uri stops at /patients
                     logger.error(e.getMessage());
-                    return true;
+                    break;
                 }
             }
         }
@@ -142,9 +152,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     }
                     break;
                 } catch (NumberFormatException e) {
+                    if (l != path.length - 1){
+                        return false;
+                    }
                     break;
                 } catch (NullPointerException e){ // If uri stops at /patients
-                    return true;
+                    logger.error(e.getMessage());
+                    break;
                 }
             }
         }

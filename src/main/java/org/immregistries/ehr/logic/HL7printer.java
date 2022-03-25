@@ -13,6 +13,9 @@ import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.Vaccine;
+import org.immregistries.ehr.security.AuthTokenFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HL7printer {
 
@@ -28,20 +31,6 @@ public class HL7printer {
     private static final String QUERY_TOO_MANY = "TM";
     private static final String QUERY_APPLICATION_ERROR = "AE";
 
-
-    public String buildHL7(Patient vaccination) {
-        StringBuilder sb = new StringBuilder();
-        CodeMap codeMap = new CodeMap();
-        Patient patient = vaccination;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        createMSH("VXU^VO4^VXU_V04", "Tom", sb);
-        sb.append(printQueryPID(patient, new StringBuilder(), sdf, 1) + "\n");
-        sb.append(printQueryNK1(patient, new StringBuilder(), codeMap));
-
-        return sb.toString();
-    }
-
     public String buildVxu(Vaccine vaccination, Patient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
         CodeMap codeMap = CodeMapManager.getCodeMap();
@@ -53,10 +42,9 @@ public class HL7printer {
         int obxSetId = 0;
         int obsSubId = 0;
         {
-            Code cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,
+            Code cvxCode = codeMap.getCodeForCodeset(
+                    CodesetType.VACCINATION_CVX_CODE,
                     vaccination.getVaccineCvxCode());
-            System.out.println(cvxCode);
-            System.out.println(vaccination.getVaccineCvxCode());
             if (cvxCode != null) {
                 printORC(facility, sb, vaccination);
                 sb.append("RXA");
@@ -524,7 +512,7 @@ public class HL7printer {
         return patientRegistryId;
     }
 
-    public void printORC(Facility orgAccess, StringBuilder sb, Vaccine vaccination/*,
+    public void printORC(Facility facility, StringBuilder sb, Vaccine vaccination/*,
       VaccinationEvent vaccinationReported, boolean originalReporter*/) {
 
         sb.append("ORC");
@@ -544,8 +532,8 @@ public class HL7printer {
         sb.append("9999^IIS");
       }*/
         } else {
-            sb.append(orgAccess.getId() + "^"
-                    + orgAccess.getNameDisplay());
+            sb.append(facility.getId() + "^"
+                    + facility.getNameDisplay());
         }
         sb.append("\r");
     }
