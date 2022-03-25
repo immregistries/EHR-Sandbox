@@ -9,6 +9,7 @@ import { Code } from 'src/app/_model/structure';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
+import { Hl7MessagingComponent } from '../../_dialogs/hl7-messaging/hl7-messaging.component';
 import { VaccinationCreationComponent } from '../../_dialogs/vaccination-creation/vaccination-creation.component';
 
 @Component({
@@ -103,6 +104,17 @@ export class VaccinationTableComponent implements AfterViewInit  {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.ngAfterViewInit()
+    });
+  }
+
+  openHl7(element: VaccinationEvent) {
+    const dialogRef = this.dialog.open(Hl7MessagingComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {patientId: this.patientId, vaccinationId: element.id},
     });
   }
 

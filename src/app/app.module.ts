@@ -47,6 +47,7 @@ import { PatientFreeFormComponent } from './_components/_forms/patient-free-form
 import { CodeMapsService, CodeMapsServiceFactory } from './_services/code-maps.service';
 import { VaccinationCreationComponent } from './_components/_dialogs/vaccination-creation/vaccination-creation.component';
 import { VaccinationTableComponent } from './_components/_lists/vaccination-table/vaccination-table.component';
+import { Hl7MessagingComponent } from './_components/_dialogs/hl7-messaging/hl7-messaging.component';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import { VaccinationTableComponent } from './_components/_lists/vaccination-tabl
     VaccinationFormComponent,
     PatientFreeFormComponent,
     VaccinationCreationComponent,
-    VaccinationTableComponent
+    VaccinationTableComponent,
+    Hl7MessagingComponent
   ],
   imports: [
     BrowserModule,
