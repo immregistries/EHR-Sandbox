@@ -16,15 +16,11 @@
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </mat-form-field>
-                <mat-form-field  appearance="outline"  class="select-field" *ngSwitchCase="'select'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <mat-select  [(ngModel)]="vaccination.vaccine[form.attribute]">
-                    <mat-option [value]="null">-{{form.title}}-</mat-option>
-                    <mat-option *ngFor="let option of codeMapsService.getCodeMap(form.codeMapLabel) | keyvalue" [value]="option.key" >
-                      {{option.value.label + ' -- ' + form.codeLabel + ': ' + option.value.value}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                <app-select-codebase *ngSwitchCase="'select'"
+                  [(model)]="vaccination.vaccine[form.attribute]"
+                  [form]="form"
+                  class="select-field"
+                  ></app-select-codebase>
                 <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput [matDatepicker]="picker" [ngModel]="asDate(vaccination.vaccine[form.attribute])" (ngModelChange)="vaccination.vaccine[form.attribute] = $event" >

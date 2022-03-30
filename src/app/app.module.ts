@@ -23,6 +23,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatSelectFilterModule } from 'mat-select-filter';
+
 
 import { TenantService } from './_services/tenant.service';
 import { FacilityService } from './_services/facility.service';
@@ -49,6 +52,9 @@ import { VaccinationCreationComponent } from './_components/_dialogs/vaccination
 import { VaccinationTableComponent } from './_components/_lists/vaccination-table/vaccination-table.component';
 import { Hl7MessagingComponent } from './_components/_dialogs/hl7-messaging/hl7-messaging.component';
 import { FhirMessagingComponent } from './_components/_dialogs/fhir-messaging/fhir-messaging.component';
+import { PatientTableComponent } from './_components/_lists/patient-table/patient-table.component';
+import { AuthenticationDialogComponent } from './_components/_dialogs/authentication-dialog/authentication-dialog.component';
+import { SelectCodebaseComponent } from './_components/_forms/select-codebase/select-codebase.component';
 
 
 @NgModule({
@@ -69,7 +75,10 @@ import { FhirMessagingComponent } from './_components/_dialogs/fhir-messaging/fh
     VaccinationCreationComponent,
     VaccinationTableComponent,
     Hl7MessagingComponent,
-    FhirMessagingComponent
+    FhirMessagingComponent,
+    PatientTableComponent,
+    AuthenticationDialogComponent,
+    SelectCodebaseComponent
   ],
   imports: [
     BrowserModule,
@@ -95,6 +104,8 @@ import { FhirMessagingComponent } from './_components/_dialogs/fhir-messaging/fh
     MatDialogModule,
     MatTableModule,
     MatSelectModule,
+    MatSelectFilterModule,
+    MatAutocompleteModule,
   ],
   providers: [
     SettingsService,

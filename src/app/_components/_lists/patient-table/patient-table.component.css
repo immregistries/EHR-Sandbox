@@ -45,3 +45,7 @@ tr.element-row:not(.expanded-row):active {
   /* min-height: 4em; */
   padding: 8px;
 }
+
+.mat-table, .mat-form-field, .mat-input{
+  padding: 0px;
+}

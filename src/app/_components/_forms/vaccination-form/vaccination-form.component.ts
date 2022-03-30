@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Facility, VaccinationEvent, Tenant, Vaccine } from 'src/app/_model/rest';
-import { Code, FormCard, formType } from 'src/app/_model/structure';
+import { Code, Form, FormCard, formType } from 'src/app/_model/structure';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
+import { KeyValue, KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -13,11 +14,16 @@ import { VaccinationService } from 'src/app/_services/vaccination.service';
 })
 export class VaccinationFormComponent implements OnInit {
 
-  private codeBaseMap!:  {[key:string]: {[key:string]: Code}};
   @Input()
   vaccination: VaccinationEvent = {id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {}};
   @Output()
   vaccinationChange = new EventEmitter<VaccinationEvent>();
+
+  private codeBaseMap!:  {[key:string]: {[key:string]: Code}};
+  private codeBaseMapKeys!:  string[];
+  private codeBaseMapValues!:  {[key:string]: Code}[];
+
+  filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
 
   constructor(private breakpointObserver: BreakpointObserver,
     private _snackBar: MatSnackBar,
@@ -28,14 +34,15 @@ export class VaccinationFormComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    this.codeMapsService.refreshCodeMaps()
-    this.refreshCodeMaps()
+    // this.refreshCodeMaps()
   }
 
   refreshCodeMaps() {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       this.codeBaseMap = codeBaseMap
-    });
+      this.codeBaseMapKeys = Object.keys(codeBaseMap)
+      this.codeBaseMapValues = Object.values(codeBaseMap)
+    })
   }
 
   // Allows Date type casting in HTML template

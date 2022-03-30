@@ -10,3 +10,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     transform: translateY(-1.1em) scale(.75);
     width: 133.33333%;
 }
+
+.close-button{
+  position: absolute;
+  float: right;
+  top:-24px;
+  right:-24px;
+}
+

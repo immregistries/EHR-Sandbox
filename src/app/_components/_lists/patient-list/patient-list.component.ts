@@ -66,7 +66,6 @@ export class PatientListComponent implements OnInit {
       this.selectedOption = event
       this.patientService.setPatient(event)
     }
-
   }
 
 }

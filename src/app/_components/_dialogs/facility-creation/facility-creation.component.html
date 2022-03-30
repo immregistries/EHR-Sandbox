@@ -1,9 +1,15 @@
+<h3 mat-dialog-title>
+  Create Facility
+  <button mat-icon-button mat-dialog-close class="close-button">X</button>
+</h3>
 <form>
-  <mat-form-field appearance="fill" >
+  <mat-form-field appearance="fill">
     <mat-label>Facility name</mat-label>
     <input matInput [formControl]=newFacilityForm>
   </mat-form-field>
-  <button mat-mini-fab (click)="create()" color="primary" >
-    <mat-icon>add</mat-icon>
-  </button>
+  <mat-dialog-actions align="end">
+    <button mat-mini-fab (click)="create()" color="primary">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-dialog-actions>
 </form>

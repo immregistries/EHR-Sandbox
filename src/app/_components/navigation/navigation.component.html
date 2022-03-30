@@ -5,8 +5,13 @@
       [opened]="(isHandset$ | async) === false">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item href="home">home</a>
+      <a mat-list-item (click)="login()">Authentication</a>
+      <mat-divider></mat-divider>
+      <a mat-list-item href="home">Home</a>
+      <mat-divider></mat-divider>
       <a mat-list-item href="patient_form">Enter Patient</a>
+      <mat-divider></mat-divider>
+
       <a mat-list-item href="vaccination_form">Enter Vaccination</a>
     </mat-nav-list>
   </mat-sidenav>

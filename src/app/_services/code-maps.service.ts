@@ -26,6 +26,9 @@ export class CodeMapsService {
      }
 
   getObservableCodeBaseMap(): BehaviorSubject<{[key:string]: {[key:string]: Code}}>{
+    if (!this.codeBaseMap){
+      this.refreshCodeMaps()
+    }
     return this.codeBaseMap
   }
 

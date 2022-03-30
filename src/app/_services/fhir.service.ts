@@ -38,7 +38,7 @@ export class FhirService {
 
   postVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
       resource,
       httpOptions);
   }

@@ -35,9 +35,11 @@ export class FhirMessagingComponent implements OnInit {
     this.fhirService.quickGetPatient(this.patientId).subscribe((resource) => {
       this.patientResource = resource
     })
-    this.fhirService.quickGetVaccination(this.patientId,this.vaccinationId).subscribe((resource) => {
-      this.vaccinationResource = resource
-    })
+    if (this.vaccinationId){
+      this.fhirService.quickGetVaccination(this.patientId,this.vaccinationId).subscribe((resource) => {
+        this.vaccinationResource = resource
+      })
+    }
   }
 
   sendPatient() {
