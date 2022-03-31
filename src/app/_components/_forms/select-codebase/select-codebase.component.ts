@@ -40,7 +40,7 @@ export class SelectCodebaseComponent implements OnInit {
     if (codeKey) {
       // let code: Code = this.codeMapsService.getCodeMap(this.form.codeLabel)[codeKey]
       let code: Code = this.codeMap[codeKey]
-      return code.label + ' | ' + this.form.codeLabel + ': ' + code.value
+      return code.label + ' | ' + (this.form.codeLabel? this.form.codeLabel + ': ' : '' ) + code.value
     }
     return codeKey
   }
@@ -48,7 +48,4 @@ export class SelectCodebaseComponent implements OnInit {
   valueChanged(){
     console.log(this.model)
   }
-
-
-
 }

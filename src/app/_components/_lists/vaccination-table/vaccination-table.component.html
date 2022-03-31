@@ -1,7 +1,7 @@
-<mat-form-field appearance="standard" *ngIf="patientId > 0">
-  <mat-label>Search</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
-</mat-form-field>
+<div style="display: flex; align-self: baseline;">
+  <span class="custom-title">{{title}}</span>
+  <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
+</div>
 <table mat-table
        [dataSource]="dataSource" multiTemplateDataRows
        class="mat-elevation-z8"
@@ -10,7 +10,7 @@
   <ng-container matColumnDef="vaccineCvxCode" >
     <th mat-header-cell *matHeaderCellDef> Cvx </th>
     <td mat-cell *matCellDef="let element">
-      {{codeMapsService.getCodeMap("VACCINATION_CVX_CODE")[element.vaccine.vaccineCvxCode].label + ' -- Cvx: ' + element.vaccine.vaccineCvxCode}}
+      {{codeMapsService.getCodeMap("VACCINATION_CVX_CODE")[element.vaccine.vaccineCvxCode].label + ' | Cvx: ' + element.vaccine.vaccineCvxCode}}
     </td>
   </ng-container>
   <ng-container matColumnDef="administeredDate" >

@@ -70,8 +70,8 @@ export class VaccinationFormComponent implements OnInit {
       {type: formType.select, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE", codeLabel: "NDC"},
     ]},
     {title: "Request",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", codeLabel: "code"},
-      {type: formType.select, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE", codeLabel: "code"},
+      {type: formType.select, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", codeLabel: ""},
+      {type: formType.select, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE", codeLabel: ""},
     ]},
     {title: "Lot",rows: 1, cols: 2, vaccineForms: [
       {type: formType.text, title: "Lot number", attribute: "lotNumber"},
@@ -79,12 +79,12 @@ export class VaccinationFormComponent implements OnInit {
       {type: formType.date, title: "Expiration date", attribute: "expirationDate"},
     ]},
     {title: "Funding",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE", codeLabel: "code"},
+      {type: formType.select, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE", codeLabel: ""},
       {type: formType.text, title: "Eligibility", attribute: "fundingEligibility"},
     ]},
     {title: "Injection route",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE"},
-      {type: formType.select, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE"},
+      {type: formType.select, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE", codeLabel: ""},
+      {type: formType.select, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE", codeLabel: ""},
     ]},
     {title: "Injection status",rows: 1, cols: 1, vaccineForms: [
       {type: formType.select, title: "Completion status", attribute: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION", codeLabel: "code"},

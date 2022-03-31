@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { Patient, VaccinationEvent } from 'src/app/_model/rest';
+import { VaccinationEvent } from 'src/app/_model/rest';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
@@ -43,6 +43,7 @@ export class VaccinationCreationComponent implements OnInit {
 
   save(): void {
     // todo if is edition
+    console.log(this.vaccination)
     if (this.isEditionMode == true){
       // TODO PUT implementation
       this.vaccinationService.quickPutVaccination( this.patientId, this.vaccination).subscribe({

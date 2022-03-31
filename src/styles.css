@@ -18,3 +18,35 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   right:-24px;
 }
 
+.form-dialog-container .form-dialog-container .mat-dialog-container {
+  /* add your styles */
+  margin: 2px;
+  padding: 2px;
+  /* max-width: 98vw;
+  max-height: 95vh; */
+  /* height: fit-content;
+  width: 90%; */
+  /* panelClass: 'full-screen-modal', */
+}
+
+.custom-title {
+  margin-right: 1em;
+  font-size: 1.4em;
+  font-weight: 590;
+}
+
+.custom-fab-button {
+  /* display: block; */
+  /* background-color: #eee;
+  width: 1em;
+  height: 1em;
+  font-size: 16px; */
+  /* font; */
+  padding-left: 1em;
+
+}
+.custom-fab-icon {
+  /* font-size: 16px; */
+  /* margin-top: -8px; */
+}
+

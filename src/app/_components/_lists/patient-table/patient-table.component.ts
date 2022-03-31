@@ -27,7 +27,9 @@ export class PatientTableComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<Patient>([]);
   expandedElement: Patient | null = null;
 
-  @Input() facility?: Facility;
+  @Input() facility: Facility = {id: -1};
+  @Input() title: string = 'Patients'
+
 
 
   columns: (keyof Patient)[] = [

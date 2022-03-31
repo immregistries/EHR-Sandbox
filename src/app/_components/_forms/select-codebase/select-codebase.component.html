@@ -3,7 +3,7 @@
   <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field" (ngModelChange)="filterChange($event)">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" >
       <mat-option *ngFor="let option of filteredOptions" [value]="option.value" >
-        {{option.label + ' | ' + form.codeLabel + ': ' + option.value}}
+        {{option.label + ' | ' + (form.codeLabel? form.codeLabel + ': ' : '' ) + option.value}}
       </mat-option>
     </mat-autocomplete>
 </mat-form-field>

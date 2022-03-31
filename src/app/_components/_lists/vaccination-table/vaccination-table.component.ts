@@ -41,6 +41,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
   expandedElement: VaccinationEvent | null = null;
 
   @Input() patientId: number= -1
+  @Input() title: string = 'Vaccination history'
 
   resultsLength = 0;
   isLoadingResults = true;
@@ -82,11 +83,11 @@ export class VaccinationTableComponent implements AfterViewInit  {
 
   openCreation() {
     const dialogRef = this.dialog.open(VaccinationCreationComponent, {
-      maxWidth: '95vw',
+      maxWidth: '98vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '90%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'form-dialog-container',
       data: {patientId: this.patientId},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -96,7 +97,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
 
   openEdition(element: VaccinationEvent) {
     const dialogRef = this.dialog.open(VaccinationCreationComponent, {
-      maxWidth: '95vw',
+      maxWidth: '98vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
