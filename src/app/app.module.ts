@@ -55,6 +55,8 @@ import { FhirMessagingComponent } from './_components/_dialogs/fhir-messaging/fh
 import { PatientTableComponent } from './_components/_lists/patient-table/patient-table.component';
 import { AuthenticationDialogComponent } from './_components/_dialogs/authentication-dialog/authentication-dialog.component';
 import { SelectCodebaseComponent } from './_components/_forms/select-codebase/select-codebase.component';
+import { TenantMenuComponent } from './_components/_lists/tenant-menu/tenant-menu.component';
+import { FacilityMenuComponent } from './_components/_lists/facility-menu/facility-menu.component';
 
 
 @NgModule({
@@ -78,7 +80,9 @@ import { SelectCodebaseComponent } from './_components/_forms/select-codebase/se
     FhirMessagingComponent,
     PatientTableComponent,
     AuthenticationDialogComponent,
-    SelectCodebaseComponent
+    SelectCodebaseComponent,
+    TenantMenuComponent,
+    FacilityMenuComponent
   ],
   imports: [
     BrowserModule,

@@ -32,11 +32,12 @@ export class PatientTableComponent implements AfterViewInit {
 
 
 
-  columns: (keyof Patient)[] = [
+  columns: (keyof Patient | 'alerts')[] = [
     "nameFirst",
     "nameMiddle",
     "nameLast",
     "birthDate",
+    // 'alerts'
   ]
 
   // Allows Date type casting in HTML template
@@ -78,6 +79,7 @@ export class PatientTableComponent implements AfterViewInit {
       return this.patientService.readPatients(this.tenantService.getTenantId(), facility.id)
 
     })).subscribe((res) => {
+      this.patientService.setPatient({})
       this.dataSource.data = res
     })
 

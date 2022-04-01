@@ -31,6 +31,10 @@
         </button>
         <button mat-stroked-button color="primary" (click)="openHl7(element)">Send with HL7v2</button>
         <button mat-stroked-button color="primary" (click)="openFhir(element)">Send with FHIR</button>
+        <!-- <p>
+          {{codeMapsService.getCodeMap("VACCINATION_CVX_CODE")[element.vaccine.vaccineCvxCode].description }}
+        </p> -->
+        <p style="color: red;">Problem / Alerts given by IIS : None</p>
       </div>
     </td>
   </ng-container>

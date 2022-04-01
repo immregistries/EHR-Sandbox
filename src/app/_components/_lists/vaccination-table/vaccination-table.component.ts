@@ -74,6 +74,8 @@ export class VaccinationTableComponent implements AfterViewInit  {
         this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
           this.dataSource.data = res
         })
+      } else {
+        this.dataSource.data = []
       }
     })
     this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {

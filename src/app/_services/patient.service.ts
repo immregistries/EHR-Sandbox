@@ -9,9 +9,7 @@ import { TenantService } from './tenant.service';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
-const postOptions = {
-  observe: 'response'
-}
+
 @Injectable({
   providedIn: 'root'
 })

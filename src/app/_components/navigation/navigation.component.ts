@@ -4,6 +4,9 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthenticationDialogComponent } from '../_dialogs/authentication-dialog/authentication-dialog.component';
+import { TenantService } from 'src/app/_services/tenant.service';
+import { PatientService } from 'src/app/_services/patient.service';
+import { FacilityService } from 'src/app/_services/facility.service';
 
 @Component({
   selector: 'app-navigation',
@@ -18,10 +21,23 @@ export class NavigationComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver, private dialog: MatDialog) {}
+  constructor(private breakpointObserver: BreakpointObserver,
+    private dialog: MatDialog,
+    public tenantService: TenantService,
+    public facilityService: FacilityService,
+    public patientService: PatientService) {}
 
   login() {
     this.dialog.open(AuthenticationDialogComponent)
   }
+
+  tenantDropdown() {
+    this.dialog.open(AuthenticationDialogComponent)
+  }
+
+  facilityDropdown() {
+    this.dialog.open(AuthenticationDialogComponent)
+  }
+
 
 }
