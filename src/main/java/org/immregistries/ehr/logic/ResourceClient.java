@@ -10,18 +10,21 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
+import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.security.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
-
-
 public abstract class ResourceClient {
-    private static final FhirContext CTX = CustomClientBuilder.getCTX();
 
-    private ResourceClient(){}
+    @Autowired
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
+    private static final FhirContext CTX = CustomClientBuilder.getCTX();
 
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private static String add_timestamp(String message){
@@ -29,23 +32,19 @@ public abstract class ResourceClient {
         return dtf.format(now) + " " + message;
     }
 
-    public static String read(String resourceType, String resourceId, HttpSession session){
-        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+    public static String read(String resourceType, String resourceId, ImmunizationRegistry ir){
         return read(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static String write(IBaseResource resource, HttpSession session){
-        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+    public static String write(IBaseResource resource, ImmunizationRegistry ir){
         return write(resource, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static String delete(String resourceType, String resourceId, HttpSession session){
-        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+    public static String delete(String resourceType, String resourceId, ImmunizationRegistry ir){
         return delete(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static String update(IBaseResource resource, String resourceId, HttpSession session){
-        ImmunizationRegistry ir = (ImmunizationRegistry) session.getAttribute("IR");
+    public static String update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
         return update(resource, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
   

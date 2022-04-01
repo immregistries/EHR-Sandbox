@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.UrlTenantSelectionInterceptor;
 import org.immregistries.ehr.EhrApiApplication;
+import org.immregistries.ehr.entities.ImmunizationRegistry;
 
 
 /**
@@ -19,24 +20,14 @@ import org.immregistries.ehr.EhrApiApplication;
  */
 public class CustomClientBuilder {
 
-    private static final String TENANT_A = "TENANT-A";
-    private static final String LOCALHOST_9091 = "http://localhost:9091/iis-sandbox/fhir";
-    private static final String FLORENCE = "https://florence.immregistries.org/iis-sandbox/fhir";
     // Needs to be static object and built only one time in whole project
     private static final FhirContext CTX = EhrApiApplication.fhirContext;
 
-    private IGenericClient client;
+    private final IGenericClient client;
 
-    public CustomClientBuilder(){
-        this(FLORENCE, TENANT_A, TENANT_A, TENANT_A);
-    }
 
-    public CustomClientBuilder(String serverURL){
-        this(serverURL, TENANT_A, TENANT_A, TENANT_A);
-    }
-
-    public CustomClientBuilder( String tenantId, String username, String password){
-        this(FLORENCE, tenantId, username, password);
+    public CustomClientBuilder(ImmunizationRegistry registry){
+        this(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword());
     }
 
     public CustomClientBuilder(String serverURL, String tenantId, String username, String password){

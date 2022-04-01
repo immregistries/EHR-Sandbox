@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * Defines the User specific information accessible through UserDetailServiceImpl
+ */
 public class UserDetailsImpl implements UserDetails {
 
     private Integer id;

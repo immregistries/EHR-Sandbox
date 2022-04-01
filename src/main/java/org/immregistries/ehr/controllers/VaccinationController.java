@@ -9,6 +9,7 @@ import org.immregistries.ehr.entities.*;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.ImmunizationHandler;
 import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.ResourceClient;
 import org.immregistries.ehr.repositories.*;
 import org.immregistries.ehr.security.AuthTokenFilter;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
@@ -34,17 +35,19 @@ import java.util.Optional;
 public class VaccinationController {
 
     @Autowired
-    VaccinationEventRepository vaccinationEventRepository;
+    private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
-    PatientRepository patientRepository;
+    private PatientRepository patientRepository;
     @Autowired
-    ClinicianRepository clinicianRepository;
+    private ClinicianRepository clinicianRepository;
     @Autowired
-    VaccineRepository vaccineRepository;
+    private VaccineRepository vaccineRepository;
     @Autowired
-    ImmunizationRegistryRepository immunizationRegistryRepository;
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+//    @Autowired(required = false)
+//    private ResourceClient resourceClient;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -60,7 +63,7 @@ public class VaccinationController {
 
     @GetMapping("/random")
     public VaccinationEvent random( @PathVariable() int facilityId,
-                                              @PathVariable() int patientId) {
+                                    @PathVariable() int patientId) {
         Optional<Patient> patient = patientRepository.findByFacilityIdAndId(facilityId,patientId);
         if (!patient.isPresent()){
             throw new ResponseStatusException(
@@ -141,9 +144,8 @@ public class VaccinationController {
     public ResponseEntity<String>  fhirSend(@RequestBody String message) {
         IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
         Immunization immunization = parser.parseResource(Immunization.class,message);
-        //
-        return ResponseEntity.ok(message);
-
+        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        return ResponseEntity.ok(ResourceClient.write(immunization,ir));
     }
 
 

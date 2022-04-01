@@ -61,11 +61,12 @@ public class RandomGenerator {
 
         patient.setAddressLine1(faker.address().streetAddress());
         patient.setAddressCity(faker.address().city());
-        patient.setAddressCountry(faker.address().country());
+        patient.setAddressCountry("USA");
         patient.setAddressCountyParish("county");
-        patient.setAddressState(faker.address().state());
+        patient.setAddressState("MD");
 
-        patient.setPhone(faker.phoneNumber().phoneNumber());
+//        patient.setPhone(faker.phoneNumber().phoneNumber());
+        patient.setPhone(faker.phoneNumber().cellPhone());
         patient.setEmail(patient.getNameFirst() + randDay +"@email.com");
 
         patient.setBirthFlag("");
@@ -84,14 +85,16 @@ public class RandomGenerator {
         patient.setGuardianLast(faker.name().lastName());
         patient.setGuardianMiddle(faker.name().firstName());
         patient.setMotherMaiden(faker.name().lastName());
-        int count = 0;
-        for(Code code : codeListGuardian) {
-            patient.setGuardianRelationship(code.getValue());
-            count+=1;
-            if(randDay==count) {
-                break;
-            }
-        }
+        patient.setGuardianRelationship("MTH");
+//        int count = 0;
+
+//        for(Code code : codeListGuardian) {
+//            patient.setGuardianRelationship(code.getValue());
+//            count+=1;
+//            if(randDay==count) {
+//                break;
+//            }
+//        }
 
         patient.setProtectionIndicator("0");
         patient.setPublicityIndicator("0");
