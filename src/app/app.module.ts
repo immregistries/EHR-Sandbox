@@ -57,6 +57,7 @@ import { AuthenticationDialogComponent } from './_components/_dialogs/authentica
 import { SelectCodebaseComponent } from './_components/_forms/select-codebase/select-codebase.component';
 import { TenantMenuComponent } from './_components/_lists/tenant-menu/tenant-menu.component';
 import { FacilityMenuComponent } from './_components/_lists/facility-menu/facility-menu.component';
+import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/settings-dialog.component';
 
 
 @NgModule({
@@ -82,7 +83,8 @@ import { FacilityMenuComponent } from './_components/_lists/facility-menu/facili
     AuthenticationDialogComponent,
     SelectCodebaseComponent,
     TenantMenuComponent,
-    FacilityMenuComponent
+    FacilityMenuComponent,
+    SettingsDialogComponent
   ],
   imports: [
     BrowserModule,

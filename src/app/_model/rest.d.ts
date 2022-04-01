@@ -18,12 +18,12 @@ export interface Facility {
 
 export interface ImmunizationRegistry {
   id?: number;
-  user?: User | number;
-  iisHl7Url?: string;
-  iisFhirUrl?: string;
-  iisUsername?: string;
-  iisFacilityId?: string;
-  iisPassword?: string;
+  user: User | number;
+  iisHl7Url: string;
+  iisFhirUrl: string;
+  iisUsername: string;
+  iisFacilityId: string;
+  iisPassword: string;
 }
 
 export interface NextOfKin {
