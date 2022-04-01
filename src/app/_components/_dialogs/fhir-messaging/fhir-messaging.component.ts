@@ -22,6 +22,8 @@ export class FhirMessagingComponent implements OnInit {
   public vaccinationAnswer: string = "";
   public vaccinationError: string = "";
 
+  public style: string = 'width: 50%'
+
   constructor(private vaccinationService: VaccinationService,
     private fhirService: FhirService,
     private _snackBar: MatSnackBar,
@@ -29,6 +31,9 @@ export class FhirMessagingComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId: number}) {
       this.patientId = data.patientId
       this.vaccinationId = data.vaccinationId
+      if (!this.vaccinationId) {
+        this.style = 'width: 100%'
+      }
      }
 
   ngOnInit(): void {

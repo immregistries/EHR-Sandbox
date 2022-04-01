@@ -3,7 +3,7 @@
   <button mat-icon-button mat-dialog-close class="close-button" >X</button>
 </h3>
 <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
-  <div style="width: 50%; height: 100%;">
+  <div [style]="style">
     <mat-form-field style="width: 100%;" appearance="fill">
       <mat-label>Patient Fhir Resource</mat-label>
       <textarea matInput style="height: 50vh;" placeholder="" [(ngModel)]="patientResource"> </textarea>
@@ -14,7 +14,7 @@
       <button mat-raised-button (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
     </mat-dialog-actions>
   </div>
-  <div style="width: 50%;">
+  <div style="width: 50%;" *ngIf="vaccinationId > -1">
     <mat-form-field style="width: 100%;" appearance="fill">
       <mat-label>Vaccination Fhir Resource</mat-label>
       <textarea matInput style="height: 50vh;" placeholder="" [(ngModel)]="vaccinationResource"> </textarea>

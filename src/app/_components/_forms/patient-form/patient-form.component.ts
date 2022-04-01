@@ -22,21 +22,10 @@ export class PatientFormComponent implements OnInit {
     private _snackBar: MatSnackBar,
     ) { }
 
-  // fillRandom(): void {
-  //   this.patientService.readRandom().subscribe((res) => this.patient = res)
-  // }
-
-  // save(): void {
-  //   this.patientService.quickPostPatient( this.patient).subscribe((res) => {
-  //     this._snackBar.open(`${res}`, 'close')
-  //   });
-  // }
-
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
 
   ngOnInit(): void {
-    this.patientService.readEmpty().subscribe((res) => this.patient = res)
   }
 
 

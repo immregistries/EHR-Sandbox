@@ -69,14 +69,14 @@ export class PatientTableComponent implements AfterViewInit {
     };
     this.facilityService.getObservableFacility().pipe(switchMap(facility =>{
       this.facility = facility
-      if (!facility || facility.id <= 0){
-        this.tenantService.getObservableTenant().subscribe(() => {
-          return this.patientService.readAllPatients(this.tenantService.getTenantId())
-        })
-        return this.patientService.readAllPatients(this.tenantService.getTenantId())
-      } else {
-        return this.patientService.readPatients(this.tenantService.getTenantId(), facility.id)
-      }
+      // if (!facility || facility.id <= 0){
+      //   this.tenantService.getObservableTenant().subscribe(() => {
+      //     return this.patientService.readAllPatients(this.tenantService.getTenantId())
+      //   })
+      //   return this.patientService.readAllPatients(this.tenantService.getTenantId())
+      // }
+      return this.patientService.readPatients(this.tenantService.getTenantId(), facility.id)
+
     })).subscribe((res) => {
       this.dataSource.data = res
     })
@@ -116,7 +116,7 @@ export class PatientTableComponent implements AfterViewInit {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
-      width: '100%',
+      width: '50%',
       panelClass: 'full-screen-modal',
       data: {patientId: element.id},
     });

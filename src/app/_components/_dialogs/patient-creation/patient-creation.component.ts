@@ -12,36 +12,53 @@ import { PatientService } from 'src/app/_services/patient.service';
 export class PatientCreationComponent implements OnInit {
 
   patient: Patient = {id: -1};
+  isEditionMode: boolean = false;
 
   constructor(private patientService: PatientService,
     private _snackBar: MatSnackBar,
-    public _dialogRef: MatDialogRef<PatientCreationComponent>,) {
-     }
+    public _dialogRef: MatDialogRef<PatientCreationComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {patient: Patient}) {
+      if (data.patient){
+        this.patient = data.patient;
+        this.isEditionMode = true
+      }
+    }
 
   fillRandom(): void {
     this.patientService.readRandom().subscribe((res) => this.patient = res)
   }
 
   save(): void {
-    this.patientService.quickPostPatient( this.patient).subscribe({
-      next: (res: HttpResponse<string>) => {
-        console.log(res)
-        if (res.body) {
-          this._snackBar.open(res.body, 'close')
+    if (this.isEditionMode) {
+      this.patientService.quickPutPatient( this.patient).subscribe({
+        next: (res: Patient) => {
+          console.log(res)
+          this._dialogRef.close(true)
+        },
+        error: (err) => {
+          console.log(err.error)
+          this._snackBar.open(`Error : ${err.error.error}`, 'close')
         }
-        this._dialogRef.close(true)
-      },
-      error: (err) => {
-        console.log(err.error)
-        this._snackBar.open(`Error : ${err.error.error}`, 'close')
-      }
-    });
+      });
+    } else {
+      this.patientService.quickPostPatient( this.patient).subscribe({
+        next: (res: HttpResponse<string>) => {
+          console.log(res)
+          if (res.body) {
+            this._snackBar.open(res.body, 'close')
+          }
+          this._dialogRef.close(true)
+        },
+        error: (err) => {
+          console.log(err.error)
+          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+        }
+      });
+    }
+
   }
 
   ngOnInit(): void {
-    if (this.patient.id == -1) {
-      this.patientService.readEmpty().subscribe((res) => this.patient = res)
-    }
   }
 
 }
