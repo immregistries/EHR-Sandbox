@@ -56,7 +56,10 @@ public class MainController {
     }
 
     @PutMapping("/settings")
-    public ImmunizationRegistry postSettings() {
-        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+    public ImmunizationRegistry putSettings(@RequestBody ImmunizationRegistry settings) {
+        ImmunizationRegistry oldSettings = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        settings.setUser(oldSettings.getUser());
+        settings.setId(oldSettings.getId());
+        return immunizationRegistryRepository.save(settings);
     }
 }
