@@ -11,9 +11,15 @@ const httpOptions = {
 })
 export class SettingsService {
   private apiUrl: string;
+  private version: string;
 
   constructor(private http: HttpClient,) {
     this.apiUrl = "http://localhost:8080"
+    this.version = "1.2.0"
+  }
+
+  public getVersion(): string {
+    return this.version
   }
 
   public getApiUrl(): string {
@@ -30,7 +36,7 @@ export class SettingsService {
       this.getApiUrl() + '/settings', httpOptions);
   }
 
-  public postSettings(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
+  public putSettings(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
     return this.http.put<ImmunizationRegistry>(
       this.getApiUrl() + '/settings', i, httpOptions);
   }

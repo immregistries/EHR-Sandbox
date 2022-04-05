@@ -58,6 +58,7 @@ import { SelectCodebaseComponent } from './_components/_forms/select-codebase/se
 import { TenantMenuComponent } from './_components/_lists/tenant-menu/tenant-menu.component';
 import { FacilityMenuComponent } from './_components/_lists/facility-menu/facility-menu.component';
 import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/settings-dialog.component';
+import { HomeComponent } from './_components/home/home.component';
 
 
 @NgModule({
@@ -84,7 +85,8 @@ import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/
     SelectCodebaseComponent,
     TenantMenuComponent,
     FacilityMenuComponent,
-    SettingsDialogComponent
+    SettingsDialogComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

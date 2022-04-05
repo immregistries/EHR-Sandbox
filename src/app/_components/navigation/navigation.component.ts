@@ -7,6 +7,7 @@ import { AuthenticationDialogComponent } from '../_dialogs/authentication-dialog
 import { TenantService } from 'src/app/_services/tenant.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { FacilityService } from 'src/app/_services/facility.service';
+import { SettingsService } from 'src/app/_services/settings.service';
 
 @Component({
   selector: 'app-navigation',
