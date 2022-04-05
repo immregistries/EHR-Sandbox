@@ -42,6 +42,7 @@ export class AuthenticationFormComponent implements OnInit {
         this.reloadPage();
       },
       error: (err) => {
+        this.tokenStorage.signOut()
         this.errorMessage = err.error.message;
         console.warn(this.errorMessage)
         this.isLoginFailed = true;

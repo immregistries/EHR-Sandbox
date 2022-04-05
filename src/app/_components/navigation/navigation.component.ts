@@ -8,6 +8,8 @@ import { TenantService } from 'src/app/_services/tenant.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { FacilityService } from 'src/app/_services/facility.service';
 import { SettingsService } from 'src/app/_services/settings.service';
+import { ActivatedRoute, Router, NavigationStart, Event as NavigationEvent  } from '@angular/router';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-navigation',
@@ -15,6 +17,7 @@ import { SettingsService } from 'src/app/_services/settings.service';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent {
+  public pathname = window.location.pathname;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -22,14 +25,26 @@ export class NavigationComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver,
+  constructor(
+    private breakpointObserver: BreakpointObserver,
     private dialog: MatDialog,
     public tenantService: TenantService,
     public facilityService: FacilityService,
-    public patientService: PatientService) {}
+    public patientService: PatientService,
+    private tokenService: TokenStorageService,
+    private router: Router) {
+      this.router.events.subscribe(
+        (event: NavigationEvent) => {
+          if(event instanceof NavigationStart) {
+            this.pathname = event.url
+          }
+        });
+    }
 
-  login() {
-    this.dialog.open(AuthenticationDialogComponent)
+  logout() {
+    // this.dialog.open(AuthenticationDialogComponent)
+    this.tokenService.signOut()
+    this.router.navigate(['/home'])
   }
 
   tenantDropdown() {

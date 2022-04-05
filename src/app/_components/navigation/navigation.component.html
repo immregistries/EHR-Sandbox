@@ -29,12 +29,14 @@
       <span>EHR Sandbox</span>
       <span style="width: 2em;"></span>
 
-      <app-tenant-menu></app-tenant-menu>
-      <app-facility-menu></app-facility-menu>
+      <span *ngIf="!pathname.startsWith('/home')">
+        <app-tenant-menu ></app-tenant-menu>
+        <app-facility-menu ></app-facility-menu>
+      </span>
 
 
       <span style="width: 100%;"></span>
-      <a mat-icon-button style="float: right;" (click)="login()">
+      <a mat-icon-button style="float: right;" (click)="logout()">
         <mat-icon>login</mat-icon>
       </a>
 
