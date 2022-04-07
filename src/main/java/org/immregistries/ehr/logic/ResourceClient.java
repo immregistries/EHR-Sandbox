@@ -57,12 +57,12 @@ public abstract class ResourceClient {
             resource = client.read().resource(resourceType).withId(resourceId).execute();
             // resource = client.read().resource(Patient.class).withId(resourceId).execute();
             response = CTX.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
-          } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
             LocalDateTime now = LocalDateTime.now();  
             response = dtf.format(now) + "Resource not found";
-            e.printStackTrace();
-          }
+//            e.printStackTrace();
+        }
         return response;
     }
   

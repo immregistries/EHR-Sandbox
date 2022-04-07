@@ -8,12 +8,14 @@ import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
 import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.ResourceClient;
 import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.security.AuthTokenFilter;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -62,4 +64,12 @@ public class MainController {
         settings.setId(oldSettings.getId());
         return immunizationRegistryRepository.save(settings);
     }
+
+//    @GetMapping("/iis/{resourceType}/{id}")
+//    public ResponseEntity<String> getFhirFromIIS(@PathVariable() String resourceType,
+//                                                 @PathVariable() String id) {
+//        return ResponseEntity.ok(ResourceClient.read(resourceType, id, settings()));
+//    }
+
+
 }

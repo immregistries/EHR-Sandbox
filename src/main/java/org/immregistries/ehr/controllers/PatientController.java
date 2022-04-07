@@ -95,28 +95,6 @@ public class PatientController {
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
     }
 
-    @GetMapping("/{patientId}/fhir")
-    public ResponseEntity<String> fhir(@PathVariable() int patientId) {
-        Optional<Patient> patient = patientRepository.findById(patientId);
-        FhirContext ctx = EhrApiApplication.fhirContext;
-        IParser parser = ctx.newXmlParser().setPrettyPrint(true);
-        if (!patient.isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "No patient found");
-        }
-        org.hl7.fhir.r4.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
-        String resource = parser.encodeResourceToString(fhirPatient);
-        return ResponseEntity.ok(resource);
-    }
-
-    @PostMapping("/{patientId}/fhir")
-    public ResponseEntity<String>  fhirSend(@RequestBody String message) {
-        IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
-        org.hl7.fhir.r4.model.Patient patient = parser.parseResource(org.hl7.fhir.r4.model.Patient.class,message);
-        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
-        return ResponseEntity.ok(ResourceClient.write(patient, ir));
-    }
-
     @PutMapping("")
     public Patient putPatient(@PathVariable() int tenantId,
                               @PathVariable() int facilityId,
@@ -135,6 +113,34 @@ public class PatientController {
         Patient newEntity = patientRepository.save(patient);
         return newEntity;
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
+    }
+
+    @GetMapping("/{patientId}/resource")
+    public ResponseEntity<String> resource(@PathVariable() int patientId) {
+        Optional<Patient> patient = patientRepository.findById(patientId);
+        FhirContext ctx = EhrApiApplication.fhirContext;
+        IParser parser = ctx.newXmlParser().setPrettyPrint(true);
+        if (!patient.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "No patient found");
+        }
+        org.hl7.fhir.r4.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
+        String resource = parser.encodeResourceToString(fhirPatient);
+        return ResponseEntity.ok(resource);
+    }
+
+    @PostMapping("/{patientId}/fhir")
+    public ResponseEntity<String>  fhirPost(@RequestBody String message) {
+        IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
+        org.hl7.fhir.r4.model.Patient patient = parser.parseResource(org.hl7.fhir.r4.model.Patient.class,message);
+        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        return ResponseEntity.ok(ResourceClient.write(patient, ir));
+    }
+
+    @GetMapping("/{patientId}/fhir")
+    public ResponseEntity<String>  fhirGet(@PathVariable() int patientId) {
+        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        return ResponseEntity.ok(ResourceClient.read("patient", String.valueOf(patientId), ir));
     }
 
 }

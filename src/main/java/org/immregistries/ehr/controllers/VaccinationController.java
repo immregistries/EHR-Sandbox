@@ -94,8 +94,27 @@ public class VaccinationController {
         return ResponseEntity.created(location).build();
     }
 
+    @PutMapping()
+    public VaccinationEvent putVaccinationEvents(@PathVariable() int patientId,
+                                                 @RequestBody VaccinationEvent vaccination) {
+        Optional<Patient> patient = patientRepository.findById(patientId);
+        Optional<VaccinationEvent> oldVaccination =  vaccinationEventRepository.findByPatientIdAndId(patientId, vaccination.getId());
+        if (!patient.isPresent() || !oldVaccination.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "No patient found");
+        }
+        vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
+        vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
+        vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
+        vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
+        vaccination.setPatient(patient.get());
+        vaccination.setAdministeringFacility(patient.get().getFacility());
+        VaccinationEvent newEntity = vaccinationEventRepository.save(vaccination);
+        return newEntity;
+    }
+
     @GetMapping("/{vaccinationId}/vxu")
-    public ResponseEntity<String> hl7v2(@PathVariable() int vaccinationId) {
+    public ResponseEntity<String> vxu(@PathVariable() int vaccinationId) {
         GsonJsonParser gson = new GsonJsonParser();
         Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
         if (!vaccinationEvent.isPresent()) {
@@ -110,7 +129,7 @@ public class VaccinationController {
     }
 
     @PostMapping("/{vaccinationId}/vxu")
-    public ResponseEntity<String>  hl7v2Send(@RequestBody String message) {
+    public ResponseEntity<String>  vxuSend(@RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
         try {
@@ -126,8 +145,8 @@ public class VaccinationController {
         }
     }
 
-    @GetMapping("/{vaccinationId}/fhir")
-    public ResponseEntity<String> fhir(@PathVariable() int vaccinationId) {
+    @GetMapping("/{vaccinationId}/resource")
+    public ResponseEntity<String> resource(@PathVariable() int vaccinationId) {
         Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
         FhirContext ctx = EhrApiApplication.fhirContext;
         IParser parser = ctx.newXmlParser().setPrettyPrint(true);
@@ -148,25 +167,14 @@ public class VaccinationController {
         return ResponseEntity.ok(ResourceClient.write(immunization,ir));
     }
 
-
-    @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@PathVariable() int patientId,
-                                                 @RequestBody VaccinationEvent vaccination) {
-        Optional<Patient> patient = patientRepository.findById(patientId);
-        Optional<VaccinationEvent> oldVaccination =  vaccinationEventRepository.findByPatientIdAndId(patientId, vaccination.getId());
-        if (!patient.isPresent() || !oldVaccination.isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "No patient found");
-        }
-        vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
-        vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
-        vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
-        vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
-        vaccination.setPatient(patient.get());
-        vaccination.setAdministeringFacility(patient.get().getFacility());
-        VaccinationEvent newEntity = vaccinationEventRepository.save(vaccination);
-        return newEntity;
+    @GetMapping("/{vaccinationId}/fhir")
+    public ResponseEntity<String>  fhirGet(@PathVariable() int vaccinationId) {
+        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        return ResponseEntity.ok(ResourceClient.read("immunization", String.valueOf(vaccinationId), ir));
     }
+
+
+
 
 
 

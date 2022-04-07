@@ -4,13 +4,14 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class EhrApiApplication {
-	public static String VERSION = "1.2";
+public class EhrApiApplication extends SpringBootServletInitializer {
+	public static String VERSION = "1.2.0";
 	public static FhirContext fhirContext;
 
 	public static void main(String[] args) {
