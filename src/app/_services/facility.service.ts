@@ -16,6 +16,15 @@ const httpOptions = {
 export class FacilityService {
 
   private facility: BehaviorSubject<Facility>;
+  private refresh: BehaviorSubject<boolean>;
+
+  public getRefresh(): Observable<boolean> {
+    return this.refresh.asObservable();
+  }
+
+  public doRefresh(): void{
+    this.refresh.next(!this.refresh.value)
+  }
 
   public getObservableFacility(): Observable<Facility> {
     return this.facility.asObservable();
@@ -37,6 +46,7 @@ export class FacilityService {
     private settings: SettingsService,
     ) {
     this.facility = new BehaviorSubject<Facility>({id:-1})
+    this.refresh = new BehaviorSubject<boolean>(false)
    }
 
   readFacilities(tenantId: number): Observable<Facility[]> {

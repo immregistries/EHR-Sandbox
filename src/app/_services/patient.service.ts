@@ -19,6 +19,15 @@ const httpOptions = {
 export class PatientService {
 
   private patient: BehaviorSubject<Patient>;
+  private refresh: BehaviorSubject<boolean>;
+
+  public getRefresh(): Observable<boolean> {
+    return this.refresh.asObservable();
+  }
+
+  public doRefresh(): void{
+    this.refresh.next(!this.refresh.value)
+  }
 
   public getObservablePatient(): Observable<Patient> {
     return this.patient.asObservable();
@@ -45,6 +54,7 @@ export class PatientService {
     private facilityService: FacilityService,
     private tenantService: TenantService ) {
       this.patient = new BehaviorSubject<Patient>({id:-1})
+      this.refresh = new BehaviorSubject<boolean>(false)
       this.facilityService.getObservableFacility().subscribe((facility) => {
         this.setPatient({})
       })

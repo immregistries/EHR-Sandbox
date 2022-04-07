@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { User } from 'src/app/_model/rest';
 import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-authentication-form',
@@ -22,6 +23,8 @@ export class AuthenticationFormComponent implements OnInit {
   errorMessage = '';
   currentUsername?: string;
 
+  @Output() success = new EventEmitter()
+
   ngOnInit(): void {
     this.currentUsername = this.tokenStorage.getUser()['username'];
   }
@@ -39,7 +42,8 @@ export class AuthenticationFormComponent implements OnInit {
         this.tokenStorage.saveUser(data);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
-        this.reloadPage();
+        this.success.emit("success");
+        // this.reloadPage();
       },
       error: (err) => {
         this.tokenStorage.signOut()

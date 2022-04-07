@@ -18,44 +18,55 @@ export class FhirService {
     private facilityService: FacilityService,
     private tenantService: TenantService ) { }
 
-  quickGetVaccination(patientId: number, vaccinationId: number): Observable<string> {
+  /**
+   *
+   * @param patientId
+   * @param vaccinationId
+   * @returns Vaccination information converted to XML FHIR Immunization resource
+   */
+  quickGetImmunizationResource(patientId: number, vaccinationId: number): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.getVaccination(tenantId,facilityId,patientId,vaccinationId)
+    return this.getImmunizationResource(tenantId,facilityId,patientId,vaccinationId)
   }
 
-  getVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<string> {
+  getImmunizationResource(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<string> {
     return this.http.get(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/resource`,
       { responseType: 'text' });
   }
 
-  quickPostVaccination(patientId: number, vaccinationId: number, resource: string): Observable<string> {
+  quickPostImmunization(patientId: number, vaccinationId: number, resource: string): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.postVaccination(tenantId,facilityId,patientId,vaccinationId,resource)
+    return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource)
   }
 
-  postVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
+  postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
       resource,
       httpOptions);
   }
 
-  quickGetPatient(patientId: number): Observable<string> {
+  quickGetPatientResource(patientId: number): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.getPatient(tenantId,facilityId,patientId)
+    return this.getPatientResource(tenantId,facilityId,patientId)
   }
 
-  getPatient(tenantId: number, facilityId: number, patientId: number): Observable<string> {
-    return this.http.get(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir`,
-      { responseType: 'text' });
+  getPatientResource(tenantId: number, facilityId: number, patientId: number): Observable<string> {
+    if (tenantId < 0 || facilityId < 0 || patientId < 0 ){
+      return of('')
+    } else {
+      return this.http.get(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/resource`,
+        { responseType: 'text' });
+    }
+
   }
 
-  quickPostPatient(patientId: number, vaccinationId: number, resource: string): Observable<string> {
+  quickPostPatient(patientId: number, resource: string): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.postPatient(tenantId,facilityId,patientId,resource)
@@ -66,6 +77,12 @@ export class FhirService {
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir`,
       resource,
       httpOptions);
+  }
+
+  getFromIIS(resourceType: string, identifier: string): Observable<string> {
+    return this.http.get(
+      `${this.settings.getApiUrl()}/iis/${resourceType}/${identifier}`,
+      { responseType: 'text' });
   }
 
 }

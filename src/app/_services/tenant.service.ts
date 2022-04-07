@@ -14,6 +14,16 @@ const httpOptions = {
 })
 export class TenantService {
   private tenant: BehaviorSubject<Tenant>;
+  private refresh: BehaviorSubject<boolean>;
+
+  public getRefresh(): Observable<boolean> {
+    return this.refresh.asObservable();
+  }
+
+  public doRefresh(): void{
+    this.refresh.next(!this.refresh.value)
+  }
+
 
   public getObservableTenant(): Observable<Tenant> {
     return this.tenant.asObservable();
@@ -39,7 +49,8 @@ export class TenantService {
   }
 
   constructor(private http: HttpClient, private settings: SettingsService, private facilityService: FacilityService ) {
-    this.tenant= new BehaviorSubject<Tenant>({id:-1})
+    this.tenant = new BehaviorSubject<Tenant>({id:-1})
+    this.refresh = new BehaviorSubject<boolean>(false)
    }
 
   readTenants(): Observable<Tenant[]> {

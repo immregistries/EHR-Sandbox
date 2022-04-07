@@ -20,6 +20,13 @@
             <li>Send data to IIS through FHIR messages</li>
           </ul>
 
+          <h3 style="text-align: left;">Main pages :</h3>
+          <ul class="w3-ul">
+            <li>Dashboard</li>
+            <li>Settings</li>
+            <!-- <li>FHIR</li> -->
+          </ul>
+
           <div class="w3-panel w3-yellow">
             <p class="w3-left-align">
             This system is for test purposes only.
@@ -39,7 +46,7 @@
         <mat-card-content class="dashboard-card-content">
           <p class="w3-red" *ngIf="loginError === '1'"> Username and password did not match</p>
           <p class="w3-red" *ngIf="loginError === '2'"> Authorization Error, please login again</p>
-          <app-authentication-form></app-authentication-form>
+          <app-authentication-form (success)="authenticationSuccess($event)"></app-authentication-form>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

@@ -19,8 +19,10 @@ export class TenantListComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.tenantService.readTenants().subscribe((res) => {
-      this.list = res
+    this.tenantService.getRefresh().subscribe((bool) => {
+      this.tenantService.readTenants().subscribe((res) => {
+        this.list = res
+      })
     })
   }
 
@@ -28,7 +30,7 @@ export class TenantListComponent implements OnInit {
     const dialogRef = this.dialog.open(TenantCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
-      this.ngOnInit();
+      // this.ngOnInit();
     });
   }
 

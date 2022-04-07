@@ -7,7 +7,8 @@ import { Facility, Patient } from 'src/app/_model/rest';
 import { FacilityService } from 'src/app/_services/facility.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { TenantService } from 'src/app/_services/tenant.service';
-import { FhirMessagingComponent } from '../../_dialogs/fhir-messaging/fhir-messaging.component';
+import { FhirDialogComponent } from '../../fhir-messaging/fhir-dialog/fhir-dialog.component';
+import { FhirMessagingComponent } from '../../fhir-messaging/fhir-messaging.component';
 import { PatientCreationComponent } from '../../_dialogs/patient-creation/patient-creation.component';
 
 @Component({
@@ -80,7 +81,9 @@ export class PatientTableComponent implements AfterViewInit {
 
     })).subscribe((res) => {
       this.patientService.setPatient({})
-      this.dataSource.data = res
+      this.patientService.getRefresh().subscribe((bool) => {
+        this.dataSource.data = res
+      })
     })
 
   }
@@ -91,7 +94,7 @@ export class PatientTableComponent implements AfterViewInit {
       maxHeight: '95vh',
       height: 'fit-content',
       width: '90%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'dialog-with-bar',
       data: {},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -105,7 +108,7 @@ export class PatientTableComponent implements AfterViewInit {
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'dialog-with-bar',
       data: {patient: element},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -114,12 +117,12 @@ export class PatientTableComponent implements AfterViewInit {
   }
 
   openFhir(element: Patient) {
-    const dialogRef = this.dialog.open(FhirMessagingComponent, {
+    const dialogRef = this.dialog.open(FhirDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '50%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'dialog-without-bar',
       data: {patientId: element.id},
     });
   }

@@ -14,6 +14,7 @@ export class SettingsService {
   private version: string;
 
   constructor(private http: HttpClient,) {
+    // this.apiUrl = "http://localhost:8080/EHR-Api"
     this.apiUrl = "http://localhost:8080"
     this.version = "1.2.0"
   }

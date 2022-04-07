@@ -32,6 +32,7 @@ export class FacilityCreationComponent implements OnInit {
         if (res.body) {
           this._snackBar.open(res.body, 'close')
         }
+        this.facilityService.doRefresh()
         this._dialogRef.close(true)
       },
       error: (err) => {

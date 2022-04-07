@@ -18,15 +18,38 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   right:-24px;
 }
 
-.form-dialog-container .form-dialog-container .mat-dialog-container {
+.form-dialog-container .mat-dialog-container {
   /* add your styles */
-  margin: 2px;
-  padding: 2px;
+  margin: 0px;
+  padding: 0px;
   /* max-width: 98vw;
   max-height: 95vh; */
   /* height: fit-content;
   width: 90%; */
-  /* panelClass: 'full-screen-modal', */
+}
+
+.full-screen-modal .mat-dialog-container {
+  /* add your styles */
+  margin: 10px;
+  /* padding: 2px; */
+  /* padding-top: 10px; */
+  padding-bottom: 25px;
+  /* max-width: 98vw;
+  max-height: 95vh; */
+  /* height: fit-content;
+  width: 90%; */
+}
+
+.dialog-without-bar .mat-dialog-container {
+  margin: 0px;
+  padding-bottom: 0px;
+}
+
+.dialog-with-bar .mat-dialog-container {
+  margin: 0px;
+  /* padding: 2px; */
+  /* padding-top: 10px; */
+  /* padding-bottom: 25px; */
 }
 
 .custom-title {

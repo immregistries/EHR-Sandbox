@@ -38,7 +38,7 @@ mat-raised-button {
   min-width: 10em;
 }
 .short-text-field {
-  max-width: 1em;
+  max-width: 1.4em;
   margin-top: 2px;
   /* margin-right: 5px; */
   /* box-shadow: 0 0 3px #CC0000; */

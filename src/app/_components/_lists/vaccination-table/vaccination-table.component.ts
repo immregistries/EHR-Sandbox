@@ -9,7 +9,8 @@ import { Code } from 'src/app/_model/structure';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
-import { FhirMessagingComponent } from '../../_dialogs/fhir-messaging/fhir-messaging.component';
+import { FhirDialogComponent } from '../../fhir-messaging/fhir-dialog/fhir-dialog.component';
+import { FhirMessagingComponent } from '../../fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from '../../_dialogs/hl7-messaging/hl7-messaging.component';
 import { VaccinationCreationComponent } from '../../_dialogs/vaccination-creation/vaccination-creation.component';
 
@@ -51,23 +52,31 @@ export class VaccinationTableComponent implements AfterViewInit  {
     private vaccinationService: VaccinationService,
     private patientService: PatientService) { }
 
-  refreshCodeMaps() {
-    this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
-      this.codeBaseMap = codeBaseMap
-    });
-  }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  vaccinationFilterPredicate() {
+    return (data: VaccinationEvent, filter: string): boolean => {
+      if (JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1) {
+        return true
+      }
+      if (data.vaccine["vaccineCvxCode"] &&
+        JSON.stringify(this.codeBaseMap["VACCINATION_CVX_CODE"][data.vaccine["vaccineCvxCode"]])
+          .trim().toLowerCase().indexOf(filter) !== -1) {
+        return true
+      }
+      return false
+    }
+  }
+
   ngAfterViewInit(): void {
-    this.refreshCodeMaps()
+    this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
+      this.codeBaseMap = codeBaseMap
+    });
     // Set filter rules for research
-    this.dataSource.filterPredicate = (data: VaccinationEvent, filter: string) =>{
-      return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
-    };
+    this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
     this.patientService.getObservablePatient().subscribe((patient) => {
       if (patient.id) {
         this.patientId = patient.id
@@ -87,9 +96,9 @@ export class VaccinationTableComponent implements AfterViewInit  {
     const dialogRef = this.dialog.open(VaccinationCreationComponent, {
       maxWidth: '98vw',
       maxHeight: '95vh',
-      height: 'fit-content',
+      minHeight: 'fit-content',
       width: '90%',
-      panelClass: 'form-dialog-container',
+      panelClass: 'dialog-with-bar',
       data: {patientId: this.patientId},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -103,7 +112,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'dialog-with-bar',
       data: {patientId: this.patientId, vaccination: element},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -117,18 +126,18 @@ export class VaccinationTableComponent implements AfterViewInit  {
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'dialog-with-bar',
       data: {patientId: this.patientId, vaccinationId: element.id},
     });
   }
 
   openFhir(element: VaccinationEvent) {
-    const dialogRef = this.dialog.open(FhirMessagingComponent, {
+    const dialogRef = this.dialog.open(FhirDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
-      panelClass: 'full-screen-modal',
+      panelClass: 'dialog-without-bar',
       data: {patientId: this.patientId, vaccinationId: element.id},
     });
   }

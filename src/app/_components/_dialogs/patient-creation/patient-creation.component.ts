@@ -33,6 +33,7 @@ export class PatientCreationComponent implements OnInit {
       this.patientService.quickPutPatient( this.patient).subscribe({
         next: (res: Patient) => {
           console.log(res)
+          this.patientService.doRefresh()
           this._dialogRef.close(true)
         },
         error: (err) => {
@@ -47,6 +48,7 @@ export class PatientCreationComponent implements OnInit {
           if (res.body) {
             this._snackBar.open(res.body, 'close')
           }
+          this.patientService.doRefresh()
           this._dialogRef.close(true)
         },
         error: (err) => {

@@ -27,16 +27,18 @@ export class FacilityListComponent implements OnInit {
       this.tenant = tenant
       this.selectedOption = undefined
       this.facilityService.setFacility({id: -1})
-      this.facilityService.readFacilities(tenant.id).subscribe((res) => {
+      this.facilityService.getRefresh().subscribe((bool) => {
+        this.facilityService.readFacilities(tenant.id).subscribe((res) => {
           this.list = res
         })
+      })
     });
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(FacilityCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
-      this.ngOnInit();
+      // this.ngOnInit();
     });
   }
 

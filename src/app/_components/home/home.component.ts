@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SettingsService } from 'src/app/_services/settings.service';
 
 @Component({
@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   constructor(
     public settings: SettingsService,
     private route: ActivatedRoute,
+    private router: Router,
     ) {
       this.route.queryParams.subscribe(params => {
         this.loginError = params['loginError'];
@@ -20,6 +21,10 @@ export class HomeComponent implements OnInit {
      }
 
   ngOnInit(): void {
+  }
+
+  authenticationSuccess(event: string) {
+    this.router.navigate(['dashboard'])
   }
 
 }

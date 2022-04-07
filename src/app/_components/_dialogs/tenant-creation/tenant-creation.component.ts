@@ -30,6 +30,7 @@ export class TenantCreationComponent implements OnInit {
         if (res.body) {
           this._snackBar.open(res.body, 'close')
         }
+        this.tenantService.doRefresh()
         this._dialogRef.close(true)
       },
       error: (err) => {
