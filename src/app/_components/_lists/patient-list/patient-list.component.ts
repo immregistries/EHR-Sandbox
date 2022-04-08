@@ -5,7 +5,7 @@ import { Facility, Patient } from 'src/app/_model/rest';
 import { FacilityService } from 'src/app/_services/facility.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { TenantService } from 'src/app/_services/tenant.service';
-import { PatientCreationComponent } from '../../_dialogs/patient-creation/patient-creation.component';
+import { PatientCreationComponent } from '../../_forms/patient-form/patient-creation/patient-creation.component';
 
 @Component({
   selector: 'app-patient-list',

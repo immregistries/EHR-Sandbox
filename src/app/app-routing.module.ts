@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './_components/dashboard/dashboard.component';
 import { HomeComponent } from './_components/home/home.component';
-import { AuthenticationDialogComponent } from './_components/_dialogs/authentication-dialog/authentication-dialog.component';
+import { AuthenticationDialogComponent } from './_components/_forms/authentication-form/authentication-dialog/authentication-dialog.component';
 import { FhirGetComponent } from './_components/fhir-messaging/fhir-get/fhir-get.component';
 import { FhirMessagingComponent } from './_components/fhir-messaging/fhir-messaging.component';
 import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/settings-dialog.component';

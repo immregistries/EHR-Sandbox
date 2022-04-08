@@ -9,7 +9,7 @@ import { PatientService } from 'src/app/_services/patient.service';
 import { TenantService } from 'src/app/_services/tenant.service';
 import { FhirDialogComponent } from '../../fhir-messaging/fhir-dialog/fhir-dialog.component';
 import { FhirMessagingComponent } from '../../fhir-messaging/fhir-messaging.component';
-import { PatientCreationComponent } from '../../_dialogs/patient-creation/patient-creation.component';
+import { PatientCreationComponent } from '../../_forms/patient-form/patient-creation/patient-creation.component';
 
 @Component({
   selector: 'app-patient-table',

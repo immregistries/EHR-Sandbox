@@ -22,9 +22,9 @@
 
           <h3 style="text-align: left;">Main pages :</h3>
           <ul class="w3-ul">
-            <li>Dashboard</li>
-            <li>Settings</li>
-            <!-- <li>FHIR</li> -->
+            <li><a href="/dashboard">Dashboard</a> {{' : Patient and Vaccination mamipulation'}}</li>
+            <li><a href="/settings">Settings</a>{{' : Settings for IIS location and logins'}}</li>
+            <li><a href="/fhir">Fhir</a> {{' : Fhir messaging page'}} </li>
           </ul>
 
           <div class="w3-panel w3-yellow">
@@ -40,13 +40,23 @@
       <mat-card >
         <mat-card-header class="card-title">
           <mat-card-title class="card-title">
-            Log in
+            Authentication
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
           <p class="w3-red" *ngIf="loginError === '1'"> Username and password did not match</p>
-          <p class="w3-red" *ngIf="loginError === '2'"> Authorization Error, please login again</p>
-          <app-authentication-form (success)="authenticationSuccess($event)"></app-authentication-form>
+          <p class="w3-red" *ngIf="loginError === '2'"> Authorization error, please login again</p>
+          <div *ngIf="!token.getUser().username ; else logout">
+            <p>To sign up : sign in with a new username</p>
+            <app-authentication-form  (success)="authenticationSuccess($event)"></app-authentication-form>
+          </div>
+          <ng-template #logout>
+            <h4>
+              {{'Currently logged in as '}}
+              <b> {{token.getUser().username}} </b>
+            </h4>
+            <button mat-raised-button (click)="token.signOut()">Sign out</button>
+          </ng-template>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

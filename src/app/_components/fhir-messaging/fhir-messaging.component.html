@@ -9,10 +9,6 @@
         <p>{{patientAnswer}}</p>
         <p style="color: red;">{{patientError}}</p>
         <button mat-raised-button class="w3-right w3-margin-bottom" (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
-
-        <!-- <mat-dialog-actions align="end">
-          <button mat-raised-button (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
-        </mat-dialog-actions> -->
       </div>
       <div style="width: 50%;" *ngIf="vaccinationId > -1">
         <mat-form-field style="width: 100%;" appearance="fill">
@@ -22,10 +18,6 @@
         <p>{{vaccinationAnswer}}</p>
         <p style="color: red;">{{vaccinationError}}</p>
         <button mat-raised-button class="w3-right w3-margin-bottom" (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
-
-        <!-- <mat-dialog-actions align="end">
-          <button mat-raised-button (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
-        </mat-dialog-actions> -->
       </div>
     </div>
   </mat-tab>

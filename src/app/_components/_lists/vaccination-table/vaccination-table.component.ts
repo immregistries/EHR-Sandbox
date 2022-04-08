@@ -12,7 +12,7 @@ import { VaccinationService } from 'src/app/_services/vaccination.service';
 import { FhirDialogComponent } from '../../fhir-messaging/fhir-dialog/fhir-dialog.component';
 import { FhirMessagingComponent } from '../../fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from '../../_dialogs/hl7-messaging/hl7-messaging.component';
-import { VaccinationCreationComponent } from '../../_dialogs/vaccination-creation/vaccination-creation.component';
+import { VaccinationCreationComponent } from '../../_forms/vaccination-form/vaccination-creation/vaccination-creation.component';
 
 @Component({
   selector: 'app-vaccination-table',

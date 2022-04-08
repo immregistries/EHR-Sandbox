@@ -1,8 +1,8 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { User } from 'src/app/_model/rest';
-import { AuthService } from 'src/app/_services/auth.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AuthService } from 'src/app/_services/_authentication/auth.service';
+import { TokenStorageService } from 'src/app/_services/_authentication/token-storage.service';
 import { EventEmitter } from '@angular/core';
 
 @Component({

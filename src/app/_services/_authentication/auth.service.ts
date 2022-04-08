@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SettingsService } from './settings.service';
-import { User } from '../_model/rest';
-import { JwtResponse } from '../_model/security';
+import { SettingsService } from '../settings.service';
+import { User } from '../../_model/rest';
+import { JwtResponse } from '../../_model/security';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

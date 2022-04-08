@@ -40,7 +40,7 @@ import { AuthenticationFormComponent } from './_components/_forms/authentication
 import { NavigationComponent } from './_components/navigation/navigation.component';
 
 import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
-import { PatientCreationComponent } from './_components/_dialogs/patient-creation/patient-creation.component';
+import { PatientCreationComponent } from './_components/_forms/patient-form/patient-creation/patient-creation.component';
 import { TenantCreationComponent } from './_components/_dialogs/tenant-creation/tenant-creation.component';
 
 import { TenantListComponent } from './_components/_lists/tenant-list/tenant-list.component';
@@ -49,12 +49,12 @@ import { PatientListComponent } from './_components/_lists/patient-list/patient-
 import { VaccinationFormComponent } from './_components/_forms/vaccination-form/vaccination-form.component';
 import { PatientFreeFormComponent } from './_components/_forms/patient-form/patient-free-form/patient-free-form.component';
 import { CodeMapsService, CodeMapsServiceFactory } from './_services/code-maps.service';
-import { VaccinationCreationComponent } from './_components/_dialogs/vaccination-creation/vaccination-creation.component';
+import { VaccinationCreationComponent } from './_components/_forms/vaccination-form/vaccination-creation/vaccination-creation.component';
 import { VaccinationTableComponent } from './_components/_lists/vaccination-table/vaccination-table.component';
 import { Hl7MessagingComponent } from './_components/_dialogs/hl7-messaging/hl7-messaging.component';
 import { FhirMessagingComponent } from './_components/fhir-messaging/fhir-messaging.component';
 import { PatientTableComponent } from './_components/_lists/patient-table/patient-table.component';
-import { AuthenticationDialogComponent } from './_components/_dialogs/authentication-dialog/authentication-dialog.component';
+import { AuthenticationDialogComponent } from './_components/_forms/authentication-form/authentication-dialog/authentication-dialog.component';
 import { SelectCodebaseComponent } from './_components/_forms/select-codebase/select-codebase.component';
 import { TenantMenuComponent } from './_components/_lists/tenant-menu/tenant-menu.component';
 import { FacilityMenuComponent } from './_components/_lists/facility-menu/facility-menu.component';

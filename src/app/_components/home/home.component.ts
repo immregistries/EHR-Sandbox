@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SettingsService } from 'src/app/_services/settings.service';
+import { TokenStorageService } from 'src/app/_services/_authentication/token-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ export class HomeComponent implements OnInit {
     public settings: SettingsService,
     private route: ActivatedRoute,
     private router: Router,
+    public token: TokenStorageService,
     ) {
       this.route.queryParams.subscribe(params => {
         this.loginError = params['loginError'];
