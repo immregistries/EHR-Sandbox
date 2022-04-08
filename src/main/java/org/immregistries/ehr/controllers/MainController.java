@@ -65,11 +65,11 @@ public class MainController {
         return immunizationRegistryRepository.save(settings);
     }
 
-//    @GetMapping("/iis/{resourceType}/{id}")
-//    public ResponseEntity<String> getFhirFromIIS(@PathVariable() String resourceType,
-//                                                 @PathVariable() String id) {
-//        return ResponseEntity.ok(ResourceClient.read(resourceType, id, settings()));
-//    }
+    @GetMapping("/iis/{resourceType}/{id}")
+    public ResponseEntity<String> getFhirFromIIS(@PathVariable() String resourceType,
+                                                 @PathVariable() String id) {
+        return ResponseEntity.ok(ResourceClient.read(resourceType, id, settings()));
+    }
 
 
 }
