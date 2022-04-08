@@ -41,7 +41,7 @@ public class HL7printer {
     return sb.toString();
   }
 
-  public String buildVxu(Vaccine vaccination,Patient patient,Facility facility) {
+  public String buildVxu(Vaccine vaccination, Patient patient, Facility facility) {
     StringBuilder sb = new StringBuilder();
     CodeMap codeMap = CodeMapManager.getCodeMap();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");

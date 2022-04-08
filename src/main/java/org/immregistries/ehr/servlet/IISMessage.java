@@ -67,7 +67,6 @@ public class IISMessage extends HttpServlet {
     try {
       {
         ServletHelper.doStandardHeader(out, req, "IIS messaging");
-        HL7ToFHIRConverter ftv = new HL7ToFHIRConverter();
         User user = (User) session.getAttribute("user");
         Facility facility = (Facility) session.getAttribute("facility");
         Patient patient = (Patient) session.getAttribute("patient") ;
