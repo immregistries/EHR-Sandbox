@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class MainController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;

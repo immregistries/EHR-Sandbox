@@ -44,7 +44,7 @@ public class PatientController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
 
     @GetMapping()
@@ -107,8 +107,8 @@ public class PatientController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
         }
-//        patient.setTenant(tenant.get());
-//        patient.setFacility(facility.get());
+        patient.setTenant(tenant.get());
+        patient.setFacility(facility.get());
         patient.setUpdatedDate(new Date());
         Patient newEntity = patientRepository.save(patient);
         return newEntity;

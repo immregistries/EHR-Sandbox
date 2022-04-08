@@ -6,6 +6,9 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.entities.*;
+import org.immregistries.ehr.security.AuthTokenFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Date;
@@ -14,6 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class RandomGenerator {
+    private static final Logger logger = LoggerFactory.getLogger(RandomGenerator.class);
 
 
     public static Patient randomPatient(Tenant tenant, Facility facility){
@@ -62,11 +66,16 @@ public class RandomGenerator {
         patient.setAddressLine1(faker.address().streetAddress());
         patient.setAddressCity(faker.address().city());
         patient.setAddressCountry("USA");
-        patient.setAddressCountyParish("county");
-        patient.setAddressState("MD");
+        patient.setAddressState(faker.address().stateAbbr());
+        patient.setAddressZip(faker.address().zipCode());
+//        patient.setAddressZip(faker.address().zipCodeByState(patient.getAddressState()).replace('#','0'));
+        try {
+            patient.setAddressCountyParish(faker.address().countyByZipCode(patient.getAddressZip()));
+        } catch (RuntimeException e) {
 
-//        patient.setPhone(faker.phoneNumber().phoneNumber());
-        patient.setPhone(faker.phoneNumber().cellPhone());
+        }
+
+        patient.setPhone(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6));
         patient.setEmail(patient.getNameFirst() + randDay +"@email.com");
 
         patient.setBirthFlag("");

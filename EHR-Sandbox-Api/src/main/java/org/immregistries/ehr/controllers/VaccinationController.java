@@ -49,7 +49,7 @@ public class VaccinationController {
 //    @Autowired(required = false)
 //    private ResourceClient resourceClient;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(VaccinationController.class);
 
     @GetMapping()
     public Iterable<VaccinationEvent> vaccinationEvents(@PathVariable() int patientId) {
