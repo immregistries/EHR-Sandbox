@@ -1,0 +1,17 @@
+<h3 mat-dialog-title>
+  Create Tenant
+  <button mat-icon-button mat-dialog-close class="close-button" >X</button>
+</h3>
+<form>
+  <mat-form-field appearance="fill" >
+    <mat-label>Tenant name</mat-label>
+    <input matInput [formControl]=newTenantForm>
+  </mat-form-field>
+  <mat-dialog-actions align="end">
+    <button mat-mini-fab (click)="create()" color="primary" >
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-dialog-actions>
+</form>
+
+

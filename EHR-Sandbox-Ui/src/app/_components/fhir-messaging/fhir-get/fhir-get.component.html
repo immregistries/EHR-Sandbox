@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill">
+  <mat-label>{{resourceType + ' '}} identifier</mat-label>
+  <input matInput [(ngModel)]="identifier">
+</mat-form-field>
+<button mat-raised-button  (click)="get()">GET</button>
+<div>
+  <textarea  class="w3-margin-bottom" style="height: 50vh; width: 95%;">{{result}}</textarea>
+</div>
