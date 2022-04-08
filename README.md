@@ -1,5 +1,7 @@
 # EhrSandboxUi
 
+This angular application is the frontend of the EHR sandbox, alongside the EHR-Api backend. To change the base URI of the API modify the constructor in [src/app/_services/settings.service.ts](src/app/_services/settings.service.ts)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.5.
 
 ## Development server
