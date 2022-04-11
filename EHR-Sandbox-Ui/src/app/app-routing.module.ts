@@ -11,6 +11,8 @@ import { PatientFormComponent } from './_components/_forms/patient-form/patient-
 import { VaccinationFormComponent } from './_components/_forms/vaccination-form/vaccination-form.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'authentication', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'patient_form', component: PatientFormComponent },

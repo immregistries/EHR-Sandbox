@@ -10,6 +10,8 @@ import { VaccinationService } from 'src/app/_services/vaccination.service';
   styleUrls: ['./fhir-messaging.component.css']
 })
 export class FhirMessagingComponent implements AfterViewInit {
+  patientLoading: Boolean = false
+  vaccinationLoading: Boolean = false
 
   @Input() vaccinationId!: number;
   @Input() patientId!: number;
@@ -30,12 +32,16 @@ export class FhirMessagingComponent implements AfterViewInit {
      }
 
   ngAfterViewInit(): void {
+    this.patientLoading = true
     this.fhirService.quickGetPatientResource(this.patientId).subscribe((resource) => {
       this.patientResource = resource
+      this.patientLoading = false
     })
     if (this.vaccinationId){
+      this.vaccinationLoading = true
       this.fhirService.quickGetImmunizationResource(this.patientId,this.vaccinationId).subscribe((resource) => {
         this.vaccinationResource = resource
+        this.vaccinationLoading = false
       })
     }
   }

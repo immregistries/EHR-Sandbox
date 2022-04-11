@@ -26,6 +26,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatSelectFilterModule } from 'mat-select-filter';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 
 import { TenantService } from './_services/tenant.service';
@@ -120,6 +121,7 @@ import { FhirDialogComponent } from './_components/fhir-messaging/fhir-dialog/fh
     MatSelectFilterModule,
     MatAutocompleteModule,
     MatTooltipModule,
+    MatProgressBarModule,
   ],
   providers: [
     SettingsService,
