@@ -1,2 +1,3 @@
 # EHR-Sandbox
-EHR Sandbox to replicate functionality of an EHR that sends immunization information to the IIS
+The EHR Sandbox is a testing tool developed by AIRA and NIST along with the IIS Sandbox tool.
+It's purpose is to simulate the behaviour of a Electronic health record (EHR).
