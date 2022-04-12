@@ -30,6 +30,7 @@ export class PatientTableComponent implements AfterViewInit {
 
   @Input() facility: Facility = {id: -1};
   @Input() title: string = 'Patients'
+  loading: boolean= false
 
 
 
@@ -81,8 +82,10 @@ export class PatientTableComponent implements AfterViewInit {
 
     })).subscribe((res) => {
       this.patientService.setPatient({})
+      this.loading = true
       this.patientService.getRefresh().subscribe((bool) => {
         this.dataSource.data = res
+        this.loading = false
       })
     })
 

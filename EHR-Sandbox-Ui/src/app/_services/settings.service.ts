@@ -22,7 +22,7 @@ export class SettingsService {
   private version: string = packageJson.version;
 
   constructor(private http: HttpClient,) {
-    // this.apiUrl = "http://localhost:9091/EHR-Sandbox-Api"
+    this.apiUrl = "http://localhost:9091/EHR-Sandbox-Api"
     // this.apiUrl = "http://localhost:8080"
   }
 

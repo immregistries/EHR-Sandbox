@@ -12,6 +12,7 @@ export class FhirGetComponent {
   @Input() resourceType: 'Patient' | 'Immunization' = 'Patient'
   @Input() identifier: string = ''
   result: string = ''
+  loading = false
 
 
   constructor(public fhir: FhirService) { }
@@ -19,8 +20,10 @@ export class FhirGetComponent {
 
   get() {
     if (this.identifier) {
+      this.loading = true
       this.fhir.getFromIIS(this.resourceType, this.identifier).subscribe((res) => {
         this.result = res
+        this.loading = false
       })
 
     }

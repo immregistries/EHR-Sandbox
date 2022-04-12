@@ -7,6 +7,9 @@ import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Maps the Database with FHIR for patient resources
+ */
 public class PatientHandler {
   
   

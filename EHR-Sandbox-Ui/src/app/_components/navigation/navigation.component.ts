@@ -32,7 +32,7 @@ export class NavigationComponent {
     public facilityService: FacilityService,
     public patientService: PatientService,
     private tokenService: TokenStorageService,
-    private router: Router) {
+    public router: Router) {
       this.router.events.subscribe(
         (event: NavigationEvent) => {
           if(event instanceof NavigationStart) {

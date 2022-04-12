@@ -5,6 +5,7 @@
     <mat-icon class="custom-fab-icon" >add</mat-icon>
   </button> -->
 </div>
+<mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
 <table mat-table
        [dataSource]="dataSource" multiTemplateDataRows
        class="mat-elevation-z8">

@@ -6,6 +6,9 @@ To change the base URI of the API :
  - when using `ng serve` to run the server, edit [src/environments/environment.ts](src/environments/environment.ts),
 - for production mode edit [src/environments/environment.ts](src/environments/environment.prod.ts)
 
+### WAR File
+To obtain the war file for this application, execute script `bash compile_war.sh`, which will generate [dist/ehr-sandbox.war](dist/ehr-sandbox.war)
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.5.
 

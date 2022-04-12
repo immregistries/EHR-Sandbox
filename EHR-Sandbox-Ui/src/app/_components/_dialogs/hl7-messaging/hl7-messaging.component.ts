@@ -14,6 +14,8 @@ export class Hl7MessagingComponent implements OnInit {
   @Input() vaccinationId: number = -1;
   @Input() patientId: number = -1;
 
+  loading: boolean = false
+
   public vxu: string = "";
   public answer: string = "";
   public error: string = "";
@@ -28,8 +30,10 @@ export class Hl7MessagingComponent implements OnInit {
      }
 
   ngOnInit(): void {
+    this.loading = true
     this.hl7Service.quickGetVXU(this.patientId,this.vaccinationId).subscribe((res) => {
       this.vxu = res
+      this.loading = false
     })
   }
 
