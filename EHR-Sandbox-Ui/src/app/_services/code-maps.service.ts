@@ -5,7 +5,7 @@ import { Code } from '../_model/structure';
 import { SettingsService } from './settings.service';
 
 
-// Needed to load codemaps on application init : NOT CURRENTLY USED IN PROVIDERS
+// Potentially needed to load codemaps on application init : Not currently used in providers
 export function CodeMapsServiceFactory(provider: CodeMapsService) {
   return () => provider.load();
 }
@@ -13,7 +13,9 @@ export function CodeMapsServiceFactory(provider: CodeMapsService) {
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
-
+/**
+ * Service fetching the codemaps provided by the API and making them accessible in the application
+ */
 @Injectable({
   providedIn: 'root'
 })

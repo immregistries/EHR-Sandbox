@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  // Default API url used testing mode, fetched by _services/settings
+  apiUrl: "http://localhost:9091/EHR-Sandbox-Api"
 };
 
 /*

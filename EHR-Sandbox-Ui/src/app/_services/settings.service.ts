@@ -2,22 +2,28 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ImmunizationRegistry } from '../_model/rest';
+import { environment } from '../../environments/environment';
+import packageJson from '../../../package.json';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
+
+/**
+ * Service responsible for :
+ *  - fetching global variables and making them accessible to the components,
+ *  - interacting with the User's settings in the API
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
-  private apiUrl: string;
-  private version: string;
+  private apiUrl: string = environment.apiUrl;
+  private version: string = packageJson.version;
 
   constructor(private http: HttpClient,) {
-    // this.apiUrl = "http://localhost:8080/EHR-Api"
-    this.apiUrl = "http://localhost:9091/EHR-Sandbox-Api"
+    // this.apiUrl = "http://localhost:9091/EHR-Sandbox-Api"
     // this.apiUrl = "http://localhost:8080"
-    this.version = "1.2.0"
   }
 
   public getVersion(): string {

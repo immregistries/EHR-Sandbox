@@ -1,12 +1,15 @@
 import { HTTP_INTERCEPTORS, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
-import { TokenStorageService } from '../_authentication/token-storage.service';
+import { TokenStorageService } from './token-storage.service';
 import { catchError, Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
 @Injectable()
+/**
+ * Interceptor handling the authentication process for each request to the API
+ */
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private token: TokenStorageService,

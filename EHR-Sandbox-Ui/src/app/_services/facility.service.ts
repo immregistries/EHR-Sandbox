@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
-import { Facility, Tenant } from '../_model/rest';
+import { Facility } from '../_model/rest';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { PatientService } from './patient.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,9 +12,15 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
+/**
+ * Facility Service interacting with the API, and providing the global selected facility as an observable
+ */
 export class FacilityService {
 
   private facility: BehaviorSubject<Facility>;
+  /**
+   * Global observable used to trigger a refresh for all the facility lists
+   */
   private refresh: BehaviorSubject<boolean>;
 
   public getRefresh(): Observable<boolean> {

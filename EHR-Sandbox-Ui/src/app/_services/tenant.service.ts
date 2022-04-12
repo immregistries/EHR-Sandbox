@@ -9,6 +9,10 @@ import { FacilityService } from './facility.service';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
+
+/**
+ * Service allowing the interactions with the tenant of the API, and providing the global selected tenant as an observable
+ */
 @Injectable({
   providedIn: 'root'
 })

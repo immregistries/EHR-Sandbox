@@ -1,4 +1,7 @@
 import { Clinician, Patient, VaccinationEvent, Vaccine } from "./rest";
+/**
+ * Interface for codemaps lists
+ */
 export interface Code {
   "value": string,
   "label": string,
@@ -10,6 +13,7 @@ export interface Code {
   "conceptType"?: string,
   "testAge"?: string
 }
+
 export interface FormCard {
   title?: string,
   cols?: number, // dimensions of the card

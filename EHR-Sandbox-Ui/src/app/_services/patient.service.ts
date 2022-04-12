@@ -14,11 +14,15 @@ const httpOptions = {
   providedIn: 'root'
 })
 /**
- * Patient Service handling interactions with the API
+ * Patient Service interacting with the API, and providing the global selected patient as an observable
  */
 export class PatientService {
 
   private patient: BehaviorSubject<Patient>;
+
+  /**
+   * Global observable used to trigger a refresh for all the lists of patients, when a new patient was created
+   */
   private refresh: BehaviorSubject<boolean>;
 
   public getRefresh(): Observable<boolean> {

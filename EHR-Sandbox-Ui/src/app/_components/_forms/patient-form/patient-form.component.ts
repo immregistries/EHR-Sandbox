@@ -79,7 +79,7 @@ export class PatientFormComponent implements OnInit {
       {type: formType.text, title: 'First name', attribute: 'guardianFirst'},
       {type: formType.text, title: 'Middle name', attribute: 'guardianMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'guardianLast'},
-      {type: formType.text, title: 'Relationship', attribute: 'guardianRelationship'},
+      {type: formType.select, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP", codeLabel: ""},
     ]},
   ]
 }

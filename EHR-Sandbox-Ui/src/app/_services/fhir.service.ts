@@ -11,6 +11,9 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
+/**
+ * Fhir service interacting with the API to parse and serialize resources, and interact with IIS's
+ */
 export class FhirService {
 
   constructor(private http: HttpClient,

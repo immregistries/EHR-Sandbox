@@ -94,7 +94,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
 
   openCreation() {
     const dialogRef = this.dialog.open(VaccinationCreationComponent, {
-      maxWidth: '98vw',
+      maxWidth: '99vw',
       maxHeight: '95vh',
       minHeight: 'fit-content',
       width: '90%',

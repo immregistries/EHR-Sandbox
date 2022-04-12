@@ -101,7 +101,7 @@ export class VaccinationFormComponent implements OnInit {
       {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "orderingClinician"},
       {type: formType.text, title: "Last name", attribute: "nameLast", role: "orderingClinician"}
     ]},
-    {title: "Administering clinician",rows: 1, cols: 1, clinicianForms: [
+    {title: "Administering clin.",rows: 1, cols: 1, clinicianForms: [
       {type: formType.text, title: "First name", attribute: "nameFirst", role: "administeringClinician"},
       {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "administeringClinician"},
       {type: formType.text, title: "Last name", attribute: "nameLast", role: "administeringClinician"}

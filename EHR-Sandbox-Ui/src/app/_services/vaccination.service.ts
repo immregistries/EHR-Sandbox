@@ -10,7 +10,9 @@ import { TenantService } from './tenant.service';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
-
+/**
+ * Service allowing the use of the functionnalities related to vaccination provided by the API
+ */
 @Injectable({
   providedIn: 'root'
 })

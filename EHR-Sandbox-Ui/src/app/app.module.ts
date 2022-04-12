@@ -33,7 +33,7 @@ import { TenantService } from './_services/tenant.service';
 import { FacilityService } from './_services/facility.service';
 import { PatientService } from './_services/patient.service';
 import { SettingsService } from './_services/settings.service';
-import { authInterceptorProviders } from './_services/_interceptors/auth.interceptor';
+import { authInterceptorProviders } from './_services/_authentication/auth.interceptor';
 
 import { PatientFormComponent } from './_components/_forms/patient-form/patient-form.component';
 import { DashboardComponent } from './_components/dashboard/dashboard.component';
@@ -63,6 +63,7 @@ import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/
 import { HomeComponent } from './_components/home/home.component';
 import { FhirGetComponent } from './_components/fhir-messaging/fhir-get/fhir-get.component';
 import { FhirDialogComponent } from './_components/fhir-messaging/fhir-dialog/fhir-dialog.component';
+import { VaccinationFreeFormComponent } from './_components/_forms/vaccination-form/vaccination-free-form/vaccination-free-form.component';
 
 
 @NgModule({
@@ -92,7 +93,8 @@ import { FhirDialogComponent } from './_components/fhir-messaging/fhir-dialog/fh
     SettingsDialogComponent,
     HomeComponent,
     FhirGetComponent,
-    FhirDialogComponent
+    FhirDialogComponent,
+    VaccinationFreeFormComponent
   ],
   imports: [
     BrowserModule,

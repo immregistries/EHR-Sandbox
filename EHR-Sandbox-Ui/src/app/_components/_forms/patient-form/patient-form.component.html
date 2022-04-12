@@ -12,6 +12,7 @@
             <mat-card-content class="dashboard-card-content">
               <ng-container *ngFor="let form of card.patientForms" [ngSwitch]="form.type">
 
+
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
                   <input matInput  type="{{form.type}}"  [(ngModel)]="patient[form.attribute]">
@@ -23,6 +24,12 @@
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
+
+                <app-select-codebase *ngSwitchCase="'select'"
+                  [(model)]="patient[form.attribute]"
+                  [form]="form"
+                  class="select-field"
+                  ></app-select-codebase>
 
                 <div *ngSwitchCase="'short'">
                   <mat-label class="short-label">{{form.title}} </mat-label>
