@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.immregistries.ehr</groupId>
-	<artifactId>EHR-Sandbox-Api</artifactId>
-	<version>2.0</version>
+	<artifactId>ehr-sandbox-api</artifactId>
+	<version>1.2.0</version>
 	<packaging>war</packaging>
 
 	<name>rest-service-initial</name>
@@ -13,7 +13,6 @@
 		<java.version>1.8</java.version>
 		<spring.version>2.6.3</spring.version>
 		<hapi.version>5.5.0</hapi.version>
-
 	</properties>
 	<dependencies>
 		<dependency>
@@ -200,6 +199,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.version}</version>
 			</plugin>
 
 			<plugin>
@@ -254,7 +254,6 @@
 <!--							<generateConstructors>true</generateConstructors>-->
 <!--							<mapClasses>asClasses</mapClasses>-->
 <!--							<outputFileType>implementationFile</outputFileType>-->
-
 							<optionalProperties>all</optionalProperties>
 							<outputFile>target/security.d.ts</outputFile>
 							<outputKind>module</outputKind>
