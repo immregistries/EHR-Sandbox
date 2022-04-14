@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+  xmlns="http://java.sun.com/xml/ns/j2ee" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee;http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4">
+
+  <display-name>EHR-Sandbox</display-name>
+  
+  <welcome-file-list>  
+  	<welcome-file>authentication</welcome-file>
+  </welcome-file-list>
+
+  <servlet>
+  	<display-name>Entry Record</display-name>
+  	<servlet-name>entry_record</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.EntryRecord</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>Facility Creation</display-name>
+    <servlet-name>facility_creation</servlet-name>
+    <servlet-class>org.immregistries.ehr.servlet.FacilityCreation</servlet-class>
+  </servlet>
+  <servlet>
+  	<display-name>Patient Record</display-name>
+  	<servlet-name>patient_record</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.PatientRecord</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>Tenants</display-name>
+  	<servlet-name>Tenants</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Tenants</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>IIS message</display-name>
+  	<servlet-name>IIS_message</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.IISMessage</servlet-class>
+  </servlet>
+  <servlet>
+    <display-name>Patient form</display-name>
+    <servlet-name>patient_form</servlet-name>
+    <servlet-class>org.immregistries.ehr.servlet.PatientForm</servlet-class>
+</servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>Tenant_creation</display-name>
+  	<servlet-name>Tenant_creation</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.TenantCreation</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>Patients List</display-name>
+  	<servlet-name>facility_patient_display</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.FacilityPatientDisplay</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>Authentication</display-name>
+  	<servlet-name>Authentication</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Authentication</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>FHIR messaging</display-name>
+  	<servlet-name>FHIR_messaging</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.FhirMessaging</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>FHIR_get</display-name>
+  	<servlet-name>FHIR_get</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.FhirGet</servlet-class>
+  </servlet>
+  <servlet>
+  	<description>
+  	</description>
+  	<display-name>Settings</display-name>
+  	<servlet-name>Settings</servlet-name>
+  	<servlet-class>org.immregistries.ehr.servlet.Settings</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>entry_record</servlet-name>
+  	<url-pattern>/entry_record</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>patient_record</servlet-name>
+  	<url-pattern>/patient_record</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>Tenants</servlet-name>
+  	<url-pattern>/tenants</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>facility_creation</servlet-name>
+  <url-pattern>/facility_creation</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>IIS_message</servlet-name>
+  	<url-pattern>/IIS_message</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>Tenant_creation</servlet-name>
+  	<url-pattern>/tenant_creation</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+      <servlet-name>patient_form</servlet-name>
+      <url-pattern>/patient_form</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>facility_patient_display</servlet-name>
+  	<url-pattern>/facility_patient_display</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>Authentication</servlet-name>
+  	<url-pattern>/authentication</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>FHIR_messaging</servlet-name>
+    <url-pattern>/FHIR_messaging</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>FHIR_get</servlet-name>
+    <url-pattern>/FHIR_get</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Settings</servlet-name>
+    <url-pattern>/Settings</url-pattern>
+  </servlet-mapping>
+
+
+  <filter>
+        <filter-name>loginFilter</filter-name>
+        <filter-class>org.immregistries.ehr.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+      <filter-name>loginFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
+</web-app>

@@ -1,0 +1,17 @@
+<!-- <h3 *ngIf="currentUsername">Currently logged in as : <b>{{currentUsername}}</b></h3> -->
+<form class="example-form" [formGroup]="authFormGroup" (ngSubmit)="onSubmit()">
+  <!-- <p class="w3-red">{{errorMessage}}</p> -->
+  <div>
+    <mat-form-field  appearance="fill">
+      <mat-label>Username</mat-label>
+      <input matInput type=text  formControlName="username">
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field  appearance="fill">
+      <mat-label>Password</mat-label>
+      <input matInput type=password formControlName="password" >
+    </mat-form-field>
+  </div>
+  <button mat-raised-button type=submit (submit)="onSubmit()" > Sign in </button>
+</form>

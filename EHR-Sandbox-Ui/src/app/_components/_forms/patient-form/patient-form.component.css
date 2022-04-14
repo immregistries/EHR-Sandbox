@@ -1,0 +1,59 @@
+.grid-container {
+  margin: 5x;
+}
+
+.dashboard-card {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+.dashboard-card-content {
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 5px 5px;
+}
+
+mat-form-field {
+  /* margin-right: 5px; */
+  height: 35px;
+}
+
+mat-raised-button {
+  padding: 15px;
+}
+
+.date-field {
+  /* max-width: 125px; */
+  max-width: 9.3em;
+}
+
+.text-field {
+  /* max-width: 45%; */
+  min-width: 10em;
+}
+.short-text-field {
+  max-width: 1.4em;
+  margin-top: 2px;
+  /* margin-right: 5px; */
+  /* box-shadow: 0 0 3px #CC0000; */
+  border-color: lightgrey;
+}
+
+.short-label {
+  color: rgb(121, 121, 121);
+}
+
+/* To change form fields height */
+::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}

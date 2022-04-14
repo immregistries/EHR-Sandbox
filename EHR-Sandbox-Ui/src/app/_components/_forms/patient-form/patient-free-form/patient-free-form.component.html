@@ -1,0 +1,24 @@
+<div class="grid-container">
+  <mat-grid-list cols="6" rowHeight="180px">
+    <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
+      <mat-card class="dashboard-card">
+        <mat-card-header *ngIf="card.title">
+          <mat-card-title>
+            {{card.title}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <ng-container *ngFor="let form of card.patientForms">
+
+            <mat-form-field  appearance="outline" class="text-field">
+              <mat-label>{{form.title}}</mat-label>
+              <input matInput  type="text"  [(ngModel)]="patient[form.attribute]">
+            </mat-form-field>
+
+          </ng-container>
+
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

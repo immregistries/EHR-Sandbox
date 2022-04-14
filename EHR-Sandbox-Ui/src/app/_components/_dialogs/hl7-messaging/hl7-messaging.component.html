@@ -1,0 +1,14 @@
+<h3 mat-dialog-title>
+  Sending HL7v2 Resources to IIS
+  <!-- <button mat-icon-button mat-dialog-close class="close-button" >X</button> -->
+</h3>
+<mat-form-field style="width: 100%;" appearance="fill" mat-dialog-content>
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+  <mat-label>HL7v2 VXU message</mat-label>
+  <textarea matInput style="height: 180px;" placeholder="" [(ngModel)]="vxu"> </textarea>
+</mat-form-field>
+<p>{{answer}}</p>
+<p style="color: red;">{{error}}</p>
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="send()" cdkFocusInitial>Send to IIS</button>
+</mat-dialog-actions>

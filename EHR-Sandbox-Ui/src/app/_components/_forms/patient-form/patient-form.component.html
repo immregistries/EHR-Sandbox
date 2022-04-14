@@ -1,0 +1,56 @@
+<mat-tab-group>
+  <mat-tab label="Patient information">
+    <div class="grid-container">
+      <mat-grid-list cols="6" rowHeight="170px">
+        <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
+          <mat-card class="dashboard-card">
+            <mat-card-header *ngIf="card.title">
+              <mat-card-title>
+                {{card.title}}
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="dashboard-card-content">
+              <ng-container *ngFor="let form of card.patientForms" [ngSwitch]="form.type">
+
+
+                <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
+                  <mat-label>{{form.title}}</mat-label>
+                  <input matInput  type="{{form.type}}"  [(ngModel)]="patient[form.attribute]">
+                </mat-form-field>
+
+                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
+                  <mat-label>{{form.title}}</mat-label>
+                  <input matInput [matDatepicker]="picker" [ngModel]="asDate(patient[form.attribute])" (ngModelChange)="patient[form.attribute] = $event" >
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <app-select-codebase *ngSwitchCase="'select'"
+                  [(model)]="patient[form.attribute]"
+                  [form]="form"
+                  class="select-field"
+                  ></app-select-codebase>
+
+                <div *ngSwitchCase="'short'">
+                  <mat-label class="short-label">{{form.title}} </mat-label>
+                  <input  class="short-text-field" [(ngModel)]="patient[form.attribute]">
+                </div>
+
+                <mat-form-field  appearance="fill" class="text-field"  *ngSwitchDefault>
+                  <mat-label>{{form.title}}</mat-label>
+                  <input matInput  [(ngModel)]="patient[form.attribute]">
+                </mat-form-field>
+
+              </ng-container>
+
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+      </mat-grid-list>
+    </div>
+  </mat-tab>
+  <mat-tab label="Patient free form"> <app-patient-free-form [(patient)]="patient" [formCards]="formCards"></app-patient-free-form> </mat-tab>
+</mat-tab-group>
+
+

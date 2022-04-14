@@ -1,0 +1,38 @@
+<mat-tab-group>
+  <mat-tab label="Post">
+    <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
+      <div [style]="(vaccinationId > -1)? 'width: 50%': 'width: 100%'">
+        <mat-progress-bar mode="query" *ngIf="patientLoading"></mat-progress-bar>
+        <mat-form-field style="width: 100%;" appearance="fill">
+          <mat-label>Patient Fhir Resource</mat-label>
+          <textarea matInput style="height: 50vh;" placeholder="" [(ngModel)]="patientResource"> </textarea>
+        </mat-form-field>
+        <p>{{patientAnswer}}</p>
+        <p style="color: red;">{{patientError}}</p>
+        <button mat-raised-button class="w3-right w3-margin-bottom" (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
+      </div>
+      <div style="width: 50%;" *ngIf="vaccinationId > -1">
+        <mat-progress-bar mode="query" *ngIf="vaccinationLoading"></mat-progress-bar>
+
+        <mat-form-field style="width: 100%;" appearance="fill">
+          <mat-label>Vaccination Fhir Resource</mat-label>
+          <textarea matInput style="height: 50vh;" placeholder="" [(ngModel)]="vaccinationResource"> </textarea>
+        </mat-form-field>
+        <p>{{vaccinationAnswer}}</p>
+        <p style="color: red;">{{vaccinationError}}</p>
+        <button mat-raised-button class="w3-right w3-margin-bottom" (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Get">
+    <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
+      <div [style]="style">
+        <app-fhir-get [resourceType]="'Patient'" [identifier]="(patientId >0)? patientId.toString(): ''"></app-fhir-get>
+      </div>
+      <div style="width: 50%;" >
+        <app-fhir-get [resourceType]="'Immunization'" [identifier]="(vaccinationId >0)? vaccinationId.toString(): ''"></app-fhir-get>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+

@@ -1,0 +1,69 @@
+<div class="grid-container">
+  <mat-grid-list cols="3" rowHeight="300px">
+    <mat-grid-tile [colspan]="2" [rowspan]="2">
+      <mat-card class="dashboard-card">
+        <mat-card-header class="card-title">
+          <mat-card-title class="card-title">
+            EHR Sandbox
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content" style="text-align: left;">
+          The EHR Sandbox is a testing tool developed by AIRA and NIST along with the IIS Sandbox tool.
+          It's purpose is to simulate the behaviour of a Electronic health record (EHR).
+
+          <h3 class="w3-margin-top"><a href="https://github.com/immregistries/EHR-Sandbox">Github Repository</a></h3>
+          <h3 style="text-align: left;">Some functionalities :</h3>
+          <ul class="w3-ul">
+            <li>Input and generation of patient information</li>
+            <li>Input and generation of vaccination history</li>
+            <li>Send data to IIS through Hl7v2 messages</li>
+            <li>Send data to IIS through FHIR messages</li>
+          </ul>
+
+          <h3 style="text-align: left;">Main pages :</h3>
+          <ul class="w3-ul">
+            <li><a href="/dashboard">Dashboard</a> {{' : Patient and Vaccination manipulation'}}</li>
+            <li><a href="/settings">Settings</a>{{' : Settings for IIS location and logins'}}</li>
+            <li><a href="/fhir">Fhir</a> {{' : Fhir messaging page'}} </li>
+          </ul>
+
+          <div class="w3-panel w3-yellow">
+            <p class="w3-left-align">
+            This system is for test purposes only.
+            Do not submit production data. This system is not secured for safely holding personally identifiable health information.
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card >
+        <mat-card-header class="card-title">
+          <mat-card-title class="card-title">
+            Authentication
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <p class="w3-red" *ngIf="loginError === '1'"> Username and password did not match</p>
+          <p class="w3-red" *ngIf="loginError === '2'"> Authorization error, please login again</p>
+          <div *ngIf="!token.getUser().username ; else logout">
+            <p>To sign up : sign in with a new username</p>
+            <app-authentication-form  (success)="authenticationSuccess($event)"></app-authentication-form>
+          </div>
+          <ng-template #logout>
+            <h4>
+              {{'Currently logged in as '}}
+              <b> {{token.getUser().username}} </b>
+            </h4>
+            <button mat-raised-button (click)="token.signOut()">Sign out</button>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+  </mat-grid-list>
+</div>
+
+<mat-toolbar style="height: 40px; font-size: medium;" class="w3-bottom" color="primary">
+  <span >EHR Sandbox {{" v" + settings.getVersion()}}</span>
+</mat-toolbar>

@@ -1,0 +1,10 @@
+<mat-form-field appearance="fill">
+  <mat-label>{{resourceType + ' '}} identifier</mat-label>
+  <input matInput [(ngModel)]="identifier">
+</mat-form-field>
+<button mat-raised-button  (click)="get()">GET</button>
+<div>
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+  <textarea  class="w3-margin-bottom" style="height: 50vh; width: 95%;">
+    {{result}}</textarea>
+</div>

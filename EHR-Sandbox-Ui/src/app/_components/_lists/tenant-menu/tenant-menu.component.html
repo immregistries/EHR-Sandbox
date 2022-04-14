@@ -1,0 +1,7 @@
+<button mat-stroked-button  style="min-width: 10em;" [matMenuTriggerFor]="menu">
+  {{(tenantService.getTenantId() > 0)? ("Tenant: " + tenantService.getTenant().nameDisplay) : "Select Tenant" }}
+  </button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)"> {{item.nameDisplay}}</button>
+  <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
+</mat-menu>
