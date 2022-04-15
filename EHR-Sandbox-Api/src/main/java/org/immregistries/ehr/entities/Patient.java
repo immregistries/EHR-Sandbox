@@ -32,7 +32,7 @@ public class Patient {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private Tenant tenant;
 
     @Column(name = "created_date", nullable = false)
@@ -140,6 +140,19 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient")
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "patient")
+//    @JsonManagedReference(value = "patient_feedback")
+//    @JsonIgnore()
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
 
     public Set<NextOfKin> getNextOfKins() {
         return nextOfKins;

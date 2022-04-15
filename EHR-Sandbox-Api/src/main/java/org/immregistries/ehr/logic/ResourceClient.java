@@ -36,15 +36,15 @@ public abstract class ResourceClient {
         return read(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static String write(IBaseResource resource, ImmunizationRegistry ir){
+    public static MethodOutcome write(IBaseResource resource, ImmunizationRegistry ir){
         return write(resource, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static String delete(String resourceType, String resourceId, ImmunizationRegistry ir){
+    public static MethodOutcome delete(String resourceType, String resourceId, ImmunizationRegistry ir){
         return delete(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static String update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
+    public static MethodOutcome update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
         return update(resource, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
   
@@ -53,76 +53,33 @@ public abstract class ResourceClient {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         IBaseResource resource;
         String response;
-        try {
-            resource = client.read().resource(resourceType).withId(resourceId).execute();
-            // resource = client.read().resource(Patient.class).withId(resourceId).execute();
-            response = CTX.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
-        } catch (ResourceNotFoundException e) {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-            LocalDateTime now = LocalDateTime.now();  
-            response = dtf.format(now) + "Resource not found";
-//            e.printStackTrace();
-        }
-        return response;
+        resource = client.read().resource(resourceType).withId(resourceId).execute();
+        return CTX.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
     }
   
   
-    public static String write(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
+    public static MethodOutcome write(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome;
         String response;
-        try {
-           // Create the resource on the server
-           outcome = client.create().resource(resource).execute();
-           // Log the ID that the server assigned
-           IIdType id = outcome.getId();
-           if (id != null){  
-                response = "Created resource, got ID: " + id.getIdPart();
-           }else {
-               response = "Response includes no id";
-           }
-        } catch (DataFormatException e) {
-           response = "ERROR Writing FHIR Resource";
-           e.printStackTrace();
-        }
-        return add_timestamp(response);
+        outcome = client.create().resource(resource).execute();
+        return outcome;
     }
 
   
-    public static String delete(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
+    public static MethodOutcome delete(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         String response;
         MethodOutcome outcome = client.delete().resourceById(new IdType(resourceType, resourceId)).execute();
-
         OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
-        if (opeOutcome != null) {
-            response = opeOutcome.getIssueFirstRep().getDetails().getCodingFirstRep().getCode();
-        }
-        else{
-            response = "Resource not found";
-        }
-        return add_timestamp(response);
+        return outcome;
     }
 
-    public static String update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
+    public static MethodOutcome update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         String response;
         MethodOutcome outcome = client.update().resource(resource).execute();
-
-        IIdType id = outcome.getId();
-
-        if (id != null){
-            response = "Updated resource, got ID: " + id.getIdPart();
-        }
-        // OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
-
-        // if (opeOutcome != null) {
-        //     response = opeOutcome.getIssueFirstRep().getDetails().getCodingFirstRep().getCode();
-        // }
-        else{
-            response = "Resource not found";
-        }
-        return add_timestamp(response);
+        return outcome;
     }
     
 }

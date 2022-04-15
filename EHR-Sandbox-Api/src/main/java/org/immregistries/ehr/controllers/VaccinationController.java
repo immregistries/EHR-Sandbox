@@ -3,6 +3,7 @@ package org.immregistries.ehr.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.hl7.fhir.r4.model.Immunization;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.*;
@@ -160,11 +161,20 @@ public class VaccinationController {
     }
 
     @PostMapping("/{vaccinationId}/fhir")
-    public ResponseEntity<String>  fhirSend(@RequestBody String message) {
+    public ResponseEntity<String> fhirSend(@RequestBody String message) {
         IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
         Immunization immunization = parser.parseResource(Immunization.class,message);
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
-        return ResponseEntity.ok(ResourceClient.write(immunization,ir));
+//        return ResponseEntity.ok(ResourceClient.write(immunization,ir));
+        MethodOutcome outcome;
+        try {
+            outcome = ResourceClient.write(immunization,ir);
+            return ResponseEntity.ok(outcome.getId().getIdPart());
+
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 
     @GetMapping("/{vaccinationId}/fhir")

@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Feedback } from 'src/app/_model/rest';
+import { FeedbackService } from 'src/app/_services/feedback.service';
 import { FhirService } from 'src/app/_services/fhir.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
 
@@ -27,7 +29,8 @@ export class FhirMessagingComponent implements AfterViewInit {
   public style: string = 'width: 50%'
 
   constructor(private fhirService: FhirService,
-    private _snackBar: MatSnackBar) {
+    private _snackBar: MatSnackBar,
+    private feedbackService: FeedbackService) {
 
      }
 
@@ -51,14 +54,23 @@ export class FhirMessagingComponent implements AfterViewInit {
       (res) => {
         this.patientAnswer = res
         this.patientError = ""
+        console.log(res)
+        const feedback: Feedback = {iis: "fhirTest", content: res, patient: this.patientId}
+        this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
+          console.log(res)
+        })
       },
       (err) => {
         this.patientAnswer = ""
         if (err.error.text) {
           this.patientError = err.error.text
         } else {
-          this.patientError = err.error
+          this.patientError = err.error.error
         }
+        const feedback: Feedback = {iis: "fhirTest", content: this.patientError, patient: this.patientId}
+        this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
+          console.log(res)
+        })
         console.error(err)
       }
     )

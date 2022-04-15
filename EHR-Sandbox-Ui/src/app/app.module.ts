@@ -27,6 +27,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatSelectFilterModule } from 'mat-select-filter';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatBadgeModule} from '@angular/material/badge';
 
 
 import { TenantService } from './_services/tenant.service';
@@ -124,6 +125,7 @@ import { VaccinationFreeFormComponent } from './_components/_forms/vaccination-f
     MatAutocompleteModule,
     MatTooltipModule,
     MatProgressBarModule,
+    MatBadgeModule,
   ],
   providers: [
     SettingsService,

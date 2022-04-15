@@ -3,6 +3,8 @@ package org.immregistries.ehr.entities;
 import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "vaccination_event")
@@ -43,6 +45,19 @@ public class VaccinationEvent {
 //    @JsonBackReference("facility-vaccinationEvent")
     @JsonIgnore
     private Facility administeringFacility;
+
+    @OneToMany(mappedBy = "vaccinationEvent")
+//    @JsonManagedReference(value = "vaccination_feedback")
+    @JsonIgnore()
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
 
     public Facility getAdministeringFacility() {
         return administeringFacility;

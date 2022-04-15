@@ -41,13 +41,8 @@ tr.element-row:not(.expanded-row):active {
   padding: 8px;
 }
 
-/* .mat-table, .mat-form-field, .mat-input{
-  padding: 0px;
-} */
 
 .search-bar {
-  /* float: left; */
-  /* height: 1.4em; */
   padding-right: 1em;
   padding-left: 0px;
 }

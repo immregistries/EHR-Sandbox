@@ -39,7 +39,7 @@ export class PatientTableComponent implements AfterViewInit {
     "nameMiddle",
     "nameLast",
     "birthDate",
-    // 'alerts'
+    'alerts'
   ]
 
   // Allows Date type casting in HTML template

@@ -2,6 +2,15 @@
 /* eslint-disable */
 // Generated using typescript-generator version 2.35.1025 on 2022-03-11 10:41:27.
 
+export interface Feedback {
+  id?: number;
+  iis?: string;
+  patient?: Patient  | number;
+  vaccinationEvent?: VaccinationEvent | number;
+  facility?: Facility | number;
+  content?: string;
+}
+
 export interface Clinician {
   id?: number;
   nameLast?: string;
@@ -14,6 +23,7 @@ export interface Facility {
   nameDisplay?: string;
   facilities?: (Facility | number)[];
   patients?: (Patient | number)[];
+  feedbacks?: (Feedback | number)[];
 }
 
 export interface ImmunizationRegistry {
@@ -84,6 +94,7 @@ export interface Patient {
   guardianRelationship?: string;
   nextOfKins?: NextOfKin[];
   facility?: Facility | number;
+  feedbacks?: (Feedback | number)[];
 }
 
 export interface Tenant {
@@ -106,6 +117,7 @@ export interface VaccinationEvent {
   orderingClinician: Clinician;
   administeringClinician: Clinician;
   vaccine: Vaccine;
+  feedbacks?: (Feedback | number)[];
 }
 
 export interface Vaccine {

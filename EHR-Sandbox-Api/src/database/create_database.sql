@@ -168,4 +168,31 @@ CREATE TABLE `vaccination_event` (
   CONSTRAINT `vaccination_event_ibfk_5` FOREIGN KEY (`administering_facility_id`) REFERENCES `facility` (`facility_id`),
   CONSTRAINT `vaccination_event_ibfk_6` FOREIGN KEY (`vaccine_id`) REFERENCES `vaccine` (`vaccine_id`)
   
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+)
+
+CREATE TABLE `ehr`.`feedback` (
+  `patient_id` INT NULL,
+  `facility_id` INT NULL,
+  `vaccination_event_id` INT NULL,
+  `content` LONGBLOB NULL,
+  `iis` VARCHAR(45) NULL,
+  INDEX `patient_id_idx` (`patient_id` ASC) VISIBLE,
+  INDEX `fk_facility_idx` (`facility_id` ASC) VISIBLE,
+  INDEX `fk_vaccination_event_idx` (`vaccination_event_id` ASC) VISIBLE,
+  CONSTRAINT `fk_patient`
+    FOREIGN KEY (`patient_id`)
+    REFERENCES `ehr`.`patient` (`patient_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_facility`
+    FOREIGN KEY (`facility_id`)
+    REFERENCES `ehr`.`facility` (`facility_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_vaccination_event`
+    FOREIGN KEY (`vaccination_event_id`)
+    REFERENCES `ehr`.`vaccination_event` (`vaccination_event_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
