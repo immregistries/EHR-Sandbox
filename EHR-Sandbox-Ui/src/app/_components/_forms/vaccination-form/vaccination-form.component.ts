@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Facility, VaccinationEvent, Tenant, Vaccine } from 'src/app/_model/rest';
-import { Code, Form, FormCard, formType } from 'src/app/_model/structure';
+import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference } from 'src/app/_model/structure';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
@@ -19,11 +19,22 @@ export class VaccinationFormComponent implements OnInit {
   @Output()
   vaccinationChange = new EventEmitter<VaccinationEvent>();
 
-  private codeBaseMap!:  {[key:string]: {[key:string]: Code}};
+  private codeBaseMap!:  CodeBaseMap;
   private codeBaseMapKeys!:  string[];
-  private codeBaseMapValues!:  {[key:string]: Code}[];
+  private codeBaseMapValues!:  CodeMap[];
+  public references: {[key:string]: Reference} = {};
 
   filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
+
+  referencesChange(value: Reference, codeMapKey?: string ) {
+    if (codeMapKey ){
+      if (value) {
+        this.references[codeMapKey] = value
+      } else {
+        delete this.references[codeMapKey]
+      }
+    }
+  }
 
   constructor(private breakpointObserver: BreakpointObserver,
     private _snackBar: MatSnackBar,
@@ -50,7 +61,7 @@ export class VaccinationFormComponent implements OnInit {
 
   getCodes() {
     this.codeMapsService.readCodeMaps().subscribe((res) => {
-      console.log(res)
+      // console.log(res)
     })
   }
 

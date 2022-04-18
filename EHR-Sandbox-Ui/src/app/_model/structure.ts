@@ -2,18 +2,32 @@ import { Clinician, Patient, VaccinationEvent, Vaccine } from "./rest";
 /**
  * Interface for codemaps lists
  */
+
+export interface CodeBaseMap {
+  [key:string]: CodeMap
+}
+export interface CodeMap {
+  [key:string]: Code
+}
 export interface Code {
   "value": string,
   "label": string,
   "description"?: string,
   "codeStatus"?: string,
-  "reference"?: string,
+  "reference"?: Reference,
   "useDate"?: Date,
   "useAge"?: string,
   "conceptType"?: string,
   "testAge"?: string
 }
+export interface Reference {
+  linkTo: ReferenceLink[]
+}
 
+export interface ReferenceLink {
+  value: string,
+  codeset: string
+}
 export interface FormCard {
   title?: string,
   cols?: number, // dimensions of the card

@@ -54,11 +54,10 @@ export class FhirMessagingComponent implements AfterViewInit {
       (res) => {
         this.patientAnswer = res
         this.patientError = ""
-        console.log(res)
-        const feedback: Feedback = {iis: "fhirTest", content: res, patient: this.patientId}
-        this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
-          console.log(res)
-        })
+        // const feedback: Feedback = {iis: "fhirTest", content: res, patient: this.patientId}
+        // this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
+        //   console.log(res)
+        // })
       },
       (err) => {
         this.patientAnswer = ""

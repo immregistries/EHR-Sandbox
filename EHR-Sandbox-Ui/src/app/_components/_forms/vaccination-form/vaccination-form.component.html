@@ -20,6 +20,8 @@
                   [(model)]="vaccination.vaccine[form.attribute]"
                   [form]="form"
                   class="select-field"
+                  [referenceFilter]="references"
+                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
                   ></app-select-codebase>
                 <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
                   <mat-label>{{form.title}}</mat-label>

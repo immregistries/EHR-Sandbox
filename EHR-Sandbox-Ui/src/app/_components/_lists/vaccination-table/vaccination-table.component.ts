@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { merge, startWith, switchMap } from 'rxjs';
 import { VaccinationEvent, Vaccine } from 'src/app/_model/rest';
-import { Code } from 'src/app/_model/structure';
+import { Code, CodeBaseMap } from 'src/app/_model/structure';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { PatientService } from 'src/app/_services/patient.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
@@ -27,7 +27,7 @@ import { VaccinationCreationComponent } from '../../_forms/vaccination-form/vacc
   ],
 })
 export class VaccinationTableComponent implements AfterViewInit  {
-  private codeBaseMap!:  {[key:string]: {[key:string]: Code}};
+  private codeBaseMap!: CodeBaseMap;
 
   columns: (keyof VaccinationEvent | keyof Vaccine )[] = [
     "vaccineCvxCode",

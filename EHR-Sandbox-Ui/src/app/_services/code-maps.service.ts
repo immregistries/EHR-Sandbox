@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Code } from '../_model/structure';
+import { Code, CodeBaseMap, CodeMap } from '../_model/structure';
 import { SettingsService } from './settings.service';
 
 
@@ -20,21 +20,21 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class CodeMapsService {
-  private codeBaseMap!:  BehaviorSubject<{[key:string]: {[key:string]: Code}}>;
+  private codeBaseMap!:  BehaviorSubject<CodeBaseMap>;
 
   constructor(private http: HttpClient,
     private settings: SettingsService,) {
       this.load()
      }
 
-  getObservableCodeBaseMap(): BehaviorSubject<{[key:string]: {[key:string]: Code}}>{
+  getObservableCodeBaseMap(): BehaviorSubject<CodeBaseMap>{
     if (!this.codeBaseMap){
       this.refreshCodeMaps()
     }
     return this.codeBaseMap
   }
 
-  getCodeMap(label: string | undefined): {[key:string]: Code}  {
+  getCodeMap(label: string | undefined): CodeMap  {
     if (label){
       if (!this.codeBaseMap) {
         this.readCodeMaps().subscribe({
@@ -62,12 +62,13 @@ export class CodeMapsService {
 
   refreshCodeMaps() {
     this.http.get<any>(this.settings.getApiUrl() + '/code_maps', httpOptions).subscribe((codeMap) => {
+      console.log(codeMap)
       this.codeBaseMap.next(codeMap["codeBaseMap"])
     });
   }
 
   load() {
-    this.codeBaseMap = new BehaviorSubject<{[key:string]: {[key:string]: Code}}>({})
+    this.codeBaseMap = new BehaviorSubject<CodeBaseMap>({})
     return new Promise((resolve, reject) => {
       this.refreshCodeMaps()
     })
