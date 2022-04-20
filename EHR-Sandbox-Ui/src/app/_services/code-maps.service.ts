@@ -62,7 +62,6 @@ export class CodeMapsService {
 
   refreshCodeMaps() {
     this.http.get<any>(this.settings.getApiUrl() + '/code_maps', httpOptions).subscribe((codeMap) => {
-      console.log(codeMap)
       this.codeBaseMap.next(codeMap["codeBaseMap"])
     });
   }

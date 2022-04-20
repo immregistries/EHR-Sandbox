@@ -24,6 +24,7 @@ export class PatientFormComponent implements OnInit {
 
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
+  asString(val: any) : string { return val; }
 
   ngOnInit(): void {
   }
@@ -79,7 +80,7 @@ export class PatientFormComponent implements OnInit {
       {type: formType.text, title: 'First name', attribute: 'guardianFirst'},
       {type: formType.text, title: 'Middle name', attribute: 'guardianMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'guardianLast'},
-      {type: formType.select, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP", codeLabel: ""},
+      {type: formType.select, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP"},
     ]},
   ]
 }

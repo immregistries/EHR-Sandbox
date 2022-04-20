@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
 import { KeyValue, KeyValuePipe } from '@angular/common';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -22,17 +23,19 @@ export class VaccinationFormComponent implements OnInit {
   private codeBaseMap!:  CodeBaseMap;
   private codeBaseMapKeys!:  string[];
   private codeBaseMapValues!:  CodeMap[];
-  public references: {[key:string]: Reference} = {};
+  public references: BehaviorSubject<{[key:string]: {reference: Reference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: Reference, value: string}}>({});
 
   filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
 
-  referencesChange(value: Reference, codeMapKey?: string ) {
+  referencesChange(emitted: {reference: Reference, value: string}, codeMapKey?: string ) {
     if (codeMapKey ){
-      if (value) {
-        this.references[codeMapKey] = value
+      let newRefList: {[key:string]: {reference: Reference, value: string}} = JSON.parse(JSON.stringify(this.references.value))
+      if (emitted) {
+        newRefList[codeMapKey] = emitted
       } else {
-        delete this.references[codeMapKey]
+        delete newRefList[codeMapKey]
       }
+      this.references.next(newRefList)
     }
   }
 
@@ -58,6 +61,7 @@ export class VaccinationFormComponent implements OnInit {
 
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
+  asString(val: any) : string { return val; }
 
   getCodes() {
     this.codeMapsService.readCodeMaps().subscribe((res) => {
@@ -77,29 +81,29 @@ export class VaccinationFormComponent implements OnInit {
       {type: formType.short, title: "Admininistered amount", attribute: "administeredAmount" },
     ]},
     {title: "Codes",rows: 1, cols: 2, vaccineForms: [
-      {type: formType.select, title: "Cvx", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", codeLabel: "Cvx"},
-      {type: formType.select, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE", codeLabel: "NDC"},
+      {type: formType.select, title: "Vaccine type | Cvx", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE"},
+      {type: formType.select, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE"},
     ]},
     {title: "Request",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", codeLabel: ""},
-      {type: formType.select, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE", codeLabel: ""},
+      {type: formType.select, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE"},
+      {type: formType.select, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE"},
     ]},
     {title: "Lot",rows: 1, cols: 2, vaccineForms: [
       {type: formType.text, title: "Lot number", attribute: "lotNumber"},
-      {type: formType.select, title: "Manifacturer", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE", codeLabel: "Mvx"},
+      {type: formType.select, title: "Manifacturer | Mvx", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE"},
       {type: formType.date, title: "Expiration date", attribute: "expirationDate"},
     ]},
     {title: "Funding",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE", codeLabel: ""},
+      {type: formType.select, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE"},
       {type: formType.text, title: "Eligibility", attribute: "fundingEligibility"},
     ]},
     {title: "Injection route",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE", codeLabel: ""},
-      {type: formType.select, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE", codeLabel: ""},
+      {type: formType.select, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE"},
+      {type: formType.select, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE"},
     ]},
     {title: "Injection status",rows: 1, cols: 1, vaccineForms: [
-      {type: formType.select, title: "Completion status", attribute: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION", codeLabel: "code"},
-      {type: formType.select, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL", codeLabel: "code"},
+      {type: formType.select, title: "Completion status", attribute: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION"},
+      {type: formType.select, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL"},
     ]},
 
     {title: "Entering clinician",rows: 1, cols: 1, clinicianForms: [

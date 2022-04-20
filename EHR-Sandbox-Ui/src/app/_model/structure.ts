@@ -51,7 +51,6 @@ export interface Form {
   title: string,
   attribute: string,
   codeMapLabel?: string,
-  codeLabel?: string,
 }
 export interface PatientForm extends Form{
   attribute: keyof Patient,

@@ -1,12 +1,15 @@
 <mat-form-field  appearance="outline"  class="select-field">
   <mat-label>{{form.title}}</mat-label>
-  <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"  (ngModelChange)="filterChange($event)">
-    <mat-autocomplete #auto="matAutocomplete"
-    [displayWith]="displayCode.bind(this)"
-    (optionSelected)="valueChanged()"
-    (opened)="filterChange(model)" >
-      <mat-option *ngFor="let option of filteredOptions" [value]="option.value" >
-        {{option.label + ' | ' + (form.codeLabel? form.codeLabel + ': ' : '' ) + option.value}}
-      </mat-option>
-    </mat-autocomplete>
+  <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field" matBadge="!"
+    [matBadgeHidden]="!warning" matBadgeColor="warn" (ngModelChange)="filterChange($event)">
+  <button matSuffix mat-icon-button *ngIf="model" (click)="model = ''; valueChanged()"
+    matBadge="!" [matBadgeHidden]="warning == false" matBadgeColor="warn">
+    <mat-icon>cancel</mat-icon>
+  </button>
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)"
+    (optionSelected)="valueChanged()" (cdkAutofill)="valueChanged()" (optionActivated)="valueChanged()" (opened)="filterChange(model)">
+    <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()">
+      {{option.label + ' | ' + option.value}}
+    </mat-option>
+  </mat-autocomplete>
 </mat-form-field>

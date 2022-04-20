@@ -10,7 +10,7 @@ import { FormCard } from 'src/app/_model/structure';
 export class VaccinationFreeFormComponent implements OnInit {
 
   @Input()
-  vaccination: VaccinationEvent = {id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {}};
+  vaccination!: VaccinationEvent;
   @Output()
   vaccinationChange = new EventEmitter<VaccinationEvent>();
 

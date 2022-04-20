@@ -26,7 +26,8 @@
                 </mat-form-field>
 
                 <app-select-codebase *ngSwitchCase="'select'"
-                  [(model)]="patient[form.attribute]"
+                  [model]="asString(patient[form.attribute])"
+                  (modelChange)="patient[form.attribute] = $event"
                   [form]="form"
                   class="select-field"
                   ></app-select-codebase>

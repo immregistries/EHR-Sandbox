@@ -17,7 +17,8 @@
                   <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </mat-form-field>
                 <app-select-codebase *ngSwitchCase="'select'"
-                  [(model)]="vaccination.vaccine[form.attribute]"
+                  [model]="asString(vaccination.vaccine[form.attribute])"
+                  (modelChange)="vaccination.vaccine[form.attribute] = $event"
                   [form]="form"
                   class="select-field"
                   [referenceFilter]="references"
