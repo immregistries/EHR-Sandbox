@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Facility, VaccinationEvent, Tenant, Vaccine } from 'src/app/_model/rest';
-import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference } from 'src/app/_model/structure';
+import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference, VaccineForm } from 'src/app/_model/structure';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
 import { KeyValue, KeyValuePipe } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -27,6 +28,24 @@ export class VaccinationFormComponent implements OnInit {
 
   filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
 
+  public vaccinationForm!: FormGroup
+  constructor(private breakpointObserver: BreakpointObserver,
+    private _snackBar: MatSnackBar,
+    public codeMapsService: CodeMapsService,
+    private vaccinationService: VaccinationService,
+    private readonly fb: FormBuilder
+    ) {
+      this.refreshCodeMaps()
+      this.vaccinationForm = fb.group(Object.fromEntries(this.formCards.map(((card) => [card.title,
+        fb.group({
+          'vaccination': Object.fromEntries(card.vaccinationForms?.map((form) => [form.attribute, ['']]) ?? []),
+          'vaccine': Object.fromEntries(card.vaccineForms?.map((form) => [form.attribute, ['']]) ?? []),
+          'clinician': Object.fromEntries(card.clinicianForms?.map((form) => [form.attribute, ['']]) ?? []),
+          'patient': Object.fromEntries(card.patientForms?.map((form) => [form.attribute, ['']]) ?? []),
+        })
+      ]))))
+    }
+
   referencesChange(emitted: {reference: Reference, value: string}, codeMapKey?: string ) {
     if (codeMapKey ){
       let newRefList: {[key:string]: {reference: Reference, value: string}} = JSON.parse(JSON.stringify(this.references.value))
@@ -39,16 +58,7 @@ export class VaccinationFormComponent implements OnInit {
     }
   }
 
-  constructor(private breakpointObserver: BreakpointObserver,
-    private _snackBar: MatSnackBar,
-    public codeMapsService: CodeMapsService,
-    private vaccinationService: VaccinationService,
-    ) {
-      this.refreshCodeMaps()
-    }
-
   ngOnInit(): void {
-    // this.refreshCodeMaps()
   }
 
   refreshCodeMaps() {

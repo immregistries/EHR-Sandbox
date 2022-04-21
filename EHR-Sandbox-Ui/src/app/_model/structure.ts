@@ -29,7 +29,7 @@ export interface ReferenceLink {
   codeset: string
 }
 export interface FormCard {
-  title?: string,
+  title: string,
   cols?: number, // dimensions of the card
   rows?: number,
   patientForms?: PatientForm[],  // form fields for each specific objects
