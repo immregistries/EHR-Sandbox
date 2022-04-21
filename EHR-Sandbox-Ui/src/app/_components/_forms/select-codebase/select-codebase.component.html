@@ -2,7 +2,7 @@
   <mat-label>{{form.title}}</mat-label>
   <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field" matBadge="!"
     [matBadgeHidden]="!warning" matBadgeColor="warn" (ngModelChange)="filterChange($event)">
-  <button matSuffix mat-icon-button *ngIf="model" (click)="model = ''; valueChanged()"
+  <button matSuffix mat-icon-button *ngIf="model" (click)="model = ''; erasedOnLastChange = true ;valueChanged()"
     matBadge="!" [matBadgeHidden]="warning == false" matBadgeColor="warn">
     <mat-icon>cancel</mat-icon>
   </button>

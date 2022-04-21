@@ -25,24 +25,29 @@ export class SelectCodebaseComponent implements OnInit {
   filteredOptions!: Code[];
   warning: boolean = false;
 
+  /**
+   * Used to avoid an interblocking situation with autoselection on filter changes
+   */
+  erasedOnLastChange: boolean = false;
+
   constructor(public codeMapsService: CodeMapsService) { }
 
   ngOnInit(): void {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       if ( this.form.codeMapLabel && codeBaseMap[this.form.codeMapLabel]) {
         this.codeMap = codeBaseMap[this.form.codeMapLabel]
-        // this.filterChange('')
       }
       this.referenceFilter.subscribe((ref) => {
-        // console.log(this.form.codeMapLabel + " test")
         this.filterChange(this.model)
         if (this.filteredOptions && this.filteredOptions.length == 0 ) {
           this.warning = true
         }
-        // if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model )) {
-        //   this.model = this.filteredOptions[0].value
-        //   this.valueChanged()
-        // }
+        if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model ) && !this.erasedOnLastChange) {
+          this.model = this.filteredOptions[0].value
+          this.valueChanged()
+        } else {
+          this.erasedOnLastChange = false
+        }
       })
     })
   }
@@ -69,7 +74,7 @@ export class SelectCodebaseComponent implements OnInit {
     let scanned = false
     let included = false
     for (const codeMapType in this.referenceFilter.getValue()) {
-      // Checking if optionned is referred to in the other codes selected
+      // Checking if option is referred to in the other codes selected
       scanned = false
       included = false
       this.referenceFilter.getValue()[codeMapType].reference.linkTo.forEach((ref) => {
@@ -113,7 +118,7 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   valueChanged(){
-    if (this.model) {
+    if (this.model && this.model != '') {
       this.warning = !this.filterWithReference(this.codeMap[this.model])
       if (this.filteredOptions && this.form.codeMapLabel &&
           this.filteredOptions.length < 1 && this.model && this.referenceFilter.getValue()) {
@@ -127,8 +132,10 @@ export class SelectCodebaseComponent implements OnInit {
       } else {
         this.referenceEmitter.emit({reference: {linkTo:[]}, value: this.model})
       }
+      this.erasedOnLastChange = false
     } else {
       this.warning = false
+      this.erasedOnLastChange = true
       this.modelChange.emit('')
       this.referenceEmitter.emit(undefined)
     }
