@@ -1,6 +1,6 @@
 <mat-tab-group>
   <mat-tab label="New entry">
-    <div class="grid-container">
+    <form #vaccinationForm="ngForm" class="grid-container">
       <mat-grid-list cols="5" rowHeight="190px">
         <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
@@ -14,7 +14,7 @@
 
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
-                  <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
+                  <input matInput name="{{form.attribute}}" type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </mat-form-field>
                 <app-select-codebase *ngSwitchCase="'select'"
                   [model]="asString(vaccination.vaccine[form.attribute])"
@@ -26,13 +26,13 @@
                   ></app-select-codebase>
                 <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
                   <mat-label>{{form.title}}</mat-label>
-                  <input matInput [matDatepicker]="picker" [ngModel]="asDate(vaccination.vaccine[form.attribute])" (ngModelChange)="vaccination.vaccine[form.attribute] = $event" >
+                  <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="asDate(vaccination.vaccine[form.attribute])" (ngModelChange)="vaccination.vaccine[form.attribute] = $event" >
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
                 <div *ngSwitchCase="'short'">
                   <mat-label class="short-label">{{form.title}} </mat-label>
-                  <input  class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
+                  <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </div>
                 <div *ngSwitchDefault></div>
               </ng-container>
@@ -40,17 +40,17 @@
               <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
-                  <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination[form.role][form.attribute]">
+                  <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
                 </mat-form-field>
                 <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
                   <mat-label>{{form.title}}</mat-label>
-                  <input matInput [matDatepicker]="picker" [ngModel]="asDate(vaccination[form.role][form.attribute])" (ngModelChange)="vaccination[form.role][form.attribute] = $event" >
+                  <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="asDate(vaccination[form.role][form.attribute])" (ngModelChange)="vaccination[form.role][form.attribute] = $event" >
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
                 <div *ngSwitchCase="'short'">
                   <mat-label class="short-label">{{form.title}} </mat-label>
-                  <input  class="short-text-field" [(ngModel)]="vaccination[form.role][form.attribute]">
+                  <input  name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination[form.role][form.attribute]">
                 </div>
                 <div *ngSwitchDefault></div>
               </ng-container>
@@ -59,7 +59,7 @@
           </mat-card>
         </mat-grid-tile>
       </mat-grid-list>
-    </div>
+    </form>
   </mat-tab>
   <mat-tab label="Free form">
     <app-vaccination-free-form [formCards]="formCards" [(vaccination)]="vaccination"></app-vaccination-free-form>

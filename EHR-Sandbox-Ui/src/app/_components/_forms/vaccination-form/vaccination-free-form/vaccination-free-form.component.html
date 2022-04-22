@@ -1,37 +1,30 @@
-<mat-grid-list cols="5" rowHeight="190px">
-  <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
-    <mat-card class="dashboard-card">
-      <mat-card-header *ngIf="card.title">
-        <mat-card-title>
-          {{card.title}}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="dashboard-card-content">
-        <ng-container *ngFor="let form of card.vaccineForms" >
+<form #form="ngForm">
+  <mat-grid-list cols="5" rowHeight="190px">
+    <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
+      <mat-card class="dashboard-card">
+        <mat-card-header *ngIf="card.title">
+          <mat-card-title>
+            {{card.title}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <ng-container *ngFor="let form of card.vaccineForms" >
 
-          <mat-form-field  appearance="outline" class="text-field">
-            <mat-label>{{form.title}}</mat-label>
-            <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
-          </mat-form-field>
-        </ng-container>
+            <mat-form-field  appearance="outline" class="text-field">
+              <mat-label>{{form.title}}</mat-label>
+              <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination.vaccine[form.attribute]">
+            </mat-form-field>
+          </ng-container>
 
-        <ng-container *ngFor="let form of card.clinicianForms">
-          <mat-form-field  appearance="outline" class="text-field">
-            <mat-label>{{form.title}}</mat-label>
-            <input matInput  type="{{form.type}}"  [(ngModel)]="vaccination[form.role][form.attribute]">
-          </mat-form-field>
-        </ng-container>
+          <ng-container *ngFor="let form of card.clinicianForms">
+            <mat-form-field  appearance="outline" class="text-field">
+              <mat-label>{{form.title}}</mat-label>
+              <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
+            </mat-form-field>
+          </ng-container>
 
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <!-- <mat-grid-tile [colspan]="1" [rowspan]="1">
-    <mat-card>
-      <mat-card-content class="dashboard-card-content">
-        <button mat-raised-button (click)="getCodes()">codemaps</button>
-        <button mat-raised-button (click)="fillRandom()">fill</button>
-        <button mat-raised-button (click)="save()">Save</button>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile> -->
-</mat-grid-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>

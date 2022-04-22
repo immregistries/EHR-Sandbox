@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Facility, VaccinationEvent, Tenant, Vaccine } from 'src/app/_model/rest';
-import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference, VaccineForm } from 'src/app/_model/structure';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { VaccinationEvent } from 'src/app/_model/rest';
+import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference} from 'src/app/_model/structure';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
 import { VaccinationService } from 'src/app/_services/vaccination.service';
-import { KeyValue, KeyValuePipe } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { KeyValue } from '@angular/common';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -25,25 +25,14 @@ export class VaccinationFormComponent implements OnInit {
   private codeBaseMapKeys!:  string[];
   private codeBaseMapValues!:  CodeMap[];
   public references: BehaviorSubject<{[key:string]: {reference: Reference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: Reference, value: string}}>({});
+  @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
   filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
-
-  public vaccinationForm!: FormGroup
   constructor(private breakpointObserver: BreakpointObserver,
     private _snackBar: MatSnackBar,
     public codeMapsService: CodeMapsService,
     private vaccinationService: VaccinationService,
-    private readonly fb: FormBuilder
     ) {
-      this.refreshCodeMaps()
-      this.vaccinationForm = fb.group(Object.fromEntries(this.formCards.map(((card) => [card.title,
-        fb.group({
-          'vaccination': Object.fromEntries(card.vaccinationForms?.map((form) => [form.attribute, ['']]) ?? []),
-          'vaccine': Object.fromEntries(card.vaccineForms?.map((form) => [form.attribute, ['']]) ?? []),
-          'clinician': Object.fromEntries(card.clinicianForms?.map((form) => [form.attribute, ['']]) ?? []),
-          'patient': Object.fromEntries(card.patientForms?.map((form) => [form.attribute, ['']]) ?? []),
-        })
-      ]))))
     }
 
   referencesChange(emitted: {reference: Reference, value: string}, codeMapKey?: string ) {
@@ -58,7 +47,18 @@ export class VaccinationFormComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  private formChangesSubscription!: Subscription
+  ngOnInit() {
+    this.refreshCodeMaps()
+    this.formChangesSubscription = this.vaccinationForm.form.valueChanges.subscribe(x => {
+      // console.log(x);
+      // this.references.next({})
+      // this.references.next(this.references.getValue())
+    })
+  }
+
+  ngOnDestroy() {
+    this.formChangesSubscription.unsubscribe();
   }
 
   refreshCodeMaps() {

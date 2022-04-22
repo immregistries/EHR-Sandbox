@@ -1,7 +1,7 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { BehaviorSubject, map, Observable, of, startWith } from 'rxjs';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { FormControl, NgForm } from '@angular/forms';
+import { BehaviorSubject, map, Observable, of, startWith, Subscription } from 'rxjs';
 import { Patient, VaccinationEvent } from 'src/app/_model/rest';
 import { Code, CodeMap, Form, Reference, ReferenceLink } from 'src/app/_model/structure';
 import { CodeMapsService } from 'src/app/_services/code-maps.service';
@@ -17,9 +17,12 @@ export class SelectCodebaseComponent implements OnInit {
 
   @Input() form!: Form;
 
+  @Input() warningCheck!: EventListener;
+
   @Input() model!: string;
   @Output() modelChange = new EventEmitter<any>();
 
+  @ViewChild('selectForm', { static: true }) selectForm!: NgForm;
 
   codeMap!: CodeMap;
   filteredOptions!: Code[];
@@ -31,6 +34,8 @@ export class SelectCodebaseComponent implements OnInit {
   erasedOnLastChange: boolean = false;
 
   constructor(public codeMapsService: CodeMapsService) { }
+
+  private formChangesSubscription!: Subscription
 
   ngOnInit(): void {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
@@ -50,6 +55,14 @@ export class SelectCodebaseComponent implements OnInit {
         }
       })
     })
+
+    this.formChangesSubscription = this.selectForm.form.valueChanges.subscribe((value) => {
+      this.valueChanged()
+    })
+  }
+
+  ngOnDestroy() {
+    this.formChangesSubscription.unsubscribe();
   }
 
   filterChange(event: string){
@@ -111,7 +124,7 @@ export class SelectCodebaseComponent implements OnInit {
   displayCode(codeKey: string): string{
     if (codeKey && this.codeMap[codeKey]) {
       let code: Code = this.codeMap[codeKey]
-      return code.label + ' | ' + code.value
+      return code.label + ' (' + code.value + ')'
     } else {
       return codeKey
     }

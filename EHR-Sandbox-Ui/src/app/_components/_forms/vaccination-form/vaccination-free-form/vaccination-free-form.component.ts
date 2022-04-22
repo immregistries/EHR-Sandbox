@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { VaccinationEvent } from 'src/app/_model/rest';
 import { FormCard } from 'src/app/_model/structure';
 
@@ -16,9 +18,20 @@ export class VaccinationFreeFormComponent implements OnInit {
 
   @Input() formCards?: FormCard[]
 
+  @ViewChild('form', { static: true }) vaccinationFreeForm!: NgForm;
+
+
   constructor() { }
 
+  private formChangesSubscription!: Subscription
   ngOnInit(): void {
+    this.formChangesSubscription = this.vaccinationFreeForm.form.valueChanges.subscribe(x => {
+      // console.log(x);
+    })
+  }
+
+  ngOnDestroy() {
+    this.formChangesSubscription.unsubscribe();
   }
 
 }
