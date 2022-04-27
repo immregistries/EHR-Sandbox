@@ -25,11 +25,11 @@ public class Tenant {
     private String nameDisplay;
 
     @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
+    @JsonManagedReference("tenant-facility")
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
+    @JsonManagedReference("tenant-patient")
     private Set<Patient> patients = new LinkedHashSet<>();
 
     public Set<Patient> getPatients() {

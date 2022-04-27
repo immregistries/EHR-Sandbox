@@ -27,12 +27,12 @@ public class Patient {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("facility-patient")
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("tenant-patient")
     private Tenant tenant;
 
     @Column(name = "created_date", nullable = false)
@@ -135,15 +135,15 @@ public class Patient {
     private String guardianRelationship = "";
 
     @OneToMany(mappedBy = "patient")
-    @JsonIgnore()
+    @JsonManagedReference("patient-vaccinationEvent")
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "patient")
+    @JsonManagedReference("patient-nextOfKin")
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "patient")
-//    @JsonManagedReference(value = "patient_feedback")
-//    @JsonIgnore()
+    @JsonManagedReference(value = "patient-feedback")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

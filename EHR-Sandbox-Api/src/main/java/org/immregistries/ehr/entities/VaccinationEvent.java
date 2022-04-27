@@ -17,8 +17,7 @@ public class VaccinationEvent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-//    @JsonBackReference("patient-vaccinationEvent")
-    @JsonIgnore
+    @JsonBackReference("patient-vaccinationEvent")
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,13 +41,11 @@ public class VaccinationEvent {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "administering_facility_id", nullable = false)
-//    @JsonBackReference("facility-vaccinationEvent")
-    @JsonIgnore
+    @JsonBackReference("facility-vaccinationEvent")
     private Facility administeringFacility;
 
     @OneToMany(mappedBy = "vaccinationEvent")
-//    @JsonManagedReference(value = "vaccination_feedback")
-    @JsonIgnore()
+    @JsonManagedReference(value = "vaccination-feedback")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

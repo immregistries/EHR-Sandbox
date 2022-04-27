@@ -17,13 +17,12 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference("tenant-facility")
     private Tenant tenant;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_facility_id")
-//    @JsonBackReference("parent")
-    @JsonIgnore()
+    @JsonBackReference("parent")
     private Facility parentFacility;
 
     @Column(name = "name_display", nullable = false, length = 250)
@@ -34,17 +33,16 @@ public class Facility {
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "parentFacility")
-//    @JsonManagedReference("parent")
-    @JsonIgnore
+    @JsonManagedReference("parent")
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
+    @JsonManagedReference("facility-patient")
     @JsonIgnore
     private Set<Patient> patients = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
-//    @JsonManagedReference( value = "facility_feedback")
-    @JsonIgnore
+    @JsonManagedReference( value = "facility-feedback")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

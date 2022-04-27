@@ -15,7 +15,7 @@ import javax.persistence.*;
 //        @Index(name = "patient_id_idx", columnList = "patient_id")
 //}
 )
-@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+//@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,20 +24,17 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-//    @JsonBackReference(value = "patient_feedback")
-    @JsonIgnore
+    @JsonBackReference(value = "patient-feedback")
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id")
-//    @JsonBackReference(value = "facility_feedback")
-    @JsonIgnore
+    @JsonBackReference(value = "facility-feedback")
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vaccination_event_id")
-//    @JsonBackReference(value = "vaccination_feedback")
-    @JsonIgnore
+    @JsonBackReference(value = "vaccination-feedback")
     private VaccinationEvent vaccinationEvent;
 
     @Column(name = "content")

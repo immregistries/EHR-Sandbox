@@ -1,8 +1,6 @@
 package org.immregistries.ehr.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,7 +15,7 @@ public class NextOfKin {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-    @JsonIgnore
+    @JsonBackReference("patient-nextOfKin")
     private Patient patient;
 
     @Column(name = "birth_date", nullable = false)
