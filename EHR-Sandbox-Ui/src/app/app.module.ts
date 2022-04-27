@@ -28,6 +28,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatSelectFilterModule } from 'mat-select-filter';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 
 import { TenantService } from './_services/tenant.service';
@@ -126,6 +127,7 @@ import { VaccinationFreeFormComponent } from './_components/_forms/vaccination-f
     MatTooltipModule,
     MatProgressBarModule,
     MatBadgeModule,
+    MatButtonToggleModule,
   ],
   providers: [
     SettingsService,

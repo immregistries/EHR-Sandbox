@@ -27,7 +27,6 @@ export class SelectCodebaseComponent implements OnInit {
   codeMap!: CodeMap;
   filteredOptions!: Code[];
   warning: boolean = false;
-
   /**
    * Used to avoid an interblocking situation with autoselection on filter changes
    */
@@ -47,15 +46,13 @@ export class SelectCodebaseComponent implements OnInit {
         if (this.filteredOptions && this.filteredOptions.length == 0 ) {
           this.warning = true
         }
-        if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model ) && !this.erasedOnLastChange) {
+        // if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model )  && this.erasedOnLastChange == false) {
+        if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model ) && this.erasedOnLastChange == false ) {
           this.model = this.filteredOptions[0].value
           this.valueChanged()
-        } else {
-          this.erasedOnLastChange = false
         }
       })
     })
-
     this.formChangesSubscription = this.selectForm.form.valueChanges.subscribe((value) => {
       this.valueChanged()
     })
@@ -121,6 +118,30 @@ export class SelectCodebaseComponent implements OnInit {
     return true
   }
 
+  valueChanged(){
+    if (this.model && this.model != '') {
+      // this.warning = !this.filterWithReference(this.codeMap[this.model])
+      if (this.filteredOptions && this.form.codeMapLabel &&
+          this.filteredOptions.length < 1 && this.model && this.referenceFilter.getValue()) {
+        this.warning = true
+      } else {
+        this.warning = false
+      }
+      this.erasedOnLastChange = false
+      this.modelChange.emit(this.model)
+      if (this.codeMap[this.model]) {
+        this.referenceEmitter.emit({reference: (this.codeMap[this.model].reference ?? {linkTo:[]}), value: this.model})
+      } else {
+        this.referenceEmitter.emit({reference: {linkTo:[]}, value: this.model})
+      }
+    } else {
+      this.warning = false
+      this.erasedOnLastChange = true
+      this.modelChange.emit('')
+      this.referenceEmitter.emit(undefined)
+    }
+  }
+
   displayCode(codeKey: string): string{
     if (codeKey && this.codeMap[codeKey]) {
       let code: Code = this.codeMap[codeKey]
@@ -130,27 +151,9 @@ export class SelectCodebaseComponent implements OnInit {
     }
   }
 
-  valueChanged(){
-    if (this.model && this.model != '') {
-      this.warning = !this.filterWithReference(this.codeMap[this.model])
-      if (this.filteredOptions && this.form.codeMapLabel &&
-          this.filteredOptions.length < 1 && this.model && this.referenceFilter.getValue()) {
-        this.warning = true
-      } else {
-        this.warning = false
-      }
-      this.modelChange.emit(this.model)
-      if (this.codeMap[this.model] && this.codeMap[this.model].reference) {
-        this.referenceEmitter.emit({reference: (this.codeMap[this.model].reference ?? {linkTo:[]}), value: this.model})
-      } else {
-        this.referenceEmitter.emit({reference: {linkTo:[]}, value: this.model})
-      }
-      this.erasedOnLastChange = false
-    } else {
-      this.warning = false
-      this.erasedOnLastChange = true
-      this.modelChange.emit('')
-      this.referenceEmitter.emit(undefined)
-    }
+  clear() {
+    this.model = '';
+    this.erasedOnLastChange = true
+    this.valueChanged()
   }
 }

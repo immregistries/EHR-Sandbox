@@ -44,6 +44,8 @@ export enum formType {
   short = 'short',
   boolean = 'boolean',
   select = 'select',
+  yesNo = 'yesNo',
+  code = 'code',
   textarea = 'textarea',
 }
 export interface Form {
@@ -51,6 +53,7 @@ export interface Form {
   title: string,
   attribute: string,
   codeMapLabel?: string,
+  options?: {value: string, label?: string}[],
 }
 export interface PatientForm extends Form{
   attribute: keyof Patient,

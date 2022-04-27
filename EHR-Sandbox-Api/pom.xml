@@ -6,8 +6,13 @@
 	<artifactId>ehr-sandbox-api</artifactId>
 	<version>1.2.0</version>
 	<packaging>war</packaging>
+	<parent>
+		<groupId>org.immregistries.ehr</groupId>
+		<artifactId>ehr-sandbox</artifactId>
+		<version>1.2.0</version>
+	</parent>
 
-	<name>rest-service-initial</name>
+	<name>EHR Sandbox API</name>
 	<description>Api for EHR Sandbox</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -183,15 +188,32 @@
 			<artifactId>hapi-base</artifactId>
 			<version>2.3</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.immregistries.ehr</groupId>
+			<artifactId>ehr-sandbox-ui</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>ehr-sandbox</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring.version}</version>
+				<configuration>
+					<mainClass>dev.marco.example.springboot.Application</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -208,12 +230,30 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.8</version>
-				<configuration>
-					<downloadSources>true</downloadSources>
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<id>merge</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.immregistries.ehr</groupId>
+									<artifactId>ehr-sandbox-ui</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

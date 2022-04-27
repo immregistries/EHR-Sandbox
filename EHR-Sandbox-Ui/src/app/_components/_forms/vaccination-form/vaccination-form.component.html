@@ -10,13 +10,18 @@
               </mat-card-title>
             </mat-card-header>
             <mat-card-content class="dashboard-card-content">
+<!-- Vaccine forms -->
               <ng-container *ngFor="let form of card.vaccineForms" [ngSwitch]="form.type">
+                <div class="text-field" *ngSwitchCase="'text'">
+                  <mat-form-field class="text-field" appearance="outline"   >
+                    <mat-label>{{form.title}}</mat-label>
+                    <input matInput name="{{form.attribute}}" type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]" [disabled]="false">
+                  </mat-form-field>
+                  <!-- Errors -->
+                  <span *ngIf="!lotNumberValid && form.attribute == 'lotNumber'" class="error">Not matching manufacturer pattern</span>
+                </div>
 
-                <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput name="{{form.attribute}}" type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]">
-                </mat-form-field>
-                <app-select-codebase *ngSwitchCase="'select'"
+                <app-select-codebase *ngSwitchCase="'code'"
                   [model]="asString(vaccination.vaccine[form.attribute])"
                   (modelChange)="vaccination.vaccine[form.attribute] = $event"
                   [form]="form"
@@ -34,9 +39,30 @@
                   <mat-label class="short-label">{{form.title}} </mat-label>
                   <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
                 </div>
+
+                <div *ngSwitchCase="'yesNo'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <mat-button-toggle-group [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <mat-button-toggle *ngIf="vaccination.vaccine[form.attribute]" value=""></mat-button-toggle>
+                    <mat-button-toggle value="Y">Y</mat-button-toggle>
+                    <mat-button-toggle value="N">N</mat-button-toggle>
+                  </mat-button-toggle-group>
+                </div>
+
+                <div *ngSwitchCase="'select'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <select *ngIf="form.options; else short" [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <option  value=""></option>
+                    <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
+                  </select>
+                  <ng-template #short >
+                    <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
+                  </ng-template>
+                </div>
+
                 <div *ngSwitchDefault></div>
               </ng-container>
-
+<!-- Clinician forms -->
               <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
@@ -64,6 +90,7 @@
   <mat-tab label="Free form">
     <app-vaccination-free-form [formCards]="formCards" [(vaccination)]="vaccination"></app-vaccination-free-form>
   </mat-tab>
+  <button matButton></button>
 </mat-tab-group>
 
 

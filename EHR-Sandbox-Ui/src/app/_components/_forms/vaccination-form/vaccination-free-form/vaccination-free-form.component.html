@@ -12,14 +12,14 @@
 
             <mat-form-field  appearance="outline" class="text-field">
               <mat-label>{{form.title}}</mat-label>
-              <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination.vaccine[form.attribute]">
+              <input matInput  type="'text'" name="{{form.attribute}}" [(ngModel)]="vaccination.vaccine[form.attribute]">
             </mat-form-field>
           </ng-container>
 
           <ng-container *ngFor="let form of card.clinicianForms">
             <mat-form-field  appearance="outline" class="text-field">
               <mat-label>{{form.title}}</mat-label>
-              <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
+              <input matInput  type="'text" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
             </mat-form-field>
           </ng-container>
 

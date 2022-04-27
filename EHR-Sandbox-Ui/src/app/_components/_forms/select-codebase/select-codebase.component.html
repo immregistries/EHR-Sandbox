@@ -3,13 +3,15 @@
     <mat-label>{{form.title}}</mat-label>
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"
       matBadge="!" [matBadgeHidden]="!warning" matBadgeColor="warn"
-      (ngModelChange)="filterChange($event)" name="{{form.attribute}}">
-    <button matSuffix mat-icon-button *ngIf="model" (click)="model = ''; erasedOnLastChange = true ;valueChanged()"
-      matBadge="!" [matBadgeHidden]="warning == false" matBadgeColor="warn">
+      (ngModelChange)="filterChange($event)" name="{{form.attribute}}"
+      matTooltip="{{warning == false ? '': 'Current value not referenced by other selected fields'}}">
+    <button matSuffix mat-icon-button *ngIf="model" (click)="clear()"
+      matBadge="!" [matBadgeHidden]="warning == false" matBadgeColor="warn"
+      matTooltip="{{warning == false ? '': 'Current value not referenced by other selected fields'}}">
       <mat-icon>cancel</mat-icon>
     </button>
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)">
-      <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"  (optionActivated)="valueChanged()">
+      <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()" >
         {{option.label + ' (' + option.value + ')'}}
       </mat-option>
     </mat-autocomplete>

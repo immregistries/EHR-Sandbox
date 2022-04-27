@@ -1,7 +1,7 @@
 <mat-tab-group>
   <mat-tab label="Patient information">
     <div class="grid-container">
-      <mat-grid-list cols="6" rowHeight="170px">
+      <mat-grid-list cols="6" rowHeight="190px">
         <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header *ngIf="card.title">
@@ -11,7 +11,6 @@
             </mat-card-header>
             <mat-card-content class="dashboard-card-content">
               <ng-container *ngFor="let form of card.patientForms" [ngSwitch]="form.type">
-
 
                 <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
                   <mat-label>{{form.title}}</mat-label>
@@ -25,7 +24,7 @@
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
 
-                <app-select-codebase *ngSwitchCase="'select'"
+                <app-select-codebase *ngSwitchCase="'code'"
                   [model]="asString(patient[form.attribute])"
                   (modelChange)="patient[form.attribute] = $event"
                   [form]="form"
@@ -37,11 +36,26 @@
                   <input  class="short-text-field" [(ngModel)]="patient[form.attribute]">
                 </div>
 
-                <mat-form-field  appearance="fill" class="text-field"  *ngSwitchDefault>
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput  [(ngModel)]="patient[form.attribute]">
-                </mat-form-field>
+                <div *ngSwitchCase="'yesNo'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <mat-button-toggle-group [(ngModel)]="patient[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <mat-button-toggle value=""></mat-button-toggle>
+                    <mat-button-toggle value="Y">Y</mat-button-toggle>
+                    <mat-button-toggle value="N">N</mat-button-toggle>
+                  </mat-button-toggle-group>
+                </div>
 
+                <div *ngSwitchCase="'select'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <select  *ngIf="form.options; else short" [(ngModel)]="patient[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <option *ngIf="patient[form.attribute]" selected="{{!patient[form.attribute]}}" value="undefined"></option>
+                    <option *ngFor="let option of form.options" selected="{{patient[form.attribute] == option.value}}" value="{{option.value}}">{{option.label ?? option.value}}</option>
+                  </select>
+                  <ng-template #short >
+                    <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="patient[form.attribute]">
+                  </ng-template>
+                </div>
+                <div *ngSwitchDefault></div>
               </ng-container>
 
             </mat-card-content>

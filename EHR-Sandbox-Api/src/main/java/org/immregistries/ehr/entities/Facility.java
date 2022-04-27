@@ -22,7 +22,8 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_facility_id")
-    @JsonBackReference("parent")
+//    @JsonBackReference("parent")
+    @JsonIgnore()
     private Facility parentFacility;
 
     @Column(name = "name_display", nullable = false, length = 250)
@@ -33,11 +34,12 @@ public class Facility {
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "parentFacility")
-    @JsonManagedReference("parent")
+//    @JsonManagedReference("parent")
+    @JsonIgnore
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Patient> patients = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")

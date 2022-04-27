@@ -57,3 +57,8 @@ mat-raised-button {
     transform: translateY(-1.1em) scale(.75);
     width: 133.33333%;
 }
+
+.mat-button-toggle-group {
+  height: 22px;
+  align-items: center;
+}

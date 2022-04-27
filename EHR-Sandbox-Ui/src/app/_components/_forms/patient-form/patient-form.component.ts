@@ -39,11 +39,12 @@ export class PatientFormComponent implements OnInit {
     ]},
     {title: 'Birth',  cols: 1, rows: 1, patientForms: [
       {type: formType.date, title: 'Birth date', attribute: 'birthDate'},
+      {type: formType.yesNo, title: 'Multiple birth', attribute: 'birthFlag'},
       {type: formType.short, title: 'Order', attribute: 'birthOrder'},
-      {type: formType.short, title: 'Flag', attribute: 'birthFlag'},
+
     ]},
     {title: 'Identity',cols: 1, rows: 1, patientForms: [
-      {type: formType.short, title: 'Sex', attribute: 'sex'},
+      {type: formType.select, title: 'Sex', attribute: 'sex', options: [{value: 'M'},{value: 'M', label: 'F'}]},
       {type: formType.text, title: 'Ethnicity', attribute: 'ethnicity'},
       {type: formType.text, title: 'Race', attribute: 'race'},
     ]},
@@ -61,26 +62,26 @@ export class PatientFormComponent implements OnInit {
       {type: formType.text, title: 'Email', attribute: 'email'},
     ]},
     {title: 'Death', cols: 1, rows: 1, patientForms: [
-      {type: formType.short, title: 'Death flag', attribute: 'deathFlag'},
+      {type: formType.yesNo, title: 'Death flag', attribute: 'deathFlag'},
       {type: formType.date, title: 'Death date', attribute: 'deathDate'},
     ]},
     {title: 'Protection', cols: 1, rows: 1, patientForms: [
-      {type: formType.short, title: 'Indicator', attribute: 'deathFlag'},
-      {type: formType.date, title: 'Date', attribute: 'deathDate'},
+      {type: formType.yesNo, title: 'Indicator', attribute: 'protectionIndicator'},
+      {type: formType.date, title: 'Date', attribute: 'protectionIndicatorDate'},
     ]},
     {title: 'Registry', cols: 1, rows: 1, patientForms: [
-      {type: formType.short, title: 'Indicator', attribute: 'deathFlag'},
-      {type: formType.date, title: 'Date', attribute: 'deathDate'},
+      {type: formType.yesNo, title: 'Indicator', attribute: 'registryStatusIndicator'},
+      {type: formType.date, title: 'Date', attribute: 'registryStatusIndicatorDate'},
     ]},
     {title: 'Publicity', cols: 1, rows: 1, patientForms: [
-      {type: formType.short, title: 'Indicator', attribute: 'deathFlag'},
-      {type: formType.date, title: 'Date', attribute: 'deathDate'},
+      {type: formType.yesNo, title: 'Indicator', attribute: 'publicityIndicator'},
+      {type: formType.date, title: 'Date', attribute: 'publicityIndicatorDate'},
     ]},
     {title: 'Guardian',cols: 3, rows: 1, patientForms: [
       {type: formType.text, title: 'First name', attribute: 'guardianFirst'},
       {type: formType.text, title: 'Middle name', attribute: 'guardianMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'guardianLast'},
-      {type: formType.select, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP"},
+      {type: formType.code, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP"},
     ]},
   ]
 }
