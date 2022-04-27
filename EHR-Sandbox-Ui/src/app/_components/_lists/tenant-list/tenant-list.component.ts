@@ -29,7 +29,6 @@ export class TenantListComponent implements OnInit {
   openDialog() {
     const dialogRef = this.dialog.open(TenantCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
       // this.ngOnInit();
     });
   }
