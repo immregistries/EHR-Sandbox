@@ -42,8 +42,6 @@ export class VaccinationCreationComponent implements OnInit {
   }
 
   save(): void {
-    // todo if is edition
-    console.log(this.vaccination)
     if (this.isEditionMode == true){
       // TODO PUT implementation
       this.vaccinationService.quickPutVaccination( this.patientId, this.vaccination).subscribe({

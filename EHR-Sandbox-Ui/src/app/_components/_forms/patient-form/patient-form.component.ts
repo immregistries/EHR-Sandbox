@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Facility, Patient, Tenant } from 'src/app/_model/rest';
-import { FormCard, formType } from 'src/app/_model/structure';
+import { FormCard, formType, Reference } from 'src/app/_model/structure';
 import { PatientService } from 'src/app/_services/patient.service';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-patient-form',
@@ -16,6 +17,12 @@ export class PatientFormComponent implements OnInit {
   patient: Patient = {id: -1};
   @Output()
   patientChange = new EventEmitter<Patient>();
+
+  /**
+   * Currently unusused, just initialised
+   */
+  public references: BehaviorSubject<{[key:string]: {reference: Reference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: Reference, value: string}}>({});
+
 
   constructor(private patientService: PatientService,
     private breakpointObserver: BreakpointObserver,
@@ -44,7 +51,7 @@ export class PatientFormComponent implements OnInit {
 
     ]},
     {title: 'Identity',cols: 1, rows: 1, patientForms: [
-      {type: formType.select, title: 'Sex', attribute: 'sex', options: [{value: 'M'},{value: 'M', label: 'F'}]},
+      {type: formType.select, title: 'Sex', attribute: 'sex', options: [{value: 'M'},{value: 'F'}]},
       {type: formType.text, title: 'Ethnicity', attribute: 'ethnicity'},
       {type: formType.text, title: 'Race', attribute: 'race'},
     ]},

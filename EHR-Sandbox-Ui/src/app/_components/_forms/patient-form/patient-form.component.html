@@ -28,6 +28,7 @@
                   [model]="asString(patient[form.attribute])"
                   (modelChange)="patient[form.attribute] = $event"
                   [form]="form"
+                  [referenceFilter]="references"
                   class="select-field"
                   ></app-select-codebase>
 
