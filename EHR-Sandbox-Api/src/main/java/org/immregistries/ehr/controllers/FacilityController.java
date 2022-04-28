@@ -2,9 +2,8 @@ package org.immregistries.ehr.controllers;
 
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.Tenant;
-import org.immregistries.ehr.repositories.FacilityRepository;
-import org.immregistries.ehr.repositories.TenantRepository;
-import org.immregistries.ehr.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.entities.repositories.FacilityRepository;
+import org.immregistries.ehr.entities.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

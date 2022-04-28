@@ -5,10 +5,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.immregistries.ehr.repositories.FacilityRepository;
-import org.immregistries.ehr.repositories.PatientRepository;
-import org.immregistries.ehr.repositories.TenantRepository;
-import org.immregistries.ehr.repositories.VaccinationEventRepository;
+import org.immregistries.ehr.entities.repositories.FacilityRepository;
+import org.immregistries.ehr.entities.repositories.PatientRepository;
+import org.immregistries.ehr.entities.repositories.TenantRepository;
+import org.immregistries.ehr.entities.repositories.VaccinationEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
