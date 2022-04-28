@@ -49,8 +49,10 @@
                 <div *ngSwitchCase="'select'">
                   <mat-label class="short-label">{{form.title}}</mat-label>
                   <select  *ngIf="form.options; else short" [(ngModel)]="patient[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
-                    <option *ngIf="patient[form.attribute]" selected="{{patient[form.attribute] == undefined || patient[form.attribute] == ''}}" value="undefined"></option>
-                    <option *ngFor="let option of form.options" selected="{{patient[form.attribute] == option.value}}" value="{{option.value}}">{{option.label ?? option.value}}</option>
+                    <!-- <option *ngIf="patient[form.attribute]" selected="{{patient[form.attribute] == undefined || patient[form.attribute] == ''}}" value=""></option> -->
+                    <!-- <option *ngFor="let option of form.options" selected="{{patient[form.attribute] == option.value}}" value="{{option.value}}">{{option.label ?? option.value}}</option>  -->
+                    <option [hidden]="!patient[form.attribute]" value=""></option>
+                    <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
                   </select>
                   <ng-template #short >
                     <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="patient[form.attribute]">

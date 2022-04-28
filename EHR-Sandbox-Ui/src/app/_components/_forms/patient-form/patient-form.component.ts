@@ -73,15 +73,15 @@ export class PatientFormComponent implements OnInit {
       {type: formType.date, title: 'Death date', attribute: 'deathDate'},
     ]},
     {title: 'Protection', cols: 1, rows: 1, patientForms: [
-      {type: formType.yesNo, title: 'Indicator', attribute: 'protectionIndicator'},
+      {type: formType.short, title: 'Indicator', attribute: 'protectionIndicator'},
       {type: formType.date, title: 'Date', attribute: 'protectionIndicatorDate'},
     ]},
     {title: 'Registry', cols: 1, rows: 1, patientForms: [
-      {type: formType.yesNo, title: 'Indicator', attribute: 'registryStatusIndicator'},
+      {type: formType.short, title: 'Indicator', attribute: 'registryStatusIndicator'},
       {type: formType.date, title: 'Date', attribute: 'registryStatusIndicatorDate'},
     ]},
     {title: 'Publicity', cols: 1, rows: 1, patientForms: [
-      {type: formType.yesNo, title: 'Indicator', attribute: 'publicityIndicator'},
+      {type: formType.short, title: 'Indicator', attribute: 'publicityIndicator'},
       {type: formType.date, title: 'Date', attribute: 'publicityIndicatorDate'},
     ]},
     {title: 'Guardian',cols: 3, rows: 1, patientForms: [
