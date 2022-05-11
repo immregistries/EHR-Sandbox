@@ -6,7 +6,9 @@ import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -39,11 +41,14 @@ public class FeedbackController {
     public Feedback postPatientFeedback(@PathVariable() int facilityId,
                                         @PathVariable() int patientId,
                                         @RequestBody Feedback feedback) {
-        Patient patient = patientRepository.findById(patientId).get();
-        Facility facility = patient.getFacility();
-        feedback.setPatient(patient);
-        feedback.setFacility(facility);
-        return feedbackRepository.save(feedback);
+        Optional<Patient> patient = patientRepository.findById(patientId);
+        if(patient.isPresent()){
+            Facility facility = patient.get().getFacility();
+            feedback.setPatient(patient.get());
+            feedback.setFacility(facility);
+            return feedbackRepository.save(feedback);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient not found");
     }
 
 

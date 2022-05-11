@@ -1,8 +1,10 @@
 package org.immregistries.ehr.controllers;
 
 import org.immregistries.ehr.entities.Facility;
+import org.immregistries.ehr.entities.Feedback;
 import org.immregistries.ehr.entities.Tenant;
 import org.immregistries.ehr.entities.repositories.FacilityRepository;
+import org.immregistries.ehr.entities.repositories.FeedbackRepository;
 import org.immregistries.ehr.entities.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ public class FacilityController {
     private FacilityRepository facilityRepository;
     @Autowired
     private TenantRepository tenantRepository;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @GetMapping()
     public Iterable<Facility> getFacilities(@PathVariable() int tenantId) {
@@ -60,5 +64,13 @@ public class FacilityController {
 //            return ResponseEntity.created(location).body("Facility " + newEntity.getId() + " saved");
         }
     }
+
+    @GetMapping("/{facilityId}/feedbacks")
+    public Iterable<Feedback> getPatientFeedback(@PathVariable() int tenantId,
+                                                 @PathVariable() int facilityId) {
+        return getFacility(tenantId,facilityId).get().getFeedbacks();
+    }
+
+
 
 }

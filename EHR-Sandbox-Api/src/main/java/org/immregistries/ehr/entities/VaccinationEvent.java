@@ -45,7 +45,7 @@ public class VaccinationEvent {
     private Facility administeringFacility;
 
     @OneToMany(mappedBy = "vaccinationEvent")
-    @JsonManagedReference(value = "vaccination-feedback")
+//    @JsonManagedReference(value = "vaccination-feedback")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

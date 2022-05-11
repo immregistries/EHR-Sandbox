@@ -24,7 +24,8 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-    @JsonBackReference(value = "patient-feedback")
+//    @JsonBackReference(value = "patient-feedback")
+    @JsonIdentityReference(alwaysAsId = true)
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +35,8 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vaccination_event_id")
-    @JsonBackReference(value = "vaccination-feedback")
+//    @JsonBackReference(value = "vaccination-feedback")
+    @JsonIdentityReference(alwaysAsId = true)
     private VaccinationEvent vaccinationEvent;
 
     @Column(name = "content")
@@ -42,6 +44,12 @@ public class Feedback {
 
     @Column(name = "iis", length = 45)
     private String iis;
+
+    @Column(name = "severity", length = 45)
+    private String severity;
+
+    @Column(name = "code", length = 45)
+    private String code;
 
     public String getIis() {
         return iis;
@@ -89,5 +97,21 @@ public class Feedback {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

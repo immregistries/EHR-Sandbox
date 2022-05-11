@@ -37,12 +37,13 @@ public class Facility {
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
-    @JsonManagedReference("facility-patient")
+//    @JsonManagedReference("facility-patient")
     @JsonIgnore
     private Set<Patient> patients = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
-    @JsonManagedReference( value = "facility-feedback")
+//    @JsonManagedReference( value = "facility-feedback")
+    @JsonIgnore
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

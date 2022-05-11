@@ -168,14 +168,18 @@ CREATE TABLE `vaccination_event` (
   CONSTRAINT `vaccination_event_ibfk_5` FOREIGN KEY (`administering_facility_id`) REFERENCES `facility` (`facility_id`),
   CONSTRAINT `vaccination_event_ibfk_6` FOREIGN KEY (`vaccine_id`) REFERENCES `vaccine` (`vaccine_id`)
   
-)
+);
 
 CREATE TABLE `ehr`.`feedback` (
-  `patient_id` INT NULL,
-  `facility_id` INT NULL,
+  `feedback_id` int(11) NOT NULL AUTO_INCREMENT,
+  `patient_id` int(11) NULL,
+  `facility_id` int(11) NULL,
   `vaccination_event_id` INT NULL,
+  `severity` VARCHAR(45) NULL,
+  `code` VARCHAR(45) NULL,
   `content` LONGBLOB NULL,
   `iis` VARCHAR(45) NULL,
+  PRIMARY KEY (`feedback_id`),
   INDEX `patient_id_idx` (`patient_id` ASC) VISIBLE,
   INDEX `fk_facility_idx` (`facility_id` ASC) VISIBLE,
   INDEX `fk_vaccination_event_idx` (`vaccination_event_id` ASC) VISIBLE,

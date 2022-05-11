@@ -143,7 +143,7 @@ public class Patient {
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "patient")
-    @JsonManagedReference(value = "patient-feedback")
+//    @JsonManagedReference(value = "patient-feedback")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {
