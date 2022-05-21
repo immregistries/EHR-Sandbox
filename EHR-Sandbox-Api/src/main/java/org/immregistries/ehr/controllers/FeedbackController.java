@@ -1,7 +1,7 @@
 package org.immregistries.ehr.controllers;
 
 import org.immregistries.ehr.entities.*;
-import org.immregistries.ehr.entities.repositories.*;
+import org.immregistries.ehr.repositories.*;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +19,8 @@ public class FeedbackController {
     @Autowired
     private PatientRepository patientRepository;
     @Autowired
+    private VaccinationEventRepository vaccinationEventRepository;
+    @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
     private TenantRepository tenantRepository;
@@ -28,8 +30,16 @@ public class FeedbackController {
     private FeedbackRepository feedbackRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private FacilityController facilityController;
 
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
+
+    @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/feedbacks")
+    public Iterable<Feedback> getPatientFeedback(@PathVariable() int tenantId,
+                                                 @PathVariable() int facilityId) {
+        return facilityController.getFacility(tenantId,facilityId).get().getFeedbacks();
+    }
 
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/feedbacks")
@@ -49,6 +59,23 @@ public class FeedbackController {
             return feedbackRepository.save(feedback);
         }
         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient not found");
+    }
+
+    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations/{vaccinationId}/feedbacks")
+    public Feedback postVaccinationFeedback(@PathVariable() int facilityId,
+                                        @PathVariable() int patientId,
+                                        @PathVariable() int vaccinationId,
+                                        @RequestBody Feedback feedback) {
+        Optional<VaccinationEvent>  vaccination = vaccinationEventRepository.findById(vaccinationId);
+        if(vaccination.isPresent()){
+            Patient patient = vaccination.get().getPatient();
+            Facility facility = patient.getFacility();
+            feedback.setVaccinationEvent(vaccination.get());
+            feedback.setPatient(patient);
+            feedback.setFacility(facility);
+            return feedbackRepository.save(feedback);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "vaccination not found");
     }
 
 

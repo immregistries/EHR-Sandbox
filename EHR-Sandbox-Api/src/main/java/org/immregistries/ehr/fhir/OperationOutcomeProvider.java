@@ -3,13 +3,15 @@ package org.immregistries.ehr.fhir;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.StringType;
 import org.immregistries.ehr.entities.Feedback;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
-import org.immregistries.ehr.entities.repositories.*;
+import org.immregistries.ehr.repositories.FacilityRepository;
+import org.immregistries.ehr.repositories.FeedbackRepository;
+import org.immregistries.ehr.repositories.PatientRepository;
+import org.immregistries.ehr.repositories.VaccinationEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class OperationOutcomeProvider implements IResourceProvider {
     }
 
     @Create
-    public OperationOutcome createOperationOutcome(@ResourceParam OperationOutcome operationOutcome) {
+    public OperationOutcome registerOperationOutcome(@ResourceParam OperationOutcome operationOutcome) {
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
         for (OperationOutcome.OperationOutcomeIssueComponent issue: operationOutcome.getIssue()) {

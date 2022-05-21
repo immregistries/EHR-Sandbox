@@ -1,4 +1,4 @@
-package org.immregistries.ehr.entities.repositories;
+package org.immregistries.ehr.repositories;
 
 import com.github.javafaker.Bool;
 import org.immregistries.ehr.entities.Tenant;

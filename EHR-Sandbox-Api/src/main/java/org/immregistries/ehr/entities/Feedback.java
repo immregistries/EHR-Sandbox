@@ -1,6 +1,7 @@
 package org.immregistries.ehr.entities;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
@@ -15,7 +16,9 @@ import javax.persistence.*;
 //        @Index(name = "patient_id_idx", columnList = "patient_id")
 //}
 )
-//@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
+        property="id",
+        scope = Feedback.class)
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,20 +27,36 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-//    @JsonBackReference(value = "patient-feedback")
     @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("patient")
     private Patient patient;
+
+    @JsonProperty("patient")
+    public void setPatient(int id) {
+        // TODO is currently taken care of in the controller
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id")
-    @JsonBackReference(value = "facility-feedback")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("facility")
     private Facility facility;
+
+    @JsonProperty("facility")
+    public void setFacility(int id) {
+        // TODO is currently taken care of in the controller
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vaccination_event_id")
-//    @JsonBackReference(value = "vaccination-feedback")
     @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("vaccinationEvent")
     private VaccinationEvent vaccinationEvent;
+
+    @JsonProperty("vaccinationEvent")
+    public void setVaccinationEvent(int id) {
+        // TODO is currently taken care of in the controller
+    }
 
     @Column(name = "content")
     private String content;

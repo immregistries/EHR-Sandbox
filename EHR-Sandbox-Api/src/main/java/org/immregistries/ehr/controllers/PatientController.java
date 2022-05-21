@@ -11,10 +11,10 @@ import org.immregistries.ehr.entities.Tenant;
 import org.immregistries.ehr.logic.PatientHandler;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.ResourceClient;
-import org.immregistries.ehr.entities.repositories.FacilityRepository;
-import org.immregistries.ehr.entities.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.entities.repositories.PatientRepository;
-import org.immregistries.ehr.entities.repositories.TenantRepository;
+import org.immregistries.ehr.repositories.FacilityRepository;
+import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.repositories.PatientRepository;
+import org.immregistries.ehr.repositories.TenantRepository;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +110,7 @@ public class PatientController {
         patient.setTenant(tenant.get());
         patient.setFacility(facility.get());
         patient.setUpdatedDate(new Date());
+//        patientRepository.
         Patient newEntity = patientRepository.save(patient);
         return newEntity;
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
@@ -124,7 +125,7 @@ public class PatientController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No patient found");
         }
-        org.hl7.fhir.r4.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
+        org.hl7.fhir.r5.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
     }
@@ -132,7 +133,7 @@ public class PatientController {
     @PostMapping("/{patientId}/fhir")
     public  ResponseEntity<String>  fhirPost(@RequestBody String message) {
         IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
-        org.hl7.fhir.r4.model.Patient patient = parser.parseResource(org.hl7.fhir.r4.model.Patient.class,message);
+        org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class,message);
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
         MethodOutcome outcome;
         try {

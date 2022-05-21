@@ -1,4 +1,4 @@
-package org.immregistries.ehr.entities.repositories;
+package org.immregistries.ehr.repositories;
 
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.springframework.data.repository.CrudRepository;

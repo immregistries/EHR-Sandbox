@@ -1,7 +1,7 @@
 package org.immregistries.ehr.security;
 
 import org.immregistries.ehr.entities.User;
-import org.immregistries.ehr.entities.repositories.UserRepository;
+import org.immregistries.ehr.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

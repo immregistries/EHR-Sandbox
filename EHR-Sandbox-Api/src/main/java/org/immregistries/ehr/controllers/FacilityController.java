@@ -1,11 +1,12 @@
 package org.immregistries.ehr.controllers;
 
 import org.immregistries.ehr.entities.Facility;
-import org.immregistries.ehr.entities.Feedback;
 import org.immregistries.ehr.entities.Tenant;
-import org.immregistries.ehr.entities.repositories.FacilityRepository;
-import org.immregistries.ehr.entities.repositories.FeedbackRepository;
-import org.immregistries.ehr.entities.repositories.TenantRepository;
+import org.immregistries.ehr.entities.VaccinationEvent;
+import org.immregistries.ehr.repositories.FacilityRepository;
+import org.immregistries.ehr.repositories.FeedbackRepository;
+import org.immregistries.ehr.repositories.TenantRepository;
+import org.immregistries.ehr.repositories.VaccinationEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ public class FacilityController {
     private TenantRepository tenantRepository;
     @Autowired
     private FeedbackRepository feedbackRepository;
+    @Autowired
+    private VaccinationEventRepository vaccinationEventRepository;
 
     @GetMapping()
     public Iterable<Facility> getFacilities(@PathVariable() int tenantId) {
@@ -36,6 +39,13 @@ public class FacilityController {
     public Optional<Facility> getFacility(@PathVariable() int tenantId,
                                           @PathVariable() int facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId,tenantId);
+    }
+
+    @GetMapping("/{facilityId}/vaccinations/{vaccinationId}")
+    public Optional<VaccinationEvent> getVaccination(@PathVariable() int tenantId,
+                                                  @PathVariable() int facilityId,
+                                                  @PathVariable() int vaccinationId) {
+        return vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId,vaccinationId);
     }
 
     @PostMapping()
@@ -65,11 +75,7 @@ public class FacilityController {
         }
     }
 
-    @GetMapping("/{facilityId}/feedbacks")
-    public Iterable<Feedback> getPatientFeedback(@PathVariable() int tenantId,
-                                                 @PathVariable() int facilityId) {
-        return getFacility(tenantId,facilityId).get().getFeedbacks();
-    }
+
 
 
 

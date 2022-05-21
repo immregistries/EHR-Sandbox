@@ -4,8 +4,8 @@ import javax.validation.Valid;
 
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.entities.User;
-import org.immregistries.ehr.entities.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.entities.repositories.UserRepository;
+import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.repositories.UserRepository;
 import org.immregistries.ehr.security.JwtResponse;
 import org.immregistries.ehr.security.JwtUtils;
 import org.immregistries.ehr.security.UserDetailsImpl;

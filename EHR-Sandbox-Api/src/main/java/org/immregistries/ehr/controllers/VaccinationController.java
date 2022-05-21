@@ -4,14 +4,14 @@ package org.immregistries.ehr.controllers;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import org.hl7.fhir.r4.model.Immunization;
+import org.hl7.fhir.r5.model.Immunization;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.*;
-import org.immregistries.ehr.entities.repositories.*;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.ImmunizationHandler;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.ResourceClient;
+import org.immregistries.ehr.repositories.*;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,8 @@ public class VaccinationController {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private PatientRepository patientRepository;
+    @Autowired
+    private FacilityRepository facilityRepository;
     @Autowired
     private ClinicianRepository clinicianRepository;
     @Autowired
@@ -95,10 +97,12 @@ public class VaccinationController {
     }
 
     @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@PathVariable() int patientId,
+    public VaccinationEvent putVaccinationEvents(@PathVariable() int facilityId,
+                                                 @PathVariable() int patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
+        Optional<Facility> facility = facilityRepository.findById(facilityId);
         Optional<Patient> patient = patientRepository.findById(patientId);
-        Optional<VaccinationEvent> oldVaccination =  vaccinationEventRepository.findByPatientIdAndId(patientId, vaccination.getId());
+        Optional<VaccinationEvent> oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccination.getId());
         if (!patient.isPresent() || !oldVaccination.isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No patient found");
@@ -108,7 +112,7 @@ public class VaccinationController {
         vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
         vaccination.setPatient(patient.get());
-        vaccination.setAdministeringFacility(patient.get().getFacility());
+        vaccination.setAdministeringFacility(facility.get());
         VaccinationEvent newEntity = vaccinationEventRepository.save(vaccination);
         return newEntity;
     }
@@ -154,7 +158,7 @@ public class VaccinationController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
         }
-        org.hl7.fhir.r4.model.Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get()) ;
+        org.hl7.fhir.r5.model.Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get()) ;
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
     }

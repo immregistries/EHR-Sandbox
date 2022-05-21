@@ -8,7 +8,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tenant")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Tenant.class)
 public class Tenant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +31,8 @@ public class Tenant {
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "tenant")
-    @JsonManagedReference("tenant-patient")
+//    @JsonManagedReference("tenant-patient")
+    @JsonIgnore
     private Set<Patient> patients = new LinkedHashSet<>();
 
     public Set<Patient> getPatients() {

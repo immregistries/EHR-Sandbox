@@ -8,7 +8,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "facility")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
+        property="id",
+        scope = Facility.class)
 public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

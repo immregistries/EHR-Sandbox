@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class EhrApiApplication extends SpringBootServletInitializer {
 	public static String VERSION = "1.2.0";
-	public static final FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);;
+	public static final FhirContext fhirContext = new FhirContext(FhirVersionEnum.R5);;
 
 	public static void main(String[] args) {
 		SpringApplication.run(EhrApiApplication.class, args);

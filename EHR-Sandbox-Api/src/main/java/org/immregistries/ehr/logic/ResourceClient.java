@@ -4,10 +4,10 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r5.model.IdType;
+import org.hl7.fhir.r5.model.OperationOutcome;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
-import org.immregistries.ehr.entities.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 

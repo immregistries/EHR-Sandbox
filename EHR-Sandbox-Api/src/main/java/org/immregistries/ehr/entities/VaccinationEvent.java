@@ -8,7 +8,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "vaccination_event")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
+        property="id",
+        scope = VaccinationEvent.class)
 public class VaccinationEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,22 +19,25 @@ public class VaccinationEvent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-    @JsonBackReference("patient-vaccinationEvent")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("patient")
     private Patient patient;
+
+    @JsonProperty("patient")
+    public void setPatient(int id) {
+        // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entering_clinician_id")
-//    @JsonBackReference("enteringClinician")
     private Clinician enteringClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordering_clinician_id")
-//    @JsonBackReference("orderingClinician")
     private Clinician orderingClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administering_clinician_id")
-//    @JsonBackReference("administeringClinician")
     private Clinician administeringClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,7 +50,7 @@ public class VaccinationEvent {
     private Facility administeringFacility;
 
     @OneToMany(mappedBy = "vaccinationEvent")
-//    @JsonManagedReference(value = "vaccination-feedback")
+//    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

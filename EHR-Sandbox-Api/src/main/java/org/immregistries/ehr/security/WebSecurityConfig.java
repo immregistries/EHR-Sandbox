@@ -1,6 +1,6 @@
 package org.immregistries.ehr.security;
 
-import org.immregistries.ehr.entities.repositories.UserRepository;
+import org.immregistries.ehr.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
