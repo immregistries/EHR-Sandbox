@@ -1,0 +1,28 @@
+<div class="grid-container">
+  <h1 class="mat-h1" *ngIf="patient">
+    {{'Patient :' + (patient.nameFirst ?? '') + ' ' + (patient.nameMiddle ?? '') + ' ' + (patient.nameLast ?? '')}}
+  </h1>
+  <mat-grid-list cols="4" rowHeight="350px">
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+      <mat-card >
+        <mat-card-content class="dashboard-card-content">
+           <app-patient-details [patient]="patient"></app-patient-details>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="3" [rowspan]="1">
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <app-feedback-table [patient]="patient"></app-feedback-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile *ngIf="patient && patient.id" [colspan]="4" [rowspan]="1">
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <app-vaccination-table [patientId]="patient.id"></app-vaccination-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

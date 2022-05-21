@@ -41,7 +41,6 @@ import { MatTabsModule } from '@angular/material/tabs';
     Hl7Service,
   ],
   exports: [
-
     Hl7MessagingComponent,
     FhirMessagingComponent,
     FhirGetComponent,

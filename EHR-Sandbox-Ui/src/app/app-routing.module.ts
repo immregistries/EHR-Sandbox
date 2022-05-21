@@ -4,10 +4,10 @@ import { DashboardComponent } from './core/_components/dashboard/dashboard.compo
 import { HomeComponent } from './core/_components/home/home.component';
 import { AuthenticationDialogComponent } from './core/authentication/_components/authentication-form/authentication-dialog/authentication-dialog.component';
 import { FhirMessagingComponent } from './fhir/_components/fhir-messaging/fhir-messaging.component';
-import { SettingsDialogComponent } from './core/_components/_dialogs/settings-dialog/settings-dialog.component';
-import { PatientFormComponent } from './core/_components/_forms/patient-form/patient-form.component';
-import { VaccinationFormComponent } from './core/_components/_forms/vaccination-form/vaccination-form.component';
-import { FeedbackTableComponent } from './core/_components/_lists/_tables/feedback-table/feedback-table.component';
+import { SettingsDialogComponent } from './shared/_components/_dialogs/settings-dialog/settings-dialog.component';
+import { PatientFormComponent } from './patient/patient-form/patient-form.component';
+import { VaccinationFormComponent } from './vaccination/vaccination-form/vaccination-form.component';
+import { FeedbackTableComponent } from './shared/feedback-table/feedback-table.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },

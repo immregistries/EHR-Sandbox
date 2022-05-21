@@ -32,10 +32,10 @@ export class SettingsService {
     return this.apiUrl
   }
 
-  public setApiUrl(url: string) {
-    this.apiUrl = url
-    return this.apiUrl
-  }
+  // public setApiUrl(url: string) {
+  //   this.apiUrl = url
+  //   return this.apiUrl
+  // }
 
   public getSettings(): Observable<ImmunizationRegistry>{
     return this.http.get<ImmunizationRegistry>(

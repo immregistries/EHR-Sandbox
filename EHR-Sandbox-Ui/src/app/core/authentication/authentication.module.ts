@@ -28,13 +28,11 @@ import { MatButtonModule } from '@angular/material/button';
     SharedModule,
   ],
   exports: [
-    ReactiveFormsModule,
-    FormsModule,
-    HttpClientModule,
-    MatInputModule,
-    MatButtonModule,
-
-    SharedModule,
+    // ReactiveFormsModule,
+    // FormsModule,
+    // HttpClientModule,
+    // MatInputModule,
+    // MatButtonModule,
 
     AuthenticationFormComponent,
     AuthenticationDialogComponent,

@@ -111,6 +111,12 @@ export class PatientService {
     return of([])
   }
 
+  quickReadPatient(patientId: number):  Observable<Patient> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.readPatient(tenantId,facilityId,patientId)
+  }
+
   /**
    *
    * @param tenantId
@@ -120,7 +126,7 @@ export class PatientService {
    */
   readPatient(tenantId: number, facilityId: number, patientId: number): Observable<Patient> {
     return this.http.get<Patient>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patient/${patientId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}`,
       httpOptions);
   }
 

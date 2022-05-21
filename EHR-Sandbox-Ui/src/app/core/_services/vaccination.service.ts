@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { Patient, VaccinationEvent} from '../_model/rest';
 import { FacilityService } from './facility.service';
@@ -17,11 +17,26 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class VaccinationService {
+  /**
+   * Global observable used to trigger a refresh for all the lists of vaccination
+   */
+  private refresh: BehaviorSubject<boolean>;
+
+  public getRefresh(): Observable<boolean> {
+    return this.refresh.asObservable();
+  }
+
+  public doRefresh(): void{
+    this.refresh.next(!this.refresh.value)
+  }
+
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) { }
+    private tenantService: TenantService ) {
+      this.refresh = new BehaviorSubject<boolean>(false)
+     }
 
   readRandom(): Observable<VaccinationEvent> {
     return this.http.get<VaccinationEvent>(
@@ -48,6 +63,22 @@ export class VaccinationService {
     if (tenantId > 0 && facilityId > 0 && patientId > 0 && vaccinationId > 0){
       return this.http.get<VaccinationEvent>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}`,
+        httpOptions);
+    } else {
+      return of()
+    }
+  }
+
+  quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent>{
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.readVaccinationFromFacility(tenantId,facilityId,vaccinationId)
+  }
+
+  readVaccinationFromFacility(tenantId: number, facilityId: number, vaccinationId: number): Observable<VaccinationEvent>{
+    if (tenantId > 0 && facilityId > 0 && vaccinationId > 0){
+      return this.http.get<VaccinationEvent>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}`,
         httpOptions);
     } else {
       return of()

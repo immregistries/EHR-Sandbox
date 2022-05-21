@@ -11,6 +11,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { FhirModule } from './fhir/fhir.module';
 import { CoreModule } from './core/core.module';
+import { PatientModule } from './patient/patient.module';
+import { VaccinationModule } from './vaccination/vaccination.module';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,8 @@ import { CoreModule } from './core/core.module';
 
     CoreModule,
     FhirModule,
+    PatientModule,
+    VaccinationModule,
   ],
   providers: [
     // { provide: APP_INITIALIZER, useFactory: CodeMapsServiceFactory, deps: [CodeMapsService], multi: true },

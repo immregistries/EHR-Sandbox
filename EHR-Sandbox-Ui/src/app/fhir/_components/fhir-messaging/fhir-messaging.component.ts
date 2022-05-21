@@ -80,6 +80,10 @@ sendVaccination() {
       (res) => {
         this.vaccinationAnswer = res
         this.vaccinationError = ""
+        const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
+        this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
+          console.log(res)
+        })
       },
       (err) => {
         this.vaccinationAnswer = ""
@@ -88,6 +92,10 @@ sendVaccination() {
         } else {
           this.vaccinationError = err.error
         }
+        const feedback: Feedback = {iis: "fhirTest", content: this.patientError, severity: "error"}
+        this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
+          console.log(res)
+        })
         console.error(err)
       }
     )
