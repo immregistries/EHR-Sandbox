@@ -39,6 +39,5 @@ export class TenantListComponent implements OnInit {
     } else {
       this.tenantService.setTenant(event)
     }
-    this.facilityService.setFacility({id: -1})
   }
 }

@@ -90,9 +90,9 @@ sendVaccination() {
         if (err.error.text) {
           this.vaccinationError = err.error.text
         } else {
-          this.vaccinationError = err.error
+          this.vaccinationError = err.error.error
         }
-        const feedback: Feedback = {iis: "fhirTest", content: this.patientError, severity: "error"}
+        const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationError, severity: "error"}
         this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
           console.log(res)
         })

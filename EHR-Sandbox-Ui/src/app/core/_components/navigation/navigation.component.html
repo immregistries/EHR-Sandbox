@@ -33,8 +33,9 @@
       <span>EHR Sandbox</span>
       <span style="width: 2em;"></span>
 
-      <span *ngIf="!pathname.startsWith('/home')">
+      <span *ngIf="!pathname.startsWith('/home')" style="display: flex;">
         <app-tenant-menu ></app-tenant-menu>
+        <span></span>
         <app-facility-menu ></app-facility-menu>
       </span>
 

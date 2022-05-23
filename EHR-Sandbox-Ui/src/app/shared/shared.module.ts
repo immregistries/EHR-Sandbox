@@ -25,6 +25,7 @@ import { MatDialogActions, MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
+import { HoverMenuComponent } from './_components/_lists/_menus/hover-menu/hover-menu.component';
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import { MatButtonModule } from '@angular/material/button';
     SettingsDialogComponent,
     FeedbackTableComponent,
     FeedbackDialogComponent,
+    HoverMenuComponent,
   ],
   imports: [
     CommonModule,
@@ -78,6 +80,7 @@ import { MatButtonModule } from '@angular/material/button';
     SettingsDialogComponent,
     FeedbackTableComponent,
     FeedbackDialogComponent,
+    HoverMenuComponent,
   ],
 })
 export class SharedModule { }

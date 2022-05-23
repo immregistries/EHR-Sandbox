@@ -18,17 +18,12 @@ export class FacilityListComponent implements OnInit {
     public tenantService: TenantService,
     public dialog: MatDialog) { }
 
-  tenant?: Tenant;
 
-  selectedOption?: Facility;
 
   ngOnInit(): void {
     this.tenantService.getObservableTenant().subscribe(tenant => {
-      this.tenant = tenant
-      this.selectedOption = undefined
-      this.facilityService.setFacility({id: -1})
       this.facilityService.getRefresh().subscribe((bool) => {
-        this.facilityService.readFacilities(tenant.id).subscribe((res) => {
+        this.facilityService.readFacilities(tenant.id ?? -1).subscribe((res) => {
           this.list = res
         })
       })
@@ -44,11 +39,10 @@ export class FacilityListComponent implements OnInit {
 
   onSelection(event: Facility) {
     if (this.facilityService.getFacilityId() == event.id) { // unselect
-      this.selectedOption = {id: -1}
+      this.facilityService.setFacility({id: -1})
     } else {
-      this.selectedOption = event
+      this.facilityService.setFacility(event)
     }
-    this.facilityService.setFacility(this.selectedOption)
   }
 
 }
