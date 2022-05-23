@@ -13,7 +13,7 @@ import { FacilityService } from 'src/app/core/_services/facility.service';
 export class DashboardComponent {
 
   constructor(private breakpointObserver: BreakpointObserver,
-    // public tenantService: TenantService,
-    // public facilityService: FacilityService,
+    public tenantService: TenantService,
+    public facilityService: FacilityService,
     public patientService: PatientService) {}
 }

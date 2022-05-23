@@ -1,5 +1,5 @@
 <app-hover-menu>
-  <button trigger mat-stroked-button  (click)="$event.stopPropagation()" style="min-width: 10em;">
+  <button trigger mat-raised-button  (click)="$event.stopPropagation()" [color]="tenantService.getTenantId() > 0 ? 'primary' : 'basic'" >
     {{(tenantService.getTenantId() > 0)? ("Tenant: " + tenantService.getTenant().nameDisplay) : "Select Tenant" }}
   </button>
   <div content>

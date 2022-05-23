@@ -7,7 +7,7 @@ import { FhirMessagingComponent } from './fhir/_components/fhir-messaging/fhir-m
 import { SettingsDialogComponent } from './shared/_components/_dialogs/settings-dialog/settings-dialog.component';
 import { PatientFormComponent } from './patient/patient-form/patient-form.component';
 import { VaccinationFormComponent } from './vaccination/vaccination-form/vaccination-form.component';
-import { FeedbackTableComponent } from './shared/feedback-table/feedback-table.component';
+import { FeedbackTableComponent } from './shared/_components/feedback-table/feedback-table.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },

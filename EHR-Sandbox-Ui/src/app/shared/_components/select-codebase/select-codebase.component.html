@@ -11,7 +11,12 @@
       <mat-icon>cancel</mat-icon>
     </button>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"  (optionActivated)="valueChanged()">
-      <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()" >
+      <mat-option
+      *ngFor="let option of filteredOptions"
+      [value]="option.value"
+      (onSelectionChange)="valueChanged()"
+      [matTooltip]="option.description ?? ''"
+      [matTooltipDisabled]="toolTipDisabled">
         {{option.label + ' (' + option.value + ')'}}
       </mat-option>
     </mat-autocomplete>

@@ -24,6 +24,8 @@ export class SelectCodebaseComponent implements OnInit {
 
   @ViewChild('selectForm', { static: true }) selectForm!: NgForm;
 
+  @Input() toolTipDisabled: boolean = false;
+
   codeMap!: CodeMap;
   filteredOptions!: Code[];
   warning: boolean = false;

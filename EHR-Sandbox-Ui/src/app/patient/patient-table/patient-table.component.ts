@@ -3,7 +3,7 @@ import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs';
-import { FeedbackDialogComponent } from 'src/app/shared/feedback-table/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialogComponent } from 'src/app/shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { Facility, Patient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';

@@ -26,7 +26,7 @@ export class HoverMenuComponent {
   mouseLeave(trigger: any) {
     this.timedOutCloser = setTimeout(() => {
       trigger.closeMenu();
-    }, 50);
+    }, 150);
   }
 
 }

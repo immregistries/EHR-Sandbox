@@ -11,11 +11,11 @@ import { FacilityListComponent } from './_components/_lists/_card-lists/facility
 import { TenantListComponent } from './_components/_lists/_card-lists/tenant-list/tenant-list.component';
 import { TenantCreationComponent } from './_components/_dialogs/tenant-creation/tenant-creation.component';
 import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
-import { TenantMenuComponent } from './_components/_lists/_menus/tenant-menu/tenant-menu.component';
-import { FacilityMenuComponent } from './_components/_lists/_menus/facility-menu/facility-menu.component';
+import { TenantMenuComponent } from './_components/_menus/tenant-menu/tenant-menu.component';
+import { FacilityMenuComponent } from './_components/_menus/facility-menu/facility-menu.component';
 import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/settings-dialog.component';
-import { FeedbackTableComponent } from './feedback-table/feedback-table.component';
-import { FeedbackDialogComponent } from './feedback-table/feedback-dialog/feedback-dialog.component';
+import { FeedbackTableComponent } from './_components/feedback-table/feedback-table.component';
+import { FeedbackDialogComponent } from './_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
@@ -25,7 +25,8 @@ import { MatDialogActions, MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
-import { HoverMenuComponent } from './_components/_lists/_menus/hover-menu/hover-menu.component';
+import { HoverMenuComponent } from './_components/_menus/hover-menu/hover-menu.component';
+import { EmptyListMessageComponent } from './_components/empty-list-message/empty-list-message.component';
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import { HoverMenuComponent } from './_components/_lists/_menus/hover-menu/hover
     FeedbackTableComponent,
     FeedbackDialogComponent,
     HoverMenuComponent,
+    EmptyListMessageComponent,
   ],
   imports: [
     CommonModule,
@@ -81,6 +83,7 @@ import { HoverMenuComponent } from './_components/_lists/_menus/hover-menu/hover
     FeedbackTableComponent,
     FeedbackDialogComponent,
     HoverMenuComponent,
+    EmptyListMessageComponent,
   ],
 })
 export class SharedModule { }

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Facility, Tenant } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { FacilityCreationComponent } from '../../../_dialogs/facility-creation/facility-creation.component';
+import { FacilityCreationComponent } from '../../_dialogs/facility-creation/facility-creation.component';
 
 @Component({
   selector: 'app-facility-menu',

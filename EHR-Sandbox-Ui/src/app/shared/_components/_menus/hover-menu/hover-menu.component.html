@@ -2,7 +2,7 @@
                   (mouseenter)="mouseEnter(menuTrigger)" (mouseleave)="mouseLeave(menuTrigger)">
       <ng-content select="[trigger]"></ng-content>
   </div>
-  <mat-menu #menu="matMenu" [hasBackdrop]="false">
+  <mat-menu #menu="matMenu" [overlapTrigger]="false" [hasBackdrop]="false">
       <div (mouseenter)="mouseEnter(menuTrigger)" (mouseleave)="mouseLeave(menuTrigger)">
           <ng-content select="[content]"></ng-content>
       </div>

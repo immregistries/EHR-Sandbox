@@ -30,7 +30,7 @@ export class PatientFormDialogComponent implements OnInit {
 
   save(): void {
     if (this.isEditionMode) {
-      this.patientService.quickPutPatient( this.patient).subscribe({
+      this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: Patient) => {
           this.patientService.doRefresh()
           this._dialogRef.close(true)

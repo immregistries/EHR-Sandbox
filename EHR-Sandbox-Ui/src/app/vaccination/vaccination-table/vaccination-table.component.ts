@@ -9,7 +9,7 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationCreationComponent } from '../vaccination-form/vaccination-creation/vaccination-creation.component';
-import { FeedbackDialogComponent } from '../../shared/feedback-table/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialogComponent } from '../../shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 
 @Component({
   selector: 'app-vaccination-table',
