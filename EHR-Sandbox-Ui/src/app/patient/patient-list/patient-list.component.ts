@@ -5,7 +5,7 @@ import { Facility, Patient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { PatientCreationComponent } from '../patient-form/patient-creation/patient-creation.component';
+import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
 
 @Component({
   selector: 'app-patient-list',
@@ -42,7 +42,7 @@ export class PatientListComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(PatientCreationComponent, {
+    const dialogRef = this.dialog.open(PatientFormDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

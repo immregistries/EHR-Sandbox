@@ -8,9 +8,7 @@ import { Facility, Patient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { FhirDialogComponent } from '../../fhir/_components/fhir-dialog/fhir-dialog.component';
-import { FhirMessagingComponent } from '../../fhir/_components/fhir-messaging/fhir-messaging.component';
-import { PatientCreationComponent } from '../patient-form/patient-creation/patient-creation.component';
+import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
 
 @Component({
   selector: 'app-patient-table',
@@ -46,12 +44,12 @@ export class PatientTableComponent implements AfterViewInit {
 
   onSelection(event: Patient) {
     if (this.expandedElement && this.expandedElement.id == event.id){
-      this.expandedElement = null
-      this.patientService.setPatient({})
+      this.expandedElement = {}
     } else {
       this.expandedElement = event
-      this.patientService.setPatient(event)
     }
+    this.patientService.setPatient(this.expandedElement)
+
   }
 
   constructor(private tenantService: TenantService,
@@ -66,6 +64,7 @@ export class PatientTableComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // Set filter rules for research
+
     this.dataSource.filterPredicate = (data: Patient, filter: string) =>{
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
@@ -87,10 +86,13 @@ export class PatientTableComponent implements AfterViewInit {
         this.loading = false
       })
     })
+    // this.patientService.getObservablePatient().subscribe(patient => {
+    //   this.expandedElement = patient
+    // })
   }
 
   openCreation() {
-    const dialogRef = this.dialog.open(PatientCreationComponent, {
+    const dialogRef = this.dialog.open(PatientFormDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

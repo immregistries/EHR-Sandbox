@@ -15,11 +15,23 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class FeedbackService {
+  private refresh: BehaviorSubject<boolean>;
+
+  public getRefresh(): Observable<boolean> {
+    return this.refresh.asObservable();
+  }
+
+  public doRefresh(): void{
+    this.refresh.next(!this.refresh.value)
+  }
+
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) { }
+    private tenantService: TenantService ) {
+      this.refresh = new BehaviorSubject<boolean>(false)
+    }
 
   postPatientFeedback(patientId: number, feedback: Feedback): Observable<Feedback> {
     const tenantId: number = this.tenantService.getTenantId()

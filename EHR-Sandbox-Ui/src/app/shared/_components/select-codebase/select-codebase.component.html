@@ -4,10 +4,10 @@
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"
       matBadge="!" [matBadgeHidden]="!warning" matBadgeColor="warn"
       (ngModelChange)="filterChange($event)" name="{{form.attribute}}"
-      matTooltip="{{warning == false ? '': 'Current value not referenced by other selected fields'}}">
+      [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
     <button matSuffix mat-icon-button *ngIf="model" (click)="clear()"
-      matBadge="!" [matBadgeHidden]="warning == false" matBadgeColor="warn"
-      matTooltip="{{warning == false ? '': 'Current value not referenced by other selected fields'}}">
+      matBadge="!" [matBadgeHidden]="warning == false" [matBadgeColor]="'warn'"
+      [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
       <mat-icon>cancel</mat-icon>
     </button>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"  (optionActivated)="valueChanged()">

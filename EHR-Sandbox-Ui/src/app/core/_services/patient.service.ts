@@ -84,6 +84,17 @@ export class PatientService {
 
   /**
    *
+   * @returns list of patients associated to the tenant and facility selected in their respected services
+   */
+   quickReadPatients(): Observable<Patient[]> {
+    const tenantId = this.tenantService.getTenantId()
+    const facilityId = this.facilityService.getFacilityId()
+    return this.readPatients(tenantId, facilityId)
+  }
+
+
+  /**
+   *
    * @param tenantId
    * @param facilityId
    * @returns list of patients associated to the tenant and facility

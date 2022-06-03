@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FhirDialogComponent } from 'src/app/fhir/_components/fhir-dialog/fhir-dialog.component';
 import { Patient } from '../../core/_model/rest';
 import { PatientService } from '../../core/_services/patient.service';
-import { PatientCreationComponent } from '../patient-form/patient-creation/patient-creation.component';
+import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
 
 @Component({
   selector: 'app-patient-details',
@@ -20,7 +20,7 @@ export class PatientDetailsComponent implements OnInit {
   }
 
   openEdition(element: Patient) {
-    const dialogRef = this.dialog.open(PatientCreationComponent, {
+    const dialogRef = this.dialog.open(PatientFormDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

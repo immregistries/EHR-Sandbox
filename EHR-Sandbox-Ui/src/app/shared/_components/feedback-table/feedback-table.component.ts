@@ -65,7 +65,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
       "patient",
       "vaccinationEvent",
       "content",
-      "remove",
+      // "remove",
     ]
     if (this.patient) {
       this.columns = this.columns.filter((attribute => attribute != "patient"))
@@ -73,6 +73,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     if (this.vaccination) {
       this.columns = this.columns.filter((attribute => attribute != "vaccinationEvent"))
     }
+
   }
 
   ngAfterViewInit(): void {
@@ -80,7 +81,9 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     this.dataSource.filterPredicate = (data: Feedback | number, filter: string) =>{
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
-    this.ngOnChanges()
+    this.feedbackService.getRefresh().subscribe(bool => {
+      this.ngOnChanges()
+    })
   }
 
   ngOnChanges(): void {

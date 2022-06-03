@@ -26,7 +26,7 @@
     <td mat-cell *matCellDef="let element">
       <button mat-icon-button *ngIf="element.feedbacks.length > 0"
         style="color: red;"
-        matTooltip="{{element.feedbacks[0].content}}"
+        matTooltip="Warnings and errors"
         matTooltipClass="example-tooltip-red"
         (click)="openFeedback(element); $event.stopPropagation();">
         <mat-icon>

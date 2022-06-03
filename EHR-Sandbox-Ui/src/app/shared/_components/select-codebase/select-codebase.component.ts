@@ -28,11 +28,16 @@ export class SelectCodebaseComponent implements OnInit {
 
   codeMap!: CodeMap;
   filteredOptions!: Code[];
+  /**
+   * Used to notify that it has been automatically selected
+   */
+  autofilled: boolean = false;
   warning: boolean = false;
   /**
    * Used to avoid an interblocking situation with autoselection on filter changes
    */
   erasedOnLastChange: boolean = false;
+
 
   constructor(public codeMapsService: CodeMapsService) { }
 
@@ -49,10 +54,12 @@ export class SelectCodebaseComponent implements OnInit {
           this.warning = true
         }
         // if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model )  && this.erasedOnLastChange == false) {
-        if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model ) && this.erasedOnLastChange == false ) {
+        if (this.filteredOptions && this.filteredOptions.length == 1 &&  !this.erasedOnLastChange && ( this.model == '' || !this.model ) ) {
           this.model = this.filteredOptions[0].value
           this.valueChanged()
+          this.autofilled = true
         }
+        this.erasedOnLastChange = false
       })
     })
     this.formChangesSubscription = this.selectForm.form.valueChanges.subscribe((value) => {
@@ -142,6 +149,7 @@ export class SelectCodebaseComponent implements OnInit {
       this.modelChange.emit('')
       this.referenceEmitter.emit(undefined)
     }
+    this.autofilled = false
   }
 
   displayCode(codeKey: string): string{

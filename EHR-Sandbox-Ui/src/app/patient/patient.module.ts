@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PatientFormComponent } from './patient-form/patient-form.component';
 import { PatientListComponent } from './patient-list/patient-list.component';
-import { PatientCreationComponent } from './patient-form/patient-creation/patient-creation.component';
 import { PatientFreeFormComponent } from './patient-free-form/patient-free-form.component';
 import { PatientTableComponent } from './patient-table/patient-table.component';
 import { PatientDetailsComponent } from './patient-details/patient-details.component';
@@ -39,18 +38,19 @@ import { PatientDashboardComponent } from './patient-dashboard/patient-dashboard
 import { LayoutModule } from '@angular/cdk/layout';
 import { VaccinationModule } from '../vaccination/vaccination.module';
 import { PatientDashboardDialogComponent } from './patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
+import { PatientMenuComponent } from './patient-menu/patient-menu.component';
 
 @NgModule({
   declarations: [
     PatientFormComponent,
     PatientListComponent,
-    PatientCreationComponent,
     PatientFreeFormComponent,
     PatientTableComponent,
     PatientDetailsComponent,
     PatientFormDialogComponent,
     PatientDashboardComponent,
-    PatientDashboardDialogComponent
+    PatientDashboardDialogComponent,
+    PatientMenuComponent
   ],
   imports: [
     CommonModule,
@@ -90,11 +90,12 @@ import { PatientDashboardDialogComponent } from './patient-dashboard/patient-das
   exports: [
     PatientFormComponent,
     PatientListComponent,
-    PatientCreationComponent,
     PatientFreeFormComponent,
+    PatientFormDialogComponent,
     PatientTableComponent,
     PatientDetailsComponent,
-    PatientDashboardComponent
+    PatientDashboardComponent,
+    PatientMenuComponent
   ],
 })
 export class PatientModule { }

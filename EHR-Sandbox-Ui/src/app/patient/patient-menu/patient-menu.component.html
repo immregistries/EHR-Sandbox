@@ -1,0 +1,15 @@
+<app-hover-menu>
+  <button trigger mat-raised-button style="" (click)="$event.stopPropagation()" *ngIf="facilityService.getFacilityId() > 0" [color]="patientService.getPatientId() > 0 ? 'primary' : 'basic'">
+    {{
+      (patientService.getPatientId() > 0 ) ?
+        ("Patient: " + (patientService.getPatient().nameFirst ?? "") + " " + (patientService.getPatient().nameLast ?? ""))
+        : "Select Patient"
+    }}
+  </button>
+  <div content>
+    <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)">
+      {{(item.nameFirst ?? "") + " " + (item.nameLast ?? "")}}
+    </button>
+    <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
+  </div>
+</app-hover-menu>

@@ -3,8 +3,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
+import { FhirService } from 'src/app/fhir/_services/fhir.service';
 
 @Component({
   selector: 'app-fhir-messaging',
@@ -16,7 +17,7 @@ export class FhirMessagingComponent implements AfterViewInit {
   vaccinationLoading: Boolean = false
 
   @Input() vaccinationId!: number;
-  @Input() patientId!: number;
+  @Input() patientId: number = -1;
 
   public patientResource: string = "";
   public patientAnswer: string = "";
@@ -29,6 +30,8 @@ export class FhirMessagingComponent implements AfterViewInit {
   public style: string = 'width: 50%'
 
   constructor(private fhirService: FhirService,
+    private patientService: PatientService,
+    private vaccinationService: VaccinationService,
     private _snackBar: MatSnackBar,
     private feedbackService: FeedbackService) {
 
@@ -57,6 +60,7 @@ export class FhirMessagingComponent implements AfterViewInit {
         const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
         this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
           console.log(res)
+          this.patientService.doRefresh()
         })
       },
       error: (err) => {
@@ -69,6 +73,7 @@ export class FhirMessagingComponent implements AfterViewInit {
         const feedback: Feedback = {iis: "fhirTest", content: this.patientError, severity: "error"}
         this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
           console.log(res)
+          this.patientService.doRefresh()
         })
         console.error(err)
       }
@@ -83,6 +88,9 @@ sendVaccination() {
         const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
         this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
           console.log(res)
+          this.patientService.doRefresh()
+          this.vaccinationService.doRefresh()
+          this.feedbackService.doRefresh()
         })
       },
       (err) => {
@@ -95,6 +103,9 @@ sendVaccination() {
         const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationError, severity: "error"}
         this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
           console.log(res)
+          this.patientService.doRefresh()
+          this.vaccinationService.doRefresh()
+          this.feedbackService.doRefresh()
         })
         console.error(err)
       }
