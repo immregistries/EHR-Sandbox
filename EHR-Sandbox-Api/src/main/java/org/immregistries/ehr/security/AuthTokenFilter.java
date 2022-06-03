@@ -83,6 +83,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String item = "";
         if(scanner.hasNext() && tenantId == -1) {
             item = scanner.next();
+            if (item.equals("fhir") ) {
+                return true;
+            }
             if (item.equals("tenants") ) {
                 if (scanner.hasNextInt()) {
                     tenantId = scanner.nextInt();

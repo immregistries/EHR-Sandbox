@@ -110,7 +110,6 @@ public class PatientController {
         patient.setTenant(tenant.get());
         patient.setFacility(facility.get());
         patient.setUpdatedDate(new Date());
-//        patientRepository.
         Patient newEntity = patientRepository.save(patient);
         return newEntity;
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
@@ -138,6 +137,11 @@ public class PatientController {
         MethodOutcome outcome;
         try {
             outcome = ResourceClient.write(patient, ir);
+            if (outcome.getOperationOutcome() != null) {
+                logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
+            }
+            logger.info(String.valueOf(outcome.getResponseHeaders()));
+
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
         } catch (Exception e) {

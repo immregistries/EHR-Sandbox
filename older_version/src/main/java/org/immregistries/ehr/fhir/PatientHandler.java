@@ -3,14 +3,14 @@ package org.immregistries.ehr.fhir;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r5.model.Address;
+import org.hl7.fhir.r5.model.ContactPoint;
+import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.r5.model.HumanName;
+import org.hl7.fhir.r5.model.Identifier;
+import org.hl7.fhir.r5.model.Patient;
 
-import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
 
 public class PatientHandler {
   

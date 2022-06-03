@@ -13,8 +13,8 @@ import javax.servlet.http.HttpSession;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r5.model.IdType;
+import org.hl7.fhir.r5.model.OperationOutcome;
 import org.immregistries.ehr.model.ImmunizationRegistry;
 
 

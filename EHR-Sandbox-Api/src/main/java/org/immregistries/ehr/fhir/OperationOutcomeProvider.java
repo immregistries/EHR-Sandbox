@@ -1,10 +1,14 @@
 package org.immregistries.ehr.fhir;
 
 import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.OperationOutcome;
-import org.hl7.fhir.r5.model.StringType;
+import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Feedback;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
@@ -12,7 +16,10 @@ import org.immregistries.ehr.repositories.FacilityRepository;
 import org.immregistries.ehr.repositories.FeedbackRepository;
 import org.immregistries.ehr.repositories.PatientRepository;
 import org.immregistries.ehr.repositories.VaccinationEventRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +36,7 @@ public class OperationOutcomeProvider implements IResourceProvider {
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProvider.class);
 
 
     @Override
@@ -36,8 +44,27 @@ public class OperationOutcomeProvider implements IResourceProvider {
         return OperationOutcome.class;
     }
 
+    @Read
+    public OperationOutcome test(
+            RequestDetails theRequestDetails,
+            @IdParam IdType id) {
+        OperationOutcome operationOutcome = new OperationOutcome();
+        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
+        logger.info("test {}", ids);
+        logger.info("test");
+        operationOutcome.setId(id);
+        operationOutcome.addIssue().setCode(OperationOutcome.IssueType.VALUE);
+        return operationOutcome;
+    }
+
     @Create
-    public OperationOutcome registerOperationOutcome(@ResourceParam OperationOutcome operationOutcome) {
+    // Endpoint for Subscription
+    public MethodOutcome registerOperationOutcome(
+            RequestDetails theRequestDetails,
+            @ResourceParam OperationOutcome operationOutcome) {
+        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
+        Integer tenantId = Integer.parseInt(ids[0]);
+        Integer facilityId = Integer.parseInt(ids[1]);
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
         for (OperationOutcome.OperationOutcomeIssueComponent issue: operationOutcome.getIssue()) {
@@ -70,6 +97,7 @@ public class OperationOutcomeProvider implements IResourceProvider {
             feedbackList.add(feedback);
         }
         feedbackRepository.saveAll(feedbackList);
-        return operationOutcome;
+        return new MethodOutcome().setOperationOutcome(operationOutcome);
+//      return operationOutcome;
     }
 }

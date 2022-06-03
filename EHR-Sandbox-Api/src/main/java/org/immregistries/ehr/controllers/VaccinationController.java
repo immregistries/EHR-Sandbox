@@ -48,8 +48,6 @@ public class VaccinationController {
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-//    @Autowired(required = false)
-//    private ResourceClient resourceClient;
 
     private static final Logger logger = LoggerFactory.getLogger(VaccinationController.class);
 

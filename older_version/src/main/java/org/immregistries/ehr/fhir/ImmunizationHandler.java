@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Immunization;
-import org.hl7.fhir.r4.model.Quantity;
-import org.hl7.fhir.r4.model.Location;
-import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r5.model.Identifier;
+import org.hl7.fhir.r5.model.Immunization;
+import org.hl7.fhir.r5.model.Quantity;
+import org.hl7.fhir.r5.model.Location;
+import org.hl7.fhir.r5.model.Reference;
 import org.immregistries.ehr.model.Facility;
 import org.immregistries.ehr.model.VaccinationEvent;
 import org.immregistries.ehr.model.Vaccine;
