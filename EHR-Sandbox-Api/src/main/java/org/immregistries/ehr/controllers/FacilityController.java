@@ -74,9 +74,4 @@ public class FacilityController {
 //            return ResponseEntity.created(location).body("Facility " + newEntity.getId() + " saved");
         }
     }
-
-
-
-
-
 }

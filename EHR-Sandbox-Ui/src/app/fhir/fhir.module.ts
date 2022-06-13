@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { SharedModule } from '../shared/shared.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { SubscriptionDashboardComponent } from './_components/subscription-dashboard/subscription-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     FhirMessagingComponent,
     FhirGetComponent,
     FhirDialogComponent,
+    SubscriptionDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +47,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     FhirMessagingComponent,
     FhirGetComponent,
     FhirDialogComponent,
+    SubscriptionDashboardComponent,
   ]
 })
 export class FhirModule { }

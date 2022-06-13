@@ -1,14 +1,10 @@
 package org.immregistries.ehr.fhir;
 
-import ca.uhn.fhir.rest.annotation.Create;
-import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.Read;
-import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Feedback;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
@@ -19,7 +15,6 @@ import org.immregistries.ehr.repositories.VaccinationEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +39,20 @@ public class OperationOutcomeProvider implements IResourceProvider {
         return OperationOutcome.class;
     }
 
+    @Search
+    public OperationOutcome search(RequestDetails theRequestDetails) {
+        logger.info(theRequestDetails.getFhirServerBase());
+        OperationOutcome operationOutcome = new OperationOutcome();
+        operationOutcome.addIssue().setCode(OperationOutcome.IssueType.VALUE);
+        return operationOutcome;
+    }
+
     @Read
-    public OperationOutcome test(
+    public OperationOutcome read(
             RequestDetails theRequestDetails,
             @IdParam IdType id) {
         OperationOutcome operationOutcome = new OperationOutcome();
-        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
-        logger.info("test {}", ids);
-        logger.info("test");
+        Integer facilityId = Integer.parseInt(theRequestDetails.getTenantId());
         operationOutcome.setId(id);
         operationOutcome.addIssue().setCode(OperationOutcome.IssueType.VALUE);
         return operationOutcome;
@@ -62,9 +63,10 @@ public class OperationOutcomeProvider implements IResourceProvider {
     public MethodOutcome registerOperationOutcome(
             RequestDetails theRequestDetails,
             @ResourceParam OperationOutcome operationOutcome) {
-        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
-        Integer tenantId = Integer.parseInt(ids[0]);
-        Integer facilityId = Integer.parseInt(ids[1]);
+//        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
+//        Integer tenantId = Integer.parseInt(ids[0]);
+//        Integer facilityId = Integer.parseInt(ids[1]);
+        // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
         for (OperationOutcome.OperationOutcomeIssueComponent issue: operationOutcome.getIssue()) {

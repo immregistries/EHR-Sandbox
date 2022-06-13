@@ -8,6 +8,7 @@
   left: 5px;
   right: 5px;
   bottom: 5px;
+  overflow: auto;
 }
 
 .card-title {

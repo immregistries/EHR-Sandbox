@@ -5,10 +5,9 @@ import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.OperationOutcome;
-import org.hl7.fhir.r5.model.Subscription;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.controllers.FeedbackController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +43,7 @@ public class SubscriptionProvider implements IResourceProvider {
 //                .setPayload("application/json");
 //        sub.setChannel(channel);
         sub.setReason("testing purposes");
+        sub.addHeader("secret");
         sub.setTopic("/subscriptionTopic");
         sub.setEndpoint(request.getServletPath());
         logger.info(request.getServletPath());
@@ -52,4 +52,29 @@ public class SubscriptionProvider implements IResourceProvider {
 //        sub.setStatus(Subscription.SubscriptionStatus.ACTIVE);
         return sub;
     }
+
+    public static Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
+        Subscription sub = new Subscription();
+        sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
+        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
+        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
+
+        sub.setReason("testing purposes");
+        sub.setName("Ehr sandbox facility number " + facilityId);
+
+        // TODO set random secret
+        sub.addHeader("Authorization: Bearer secret-secret");
+        sub.setHeartbeatPeriod(5);
+
+        sub.setChannelType(new Coding("SubscriptionChannelType", "RESTHOOK","RESTHOOK"));
+        /**
+         * TODO get server base url dynamically
+         */
+        sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId + "/OperationOutcome");
+//        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
+
+        return sub;
+    }
+
+
 }

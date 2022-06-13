@@ -88,21 +88,20 @@ export class FhirService {
       { responseType: 'text' });
   }
 
-//  readOperationOutcome(): Observable<any> {
-//     const tenantId: number = this.tenantService.getTenantId()
-//     const facilityId: number = this.facilityService.getFacilityId()
-//     return this.http.get<any>(
-//       // `${this.settings.getApiUrl()}/fhir/OperationOutcome/nul`,
-//    `${this.settings.getApiUrl()}/fhir/tenants/${tenantId}/facilities/${facilityId}/OperationOutcome`,
-//       httpOptions);
-//   }
-readOperationOutcome(str: string): Observable<any> {
+readOperationOutcome(): Observable<any> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.http.get<any>(
-      // `${this.settings.getApiUrl()}/fhir/OperationOutcome/nul`,
-   `${this.settings.getApiUrl()}/fhir/${str}`,
+   `${this.settings.getApiUrl()}/fhir/${facilityId}`,
       httpOptions);
   }
+
+createSubscription(): Observable<any> {
+  const tenantId: number = this.tenantService.getTenantId()
+  const facilityId: number = this.facilityService.getFacilityId()
+  return this.http.post<any>(
+    `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/subscription`,
+    httpOptions);
+}
 
 }

@@ -53,10 +53,11 @@ export class FeedbackService {
       httpOptions);
   }
 
-  readFacilityFeedback(): Observable<Feedback[]> {
+  readFacilityFeedback(facilityId: number): Observable<Feedback[]> {
     const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-
+    if (facilityId < 0) {
+      return of()
+    }
     return this.http.get<Feedback[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/feedbacks`,
       httpOptions);

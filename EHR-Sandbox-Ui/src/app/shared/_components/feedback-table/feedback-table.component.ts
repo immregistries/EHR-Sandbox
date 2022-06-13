@@ -107,7 +107,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     } else if (this.patient && this.patient.id && this.patient.id > 0) {
       this.dataSource.data = this.patient.feedbacks ?? []
     } else if (this.facility && this.facility.id > -1) {
-      this.feedbackService.readFacilityFeedback().subscribe((res) => {
+      this.feedbackService.readFacilityFeedback(this.facility.id).subscribe((res) => {
         this.dataSource.data = res
         this.loading = false
       })

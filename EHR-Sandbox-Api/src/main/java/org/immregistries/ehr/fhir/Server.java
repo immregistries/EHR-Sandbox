@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.server.ApacheProxyAddressStrategy;
 import ca.uhn.fhir.rest.server.HardcodedServerAddressStrategy;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
 import org.immregistries.ehr.EhrApiApplication;
 import org.springframework.stereotype.Controller;
@@ -36,9 +37,14 @@ public class Server extends RestfulServer {
         this.setDefaultResponseEncoding(EncodingEnum.XML);
         setFhirContext(ctx);
 
-        setTenantIdentificationStrategy(new CustomIdentificationStrategy());
-        setServerAddressStrategy(new HardcodedServerAddressStrategy(serverBaseUrl));
-//        setServerAddressStrategy(new ApacheProxyAddressStrategy(true));
+        LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLoggerName("FHIR");
+        registerInterceptor(loggingInterceptor);
+
+//        setTenantIdentificationStrategy(new CustomIdentificationStrategy());
+        setTenantIdentificationStrategy(new UrlBaseTenantIdentificationStrategy());
+//        setServerAddressStrategy(new HardcodedServerAddressStrategy(serverBaseUrl));
+        setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
         resourceProviders.add(new SubscriptionProvider());
@@ -47,7 +53,5 @@ public class Server extends RestfulServer {
 
         INarrativeGenerator narrativeGen = new DefaultThymeleafNarrativeGenerator();
         getFhirContext().setNarrativeGenerator(narrativeGen);
-
-
     }
 }
