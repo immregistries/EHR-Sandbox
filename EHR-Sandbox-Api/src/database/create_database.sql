@@ -199,4 +199,21 @@ CREATE TABLE `ehr`.`feedback` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION);
 
-ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `subscription_store` (
+  `identifier` varchar(45) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `status` varchar(45) NOT NULL,
+  `topic` varchar(90) NOT NULL,
+  `end` datetime DEFAULT NULL,
+  `reason` varchar(90) DEFAULT NULL,
+  `channelType` varchar(45) DEFAULT NULL,
+  `header` varchar(45) DEFAULT NULL,
+  `heartbeatPeriod` int DEFAULT NULL,
+  `timeout` int DEFAULT NULL,
+  `contentType` varchar(45) DEFAULT NULL,
+  `content` varchar(45) DEFAULT NULL,
+  `notificationUrlLocation` varchar(45) DEFAULT NULL,
+  `maxCount` int DEFAULT NULL,
+  PRIMARY KEY (`identifier`)
+)

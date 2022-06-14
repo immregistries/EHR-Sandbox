@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 public class SubscriptionProvider implements IResourceProvider {
@@ -55,6 +57,7 @@ public class SubscriptionProvider implements IResourceProvider {
 
     public static Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
         Subscription sub = new Subscription();
+        sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
         sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
         sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
@@ -65,12 +68,13 @@ public class SubscriptionProvider implements IResourceProvider {
         // TODO set random secret
         sub.addHeader("Authorization: Bearer secret-secret");
         sub.setHeartbeatPeriod(5);
+        sub.setEnd(new Date());
 
         sub.setChannelType(new Coding("SubscriptionChannelType", "RESTHOOK","RESTHOOK"));
         /**
          * TODO get server base url dynamically
          */
-        sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId + "/OperationOutcome");
+        sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
 
         return sub;
