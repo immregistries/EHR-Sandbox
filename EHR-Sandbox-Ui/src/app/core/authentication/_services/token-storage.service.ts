@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { FacilityService } from '../../_services/facility.service';
+import { TenantService } from '../../_services/tenant.service';
 import { JwtResponse } from '../security';
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
@@ -6,9 +8,13 @@ const USER_KEY = 'auth-user';
   providedIn: 'root'
 })
 export class TokenStorageService {
-  constructor() { }
+  constructor( private facilityService : FacilityService,
+    private tenantService: TenantService) { }
   signOut(): void {
     window.sessionStorage.clear();
+    this.facilityService.setFacility({id:-1})
+    this.tenantService.setTenant({id:-1})
+
   }
   public saveToken(token: string): void {
     window.sessionStorage.removeItem(TOKEN_KEY);

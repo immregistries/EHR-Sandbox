@@ -23,7 +23,8 @@ import java.util.List;
 //@WebServlet(urlPatterns = {"/fhir/*", "/fhir/**", "/fhir/tenants/{tenantId}/facilities/{facilityId}/*"}, displayName = "FHIR Server")
 public class Server extends RestfulServer {
     private static final long serialVersionUID = 1L;
-    protected static  final String serverBaseUrl = "florence.immregistries.org/ehr-sandbox/fhir";
+    protected static  final String serverBaseUrl = "http://localhost:9091/ehr-sandbox/fhir";
+//    protected static  final String serverBaseUrl = "florence.immregistries.org/ehr-sandbox/fhir";
     private static final FhirContext ctx = EhrApiApplication.fhirContext;
 
     /**
@@ -38,16 +39,17 @@ public class Server extends RestfulServer {
         setFhirContext(ctx);
 
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
-        loggingInterceptor.setLoggerName("FHIR");
+        loggingInterceptor.setLoggerName("FHIR Server");
         registerInterceptor(loggingInterceptor);
 
 //        setTenantIdentificationStrategy(new CustomIdentificationStrategy());
         setTenantIdentificationStrategy(new UrlBaseTenantIdentificationStrategy());
-//        setServerAddressStrategy(new HardcodedServerAddressStrategy(serverBaseUrl));
-        setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
+        setServerAddressStrategy(new HardcodedServerAddressStrategy(serverBaseUrl));
+//        setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
         resourceProviders.add(new SubscriptionProvider());
+        resourceProviders.add(new SubscriptionStatusProvider());
         resourceProviders.add(new OperationOutcomeProvider());
         setResourceProviders(resourceProviders);
 

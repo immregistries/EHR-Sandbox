@@ -5,10 +5,8 @@ import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.controllers.FeedbackController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -60,7 +58,6 @@ public class SubscriptionProvider implements IResourceProvider {
         sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
         sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
-        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
 
         sub.setReason("testing purposes");
         sub.setName("Ehr sandbox facility number " + facilityId);
@@ -74,9 +71,10 @@ public class SubscriptionProvider implements IResourceProvider {
         /**
          * TODO get server base url dynamically
          */
+
+
         sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
-
         return sub;
     }
 

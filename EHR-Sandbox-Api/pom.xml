@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<spring.version>2.6.3</spring.version>
-		<hapi.version>5.7.2</hapi.version>
+		<hapi.version>6.0.1</hapi.version>
 	</properties>
 	<dependencies>
 		<dependency>

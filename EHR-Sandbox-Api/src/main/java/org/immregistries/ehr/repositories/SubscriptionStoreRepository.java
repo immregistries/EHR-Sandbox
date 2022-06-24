@@ -1,7 +1,11 @@
 package org.immregistries.ehr.repositories;
 
 import org.immregistries.ehr.entities.SubscriptionStore;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface SubscriptionStoreRepository extends JpaRepository<SubscriptionStore, String> {
+import java.util.Optional;
+
+public interface SubscriptionStoreRepository extends CrudRepository<SubscriptionStore, String> {
+    Optional<SubscriptionStore> findByIdentifier(String id);
+//    Optional<SubscriptionStore> findByIdentifier(int id);
 }

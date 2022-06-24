@@ -201,19 +201,19 @@ CREATE TABLE `ehr`.`feedback` (
 
 
 CREATE TABLE `subscription_store` (
-  `identifier` varchar(45) NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(45) NOT NULL,
   `name` varchar(45) DEFAULT NULL,
   `status` varchar(45) NOT NULL,
   `topic` varchar(90) NOT NULL,
   `end` datetime DEFAULT NULL,
   `reason` varchar(90) DEFAULT NULL,
-  `channelType` varchar(45) DEFAULT NULL,
+  `channel_type` varchar(45) DEFAULT NULL,
   `header` varchar(45) DEFAULT NULL,
-  `heartbeatPeriod` int DEFAULT NULL,
+  `heartbeat_period` int DEFAULT NULL,
   `timeout` int DEFAULT NULL,
-  `contentType` varchar(45) DEFAULT NULL,
+  `content_type` varchar(45) DEFAULT NULL,
   `content` varchar(45) DEFAULT NULL,
-  `notificationUrlLocation` varchar(45) DEFAULT NULL,
-  `maxCount` int DEFAULT NULL,
+  `notification_url_location` varchar(45) DEFAULT NULL,
+  `max_count` int DEFAULT NULL,
   PRIMARY KEY (`identifier`)
 )
