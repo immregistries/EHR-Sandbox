@@ -2,6 +2,7 @@ package org.immregistries.ehr.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
@@ -14,7 +15,6 @@ import org.immregistries.ehr.repositories.FacilityRepository;
 import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.repositories.PatientRepository;
 import org.immregistries.ehr.repositories.TenantRepository;
-import org.immregistries.ehr.security.AuthTokenFilter;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,17 +124,30 @@ public class PatientController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No patient found");
         }
-        org.hl7.fhir.r4.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
+        org.hl7.fhir.r5.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
     }
 
     @PostMapping("/{patientId}/fhir")
-    public ResponseEntity<String>  fhirPost(@RequestBody String message) {
+    public  ResponseEntity<String>  fhirPost(@RequestBody String message) {
         IParser parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
-        org.hl7.fhir.r4.model.Patient patient = parser.parseResource(org.hl7.fhir.r4.model.Patient.class,message);
+        org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class,message);
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
-        return ResponseEntity.ok(ResourceClient.write(patient, ir));
+        MethodOutcome outcome;
+        try {
+            outcome = ResourceClient.write(patient, ir);
+            if (outcome.getOperationOutcome() != null) {
+                logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
+            }
+            logger.info(String.valueOf(outcome.getResponseHeaders()));
+
+            return ResponseEntity.ok(outcome.getId().getIdPart());
+
+        } catch (Exception e) {
+            throw e;
+        }
+//        return ResourceClient.write(patient, ir);
     }
 
     @GetMapping("/{patientId}/fhir")

@@ -17,7 +17,7 @@ import ca.uhn.fhir.parser.IParser;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hl7.fhir.r4.model.Immunization;
+import org.hl7.fhir.r5.model.Immunization;
 import org.immregistries.ehr.fhir.CustomClientBuilder;
 import org.immregistries.ehr.fhir.ImmunizationHandler;
 import org.immregistries.ehr.fhir.PatientHandler;
@@ -51,15 +51,15 @@ public class FhirMessaging extends HttpServlet {
     switch(resourceType){
       case "Patient":{
         try {
-          org.hl7.fhir.r4.model.Patient fhirPatient;
+          org.hl7.fhir.r5.model.Patient fhirPatient;
           switch (operationType) {
             case "POST":
-              fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
+              fhirPatient = (org.hl7.fhir.r5.model.Patient) parser
                 .parseResource(fhirResourceString);
               fhirResponse = ResourceClient.write(fhirPatient, session);
               break;
             case "PUT" :
-              fhirPatient = (org.hl7.fhir.r4.model.Patient) parser
+              fhirPatient = (org.hl7.fhir.r5.model.Patient) parser
                 .parseResource(fhirResourceString);
               fhirResponse = ResourceClient.update(fhirPatient, fhirPatient.getId(), session);
               break;
@@ -80,15 +80,15 @@ public class FhirMessaging extends HttpServlet {
       }
       case "Immunization":{
         try {
-          org.hl7.fhir.r4.model.Immunization fhirImmunization;
+          org.hl7.fhir.r5.model.Immunization fhirImmunization;
             switch (operationType) {
               case "POST":
-                fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
+                fhirImmunization = (org.hl7.fhir.r5.model.Immunization) parser
                   .parseResource(fhirResourceString);
                 fhirResponse = ResourceClient.write(fhirImmunization, session);
                 break;
               case "PUT" :
-                fhirImmunization = (org.hl7.fhir.r4.model.Immunization) parser
+                fhirImmunization = (org.hl7.fhir.r5.model.Immunization) parser
                   .parseResource(fhirResourceString);
                 fhirResponse = ResourceClient.update(fhirImmunization, fhirImmunization.getId(), session);
                 break;

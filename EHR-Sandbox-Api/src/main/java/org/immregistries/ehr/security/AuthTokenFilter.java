@@ -1,5 +1,6 @@
 package org.immregistries.ehr.security;
 import java.io.IOException;
+import java.util.Scanner;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
-                authorized = isAuthorizedURI(request.getContextPath());
+                authorized = isAuthorizedURI(request.getServletPath());
 
             } else { // for registration no authorization needed
                 authorized = true;
@@ -73,92 +74,65 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean isAuthorizedURI(String url) throws IOException {
-        String[] pathSplit = url.split("/tenants/",2);
-        String[] path = url.split("/",2);
         int tenantId = -1;
         int facilityId = -1;
         int patientId = -1;
         int vaccinationId = -1;
         // Parsing the URI
-        int i;
-//        return true;
-        for (i = 0; i < path.length; i++) {
-            if ( path[i].equals("tenants")){
-                try {
-                    tenantId = Integer.parseInt(path[i+1]);
+        Scanner scanner = new Scanner(url).useDelimiter("/");
+        String item = "";
+        if(scanner.hasNext() && tenantId == -1) {
+            item = scanner.next();
+            if (item.equals("fhir") ) {
+                return true;
+            }
+            if (item.equals("tenants") ) {
+                if (scanner.hasNextInt()) {
+                    tenantId = scanner.nextInt();
                     if (!tenantRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
                         return  false;
                     }
-                    break;
-                } catch (NumberFormatException e) {
-                    if (i != path.length - 1){
-                        return false;
-                    }
-                    break;
-                } catch (NullPointerException e){ // If uri stops at /tenants
-                    return true;
                 }
             }
         }
-        int j;
-        for (j=i; j < path.length; j++) {
-            if ( path[i].equals("facilities")){
-                try {
-                    facilityId = Integer.parseInt(path[j+1]);
+        if(scanner.hasNext() && facilityId == -1 ) {
+            item = scanner.next();
+            if (item.equals("facilities") ) {
+                if (scanner.hasNextInt()) {
+                    facilityId = scanner.nextInt();
                     if (!facilityRepository.existsByTenantIdAndId(tenantId,facilityId)){
                         return  false;
                     }
-                    break;
-                } catch (NumberFormatException e) {
-                    logger.error(e.getMessage());
-                    if (j != path.length - 1){
-                        return false;
-                    }
-                    break;
-                } catch (NullPointerException e){ // If uri stops at /facilities
-                    logger.error(e.getMessage());
-                    break;
                 }
             }
         }
-        int k;
-        for (k=j; k < path.length; k++) {
-            if ( path[i].equals("patients")){
-                try {
-                    patientId = Integer.parseInt(path[k+1]);
+        if(scanner.hasNext() && patientId == -1 && vaccinationId == -1 ) {
+            item = scanner.next();
+            if (item.equals("patients") ) {
+                if (scanner.hasNextInt()) {
+                    patientId = scanner.nextInt();
                     if (!patientRepository.existsByFacilityIdAndId(facilityId,patientId)){
                         return  false;
                     }
-                    break;
-                } catch (NumberFormatException e) {
-                    logger.error(e.getMessage());
-                    if (k != path.length - 1){
-                        return false;
+                }
+            }
+            if (item.equals("vaccinations") ) {
+                if (scanner.hasNextInt()) {
+                    vaccinationId = scanner.nextInt();
+                    if (!vaccinationEventRepository.existsByAdministeringFacilityIdAndId(facilityId,vaccinationId)){
+                        return  false;
                     }
-                    break;
-                } catch (NullPointerException e){ // If uri stops at /patients
-                    logger.error(e.getMessage());
-                    break;
                 }
             }
         }
-        int l;
-        for (l=k; l < path.length; l++) {
-            if ( path[i].equals("vaccinations")){
-                try {
-                    vaccinationId = Integer.parseInt(path[l+1]);
+        if(scanner.hasNext() && vaccinationId == -1 ) {
+            item = scanner.next();
+            if (item.equals("vaccinations") ) {
+                if (scanner.hasNextInt()) {
+                    vaccinationId = scanner.nextInt();
                     if (!vaccinationEventRepository.existsByPatientIdAndId(patientId,vaccinationId)){
                         return  false;
                     }
-                    break;
-                } catch (NumberFormatException e) {
-                    if (l != path.length - 1){
-                        return false;
-                    }
-                    break;
-                } catch (NullPointerException e){ // If uri stops at /patients
-                    logger.error(e.getMessage());
-                    break;
                 }
             }
         }

@@ -168,4 +168,52 @@ CREATE TABLE `vaccination_event` (
   CONSTRAINT `vaccination_event_ibfk_5` FOREIGN KEY (`administering_facility_id`) REFERENCES `facility` (`facility_id`),
   CONSTRAINT `vaccination_event_ibfk_6` FOREIGN KEY (`vaccine_id`) REFERENCES `vaccine` (`vaccine_id`)
   
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
+
+CREATE TABLE `ehr`.`feedback` (
+  `feedback_id` int(11) NOT NULL AUTO_INCREMENT,
+  `patient_id` int(11) NULL,
+  `facility_id` int(11) NULL,
+  `vaccination_event_id` INT NULL,
+  `severity` VARCHAR(45) NULL,
+  `code` VARCHAR(45) NULL,
+  `content` LONGBLOB NULL,
+  `iis` VARCHAR(45) NULL,
+  PRIMARY KEY (`feedback_id`),
+  INDEX `patient_id_idx` (`patient_id` ASC) VISIBLE,
+  INDEX `fk_facility_idx` (`facility_id` ASC) VISIBLE,
+  INDEX `fk_vaccination_event_idx` (`vaccination_event_id` ASC) VISIBLE,
+  CONSTRAINT `fk_patient`
+    FOREIGN KEY (`patient_id`)
+    REFERENCES `ehr`.`patient` (`patient_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_facility`
+    FOREIGN KEY (`facility_id`)
+    REFERENCES `ehr`.`facility` (`facility_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_vaccination_event`
+    FOREIGN KEY (`vaccination_event_id`)
+    REFERENCES `ehr`.`vaccination_event` (`vaccination_event_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+
+
+CREATE TABLE `subscription_store` (
+  `identifier` varchar(45) NOT NULL,
+  `name` varchar(45) DEFAULT NULL,
+  `status` varchar(45) NOT NULL,
+  `topic` varchar(90) NOT NULL,
+  `end` datetime DEFAULT NULL,
+  `reason` varchar(90) DEFAULT NULL,
+  `channel_type` varchar(45) DEFAULT NULL,
+  `header` varchar(45) DEFAULT NULL,
+  `heartbeat_period` int DEFAULT NULL,
+  `timeout` int DEFAULT NULL,
+  `content_type` varchar(45) DEFAULT NULL,
+  `content` varchar(45) DEFAULT NULL,
+  `notification_url_location` varchar(45) DEFAULT NULL,
+  `max_count` int DEFAULT NULL,
+  PRIMARY KEY (`identifier`)
+)

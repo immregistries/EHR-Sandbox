@@ -8,7 +8,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "facility")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
+        property="id",
+        scope = Facility.class)
 public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +19,7 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference("tenant-facility")
     private Tenant tenant;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +31,6 @@ public class Facility {
     private String nameDisplay = "";
 
     @OneToMany(mappedBy = "administeringFacility")
-//    @JsonManagedReference("facility-vaccinationEvent")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
@@ -38,8 +39,22 @@ public class Facility {
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
-    @JsonManagedReference
+//    @JsonManagedReference("facility-patient")
+    @JsonIgnore
     private Set<Patient> patients = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "facility")
+//    @JsonManagedReference( value = "facility-feedback")
+    @JsonIgnore
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
 
     public Set<Patient> getPatients() {
         return patients;

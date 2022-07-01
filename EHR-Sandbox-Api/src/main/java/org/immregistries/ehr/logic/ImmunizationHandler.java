@@ -1,6 +1,6 @@
 package org.immregistries.ehr.logic;
 
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -39,21 +39,21 @@ public class ImmunizationHandler {
     i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
     i.setExpirationDate(vaccine.getExpirationDate());
     if (vaccine.getActionCode().equals("D")) {
-      i.setStatus(Immunization.ImmunizationStatus.ENTEREDINERROR);
+      i.setStatus(Immunization.ImmunizationStatusCodes.ENTEREDINERROR);
     } else {
       switch(vaccine.getCompletionStatus()) {
         case "CP" : {
-          i.setStatus(Immunization.ImmunizationStatus.COMPLETED);
+          i.setStatus(Immunization.ImmunizationStatusCodes.COMPLETED);
           break;
         }
         case "NA" :
         case "PA" :
         case "RE" : {
-          i.setStatus(Immunization.ImmunizationStatus.NOTDONE);
+          i.setStatus(Immunization.ImmunizationStatusCodes.NOTDONE);
           break;
         }
         case "" : {
-          i.setStatus(Immunization.ImmunizationStatus.NULL);
+          i.setStatus(Immunization.ImmunizationStatusCodes.NULL);
           break;
         }
       }
@@ -66,11 +66,11 @@ public class ImmunizationHandler {
       }
     }
 
-    i.addReasonCode().addCoding().setCode(vaccine.getRefusalReasonCode());
+//    i.addReasonCode().addCoding().setCode(vaccine.getRefusalReasonCode());
     i.getVaccineCode().addCoding().setCode(vaccine.getVaccineCvxCode());
     i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId()));
-    Location location = i.getLocationTarget();
-    location.setName(facility.getNameDisplay());
+//    i.getLocation().setReferenceElement();
+//    location.setName(facility.getNameDisplay());
     return i;
   }
   

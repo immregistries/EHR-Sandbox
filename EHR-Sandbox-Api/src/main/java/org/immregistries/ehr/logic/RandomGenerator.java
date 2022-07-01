@@ -105,14 +105,15 @@ public class RandomGenerator {
 //            }
 //        }
 
-        patient.setProtectionIndicator("0");
-        patient.setPublicityIndicator("0");
-        patient.setRegistryStatusIndicator("0");
+        patient.setProtectionIndicator("");
+        patient.setPublicityIndicator("");
+        patient.setRegistryStatusIndicator("");
         patient.setProtectionIndicatorDate(protectionIndicatorDate);
         patient.setPublicityIndicatorDate(publicityIndicatorDate);
         patient.setRegistryStatusIndicatorDate(registryStatusIndicatorDate);
 
         patient.setUpdatedDate(new Date());
+        patient.setCreatedDate(new Date());
         return patient;
     }
 

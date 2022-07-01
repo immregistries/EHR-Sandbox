@@ -1,6 +1,6 @@
 {
   "name": "ehr-sandbox-ui",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,8 +20,11 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
+    "@ngneat/reactive-forms": "^4.1.0",
     "mat-select-filter": "^2.4.1",
     "moment": "^2.29.1",
+    "randexp": "^0.5.3",
+    "regexp": "^1.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

@@ -1,6 +1,5 @@
 package org.immregistries.ehr.repositories;
 
-import com.github.javafaker.Bool;
 import org.immregistries.ehr.entities.Tenant;
 import org.springframework.data.repository.CrudRepository;
 

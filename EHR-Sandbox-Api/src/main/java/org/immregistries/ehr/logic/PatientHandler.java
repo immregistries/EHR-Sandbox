@@ -1,8 +1,8 @@
 package org.immregistries.ehr.logic;
 
-import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
 
 import java.util.ArrayList;
 import java.util.List;

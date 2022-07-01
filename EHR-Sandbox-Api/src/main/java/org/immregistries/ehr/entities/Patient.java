@@ -1,25 +1,24 @@
 package org.immregistries.ehr.entities;
 
 import com.fasterxml.jackson.annotation.*;
-import com.github.javafaker.Faker;
-import org.immregistries.codebase.client.CodeMap;
-import org.immregistries.codebase.client.generated.Code;
-import org.immregistries.codebase.client.reference.CodesetType;
-import org.immregistries.ehr.CodeMapManager;
+import org.immregistries.ehr.repositories.TenantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 @Entity
 @Table(name = "patient", indexes = {
         @Index(name = "tenant_id", columnList = "tenant_id"),
         @Index(name = "facility_id", columnList = "facility_id")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Patient.class)
 public class Patient {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id", nullable = false)
@@ -27,13 +26,20 @@ public class Patient {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("facility-patient")
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonIgnore
+//    @JsonBackReference("tenant-patient")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("tenant")
     private Tenant tenant;
+
+    @JsonProperty("tenant")
+    public void setTenant(int id) {
+        // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
+    }
 
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
@@ -135,11 +141,25 @@ public class Patient {
     private String guardianRelationship = "";
 
     @OneToMany(mappedBy = "patient")
-    @JsonIgnore()
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
+
     @OneToMany(mappedBy = "patient")
+    @JsonManagedReference("patient-nextOfKin")
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "patient")
+//    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
 
     public Set<NextOfKin> getNextOfKins() {
         return nextOfKins;

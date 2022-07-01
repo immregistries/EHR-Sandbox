@@ -1,0 +1,116 @@
+<mat-tab-group>
+  <mat-tab label="New entry">
+    <form #vaccinationForm="ngForm" class="grid-container">
+      <mat-grid-list cols="5" rowHeight="190px">
+        <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
+          <mat-card class="dashboard-card">
+            <mat-card-header *ngIf="card.title">
+              <mat-card-title>
+                {{card.title}}
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="dashboard-card-content">
+<!-- Vaccine forms -->
+              <ng-container *ngFor="let form of card.vaccineForms" [ngSwitch]="form.type">
+                <div class="text-field" *ngSwitchCase="'text'">
+                  <mat-form-field class="text-field" appearance="outline"   >
+                    <mat-label>{{form.title}}</mat-label>
+                    <input matInput name="{{form.attribute}}" type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]" [disabled]="false">
+                  </mat-form-field>
+                  <!-- Errors -->
+                  <div *ngIf="!lotNumberValid && form.attribute == 'lotNumber'" class="error">Not matching manufacturer patterns</div>
+                </div>
+
+                <app-select-codebase *ngSwitchCase="'code'"
+                  [model]="asString(vaccination.vaccine[form.attribute])"
+                  (modelChange)="vaccination.vaccine[form.attribute] = $event"
+                  [form]="form"
+                  class="select-field"
+                  [referenceFilter]="references"
+                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
+                  ></app-select-codebase>
+                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
+                  <mat-label>{{form.title}}</mat-label>
+                  <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="asDate(vaccination.vaccine[form.attribute])" (ngModelChange)="vaccination.vaccine[form.attribute] = $event" >
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <div *ngSwitchCase="'short'">
+                  <mat-label class="short-label">{{form.title}} </mat-label>
+                  <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
+                </div>
+
+                <div *ngSwitchCase="'yesNo'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <select [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <option [hidden]="!vaccination.vaccine[form.attribute]" value=""></option>
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                  </select>
+                </div>
+
+                <div *ngSwitchCase="'select'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <select *ngIf="form.options; else short" [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <option [hidden]="!vaccination.vaccine[form.attribute]" value=""></option>
+                    <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
+                  </select>
+                  <ng-template #short >
+                    <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
+                  </ng-template>
+                </div>
+
+                <div *ngSwitchDefault></div>
+              </ng-container>
+<!-- Clinician forms -->
+              <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
+                <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
+                  <mat-label>{{form.title}}</mat-label>
+                  <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
+                </mat-form-field>
+                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
+                  <mat-label>{{form.title}}</mat-label>
+                  <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="asDate(vaccination[form.role][form.attribute])" (ngModelChange)="vaccination[form.role][form.attribute] = $event" >
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <div *ngSwitchCase="'short'">
+                  <mat-label class="short-label">{{form.title}} </mat-label>
+                  <input  name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination[form.role][form.attribute]">
+                </div>
+                <div *ngSwitchDefault></div>
+              </ng-container>
+
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+<!-- Metadata dates -->
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <mat-card-header>
+              <mat-card-title>
+                Update dates
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="dashboard-card-content">
+              <mat-form-field  appearance="outline" class="date-field">
+                <mat-label>Creation date</mat-label>
+                <input matInput [matDatepicker]="created" name="createdDate" [ngModel]="asDate(vaccination.vaccine.createdDate)" disabled>
+                <mat-datepicker #created></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field  appearance="outline" class="date-field">
+                <mat-label>Update date</mat-label>
+                <input matInput [matDatepicker]="updated" name="updatedDate" [ngModel]="asDate(vaccination.vaccine.updatedDate)" disabled>
+                <mat-datepicker #updated></mat-datepicker>
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </form>
+  </mat-tab>
+  <mat-tab label="Free form">
+    <app-vaccination-free-form [formCards]="formCards" [(vaccination)]="vaccination"></app-vaccination-free-form>
+  </mat-tab>
+  <button matButton></button>
+</mat-tab-group>

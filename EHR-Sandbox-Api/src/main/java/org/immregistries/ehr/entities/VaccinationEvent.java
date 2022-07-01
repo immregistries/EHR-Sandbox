@@ -3,10 +3,14 @@ package org.immregistries.ehr.entities;
 import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "vaccination_event")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
+        property="id",
+        scope = VaccinationEvent.class)
 public class VaccinationEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,23 +19,25 @@ public class VaccinationEvent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
-//    @JsonBackReference("patient-vaccinationEvent")
-    @JsonIgnore
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("patient")
     private Patient patient;
+
+    @JsonProperty("patient")
+    public void setPatient(int id) {
+        // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entering_clinician_id")
-//    @JsonBackReference("enteringClinician")
     private Clinician enteringClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordering_clinician_id")
-//    @JsonBackReference("orderingClinician")
     private Clinician orderingClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administering_clinician_id")
-//    @JsonBackReference("administeringClinician")
     private Clinician administeringClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,9 +46,20 @@ public class VaccinationEvent {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "administering_facility_id", nullable = false)
-//    @JsonBackReference("facility-vaccinationEvent")
-    @JsonIgnore
+    @JsonBackReference("facility-vaccinationEvent")
     private Facility administeringFacility;
+
+    @OneToMany(mappedBy = "vaccinationEvent")
+//    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
 
     public Facility getAdministeringFacility() {
         return administeringFacility;
