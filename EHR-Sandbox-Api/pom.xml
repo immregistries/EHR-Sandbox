@@ -211,6 +211,7 @@
 				<version>${spring.version}</version>
 				<configuration>
 					<mainClass>dev.marco.example.springboot.Application</mainClass>
+					<outputDirectory>${project.build.directory}/../../</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
