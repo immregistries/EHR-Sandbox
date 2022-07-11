@@ -37,6 +37,7 @@ public class HL7printer {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         createMSH("VXU^V04^VXU_V04", "Z22", sb);
         printQueryPID(patient, sb, sdf, 1);
+        printPD1(patient,sb, sdf);
         printQueryNK1(patient, sb, codeMap);
 
         int obxSetId = 0;
@@ -603,5 +604,73 @@ public class HL7printer {
         }
         sb.append("\r");
     }
+
+
+    public void printPD1(Patient patient, StringBuilder sb,
+                         SimpleDateFormat sdf) {
+        sb.append("PD1");
+        // PD1-1
+        sb.append("|");
+        // PD1-2
+        sb.append("|");
+        // PD1-3
+        sb.append("|");
+        // PD1-4
+        sb.append("|");
+        // PD1-5
+        sb.append("|");
+        // PD1-6
+        sb.append("|");
+        // PD1-7
+        sb.append("|");
+        // PD1-8
+        sb.append("|");
+        // PD1-9
+        sb.append("|");
+        // PD1-10
+        sb.append("|");
+        // PD1-11
+        if (patient.getPublicityIndicator() != null){
+            sb.append(patient.getPublicityIndicator());
+        }
+        sb.append("|");
+        // PD1-12
+        if (patient.getProtectionIndicator() != null){
+            sb.append(patient.getProtectionIndicator());
+        }
+        sb.append("|");
+        // PD1-13
+        if (patient.getProtectionIndicatorDate() != null){
+            sb.append(sdf.format(patient.getProtectionIndicatorDate()));
+        }
+        sb.append("|");
+        // PD1-14
+        sb.append("|");
+        // PD1-15
+        sb.append("|");
+        // PD1-16
+        if (patient.getRegistryStatusIndicator() != null){
+            sb.append(patient.getRegistryStatusIndicator());
+        }
+        sb.append("|");
+        // PD1-17
+        if (patient.getRegistryStatusIndicatorDate() != null){
+            sb.append(sdf.format(patient.getRegistryStatusIndicatorDate()));
+        }
+        sb.append("|");
+        // PD1-18
+        if (patient.getPublicityIndicatorDate() != null){
+            sb.append(sdf.format(patient.getPublicityIndicatorDate()));
+        }
+        sb.append("|");
+        // PD1-19
+        sb.append("|");
+        // PD1-20
+        sb.append("|");
+        // PD1-21
+        sb.append("|");
+    }
+
+
 
 }
