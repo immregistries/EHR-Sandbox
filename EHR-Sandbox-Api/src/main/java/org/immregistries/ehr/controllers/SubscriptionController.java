@@ -36,11 +36,13 @@ public class SubscriptionController {
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
     public MethodOutcome subscribeToIIS(@PathVariable() int facilityId , @RequestBody String body) {
+        logger.info("Subscription post");
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
         Subscription sub = SubscriptionProvider.generateRestHookSubscription(facilityId, ir.getIisFhirUrl());
         IGenericClient client = new CustomClientBuilder(ir).getClient();
 
         MethodOutcome outcome = client.create().resource(sub).execute();
+        logger.info(outcome.toString());
         if(outcome.getResource() == null) {
 
         }

@@ -1,11 +1,9 @@
 package org.immregistries.ehr.fhir;
 
+import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.CodeableConcept;
-import org.hl7.fhir.r5.model.Coding;
-import org.hl7.fhir.r5.model.Enumerations;
-import org.hl7.fhir.r5.model.SubscriptionTopic;
+import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.SubscriptionTopic.SubscriptionTopicResourceTriggerComponent;
 
 public class SubscriptionTopicProvider implements IResourceProvider {
@@ -23,7 +21,7 @@ public class SubscriptionTopicProvider implements IResourceProvider {
     }
 
     @Read()
-    public SubscriptionTopic readSubscription() {
+    public SubscriptionTopic readSubscriptionTopic(@IdParam IdType id) {
         SubscriptionTopicResourceTriggerComponent patientTrigger = new SubscriptionTopicResourceTriggerComponent()
                 .setResource("Patient");
         SubscriptionTopicResourceTriggerComponent operationOutcomeTrigger = new SubscriptionTopicResourceTriggerComponent()
@@ -38,7 +36,7 @@ public class SubscriptionTopicProvider implements IResourceProvider {
 
         SubscriptionTopic topic  = new SubscriptionTopic()
                 .setDescription("Testing communication between EHR and IIS and operation outcome")
-                .setUrl("ehr-sandbox/fhir/SubscriptionTopic")
+                .setUrl("http://localhost:8080/SubscriptionTopic")
 //                .setUrl("https://florence.immregistries.org/iis-sandbox/fhir/SubscriptionTopic")
                 .setStatus(Enumerations.PublicationStatus.DRAFT)
                 .setExperimental(true).setPublisher("Aira/Nist").setTitle("Health equity data quality requests within Immunization systems");

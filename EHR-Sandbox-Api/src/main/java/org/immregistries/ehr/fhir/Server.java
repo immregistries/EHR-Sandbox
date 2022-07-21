@@ -50,6 +50,7 @@ public class Server extends RestfulServer {
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
         resourceProviders.add(new SubscriptionProvider());
         resourceProviders.add(new SubscriptionStatusProvider());
+        resourceProviders.add(new SubscriptionTopicProvider());
         resourceProviders.add(new OperationOutcomeProvider());
         setResourceProviders(resourceProviders);
 
