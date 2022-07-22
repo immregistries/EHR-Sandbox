@@ -37,6 +37,8 @@ public class SubscriptionProvider implements IResourceProvider {
      * be overridden to indicate what type of resource this provider
      * supplies.
      */
+
+    private static final String LOCAL_TOPIC = "http://localhost:8080/SubscriptionTopic";
     @Override
     public Class<Subscription> getResourceType() {
         return Subscription.class;
@@ -51,19 +53,6 @@ public class SubscriptionProvider implements IResourceProvider {
     public Subscription readSubscription(HttpServletRequest request, @IdParam IdType id) {
         OperationOutcome operationOutcome = new OperationOutcome();
         Subscription sub = new Subscription();
-//        Subscription.SubscriptionChannelComponent channel = new Subscription.SubscriptionChannelComponent()
-//                .setType(Subscription.SubscriptionChannelType.RESTHOOK)
-//                .setEndpoint(Server.serverBaseUrl)
-//                .setPayload("application/json");
-//        sub.setChannel(channel);
-        sub.setReason("testing purposes");
-        sub.addHeader("secret");
-        sub.setTopic("/subscriptionTopic");
-        sub.setEndpoint(request.getServletPath());
-        logger.info(request.getServletPath());
-        logger.info(String.valueOf(ServletUriComponentsBuilder.fromRequestUri(request)));
-
-//        sub.setStatus(Subscription.SubscriptionStatus.ACTIVE);
         return sub;
     }
 
@@ -72,7 +61,7 @@ public class SubscriptionProvider implements IResourceProvider {
         sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
 //        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
-        sub.setTopic("http://localhost:8080/SubscriptionTopic");
+        sub.setTopic(LOCAL_TOPIC);
 
         sub.setReason("testing purposes");
         sub.setName("Ehr sandbox facility number " + facilityId);
@@ -87,17 +76,21 @@ public class SubscriptionProvider implements IResourceProvider {
          * TODO get server base url dynamically
          */
 
-        sub.addFilterBy().setValue("value").setSearchParamName("name");
+        sub.addFilterBy().setResourceType("OperationOutcome")
+                .setSearchParamName("severity")
+                .setValue("warning").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
+        sub.addFilterBy().setResourceType("OperationOutcome")
+                .setSearchParamName("severity")
+                .setValue("error").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
 
         sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
-//        sub.setContained()
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;
         URL url = null;
         IParser parser = EhrApiApplication.fhirContext.newJsonParser();
         HttpURLConnection con;
         try {
-            url = new URL(iis_uri + "SubscriptionTopic");
+            url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Content-Type", "application/json");
@@ -106,7 +99,12 @@ public class SubscriptionProvider implements IResourceProvider {
             int status = con.getResponseCode();
             if (status == 200) {
                 topic = parser.parseResource(SubscriptionTopic.class, con.getInputStream());
+                logger.info("status {} topic {}",status, parser.encodeResourceToString(topic));
+                topic.setId(topic.getUrl());
                 sub.addContained(topic);
+                sub.setTopicElement(new CanonicalType(topic.getUrl()));
+            } else {
+                logger.info("{}",status);
             }
             con.disconnect();
 
