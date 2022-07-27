@@ -45,7 +45,6 @@ public class SubscriptionStatusProvider implements IResourceProvider {
         logger.info("facility id {} status type {}", theRequestDetails.getTenantId(), status.getType());
         MethodOutcome methodOutcome = new MethodOutcome();
         IParser parser = EhrApiApplication.fhirContext.newJsonParser();
-        logger.info(parser.encodeResourceToString(status));
         switch (status.getType()){
             case HANDSHAKE: {
                 processHandshake(status,theRequestDetails, methodOutcome);
@@ -67,26 +66,36 @@ public class SubscriptionStatusProvider implements IResourceProvider {
     }
 
     private void processHandshake(SubscriptionStatus status, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
+        logger.info("Handshake {} {}", status.getSubscription(), status.getStatus());
+
         Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findById(theRequestDetails.getTenantId());
         if (subscriptionStore.isPresent()) {
-            Subscription subscription = subscriptionStore.get().toSubscription();
-            subscription.setStatus(status.getStatus());
-            subscriptionStoreRepository.save(new SubscriptionStore(subscription));
+            subscriptionStore.get().setStatus(status.getStatus().toCode());
+            subscriptionStoreRepository.save(subscriptionStore.get());
             methodOutcome.setCreated(true);
         } else {
-            throw new InvalidRequestException("");
+            throw new InvalidRequestException("No subscription of this id");
         }
     }
 
     private void processHeartbeat(SubscriptionStatus status, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
 //        checking if subscription still exists and is active on this side
-        logger.info(String.valueOf(subscriptionStoreRepository));
+        logger.info("Heartbeat {} {}", status.getSubscription(), status.getStatus());
         Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findByIdentifier(theRequestDetails.getTenantId());
         if (subscriptionStore.isPresent()) {
             Subscription subscription = subscriptionStore.get().toSubscription();
-            subscription.getStatus();
-            if (subscription.getStatus().equals(Enumerations.SubscriptionState.ACTIVE)) {
-                methodOutcome.setCreated(true);
+            switch(subscription.getStatus()) {
+                case ACTIVE: {
+                    methodOutcome.setCreated(true);
+                    break;
+                }
+                case REQUESTED:
+                case OFF:
+                case ERROR:
+                case NULL:
+                case ENTEREDINERROR: {
+                    throw new InvalidRequestException("Subscription no longer active");
+                }
             }
         } else {
             throw new InvalidRequestException("");

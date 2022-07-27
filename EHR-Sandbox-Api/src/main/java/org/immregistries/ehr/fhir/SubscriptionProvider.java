@@ -76,17 +76,17 @@ public class SubscriptionProvider implements IResourceProvider {
          * TODO get server base url dynamically
          */
 
-        sub.addFilterBy().setResourceType("OperationOutcome")
-                .setSearchParamName("severity")
-                .setValue("warning").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
-        sub.addFilterBy().setResourceType("OperationOutcome")
-                .setSearchParamName("severity")
-                .setValue("error").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
+//        sub.addFilterBy().setResourceType("OperationOutcome")
+//                .setSearchParamName("severity")
+//                .setValue("warning").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
+//        sub.addFilterBy().setResourceType("OperationOutcome")
+//                .setSearchParamName("severity")
+//                .setValue("error").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
 
         sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;
-        URL url = null;
+        URL url;
         IParser parser = EhrApiApplication.fhirContext.newJsonParser();
         HttpURLConnection con;
         try {
@@ -100,9 +100,8 @@ public class SubscriptionProvider implements IResourceProvider {
             if (status == 200) {
                 topic = parser.parseResource(SubscriptionTopic.class, con.getInputStream());
                 logger.info("status {} topic {}",status, parser.encodeResourceToString(topic));
-                topic.setId(topic.getUrl());
                 sub.addContained(topic);
-                sub.setTopicElement(new CanonicalType(topic.getUrl()));
+                sub.setTopicElement(new CanonicalType(topic.getId().split("/")[1]));
             } else {
                 logger.info("{}",status);
             }

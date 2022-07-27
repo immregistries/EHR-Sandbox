@@ -1,8 +1,10 @@
 package org.immregistries.ehr.controllers;
 
+import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r5.model.Subscription;
+import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.entities.SubscriptionStore;
@@ -35,18 +37,21 @@ public class SubscriptionController {
     private SubscriptionStoreRepository subscriptionStoreRepository;
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
-    public MethodOutcome subscribeToIIS(@PathVariable() int facilityId , @RequestBody String body) {
+    public Boolean subscribeToIIS(@PathVariable() int facilityId , @RequestBody String body) {
         logger.info("Subscription post");
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
         Subscription sub = SubscriptionProvider.generateRestHookSubscription(facilityId, ir.getIisFhirUrl());
         IGenericClient client = new CustomClientBuilder(ir).getClient();
 
         MethodOutcome outcome = client.create().resource(sub).execute();
-        logger.info(outcome.toString());
+
         if(outcome.getResource() == null) {
 
         }
+        IParser parser  = EhrApiApplication.fhirContext.newJsonParser();
         Subscription outcomeSub = (Subscription) outcome.getResource();
+
+        logger.info(parser.encodeResourceToString(outcomeSub));
 
         subscriptionStoreRepository.save(new SubscriptionStore(outcomeSub));
 
@@ -56,13 +61,19 @@ public class SubscriptionController {
                 // set up waiting for handshake and heartbeat
                 break;
             }
+            case REQUESTED: {
+                break;
+            }
+            case OFF: {
+                break;
+            }
             case ERROR:
             case NULL:
             case ENTEREDINERROR: {
 
             }
         }
-        return outcome;
+        return outcome.getCreated();
     }
 
 }
