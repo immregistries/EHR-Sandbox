@@ -32,6 +32,7 @@ public class SubscriptionProvider implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionProvider.class);
 
     public static final String RESTHOOK = "rest-hook";
+    public static final String EMAIL = "mailto:Clement.Hennequin@telecomnancy.net";
     /**
      * The getResourceType method comes from IResourceProvider, and must
      * be overridden to indicate what type of resource this provider
@@ -69,7 +70,10 @@ public class SubscriptionProvider implements IResourceProvider {
         // TODO set random secret
         sub.addHeader("Authorization: Bearer secret-secret");
         sub.setHeartbeatPeriod(5);
-        sub.setEnd(new Date());
+        sub.setTimeout(30);
+        sub.setEnd(new Date(System.currentTimeMillis() + 3 * 60 * 1000));
+        sub.setContent(Subscription.SubscriptionPayloadContent.FULLRESOURCE);
+        sub.setContentType("application/fhir+json");
 
         sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
         /**

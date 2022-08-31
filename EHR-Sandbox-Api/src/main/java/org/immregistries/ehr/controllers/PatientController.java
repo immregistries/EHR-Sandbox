@@ -3,6 +3,7 @@ package org.immregistries.ehr.controllers;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import org.hl7.fhir.r5.model.Identifier;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
 import java.net.URI;
 import java.util.Date;
 import java.util.Optional;
@@ -116,7 +119,9 @@ public class PatientController {
     }
 
     @GetMapping("/{patientId}/resource")
-    public ResponseEntity<String> resource(@PathVariable() int patientId) {
+    public ResponseEntity<String> resource(
+            HttpServletRequest request,
+            @PathVariable() int patientId) {
         Optional<Patient> patient = patientRepository.findById(patientId);
         FhirContext ctx = EhrApiApplication.fhirContext;
         IParser parser = ctx.newXmlParser().setPrettyPrint(true);
@@ -124,7 +129,8 @@ public class PatientController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No patient found");
         }
-        org.hl7.fhir.r5.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get());
+        org.hl7.fhir.r5.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get(),
+                request.getRequestURI().split("/patients")[0]);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
     }
@@ -136,7 +142,7 @@ public class PatientController {
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
         MethodOutcome outcome;
         try {
-            outcome = ResourceClient.write(patient, ir);
+            outcome = ResourceClient.updateOrCreate(patient, "Patient",patient.getIdentifierFirstRep(), ir);
             if (outcome.getOperationOutcome() != null) {
                 logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
             }

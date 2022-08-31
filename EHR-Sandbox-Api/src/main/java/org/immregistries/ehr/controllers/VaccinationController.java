@@ -26,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Optional;
 
@@ -148,7 +149,9 @@ public class VaccinationController {
     }
 
     @GetMapping("/{vaccinationId}/resource")
-    public ResponseEntity<String> resource(@PathVariable() int vaccinationId) {
+    public ResponseEntity<String> resource(
+            HttpServletRequest request,
+            @PathVariable() int vaccinationId) {
         Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
         FhirContext ctx = EhrApiApplication.fhirContext;
         IParser parser = ctx.newXmlParser().setPrettyPrint(true);
@@ -156,7 +159,9 @@ public class VaccinationController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
         }
-        org.hl7.fhir.r5.model.Immunization immunization = ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get()) ;
+        org.hl7.fhir.r5.model.Immunization immunization =
+                ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get(),
+                        request.getRequestURI().split("/vaccinations")[0]) ;
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
     }
@@ -169,7 +174,7 @@ public class VaccinationController {
 //        return ResponseEntity.ok(ResourceClient.write(immunization,ir));
         MethodOutcome outcome;
         try {
-            outcome = ResourceClient.write(immunization,ir);
+            outcome = ResourceClient.updateOrCreate(immunization, "Immunization",immunization.getIdentifierFirstRep(), ir);
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
         } catch (Exception e) {

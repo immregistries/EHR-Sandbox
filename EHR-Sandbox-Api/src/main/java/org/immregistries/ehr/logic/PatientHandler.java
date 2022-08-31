@@ -11,52 +11,47 @@ import java.util.List;
  * Maps the Database with FHIR for patient resources
  */
 public class PatientHandler {
-  
-  
-  public static Patient dbPatientToFhirPatient(org.immregistries.ehr.entities.Patient dbPatient) {
-    Patient fhirPatient = new Patient();
-    fhirPatient.setId("" + dbPatient.getId());
-    
-    Identifier identifier = new Identifier();
+  public static Patient dbPatientToFhirPatient(org.immregistries.ehr.entities.Patient dbPatient, String identifier_system) {
+    Patient fhirPatient = dbPatientToFhirPatient(dbPatient);
+    Identifier identifier = fhirPatient.addIdentifier();
     identifier.setValue(""+dbPatient.getId());
-    List<Identifier> li = new ArrayList<>();
-    li.add(identifier);
-    fhirPatient.setIdentifier(li);
-    HumanName name = new HumanName();
+    identifier.setSystem(identifier_system);
+    return fhirPatient;
+  }
+
+
+  private static Patient dbPatientToFhirPatient(org.immregistries.ehr.entities.Patient dbPatient) {
+    Patient fhirPatient = new Patient();
+//    fhirPatient.setId("" + dbPatient.getId());
+    
+//    Identifier identifier = fhirPatient.addIdentifier(); Dealt with in Controller
+//    identifier.setValue(""+dbPatient.getId());
+//    identifier.setSystem("EHR-Sandbox");
+
+
+    HumanName name = fhirPatient.addName();
     name.addGiven(dbPatient.getNameFirst());
     name.addGiven(dbPatient.getNameMiddle());
     name.setFamily(dbPatient.getNameLast());
-    fhirPatient.addName(name);
 
-    Address address = new Address();
+    Address address = fhirPatient.addAddress();
     address.setCity(dbPatient.getAddressCity());
     address.setCountry(dbPatient.getAddressCountry());
     address.setState(dbPatient.getAddressState());
     address.setPostalCode(dbPatient.getAddressZip());
-    fhirPatient.addAddress(address);
 
-
-      ContactPoint cp = new ContactPoint();
-      cp.setValue(dbPatient.getPhone());
-      cp.setSystem(ContactPointSystem.PHONE);
-      cp.setValue(dbPatient.getEmail());
-      cp.setSystem(ContactPointSystem.EMAIL);
-      fhirPatient.addTelecom(cp);
+    ContactPoint cp = fhirPatient.addTelecom();
+    cp.setValue(dbPatient.getPhone());
+    cp.setSystem(ContactPointSystem.PHONE);
+    cp.setValue(dbPatient.getEmail());
+    cp.setSystem(ContactPointSystem.EMAIL);
 
     fhirPatient.setBirthDate(dbPatient.getBirthDate());
-
-      if (dbPatient.getSex().equals("M")) {
-        fhirPatient.setGender(AdministrativeGender.MALE);
-      } else if (dbPatient.getSex().equals("F")) {
-        fhirPatient.setGender(AdministrativeGender.FEMALE);
-      }
-      
-    // String username = "default";
-    // String password = "default"; 
-    // String response;
-
-    // response = ResourceClient.write(fhirPatient, tenantId, username, password);
-        
+    if (dbPatient.getSex().equals("M")) {
+      fhirPatient.setGender(AdministrativeGender.MALE);
+    } else if (dbPatient.getSex().equals("F")) {
+      fhirPatient.setGender(AdministrativeGender.FEMALE);
+    }
     return fhirPatient;
   }
 }

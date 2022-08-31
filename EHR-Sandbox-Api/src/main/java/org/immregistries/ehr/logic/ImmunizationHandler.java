@@ -18,19 +18,24 @@ import java.util.List;
  * Maps the Database with FHIR for the immunization resources
  */
 public class ImmunizationHandler {
+  public static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination, String identifier_system) {
+    Immunization i = dbVaccinationToFhirVaccination(dbVaccination);
+    Identifier identifier = i.addIdentifier();
+    identifier.setValue(""+dbVaccination.getId());
+    identifier.setSystem(identifier_system);
+    i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId())
+            // TODO autamatically set id or ask in the form
+            .setIdentifier(new Identifier()
+                    .setValue("" + dbVaccination.getPatient().getId())
+                    .setSystem(identifier_system)));
+    return  i;
+  }
   
-  public static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
+  private static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
     
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
-
-    i.setId(""+vaccine.getId());
-    Identifier identifier = new Identifier();
-    identifier.setValue(""+dbVaccination.getId());
-    List<Identifier> li = new ArrayList<>();
-    li.add(identifier);
-    i.setIdentifier(li);
 
     i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotNumber());
@@ -68,7 +73,7 @@ public class ImmunizationHandler {
 
 //    i.addReasonCode().addCoding().setCode(vaccine.getRefusalReasonCode());
     i.getVaccineCode().addCoding().setCode(vaccine.getVaccineCvxCode());
-    i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId()));
+
 //    i.getLocation().setReferenceElement();
 //    location.setName(facility.getNameDisplay());
     return i;
