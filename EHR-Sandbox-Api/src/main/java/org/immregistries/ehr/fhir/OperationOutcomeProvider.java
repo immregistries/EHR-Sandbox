@@ -37,6 +37,10 @@ public class OperationOutcomeProvider implements IResourceProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProvider.class);
 
+//    public OperationOutcomeProvider(FeedbackRepository feedbackRepository) {
+//        this.feedbackRepository = feedbackRepository;
+//    }
+
 
     @Override
     public Class<OperationOutcome> getResourceType() {
@@ -65,8 +69,9 @@ public class OperationOutcomeProvider implements IResourceProvider {
     @Create
     // Endpoint for Subscription
     public MethodOutcome registerOperationOutcome(
-            RequestDetails theRequestDetails,
-            @ResourceParam OperationOutcome operationOutcome) {
+            @ResourceParam OperationOutcome operationOutcome,
+            RequestDetails theRequestDetails
+            ) {
 //        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
 //        Integer tenantId = Integer.parseInt(ids[0]);
 //        Integer facilityId = Integer.parseInt(ids[1]);

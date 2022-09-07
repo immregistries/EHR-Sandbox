@@ -58,7 +58,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
                 break;
             }
             case EVENTNOTIFICATION: {
-//                operationOutcomeProvider.registerOperationOutcome(theRequestDetails, status)
+//                operationOutcomeProvider.registerOperationOutcome(theRequestDetails, status);
                 break;
             }
         }
@@ -98,7 +98,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
                 }
             }
         } else {
-            throw new InvalidRequestException("");
+            throw new InvalidRequestException("No subscription found");
         }
 
     }

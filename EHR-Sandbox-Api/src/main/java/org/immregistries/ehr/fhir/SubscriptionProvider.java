@@ -31,15 +31,14 @@ public class SubscriptionProvider implements IResourceProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionProvider.class);
 
-    public static final String RESTHOOK = "rest-hook";
-    public static final String EMAIL = "mailto:Clement.Hennequin@telecomnancy.net";
+
+
     /**
      * The getResourceType method comes from IResourceProvider, and must
      * be overridden to indicate what type of resource this provider
      * supplies.
      */
 
-    private static final String LOCAL_TOPIC = "http://localhost:8080/SubscriptionTopic";
     @Override
     public Class<Subscription> getResourceType() {
         return Subscription.class;
@@ -57,71 +56,6 @@ public class SubscriptionProvider implements IResourceProvider {
         return sub;
     }
 
-    public static Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
-        Subscription sub = new Subscription();
-        sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
-        sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
-//        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
-        sub.setTopic(LOCAL_TOPIC);
-
-        sub.setReason("testing purposes");
-        sub.setName("Ehr sandbox facility number " + facilityId);
-
-        // TODO set random secret
-        sub.addHeader("Authorization: Bearer secret-secret");
-        sub.setHeartbeatPeriod(5);
-        sub.setTimeout(30);
-        sub.setEnd(new Date(System.currentTimeMillis() + 3 * 60 * 1000));
-        sub.setContent(Subscription.SubscriptionPayloadContent.FULLRESOURCE);
-        sub.setContentType("application/fhir+json");
-
-        sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
-        /**
-         * TODO get server base url dynamically
-         */
-
-//        sub.addFilterBy().setResourceType("OperationOutcome")
-//                .setSearchParamName("severity")
-//                .setValue("warning").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
-//        sub.addFilterBy().setResourceType("OperationOutcome")
-//                .setSearchParamName("severity")
-//                .setValue("error").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
-
-        sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
-//        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
-        SubscriptionTopic topic;
-        URL url;
-        IParser parser = EhrApiApplication.fhirContext.newJsonParser();
-        HttpURLConnection con;
-        try {
-            url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setConnectTimeout(5000);
-
-            int status = con.getResponseCode();
-            if (status == 200) {
-                topic = parser.parseResource(SubscriptionTopic.class, con.getInputStream());
-                logger.info("status {} topic {}",status, parser.encodeResourceToString(topic));
-                sub.addContained(topic);
-                sub.setTopicElement(new CanonicalType(topic.getId().split("/")[1]));
-            } else {
-                logger.info("{}",status);
-            }
-            con.disconnect();
-
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        return sub;
-    }
 
 
 }

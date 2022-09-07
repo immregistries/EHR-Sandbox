@@ -11,6 +11,9 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
 import org.immregistries.ehr.EhrApiApplication;
+import org.immregistries.ehr.repositories.FeedbackRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.ServletException;
@@ -20,10 +23,16 @@ import java.util.List;
 
 //@WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server Endpoint")
 @WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server")
+@Controller
 //@WebServlet(urlPatterns = {"/fhir/*", "/fhir/**", "/fhir/tenants/{tenantId}/facilities/{facilityId}/*"}, displayName = "FHIR Server")
 public class Server extends RestfulServer {
+    @Autowired
+    AutowireCapableBeanFactory beanFactory;
+    @Autowired
+    FeedbackRepository feedbackRepository;
+
     private static final long serialVersionUID = 1L;
-    protected static  final String serverBaseUrl = "http://localhost:9091/ehr-sandbox/fhir";
+    public static  final String serverBaseUrl = "http://localhost:9091/ehr-sandbox/fhir";
 //    protected static  final String serverBaseUrl = "florence.immregistries.org/ehr-sandbox/fhir";
     private static final FhirContext ctx = EhrApiApplication.fhirContext;
 
@@ -48,9 +57,16 @@ public class Server extends RestfulServer {
 //        setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
+        SubscriptionStatusProvider subscriptionStatusProvider = new SubscriptionStatusProvider();
+        OperationOutcomeProvider operationOutcomeProvider = new OperationOutcomeProvider();
+        BundleProvider bundleProvider = new BundleProvider(operationOutcomeProvider, subscriptionStatusProvider);
+        beanFactory.autowireBean(operationOutcomeProvider);
+        beanFactory.autowireBean(subscriptionStatusProvider);
+        beanFactory.autowireBean(bundleProvider);
         resourceProviders.add(new SubscriptionProvider());
-        resourceProviders.add(new SubscriptionStatusProvider());
-        resourceProviders.add(new OperationOutcomeProvider());
+        resourceProviders.add(subscriptionStatusProvider);
+        resourceProviders.add(operationOutcomeProvider);
+        resourceProviders.add(bundleProvider);
         setResourceProviders(resourceProviders);
 
         INarrativeGenerator narrativeGen = new DefaultThymeleafNarrativeGenerator();

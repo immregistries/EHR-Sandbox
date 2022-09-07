@@ -161,7 +161,7 @@ public class VaccinationController {
         }
         org.hl7.fhir.r5.model.Immunization immunization =
                 ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get(),
-                        request.getRequestURI().split("/vaccinations")[0]) ;
+                        request.getRequestURI().split("/patients")[0]) ;
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
     }

@@ -18,6 +18,22 @@ import java.util.List;
  * Maps the Database with FHIR for the immunization resources
  */
 public class ImmunizationHandler {
+  // Constants need to be harmonized with IIS Sandbox
+  public static final String CVX = "http://hl7.org/fhir/sid/cvx";
+  public static final String MVX = "http://terminology.hl7.org/CodeSystem/MVX";
+  public static final String NDC = "NDC";
+  public static final String INFORMATION_SOURCE = "informationSource";
+  public static final String FUNCTION = "iis-sandbox-function";
+  public static final String ORDERING = "ordering";
+  public static final String ENTERING = "entering";
+  public static final String ADMINISTERING = "administering";
+  public static final String REFUSAL_REASON_CODE = "refusalReasonCode";
+  public static final String BODY_PART = "bodyPart";
+  public static final String BODY_ROUTE = "bodyRoute";
+  public static final String FUNDING_SOURCE = "fundingSource";
+  public static final String FUNDING_ELIGIBILITY = "fundingEligibility";
+
+
   public static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination, String identifier_system) {
     Immunization i = dbVaccinationToFhirVaccination(dbVaccination);
     Identifier identifier = i.addIdentifier();
@@ -71,8 +87,25 @@ public class ImmunizationHandler {
       }
     }
 
-//    i.addReasonCode().addCoding().setCode(vaccine.getRefusalReasonCode());
-    i.getVaccineCode().addCoding().setCode(vaccine.getVaccineCvxCode());
+    i.addReason().setConcept(new CodeableConcept(new Coding(REFUSAL_REASON_CODE,vaccine.getRefusalReasonCode(),vaccine.getRefusalReasonCode())));
+    i.getSite().addCoding().setSystem(BODY_PART).setCode(vaccine.getBodySite());
+    i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
+    i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
+    i.addProgramEligibility().addCoding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility());
+
+    i.getVaccineCode().addCoding()
+            .setSystem(CVX)
+            .setCode(vaccine.getVaccineCvxCode());
+    i.getVaccineCode().addCoding()
+            .setSystem(NDC)
+            .setCode(vaccine.getVaccineNdcCode());
+
+    i.setManufacturer(new Reference()
+            .setType("Organisation")
+            .setIdentifier(new Identifier()
+                    .setSystem(MVX)
+                    .setValue(vaccine.getVaccineMvxCode())));
+
 
 //    i.getLocation().setReferenceElement();
 //    location.setName(facility.getNameDisplay());

@@ -87,7 +87,7 @@ public abstract class ResourceClient {
         try {
             outcome = client.update().resource(resource).conditionalByUrl(
                     type+"?identifier="+identifier.getSystem()+"|"+identifier.getValue()
-                            + "&_tag:not=https://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
+                            + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
             ).execute();
         } catch (ResourceNotFoundException | InvalidRequestException e) {
             outcome = client.create().resource(resource).execute();
