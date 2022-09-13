@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.Feedback;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,37 +72,41 @@ public class OperationOutcomeProvider implements IResourceProvider {
     // Endpoint for Subscription
     public MethodOutcome registerOperationOutcome(
             @ResourceParam OperationOutcome operationOutcome,
-            RequestDetails theRequestDetails
+            RequestDetails theRequestDetails,
+            HttpServletRequest request
             ) {
 //        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
 //        Integer tenantId = Integer.parseInt(ids[0]);
-//        Integer facilityId = Integer.parseInt(ids[1]);
-        // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
+        Facility facility = facilityRepository.findById(Integer.parseInt(theRequestDetails.getTenantId())).get();
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
+
         for (OperationOutcome.OperationOutcomeIssueComponent issue: operationOutcome.getIssue()) {
             Feedback feedback = new Feedback();
-            feedback.setContent(issue.toString());
+            feedback.setContent(issue.getDetails().getText());
+            feedback.setFacility(facility);
+            feedback.setSeverity(issue.getSeverity().toCode());
+            feedback.setCode(issue.getCode().toCode());
+            //TODO date ? code system ?
+            if (request != null && request.getRequestURI() != null) {
+                feedback.setIis(request.getRequestURI());
+
+            }
             // Using deprecated field "Location to refer to the right resource for the issue"
             for (StringType location: issue.getLocation()) {
                 Scanner scanner = new Scanner(location.getValueNotNull());
                 scanner.useDelimiter("/|\\?|#");
                 while (scanner.hasNext()) {
                     next = scanner.next();
-                    if (next.equals("Patient") && scanner.hasNextInt()) {
-                        Optional<Patient> patient = patientRepository.findById(scanner.nextInt());
-                        if(patient.isPresent()){
-                            feedback.setPatient(patient.get());
-                            feedback.setFacility(patient.get().getFacility());
-                        }
+                    if (next.equals("Patient") && scanner.hasNextInt()) { // TODO Define format for identifier specification
+                        Optional<Patient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.nextInt());
+                        patient.ifPresent(feedback::setPatient);
                     }
                     if (next.equals("Immunization") && scanner.hasNextInt()) {
-                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(scanner.nextInt());
-                        vaccinationEvent.ifPresent(feedback::setVaccinationEvent);
+                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), scanner.nextInt());
                         if(vaccinationEvent.isPresent()){
                             feedback.setVaccinationEvent(vaccinationEvent.get());
                             feedback.setPatient(vaccinationEvent.get().getPatient());
-                            feedback.setFacility(vaccinationEvent.get().getAdministeringFacility());
                         }
                     }
                 }

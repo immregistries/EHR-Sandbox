@@ -12,9 +12,16 @@ import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.repositories.FeedbackRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.FrameworkServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,13 +30,12 @@ import java.util.List;
 
 //@WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server Endpoint")
 @WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server")
-@Controller
+//@Controller
 //@WebServlet(urlPatterns = {"/fhir/*", "/fhir/**", "/fhir/tenants/{tenantId}/facilities/{facilityId}/*"}, displayName = "FHIR Server")
 public class Server extends RestfulServer {
     @Autowired
     AutowireCapableBeanFactory beanFactory;
-    @Autowired
-    FeedbackRepository feedbackRepository;
+    private static final String DISPATCHER_CONTEXT_ATTRIBUTE_NAME = FrameworkServlet.SERVLET_CONTEXT_PREFIX + "EhrApiApplication";
 
     private static final long serialVersionUID = 1L;
     public static  final String serverBaseUrl = "http://localhost:9091/ehr-sandbox/fhir";
@@ -44,6 +50,15 @@ public class Server extends RestfulServer {
 
     @Override
     protected void initialize() throws ServletException {
+        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+        try {
+            SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, getServletContext());
+
+        } catch (NoSuchBeanDefinitionException e) {
+            WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext(), DISPATCHER_CONTEXT_ATTRIBUTE_NAME);
+//            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this, context);
+
+        }
         this.setDefaultResponseEncoding(EncodingEnum.XML);
         setFhirContext(ctx);
 
