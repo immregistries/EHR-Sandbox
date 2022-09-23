@@ -7,12 +7,14 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
+import org.immregistries.ehr.entities.SubscriptionInfo;
 import org.immregistries.ehr.entities.SubscriptionStore;
 import org.immregistries.ehr.fhir.Server;
 import org.immregistries.ehr.fhir.SubscriptionProvider;
 import org.immregistries.ehr.logic.CustomClientBuilder;
 import org.immregistries.ehr.repositories.FacilityRepository;
 import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.repositories.SubscriptionInfoRepository;
 import org.immregistries.ehr.repositories.SubscriptionStoreRepository;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
@@ -26,11 +28,10 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Optional;
 
 
 @RestController
-//@RequestMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
-//@RequestMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
 public class SubscriptionController {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionController.class);
@@ -46,6 +47,13 @@ public class SubscriptionController {
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private SubscriptionStoreRepository subscriptionStoreRepository;
+    @Autowired
+    private SubscriptionInfoRepository subscriptionInfoRepository;
+    @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
+    public Optional<SubscriptionStore> subscriptionStore(@PathVariable() String facilityId){
+        Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findByIdentifier(facilityId);
+        return subscriptionStore;
+    }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
     public Boolean subscribeToIIS(@PathVariable() int facilityId , @RequestBody String body) {
@@ -54,34 +62,32 @@ public class SubscriptionController {
         IGenericClient client = new CustomClientBuilder(ir).getClient();
 
         MethodOutcome outcome = client.create().resource(sub).execute();
-
-        if(outcome.getResource() == null) {
-            logger.info("No resource in outcome");
-        }
         IParser parser  = EhrApiApplication.fhirContext.newJsonParser();
         Subscription outcomeSub = (Subscription) outcome.getResource();
-
-//        logger.info(parser.encodeResourceToString(outcomeSub));
-        subscriptionStoreRepository.save(new SubscriptionStore(outcomeSub));
-
-        switch(outcomeSub.getStatus()) {
-            case ACTIVE: {
-                // return positive message
-                // set up waiting for handshake and heartbeat
-                break;
-            }
-            case REQUESTED: {
-                break;
-            }
-            case OFF: {
-                break;
-            }
-            case ERROR:
-            case NULL:
-            case ENTEREDINERROR: {
-
-            }
+        if (outcome.getCreated()){
+            outcomeSub.setStatus(Enumerations.SubscriptionState.ACTIVE);
         }
+        SubscriptionStore subscriptionStore = new SubscriptionStore(outcomeSub);
+        SubscriptionInfo subscriptionInfo = new SubscriptionInfo(subscriptionStore);
+//        subscriptionStore.setSubscriptionInfo(subscriptionInfo);
+        subscriptionStoreRepository.save(subscriptionStore);
+//        switch(outcomeSub.getStatus()) {
+//            case ACTIVE: {
+//                // return positive message
+//                // set up waiting for handshake and heartbeat
+//                break;
+//            }
+//            case REQUESTED: {
+//                break;
+//            }
+//            case OFF: {
+//                break;
+//            }
+//            case ERROR:
+//            case NULL:
+//            case ENTEREDINERROR: {
+//            }
+//        }
         return outcome.getCreated();
     }
 
@@ -93,7 +99,7 @@ public class SubscriptionController {
         sub.setTopic(LOCAL_TOPIC);
 
         sub.setReason("testing purposes");
-        sub.setName("Ehr sandbox facility number " + facilityId);
+        sub.setName("Ehr sandbox facility n" + facilityId);
 
         // TODO set random secret
         sub.addHeader("Authorization: Bearer secret-secret");
@@ -131,7 +137,7 @@ public class SubscriptionController {
             int status = con.getResponseCode();
             if (status == 200) {
                 topic = parser.parseResource(SubscriptionTopic.class, con.getInputStream());
-                logger.info("status {} topic {}",status, parser.encodeResourceToString(topic));
+//                logger.info("status {} topic {}",status, parser.encodeResourceToString(topic));
                 sub.addContained(topic);
                 sub.setTopicElement(new CanonicalType(topic.getId().split("/")[1]));
             } else {
@@ -146,8 +152,6 @@ public class SubscriptionController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
         return sub;
     }
 

@@ -37,6 +37,9 @@ export class FhirMessagingComponent implements AfterViewInit {
 
      }
 
+  public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
+  public immunizationOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
+
   ngAfterViewInit(): void {
     this.patientLoading = true
     this.fhirService.quickGetPatientResource(this.patientId).subscribe((resource) => {
@@ -53,15 +56,15 @@ export class FhirMessagingComponent implements AfterViewInit {
   }
 
   sendPatient() {
-    this.fhirService.quickPostPatient(this.patientId, this.patientResource).subscribe({
+    this.fhirService.quickPostPatient(this.patientId, this.patientResource, this.patientOperation).subscribe({
       next: (res) => {
         this.patientAnswer = res
         this.patientError = ""
-        const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
-        this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
-          console.log(res)
-          this.patientService.doRefresh()
-        })
+        this.patientService.doRefresh()
+        // const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
+        // this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
+        //   console.log(res)
+        // })
       },
       error: (err) => {
         this.patientAnswer = ""
@@ -74,6 +77,7 @@ export class FhirMessagingComponent implements AfterViewInit {
         this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
           console.log(res)
           this.patientService.doRefresh()
+          this.feedbackService.doRefresh()
         })
         console.error(err)
       }
@@ -85,13 +89,13 @@ sendVaccination() {
       (res) => {
         this.vaccinationAnswer = res
         this.vaccinationError = ""
-        const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
-        this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
-          console.log(res)
-          this.patientService.doRefresh()
-          this.vaccinationService.doRefresh()
-          this.feedbackService.doRefresh()
-        })
+        this.feedbackService.doRefresh()
+        // const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
+        // this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
+        //   console.log(res)
+        //   this.patientService.doRefresh()
+        //   this.vaccinationService.doRefresh()
+        // })
       },
       (err) => {
         this.vaccinationAnswer = ""
@@ -100,7 +104,8 @@ sendVaccination() {
         } else {
           this.vaccinationError = err.error.error
         }
-        const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationError, severity: "error"}
+        this.feedbackService.doRefresh()
+        const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationError, severity: "error", date: new Date()}
         this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
           console.log(res)
           this.patientService.doRefresh()

@@ -36,8 +36,8 @@ public abstract class ResourceClient {
         return read(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static MethodOutcome write(IBaseResource resource, ImmunizationRegistry ir){
-        return write(resource, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
+    public static MethodOutcome create(IBaseResource resource, ImmunizationRegistry ir){
+        return create(resource, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
     public static MethodOutcome delete(String resourceType, String resourceId, ImmunizationRegistry ir){
@@ -57,7 +57,7 @@ public abstract class ResourceClient {
     }
   
   
-    public static MethodOutcome write(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
+    public static MethodOutcome create(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome;
         outcome = client.create().resource(resource).execute();
@@ -85,10 +85,15 @@ public abstract class ResourceClient {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome;
         try {
-            outcome = client.update().resource(resource).conditionalByUrl(
-                    type+"?identifier="+identifier.getSystem()+"|"+identifier.getValue()
-                            + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
-            ).execute();
+            if (identifier.getValue() != null && !identifier.getValue().isEmpty()) {
+                outcome = client.update().resource(resource).conditionalByUrl(
+                        type+"?identifier="+identifier.getSystem()+"|"+identifier.getValue()
+                                + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
+                ).execute();
+            } else {
+                outcome = client.create().resource(resource).execute();
+            }
+
         } catch (ResourceNotFoundException | InvalidRequestException e) {
             outcome = client.create().resource(resource).execute();
         }

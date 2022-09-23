@@ -5,10 +5,7 @@ import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Subscription;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -98,6 +95,10 @@ public class SubscriptionStore {
 
     @Column(name = "maxCount")
     private Integer maxCount;
+
+    @OneToOne(mappedBy = "subscriptionStore", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private SubscriptionInfo subscriptionInfo;
 
     public Integer getMaxCount() {
         return maxCount;
@@ -209,5 +210,13 @@ public class SubscriptionStore {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public SubscriptionInfo getSubscriptionInfo() {
+        return subscriptionInfo;
+    }
+
+    public void setSubscriptionInfo(SubscriptionInfo subscriptionInfo) {
+        this.subscriptionInfo = subscriptionInfo;
     }
 }

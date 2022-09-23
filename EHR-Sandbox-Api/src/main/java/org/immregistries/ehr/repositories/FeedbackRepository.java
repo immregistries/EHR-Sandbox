@@ -2,6 +2,7 @@ package org.immregistries.ehr.repositories;
 
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.Feedback;
+import org.immregistries.ehr.entities.Tenant;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

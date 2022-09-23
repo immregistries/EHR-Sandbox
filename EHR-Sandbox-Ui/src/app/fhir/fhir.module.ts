@@ -16,6 +16,11 @@ import { SharedModule } from '../shared/shared.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SubscriptionDashboardComponent } from './_components/subscription-dashboard/subscription-dashboard.component';
+import { SubscriptionTableComponent } from './_components/subscription-table/subscription-table.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -24,6 +29,7 @@ import { SubscriptionDashboardComponent } from './_components/subscription-dashb
     FhirGetComponent,
     FhirDialogComponent,
     SubscriptionDashboardComponent,
+    SubscriptionTableComponent,
   ],
   imports: [
     CommonModule,
@@ -35,6 +41,10 @@ import { SubscriptionDashboardComponent } from './_components/subscription-dashb
     MatInputModule,
     MatProgressBarModule,
     MatTabsModule,
+    MatTableModule,
+    MatSelectModule,
+    MatGridListModule,
+    MatCardModule,
 
     SharedModule,
   ],

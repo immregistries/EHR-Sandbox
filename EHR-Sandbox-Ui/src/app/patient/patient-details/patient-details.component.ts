@@ -36,7 +36,7 @@ export class PatientDetailsComponent implements OnInit {
   openFhir(element: Patient) {
     const dialogRef = this.dialog.open(FhirDialogComponent, {
       maxWidth: '95vw',
-      maxHeight: '95vh',
+      maxHeight: '98vh',
       height: 'fit-content',
       width: '50%',
       panelClass: 'dialog-without-bar',

@@ -44,7 +44,7 @@
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
       <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-        <!-- {{element.content}} -->
+        {{element.content}}
         <!-- <button mat-icon-button  color="primary" (click)="remove(element); $event.stopPropagation();">
           <mat-icon>remove</mat-icon>
         </button> -->

@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r5.model.Enumerations;
+import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Subscription;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.EhrApiApplication;
@@ -45,64 +46,61 @@ public class SubscriptionStatusProvider implements IResourceProvider {
         logger.info("facility id {} status type {}", theRequestDetails.getTenantId(), status.getType());
         MethodOutcome methodOutcome = new MethodOutcome();
         IParser parser = EhrApiApplication.fhirContext.newJsonParser();
-        switch (status.getType()){
-            case HANDSHAKE: {
-                processHandshake(status,theRequestDetails, methodOutcome);
-                break;
-            }
-            case HEARTBEAT: {
-                processHeartbeat(status,theRequestDetails, methodOutcome);
-                break;
-            }
-            case NULL: {
-                break;
-            }
-            case EVENTNOTIFICATION: {
+        Optional<SubscriptionStore> subscriptionStore;
+        if (status.getSubscription().getId() != null) {
+            subscriptionStore = subscriptionStoreRepository.findById(status.getSubscription().getId());
+        } else  {
+            subscriptionStore = subscriptionStoreRepository.findByIdentifier(theRequestDetails.getTenantId());
+        }
+
+        if (subscriptionStore.isPresent()) {
+            switch (status.getType()){
+                case HANDSHAKE: {
+                    processHandshake(status, subscriptionStore.get(), theRequestDetails, methodOutcome);
+                    break;
+                }
+                case HEARTBEAT: {
+                    processHeartbeat(status, subscriptionStore.get(),theRequestDetails, methodOutcome);
+                    break;
+                }
+                case NULL: {
+                    break;
+                }
+                case EVENTNOTIFICATION: {
 //                operationOutcomeProvider.registerOperationOutcome(theRequestDetails, status);
-                break;
+//                    if (!subscriptionStore.get().getStatus().equals("Active")) {
+//                        throw new InvalidRequestException("No active  subscription registered with this id");
+//                    }
+                    if (status.getEventsSinceSubscriptionStartElement().getValue().intValue() != subscriptionStore.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
+                        // TODO trigger problem
+                    }
+                    subscriptionStore.get().getSubscriptionInfo().setEventsSinceSubscriptionStart(status.getEventsSinceSubscriptionStartElement().getValue().intValue());
+                    subscriptionStoreRepository.save(subscriptionStore.get());
+                    break;
+                }
             }
+        } else {
+            throw new InvalidRequestException("No subscription registered with this id");
         }
         return methodOutcome;
     }
 
-    private void processHandshake(SubscriptionStatus status, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
+    private void processHandshake(SubscriptionStatus status,SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
         logger.info("Handshake {} {}", status.getSubscription(), status.getStatus());
-
-        Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findById(theRequestDetails.getTenantId());
-        if (subscriptionStore.isPresent()) {
-            subscriptionStore.get().setStatus(status.getStatus().toCode());
-            subscriptionStoreRepository.save(subscriptionStore.get());
-            methodOutcome.setCreated(true);
-        } else {
-            throw new InvalidRequestException("No subscription of this id");
+        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionState.REQUESTED.toCode())) {
+            throw new InvalidRequestException("Subscription not requested, " + subscriptionStore.getStatus());
         }
+        subscriptionStore.setStatus(status.getStatus().toCode());
+        subscriptionStoreRepository.save(subscriptionStore);
+        methodOutcome.setCreated(true);
+
     }
 
-    private void processHeartbeat(SubscriptionStatus status, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
+    private void processHeartbeat(SubscriptionStatus status, SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
 //        checking if subscription still exists and is active on this side
         logger.info("Heartbeat {} {}", status.getSubscription(), status.getStatus());
-        Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findByIdentifier(theRequestDetails.getTenantId());
-        if (subscriptionStore.isPresent()) {
-            Subscription subscription = subscriptionStore.get().toSubscription();
-            switch(subscription.getStatus()) {
-                case ACTIVE: {
-                    methodOutcome.setCreated(true);
-                    break;
-                }
-                case REQUESTED:
-                case OFF:
-                case ERROR:
-                case NULL:
-                case ENTEREDINERROR: {
-                    throw new InvalidRequestException("Subscription no longer active");
-                }
-            }
-        } else {
-            throw new InvalidRequestException("No subscription found");
+        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionState.ACTIVE.toCode())) {
+            throw new InvalidRequestException("Subscription no longer active");
         }
-
     }
-
-
-
 }

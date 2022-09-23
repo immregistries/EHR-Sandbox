@@ -5,10 +5,18 @@
         <mat-progress-bar mode="query" *ngIf="patientLoading"></mat-progress-bar>
         <mat-form-field style="width: 100%;" appearance="fill">
           <mat-label>Patient Fhir Resource</mat-label>
-          <textarea matInput style="height: 50vh;" placeholder="" [(ngModel)]="patientResource"> </textarea>
+          <textarea matInput style="height: 65vh;" placeholder="" [(ngModel)]="patientResource"> </textarea>
         </mat-form-field>
         <p>{{patientAnswer}}</p>
         <p style="color: red;">{{patientError}}</p>
+        <mat-form-field appearance="fill">
+          <mat-label>Operation</mat-label>
+          <mat-select [(ngModel)]="patientOperation" name="patientOperation">
+            <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
+            <mat-option [value]="'Create'">Create</mat-option>
+            <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+          </mat-select>
+        </mat-form-field>
         <button mat-raised-button class="w3-right w3-margin-bottom" (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
       </div>
       <div style="width: 50%;" *ngIf="vaccinationId > -1">
@@ -20,6 +28,14 @@
         </mat-form-field>
         <p>{{vaccinationAnswer}}</p>
         <p style="color: red;">{{vaccinationError}}</p>
+        <mat-form-field appearance="fill">
+          <mat-label>Operation</mat-label>
+          <mat-select [(ngModel)]="immunizationOperation" name="immunizationOperation">
+            <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
+            <mat-option [value]="'Create'">Create</mat-option>
+            <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+          </mat-select>
+        </mat-form-field>
         <button mat-raised-button class="w3-right w3-margin-bottom" (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
       </div>
     </div>

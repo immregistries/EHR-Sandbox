@@ -30,15 +30,11 @@ import java.util.Date;
 public class SubscriptionProvider implements IResourceProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionProvider.class);
-
-
-
     /**
      * The getResourceType method comes from IResourceProvider, and must
      * be overridden to indicate what type of resource this provider
      * supplies.
      */
-
     @Override
     public Class<Subscription> getResourceType() {
         return Subscription.class;
@@ -46,6 +42,7 @@ public class SubscriptionProvider implements IResourceProvider {
 
     @Create()
     public MethodOutcome createSubscription(@ResourceParam Subscription subscription) {
+        logger.info("Received request CREATE SUBSCRIPTION {}", subscription.getId());
         return new MethodOutcome();
     }
 

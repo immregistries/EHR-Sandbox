@@ -3,14 +3,18 @@ package org.immregistries.ehr.logic;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Maps the Database with FHIR for patient resources
  */
 public class PatientHandler {
+  private  static Logger logger = LoggerFactory.getLogger(PatientHandler.class);
   private static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
   private static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
   private static final String ETHNICITY_EXTENSION = "ethnicity";
@@ -85,7 +89,7 @@ public class PatientHandler {
     fhirPatient.addExtension(ETHNICITY_EXTENSION,new CodeType().setSystem(ETHNICITY_SYSTEM).setValue(dbPatient.getEthnicity()));
 
     if (dbPatient.getDeathDate() != null) {
-      fhirPatient.setDeceased(new DateType(dbPatient.getDeathDate()));
+      fhirPatient.getDeceasedDateTimeType().setValue(dbPatient.getDeathDate());
     } else if (dbPatient.getDeathFlag().equals(YES)) {
       fhirPatient.setDeceased(new BooleanType(true));
     } else if (dbPatient.getDeathFlag().equals(NO)) {

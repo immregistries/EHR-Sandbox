@@ -2,6 +2,25 @@
 /* eslint-disable */
 // Generated using typescript-generator version 2.35.1025 on 2022-03-11 10:41:27.
 
+export interface SubscriptionStore {
+  identifier?: number;
+  name?: string;
+  status?: string;
+  topic?: string;
+  end?: Date;
+  reason?: string;
+  channelType?: string;
+  header?: string;
+  heartbeatPeriod?: number;
+  timeout?: number;
+  contentType?: string;
+  content?: string;
+  notificationUrlLocation?: string;
+  maxCount?: number;
+  subscriptionInfo: {
+    eventsSinceSubscriptionStart: number;
+  }
+}
 export interface Feedback {
   id?: number;
   iis?: string;
@@ -11,6 +30,7 @@ export interface Feedback {
   content?: string;
   code?: string;
   severity?: string;
+  date?: Date;
 }
 
 export interface Clinician {

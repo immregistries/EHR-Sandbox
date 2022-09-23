@@ -7,6 +7,7 @@ import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "feedback"
@@ -70,6 +71,10 @@ public class Feedback {
     @Column(name = "code", length = 45)
     private String code;
 
+    @JoinColumn(name = "date", nullable = false)
+    @JsonIgnore
+    private Date date;
+
     public String getIis() {
         return iis;
     }
@@ -132,5 +137,13 @@ public class Feedback {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

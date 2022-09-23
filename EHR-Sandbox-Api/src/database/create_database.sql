@@ -3,7 +3,6 @@ CREATE DATABASE ehr;
 
 USE ehr;
 
-
 CREATE TABLE `clinician` (
   `clinician_id` int(11) NOT NULL AUTO_INCREMENT,
   `name_last` varchar(250) NOT NULL,
@@ -179,6 +178,7 @@ CREATE TABLE `ehr`.`feedback` (
   `code` VARCHAR(45) NULL,
   `content` LONGBLOB NULL,
   `iis` VARCHAR(45) NULL,
+  `date` DATETIME NULL,
   PRIMARY KEY (`feedback_id`),
   INDEX `patient_id_idx` (`patient_id` ASC) VISIBLE,
   INDEX `fk_facility_idx` (`facility_id` ASC) VISIBLE,
@@ -217,3 +217,13 @@ CREATE TABLE `subscription_store` (
   `max_count` int DEFAULT NULL,
   PRIMARY KEY (`identifier`)
 )
+
+CREATE TABLE `subscription_info` (
+  `subscription_store` varchar(45) NOT NULL,
+  `eventsSinceSubscriptionStart` int DEFAULT 0,
+  PRIMARY KEY (`subscription_store`),
+  CONSTRAINT `fk_subscription_store`
+      FOREIGN KEY (`subscription_store`)
+      REFERENCES `ehr`.`subscription_store` (`identifier`)
+      ON DELETE CASCADE
+      ON UPDATE NO ACTION);

@@ -36,13 +36,7 @@ public class OperationOutcomeProvider implements IResourceProvider {
     private FacilityRepository facilityRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
-
     private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProvider.class);
-
-//    public OperationOutcomeProvider(FeedbackRepository feedbackRepository) {
-//        this.feedbackRepository = feedbackRepository;
-//    }
-
 
     @Override
     public Class<OperationOutcome> getResourceType() {
@@ -90,7 +84,6 @@ public class OperationOutcomeProvider implements IResourceProvider {
             //TODO date ? code system ?
             if (request != null && request.getRequestURI() != null) {
                 feedback.setIis(request.getRequestURI());
-
             }
             // Using deprecated field "Location to refer to the right resource for the issue"
             for (StringType location: issue.getLocation()) {
@@ -98,7 +91,7 @@ public class OperationOutcomeProvider implements IResourceProvider {
                 scanner.useDelimiter("/|\\?|#");
                 while (scanner.hasNext()) {
                     next = scanner.next();
-                    if (next.equals("Patient") && scanner.hasNextInt()) { // TODO Define format for identifier specification
+                    if (next.equals("Patient") && scanner.hasNextInt()) { // TODO Define format for identifier specification, or use fhirpath more accurately
                         Optional<Patient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.nextInt());
                         patient.ifPresent(feedback::setPatient);
                     }
@@ -114,7 +107,6 @@ public class OperationOutcomeProvider implements IResourceProvider {
             feedbackList.add(feedback);
         }
         feedbackRepository.saveAll(feedbackList);
-        return new MethodOutcome().setOperationOutcome(operationOutcome);
-//      return operationOutcome;
+        return new MethodOutcome().setOperationOutcome(operationOutcome).setCreated(true).setResource(operationOutcome);
     }
 }

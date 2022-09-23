@@ -69,11 +69,27 @@ export class FhirService {
 
   }
 
-  quickPostPatient(patientId: number, resource: string): Observable<string> {
+  quickPostPatient(patientId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.postPatient(tenantId,facilityId,patientId,resource)
+    switch(operation) {
+      case "Create" : {
+        return this.postPatient(tenantId,facilityId,patientId,resource)
+      }
+      case "UpdateOrCreate" :
+      case "Update" :
+      default :
+        return this.putPatient(tenantId,facilityId,patientId,resource)
+    }
   }
+
+  putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
+    return this.http.put<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir`,
+      resource,
+      httpOptions);
+  }
+
 
   postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
     return this.http.post<string>(
@@ -96,12 +112,6 @@ readOperationOutcome(): Observable<any> {
       httpOptions);
   }
 
-createSubscription(): Observable<any> {
-  const tenantId: number = this.tenantService.getTenantId()
-  const facilityId: number = this.facilityService.getFacilityId()
-  return this.http.post<any>(
-    `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/subscription`,
-    httpOptions);
-}
+
 
 }

@@ -1,1 +1,26 @@
-<button (click)="subscribeToIIS()">Subscribe to IIS</button>
+<div class="grid-container">
+  <mat-grid-list cols="6" rowHeight="370px">
+
+    <mat-grid-tile [colspan]="1" >
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <mat-card-title>Actions</mat-card-title>
+        <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getFacilityId() < 0}}">Subscribe to IIS</button>
+        <p class="w3-red" *ngIf="facilityService.getFacilityId() < 0">No facility selected</p>
+        <p class="w3-red" *ngIf="error">{{error}}</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="5" [rowspan]="1">
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+        <app-subscription-table></app-subscription-table>
+
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+  </mat-grid-list>
+</div>
+
+<!-- TODO Add IIS selector -->
