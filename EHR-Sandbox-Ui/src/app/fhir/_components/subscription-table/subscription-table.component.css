@@ -1,0 +1,58 @@
+table {
+  width: 100%;
+}
+
+tr {
+  text-align: left;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: #efefef;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.element-description {
+  padding: 16px;
+}
+
+.element-description-attribution {
+  opacity: 0.5;
+}
+
+.mat-header-row, .mat-footer-row, .mat-row {
+  height: 2.5em;
+  /* min-height: 4em; */
+  padding: 8px;
+}
+
+
+.search-bar {
+  padding-right: 1em;
+  padding-left: 0px;
+}
+
+/* To change form fields height */
+/* ::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0.3em 0px !important;}
+::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+ */
