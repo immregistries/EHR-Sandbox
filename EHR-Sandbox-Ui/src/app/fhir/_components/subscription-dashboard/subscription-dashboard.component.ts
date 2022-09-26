@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SubscriptionStore } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import { SubscriptionService } from 'src/app/core/_services/subscription.service';
+import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
 import { FhirService } from '../../_services/fhir.service';
 
 @Component({
