@@ -42,6 +42,8 @@ public class FhirClientController {
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
+    @Autowired
+    ImmunizationHandler immunizationHandler;
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
 
 
@@ -111,7 +113,7 @@ public class FhirClientController {
                     HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
         }
         org.hl7.fhir.r5.model.Immunization immunization =
-                ImmunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get(),
+                immunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get(),
                         request.getRequestURI().split("/patients")[0]) ;
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
@@ -119,12 +121,23 @@ public class FhirClientController {
 
     @PostMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir")
     public ResponseEntity<String> postImmunization(@RequestBody String message) {
-        IParser parser;
-        if (message.startsWith("<")) {
-            parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
-        } else {
-            parser = EhrApiApplication.fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = parser(message);
+        Immunization immunization = parser.parseResource(Immunization.class,message);
+        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        MethodOutcome outcome;
+        try {
+            outcome = ResourceClient.create(immunization, ir);
+            return ResponseEntity.ok(outcome.getId().getIdPart());
+
+        } catch (Exception e) {
+            throw e;
+//            return ResponseEntity.internalServerError().body(e.getMessage());
         }
+    }
+
+    @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir")
+    public ResponseEntity<String> updateImmunization(@RequestBody String message) {
+        IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class,message);
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
         MethodOutcome outcome;

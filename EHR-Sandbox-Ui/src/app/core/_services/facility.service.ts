@@ -69,8 +69,8 @@ export class FacilityService {
       httpOptions);
   }
 
-  postFacility(tenantId: number, facility: Facility): Observable<HttpResponse<string>> {
-    return this.http.post<string>(
+  postFacility(tenantId: number, facility: Facility): Observable<HttpResponse<Facility>> {
+    return this.http.post<Facility>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
       facility, {observe: 'response'})
   }

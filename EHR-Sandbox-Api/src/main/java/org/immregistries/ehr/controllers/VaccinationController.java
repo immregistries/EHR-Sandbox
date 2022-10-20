@@ -34,6 +34,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations"})
 public class VaccinationController {
+    @Autowired
+    HL7printer hl7printer;
+    @Autowired
+    RandomGenerator randomGenerator;
 
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
@@ -70,7 +74,7 @@ public class VaccinationController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Invalid patient id");
         }
-        return RandomGenerator.randomVaccinationEvent(patient.get(), patient.get().getFacility());
+        return randomGenerator.randomVaccinationEvent(patient.get(), patient.get().getFacility());
     }
 
     @PostMapping()
@@ -127,7 +131,7 @@ public class VaccinationController {
         Vaccine vaccine = vaccinationEvent.get().getVaccine();
         Patient patient = vaccinationEvent.get().getPatient();
         Facility facility = vaccinationEvent.get().getAdministeringFacility();
-        String vxu = new HL7printer().buildVxu(vaccine,patient,facility);
+        String vxu = hl7printer.buildVxu(vaccine,patient,facility);
         return ResponseEntity.ok( vxu );
     }
 

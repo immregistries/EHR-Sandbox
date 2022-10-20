@@ -39,14 +39,29 @@ export class FhirService {
       { responseType: 'text' });
   }
 
-  quickPostImmunization(patientId: number, vaccinationId: number, resource: string): Observable<string> {
+  quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource)
+    switch(operation) {
+      case "Create" : {
+        return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource)
+      }
+      case "UpdateOrCreate" :
+      case "Update" :
+      default :
+        return this.putImmunization(tenantId,facilityId,patientId,vaccinationId,resource)
+    }
   }
 
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
     return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
+      resource,
+      httpOptions);
+  }
+
+  putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
+    return this.http.put<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
       resource,
       httpOptions);

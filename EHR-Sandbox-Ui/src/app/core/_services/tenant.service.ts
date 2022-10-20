@@ -67,8 +67,8 @@ export class TenantService {
       `${this.settings.getApiUrl()}/tenants/${tenantId}`, httpOptions);
   }
 
-  postTenant(tenant: Tenant): Observable<HttpResponse<string>> {
-    return this.http.post<string>(
+  postTenant(tenant: Tenant): Observable<HttpResponse<Tenant>> {
+    return this.http.post<Tenant>(
       this.settings.getApiUrl()
       + '/tenants',
       tenant, {observe: 'response'});

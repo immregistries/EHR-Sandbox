@@ -49,7 +49,7 @@ public class FacilityController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> postFacility(@PathVariable() int tenantId,
+    public ResponseEntity<Facility> postFacility(@PathVariable() int tenantId,
                                                @RequestBody Facility facility) {
         if (facility.getNameDisplay().length() < 1){
             throw new ResponseStatusException(
@@ -70,8 +70,9 @@ public class FacilityController {
                     .path("/{id}")
                     .buildAndExpand(newEntity.getId())
                     .toUri();
-            return ResponseEntity.created(location).build();
-//            return ResponseEntity.created(location).body("Facility " + newEntity.getId() + " saved");
+//            return ResponseEntity.created(location).build();
+            return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
+//                    .created(location).body(newEntity);
         }
     }
 }

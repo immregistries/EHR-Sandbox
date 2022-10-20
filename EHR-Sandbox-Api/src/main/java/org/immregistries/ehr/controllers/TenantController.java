@@ -42,7 +42,7 @@ public class TenantController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> postTenant(@RequestBody Tenant tenant) {
+    public ResponseEntity<Tenant> postTenant(@RequestBody Tenant tenant) {
         if (tenantRepository.existsByUserIdAndNameDisplay(userDetailsService.currentUserId(), tenant.getNameDisplay())){
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Tenant already exists");
@@ -58,9 +58,7 @@ public class TenantController {
                 .path("/{id}")
                 .buildAndExpand(newTenant.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
-//        return ResponseEntity.created(location).body("Tenant " + newTenant.getId() + " created");
-
+        return new ResponseEntity<>(newTenant, HttpStatus.CREATED);
     }
 
 

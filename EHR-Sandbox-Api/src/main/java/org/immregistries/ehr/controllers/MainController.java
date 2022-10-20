@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/")
 public class MainController {
+    @Autowired
+    CodeMapManager codeMapManager;
+    @Autowired
+    RandomGenerator randomGenerator;
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
@@ -35,19 +39,18 @@ public class MainController {
 
     @GetMapping("/random_patient")
     public Patient randomPatient() {
-        return RandomGenerator.randomPatient(null,null);
+        return randomGenerator.randomPatient(null,null);
     }
 
     @GetMapping("/random_vaccination")
     public VaccinationEvent randomVaccination() {
-        return RandomGenerator.randomVaccinationEvent(null,null);
+        return randomGenerator.randomVaccinationEvent(null,null);
     }
 
     @GetMapping("/code_maps")
     public String codeMaps() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        CodeMap codeMap = CodeMapManager.getCodeMap();
-//        logger.info("Code Maps fetched");
+        CodeMap codeMap = codeMapManager.getCodeMap();
         return gson.toJson(codeMap);
     }
 

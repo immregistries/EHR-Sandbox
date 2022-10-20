@@ -26,9 +26,10 @@ export class TenantCreationComponent implements OnInit {
     this.newTenant = {id: -1, nameDisplay: this.newTenantForm.value}
     // this.tenantService.getTenant(1).subscribe((res) => {this._snackBar.open(`${res}`)})
     this.tenantService.postTenant(this.newTenant).subscribe({
-      next: (res: HttpResponse<string>) => {
+      next: (res: HttpResponse<Tenant>) => {
         if (res.body) {
-          this._snackBar.open(res.body, 'close')
+          // this._snackBar.open("Ok", 'close')
+          this.tenantService.setTenant(res.body)
         }
         this.tenantService.doRefresh()
         this._dialogRef.close(true)

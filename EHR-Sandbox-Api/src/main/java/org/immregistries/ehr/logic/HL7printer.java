@@ -16,8 +16,13 @@ import org.immregistries.ehr.entities.Vaccine;
 import org.immregistries.ehr.security.AuthTokenFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class HL7printer {
+    @Autowired
+    CodeMapManager codeMapManager;
 
     private static final String QBP_Z34 = "Z34";
     private static final String QBP_Z44 = "Z44";
@@ -33,7 +38,7 @@ public class HL7printer {
 
     public String buildVxu(Vaccine vaccination, Patient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
-        CodeMap codeMap = CodeMapManager.getCodeMap();
+        CodeMap codeMap = codeMapManager.getCodeMap();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         createMSH("VXU^V04^VXU_V04", "Z22", sb);
         printQueryPID(patient, sb, sdf, 1);

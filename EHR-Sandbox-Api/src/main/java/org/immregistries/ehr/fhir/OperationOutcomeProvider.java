@@ -62,6 +62,16 @@ public class OperationOutcomeProvider implements IResourceProvider {
         return operationOutcome;
     }
 
+    @Update
+    public MethodOutcome updateOperationOutcome(
+            @ResourceParam OperationOutcome operationOutcome,
+            RequestDetails theRequestDetails,
+            HttpServletRequest request
+    ) {
+        return registerOperationOutcome(operationOutcome,theRequestDetails,request);
+    }
+
+
     @Create
     // Endpoint for Subscription
     public MethodOutcome registerOperationOutcome(

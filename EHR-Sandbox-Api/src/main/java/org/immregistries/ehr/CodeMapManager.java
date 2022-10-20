@@ -2,22 +2,14 @@ package org.immregistries.ehr;
 
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.CodeMapBuilder;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 
+@Service
 public class CodeMapManager {
-
-  private static CodeMapManager singleton = null;
-
-  public static CodeMap getCodeMap() {
-    if (singleton == null) {
-      singleton = new CodeMapManager();
-    }
-    return singleton.codeMap;
-  }
-
   CodeMapBuilder builder = CodeMapBuilder.INSTANCE;
-  CodeMap codeMap = null;
+  CodeMap codeMap;
 
   public CodeMapManager() {
     InputStream is = this.getClass().getResourceAsStream("/Compiled.xml");
@@ -26,4 +18,11 @@ public class CodeMapManager {
     }
     codeMap = builder.getCodeMap(is);
   }
+
+
+
+  public CodeMap getCodeMap() {
+    return this.codeMap;
+  }
+
 }

@@ -46,6 +46,8 @@ public class PatientController {
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    RandomGenerator randomGenerator;
 
     private static final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
@@ -71,7 +73,7 @@ public class PatientController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id");
         }
-        return RandomGenerator.randomPatient(facility.get().getTenant(), facility.get());
+        return randomGenerator.randomPatient(facility.get().getTenant(), facility.get());
     }
 
     @PostMapping()

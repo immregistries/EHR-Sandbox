@@ -3,6 +3,7 @@ package org.immregistries.ehr.fhir;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -71,6 +72,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
 //                    if (!subscriptionStore.get().getStatus().equals("Active")) {
 //                        throw new InvalidRequestException("No active  subscription registered with this id");
 //                    }
+                    logger.info("events number {}",status.getEventsSinceSubscriptionStartElement().getValue());
                     if (status.getEventsSinceSubscriptionStartElement().getValue().intValue() != subscriptionStore.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
                         // TODO trigger problem
                     }
@@ -84,6 +86,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
         }
         return methodOutcome;
     }
+
 
     private void processHandshake(SubscriptionStatus status,SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
         logger.info("Handshake {} {}", status.getSubscription(), status.getStatus());

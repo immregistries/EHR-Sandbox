@@ -9,6 +9,8 @@ import org.immregistries.ehr.entities.*;
 import org.immregistries.ehr.security.AuthTokenFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Date;
@@ -16,11 +18,13 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+@Service
 public class RandomGenerator {
     private static final Logger logger = LoggerFactory.getLogger(RandomGenerator.class);
+    @Autowired
+    CodeMapManager codeMapManager;
 
-
-    public static Patient randomPatient(Tenant tenant, Facility facility){
+    public Patient randomPatient(Tenant tenant, Facility facility){
         Faker faker = new Faker();
 
         int randDay = (int) (Math.random()*30+1);
@@ -38,7 +42,7 @@ public class RandomGenerator {
         Date tenDaysAgo = new Date(now - aDay * 10);
         Date fourYearsAgo = new Date(now - aDay*365*4);
 
-        CodeMap codeMap = CodeMapManager.getCodeMap();
+        CodeMap codeMap = codeMapManager.getCodeMap();
         Collection<Code> codeListGuardian=codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
 
         Date birthDate = between(eightyYearsAgo,tenDaysAgo );
@@ -127,7 +131,7 @@ public class RandomGenerator {
         return new Date(randomMillisSinceEpoch);
     }
 
-    public static VaccinationEvent randomVaccinationEvent(Patient patient, Facility facility){
+    public VaccinationEvent randomVaccinationEvent(Patient patient, Facility facility){
         VaccinationEvent vaccinationEvent = new VaccinationEvent();
         vaccinationEvent.setPatient(patient);
         vaccinationEvent.setAdministeringFacility(facility);
@@ -141,7 +145,7 @@ public class RandomGenerator {
         return vaccinationEvent;
     }
 
-    public static Vaccine randomVaccine(){
+    public Vaccine randomVaccine(){
         Date currentDate = new Date();
         Date instant = new Date();
         int randomN = (int) (Math.random()*9);
@@ -167,7 +171,7 @@ public class RandomGenerator {
         vaccine.setLotNumber(Integer.toString(randomN));
         vaccine.setRefusalReasonCode("");
 
-        CodeMap codeMap = CodeMapManager.getCodeMap();
+        CodeMap codeMap = codeMapManager.getCodeMap();
         Collection<Code> codeListCVX=codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code>codeListMVX=codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
         Collection<Code>codeListNDC=codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);

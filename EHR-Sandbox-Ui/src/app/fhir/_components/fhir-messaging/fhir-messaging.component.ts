@@ -85,7 +85,7 @@ export class FhirMessagingComponent implements AfterViewInit {
   }
 
 sendVaccination() {
-    this.fhirService.quickPostImmunization(this.patientId,this.vaccinationId, this.vaccinationResource).subscribe(
+    this.fhirService.quickPostImmunization(this.patientId,this.vaccinationId, this.vaccinationResource, this.immunizationOperation).subscribe(
       (res) => {
         this.vaccinationAnswer = res
         this.vaccinationError = ""

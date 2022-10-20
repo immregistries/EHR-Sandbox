@@ -8,6 +8,8 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.VaccinationEvent;
 import org.immregistries.ehr.entities.Vaccine;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +19,12 @@ import java.util.List;
 /**
  * Maps the Database with FHIR for the immunization resources
  */
+@Service
 public class ImmunizationHandler {
+  //        logger.info("Code Maps fetched");
+  @Autowired
+  CodeMapManager codeMapManager;
+
   // Constants need to be harmonized with IIS Sandbox
   public static final String CVX = "http://hl7.org/fhir/sid/cvx";
   public static final String MVX = "http://terminology.hl7.org/CodeSystem/MVX";
@@ -34,7 +41,7 @@ public class ImmunizationHandler {
   public static final String FUNDING_ELIGIBILITY = "fundingEligibility";
 
 
-  public static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination, String identifier_system) {
+  public Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination, String identifier_system) {
     Immunization i = dbVaccinationToFhirVaccination(dbVaccination);
     Identifier identifier = i.addIdentifier();
     identifier.setValue(""+dbVaccination.getId());
@@ -47,7 +54,7 @@ public class ImmunizationHandler {
     return  i;
   }
   
-  private static Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
+  private Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
     
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
@@ -79,7 +86,7 @@ public class ImmunizationHandler {
         }
       }
     }
-    CodeMap codeMap = CodeMapManager.getCodeMap();
+    CodeMap codeMap = codeMapManager.getCodeMap();
     Collection<Code> codeRoute= codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
     for (Code c: codeRoute) {
       if (c.getValue().equals(vaccine.getBodyRoute())) {
