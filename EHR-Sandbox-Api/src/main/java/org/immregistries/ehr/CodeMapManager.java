@@ -19,8 +19,6 @@ public class CodeMapManager {
     codeMap = builder.getCodeMap(is);
   }
 
-
-
   public CodeMap getCodeMap() {
     return this.codeMap;
   }

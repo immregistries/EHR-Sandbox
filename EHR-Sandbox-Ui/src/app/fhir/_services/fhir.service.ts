@@ -39,32 +39,55 @@ export class FhirService {
       { responseType: 'text' });
   }
 
-  quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
+  quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", patientFhirId: string): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     switch(operation) {
       case "Create" : {
-        return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource)
+        return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource,patientFhirId)
       }
       case "UpdateOrCreate" :
       case "Update" :
       default :
-        return this.putImmunization(tenantId,facilityId,patientId,vaccinationId,resource)
+        return this.putImmunization(tenantId,facilityId,patientId,vaccinationId,resource,patientFhirId)
     }
   }
 
-  postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
+  postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId: string): Observable<string> {
+    let options = {
+      headers: httpOptions.headers,
+      params: {
+        patientFhirId: patientFhirId
+      }
+    }
+    if (patientFhirId.length>0){
+      options.params = {
+        patientFhirId: patientFhirId
+      }
+    }
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
       resource,
-      httpOptions);
+      options);
   }
 
-  putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string): Observable<string> {
+  putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId: string): Observable<string> {
+    let options = {
+      headers: httpOptions.headers,
+      params: {
+        patientFhirId: patientFhirId
+      }
+    }
+    if (patientFhirId.length>0){
+      options.params = {
+        patientFhirId: patientFhirId
+      }
+    }
     return this.http.put<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
       resource,
-      httpOptions);
+      options,
+      );
   }
 
   quickGetPatientResource(patientId: number): Observable<string> {

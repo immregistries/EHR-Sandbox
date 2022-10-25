@@ -16,7 +16,7 @@ export class FacilityMenuComponent implements OnInit {
 
   constructor(public facilityService: FacilityService,
     public tenantService: TenantService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.facilityService.getRefresh().subscribe((bool) => {

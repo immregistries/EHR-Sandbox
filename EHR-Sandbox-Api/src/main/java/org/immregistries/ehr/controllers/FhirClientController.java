@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.hl7.fhir.r5.model.Immunization;
+import org.hl7.fhir.r5.model.Reference;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.entities.Patient;
@@ -120,10 +121,17 @@ public class FhirClientController {
     }
 
     @PostMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir")
-    public ResponseEntity<String> postImmunization(@RequestBody String message) {
+    public ResponseEntity<String> postImmunization(@RequestBody String message, @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class,message);
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        if (patientFhirId!= null && !patientFhirId.isEmpty()) {
+            if (patientFhirId.startsWith("Patient/")) {
+                immunization.setPatient(new Reference().setReference(patientFhirId));
+            } else {
+                immunization.setPatient(new Reference().setReference("Patient/" + patientFhirId));
+            }
+        }
         MethodOutcome outcome;
         try {
             outcome = ResourceClient.create(immunization, ir);
@@ -136,10 +144,17 @@ public class FhirClientController {
     }
 
     @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir")
-    public ResponseEntity<String> updateImmunization(@RequestBody String message) {
+    public ResponseEntity<String> updateImmunization(@RequestBody String message, @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class,message);
         ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        if (patientFhirId!= null && !patientFhirId.isEmpty()) {
+            if (patientFhirId.startsWith("Patient/")) {
+                immunization.setPatient(new Reference().setReference(patientFhirId));
+            } else {
+                immunization.setPatient(new Reference().setReference("Patient/" + patientFhirId));
+            }
+        }
         MethodOutcome outcome;
         try {
             outcome = ResourceClient.updateOrCreate(immunization, "Immunization",immunization.getIdentifierFirstRep(), ir);

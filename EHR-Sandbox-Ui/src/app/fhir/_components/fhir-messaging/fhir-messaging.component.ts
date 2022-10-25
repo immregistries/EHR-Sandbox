@@ -15,27 +15,31 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
 export class FhirMessagingComponent implements AfterViewInit {
   patientLoading: Boolean = false
   vaccinationLoading: Boolean = false
+  patientRequestLoading: Boolean = false
+  vaccinationRequestLoading: Boolean = false
 
   @Input() vaccinationId!: number;
   @Input() patientId: number = -1;
 
   public patientResource: string = "";
   public patientAnswer: string = "";
-  public patientError: string = "";
+  public patientError: boolean = false;
 
   public vaccinationResource: string = "";
   public vaccinationAnswer: string = "";
-  public vaccinationError: string = "";
+  public vaccinationError: boolean = false;
 
   public style: string = 'width: 50%'
+
+  public autofillId: boolean = true;
+  public patientFhirId = "";
 
   constructor(private fhirService: FhirService,
     private patientService: PatientService,
     private vaccinationService: VaccinationService,
     private _snackBar: MatSnackBar,
     private feedbackService: FeedbackService) {
-
-     }
+  }
 
   public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
   public immunizationOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
@@ -56,24 +60,29 @@ export class FhirMessagingComponent implements AfterViewInit {
   }
 
   sendPatient() {
+    this.patientAnswer = ""
+    this.patientRequestLoading = true
     this.fhirService.quickPostPatient(this.patientId, this.patientResource, this.patientOperation).subscribe({
       next: (res) => {
+        this.patientRequestLoading = false
         this.patientAnswer = res
-        this.patientError = ""
+        this.patientError = false
         this.patientService.doRefresh()
-        // const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
-        // this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
-        //   console.log(res)
-        // })
+        if (this.autofillId) {
+          this.patientFhirId = res
+        }
       },
       error: (err) => {
-        this.patientAnswer = ""
-        if (err.error.text) {
-          this.patientError = err.error.text
+        this.patientRequestLoading = false
+        this.patientError = true
+        if (err.error.error) {
+          this.patientAnswer = err.error.error
+        }else if (err.error.text) {
+          this.patientAnswer = err.error.text
         } else {
-          this.patientError = err.error.error
+          this.patientAnswer = "Error"
         }
-        const feedback: Feedback = {iis: "fhirTest", content: this.patientError, severity: "error"}
+        const feedback: Feedback = {iis: "fhirTest", content: this.patientAnswer, severity: "error"}
         this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
           console.log(res)
           this.patientService.doRefresh()
@@ -85,36 +94,34 @@ export class FhirMessagingComponent implements AfterViewInit {
   }
 
 sendVaccination() {
-    this.fhirService.quickPostImmunization(this.patientId,this.vaccinationId, this.vaccinationResource, this.immunizationOperation).subscribe(
-      (res) => {
-        this.vaccinationAnswer = res
-        this.vaccinationError = ""
-        this.feedbackService.doRefresh()
-        // const feedback: Feedback = {iis: "fhirTest", content: res, severity: "info"}
-        // this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
-        //   console.log(res)
-        //   this.patientService.doRefresh()
-        //   this.vaccinationService.doRefresh()
-        // })
-      },
-      (err) => {
-        this.vaccinationAnswer = ""
-        if (err.error.text) {
-          this.vaccinationError = err.error.text
-        } else {
-          this.vaccinationError = err.error.error
-        }
-        this.feedbackService.doRefresh()
-        const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationError, severity: "error", date: new Date()}
-        this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
-          console.log(res)
-          this.patientService.doRefresh()
-          this.vaccinationService.doRefresh()
-          this.feedbackService.doRefresh()
-        })
-        console.error(err)
+  this.vaccinationAnswer = ""
+  this.vaccinationRequestLoading = true
+  this.fhirService.quickPostImmunization(this.patientId,this.vaccinationId, this.vaccinationResource, this.immunizationOperation, this.patientFhirId).subscribe({
+    next: (res) => {
+      this.vaccinationRequestLoading = false
+      this.vaccinationAnswer = res
+      this.vaccinationError = false
+      this.feedbackService.doRefresh()
+    },
+    error: (err) => {
+      this.vaccinationError = true
+      if (err.error.error) {
+        this.vaccinationAnswer = err.error.error
+      } else if (err.error.text) {
+        this.vaccinationAnswer = err.error.text
+      } else {
+        this.vaccinationAnswer = "Error"
       }
-    )
+      this.feedbackService.doRefresh()
+      const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationAnswer, severity: "error", date: new Date()}
+      this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
+        console.log(res)
+        this.patientService.doRefresh()
+        this.vaccinationService.doRefresh()
+        this.feedbackService.doRefresh()
+      })
+      console.error(err)
+    }})
   }
 
 

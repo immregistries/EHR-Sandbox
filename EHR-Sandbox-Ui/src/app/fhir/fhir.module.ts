@@ -21,6 +21,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 import { SubscriptionService } from './_services/subscription.service';
 
 @NgModule({
@@ -46,6 +48,7 @@ import { SubscriptionService } from './_services/subscription.service';
     MatSelectModule,
     MatGridListModule,
     MatCardModule,
+    MatCheckboxModule,
 
     SharedModule,
   ],
