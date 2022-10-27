@@ -126,7 +126,6 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     // dialogRef.afterClosed().subscribe(result => {
     //   this.patientService.doRefresh()
     // });
-
   }
 
   openVaccination(vaccination: VaccinationEvent | number){
@@ -138,10 +137,13 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
       panelClass: 'dialog-with-bar',
       data: {vaccination: vaccination},
     });
-
   }
 
   remove(element: Feedback){
 
   }
+
+  // Here dealing with overflow and size
+  @Input()
+  maxHeight?: number;
 }

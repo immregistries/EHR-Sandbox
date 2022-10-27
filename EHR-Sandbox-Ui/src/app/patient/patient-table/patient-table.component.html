@@ -49,6 +49,9 @@
       <div class="element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
         <app-patient-details [patient]="element"></app-patient-details>
+        <button mat-icon-button color="primary" (click)="openPatient(element); $event.stopPropagation();">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
       </div>
     </td>
   </ng-container>

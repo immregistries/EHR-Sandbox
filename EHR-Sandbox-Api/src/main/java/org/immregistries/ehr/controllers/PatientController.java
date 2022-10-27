@@ -43,8 +43,6 @@ public class PatientController {
     @Autowired
     private TenantRepository tenantRepository;
     @Autowired
-    private ImmunizationRegistryRepository immunizationRegistryRepository;
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     RandomGenerator randomGenerator;

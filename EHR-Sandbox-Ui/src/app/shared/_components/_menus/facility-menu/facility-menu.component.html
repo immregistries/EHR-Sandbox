@@ -6,7 +6,9 @@
   <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
 </mat-menu> -->
 <app-hover-menu>
-  <button trigger mat-raised-button style="" (click)="$event.stopPropagation()" *ngIf="tenantService.getTenantId() > 0" [color]="facilityService.getFacilityId() > 0 ? 'primary' : 'basic'">
+  <button trigger mat-raised-button
+  (click)="selectFirstOrCreate()"
+  *ngIf="tenantService.getTenantId() > 0" [color]="facilityService.getFacilityId() > 0 ? 'primary' : 'basic'">
     {{(facilityService.getFacility().id > 0)? ("Facility: " + facilityService.getFacility().nameDisplay) : "Select Facility" }}
   </button>
   <div content>

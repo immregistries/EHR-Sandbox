@@ -76,18 +76,18 @@ export class FhirMessagingComponent implements AfterViewInit {
         this.patientRequestLoading = false
         this.patientError = true
         if (err.error.error) {
-          this.patientAnswer = err.error.error
+          this.patientAnswer = "error " + err.error.error
         }else if (err.error.text) {
-          this.patientAnswer = err.error.text
+          this.patientAnswer = "error " + err.error.text
         } else {
           this.patientAnswer = "Error"
         }
-        const feedback: Feedback = {iis: "fhirTest", content: this.patientAnswer, severity: "error"}
-        this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
-          console.log(res)
-          this.patientService.doRefresh()
-          this.feedbackService.doRefresh()
-        })
+        // const feedback: Feedback = {iis: "fhirTest", content: this.patientAnswer, severity: "error"}
+        // this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
+        //   console.log(res)
+        //   this.patientService.doRefresh()
+        //   this.feedbackService.doRefresh()
+        // })
         console.error(err)
       }
     })
@@ -113,13 +113,13 @@ sendVaccination() {
         this.vaccinationAnswer = "Error"
       }
       this.feedbackService.doRefresh()
-      const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationAnswer, severity: "error", date: new Date()}
-      this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
-        console.log(res)
-        this.patientService.doRefresh()
-        this.vaccinationService.doRefresh()
-        this.feedbackService.doRefresh()
-      })
+      // const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationAnswer, severity: "error", date: new Date()}
+      // this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
+      //   console.log(res)
+      //   this.patientService.doRefresh()
+      //   this.vaccinationService.doRefresh()
+      //   this.feedbackService.doRefresh()
+      // })
       console.error(err)
     }})
   }

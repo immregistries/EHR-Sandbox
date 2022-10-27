@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
+import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
 import { SettingsService } from 'src/app/core/_services/settings.service';
 
 @Component({
@@ -8,21 +9,32 @@ import { SettingsService } from 'src/app/core/_services/settings.service';
   styleUrls: ['./settings-dialog.component.css']
 })
 export class SettingsDialogComponent implements OnInit {
-  imm!: ImmunizationRegistry
+  @Input()
+  immunizationRegistry!: ImmunizationRegistry
 
-  constructor(private settings: SettingsService) { }
+  constructor(private immRegistryService: ImmRegistriesService) { }
 
   ngOnInit(): void {
-    this.settings.getSettings().subscribe(res => {
-      this.imm = res
+    this.immRegistryService.getObservableImmRegistry().subscribe(res => {
+      this.immunizationRegistry = res
     })
   }
 
   save() {
-    this.settings.putSettings(this.imm).subscribe(res => {
-      this.imm = res
-      console.log(res)
+    this.immRegistryService.putImmRegistry(this.immRegistryService.getImmRegistry()).subscribe(res => {
+      this.immRegistryService.doRefresh();
+      this.immRegistryService.setImmRegistry(res);
     })
+  }
+
+  new() {
+    this.immRegistryService.setImmRegistry({});
+    // this.immRegistryService.putImmRegistry(this.imm).subscribe(res => {
+    //   this.immRegistryService.setImmRegistry(res);
+    //   this.immRegistryService.doRefresh();
+    //   // this.imm = res
+    //   console.log(res)
+    // })
   }
 
 }

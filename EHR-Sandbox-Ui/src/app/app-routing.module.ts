@@ -9,6 +9,7 @@ import { PatientFormComponent } from './patient/patient-form/patient-form.compon
 import { VaccinationFormComponent } from './vaccination/vaccination-form/vaccination-form.component';
 import { FeedbackTableComponent } from './shared/_components/feedback-table/feedback-table.component';
 import { SubscriptionDashboardComponent } from './fhir/_components/subscription-dashboard/subscription-dashboard.component';
+import { SettingsComponent } from './core/_components/settings/settings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -17,7 +18,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'patient_form', component: PatientFormComponent },
   { path: 'vaccination_form', component: VaccinationFormComponent },
-  { path: 'settings', component: SettingsDialogComponent },
+  { path: 'settings', component: SettingsComponent },
   { path: 'login', component: AuthenticationDialogComponent },
   { path: 'fhir', component: FhirMessagingComponent },
   { path: 'feedback', component: FeedbackTableComponent },

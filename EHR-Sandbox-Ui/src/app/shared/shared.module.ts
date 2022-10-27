@@ -27,6 +27,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 import { HoverMenuComponent } from './_components/_menus/hover-menu/hover-menu.component';
 import { EmptyListMessageComponent } from './_components/empty-list-message/empty-list-message.component';
+import { SelectImmregistryComponent } from './_components/select-immregistry/select-immregistry.component';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -43,6 +45,7 @@ import { EmptyListMessageComponent } from './_components/empty-list-message/empt
     FeedbackDialogComponent,
     HoverMenuComponent,
     EmptyListMessageComponent,
+    SelectImmregistryComponent,
   ],
   imports: [
     CommonModule,
@@ -61,7 +64,8 @@ import { EmptyListMessageComponent } from './_components/empty-list-message/empt
     MatDialogModule,
     MatCardModule,
     MatGridListModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSelectModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -84,6 +88,7 @@ import { EmptyListMessageComponent } from './_components/empty-list-message/empt
     FeedbackDialogComponent,
     HoverMenuComponent,
     EmptyListMessageComponent,
+    SelectImmregistryComponent,
   ],
 })
 export class SharedModule { }

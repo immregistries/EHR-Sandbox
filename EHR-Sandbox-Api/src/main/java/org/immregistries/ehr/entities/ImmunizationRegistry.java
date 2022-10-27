@@ -21,6 +21,9 @@ public class ImmunizationRegistry {
     @JsonIgnore
     private User user;
 
+    @Column(name = "name", nullable = false, length = 50)
+    private String name = "";
+
     @Column(name = "iis_HL7_url", nullable = false, length = 250)
     private String iisHl7Url = "";
 
@@ -90,5 +93,13 @@ public class ImmunizationRegistry {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

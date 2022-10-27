@@ -10,6 +10,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationCreationComponent } from '../vaccination-form/vaccination-creation/vaccination-creation.component';
 import { FeedbackDialogComponent } from '../../shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
+import { VaccinationDashboardDialogComponent } from '../vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -116,6 +117,17 @@ export class VaccinationTableComponent implements AfterViewInit  {
       width: '100%',
       panelClass: 'dialog-with-bar',
       data: {vaccination: element},
+    });
+  }
+
+  openVaccination(vaccination: VaccinationEvent | number){
+    const dialogRef = this.dialog.open(VaccinationDashboardDialogComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: {vaccination: vaccination},
     });
   }
 

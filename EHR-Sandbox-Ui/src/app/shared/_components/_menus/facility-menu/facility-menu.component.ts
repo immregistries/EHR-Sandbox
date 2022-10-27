@@ -43,4 +43,15 @@ export class FacilityMenuComponent implements OnInit {
     }
   }
 
+  selectFirstOrCreate() {
+    if (this.facilityService.getFacilityId() < 0) {
+      if (this.list && this.list[0] ) {
+        this.onSelection(this.list[0])
+      } else {
+        this.openDialog()
+      }
+    }
+    event?.stopPropagation()
+  }
+
 }

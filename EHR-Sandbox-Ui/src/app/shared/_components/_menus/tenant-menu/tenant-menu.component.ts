@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tenant } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
@@ -10,7 +10,7 @@ import { TenantCreationComponent } from '../../_dialogs/tenant-creation/tenant-c
   templateUrl: './tenant-menu.component.html',
   styleUrls: ['./tenant-menu.component.css']
 })
-export class TenantMenuComponent implements OnInit {
+export class TenantMenuComponent implements AfterViewInit {
   list!: Tenant[];
 
   constructor(
@@ -18,7 +18,7 @@ export class TenantMenuComponent implements OnInit {
     private facilityService: FacilityService,
     public dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.tenantService.getRefresh().subscribe((bool) => {
       this.tenantService.readTenants().subscribe((res) => {
         this.list = res
@@ -40,6 +40,17 @@ export class TenantMenuComponent implements OnInit {
       this.tenantService.setTenant(event)
     }
     this.facilityService.setFacility({id: -1})
+  }
+
+  selectFirstOrCreate() {
+    if (this.tenantService.getTenantId() < 0) {
+      if (this.list && this.list[0]) {
+        this.onSelection(this.list[0])
+      } else {
+        this.openDialog()
+      }
+    }
+    event?.stopPropagation()
   }
 
 }

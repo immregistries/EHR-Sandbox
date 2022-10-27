@@ -1,6 +1,6 @@
 <div class="grid-container">
   <h1 class="mat-h1" *ngIf="patient">
-    {{'Patient :' + (patient.nameFirst ?? '') + ' ' + (patient.nameMiddle ?? '') + ' ' + (patient.nameLast ?? '')}}
+    {{'Patient: ' + (patient.nameFirst ?? '') + ' ' + (patient.nameMiddle ?? '') + ' ' + (patient.nameLast ?? '')}}
   </h1>
   <mat-grid-list cols="4" rowHeight="350px">
     <mat-grid-tile [colspan]="1" [rowspan]="1">

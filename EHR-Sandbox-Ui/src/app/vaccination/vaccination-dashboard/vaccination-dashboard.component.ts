@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
+import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
 @Component({
   selector: 'app-vaccination-dashboard',
@@ -9,9 +10,11 @@ import { VaccinationEvent } from 'src/app/core/_model/rest';
 export class VaccinationDashboardComponent implements OnInit {
   @Input() vaccination!: VaccinationEvent
 
-  constructor() { }
+
+  constructor(public codeMapsService: CodeMapsService) { }
 
   ngOnInit(): void {
+    this.codeMapsService.getCodeMap("cvx")
   }
 
 }

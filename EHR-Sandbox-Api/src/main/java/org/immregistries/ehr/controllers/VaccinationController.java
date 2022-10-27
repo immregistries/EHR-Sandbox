@@ -50,7 +50,7 @@ public class VaccinationController {
     @Autowired
     private VaccineRepository vaccineRepository;
     @Autowired
-    private ImmunizationRegistryRepository immunizationRegistryRepository;
+    private ImmRegistryController immRegistryController;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -135,10 +135,10 @@ public class VaccinationController {
         return ResponseEntity.ok( vxu );
     }
 
-    @PostMapping("/{vaccinationId}/vxu")
-    public ResponseEntity<String>  vxuSend(@RequestBody String message) {
+    @PostMapping("/{vaccinationId}/vxu/" + FhirClientController.IMM_REGISTRY_SUFFIX)
+    public ResponseEntity<String>  vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

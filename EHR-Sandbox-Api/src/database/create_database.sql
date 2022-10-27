@@ -23,6 +23,7 @@ CREATE TABLE `user` (
 CREATE TABLE `immunization_registry` (
   `immunization_registry_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
   `iis_HL7_url` varchar(250) NOT NULL,
   `iis_FHIR_url` varchar(250) NOT NULL,
   `iis_username` varchar(250) NOT NULL,
@@ -216,7 +217,7 @@ CREATE TABLE `subscription_store` (
   `notification_url_location` varchar(45) DEFAULT NULL,
   `max_count` int DEFAULT NULL,
   PRIMARY KEY (`identifier`)
-)
+);
 
 CREATE TABLE `subscription_info` (
   `subscription_store` varchar(45) NOT NULL,

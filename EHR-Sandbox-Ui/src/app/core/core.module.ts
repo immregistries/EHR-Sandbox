@@ -44,12 +44,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { VaccinationModule } from '../vaccination/vaccination.module';
+import { SettingsComponent } from './_components/settings/settings.component';
 
 @NgModule({
   declarations: [
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
+    SettingsComponent,
   ],
   imports: [
     CommonModule,
@@ -99,6 +101,7 @@ import { VaccinationModule } from '../vaccination/vaccination.module';
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
+    SettingsComponent,
   ],
   providers: [
     SettingsService,

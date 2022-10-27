@@ -3,6 +3,10 @@ package org.immregistries.ehr.repositories;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface ImmunizationRegistryRepository extends CrudRepository<ImmunizationRegistry, Integer> {
-    ImmunizationRegistry findByUserId(Integer userId);
+    Iterable<ImmunizationRegistry> findByUserId(Integer userId);
+    Optional<ImmunizationRegistry> findByIdAndUserId(Integer id, Integer userId);
+    Boolean existsByNameAndUserId(String name, Integer userId);
 }

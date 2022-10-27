@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { SettingsService } from '../../core/_services/settings.service';
 import { FacilityService } from '../../core/_services/facility.service';
 import { TenantService } from '../../core/_services/tenant.service';
+import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,7 +20,8 @@ export class FhirService {
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) { }
+    private tenantService: TenantService,
+    private immRegistries: ImmRegistriesService) { }
 
   /**
    *
@@ -30,10 +32,6 @@ export class FhirService {
   quickGetImmunizationResource(patientId: number, vaccinationId: number): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.getImmunizationResource(tenantId,facilityId,patientId,vaccinationId)
-  }
-
-  getImmunizationResource(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<string> {
     return this.http.get(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/resource`,
       { responseType: 'text' });
@@ -54,49 +52,25 @@ export class FhirService {
   }
 
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId: string): Observable<string> {
-    let options = {
-      headers: httpOptions.headers,
-      params: {
-        patientFhirId: patientFhirId
-      }
-    }
-    if (patientFhirId.length>0){
-      options.params = {
-        patientFhirId: patientFhirId
-      }
-    }
+    const immId = this.immRegistries.getImmRegistryId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir/imm-registry/${immId}`,
       resource,
-      options);
+      this.immunizationOptions(patientFhirId));
   }
 
   putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId: string): Observable<string> {
-    let options = {
-      headers: httpOptions.headers,
-      params: {
-        patientFhirId: patientFhirId
-      }
-    }
-    if (patientFhirId.length>0){
-      options.params = {
-        patientFhirId: patientFhirId
-      }
-    }
+    const immId = this.immRegistries.getImmRegistryId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir/imm-registry/${immId}`,
       resource,
-      options,
+      this.immunizationOptions(patientFhirId),
       );
   }
 
   quickGetPatientResource(patientId: number): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.getPatientResource(tenantId,facilityId,patientId)
-  }
-
-  getPatientResource(tenantId: number, facilityId: number, patientId: number): Observable<string> {
     if (tenantId < 0 || facilityId < 0 || patientId < 0 ){
       return of('')
     } else {
@@ -104,7 +78,6 @@ export class FhirService {
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/resource`,
         { responseType: 'text' });
     }
-
   }
 
   quickPostPatient(patientId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
@@ -122,34 +95,48 @@ export class FhirService {
   }
 
   putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir/imm-registry/${immId}`,
       resource,
       httpOptions);
   }
-
 
   postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir/imm-registry/${immId}`,
       resource,
       httpOptions);
   }
 
-  getFromIIS(resourceType: string, identifier: string): Observable<string> {
+  getFromIIS( resourceType: string, identifier: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iis/${resourceType}/${identifier}`,
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/${resourceType}/${identifier}`,
       { responseType: 'text' });
   }
 
-readOperationOutcome(): Observable<any> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-    return this.http.get<any>(
-   `${this.settings.getApiUrl()}/fhir/${facilityId}`,
-      httpOptions);
+  // readOperationOutcome(): Observable<any> {
+  //   const tenantId: number = this.tenantService.getTenantId()
+  //   const facilityId: number = this.facilityService.getFacilityId()
+  //   return this.http.get<any>(
+  //  `${this.settings.getApiUrl()}/fhir/${facilityId}`,
+  //     httpOptions);
+  // }
+
+  private immunizationOptions(patientFhirId: string) {
+    let options = {
+      headers: httpOptions.headers,
+      params: {
+        patientFhirId: patientFhirId
+      }
+    }
+    if (patientFhirId.length>0){
+      options.params = {
+        patientFhirId: patientFhirId
+      }
+    }
+    return options
   }
-
-
-
 }

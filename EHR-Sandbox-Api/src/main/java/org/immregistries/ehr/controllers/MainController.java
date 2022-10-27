@@ -28,8 +28,6 @@ public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
-    private ImmunizationRegistryRepository immunizationRegistryRepository;
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
     @GetMapping("/new_patient")
@@ -53,20 +51,5 @@ public class MainController {
         CodeMap codeMap = codeMapManager.getCodeMap();
         return gson.toJson(codeMap);
     }
-
-    @GetMapping("/settings")
-    public ImmunizationRegistry settings() {
-        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
-    }
-
-    @PutMapping("/settings")
-    public ImmunizationRegistry putSettings(@RequestBody ImmunizationRegistry settings) {
-        ImmunizationRegistry oldSettings = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
-        settings.setUser(oldSettings.getUser());
-        settings.setId(oldSettings.getId());
-        return immunizationRegistryRepository.save(settings);
-    }
-
-
 
 }

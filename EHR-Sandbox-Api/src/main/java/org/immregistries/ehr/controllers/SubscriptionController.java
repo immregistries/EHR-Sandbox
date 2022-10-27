@@ -42,7 +42,7 @@ public class SubscriptionController {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private ImmunizationRegistryRepository immunizationRegistryRepository;
+    private ImmRegistryController immRegistryController;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
@@ -55,9 +55,9 @@ public class SubscriptionController {
         return subscriptionStore;
     }
 
-    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
-    public Boolean subscribeToIIS(@PathVariable() int facilityId , @RequestBody String body) {
-        ImmunizationRegistry ir = immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
+    public Boolean subscribeToIIS(@PathVariable() Integer immRegistryId, @PathVariable() int facilityId , @RequestBody String body) {
+        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         Subscription sub = generateRestHookSubscription(facilityId, ir.getIisFhirUrl());
         IGenericClient client = new CustomClientBuilder(ir).getClient();
 

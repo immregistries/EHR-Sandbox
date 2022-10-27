@@ -57,11 +57,12 @@ public class AuthController {
         newUser.setUsername(user.getUsername());
         newUser.setPassword(encoder.encode(user.getPassword()));
         ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
+        immunizationRegistry.setName("Florence-jpa");
         immunizationRegistry.setIisFacilityId(newUser.getUsername());
         immunizationRegistry.setIisUsername(newUser.getUsername());
         immunizationRegistry.setIisPassword(newUser.getUsername());
-        immunizationRegistry.setIisHl7Url("https://florence.immregistries.org/iis-sandbox/soap");
-        immunizationRegistry.setIisFhirUrl("https://florence.immregistries.org/iis-sandbox/fhir");
+        immunizationRegistry.setIisHl7Url("https://florence.immregistries.org/iis-jpa/soap");
+        immunizationRegistry.setIisFhirUrl("https://florence.immregistries.org/iis-jpa/fhir");
         immunizationRegistry.setUser(newUser);
 //        newUser.setImmunizationRegistries((Set<ImmunizationRegistry>) immunizationRegistry);
         userRepository.save(newUser);

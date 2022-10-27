@@ -85,7 +85,6 @@ export class SelectCodebaseComponent implements OnInit {
           return this.filterWithReference(option)
         }
       )
-
     }
   }
 
