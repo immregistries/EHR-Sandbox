@@ -1,65 +1,82 @@
-<div #header style="display: flex; align-self: baseline;">
+<div class="sticky-header">
   <span class="custom-title">{{title}}</span>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
 </div>
-<mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-<div #container style="width:100%; height:80%; overflow:scroll;">
-  <table mat-table
-        [dataSource]="dataSource" multiTemplateDataRows
-        class="mat-elevation-z8">
-    <ng-container matColumnDef="severity" >
-      <th mat-header-cell *matHeaderCellDef> Severity </th>
-      <td mat-cell *matCellDef="let element"> {{element.severity}} </td>
-    </ng-container>
-    <ng-container matColumnDef="code" >
-      <th mat-header-cell *matHeaderCellDef> Error code</th>
-      <td mat-cell *matCellDef="let element"> {{element.code}} </td>
-    </ng-container>
-    <ng-container matColumnDef="patient" >
-      <th mat-header-cell *matHeaderCellDef>Patient</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button *ngIf="element.patient"  color="primary"
-        (click)="openPatient(element.patient); $event.stopPropagation();"
-        matTooltip="Open Patient Dashboard">
-        {{element.patient.nameLast ?? element.patient}}
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="vaccinationEvent" >
-      <th mat-header-cell *matHeaderCellDef>Vaccination</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.vaccinationEvent ? element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode : element.vaccinationEvent : ''}}
-        <button mat-icon-button *ngIf="element.vaccinationEvent"  color="primary"
-        (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+<div class="table-container mat-elevation-z8">
+  <div>
+    <table mat-table
+          [dataSource]="dataSource" multiTemplateDataRows
+          class="mat-elevation-z8">
+      <ng-container matColumnDef="severity" >
+        <th mat-header-cell *matHeaderCellDef> Severity </th>
+        <td mat-cell *matCellDef="let element"> {{element.severity}} </td>
+      </ng-container>
+      <ng-container matColumnDef="code" >
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+      </ng-container>
+      <ng-container matColumnDef="patient" >
+        <th mat-header-cell *matHeaderCellDef>Patient</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button *ngIf="element.patient"  color="primary"
+          (click)="openPatient(element.patient); $event.stopPropagation();"
+          matTooltip="Open Patient Dashboard">
+          {{element.patient.nameLast ?? element.patient}}
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="vaccinationEvent" >
+        <th mat-header-cell *matHeaderCellDef>Vaccination</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.vaccinationEvent ? element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode : element.vaccinationEvent : ''}}
+          <button mat-icon-button *ngIf="element.vaccinationEvent"  color="primary"
+          (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="timestamp" >
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let element"> {{element.timestamp | date: 'shortDate'}} </td>
+      </ng-container>
+      <ng-container matColumnDef="iis" >
+        <th mat-header-cell *matHeaderCellDef>IIS</th>
+        <td mat-cell *matCellDef="let element"> {{element.iis}} </td>
+      </ng-container>
+      <ng-container matColumnDef="content" >
+        <th mat-header-cell *matHeaderCellDef>Content</th>
+        <td mat-cell *matCellDef="let element"> {{shortenContent(asString(element.content))}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="content" >
-      <th mat-header-cell *matHeaderCellDef>Content</th>
-      <td mat-cell *matCellDef="let element"> {{asString(element.content)}} </td>
-    </ng-container>
 
-    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-    <ng-container matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
-        <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          {{element.content}}
-          <!-- <button mat-icon-button  color="primary" (click)="remove(element); $event.stopPropagation();">
-            <mat-icon>remove</mat-icon>
-          </button> -->
-        </div>
-      </td>
-    </ng-container>
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
+          <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <table>
+              <tr>
+                <th>Content</th>
+                <th>Timestamp</th>
+              </tr>
+              <tr>
+                <td>{{element.content}}</td>
+                <td>{{element.timestamp | date: 'short' }}</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columns" sticky></tr>
+
+      <tr mat-header-row *matHeaderRowDef="columns;" sticky></tr>
       <tr mat-row *matRowDef="let element; columns: columns;"
           class="element-row"
           [class.expanded-row]="expandedElement === element"
           (click)="onSelection(element)">
       </tr>
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
-  </table>
+    </table>
+  </div>
 </div>

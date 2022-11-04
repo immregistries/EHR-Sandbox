@@ -7,7 +7,7 @@ import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "feedback"
@@ -71,9 +71,8 @@ public class Feedback {
     @Column(name = "code", length = 45)
     private String code;
 
-    @JoinColumn(name = "date", nullable = false)
-    @JsonIgnore
-    private Date date;
+    @JoinColumn(name = "timestamp", nullable = false)
+    private Timestamp timestamp;
 
     public String getIis() {
         return iis;
@@ -139,11 +138,11 @@ public class Feedback {
         this.code = code;
     }
 
-    public Date getDate() {
-        return date;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }

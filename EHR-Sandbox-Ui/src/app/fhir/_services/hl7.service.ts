@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { SettingsService } from '../../core/_services/settings.service';
 import { FacilityService } from '../../core/_services/facility.service';
 import { TenantService } from '../../core/_services/tenant.service';
+import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -20,7 +21,8 @@ export class Hl7Service {
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) { }
+    private tenantService: TenantService,
+    private immRegistries: ImmRegistriesService) { }
 
   quickGetVXU(patientId: number, vaccinationId: number): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
@@ -52,22 +54,11 @@ export class Hl7Service {
   quickPostVXU(patientId: number, vaccinationId: number, vxu: string): Observable<string> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.postVXU(tenantId,facilityId,patientId,vaccinationId,vxu)
-  }
-
-  /**
-   * Sends post request with Vxu Message to the IIS
-   * @param tenantId
-   * @param facilityId
-   * @param patientId
-   * @param vaccinationId
-   * @param vxu
-   * @returns IIS answer
-   */
-  postVXU(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, vxu: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu/imm-registry/${immId}`,
       vxu,
       httpOptions);
   }
+
 }

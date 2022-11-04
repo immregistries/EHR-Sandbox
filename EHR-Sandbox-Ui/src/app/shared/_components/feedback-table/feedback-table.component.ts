@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterContentInit, AfterViewInit, Component, Input, OnChanges, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, Self, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs';
@@ -36,6 +36,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   columns!: (keyof Feedback | 'remove')[]
 
   asString(val: any) : string { return val; }
+  shortenContent(content: string) : string { return content.length > 15? content.substring(0,12) + "..." : content }
 
   onSelection(event: Feedback) {
     if (this.expandedElement && this.expandedElement.id == event.id){
@@ -50,7 +51,8 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     private tenantService: TenantService,
     private facilityService: FacilityService,
     private feedbackService: FeedbackService,
-    private patientService: PatientService) { }
+    private patientService: PatientService,
+    ) { }
 
 
   applyFilter(event: Event) {
@@ -64,6 +66,8 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
       "code",
       "patient",
       "vaccinationEvent",
+      "timestamp",
+      "iis",
       "content",
       // "remove",
     ]
@@ -111,6 +115,9 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
         this.dataSource.data = res
         this.loading = false
       })
+    } else {
+      this.dataSource.data = []
+      this.loading = false
     }
   }
 
@@ -143,7 +150,4 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
 
   }
 
-  // Here dealing with overflow and size
-  @Input()
-  maxHeight?: number;
 }

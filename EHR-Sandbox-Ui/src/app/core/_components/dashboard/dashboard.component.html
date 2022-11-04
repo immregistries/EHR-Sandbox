@@ -1,5 +1,5 @@
 <div class="grid-container">
-  <mat-grid-list cols="6" rowHeight="370px">
+  <mat-grid-list cols="6"  rowHeight="{{rowHeight}}">
     <!-- <mat-grid-tile>
       <mat-card class="dashboard-card">
         <mat-card-header class="card-title">
@@ -26,21 +26,21 @@
     </mat-grid-tile> -->
     <mat-grid-tile [colspan]="4" >
       <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content">
+        <mat-card-content class="dashboard-card-content" #patients>
           <app-patient-table></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="2" >
       <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content">
+        <mat-card-content class="dashboard-card-content" >
           <app-feedback-table [facility]="facilityService.getFacility()"></app-feedback-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="6" [rowspan]="1">
       <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content">
+        <mat-card-content class="dashboard-card-content" #vaccinations [style]="{maxHeight: rowHeight}">
           <app-vaccination-table [patientId]="patientService.getPatientId()"></app-vaccination-table>
         </mat-card-content>
       </mat-card>

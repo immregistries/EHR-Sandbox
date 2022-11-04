@@ -48,6 +48,7 @@ mat-raised-button {
 
 .short-label {
   color: rgb(121, 121, 121);
+  margin-right: 3px;
 }
 
 /* To change form fields height */

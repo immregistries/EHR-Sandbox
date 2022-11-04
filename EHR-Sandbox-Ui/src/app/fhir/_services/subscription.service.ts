@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
 import { SubscriptionStore } from '../../core/_model/rest';
 import { FacilityService } from '../../core/_services/facility.service';
 import { SettingsService } from '../../core/_services/settings.service';
@@ -27,15 +28,17 @@ export class SubscriptionService {
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService) {
+    private tenantService: TenantService,
+    private immRegistriesService: ImmRegistriesService) {
       this.refresh = new BehaviorSubject<boolean>(false)
   }
 
   createSubscription(): Observable<any> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
+    const immRegistryId: number | undefined = this.immRegistriesService.getImmRegistryId()
     return this.http.post<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/subscription`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${immRegistryId}/subscription`,
       httpOptions);
   }
 

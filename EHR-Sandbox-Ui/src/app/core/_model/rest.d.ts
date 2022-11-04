@@ -30,7 +30,7 @@ export interface Feedback {
   content?: string;
   code?: string;
   severity?: string;
-  date?: Date;
+  timestamp?: number;
 }
 
 export interface Clinician {

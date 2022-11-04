@@ -42,10 +42,6 @@ tr.element-row:not(.expanded-row):active {
 }
 
 
-.search-bar {
-  padding-right: 1em;
-  padding-left: 0px;
-}
 
 /* To change form fields height */
 /* ::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0.3em 0px !important;}

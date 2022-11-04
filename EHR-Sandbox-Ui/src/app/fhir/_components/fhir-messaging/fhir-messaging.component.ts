@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
@@ -38,7 +39,8 @@ export class FhirMessagingComponent implements AfterViewInit {
     private patientService: PatientService,
     private vaccinationService: VaccinationService,
     private _snackBar: MatSnackBar,
-    private feedbackService: FeedbackService) {
+    private feedbackService: FeedbackService,
+    private immRegistriesService: ImmRegistriesService) {
   }
 
   public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
@@ -76,18 +78,18 @@ export class FhirMessagingComponent implements AfterViewInit {
         this.patientRequestLoading = false
         this.patientError = true
         if (err.error.error) {
-          this.patientAnswer = "error " + err.error.error
+          this.patientAnswer = err.error.error
         }else if (err.error.text) {
-          this.patientAnswer = "error " + err.error.text
+          this.patientAnswer = err.error.text
         } else {
           this.patientAnswer = "Error"
         }
-        // const feedback: Feedback = {iis: "fhirTest", content: this.patientAnswer, severity: "error"}
-        // this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
-        //   console.log(res)
-        //   this.patientService.doRefresh()
-        //   this.feedbackService.doRefresh()
-        // })
+        const feedback: Feedback = {iis: this.immRegistriesService.getImmRegistry().name, content: this.patientAnswer, severity: "error", timestamp: Date.now()}
+        this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
+          console.log(res)
+          this.patientService.doRefresh()
+          this.feedbackService.doRefresh()
+        })
         console.error(err)
       }
     })

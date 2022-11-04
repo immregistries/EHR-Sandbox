@@ -179,7 +179,7 @@ CREATE TABLE `ehr`.`feedback` (
   `code` VARCHAR(45) NULL,
   `content` LONGBLOB NULL,
   `iis` VARCHAR(45) NULL,
-  `date` DATETIME NULL,
+  `timestamp` TIMESTAMP NULL,
   PRIMARY KEY (`feedback_id`),
   INDEX `patient_id_idx` (`patient_id` ASC) VISIBLE,
   INDEX `fk_facility_idx` (`facility_id` ASC) VISIBLE,
@@ -221,7 +221,7 @@ CREATE TABLE `subscription_store` (
 
 CREATE TABLE `subscription_info` (
   `subscription_store` varchar(45) NOT NULL,
-  `eventsSinceSubscriptionStart` int DEFAULT 0,
+  `events_since_start` int DEFAULT 0,
   PRIMARY KEY (`subscription_store`),
   CONSTRAINT `fk_subscription_store`
       FOREIGN KEY (`subscription_store`)

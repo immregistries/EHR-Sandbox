@@ -53,9 +53,48 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .custom-title {
-  margin-right: 1em;
+  margin-right: 3px;
+  margin-left: 3px;
   font-size: 1.4em;
   font-weight: 590;
+  /* margin-top: auto; */
+  /* margin-bottom: -5px; */
+}
+
+.search-bar {
+  padding-right: 1em;
+  padding-left: 0px;
+  min-width: 55px;
+  flex-grow: 0.5;
+  flex-shrink: 2;
+  /* max-width: 220px; */
+}
+
+.sticky-header {
+  text-align: left;
+  position:sticky;
+  top: 0;
+  z-index: 1;
+  /* height: min-content; */
+  color: black;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sticky-header-button {
+  margin-top: -7px;
+  margin-bottom: -6px;
+}
+
+.sticky-header-prefix {
+  display: flex;
+  align-items: center;
+}
+
+.table-container {
+  overflow: auto;
 }
 
 .custom-fab-button {

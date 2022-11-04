@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { PatientService } from 'src/app/core/_services/patient.service';
@@ -16,4 +16,9 @@ export class DashboardComponent {
     public tenantService: TenantService,
     public facilityService: FacilityService,
     public patientService: PatientService) {}
+
+    @ViewChild('feedback')
+    feedback!: ElementRef;
+
+    rowHeight: string = '370px';
 }

@@ -1,9 +1,11 @@
-<div style="display: flex; align-self: baseline;">
-  <span class="custom-title">{{title}}</span>
+<div class="sticky-header">
+  <div class="sticky-header-prefix">
+    <span class="custom-title">{{title}}</span>
+    <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(facility && facility.id > 0)" matTooltip="New Patient">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
-  <!-- <button mat-mini-fab class="custom-fab-button"  (click)="openCreation()" color="primary" >
-    <mat-icon class="custom-fab-icon" >add</mat-icon>
-  </button> -->
 </div>
 <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
 <table mat-table
@@ -64,7 +66,7 @@
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
-<button mat-mini-fab *ngIf="facility && facility.id > 0" style="float: center;" (click)="openCreation()" color="primary" >
+<button mat-mini-fab [disabled]="!(facility && facility.id > 0)" style="float: center;" (click)="openCreation()" color="primary" >
   <mat-icon>add</mat-icon>
 </button>
 <app-empty-list-message></app-empty-list-message>

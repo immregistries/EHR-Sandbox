@@ -135,7 +135,7 @@ public class VaccinationController {
         return ResponseEntity.ok( vxu );
     }
 
-    @PostMapping("/{vaccinationId}/vxu/" + FhirClientController.IMM_REGISTRY_SUFFIX)
+    @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String>  vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
