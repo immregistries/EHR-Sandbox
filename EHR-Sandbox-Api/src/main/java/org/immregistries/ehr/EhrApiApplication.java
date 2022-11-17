@@ -21,9 +21,6 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 //		fhirContext =  new FhirContext(FhirVersionEnum.R5);
 		SpringApplication.run(EhrApiApplication.class, args);
-
-		final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-		logger.info("Base Url for deployment : {}", baseUrl);
 	}
 
 	@Bean

@@ -66,13 +66,7 @@ public class FacilityController {
             }
             facility.setTenant(tenant.get());
             Facility newEntity = facilityRepository.save(facility);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(newEntity.getId())
-                    .toUri();
-//            return ResponseEntity.created(location).build();
             return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
-//                    .created(location).body(newEntity);
         }
     }
 }

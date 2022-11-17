@@ -67,8 +67,8 @@ public class AuthController {
         immunizationRegistry.setIisFacilityId(newUser.getUsername());
         immunizationRegistry.setIisUsername(newUser.getUsername());
         immunizationRegistry.setIisPassword(newUser.getUsername());
-        immunizationRegistry.setIisHl7Url("https://localhost:8080/iis-sandbox-jpa/soap");
-        immunizationRegistry.setIisFhirUrl("https://localhost:8080/iis-sandbox-jpa/fhir");
+        immunizationRegistry.setIisHl7Url("http://localhost:8080/iis-sandbox-jpa/soap");
+        immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis-sandbox-jpa/fhir");
         immunizationRegistry.setUser(newUser);
         userRepository.save(newUser);
         immunizationRegistryRepository.save(immunizationRegistry);
