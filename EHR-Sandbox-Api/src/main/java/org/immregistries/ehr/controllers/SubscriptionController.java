@@ -5,15 +5,12 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.EhrApiApplication;
-import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.entities.SubscriptionInfo;
 import org.immregistries.ehr.entities.SubscriptionStore;
 import org.immregistries.ehr.fhir.Server;
-import org.immregistries.ehr.fhir.SubscriptionProvider;
 import org.immregistries.ehr.logic.CustomClientBuilder;
 import org.immregistries.ehr.repositories.FacilityRepository;
-import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.repositories.SubscriptionInfoRepository;
 import org.immregistries.ehr.repositories.SubscriptionStoreRepository;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
@@ -68,6 +65,7 @@ public class SubscriptionController {
             outcomeSub.setStatus(Enumerations.SubscriptionState.ACTIVE);
         }
         SubscriptionStore subscriptionStore = new SubscriptionStore(outcomeSub);
+        subscriptionStore.setImmunizationRegistry(ir);
         SubscriptionInfo subscriptionInfo = new SubscriptionInfo(subscriptionStore);
 //        subscriptionStore.setSubscriptionInfo(subscriptionInfo);
         subscriptionStoreRepository.save(subscriptionStore);
@@ -113,14 +111,6 @@ public class SubscriptionController {
         /**
          * TODO get server base url dynamically
          */
-
-//        sub.addFilterBy().setResourceType("OperationOutcome")
-//                .setSearchParamName("severity")
-//                .setValue("warning").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
-//        sub.addFilterBy().setResourceType("OperationOutcome")
-//                .setSearchParamName("severity")
-//                .setValue("error").setSearchModifier(Enumerations.SubscriptionSearchModifier.EQUAL);
-
         sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;

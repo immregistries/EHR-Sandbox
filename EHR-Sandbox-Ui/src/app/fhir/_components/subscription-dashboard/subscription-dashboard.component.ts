@@ -26,7 +26,7 @@ export class SubscriptionDashboardComponent implements OnInit {
         this.error = ""
       },
       err => {
-        this.error = err
+        this.error = `${err.status} : ${err.error}`
       })
     })
   }

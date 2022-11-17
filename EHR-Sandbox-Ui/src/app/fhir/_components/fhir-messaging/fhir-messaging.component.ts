@@ -84,7 +84,7 @@ export class FhirMessagingComponent implements AfterViewInit {
         } else {
           this.patientAnswer = "Error"
         }
-        const feedback: Feedback = {iis: this.immRegistriesService.getImmRegistry().name, content: this.patientAnswer, severity: "error", timestamp: Date.now()}
+        const feedback: Feedback = {iis: this.immRegistriesService.getImmRegistry().name, code: err.status, content: this.patientAnswer, severity: "Error", timestamp: Date.now()}
         this.feedbackService.postPatientFeedback(this.patientId, feedback).subscribe((res) => {
           console.log(res)
           this.patientService.doRefresh()

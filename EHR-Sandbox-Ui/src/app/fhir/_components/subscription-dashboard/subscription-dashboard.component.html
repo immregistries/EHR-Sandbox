@@ -5,10 +5,14 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <mat-card-title>Actions</mat-card-title>
-          <app-select-immregistry></app-select-immregistry>
-        <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getFacilityId() < 0}}">Subscribe to IIS</button>
-        <p class="w3-red" *ngIf="facilityService.getFacilityId() < 0">No facility selected</p>
-        <p class="w3-red" *ngIf="error">{{error}}</p>
+          <div>
+            <app-select-immregistry></app-select-immregistry>
+          </div>
+          <div>
+            <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getFacilityId() < 0}}">Subscribe to IIS</button>
+            <p class="w3-red" *ngIf="facilityService.getFacilityId() < 0">No facility selected</p>
+            <p class="w3-red" *ngIf="error">{{error}}</p>
+          </div>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

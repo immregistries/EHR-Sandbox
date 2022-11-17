@@ -7,19 +7,26 @@
           <mat-label>Patient Fhir Resource</mat-label>
           <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="patientResource"> </textarea>
         </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Operation</mat-label>
-          <mat-select [(ngModel)]="patientOperation" name="patientOperation">
-            <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
-            <mat-option [value]="'Create'">Create</mat-option>
-            <!-- <mat-option [value]="'Update'">Update</mat-option> -->
-          </mat-select>
-        </mat-form-field>
-        <mat-checkbox appearance="fill" *ngIf="vaccinationId > -1"
-          [(ngModel)]="autofillId">
-          Autofill server Id in immunization
-        </mat-checkbox>
-        <button mat-raised-button class="w3-right" (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
+
+        <div class="footer">
+          <div>
+            <mat-form-field appearance="fill">
+              <mat-label>Operation</mat-label>
+              <mat-select [(ngModel)]="patientOperation" name="patientOperation">
+                <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
+                <mat-option [value]="'Create'">Create</mat-option>
+                <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+              </mat-select>
+            </mat-form-field>
+            <mat-checkbox appearance="fill" *ngIf="vaccinationId > -1"
+              [(ngModel)]="autofillId">
+              Autofill server Id in immunization
+            </mat-checkbox>
+          </div>
+
+          <button mat-raised-button class="w3-right" (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
+        </div>
+
         <p [ngStyle]="patientError ? {color: 'red'} : null" >{{patientAnswer}}</p>
       </div>
 
@@ -30,19 +37,26 @@
           <mat-label>Vaccination Fhir rResource</mat-label>
           <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="vaccinationResource"> </textarea>
         </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Operation</mat-label>
-          <mat-select [(ngModel)]="immunizationOperation" name="immunizationOperation">
-            <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
-            <mat-option [value]="'Create'">Create</mat-option>
-            <!-- <mat-option [value]="'Update'">Update</mat-option> -->
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill" matTooltip="Overrides specified patient id in resource, can be automatically filled by created patient">
-          <mat-label>Use Patient Id</mat-label>
-          <input matInput [(ngModel)]="patientFhirId">
-        </mat-form-field>
-        <button mat-raised-button class="w3-right" (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
+
+        <div class="footer">
+          <div>
+            <mat-form-field appearance="fill">
+              <mat-label>Operation</mat-label>
+              <mat-select [(ngModel)]="immunizationOperation" name="immunizationOperation">
+                <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
+                <mat-option [value]="'Create'">Create</mat-option>
+                <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" matTooltip="Overrides specified patient id in resource, can be automatically filled by created patient">
+              <mat-label>Use Patient Id</mat-label>
+              <input matInput [(ngModel)]="patientFhirId">
+            </mat-form-field>
+          </div>
+
+          <button mat-raised-button class="w3-right" (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
+        </div>
+
         <p [ngStyle]="vaccinationError ? {color: 'red'} : null" >{{vaccinationAnswer}}</p>
       </div>
     </div>
@@ -59,6 +73,7 @@
     </div>
   </mat-tab>
   <mat-tab label="Settings">
+    <div style="padding: 5px;"></div>
     <app-select-immregistry></app-select-immregistry>
   </mat-tab>
 </mat-tab-group>

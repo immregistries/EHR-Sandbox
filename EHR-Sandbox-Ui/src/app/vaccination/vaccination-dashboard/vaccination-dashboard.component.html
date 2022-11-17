@@ -1,6 +1,7 @@
 <div class="grid-container">
   <h1 class="mat-h1" *ngIf="vaccination && vaccination.vaccine">
-    {{'Vaccination: ' +  (vaccination.vaccine && vaccination.vaccine.vaccineCvxCode ? codeMapsService.getCodeMap("VACCINATION_CVX_CODE")[vaccination.vaccine.vaccineCvxCode].label : "") +
+    <!-- {{'Vaccination: ' +  (vaccination.vaccine && vaccination.vaccine.vaccineCvxCode ? codeMapsService.getCodeMap("VACCINATION_CVX_CODE")[vaccination.vaccine.vaccineCvxCode].label : "") + -->
+    {{'Vaccination: ' +  (vaccination.vaccine && vaccination.vaccine.vaccineCvxCode ? (vaccination.vaccine.vaccineCvxCode | codeMaps: "VACCINATION_CVX_CODE").label : "") +
     ' ' + (vaccination.vaccine && vaccination.vaccine.administeredDate ? (vaccination.vaccine.administeredDate | date) : "") }}
   </h1>
   <mat-grid-list cols="4" rowHeight="350px">

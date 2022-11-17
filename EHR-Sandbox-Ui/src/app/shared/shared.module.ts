@@ -29,6 +29,8 @@ import { HoverMenuComponent } from './_components/_menus/hover-menu/hover-menu.c
 import { EmptyListMessageComponent } from './_components/empty-list-message/empty-list-message.component';
 import { SelectImmregistryComponent } from './_components/select-immregistry/select-immregistry.component';
 import { MatSelectModule } from '@angular/material/select';
+import { CodeMapsPipe } from './_pipes/code-maps.pipe';
+import { TextShortenPipe } from './_pipes/text-shorten.pipe';
 
 
 @NgModule({
@@ -46,6 +48,8 @@ import { MatSelectModule } from '@angular/material/select';
     HoverMenuComponent,
     EmptyListMessageComponent,
     SelectImmregistryComponent,
+    CodeMapsPipe,
+    TextShortenPipe,
   ],
   imports: [
     CommonModule,
@@ -89,6 +93,9 @@ import { MatSelectModule } from '@angular/material/select';
     HoverMenuComponent,
     EmptyListMessageComponent,
     SelectImmregistryComponent,
+
+    CodeMapsPipe,
+     TextShortenPipe,
   ],
 })
 export class SharedModule { }

@@ -5,14 +5,9 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.entities.Facility;
-import org.immregistries.ehr.entities.Feedback;
+import org.immregistries.ehr.entities.*;
 import org.immregistries.ehr.entities.Patient;
-import org.immregistries.ehr.entities.VaccinationEvent;
-import org.immregistries.ehr.repositories.FacilityRepository;
-import org.immregistries.ehr.repositories.FeedbackRepository;
-import org.immregistries.ehr.repositories.PatientRepository;
-import org.immregistries.ehr.repositories.VaccinationEventRepository;
+import org.immregistries.ehr.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Service
 @Controller
@@ -36,6 +29,10 @@ public class OperationOutcomeProvider implements IResourceProvider {
     private FacilityRepository facilityRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
+    @Autowired
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
+    @Autowired
+    private SubscriptionStoreRepository subscriptionStoreRepository;
     private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProvider.class);
 
     @Override
@@ -91,9 +88,14 @@ public class OperationOutcomeProvider implements IResourceProvider {
             feedback.setFacility(facility);
             feedback.setSeverity(issue.getSeverity().toCode());
             feedback.setCode(issue.getCode().toCode());
-            //TODO date ? code system ?
-            if (request != null && request.getRequestURI() != null) {
-                feedback.setIis(request.getRequestURI());
+            feedback.setTimestamp(new Timestamp(new Date().getTime()));
+            if (request != null && request.getRemoteAddr() != null) {
+                Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()),request.getRemoteAddr());
+                if (immunizationRegistry.isPresent()) {
+                    feedback.setIis(immunizationRegistry.get().getName());
+                } else {
+                    feedback.setIis(request.getRemoteAddr());
+                }
             }
             // Using deprecated field "Location to refer to the right resource for the issue"
             for (StringType location: issue.getLocation()) {

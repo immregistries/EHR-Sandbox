@@ -41,7 +41,11 @@ tr.element-row:not(.expanded-row):active {
   padding: 8px;
 }
 
-
+td {
+  /* min-width: 70px;
+  width: max-content; */
+  padding-left: 5px;
+}
 
 /* To change form fields height */
 /* ::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0.3em 0px !important;}

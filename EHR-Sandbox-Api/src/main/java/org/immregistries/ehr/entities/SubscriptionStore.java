@@ -100,6 +100,18 @@ public class SubscriptionStore {
     @PrimaryKeyJoinColumn
     private SubscriptionInfo subscriptionInfo;
 
+    @ManyToOne
+    @JoinColumn(name = "immunization_registry_id")
+    private ImmunizationRegistry immunizationRegistry;
+
+    public ImmunizationRegistry getImmunizationRegistry() {
+        return immunizationRegistry;
+    }
+
+    public void setImmunizationRegistry(ImmunizationRegistry immunizationRegistry) {
+        this.immunizationRegistry = immunizationRegistry;
+    }
+
     public Integer getMaxCount() {
         return maxCount;
     }

@@ -216,7 +216,11 @@ CREATE TABLE `subscription_store` (
   `content` varchar(45) DEFAULT NULL,
   `notification_url_location` varchar(45) DEFAULT NULL,
   `max_count` int DEFAULT NULL,
-  PRIMARY KEY (`identifier`)
+  `immunization_registry_id` int DEFAULT NULL,
+  PRIMARY KEY (`identifier`),
+  CONSTRAINT `fk_immunization_registry`
+      FOREIGN KEY (`immunization_registry_id`)
+      REFERENCES `ehr`.`immunization_registry` (`immunization_registry_id`)
 );
 
 CREATE TABLE `subscription_info` (

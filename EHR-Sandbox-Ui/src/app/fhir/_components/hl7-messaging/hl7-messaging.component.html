@@ -10,6 +10,8 @@
 <p>{{answer}}</p>
 <p style="color: red;">{{error}}</p>
 <mat-dialog-actions align="end">
-  <app-select-immregistry></app-select-immregistry>
-  <button mat-raised-button (click)="send()" cdkFocusInitial>Send to IIS</button>
+  <div class="footer">
+    <app-select-immregistry></app-select-immregistry>
+    <button mat-raised-button (click)="send()" cdkFocusInitial>Send to IIS</button>
+  </div>
 </mat-dialog-actions>

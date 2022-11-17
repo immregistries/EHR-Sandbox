@@ -35,8 +35,6 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
 
   columns!: (keyof Feedback | 'remove')[]
 
-  asString(val: any) : string { return val; }
-  shortenContent(content: string) : string { return content.length > 15? content.substring(0,12) + "..." : content }
 
   onSelection(event: Feedback) {
     if (this.expandedElement && this.expandedElement.id == event.id){

@@ -17,8 +17,12 @@ export class DashboardComponent {
     public facilityService: FacilityService,
     public patientService: PatientService) {}
 
-    @ViewChild('feedback')
-    feedback!: ElementRef;
 
-    rowHeight: string = '370px';
+    // rowHeight: string = '370px';
+
+
+
+  rowHeight(): string {
+    return (window.innerHeight/2 - 35) + 'px'
+  }
 }
