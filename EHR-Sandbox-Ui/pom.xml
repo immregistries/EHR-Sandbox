@@ -79,6 +79,58 @@
       </build>
     </profile>
     <profile>
+      <id>local</id>
+<!--      same as prod, but with local api set in angular by using "local" angular config-->
+
+<!--     and dist directoty is not clean-->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.12.1</version>
+            <executions>
+              <!-- Install node and npm -->
+              <execution>
+                <id>Install Node and NPM</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <configuration>
+                  <nodeVersion>v16.14.0</nodeVersion>
+                </configuration>
+              </execution>
+
+              <!-- clean install -->
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+              </execution>
+
+              <!-- build app -->
+              <execution>
+                <id>npm run build</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build -c -local</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+        <resources>
+          <resource>
+            <!-- we copy the content of the frontend directory in the final artifact -->
+            <directory>dist/ehr-sandbox</directory>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+    <profile>
       <id>dev</id>
 <!--      Nothing happens-->
     </profile>

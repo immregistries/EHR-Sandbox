@@ -1,7 +1,6 @@
 package org.immregistries.ehr.entities;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immregistries.ehr.entities.Facility;
 import org.immregistries.ehr.entities.Patient;
 import org.immregistries.ehr.entities.VaccinationEvent;
@@ -32,21 +31,12 @@ public class Feedback {
     @JsonProperty("patient")
     private Patient patient;
 
-    @JsonProperty("patient")
-    public void setPatient(int id) {
-        // TODO is currently taken care of in the controller
-    }
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("facility")
     private Facility facility;
 
-    @JsonProperty("facility")
-    public void setFacility(int id) {
-        // TODO is currently taken care of in the controller
-    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vaccination_event_id")
@@ -54,10 +44,21 @@ public class Feedback {
     @JsonProperty("vaccinationEvent")
     private VaccinationEvent vaccinationEvent;
 
-    @JsonProperty("vaccinationEvent")
-    public void setVaccinationEvent(int id) {
-        // TODO is currently taken care of in the controller
-    }
+//    @JsonProperty("patient")
+//    public void setPatient(int id) {
+//        // is currently taken care of in the controller
+//    }
+
+
+//    @JsonProperty("facility")
+//    public void setFacility(int id) {
+//        // is currently taken care of in the controller
+//    }
+
+//    @JsonProperty("vaccinationEvent")
+//    public void setVaccinationEvent(int id) {
+//        // is currently taken care of in the controller
+//    }
 
     @Column(name = "content")
     private String content;

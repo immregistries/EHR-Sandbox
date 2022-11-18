@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -46,6 +47,7 @@ public class SubscriptionController {
     private SubscriptionStoreRepository subscriptionStoreRepository;
     @Autowired
     private SubscriptionInfoRepository subscriptionInfoRepository;
+
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
     public Optional<SubscriptionStore> subscriptionStore(@PathVariable() String facilityId){
         Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findByIdentifier(facilityId);
@@ -111,7 +113,7 @@ public class SubscriptionController {
         /**
          * TODO get server base url dynamically
          */
-        sub.setEndpoint(Server.serverBaseUrl + "/" + facilityId);
+        sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;
         URL url;

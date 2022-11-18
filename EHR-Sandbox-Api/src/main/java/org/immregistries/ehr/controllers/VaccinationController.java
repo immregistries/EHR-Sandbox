@@ -20,6 +20,7 @@ import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -146,9 +147,8 @@ public class VaccinationController {
             connector.setFacilityid(immunizationRegistry.getIisFacilityId());
             return ResponseEntity.ok(connector.submitMessage(message, false));
         } catch (Exception e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
-            return ResponseEntity.ok("SOAP Error");
+            return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
