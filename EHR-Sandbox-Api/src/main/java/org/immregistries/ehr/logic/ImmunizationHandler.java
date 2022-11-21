@@ -47,7 +47,6 @@ public class ImmunizationHandler {
     identifier.setValue(""+dbVaccination.getId());
     identifier.setSystem(identifier_system);
     i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId())
-            // TODO autamatically set id or ask in the form
             .setIdentifier(new Identifier()
                     .setValue("" + dbVaccination.getPatient().getId())
                     .setSystem(identifier_system)));

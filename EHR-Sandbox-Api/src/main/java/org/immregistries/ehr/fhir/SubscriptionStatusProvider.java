@@ -74,7 +74,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
 //                    }
                     logger.info("events number {}",status.getEventsSinceSubscriptionStartElement().getValue());
                     if (status.getEventsSinceSubscriptionStartElement().getValue().intValue() != subscriptionStore.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
-                        // TODO trigger problem
+                        // TODO trigger problem when HAPI FHIR actually implements it
                     }
                     subscriptionStore.get().getSubscriptionInfo().setEventsSinceSubscriptionStart(status.getEventsSinceSubscriptionStartElement().getValue().intValue());
                     subscriptionStoreRepository.save(subscriptionStore.get());

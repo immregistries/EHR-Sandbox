@@ -110,9 +110,6 @@ public class SubscriptionController {
         sub.setContentType("application/fhir+json");
 
         sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
-        /**
-         * TODO get server base url dynamically
-         */
         sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;
