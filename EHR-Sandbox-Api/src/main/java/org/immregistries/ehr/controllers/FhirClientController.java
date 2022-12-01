@@ -40,6 +40,12 @@ public class FhirClientController {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private ImmunizationHandler immunizationHandler;
+    @Autowired
+    private PatientHandler patientHandler;
+    @Autowired
+    FhirContext fhirContext;
+    @Autowired
+    ResourceClient resourceClient;
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
 
     @GetMapping("/iim-registry/{immRegistryId}/{resourceType}/{id}")
@@ -47,7 +53,7 @@ public class FhirClientController {
             @PathVariable() Integer immRegistryId,
             @PathVariable() String resourceType,
             @PathVariable() String id) {
-        return ResponseEntity.ok(ResourceClient.read(resourceType, id, immRegistryController.settings(immRegistryId)));
+        return ResponseEntity.ok(resourceClient.read(resourceType, id, immRegistryController.settings(immRegistryId)));
     }
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
@@ -55,13 +61,12 @@ public class FhirClientController {
             HttpServletRequest request,
             @PathVariable() int patientId) {
         Optional<Patient> patient = patientRepository.findById(patientId);
-        FhirContext ctx = EhrApiApplication.fhirContext;
-        IParser parser = ctx.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         if (!patient.isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No patient found");
         }
-        org.hl7.fhir.r5.model.Patient fhirPatient = PatientHandler.dbPatientToFhirPatient(patient.get(),
+        org.hl7.fhir.r5.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient.get(),
                 request.getRequestURI().split("/patients")[0]);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
@@ -72,7 +77,7 @@ public class FhirClientController {
         IParser parser = parser(message);
         org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class,message);
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
-        MethodOutcome outcome = ResourceClient.create(patient, ir);
+        MethodOutcome outcome = resourceClient.create(patient, ir);
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
@@ -84,7 +89,7 @@ public class FhirClientController {
         IParser parser = parser(message);
         org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class,message);
         ImmunizationRegistry ir =immRegistryController.settings(immRegistryId);
-        MethodOutcome outcome = ResourceClient.updateOrCreate(patient, "Patient",patient.getIdentifierFirstRep(), ir);
+        MethodOutcome outcome = resourceClient.updateOrCreate(patient, "Patient",patient.getIdentifierFirstRep(), ir);
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
@@ -94,7 +99,7 @@ public class FhirClientController {
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/fhir" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String>  getPatient(@PathVariable() Integer immRegistryId, @PathVariable() int patientId) {
-        return ResponseEntity.ok(ResourceClient.read("patient", String.valueOf(patientId), immRegistryController.settings(immRegistryId)));
+        return ResponseEntity.ok(resourceClient.read("patient", String.valueOf(patientId), immRegistryController.settings(immRegistryId)));
     }
 
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/resource")
@@ -102,8 +107,7 @@ public class FhirClientController {
             HttpServletRequest request,
             @PathVariable() int vaccinationId) {
         Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
-        FhirContext ctx = EhrApiApplication.fhirContext;
-        IParser parser = ctx.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         if (!vaccinationEvent.isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
@@ -129,7 +133,7 @@ public class FhirClientController {
         }
         MethodOutcome outcome;
         try {
-            outcome = ResourceClient.create(immunization, immRegistryController.settings(immRegistryId));
+            outcome = resourceClient.create(immunization, immRegistryController.settings(immRegistryId));
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
         } catch (Exception e) {
@@ -152,7 +156,7 @@ public class FhirClientController {
         }
         MethodOutcome outcome;
         try {
-            outcome = ResourceClient.updateOrCreate(immunization, "Immunization",immunization.getIdentifierFirstRep(), ir);
+            outcome = resourceClient.updateOrCreate(immunization, "Immunization",immunization.getIdentifierFirstRep(), ir);
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
         } catch (Exception e) {
@@ -163,15 +167,15 @@ public class FhirClientController {
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String>  getImmunization(@PathVariable() Integer immRegistryId, @PathVariable() int vaccinationId) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
-        return ResponseEntity.ok(ResourceClient.read("immunization", String.valueOf(vaccinationId), ir));
+        return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), ir));
     }
 
     private IParser parser(String message) {
         IParser parser;
         if (message.startsWith("<")) {
-            parser = EhrApiApplication.fhirContext.newXmlParser().setPrettyPrint(true);
+            parser = fhirContext.newXmlParser().setPrettyPrint(true);
         } else {
-            parser = EhrApiApplication.fhirContext.newJsonParser().setPrettyPrint(true);
+            parser = fhirContext.newJsonParser().setPrettyPrint(true);
         }
         return parser;
     }

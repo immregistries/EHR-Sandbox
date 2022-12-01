@@ -9,19 +9,18 @@ import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.UrlTenantSelectionInterceptor;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
  * CustomClientBuilder
  * 
- * Generates the FHIR Context of the skeleton
- * 
- * 
  */
 public class CustomClientBuilder {
 
     // Needs to be static object and built only one time in whole project
-    private static final FhirContext CTX = EhrApiApplication.fhirContext;
+    @Autowired
+    FhirContext fhirContext;
 
     private final IGenericClient client;
 
@@ -32,9 +31,9 @@ public class CustomClientBuilder {
 
     public CustomClientBuilder(String serverURL, String tenantId, String username, String password){
         // Deactivate the request for server metadata
-        CTX.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
+        fhirContext.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
         // Create a client
-        this.client = CTX.newRestfulGenericClient(serverURL);
+        this.client = fhirContext.newRestfulGenericClient(serverURL);
 
         // Register a logging interceptor
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
@@ -54,9 +53,4 @@ public class CustomClientBuilder {
         return client;
     }
 
-    public static FhirContext getCTX() {
-        return CTX;
-    }
-    
-    
 }

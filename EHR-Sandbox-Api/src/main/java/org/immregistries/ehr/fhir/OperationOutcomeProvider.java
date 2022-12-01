@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.*;
 
-@Service
 @Controller
 public class OperationOutcomeProvider implements IResourceProvider {
     @Autowired

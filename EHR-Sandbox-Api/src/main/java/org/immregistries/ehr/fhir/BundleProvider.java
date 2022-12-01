@@ -1,5 +1,6 @@
 package org.immregistries.ehr.fhir;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -15,19 +16,20 @@ import org.immregistries.ehr.EhrApiApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Controller
 public class BundleProvider implements IResourceProvider {
         private static final Logger logger = LoggerFactory.getLogger(BundleProvider.class);
 
+        @Autowired
         private OperationOutcomeProvider operationOutcomeProvider;
+        @Autowired
         private SubscriptionStatusProvider subscriptionStatusProvider;
-
-        public BundleProvider(OperationOutcomeProvider operationOutcomeProvider, SubscriptionStatusProvider subscriptionStatusProvider) {
-                this.operationOutcomeProvider = operationOutcomeProvider;
-                this.subscriptionStatusProvider = subscriptionStatusProvider;
-        }
+        @Autowired
+        FhirContext fhirContext;
 
         /**
          * The getResourceType method comes from IResourceProvider, and must
@@ -44,7 +46,7 @@ public class BundleProvider implements IResourceProvider {
         public MethodOutcome create(@ResourceParam Bundle bundle, RequestDetails requestDetails, HttpServletRequest request) {
                 // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
 
-                IParser parser = EhrApiApplication.fhirContext.newJsonParser();
+                IParser parser = fhirContext.newJsonParser();
                 logger.info("BUNDLE " + parser.encodeResourceToString(bundle));
 //
                 MethodOutcome outcome = new MethodOutcome();

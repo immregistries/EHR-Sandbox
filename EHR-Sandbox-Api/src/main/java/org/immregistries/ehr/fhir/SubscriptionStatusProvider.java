@@ -1,16 +1,14 @@
 package org.immregistries.ehr.fhir;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
-import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r5.model.Enumerations;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.Subscription;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.SubscriptionStore;
@@ -19,17 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
 @Controller
 public class SubscriptionStatusProvider implements IResourceProvider {
     @Autowired
     SubscriptionStoreRepository subscriptionStoreRepository;
     @Autowired
     OperationOutcomeProvider operationOutcomeProvider;
+    @Autowired
+    FhirContext fhirContext;
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionStatusProvider.class);
     /**
@@ -46,7 +44,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
     public MethodOutcome create(@ResourceParam SubscriptionStatus status, RequestDetails theRequestDetails) {
         logger.info("facility id {} status type {}", theRequestDetails.getTenantId(), status.getType());
         MethodOutcome methodOutcome = new MethodOutcome();
-        IParser parser = EhrApiApplication.fhirContext.newJsonParser();
+        IParser parser = fhirContext.newJsonParser();
         Optional<SubscriptionStore> subscriptionStore;
         if (status.getSubscription().getId() != null) {
             subscriptionStore = subscriptionStoreRepository.findById(status.getSubscription().getId());

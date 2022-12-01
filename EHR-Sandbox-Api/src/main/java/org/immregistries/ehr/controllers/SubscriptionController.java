@@ -1,5 +1,6 @@
 package org.immregistries.ehr.controllers;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -8,7 +9,6 @@ import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.entities.SubscriptionInfo;
 import org.immregistries.ehr.entities.SubscriptionStore;
-import org.immregistries.ehr.fhir.Server;
 import org.immregistries.ehr.logic.CustomClientBuilder;
 import org.immregistries.ehr.repositories.FacilityRepository;
 import org.immregistries.ehr.repositories.SubscriptionInfoRepository;
@@ -47,6 +47,8 @@ public class SubscriptionController {
     private SubscriptionStoreRepository subscriptionStoreRepository;
     @Autowired
     private SubscriptionInfoRepository subscriptionInfoRepository;
+    @Autowired
+    FhirContext fhirContext;
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
     public Optional<SubscriptionStore> subscriptionStore(@PathVariable() String facilityId){
@@ -61,7 +63,7 @@ public class SubscriptionController {
         IGenericClient client = new CustomClientBuilder(ir).getClient();
 
         MethodOutcome outcome = client.create().resource(sub).execute();
-        IParser parser  = EhrApiApplication.fhirContext.newJsonParser();
+        IParser parser  = fhirContext.newJsonParser();
         Subscription outcomeSub = (Subscription) outcome.getResource();
         if (outcome.getCreated()){
             outcomeSub.setStatus(Enumerations.SubscriptionState.ACTIVE);
@@ -91,7 +93,7 @@ public class SubscriptionController {
         return outcome.getCreated();
     }
 
-    public static Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
+    public Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
         Subscription sub = new Subscription();
         sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
@@ -110,11 +112,11 @@ public class SubscriptionController {
         sub.setContentType("application/fhir+json");
 
         sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
-        sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/" + facilityId);
+        sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/" + facilityId);
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;
         URL url;
-        IParser parser = EhrApiApplication.fhirContext.newJsonParser();
+        IParser parser = fhirContext.newJsonParser();
         HttpURLConnection con;
         try {
             url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");

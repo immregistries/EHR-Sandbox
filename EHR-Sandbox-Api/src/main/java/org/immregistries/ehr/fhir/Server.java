@@ -9,6 +9,7 @@ import ca.uhn.fhir.rest.server.HardcodedServerAddressStrategy;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.repositories.FeedbackRepository;
@@ -28,17 +29,27 @@ import javax.servlet.annotation.WebServlet;
 import java.util.ArrayList;
 import java.util.List;
 
-//@WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server Endpoint")
 @WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server for subscription endpoint")
-//@Controller
-//@WebServlet(urlPatterns = {"/fhir/*", "/fhir/**", "/fhir/tenants/{tenantId}/facilities/{facilityId}/*"}, displayName = "FHIR Server")
 public class Server extends RestfulServer {
-    @Autowired
-    AutowireCapableBeanFactory beanFactory;
-    private static final String DISPATCHER_CONTEXT_ATTRIBUTE_NAME = FrameworkServlet.SERVLET_CONTEXT_PREFIX + "EhrApiApplication";
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
+    @Autowired
+    BundleProvider bundleProvider;
+    @Autowired
+    OperationOutcomeProvider operationOutcomeProvider;
+    @Autowired
+    SubscriptionStatusProvider subscriptionStatusProvider;
+    @Autowired
+    SubscriptionProvider subscriptionProvider;
+    @Autowired
+    PatientProvider patientProvider;
+
+    public Server(FhirContext ctx) {
+        super(ctx);
+    }
+
+    private static final String DISPATCHER_CONTEXT_ATTRIBUTE_NAME = FrameworkServlet.SERVLET_CONTEXT_PREFIX + "EhrApiApplication";
     private static final long serialVersionUID = 1L;
-    private static final FhirContext ctx = EhrApiApplication.fhirContext;
 
     /**
      * The initialize method is automatically called when the servlet is starting up, so it can
@@ -48,21 +59,21 @@ public class Server extends RestfulServer {
 
     @Override
     protected void initialize() throws ServletException {
-        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-        try {
-            SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, getServletContext());
-
-        } catch (NoSuchBeanDefinitionException e) {
-            WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext(), DISPATCHER_CONTEXT_ATTRIBUTE_NAME);
-//            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this, context);
-
-        }
-        this.setDefaultResponseEncoding(EncodingEnum.XML);
-        setFhirContext(ctx);
+//        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+//        try {
+//            SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, getServletContext());
+//        } catch (NoSuchBeanDefinitionException e) {
+//            WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext(), DISPATCHER_CONTEXT_ATTRIBUTE_NAME);
+////            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this, context);
+//        }
+        setDefaultResponseEncoding(EncodingEnum.XML);
 
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
         loggingInterceptor.setLoggerName("FHIR Server");
         registerInterceptor(loggingInterceptor);
+
+        ResponseHighlighterInterceptor responseHighlighterInterceptor = new ResponseHighlighterInterceptor();
+        registerInterceptor(responseHighlighterInterceptor);
 
 //        setTenantIdentificationStrategy(new CustomIdentificationStrategy());
         setTenantIdentificationStrategy(new UrlBaseTenantIdentificationStrategy());
@@ -70,16 +81,11 @@ public class Server extends RestfulServer {
         setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
-        SubscriptionStatusProvider subscriptionStatusProvider = new SubscriptionStatusProvider();
-        OperationOutcomeProvider operationOutcomeProvider = new OperationOutcomeProvider();
-        BundleProvider bundleProvider = new BundleProvider(operationOutcomeProvider, subscriptionStatusProvider);
-        beanFactory.autowireBean(operationOutcomeProvider);
-        beanFactory.autowireBean(subscriptionStatusProvider);
-        beanFactory.autowireBean(bundleProvider);
-        resourceProviders.add(new SubscriptionProvider());
+        resourceProviders.add(subscriptionProvider);
         resourceProviders.add(subscriptionStatusProvider);
         resourceProviders.add(operationOutcomeProvider);
         resourceProviders.add(bundleProvider);
+        resourceProviders.add(patientProvider);
         setResourceProviders(resourceProviders);
 
         INarrativeGenerator narrativeGen = new DefaultThymeleafNarrativeGenerator();

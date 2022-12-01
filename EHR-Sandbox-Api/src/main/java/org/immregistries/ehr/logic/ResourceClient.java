@@ -13,51 +13,53 @@ import org.immregistries.ehr.entities.ImmunizationRegistry;
 import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public abstract class ResourceClient {
+@Service
+public class ResourceClient {
 
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    FhirContext fhirContext;
 
-    private static final FhirContext CTX = CustomClientBuilder.getCTX();
-
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    private static String add_timestamp(String message){
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private String add_timestamp(String message){
         LocalDateTime now = LocalDateTime.now();  
         return dtf.format(now) + " " + message;
     }
 
-    public static String read(String resourceType, String resourceId, ImmunizationRegistry ir){
+    public String read(String resourceType, String resourceId, ImmunizationRegistry ir){
         return read(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static MethodOutcome create(IBaseResource resource, ImmunizationRegistry ir){
+    public MethodOutcome create(IBaseResource resource, ImmunizationRegistry ir){
         return create(resource, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static MethodOutcome delete(String resourceType, String resourceId, ImmunizationRegistry ir){
+    public MethodOutcome delete(String resourceType, String resourceId, ImmunizationRegistry ir){
         return delete(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
 
-    public static MethodOutcome update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
+    public MethodOutcome update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
         return update(resource, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
   
   
-    public static String read(String resourceType, String resourceId, String iisUrl, String tenantId, String username, String password) {
+    public String read(String resourceType, String resourceId, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         IBaseResource resource;
         resource = client.read().resource(resourceType).withId(resourceId).execute();
-        return CTX.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
+        return fhirContext.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
     }
   
   
-    public static MethodOutcome create(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
+    public MethodOutcome create(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome;
         outcome = client.create().resource(resource).execute();
@@ -65,23 +67,23 @@ public abstract class ResourceClient {
     }
 
   
-    public static MethodOutcome delete(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
+    public MethodOutcome delete(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome = client.delete().resourceById(new IdType(resourceType, resourceId)).execute();
         OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
         return outcome;
     }
 
-    public static MethodOutcome update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
+    public MethodOutcome update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome = client.update().resource(resource).execute();
         return outcome;
     }
 
-    public static MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, ImmunizationRegistry ir) {
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, ImmunizationRegistry ir) {
         return  updateOrCreate(resource, type, identifier, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
     }
-    public static MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, String iisUrl, String tenantId, String username, String password) {
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, String iisUrl, String tenantId, String username, String password) {
         IGenericClient client = new CustomClientBuilder(iisUrl, tenantId, username, password).getClient();
         MethodOutcome outcome;
         try {
