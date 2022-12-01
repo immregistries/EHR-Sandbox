@@ -9,9 +9,9 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.OperationOutcome;
-import org.immregistries.ehr.entities.ImmunizationRegistry;
-import org.immregistries.ehr.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

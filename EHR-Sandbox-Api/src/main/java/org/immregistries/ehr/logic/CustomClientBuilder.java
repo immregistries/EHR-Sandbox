@@ -7,8 +7,7 @@ import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.UrlTenantSelectionInterceptor;
-import org.immregistries.ehr.EhrApiApplication;
-import org.immregistries.ehr.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 

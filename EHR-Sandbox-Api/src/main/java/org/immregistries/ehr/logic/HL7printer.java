@@ -10,12 +10,9 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.EhrApiApplication;
-import org.immregistries.ehr.entities.Facility;
-import org.immregistries.ehr.entities.Patient;
-import org.immregistries.ehr.entities.Vaccine;
-import org.immregistries.ehr.security.AuthTokenFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.Vaccine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

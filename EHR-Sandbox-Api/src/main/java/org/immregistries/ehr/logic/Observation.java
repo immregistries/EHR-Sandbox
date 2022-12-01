@@ -1,7 +1,7 @@
 package org.immregistries.ehr.logic;
 
-import org.immregistries.ehr.entities.Patient;
-import org.immregistries.ehr.entities.VaccinationEvent;
+import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.VaccinationEvent;
 
 import java.io.Serializable;
 import java.util.Date;
