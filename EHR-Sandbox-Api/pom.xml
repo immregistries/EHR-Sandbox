@@ -20,16 +20,16 @@
 		<hapi.version>6.0.3</hapi.version>
 	</properties>
 	<dependencies>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>${spring-boot-starter-tomcat.scope}</scope>
+			<scope>${spring-boot-tomcat.scope}</scope>
 			<version>${spring.version}</version>
 		</dependency>
 
@@ -44,8 +44,6 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -250,7 +248,7 @@
 			<properties>
 				<activatedProperties>prod</activatedProperties>
 				<maven.test.skip>true</maven.test.skip>
-				<spring-boot-starter-tomcat.scope>provided</spring-boot-starter-tomcat.scope>
+				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -290,7 +288,7 @@
 			<properties>
 				<activatedProperties>dev</activatedProperties>
 				<maven.test.skip>true</maven.test.skip>
-				<spring-boot-starter-tomcat.scope>compile</spring-boot-starter-tomcat.scope>
+				<spring-boot-tomcat.scope>compile</spring-boot-tomcat.scope>
 			</properties>
 		</profile>
 		<profile>

@@ -1,0 +1,23 @@
+#spring.jpa.hibernate.ddl-auto:none
+spring:
+  profiles.active: '@activatedProperties@'
+  datasource:
+    url : "jdbc:mysql://localhost:3306/ehr"
+    username : 'ehr_web'
+    password : 'SharkBaitHooHaHa'
+# App Properties
+ehr:
+  api:
+    app:
+      jwtSecret: EHRSandboxSecretKeythebigshort
+      jwtExpirationMs: 86400000
+#spring.output.ansi.enabled:always
+
+---
+spring.config.activate.on-profile: dev
+server:
+  port: 9091
+  context-path : '/ehr-sandbox'
+
+---
+spring.config.activate.on-profile: prod
