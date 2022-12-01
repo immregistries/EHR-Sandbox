@@ -3,10 +3,8 @@ package org.immregistries.ehr.api.controllers;
 
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.entities.*;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

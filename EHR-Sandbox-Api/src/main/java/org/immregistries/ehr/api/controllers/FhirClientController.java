@@ -14,7 +14,6 @@ import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.mapping.ImmunizationHandler;
 import org.immregistries.ehr.logic.mapping.PatientHandler;
 import org.immregistries.ehr.logic.ResourceClient;
-import org.immregistries.ehr.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

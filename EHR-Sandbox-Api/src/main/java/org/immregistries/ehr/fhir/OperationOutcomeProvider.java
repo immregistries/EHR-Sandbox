@@ -8,8 +8,6 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.Patient;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.entities.*;
-import org.immregistries.ehr.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

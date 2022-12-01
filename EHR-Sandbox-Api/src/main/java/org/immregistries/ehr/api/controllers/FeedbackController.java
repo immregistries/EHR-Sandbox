@@ -5,8 +5,6 @@ import org.immregistries.ehr.api.entities.Feedback;
 import org.immregistries.ehr.api.entities.Patient;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.entities.*;
-import org.immregistries.ehr.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

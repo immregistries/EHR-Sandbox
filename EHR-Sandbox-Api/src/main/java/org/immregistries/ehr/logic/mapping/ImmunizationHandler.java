@@ -8,11 +8,13 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Maps the Database with FHIR for the immunization resources
@@ -22,6 +24,8 @@ public class ImmunizationHandler {
   //        logger.info("Code Maps fetched");
   @Autowired
   CodeMapManager codeMapManager;
+  @Autowired
+  ClinicianRepository clinicianRepository;
 
   // Constants need to be harmonized with IIS Sandbox
   public static final String CVX = "http://hl7.org/fhir/sid/cvx";
@@ -116,8 +120,82 @@ public class ImmunizationHandler {
     return i;
   }
 
-  public VaccinationEvent fromFhir(Immunization immunization) {
-    return new VaccinationEvent();
+  public VaccinationEvent fromFhir(Immunization i) {
+    VaccinationEvent ve = new VaccinationEvent();
+    ve.setVaccine(vaccineFromFhir(i));
+//    ve.setExternalLink(i.getIdentifierFirstRep().getValue());
+    if (i.getPatient() != null && i.getPatient().getReference() != null && !i.getPatient().getReference().isBlank()) {
+    }
+    if (i.getLocation() != null && i.getLocation().getReference() != null && !i.getLocation().getReference().isBlank()){
+//      ve.setOrgLocation(fhirRequests.readOrgLocation(i.getLocation().getReference()));
+    }
+    if (i.hasInformationSourceReference() && i.getInformationSourceReference().getReference() != null && !i.getInformationSourceReference().getReference().isBlank()) {
+//      ve.setEnteringClinician(fhirRequests.readPractitionerPerson(i.getInformationSourceReference().getReference()));
+    }
+    for (Immunization.ImmunizationPerformerComponent performer: i.getPerformer()) {
+      if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()){
+        switch (performer.getFunction().getCode(FUNCTION)){
+          case ADMINISTERING: {
+//            ve.setAdministeringClinician(fhirRequests.readPractitionerPerson(performer.getActor().getReference()));
+            break;
+          }
+          case ORDERING: {
+//            ve.setOrderingClinician(fhirRequests.readPractitionerPerson(performer.getActor().getReference()));
+            break;
+          }
+        }
+      }
+    }
+    return  ve;
+  }
+
+  public Vaccine vaccineFromFhir(Immunization i) {
+    Vaccine v = new Vaccine();
+    v.setUpdatedDate(i.getMeta().getLastUpdated());
+
+    v.setCreatedDate(i.getRecorded());
+    v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
+
+    v.setVaccineCvxCode(i.getVaccineCode().getCode(CVX));
+    v.setVaccineNdcCode(i.getVaccineCode().getCode(NDC));
+    v.setVaccineMvxCode(i.getVaccineCode().getCode(MVX));
+
+    v.setVaccineMvxCode(i.getManufacturer().getIdentifier().getValue());
+
+    v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
+
+    v.setInformationSource(i.getInformationSourceCodeableConcept().getCode(INFORMATION_SOURCE));
+    v.setUpdatedDate(new Date());
+
+    v.setLotNumber(i.getLotNumber());
+    v.setExpirationDate(i.getExpirationDate());
+    if (i.getStatus() != null) {
+      switch(i.getStatus()){
+        case COMPLETED: {
+          v.setCompletionStatus("CP");
+          break;
+        }
+        case ENTEREDINERROR: {
+          v.setActionCode("D");
+          break;
+        }
+        case NOTDONE: {
+          v.setCompletionStatus("RE");
+          break;
+        } //Could also be NA or PA
+        case NULL:
+        default:
+          v.setCompletionStatus("");
+          break;
+      }
+    }
+    v.setRefusalReasonCode(i.getReasonFirstRep().getConcept().getCodingFirstRep().getCode());
+    v.setBodySite(i.getSite().getCodingFirstRep().getCode());
+    v.setBodyRoute(i.getRoute().getCodingFirstRep().getCode());
+    v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
+    v.setFundingEligibility(i.getProgramEligibilityFirstRep().getCodingFirstRep().getCode());
+
+    return v;
   }
   
   
