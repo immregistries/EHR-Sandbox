@@ -1,55 +1,76 @@
 package org.immregistries.ehr.logic;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
-import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
-import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import ca.uhn.fhir.rest.client.interceptor.UrlTenantSelectionInterceptor;
+import ca.uhn.fhir.rest.client.interceptor.*;
+import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * CustomClientBuilder
  * 
  */
-public class CustomClientBuilder {
+@Component
+public class CustomClientBuilder extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
 
     // Needs to be static object and built only one time in whole project
     @Autowired
     FhirContext fhirContext;
 
-    private final IGenericClient client;
+    LoggingInterceptor loggingInterceptor;
+    private static final Logger logger = LoggerFactory.getLogger(CustomClientBuilder.class);
 
-
-    public CustomClientBuilder(ImmunizationRegistry registry){
-        this(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword());
+    public IGenericClient newGenericClient(ImmunizationRegistry registry){
+         return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword());
     }
 
-    public CustomClientBuilder(String serverURL, String tenantId, String username, String password){
-        // Deactivate the request for server metadata
-        fhirContext.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
-        // Create a client
-        this.client = fhirContext.newRestfulGenericClient(serverURL);
-
-        // Register a logging interceptor
-        LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
-        loggingInterceptor.setLogRequestSummary(true);
-        loggingInterceptor.setLogRequestBody(true);
-        this.client.registerInterceptor(loggingInterceptor);
-
+    public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password){
+        IGenericClient client = newGenericClient(serverURL);
         // Register a tenancy interceptor to add /$tenantid to the url
         UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
-        this.client.registerInterceptor(tenantSelection);
+        client.registerInterceptor(tenantSelection);
         // Create an HTTP basic auth interceptor
         IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
-        this.client.registerInterceptor(authInterceptor);
-    }
-
-    public IGenericClient getClient() {
+        client.registerInterceptor(authInterceptor);
         return client;
     }
 
+    @Override
+    public synchronized IGenericClient newGenericClient(String theServerBase) {
+        asynchInit();
+        IGenericClient client = super.newGenericClient(theServerBase);
+        client.registerInterceptor(loggingInterceptor);
+//        AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+//        interceptor.addHeaderValue("Cache-Control", "no-cache");
+//        client.registerInterceptor(interceptor);
+        return client;
+    }
+
+    private void asynchInit() {
+        if (this.getFhirContext() == null ){
+            setFhirContext(fhirContext);
+            setServerValidationMode(ServerValidationModeEnum.NEVER);
+            loggingInterceptor = new LoggingInterceptor();
+            loggingInterceptor.setLogger(logger);
+            loggingInterceptor.setLogRequestSummary(true);
+            loggingInterceptor.setLogRequestBody(true);
+        }
+    }
+
+    @Override
+    public IGenericClient newClient(FhirContext fhirContext, HttpServletRequest httpServletRequest, String s) {
+        return null;
+    }
 }

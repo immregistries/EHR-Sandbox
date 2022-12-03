@@ -1,0 +1,6 @@
+<mat-form-field appearance="outline" style="padding: 0%; margin: 0px; height: 60px">
+  <mat-label>Interacting IIS</mat-label>
+  <mat-select [ngModel]="immRegistryService.getImmRegistryId()" (ngModelChange)="onSelect($event)" name="immunizationRegistry">
+    <mat-option *ngFor="let registry of immunizationRegistries" [value]="registry.id" >{{registry.name + (registry.id? " (" + registry.id + ")" : "")}}</mat-option>
+  </mat-select>
+</mat-form-field>

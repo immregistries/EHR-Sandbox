@@ -17,7 +17,8 @@ ehr:
 spring.config.activate.on-profile: dev
 server:
   port: 9091
-  context-path : '/ehr-sandbox'
+  server.contextPath: /ehr-sandbox
+
 
 ---
 spring.config.activate.on-profile: prod

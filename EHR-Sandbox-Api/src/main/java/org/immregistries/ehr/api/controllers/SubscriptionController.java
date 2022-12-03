@@ -48,6 +48,8 @@ public class SubscriptionController {
     private SubscriptionInfoRepository subscriptionInfoRepository;
     @Autowired
     FhirContext fhirContext;
+    @Autowired
+    CustomClientBuilder customClientBuilder;
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
     public Optional<SubscriptionStore> subscriptionStore(@PathVariable() String facilityId){
@@ -59,7 +61,7 @@ public class SubscriptionController {
     public Boolean subscribeToIIS(@PathVariable() Integer immRegistryId, @PathVariable() int facilityId , @RequestBody String body) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         Subscription sub = generateRestHookSubscription(facilityId, ir.getIisFhirUrl());
-        IGenericClient client = new CustomClientBuilder(ir).getClient();
+        IGenericClient client = customClientBuilder.newGenericClient(ir);
 
         MethodOutcome outcome = client.create().resource(sub).execute();
         IParser parser  = fhirContext.newJsonParser();

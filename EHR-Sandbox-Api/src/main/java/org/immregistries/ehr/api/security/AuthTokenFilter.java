@@ -83,6 +83,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String item = "";
         if(scanner.hasNext() && tenantId == -1) {
             item = scanner.next();
+            if (item.equals("ehr-sandbox") ) {
+                if (scanner.hasNext()) {
+                    item = scanner.next();
+                } else {
+                    return true;
+                }
+            }
             if (item.equals("fhir") ) {
                 return true;
             }
