@@ -34,6 +34,8 @@ public class EhrFhirServer extends RestfulServer {
     SubscriptionProvider subscriptionProvider;
     @Autowired
     PatientProvider patientProvider;
+    @Autowired
+    ImmunizationProvider immunizationProvider;
 
     public EhrFhirServer(FhirContext ctx) {
         super(ctx);
@@ -77,6 +79,7 @@ public class EhrFhirServer extends RestfulServer {
         resourceProviders.add(operationOutcomeProvider);
         resourceProviders.add(bundleProvider);
         resourceProviders.add(patientProvider);
+        resourceProviders.add(immunizationProvider);
         setResourceProviders(resourceProviders);
 
         INarrativeGenerator narrativeGen = new DefaultThymeleafNarrativeGenerator();

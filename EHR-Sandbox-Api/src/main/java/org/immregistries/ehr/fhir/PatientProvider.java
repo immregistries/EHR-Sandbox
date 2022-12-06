@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Patient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.logic.mapping.PatientHandler;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Date;
 
 @Controller
 public class PatientProvider implements IResourceProvider {
@@ -44,9 +47,11 @@ public class PatientProvider implements IResourceProvider {
         org.immregistries.ehr.api.entities.Patient patient = patientHandler.fromFhir(fhirPatient);
         patient.setFacility(facility);
         patient.setTenant(facility.getTenant());
+        patient.setCreatedDate(new Date());
+        patient.setUpdatedDate(new Date());
         // TODO set received information status and make sure history of patient info if already exists
-        patientRepository.save(patient);
-        return methodOutcome;
+        patient = patientRepository.save(patient);
+        return methodOutcome.setId(new IdType().setValue(patient.getId().toString()));
     }
 
 }

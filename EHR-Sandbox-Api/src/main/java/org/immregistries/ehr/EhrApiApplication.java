@@ -56,7 +56,7 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 		EhrFhirServer servlet = new EhrFhirServer(context.getBean(FhirContext.class));
 		beanFactory.autowireBean(servlet);
 		registrationBean.setServlet(servlet);
-		registrationBean.addUrlMappings( "/fhir/*");
+		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");
 		registrationBean.setLoadOnStartup(1);
 		return registrationBean;
 	}

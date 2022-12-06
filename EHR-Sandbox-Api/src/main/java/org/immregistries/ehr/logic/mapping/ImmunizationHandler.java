@@ -113,8 +113,6 @@ public class ImmunizationHandler {
             .setIdentifier(new Identifier()
                     .setSystem(MVX)
                     .setValue(vaccine.getVaccineMvxCode())));
-
-
 //    i.getLocation().setReferenceElement();
 //    location.setName(facility.getNameDisplay());
     return i;
@@ -130,17 +128,19 @@ public class ImmunizationHandler {
 //      ve.setOrgLocation(fhirRequests.readOrgLocation(i.getLocation().getReference()));
     }
     if (i.hasInformationSourceReference() && i.getInformationSourceReference().getReference() != null && !i.getInformationSourceReference().getReference().isBlank()) {
-//      ve.setEnteringClinician(fhirRequests.readPractitionerPerson(i.getInformationSourceReference().getReference()));
+      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]); // TODO
+      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
     }
     for (Immunization.ImmunizationPerformerComponent performer: i.getPerformer()) {
       if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()){
+        Integer performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
         switch (performer.getFunction().getCode(FUNCTION)){
           case ADMINISTERING: {
-//            ve.setAdministeringClinician(fhirRequests.readPractitionerPerson(performer.getActor().getReference()));
+            ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO
             break;
           }
           case ORDERING: {
-//            ve.setOrderingClinician(fhirRequests.readPractitionerPerson(performer.getActor().getReference()));
+            ve.setOrderingClinician(clinicianRepository.findById(performerId).get());//TODO
             break;
           }
         }

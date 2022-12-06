@@ -148,9 +148,9 @@ CREATE TABLE `vaccine` (
 
 CREATE TABLE `vaccination_event` (
   `vaccination_event_id` int(11) NOT NULL AUTO_INCREMENT,
-  `administering_clinician_id` int(11) NOT NULL,
-  `entering_clinician_id` int(11) NOT NULL,
-  `ordering_clinician_id` int(11) NOT NULL,
+  `administering_clinician_id` int(11) DEFAULT NULL,
+  `entering_clinician_id` int(11) DEFAULT NULL,
+  `ordering_clinician_id` int(11) DEFAULT NULL,
   `administering_facility_id` int(11) NOT NULL,
   `patient_id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,

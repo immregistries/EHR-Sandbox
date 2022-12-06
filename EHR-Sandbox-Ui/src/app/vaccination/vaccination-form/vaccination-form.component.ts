@@ -34,6 +34,12 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   private formChangesSubscription!: Subscription;
   ngOnInit() {
+    if (this.vaccination) {
+      this.vaccination.vaccine ? null : this.vaccination.vaccine = {};
+      this.vaccination.enteringClinician ? null : this.vaccination.enteringClinician = {};
+      this.vaccination.administeringClinician ? null : this.vaccination.administeringClinician = {};
+      this.vaccination.orderingClinician ? null : this.vaccination.orderingClinician = {};
+    }
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       this.codeBaseMap = codeBaseMap
       this.codeBaseMapKeys = Object.keys(codeBaseMap)

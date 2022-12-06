@@ -225,16 +225,16 @@ public class PatientHandler {
     patient.setAddressCountry(address.getCountry());
     patient.setAddressCountyParish(address.getDistrict());
 
-    if (null != p.getMultipleBirth()) {
+    if (null != p.getMultipleBirth() && !p.getMultipleBirth().isEmpty()) {
       if (p.getMultipleBirth().isBooleanPrimitive()) {
         if (p.getMultipleBirthBooleanType().booleanValue()) {
           patient.setBirthFlag(YES);
         } else {
           patient.setBirthFlag(NO);
         }
+      } else {
+        patient.setBirthOrder(String.valueOf(p.getMultipleBirthIntegerType()));
       }
-    } else {
-      patient.setBirthOrder(String.valueOf(p.getMultipleBirthIntegerType()));
     }
 
     if (p.getExtensionByUrl(PUBLICITY_EXTENSION) != null) {
