@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { SettingsService } from '../../core/_services/settings.service';
 import { FacilityService } from '../../core/_services/facility.service';
@@ -22,6 +22,39 @@ export class FhirService {
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private immRegistries: ImmRegistriesService) { }
+
+  postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number,parentId: number, referenceId: string): Observable<string> {
+    switch(type){
+      case "Patient": {
+        return this.quickPostPatient(resourceId,resource,operation);
+        break;
+      }
+      case "Immunization": {
+        return this.quickPostImmunization(parentId, resourceId, resource, operation, referenceId);
+        break;
+      }
+      case "Practitionner": {
+        break;
+      }
+      case "Group": {
+        return this.postGroup(resource,operation,resourceId);
+        break;
+      }
+    }
+    return of("");
+  }
+
+  postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    const options = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      params: new HttpParams().append("type", "Group")
+    };
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/fhir-client/imm-registry/${immId}`,
+      resource,
+      options);
+  }
 
   /**
    *
@@ -54,7 +87,7 @@ export class FhirService {
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${immId}`,
       resource,
       this.immunizationOptions(patientFhirId));
   }
@@ -62,7 +95,7 @@ export class FhirService {
   putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${immId}`,
       resource,
       this.immunizationOptions(patientFhirId),
       );
@@ -97,7 +130,7 @@ export class FhirService {
   putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}`,
       resource,
       httpOptions);
   }
@@ -105,7 +138,7 @@ export class FhirService {
   postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}`,
       resource,
       httpOptions);
   }
@@ -121,7 +154,7 @@ export class FhirService {
   //   const tenantId: number = this.tenantService.getTenantId()
   //   const facilityId: number = this.facilityService.getFacilityId()
   //   return this.http.get<any>(
-  //  `${this.settings.getApiUrl()}/fhir/${facilityId}`,
+  //  `${this.settings.getApiUrl()}/fhir-client/${facilityId}`,
   //     httpOptions);
   // }
 

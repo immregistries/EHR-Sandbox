@@ -90,7 +90,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     return true;
                 }
             }
-            if (item.equals("fhir") ) {
+            if (item.equals("fhir") || item.equals("fhir-client") ) {
                 return true;
             }
             if (item.equals("tenants") ) {

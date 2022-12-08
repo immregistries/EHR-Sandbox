@@ -3,6 +3,7 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Immunization;
 import org.hl7.fhir.r5.model.Reference;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -72,7 +73,7 @@ public class FhirClientController {
         return ResponseEntity.ok(resource);
     }
 
-    @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir" + IMM_REGISTRY_SUFFIX)
+    @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public  ResponseEntity<String>  postPatient(@PathVariable() Integer immRegistryId, @RequestBody String message) {
         IParser parser = parser(message);
         org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class,message);
@@ -84,7 +85,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-    @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir" + IMM_REGISTRY_SUFFIX)
+    @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public  ResponseEntity<String>  updatePatient(@PathVariable() Integer immRegistryId, @RequestBody String message) {
         IParser parser = parser(message);
         org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class,message);
@@ -97,7 +98,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-    @GetMapping(PATIENT_PREFIX + "/{patientId}/fhir" + IMM_REGISTRY_SUFFIX)
+    @GetMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String>  getPatient(@PathVariable() Integer immRegistryId, @PathVariable() int patientId) {
         return ResponseEntity.ok(resourceClient.read("patient", String.valueOf(patientId), immRegistryController.settings(immRegistryId)));
     }
@@ -119,7 +120,7 @@ public class FhirClientController {
         return ResponseEntity.ok(resource);
     }
 
-    @PostMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir" + IMM_REGISTRY_SUFFIX)
+    @PostMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> postImmunization(@PathVariable() Integer immRegistryId, @RequestBody String message, @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class,message);
@@ -142,7 +143,7 @@ public class FhirClientController {
         }
     }
 
-    @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir" + IMM_REGISTRY_SUFFIX)
+    @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> updateImmunization(@PathVariable() Integer immRegistryId, @RequestBody String message, @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class,message);
@@ -164,10 +165,36 @@ public class FhirClientController {
         }
     }
 
-    @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir" + IMM_REGISTRY_SUFFIX)
+    @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String>  getImmunization(@PathVariable() Integer immRegistryId, @PathVariable() int vaccinationId) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), ir));
+    }
+
+    @PostMapping("/fhir-client" + IMM_REGISTRY_SUFFIX)
+    public  ResponseEntity<String>  postResource(@PathVariable() Integer immRegistryId,@RequestParam(name="type") String type, @RequestBody String message) {
+        IParser parser = parser(message);
+        IBaseResource resource = parser.parseResource(message);
+        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+        MethodOutcome outcome = resourceClient.updateOrCreate(resource, type, null, ir);
+        if (outcome.getOperationOutcome() != null) {
+            logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
+        }
+        logger.info(String.valueOf(outcome.getResponseHeaders()));
+        return ResponseEntity.ok(outcome.getId().getIdPart());
+    }
+
+    @PutMapping("/fhir-client" + IMM_REGISTRY_SUFFIX)
+    public  ResponseEntity<String>  putResource(@PathVariable() Integer immRegistryId,@RequestParam String type, @RequestBody String message) {
+        IParser parser = parser(message);
+        IBaseResource resource = parser.parseResource(message);
+        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+        MethodOutcome outcome = resourceClient.updateOrCreate(resource, type, null, ir);
+        if (outcome.getOperationOutcome() != null) {
+            logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
+        }
+        logger.info(String.valueOf(outcome.getResponseHeaders()));
+        return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
     private IParser parser(String message) {

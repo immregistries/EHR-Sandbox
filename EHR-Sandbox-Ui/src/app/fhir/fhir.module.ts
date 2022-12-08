@@ -24,6 +24,8 @@ import { MatCardModule } from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import { SubscriptionService } from './_services/subscription.service';
+import { FhirPostComponent } from './_components/fhir-post/fhir-post.component';
+import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { SubscriptionService } from './_services/subscription.service';
     FhirDialogComponent,
     SubscriptionDashboardComponent,
     SubscriptionTableComponent,
+    FhirPostComponent,
   ],
   imports: [
     CommonModule,
@@ -49,6 +52,7 @@ import { SubscriptionService } from './_services/subscription.service';
     MatGridListModule,
     MatCardModule,
     MatCheckboxModule,
+    MatProgressSpinnerModule,
 
     SharedModule,
   ],
@@ -63,6 +67,7 @@ import { SubscriptionService } from './_services/subscription.service';
     FhirGetComponent,
     FhirDialogComponent,
     SubscriptionDashboardComponent,
+    FhirPostComponent,
   ]
 })
 export class FhirModule { }

@@ -89,7 +89,7 @@ public class ResourceClient {
         IGenericClient client = customClientBuilder.newGenericClient(iisUrl, tenantId, username, password);
         MethodOutcome outcome;
         try {
-            if (identifier.getValue() != null && !identifier.getValue().isEmpty()) {
+            if (identifier != null && identifier.getValue() != null && !identifier.getValue().isEmpty()) {
                 outcome = client.update().resource(resource).conditionalByUrl(
                         type+"?identifier="+identifier.getSystem()+"|"+identifier.getValue()
                                 + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"

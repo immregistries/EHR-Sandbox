@@ -106,6 +106,7 @@ sendVaccination() {
       this.feedbackService.doRefresh()
     },
     error: (err) => {
+      this.vaccinationRequestLoading = false
       this.vaccinationError = true
       if (err.error.error) {
         this.vaccinationAnswer = err.error.error
