@@ -95,6 +95,9 @@
             },
             "development": {
               "browserTarget": "ehr-sandbox-ui:build:development"
+            },
+            "local": {
+              "browserTarget": "ehr-sandbox-ui:build:local"
             }
           },
           "defaultConfiguration": "development"

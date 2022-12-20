@@ -17,6 +17,7 @@ export class SubscriptionDashboardComponent implements OnInit {
 
   subscription?: SubscriptionStore;
   error: string = "";
+  loading: boolean = false;
 
   ngOnInit(): void {
     this.facilityService.getRefresh().subscribe(res => {
@@ -33,7 +34,9 @@ export class SubscriptionDashboardComponent implements OnInit {
 
   subscribeToIIS() {
     console.log("subscribe")
+    this.loading = true
     this.subscriptionService.createSubscription().subscribe(res => {
+      this.loading = false
       this.ngOnInit()
     })
   }

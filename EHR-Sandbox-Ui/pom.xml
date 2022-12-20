@@ -86,7 +86,7 @@
       <id>local</id>
       <!--      same as prod, but with local api set in angular by using "local" angular config-->
       <properties>
-        <run.arguments>run build -c -local</run.arguments>
+        <run.arguments>run build -- --c local</run.arguments>
       </properties>
     </profile>
     <profile>
