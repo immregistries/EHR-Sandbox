@@ -38,20 +38,16 @@ public class TenantController {
 
     @GetMapping("/{tenantId}/patients")
     public Iterable<Patient> patients(@PathVariable() int tenantId) {
-
         return patientRepository.findByTenantId(tenantId);
     }
 
     @PostMapping()
     public ResponseEntity<Tenant> postTenant(@RequestBody Tenant tenant) {
         if (tenantRepository.existsByUserIdAndNameDisplay(userDetailsService.currentUserId(), tenant.getNameDisplay())){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Tenant already exists");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Tenant already exists");
         }
         if (tenant.getNameDisplay().length() < 1){
-//            return new ResponseEntity<String>( "No tenant name specified", HttpStatus.NOT_ACCEPTABLE) ;
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "No tenant name specified");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No tenant name specified");
         }
         tenant.setUser(userDetailsService.currentUser());
         Tenant newTenant = tenantRepository.save(tenant);

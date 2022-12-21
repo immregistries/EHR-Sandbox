@@ -61,13 +61,10 @@ public class FhirClientController {
     public ResponseEntity<String> getPatientAsResource(
             HttpServletRequest request,
             @PathVariable() int patientId) {
-        Optional<Patient> patient = patientRepository.findById(patientId);
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        if (!patient.isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "No patient found");
-        }
-        org.hl7.fhir.r5.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient.get(),
+        org.hl7.fhir.r5.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient,
                 request.getRequestURI().split("/patients")[0]);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
@@ -107,14 +104,11 @@ public class FhirClientController {
     public ResponseEntity<String> immunizationResource(
             HttpServletRequest request,
             @PathVariable() int vaccinationId) {
-        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findById(vaccinationId);
+        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        if (!vaccinationEvent.isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "No vaccination found");
-        }
         org.hl7.fhir.r5.model.Immunization immunization =
-                immunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent.get(),
+                immunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent,
                         request.getRequestURI().split("/patients")[0]) ;
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);

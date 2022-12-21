@@ -53,16 +53,12 @@ public class FacilityController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
         }else {
-            Optional<Tenant> tenant = tenantRepository.findById(tenantId);
-            if (!tenant.isPresent()){
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id");
-            }
             if (facilityRepository.existsByTenantIdAndNameDisplay(tenantId, facility.getNameDisplay())){
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_ACCEPTABLE, "Facility already exists");
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already exists");
             }
-            facility.setTenant(tenant.get());
+            Tenant tenant = tenantRepository.findById(tenantId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id"));
+            facility.setTenant(tenant);
             Facility newEntity = facilityRepository.save(facility);
             return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
         }

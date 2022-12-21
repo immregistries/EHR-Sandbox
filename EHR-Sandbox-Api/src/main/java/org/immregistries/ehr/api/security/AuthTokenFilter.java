@@ -79,6 +79,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         int patientId = -1;
         int vaccinationId = -1;
         // Parsing the URI
+        String[] split = url.split("/");
+        int len = split.length;
         Scanner scanner = new Scanner(url).useDelimiter("/");
         String item = "";
         if(scanner.hasNext() && tenantId == -1) {
@@ -144,6 +146,5 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
         }
         return true;
-
     }
 }
