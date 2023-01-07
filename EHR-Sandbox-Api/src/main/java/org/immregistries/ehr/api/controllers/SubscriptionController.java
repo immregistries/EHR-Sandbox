@@ -67,7 +67,7 @@ public class SubscriptionController {
         IParser parser  = fhirContext.newJsonParser();
         Subscription outcomeSub = (Subscription) outcome.getResource();
         if (outcome.getCreated()){
-            outcomeSub.setStatus(Enumerations.SubscriptionState.ACTIVE);
+            outcomeSub.setStatus(Enumerations.SubscriptionStatusCodes.ACTIVE);
         }
         SubscriptionStore subscriptionStore = new SubscriptionStore(outcomeSub);
         subscriptionStore.setImmunizationRegistry(ir);
@@ -97,7 +97,7 @@ public class SubscriptionController {
     public Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
         Subscription sub = new Subscription();
         sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
-        sub.setStatus(Enumerations.SubscriptionState.REQUESTED);
+        sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
 //        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
         sub.setTopic(LOCAL_TOPIC);
 

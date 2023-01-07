@@ -56,12 +56,12 @@ public class ImmunizationHandler {
   }
   
   private Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
-    
+
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
 
-    i.setRecorded(vaccine.getCreatedDate());
+//    i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotNumber());
     i.getOccurrenceDateTimeType().setValue(vaccine.getAdministeredDate());
     i.setDoseQuantity(new Quantity());
@@ -99,7 +99,7 @@ public class ImmunizationHandler {
     i.getSite().addCoding().setSystem(BODY_PART).setCode(vaccine.getBodySite());
     i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
     i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
-    i.addProgramEligibility().addCoding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility());
+    i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility())));
 
     i.getVaccineCode().addCoding()
             .setSystem(CVX)
@@ -108,11 +108,11 @@ public class ImmunizationHandler {
             .setSystem(NDC)
             .setCode(vaccine.getVaccineNdcCode());
 
-    i.setManufacturer(new Reference()
+    i.setManufacturer(new CodeableReference(new Reference()
             .setType("Organisation")
             .setIdentifier(new Identifier()
                     .setSystem(MVX)
-                    .setValue(vaccine.getVaccineMvxCode())));
+                    .setValue(vaccine.getVaccineMvxCode()))));
 //    i.getLocation().setReferenceElement();
 //    location.setName(facility.getNameDisplay());
     return i;
@@ -127,10 +127,10 @@ public class ImmunizationHandler {
     if (i.getLocation() != null && i.getLocation().getReference() != null && !i.getLocation().getReference().isBlank()){
 //      ve.setOrgLocation(fhirRequests.readOrgLocation(i.getLocation().getReference()));
     }
-    if (i.hasInformationSourceReference() && i.getInformationSourceReference().getReference() != null && !i.getInformationSourceReference().getReference().isBlank()) {
-      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]); // TODO
-      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
-    }
+//    if (i.hasInformationSourceReference() && i.getInformationSourceReference().getReference() != null && !i.getInformationSourceReference().getReference().isBlank()) {
+//      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]); // TODO
+//      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
+//    }
     for (Immunization.ImmunizationPerformerComponent performer: i.getPerformer()) {
       if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()){
         Integer performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
@@ -153,18 +153,18 @@ public class ImmunizationHandler {
     Vaccine v = new Vaccine();
     v.setUpdatedDate(i.getMeta().getLastUpdated());
 
-    v.setCreatedDate(i.getRecorded());
+//    v.setCreatedDate(i.getRecorded());
     v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
 
     v.setVaccineCvxCode(i.getVaccineCode().getCode(CVX));
     v.setVaccineNdcCode(i.getVaccineCode().getCode(NDC));
     v.setVaccineMvxCode(i.getVaccineCode().getCode(MVX));
 
-    v.setVaccineMvxCode(i.getManufacturer().getIdentifier().getValue());
+    v.setVaccineMvxCode(i.getManufacturer().getReference().getIdentifier().getValue());
 
     v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
 
-    v.setInformationSource(i.getInformationSourceCodeableConcept().getCode(INFORMATION_SOURCE));
+//    v.setInformationSource(i.getInformationSourceCodeableConcept().getCode(INFORMATION_SOURCE));
     v.setUpdatedDate(new Date());
 
     v.setLotNumber(i.getLotNumber());
@@ -193,7 +193,7 @@ public class ImmunizationHandler {
     v.setBodySite(i.getSite().getCodingFirstRep().getCode());
     v.setBodyRoute(i.getRoute().getCodingFirstRep().getCode());
     v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
-    v.setFundingEligibility(i.getProgramEligibilityFirstRep().getCodingFirstRep().getCode());
+//    v.setFundingEligibility(i.getProgramEligibilityFirstRep().getCodingFirstRep().getCode());
 
     return v;
   }

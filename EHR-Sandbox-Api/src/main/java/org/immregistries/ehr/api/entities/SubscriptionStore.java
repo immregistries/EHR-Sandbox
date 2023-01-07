@@ -30,7 +30,7 @@ public class SubscriptionStore {
         timeout = subscription.getTimeout();
         contentType = subscription.getContentType();
         content = subscription.hasContent() ? subscription.getContent().toCode() : null;
-        notificationUrlLocation = subscription.hasNotificationUrlLocation() ? subscription.getNotificationUrlLocation().toCode() : null;
+        notificationUrlLocation = subscription.getEndpoint(); //TODO verify
         maxCount = subscription.getMaxCount();
     }
 
@@ -38,7 +38,7 @@ public class SubscriptionStore {
         Subscription subscription = new Subscription();
         subscription.addIdentifier(new Identifier().setValue(identifier));
         subscription.setName(name);
-        subscription.setStatus(Enumerations.SubscriptionState.valueOf(status));
+        subscription.setStatus(Enumerations.SubscriptionStatusCodes.valueOf(status));
         subscription.setTopic(topic);
         subscription.setEnd(end);
         subscription.setReason(reason);
@@ -48,7 +48,7 @@ public class SubscriptionStore {
         subscription.setTimeout(timeout);
         subscription.setContent(Subscription.SubscriptionPayloadContent.valueOf(content));
         subscription.setContentType(contentType);
-        subscription.setNotificationUrlLocation(Subscription.SubscriptionUrlLocation.valueOf(notificationUrlLocation));
+        subscription.setEndpoint(notificationUrlLocation);
         subscription.setMaxCount(maxCount);
         return  subscription;
     }

@@ -44,6 +44,14 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
         // Create an HTTP basic auth interceptor
         IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
         client.registerInterceptor(authInterceptor);
+        // TODO ADD TOKEN MANUALLY ?
+        return client;
+    }
+
+    public IGenericClient newGenericClient(String serverURL, String username, String password){
+        IGenericClient client = newGenericClient(serverURL);
+        IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
+        client.registerInterceptor(authInterceptor);
         return client;
     }
 

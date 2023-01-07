@@ -87,7 +87,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
 
     private void processHandshake(SubscriptionStatus status,SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
         logger.info("Handshake {} {}", status.getSubscription(), status.getStatus());
-        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionState.REQUESTED.toCode())) {
+        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionStatusCodes.REQUESTED.toCode())) {
             throw new InvalidRequestException("Subscription not requested, " + subscriptionStore.getStatus());
         }
         subscriptionStore.setStatus(status.getStatus().toCode());
@@ -99,7 +99,7 @@ public class SubscriptionStatusProvider implements IResourceProvider {
     private void processHeartbeat(SubscriptionStatus status, SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
 //        checking if subscription still exists and is active on this side
         logger.info("Heartbeat {} {}", status.getSubscription(), status.getStatus());
-        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionState.ACTIVE.toCode())) {
+        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionStatusCodes.ACTIVE.toCode())) {
             throw new InvalidRequestException("Subscription no longer active");
         }
     }
