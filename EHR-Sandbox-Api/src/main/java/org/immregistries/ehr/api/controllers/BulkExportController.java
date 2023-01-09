@@ -226,7 +226,7 @@ public class BulkExportController {
                 if (loadInFacility.isPresent()) {
                     Facility facility = facilityRepository.findById(loadInFacility.get()).orElseThrow(
                             () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
-                    loadNdJson(ir, facility,con.getInputStream());
+                    return loadNdJson(ir, facility,con.getInputStream());
                 }
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
@@ -251,37 +251,43 @@ public class BulkExportController {
         immunizationIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
         patientIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
         IParser parser = fhirContext.newNDJsonParser();
-        IParser jsonParser = fhirContext.newJsonParser();
         Bundle bundle = (Bundle) parser.parseResource(ndJsonStream);
+        StringBuilder responseBuilder = new StringBuilder();
+        int count = 0;
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
             switch (entry.getResource().getResourceType()) {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
-                    Integer dbId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(patient.getId(),-1);
+                    String receivedId = patient.getId().split("Patient/")[1].split("/")[0];
+                    Integer dbId; // = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedId,-1);
                     MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
-                    patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(patient.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
+                    dbId = Integer.parseInt(methodOutcome.getId().getValue());
+                    patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(receivedId, dbId);
+                    responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
+                    count++;
                     break;
                 }
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
-                    Integer dbId = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
-                    Integer dbPatientId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getPatient().getReference(),-1);
-                    if (dbPatientId > -1) {
+                    Integer dbId; // = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
+                    String receivedId = immunization.getId().split("Immunization/")[1].split("/")[0];
+                    String receivedPatientId = immunization.getPatient().getReference().split("Patient/")[1].split("/")[0];
+                    Integer dbPatientId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedPatientId,-1);
+                    if (dbPatientId == -1) {
+                        responseBuilder.append("\nERROR : ").append(immunization.getPatient().getReference()).append(" Unknown");
+                    } else {
+                        immunization.setPatient(new Reference("Patient/" + dbPatientId));
+                        MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
+                        dbId = Integer.parseInt(methodOutcome.getId().getValue());
+                        immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(receivedId, dbId);
+                        responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
+                        count++;
                     }
-                    immunization.setPatient(new Reference("Patient/" + dbPatientId));
-                    MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
-                    immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(immunization.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
                     break;
                 }
             }
-
         }
-//        logger.info("{}", resource);
-//        logger.info("NDJSON_PARSER {}", parser.encodeResourceToString(resource));
-//        logger.info("NDJSON_PARSER {}", jsonParser.encodeResourceToString(resource));
-
-
-
-        return ResponseEntity.ok("ERROR");
+        responseBuilder.append("\nNumber of successful load in facility ").append(facility.getNameDisplay()).append(": ").append(count);
+        return ResponseEntity.ok(responseBuilder.toString());
     }
 }

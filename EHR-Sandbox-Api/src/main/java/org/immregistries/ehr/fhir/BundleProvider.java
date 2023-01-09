@@ -11,7 +11,7 @@ import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.hl7.fhir.r4.model.ResourceType;
-//import org.hl7.fhir.r4.model.SubscriptionStatus;
+import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.EhrApiApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
