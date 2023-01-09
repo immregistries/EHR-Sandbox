@@ -1,0 +1,73 @@
+<div class="grid-container">
+  <mat-grid-list cols="3"  [rowHeight]="rowHeight()">
+    <mat-grid-tile style="justify-content: flex-start;" >
+      <!-- <mat-grid-tile-header>Kickoff</mat-grid-tile-header> -->
+      <div class="tile-content">
+        <div class="bulk-header">
+          <div>
+            <mat-form-field appearance="fill" style="width: 90px; padding-right: 5px" class="w3-padding-left">
+              <mat-label>Group ID</mat-label>
+              <input matInput [(ngModel)]="groupId">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Parameters</mat-label>
+              <input matInput [(ngModel)]="exportArguments">
+            </mat-form-field>
+          </div>
+          <p>{{"Request URI : /Group/" + (groupId.length>0? groupId : "{groupId}") + "/$export"
+            + (exportArguments.length>0? "?" + exportArguments : "")}}
+          </p>
+          <mat-checkbox class="" appearance="fill" [(ngModel)]="asynchronous">Asynchronous</mat-checkbox>
+
+          <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">Autofill content URL</mat-checkbox>
+          <button mat-raised-button class="w3-right" (click)="export()">Initial Operation</button>
+        </div>
+        <div>
+          <mat-progress-bar mode="query" *ngIf="exportLoading"></mat-progress-bar>
+          <textarea class="result-space">{{exportResult}}</textarea>
+        </div>
+      </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <div class="tile-content">
+        <mat-form-field appearance="fill" style="width: 100%">
+          <mat-label>Content & Status check URL</mat-label>
+          <input matInput [(ngModel)]="contentUrl">
+        </mat-form-field>
+        <div>
+          <mat-checkbox appearance="fill" [(ngModel)]="autofillNdUrl">Autofill Result URL</mat-checkbox>
+          <div class="w3-right">
+            <button mat-raised-button  (click)="status()">Check Status</button>
+            <button mat-raised-button  (click)="cancel()">Cancel</button>
+          </div>
+        </div>
+        <div>
+          <mat-progress-bar mode="query" *ngIf="statusLoading"></mat-progress-bar>
+          <textarea  class="result-space" >{{statusResult}}</textarea>
+        </div>
+      </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile>
+      <div class="tile-content">
+        <mat-form-field appearance="fill" style="width: 100%">
+          <mat-label>Result File Url</mat-label>
+          <input matInput [(ngModel)]="ndUrl">
+        </mat-form-field>
+        <div>
+          <mat-checkbox appearance="fill" [(ngModel)]="loadInFacility">Load content in Current Facility</mat-checkbox>
+          <div class="w3-right">
+            <button mat-raised-button  (click)="ndJson()">Get NdJson file</button>
+          </div>
+        </div>
+
+        <div>
+          <mat-progress-bar mode="query" *ngIf="ndLoading"></mat-progress-bar>
+          <textarea class="result-space">{{ndResult}}</textarea>
+        </div>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+</div>

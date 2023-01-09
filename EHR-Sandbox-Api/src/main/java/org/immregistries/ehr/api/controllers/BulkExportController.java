@@ -1,21 +1,16 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Immunization;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.Parameters;
-import org.hl7.fhir.r5.model.StringType;
-import org.immregistries.ehr.EhrApiApplication;
+import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Parameters;
+import org.hl7.fhir.r4.model.StringType;
+import org.hl7.fhir.r4.model.DateType;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -65,29 +60,67 @@ public class BulkExportController {
     @Autowired
     ImmunizationProvider immunizationProvider;
 
-    @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export")
-    public ResponseEntity<String> bulkKickOff(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId, @RequestParam Optional<String> _type) {
+    @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
+    public ResponseEntity<String> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
+            ,@RequestParam Optional<String> _outputFormat
+            ,@RequestParam Optional<String> _type
+            ,@RequestParam Optional<Date> _since
+            ,@RequestParam Optional<String> _typeFilter
+            ,@RequestParam Optional<Boolean> _mdm
+    ) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         IGenericClient client = customClientBuilder.newGenericClient(ir);
-//        String response = client.operation().onServer().named("$export")
-//                .withNoParameters(Parameters.class)
-//                .withAdditionalHeader("").useHttpGet().execute().toString()
-//        return ResponseEntity.ok(response);
-        // Adding new interceptor to add "Prefer Header"
-//        AdditionalRequestHeadersInterceptor additionalRequestHeadersInterceptor = new AdditionalRequestHeadersInterceptor();
-//        additionalRequestHeadersInterceptor.addHeaderValue("Prefer","respond-async");
-//        client.registerInterceptor(additionalRequestHeadersInterceptor);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
 
-
         Parameters inParams = new Parameters();
+        _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new StringType(s)));
         _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new StringType(s)));
-
+        _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new DateType(d)));
+        _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
+        _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
         Parameters outParams =
-//        String respMessage =
+                client.operation()
+                        .onInstance(new IdType("Group", groupId))
+                        .named("$export")
+                        .withParameters(inParams)
+                        .useHttpGet()
+                        .withAdditionalHeader("Prefer", "respond-sync")
+                        .execute();
+        IHttpResponse response = capturingInterceptor.getLastResponse();
+        if (response.getStatus() != 200) {
+            throw new RuntimeException(response.getStatusInfo());
+        }
+//        String contentLocationUrl = response.getHeaders("Content-Location").get(0);
+//        response.get
+        IParser jsonParser = fhirContext.newJsonParser();
+        return ResponseEntity.ok(jsonParser.encodeResourceToString(outParams));
+    }
+
+    @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-asynch")
+    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
+            ,@RequestParam Optional<String> _outputFormat
+            ,@RequestParam Optional<String> _type
+            ,@RequestParam Optional<Date> _since
+            ,@RequestParam Optional<String> _typeFilter
+            ,@RequestParam Optional<Boolean> _mdm
+    ) {
+        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+        IGenericClient client = customClientBuilder.newGenericClient(ir);
+        // In order to get the response headers
+        CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
+        client.registerInterceptor(capturingInterceptor);
+
+        Parameters inParams = new Parameters();
+        _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new StringType(s)));
+        _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new StringType(s)));
+        _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new DateType(d)));
+        _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
+        _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
+
+        Parameters outParams =
                 client.operation()
                 .onInstance(new IdType("Group", groupId))
                 .named("$export")
@@ -95,14 +128,11 @@ public class BulkExportController {
                 .useHttpGet()
                 .withAdditionalHeader("Prefer", "respond-async")
                 .execute();
-//                .toString();
-
         IHttpResponse response = capturingInterceptor.getLastResponse();
         if (response.getStatus() != 202) {
             throw new RuntimeException(response.getStatusInfo());
         }
         String contentLocationUrl = response.getHeaders("Content-Location").get(0);
-//        return ResponseEntity.ok(contentLocationUrl);
         return ResponseEntity.ok(contentLocationUrl);
     }
 
@@ -156,12 +186,6 @@ public class BulkExportController {
                 con.disconnect();
             }
         }
-//        Parameters outParams = client.operation().onServer()
-//                .named("$export")
-//                .withParameters(inParams)
-//                .useHttpGet()
-//                .withAdditionalHeader("Prefer","respond-async")
-//                .execute();
     }
 
     @DeleteMapping("/iim-registry/{immRegistryId}/$export-status")

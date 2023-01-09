@@ -1,0 +1,15 @@
+.tile-content {
+  width: 100%;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: flex-start; */
+  gap: 5px 5px;
+  padding: 2px;
+  flex-wrap: wrap;
+
+}
+
+.result-space {
+  height: 70vh;
+  width: 100%;
+}

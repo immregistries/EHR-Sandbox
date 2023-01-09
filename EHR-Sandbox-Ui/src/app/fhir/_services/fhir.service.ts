@@ -157,10 +157,19 @@ export class FhirService {
       { responseType: 'text' });
   }
 
-  groupExport(groupId: string, paramsString: string): Observable<string> {
+  groupExportSynch(groupId: string, paramsString: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export?${paramsString}`,
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export-synch?${paramsString}`,
+      {
+        responseType: 'text',
+      });
+  }
+
+  groupExportAsynch(groupId: string, paramsString: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export-asynch?${paramsString}`,
       {
         responseType: 'text',
       });
