@@ -8,10 +8,10 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
-import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.OperationOutcome;
-import org.hl7.fhir.r5.model.ResourceType;
-import org.hl7.fhir.r5.model.SubscriptionStatus;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r4.model.ResourceType;
+//import org.hl7.fhir.r4.model.SubscriptionStatus;
 import org.immregistries.ehr.EhrApiApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,25 +51,28 @@ public class BundleProvider implements IResourceProvider {
 //
                 MethodOutcome outcome = new MethodOutcome();
                 Bundle outcomeBundle = new Bundle();
-                if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
-                      throw new InvalidRequestException("Bundles other than Subscription notification not supported");
-                }
-
-                SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
-                outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
-                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
-                        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
-                                outcome = processPostEntry(entry,requestDetails, request);
-//                        switch (entry.getRequest().getMethod()) {
-//                                case POST: {
-//                                        outcome = processPostEntry(entry,requestDetails);
-//                                        // TODO combine outcomes ?
-////                                        outcomeBundle.addEntry().setResource(processPostEntry(entry,requestDetails));
-//                                        break;
-//                                }
+//                if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
+//                      throw new InvalidRequestException("Bundles other than Subscription notification not supported");
+//                }
+//
+//                SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
+//                outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
+//                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
+//                        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
+//                                outcome = processPostEntry(entry,requestDetails, request);
+//
+//
+//
+////                        switch (entry.getRequest().getMethod()) {
+////                                case POST: {
+////                                        outcome = processPostEntry(entry,requestDetails);
+////                                        // TODO combine outcomes ?
+//////                                        outcomeBundle.addEntry().setResource(processPostEntry(entry,requestDetails));
+////                                        break;
+////                                }
+////                        }
 //                        }
-                        }
-                }
+//                }
                 return outcome;
         }
 

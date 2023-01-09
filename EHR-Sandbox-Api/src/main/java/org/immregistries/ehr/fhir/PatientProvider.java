@@ -5,10 +5,10 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.Patient;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Patient;
 import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.logic.mapping.PatientHandler;
+import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class PatientProvider implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(PatientProvider.class);
 
     @Autowired
-    private PatientHandler patientHandler;
+    private PatientMapperR4 patientHandler;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired

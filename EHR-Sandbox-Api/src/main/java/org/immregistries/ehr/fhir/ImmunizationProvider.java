@@ -5,12 +5,12 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.Immunization;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Immunization;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.VaccineRepository;
-import org.immregistries.ehr.logic.mapping.ImmunizationHandler;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
@@ -26,7 +26,7 @@ public class ImmunizationProvider implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(PatientProvider.class);
 
     @Autowired
-    private ImmunizationHandler immunizationHandler;
+    private ImmunizationMapperR4 immunizationMapperR4;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
@@ -50,7 +50,7 @@ public class ImmunizationProvider implements IResourceProvider {
 
     public MethodOutcome createImmunization(Immunization immunization, Facility facility) {
         MethodOutcome methodOutcome = new MethodOutcome();
-        VaccinationEvent vaccinationEvent = immunizationHandler.fromFhir(immunization);
+        VaccinationEvent vaccinationEvent = immunizationMapperR4.fromFhir(immunization);
         vaccinationEvent.setAdministeringFacility(facility);
         Integer patientId = Integer.parseInt(immunization.getPatient().getReference().split("Patient/")[1]);//TODO Identifier
         vaccinationEvent.setPatient(

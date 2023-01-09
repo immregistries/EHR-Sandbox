@@ -34,7 +34,7 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	public static String VERSION = "1.2.2-January-Connectathon";
 	@Bean
 	public FhirContext fhirContext() {
-		return new FhirContext(FhirVersionEnum.R5);
+		return new FhirContext(FhirVersionEnum.R4);
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(EhrApiApplication.class);

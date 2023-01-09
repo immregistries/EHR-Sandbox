@@ -3,26 +3,20 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.api.IHttpResponse;
-import ca.uhn.fhir.rest.client.interceptor.AdditionalRequestHeadersInterceptor;
-import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r4.model.*;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.Patient;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.CustomClientBuilder;
-import org.immregistries.ehr.logic.mapping.ImmunizationHandler;
-import org.immregistries.ehr.logic.mapping.PatientHandler;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
+import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.immregistries.ehr.logic.ResourceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +38,9 @@ public class FhirClientController {
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
-    private ImmunizationHandler immunizationHandler;
+    private ImmunizationMapperR4 immunizationHandler;
     @Autowired
-    private PatientHandler patientHandler;
+    private PatientMapperR4 patientHandler;
     @Autowired
     FhirContext fhirContext;
     @Autowired
@@ -68,7 +62,7 @@ public class FhirClientController {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        org.hl7.fhir.r5.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient,
+        org.hl7.fhir.r4.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient,
                 request.getRequestURI().split("/patients")[0]);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
@@ -89,7 +83,7 @@ public class FhirClientController {
     @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> updatePatient(@PathVariable() Integer immRegistryId, @RequestBody String message) {
         IParser parser = parser(message);
-        org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class, message);
+        org.hl7.fhir.r4.model.Patient patient = parser.parseResource(org.hl7.fhir.r4.model.Patient.class, message);
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(patient, "Patient", patient.getIdentifierFirstRep(), ir);
         if (outcome.getOperationOutcome() != null) {
@@ -111,7 +105,7 @@ public class FhirClientController {
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        org.hl7.fhir.r5.model.Immunization immunization =
+        Immunization immunization =
                 immunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent,
                         request.getRequestURI().split("/patients")[0]);
         String resource = parser.encodeResourceToString(immunization);

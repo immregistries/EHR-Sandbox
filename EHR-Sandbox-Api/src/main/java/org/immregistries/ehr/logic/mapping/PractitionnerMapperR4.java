@@ -1,12 +1,12 @@
 package org.immregistries.ehr.logic.mapping;
 
-import org.hl7.fhir.r5.model.HumanName;
-import org.hl7.fhir.r5.model.Practitioner;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.immregistries.ehr.api.entities.Clinician;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PractitionnerHandler {
+public class PractitionnerMapperR4 {
 
     public Clinician fromFhir(Practitioner practitioner) {
         Clinician clinician = new Clinician();

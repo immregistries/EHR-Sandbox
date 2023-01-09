@@ -4,7 +4,7 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r4.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.Patient;
 import org.immregistries.ehr.api.repositories.*;

@@ -11,6 +11,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Parameters;
 import org.hl7.fhir.r5.model.StringType;
@@ -257,16 +258,19 @@ public class BulkExportController {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     Integer dbId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(patient.getId(),-1);
-
-//                    MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
-//                    patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(patient.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
+                    MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
+                    patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(patient.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
                     break;
                 }
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
-//                    Integer dbId = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
-//                    MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
-//                    immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(immunization.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
+                    Integer dbId = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
+                    Integer dbPatientId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getPatient().getReference(),-1);
+                    if (dbPatientId > -1) {
+                    }
+                    immunization.setPatient(new Reference("Patient/" + dbPatientId));
+                    MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
+                    immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(immunization.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
                     break;
                 }
             }

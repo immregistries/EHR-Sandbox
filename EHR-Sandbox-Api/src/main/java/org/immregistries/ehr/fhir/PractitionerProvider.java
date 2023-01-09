@@ -5,11 +5,12 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.Practitioner;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.logic.mapping.PractitionnerHandler;
+import org.immregistries.ehr.logic.mapping.PractitionnerMapperR4;
+import org.immregistries.ehr.logic.mapping.PractitionnerMapperR5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 public class PractitionerProvider implements IResourceProvider {
     @Autowired
-    private PractitionnerHandler practitionnerHandler;
+    private PractitionnerMapperR4 practitionnerHandler;
     @Autowired
     private FacilityRepository facilityRepository;
 

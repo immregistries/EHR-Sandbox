@@ -14,8 +14,8 @@ import java.text.SimpleDateFormat;
  * Maps the Database with FHIR for patient resources
  */
 @Service
-public class PatientHandler {
-  private  static Logger logger = LoggerFactory.getLogger(PatientHandler.class);
+public class PatientMapperR5 {
+  private  static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
   private static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
   private static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
   private static final String ETHNICITY_EXTENSION = "ethnicity";

@@ -75,7 +75,7 @@ public class EhrFhirServer extends RestfulServer {
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
         resourceProviders.add(subscriptionProvider);
-        resourceProviders.add(subscriptionStatusProvider);
+//        resourceProviders.add(subscriptionStatusProvider); TODO
         resourceProviders.add(operationOutcomeProvider);
         resourceProviders.add(bundleProvider);
         resourceProviders.add(patientProvider);
