@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.immregistries.ehr</groupId>
 	<artifactId>ehr-sandbox-api</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2-January-Connectathon</version>
 	<packaging>war</packaging>
 	<parent>
 		<groupId>org.immregistries.ehr</groupId>
 		<artifactId>ehr-sandbox</artifactId>
-		<version>1.2.1</version>
+		<version>1.2.2-January-Connectathon</version>
 	</parent>
 
 	<name>EHR Sandbox API</name>

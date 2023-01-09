@@ -21,10 +21,17 @@ export class FhirGetComponent {
   get() {
     if (this.identifier) {
       this.loading = true
-      this.fhir.getFromIIS(this.resourceType, this.identifier).subscribe((res) => {
-        this.result = res
-        this.loading = false
-      })
+      if (this.identifier.includes("/")) {
+        this.fhir.get(this.identifier).subscribe((res) => {
+          this.result = res
+          this.loading = false
+        })
+      } else {
+        this.fhir.getFromIIS(this.resourceType, this.identifier).subscribe((res) => {
+          this.result = res
+          this.loading = false
+        })
+      }
     }
     // this.fhir.readOperationOutcome(this.identifier).subscribe((res) => {
     //   console.log(res);

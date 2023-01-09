@@ -150,6 +150,57 @@ export class FhirService {
       { responseType: 'text' });
   }
 
+  get( urlEnd: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}${urlEnd}`,
+      { responseType: 'text' });
+  }
+
+  groupExport(groupId: string, paramsString: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export?${paramsString}`,
+      {
+        responseType: 'text',
+      });
+  }
+
+  groupExportStatus(contentUrl: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-status`,
+      {
+        responseType: 'text',
+        params: {
+          contentUrl: contentUrl
+        }
+      });
+  }
+  groupExportDelete(contentUrl: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.delete(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-status`,
+      {
+        responseType: 'text',
+        params: {
+          contentUrl: contentUrl
+        }
+      });
+  }
+
+  groupNdJson(contentUrl: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
+      // this.immunizationOptions({}),
+      {
+        responseType: 'text',
+        params: {
+          contentUrl: contentUrl
+      } });
+  }
+
   // readOperationOutcome(): Observable<any> {
   //   const tenantId: number = this.tenantService.getTenantId()
   //   const facilityId: number = this.facilityService.getFacilityId()

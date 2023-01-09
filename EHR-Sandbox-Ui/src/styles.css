@@ -112,3 +112,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   /* margin-top: -8px; */
 }
 
+
+/* .mat-grid-tile .mat-figure {
+  justify-content: flex-start !important ;
+  align-items: flex-start !important;
+} */

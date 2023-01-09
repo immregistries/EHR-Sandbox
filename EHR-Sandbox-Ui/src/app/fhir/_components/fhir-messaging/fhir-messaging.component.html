@@ -1,5 +1,8 @@
 <mat-tab-group>
-  <mat-tab label="Sending FHIR Resources to IIS">
+  <mat-tab label="Bulk Import Asynch">
+    <app-fhir-bulk></app-fhir-bulk>
+</mat-tab>
+  <mat-tab label="Send resources to IIS">
     <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
       <div [style]="(vaccinationId > -1)? 'width: 50%': 'width: 100%'">
         <mat-progress-bar mode="query" *ngIf="patientLoading"></mat-progress-bar>
@@ -68,7 +71,7 @@
     </div>
   </mat-tab>
 
-  <mat-tab label="Getting FHIR Resources from IIS">
+  <mat-tab label="Get resources from IIS">
     <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
       <div [style]="style">
         <app-fhir-get [resourceType]="'Patient'" [identifier]="(patientId >0)? patientId.toString(): ''"></app-fhir-get>
@@ -78,11 +81,19 @@
       </div>
     </div>
   </mat-tab>
+  <mat-tab label="Bulk Import Asynch">
+      <app-fhir-bulk></app-fhir-bulk>
+  </mat-tab>
+   <mat-tab label="Bulk Import Synch">
+    <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
+      <app-fhir-bulk></app-fhir-bulk>
+    </div>
+  </mat-tab>
   <mat-tab label="Settings">
     <div style="padding: 5px;"></div>
     <app-select-immregistry></app-select-immregistry>
   </mat-tab>
-  <mat-tab label="Alternative Post">
+  <mat-tab label="Any Post">
     <div style="padding: 5px;"></div>
     <app-fhir-post></app-fhir-post>
   </mat-tab>

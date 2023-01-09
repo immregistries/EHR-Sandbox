@@ -62,6 +62,11 @@ public class AuthController {
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(newUser);
+
+        /**
+         * Defining default IIS's automatically on first login
+         */
         ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
         immunizationRegistry.setName("Localhost");
         immunizationRegistry.setIisFacilityId(newUser.getUsername());
@@ -70,8 +75,16 @@ public class AuthController {
         immunizationRegistry.setIisHl7Url("http://localhost:8080/iis-sandbox-jpa/soap");
         immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis-sandbox-jpa/fhir");
         immunizationRegistry.setUser(newUser);
-        userRepository.save(newUser);
         immunizationRegistryRepository.save(immunizationRegistry);
+        ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
+        immunizationRegistryOnline.setName("Online");
+        immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
+        immunizationRegistryOnline.setIisUsername(newUser.getUsername());
+        immunizationRegistryOnline.setIisPassword(newUser.getUsername());
+        immunizationRegistryOnline.setIisHl7Url("http://florence.immregistries.org/iis-sandbox-jpa/soap");
+        immunizationRegistryOnline.setIisFhirUrl("http://florence.immregistries.org/iis-sandbox-jpa/fhir");
+        immunizationRegistryOnline.setUser(newUser);
+        immunizationRegistryRepository.save(immunizationRegistryOnline);
         return registerUser(user);
     }
 }
