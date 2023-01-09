@@ -189,16 +189,34 @@ export class FhirService {
       });
   }
 
-  groupNdJson(contentUrl: string): Observable<string> {
+  groupNdJson(contentUrl: string, loadInFacility: boolean): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
-    return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
-      // this.immunizationOptions({}),
-      {
-        responseType: 'text',
-        params: {
-          contentUrl: contentUrl
-      } });
+    if (loadInFacility) {
+      const facilityId = this.facilityService.getFacilityId()
+      if ( facilityId > -1) {
+        return this.http.get(
+          `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
+          {
+            responseType: 'text',
+            params: {
+              contentUrl: contentUrl,
+              loadInFacility: facilityId
+            }
+          });
+        } else {
+          return of("")
+        }
+      } else {
+        return this.http.get(
+          `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
+          {
+            responseType: 'text',
+            params: {
+              contentUrl: contentUrl
+            }
+          });
+    }
+
   }
 
   // readOperationOutcome(): Observable<any> {

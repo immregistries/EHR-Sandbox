@@ -2,6 +2,7 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
+import org.immregistries.ehr.api.IdentifierRegistryConfig;
 import org.immregistries.ehr.fhir.EhrFhirServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,19 +15,23 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @SpringBootApplication
 @ServletComponentScan
+@Import({
+	IdentifierRegistryConfig.class
+})
 public class EhrApiApplication extends SpringBootServletInitializer {
 	@Autowired
 	AutowireCapableBeanFactory beanFactory;
 	@Autowired
 	private ApplicationContext context;
 
-	public static String VERSION = "1.2.0";
+	public static String VERSION = "1.2.2-January-Connectathon";
 	@Bean
 	public FhirContext fhirContext() {
 		return new FhirContext(FhirVersionEnum.R5);

@@ -1,34 +1,68 @@
 package org.immregistries.ehr.api.controllers;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Immunization;
+import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Parameters;
 import org.hl7.fhir.r5.model.StringType;
+import org.immregistries.ehr.EhrApiApplication;
+import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.fhir.ImmunizationProvider;
+import org.immregistries.ehr.fhir.PatientProvider;
 import org.immregistries.ehr.logic.CustomClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class BulkExportController {
+    private static final Logger logger = LoggerFactory.getLogger(BulkExportController.class);
+
     @Autowired
-    private ImmRegistryController immRegistryController;
+    FhirContext fhirContext;
+
+    @Autowired
+    ImmRegistryController immRegistryController;
+
     @Autowired
     CustomClientBuilder customClientBuilder;
+
+    @Autowired
+    FacilityRepository facilityRepository;
+
+    @Autowired
+    ApplicationContext context;
+
+    @Autowired
+    PatientProvider patientProvider;
+
+    @Autowired
+    ImmunizationProvider immunizationProvider;
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export")
     public ResponseEntity<String> bulkKickOff(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId, @RequestParam Optional<String> _type) {
@@ -163,16 +197,10 @@ public class BulkExportController {
                 con.disconnect();
             }
         }
-//        Parameters outParams = client.operation().onServer()
-//                .named("$export")
-//                .withParameters(inParams)
-//                .useHttpGet()
-//                .withAdditionalHeader("Prefer","respond-async")
-//                .execute();
     }
 
     @GetMapping("/iim-registry/{immRegistryId}/$export-result")
-    public ResponseEntity bulkResult(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl) {
+    public ResponseEntity bulkResult(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl, Optional<Integer> loadInFacility) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
@@ -194,8 +222,11 @@ public class BulkExportController {
 
             int status = con.getResponseCode();
             if (status == 200) {
-//                wait();
-//                return ResponseEntity.ok(con.getHeaderFields());
+                if (loadInFacility.isPresent()) {
+                    Facility facility = facilityRepository.findById(loadInFacility.get()).orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
+                    loadNdJson(ir, facility,con.getInputStream());
+                }
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
                 return ResponseEntity.ok("ERROR");
@@ -211,5 +242,42 @@ public class BulkExportController {
                 con.disconnect();
             }
         }
+    }
+
+    private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, InputStream ndJsonStream) {
+        Map<Integer,Map<String,Integer>> immunizationIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("ImmunizationIdentifier");
+        Map<Integer,Map<String,Integer>> patientIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("PatientIdentifier");
+        immunizationIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
+        patientIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
+        IParser parser = fhirContext.newNDJsonParser();
+        IParser jsonParser = fhirContext.newJsonParser();
+        Bundle bundle = (Bundle) parser.parseResource(ndJsonStream);
+        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
+            switch (entry.getResource().getResourceType()) {
+                case Patient: {
+                    Patient patient = (Patient) entry.getResource();
+                    Integer dbId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(patient.getId(),-1);
+
+//                    MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
+//                    patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(patient.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
+                    break;
+                }
+                case Immunization: {
+                    Immunization immunization = (Immunization) entry.getResource();
+//                    Integer dbId = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
+//                    MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
+//                    immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(immunization.getId(), Integer.parseInt(methodOutcome.getId().getValue()));
+                    break;
+                }
+            }
+
+        }
+//        logger.info("{}", resource);
+//        logger.info("NDJSON_PARSER {}", parser.encodeResourceToString(resource));
+//        logger.info("NDJSON_PARSER {}", jsonParser.encodeResourceToString(resource));
+
+
+
+        return ResponseEntity.ok("ERROR");
     }
 }
