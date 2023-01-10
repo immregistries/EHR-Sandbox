@@ -1,6 +1,5 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR4;
 
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -15,9 +14,12 @@ import org.springframework.stereotype.Controller;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class SubscriptionProvider implements IResourceProvider {
+/**
+ * NOT FINISHED
+ */
+public class SubscriptionProviderR4 implements IResourceProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(SubscriptionProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionProviderR4.class);
     /**
      * The getResourceType method comes from IResourceProvider, and must
      * be overridden to indicate what type of resource this provider

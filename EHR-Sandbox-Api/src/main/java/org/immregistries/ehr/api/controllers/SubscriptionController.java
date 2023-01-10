@@ -11,7 +11,7 @@ import org.immregistries.ehr.api.entities.SubscriptionStore;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.CustomClientBuilder;
+import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
 import org.immregistries.ehr.api.repositories.SubscriptionInfoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

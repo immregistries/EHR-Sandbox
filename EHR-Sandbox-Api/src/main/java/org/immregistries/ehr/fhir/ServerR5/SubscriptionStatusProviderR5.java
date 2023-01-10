@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR5;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
@@ -12,6 +12,7 @@ import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.api.entities.SubscriptionStore;
 import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
+import org.immregistries.ehr.fhir.ServerR4.OperationOutcomeProviderR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,15 @@ import org.springframework.stereotype.Controller;
 import java.util.Optional;
 
 @Controller
-public class SubscriptionStatusProvider implements IResourceProvider {
+public class SubscriptionStatusProviderR5 implements IResourceProvider {
     @Autowired
     SubscriptionStoreRepository subscriptionStoreRepository;
     @Autowired
-    OperationOutcomeProvider operationOutcomeProvider;
+    OperationOutcomeProviderR4 operationOutcomeProvider;
     @Autowired
     FhirContext fhirContext;
 
-    private static final Logger logger = LoggerFactory.getLogger(SubscriptionStatusProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionStatusProviderR5.class);
     /**
      * The getResourceType method comes from IResourceProvider, and must
      * be overridden to indicate what type of resource this provider

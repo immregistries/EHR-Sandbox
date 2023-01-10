@@ -3,7 +3,7 @@ package org.immregistries.ehr;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.immregistries.ehr.api.IdentifierRegistryConfig;
-import org.immregistries.ehr.fhir.EhrFhirServer;
+import org.immregistries.ehr.fhir.ServerR4.EhrFhirServerR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +56,9 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public ServletRegistrationBean<EhrFhirServer> popServletRegistrationBean() {
-		ServletRegistrationBean<EhrFhirServer>  registrationBean = new ServletRegistrationBean<>();
-		EhrFhirServer servlet = new EhrFhirServer(context.getBean(FhirContext.class));
+	public ServletRegistrationBean<EhrFhirServerR4> popServletRegistrationBean() {
+		ServletRegistrationBean<EhrFhirServerR4>  registrationBean = new ServletRegistrationBean<>();
+		EhrFhirServerR4 servlet = new EhrFhirServerR4(context.getBean(FhirContext.class));
 		beanFactory.autowireBean(servlet);
 		registrationBean.setServlet(servlet);
 		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");

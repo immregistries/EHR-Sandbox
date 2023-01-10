@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR5;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
@@ -8,11 +8,9 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.OperationOutcome;
-import org.hl7.fhir.r4.model.ResourceType;
+import org.hl7.fhir.r5.model.Bundle;
+import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
-import org.immregistries.ehr.EhrApiApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +19,13 @@ import org.springframework.stereotype.Controller;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class BundleProvider implements IResourceProvider {
-        private static final Logger logger = LoggerFactory.getLogger(BundleProvider.class);
+public class BundleProviderR5 implements IResourceProvider {
+        private static final Logger logger = LoggerFactory.getLogger(BundleProviderR5.class);
 
         @Autowired
-        private OperationOutcomeProvider operationOutcomeProvider;
+        private OperationOutcomeProviderR5 operationOutcomeProvider;
         @Autowired
-        private SubscriptionStatusProvider subscriptionStatusProvider;
+        private SubscriptionStatusProviderR5 subscriptionStatusProvider;
         @Autowired
         FhirContext fhirContext;
 
@@ -51,15 +49,15 @@ public class BundleProvider implements IResourceProvider {
 //
                 MethodOutcome outcome = new MethodOutcome();
                 Bundle outcomeBundle = new Bundle();
-//                if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
-//                      throw new InvalidRequestException("Bundles other than Subscription notification not supported");
-//                }
-//
-//                SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
-//                outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
-//                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
-//                        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
-//                                outcome = processPostEntry(entry,requestDetails, request);
+                if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
+                      throw new InvalidRequestException("Bundles other than Subscription notification not supported");
+                }
+
+                SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
+                outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
+                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
+                        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
+                                outcome = processPostEntry(entry,requestDetails, request);
 //
 //
 //
@@ -71,8 +69,8 @@ public class BundleProvider implements IResourceProvider {
 ////                                        break;
 ////                                }
 ////                        }
-//                        }
-//                }
+                        }
+                }
                 return outcome;
         }
 

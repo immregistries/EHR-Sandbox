@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
-public class OperationOutcomeProvider implements IResourceProvider {
+public class OperationOutcomeProviderR4 implements IResourceProvider {
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
@@ -31,7 +31,7 @@ public class OperationOutcomeProvider implements IResourceProvider {
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
     private SubscriptionStoreRepository subscriptionStoreRepository;
-    private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProviderR4.class);
 
     @Override
     public Class<OperationOutcome> getResourceType() {

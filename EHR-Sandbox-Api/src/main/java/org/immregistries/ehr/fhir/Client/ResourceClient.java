@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic;
+package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -12,6 +12,7 @@ import org.hl7.fhir.r4.model.OperationOutcome;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

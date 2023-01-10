@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic;
+package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;

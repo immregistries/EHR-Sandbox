@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -10,14 +10,16 @@ import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.logic.mapping.PractitionnerMapperR4;
-import org.immregistries.ehr.logic.mapping.PractitionnerMapperR5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
-public class PractitionerProvider implements IResourceProvider {
+/**
+ * NOT FINISHED
+ */
+public class PractitionerProviderR4 implements IResourceProvider {
     @Autowired
     private PractitionnerMapperR4 practitionnerHandler;
     @Autowired

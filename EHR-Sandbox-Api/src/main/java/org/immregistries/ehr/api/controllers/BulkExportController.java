@@ -14,9 +14,9 @@ import org.hl7.fhir.r4.model.DateType;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.ImmunizationProvider;
-import org.immregistries.ehr.fhir.PatientProvider;
-import org.immregistries.ehr.logic.CustomClientBuilder;
+import org.immregistries.ehr.fhir.ServerR4.ImmunizationProviderR4;
+import org.immregistries.ehr.fhir.ServerR4.PatientProviderR4;
+import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +55,10 @@ public class BulkExportController {
     ApplicationContext context;
 
     @Autowired
-    PatientProvider patientProvider;
+    PatientProviderR4 patientProvider;
 
     @Autowired
-    ImmunizationProvider immunizationProvider;
+    ImmunizationProviderR4 immunizationProvider;
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
     public ResponseEntity<String> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId

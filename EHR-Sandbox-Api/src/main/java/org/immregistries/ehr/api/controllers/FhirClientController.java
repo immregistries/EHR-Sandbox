@@ -13,7 +13,7 @@ import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
 import org.immregistries.ehr.logic.mapping.PatientMapperR4;
-import org.immregistries.ehr.logic.ResourceClient;
+import org.immregistries.ehr.fhir.Client.ResourceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

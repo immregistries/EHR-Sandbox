@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -20,15 +20,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
 import java.util.Optional;
 
 @Controller
 /**
  * NOT FINISHED
  */
-public class RelatedPersonProvider implements IResourceProvider {
-    private static final Logger logger = LoggerFactory.getLogger(RelatedPersonProvider.class);
+public class RelatedPersonProviderR4 implements IResourceProvider {
+    private static final Logger logger = LoggerFactory.getLogger(RelatedPersonProviderR4.class);
 
     @Autowired
     private PatientMapperR4 patientHandler;

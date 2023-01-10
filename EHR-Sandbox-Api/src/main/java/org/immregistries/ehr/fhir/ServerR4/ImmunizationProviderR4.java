@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -10,6 +10,7 @@ import org.hl7.fhir.r4.model.Immunization;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.VaccineRepository;
+import org.immregistries.ehr.fhir.ServerR4.PatientProviderR4;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
@@ -22,8 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
-public class ImmunizationProvider implements IResourceProvider {
-    private static final Logger logger = LoggerFactory.getLogger(PatientProvider.class);
+public class ImmunizationProviderR4 implements IResourceProvider {
+    private static final Logger logger = LoggerFactory.getLogger(ImmunizationProviderR4.class);
 
     @Autowired
     private ImmunizationMapperR4 immunizationMapperR4;

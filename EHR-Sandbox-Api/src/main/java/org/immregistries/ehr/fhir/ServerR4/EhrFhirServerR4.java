@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.ServerR4;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
@@ -10,6 +10,7 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
+import org.immregistries.ehr.fhir.ServerR5.SubscriptionStatusProviderR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/fhir/*"}, displayName = "FHIR Server for subscription endpoint")
-public class EhrFhirServer extends RestfulServer {
-    private static final Logger logger = LoggerFactory.getLogger(EhrFhirServer.class);
+public class EhrFhirServerR4 extends RestfulServer {
+    private static final Logger logger = LoggerFactory.getLogger(EhrFhirServerR4.class);
 
     @Autowired
-    BundleProvider bundleProvider;
+    BundleProviderR4 bundleProvider;
     @Autowired
-    OperationOutcomeProvider operationOutcomeProvider;
+    OperationOutcomeProviderR4 operationOutcomeProvider;
     @Autowired
-    SubscriptionStatusProvider subscriptionStatusProvider;
+    SubscriptionStatusProviderR5 subscriptionStatusProvider;
     @Autowired
-    SubscriptionProvider subscriptionProvider;
+    SubscriptionProviderR4 subscriptionProvider;
     @Autowired
-    PatientProvider patientProvider;
+    PatientProviderR4 patientProvider;
     @Autowired
-    ImmunizationProvider immunizationProvider;
+    ImmunizationProviderR4 immunizationProvider;
 
-    public EhrFhirServer(FhirContext ctx) {
+    public EhrFhirServerR4(FhirContext ctx) {
         super(ctx);
     }
 
@@ -74,7 +75,7 @@ public class EhrFhirServer extends RestfulServer {
         setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
-        resourceProviders.add(subscriptionProvider);
+//        resourceProviders.add(subscriptionProvider);
 //        resourceProviders.add(subscriptionStatusProvider); TODO
         resourceProviders.add(operationOutcomeProvider);
         resourceProviders.add(bundleProvider);
