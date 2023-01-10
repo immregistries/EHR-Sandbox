@@ -47,14 +47,11 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
              * If username is blank : use token bearer auth
              */
             authInterceptor = new BearerTokenAuthInterceptor(password);
-
         }else {
             // Create an HTTP basic auth interceptor
             authInterceptor = new BasicAuthInterceptor(username, password);
         }
-
         client.registerInterceptor(authInterceptor);
-        // TODO ADD TOKEN MANUALLY ?
         return client;
     }
 

@@ -65,6 +65,25 @@
           <input matInput [(ngModel)]="immunizationRegistry.iisPassword">
         </mat-form-field>
       </mat-card-content>
+      <mat-card-footer>
+        <mat-card-subtitle>
+          <div *ngIf="(!immunizationRegistry.iisUsername || immunizationRegistry.iisUsername.length < 0)
+            && immunizationRegistry.iisPassword && immunizationRegistry.iisPassword.length > 0
+            ;then bearer else basic">here is ignored</div>
+          <ng-template #bearer>Option activated : Token Bearer Authentication</ng-template>
+          <ng-template #basic>Default option : Basic Authentication</ng-template>
+        </mat-card-subtitle>
+      </mat-card-footer>
     </mat-card>
   </mat-grid-tile>
+  <!-- <mat-grid-tile [colspan]="4">
+    <mat-card>
+
+    </mat-card>
+  </mat-grid-tile> -->
 </mat-grid-list>
+<h3 style="text-align: left;">Authentication options:</h3>
+<ul class="w3-ul">
+  <li>Default authentication mode is <b>Basic</b> </li>
+  <li>Leaving <b>Username empty</b> activates option for <b>Token bearer</b> Authentication with set password</li>
+</ul>
