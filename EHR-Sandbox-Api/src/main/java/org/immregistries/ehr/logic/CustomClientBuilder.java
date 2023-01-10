@@ -41,8 +41,18 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
         // Register a tenancy interceptor to add /$tenantid to the url
         UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
         client.registerInterceptor(tenantSelection);
-        // Create an HTTP basic auth interceptor
-        IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
+        IClientInterceptor authInterceptor;
+        if (username == null || username.isBlank()) {
+            /**
+             * If username is blank : use token bearer auth
+             */
+            authInterceptor = new BearerTokenAuthInterceptor(password);
+
+        }else {
+            // Create an HTTP basic auth interceptor
+            authInterceptor = new BasicAuthInterceptor(username, password);
+        }
+
         client.registerInterceptor(authInterceptor);
         // TODO ADD TOKEN MANUALLY ?
         return client;
