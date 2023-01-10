@@ -1,5 +1,5 @@
 <div class="grid-container">
-  <mat-grid-list cols="3" [rowHeight]="rowHeight()">
+  <mat-grid-list [cols]="asynchronous? 3 : 2" [rowHeight]="rowHeight()">
     <mat-grid-tile>
       <div class="tile-content">
         <div class="bulk-header">
@@ -17,7 +17,7 @@
             + (exportArguments.length>0? "?" + exportArguments : "")}}
           </p>
           <!-- <mat-checkbox class="" appearance="fill" [(ngModel)]="asynchronous">Asynchronous</mat-checkbox> -->
-          <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">Autofill content URL</mat-checkbox>
+          <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">{{asynchronous? "Autofill content URL" : "Autofill Patient Result URL"}}</mat-checkbox>
           <button mat-raised-button class="w3-right" (click)="export()">Initial Operation</button>
         </div>
         <div>
@@ -51,7 +51,13 @@
       <div class="tile-content">
         <mat-form-field appearance="fill" style="width: 100%">
           <mat-label>Result File Url</mat-label>
-          <input matInput [(ngModel)]="ndUrl" required>
+          <input matInput [(ngModel)]="ndUrl" required  [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of resultList" [value]="option.url">
+              <span>{{option.type}}</span> |
+              <span>{{option.url}}</span>
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
         <div>
           <mat-checkbox appearance="fill" [(ngModel)]="loadInFacility">Load content in Current Facility</mat-checkbox>

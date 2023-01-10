@@ -232,8 +232,7 @@ public class BulkExportController {
             url = new URL(contentUrl);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/fhir+ndjson");
+            con.setRequestProperty("Accept", "*/*");
             con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
             con.setConnectTimeout(5000);
 

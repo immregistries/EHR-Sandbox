@@ -38,10 +38,10 @@ export class FhirBulkComponent implements OnInit {
         this.fhir.groupExportSynch(this.groupId, this.exportArguments).subscribe((res) => {
           this.exportResult = res.trim()
           this.exportLoading = false
-          if (this.autofillContentUrl) {
-            if (this.autofillNdUrl && res.startsWith('{')) {
-              let output: [key:{type: string,url:string}] = JSON.parse(res).output ?? [[]]
-              this.ndUrl = output.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
+          if (res.startsWith('{')) {
+            this.resultList = JSON.parse(res).output ?? []
+            if (this.autofillContentUrl) {
+              this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
             }
           }
         })
@@ -49,6 +49,8 @@ export class FhirBulkComponent implements OnInit {
 
     }
   }
+
+  resultList?: [key:{type: string,url:string}];
 
   contentUrl: string = ''
   statusResult: string = ''
@@ -60,9 +62,11 @@ export class FhirBulkComponent implements OnInit {
       this.fhir.groupExportStatus(this.contentUrl).subscribe((res) => {
         this.statusResult = res.trim()
         this.statusLoading = false
-        if (this.autofillNdUrl && res.startsWith('{')) {
-          let output: [key:{type: string,url:string}] = JSON.parse(res).output ?? [[]]
-          this.ndUrl = output.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
+        if (res.startsWith('{')) {
+          this.resultList = JSON.parse(res).output ?? []
+          if (this.autofillNdUrl) {
+            this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
+          }
         }
       })
     }

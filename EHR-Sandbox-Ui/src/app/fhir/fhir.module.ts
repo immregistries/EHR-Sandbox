@@ -29,6 +29,7 @@ import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FhirBulkDashboardComponent } from '../fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { FhirBulkDashboardComponent } from '../fhir/_components/fhir-bulk-dashbo
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatToolbarModule,
+    MatAutocompleteModule,
 
     SharedModule,
   ],
