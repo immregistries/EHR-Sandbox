@@ -10,7 +10,6 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
-import org.immregistries.ehr.fhir.ServerR5.SubscriptionStatusProviderR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,8 @@ public class EhrFhirServerR4 extends RestfulServer {
     BundleProviderR4 bundleProvider;
     @Autowired
     OperationOutcomeProviderR4 operationOutcomeProvider;
-    @Autowired
-    SubscriptionStatusProviderR5 subscriptionStatusProvider;
+//    @Autowired
+//    SubscriptionStatusProvider subscriptionStatusProvider;
     @Autowired
     SubscriptionProviderR4 subscriptionProvider;
     @Autowired

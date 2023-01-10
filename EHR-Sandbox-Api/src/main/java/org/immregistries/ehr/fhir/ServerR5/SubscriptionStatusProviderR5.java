@@ -12,7 +12,7 @@ import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.api.entities.SubscriptionStore;
 import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
-import org.immregistries.ehr.fhir.ServerR4.OperationOutcomeProviderR4;
+import org.immregistries.ehr.fhir.ServerR5.OperationOutcomeProviderR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
     @Autowired
     SubscriptionStoreRepository subscriptionStoreRepository;
     @Autowired
-    OperationOutcomeProviderR4 operationOutcomeProvider;
+    OperationOutcomeProviderR5 operationOutcomeProvider;
     @Autowired
     FhirContext fhirContext;
 
