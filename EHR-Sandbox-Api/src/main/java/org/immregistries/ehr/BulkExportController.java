@@ -1,4 +1,4 @@
-package org.immregistries.ehr.api.controllers;
+package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
@@ -6,11 +6,13 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
+import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.DateType;
+import org.immregistries.ehr.api.controllers.ImmRegistryController;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -61,13 +63,13 @@ public class BulkExportController {
     ImmunizationProviderR4 immunizationProvider;
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
-    public ResponseEntity<String> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
+    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
             ,@RequestParam Optional<String> _outputFormat
             ,@RequestParam Optional<String> _type
             ,@RequestParam Optional<Date> _since
             ,@RequestParam Optional<String> _typeFilter
             ,@RequestParam Optional<Boolean> _mdm
-    ) {
+    ) throws IOException {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         IGenericClient client = customClientBuilder.newGenericClient(ir);
         // In order to get the response headers
@@ -82,23 +84,18 @@ public class BulkExportController {
         _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
         _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
-        MethodOutcome outParams =
-                client.operation()
+        Parameters outParams = client.operation()
                         .onInstance(new IdType("Group", groupId))
                         .named("$export")
                         .withParameters(inParams).accept("*/*")
                         .useHttpGet()
                         .withAdditionalHeader("Prefer", "respond-sync")
-                        .returnMethodOutcome()
                         .execute();
         IHttpResponse response = capturingInterceptor.getLastResponse();
         if (response.getStatus() != 200) {
             throw new RuntimeException(response.getStatusInfo());
         }
-//        String contentLocationUrl = response.getHeaders("Content-Location").get(0);
-//        response.get
-        IParser jsonParser = fhirContext.newJsonParser();
-        return ResponseEntity.ok(jsonParser.encodeResourceToString(outParams.getResource()));
+        return ResponseEntity.ok(response.readEntity().readAllBytes());
     }
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-asynch")
