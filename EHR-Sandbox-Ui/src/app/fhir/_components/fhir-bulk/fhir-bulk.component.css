@@ -1,15 +1,27 @@
 .tile-content {
-  width: 100%;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: flex-start; */
+  /* width: 100%; */
+  /* display: flex; */
+  /* flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 5px 5px;
-  padding: 2px;
-  flex-wrap: wrap;
-
+  padding: 2px; */
+  /* flex-wrap: wrap; */
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  overflow: auto;
 }
 
 .result-space {
-  height: 70vh;
+  height: 60vh;
   width: 100%;
+}
+
+.grid-container {
+  width: 100%;
+  /* align-items: flex-start;
+  justify-content: flex-start; */
 }

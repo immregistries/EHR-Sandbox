@@ -27,6 +27,8 @@ import { SubscriptionService } from './_services/subscription.service';
 import { FhirPostComponent } from './_components/fhir-post/fhir-post.component';
 import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { FhirBulkDashboardComponent } from '../fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,7 @@ import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.compo
     SubscriptionTableComponent,
     FhirPostComponent,
     FhirBulkComponent,
+    FhirBulkDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -55,6 +58,7 @@ import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.compo
     MatCardModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
+    MatToolbarModule,
 
     SharedModule,
   ],
@@ -71,6 +75,7 @@ import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.compo
     SubscriptionDashboardComponent,
     FhirPostComponent,
     FhirBulkComponent,
+    FhirBulkDashboardComponent,
   ]
 })
 export class FhirModule { }

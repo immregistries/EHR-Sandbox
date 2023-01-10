@@ -10,6 +10,7 @@ import { FhirService } from '../../_services/fhir.service';
 export class FhirBulkComponent implements OnInit {
 
 
+
   ngOnInit(): void {
   }
 
@@ -20,7 +21,7 @@ export class FhirBulkComponent implements OnInit {
   autofillContentUrl: boolean = true;
   exportResult: string = ''
   exportLoading = false
-  asynchronous: boolean = true;
+  @Input() asynchronous: boolean = true;
   export() {
     if (this.groupId) {
       if (this.asynchronous) {
@@ -38,7 +39,10 @@ export class FhirBulkComponent implements OnInit {
           this.exportResult = res.trim()
           this.exportLoading = false
           if (this.autofillContentUrl) {
-            // this.contentUrl = res.trim()
+            if (this.autofillNdUrl && res.startsWith('{')) {
+              let output: [key:{type: string,url:string}] = JSON.parse(res).output ?? [[]]
+              this.ndUrl = output.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
+            }
           }
         })
       }
@@ -57,8 +61,8 @@ export class FhirBulkComponent implements OnInit {
         this.statusResult = res.trim()
         this.statusLoading = false
         if (this.autofillNdUrl && res.startsWith('{')) {
-          this.ndUrl = JSON.parse(res).output[0].url
-
+          let output: [key:{type: string,url:string}] = JSON.parse(res).output ?? [[]]
+          this.ndUrl = output.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
         }
       })
     }
@@ -66,9 +70,9 @@ export class FhirBulkComponent implements OnInit {
   cancelLoading: boolean = false
   cancel() {
     if (this.contentUrl) {
-      this.cancelLoading = true
+      this.statusLoading = true
       this.fhir.groupExportDelete(this.contentUrl).subscribe((res) => {
-        this.cancelLoading = false
+        this.statusLoading = false
       })
     }
   }
@@ -91,7 +95,7 @@ export class FhirBulkComponent implements OnInit {
   }
 
   rowHeight(): string {
-    return (window.innerHeight - 35) + 'px'
+    return (window.innerHeight - 130) + 'px'
   }
 
 }

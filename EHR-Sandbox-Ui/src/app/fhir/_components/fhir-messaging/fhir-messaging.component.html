@@ -79,12 +79,10 @@
     </div>
   </mat-tab>
   <mat-tab label="Bulk Import Asynch">
-      <app-fhir-bulk></app-fhir-bulk>
+      <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
   </mat-tab>
    <mat-tab label="Bulk Import Synch">
-    <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
-      <app-fhir-bulk></app-fhir-bulk>
-    </div>
+    <app-fhir-bulk [asynchronous]="false"></app-fhir-bulk>
   </mat-tab>
   <mat-tab label="Settings">
     <div style="padding: 5px;"></div>

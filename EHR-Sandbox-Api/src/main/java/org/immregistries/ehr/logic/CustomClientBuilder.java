@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 
 /**
@@ -87,5 +89,20 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
     @Override
     public IGenericClient newClient(FhirContext fhirContext, HttpServletRequest httpServletRequest, String s) {
         return null;
+    }
+
+    public String authorisationTokenContent(ImmunizationRegistry ir) {
+        if (ir.getIisUsername() == null || ir.getIisUsername().isBlank()) {
+            /**
+             * If username is blank : use token bearer auth
+             */
+            return "Bearer " + ir.getIisPassword();
+        }else {
+            // Create an HTTP basic auth interceptor
+            String encoded = Base64.getEncoder()
+                    .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
+                            .getBytes(StandardCharsets.UTF_8));  //Java 8
+            return "Basic " + encoded;
+        }
     }
 }

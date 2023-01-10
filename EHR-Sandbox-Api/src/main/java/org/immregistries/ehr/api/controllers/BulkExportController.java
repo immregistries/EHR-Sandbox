@@ -76,18 +76,20 @@ public class BulkExportController {
 
         Parameters inParams = new Parameters();
         _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new StringType(s)));
+        logger.info("_type {}", _type.get());
         _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new StringType(s)));
         _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new DateType(d)));
         _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
         _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
-        Parameters outParams =
+        MethodOutcome outParams =
                 client.operation()
                         .onInstance(new IdType("Group", groupId))
                         .named("$export")
-                        .withParameters(inParams)
+                        .withParameters(inParams).accept("*/*")
                         .useHttpGet()
                         .withAdditionalHeader("Prefer", "respond-sync")
+                        .returnMethodOutcome()
                         .execute();
         IHttpResponse response = capturingInterceptor.getLastResponse();
         if (response.getStatus() != 200) {
@@ -96,7 +98,7 @@ public class BulkExportController {
 //        String contentLocationUrl = response.getHeaders("Content-Location").get(0);
 //        response.get
         IParser jsonParser = fhirContext.newJsonParser();
-        return ResponseEntity.ok(jsonParser.encodeResourceToString(outParams));
+        return ResponseEntity.ok(jsonParser.encodeResourceToString(outParams.getResource()));
     }
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-asynch")
@@ -137,7 +139,7 @@ public class BulkExportController {
     }
 
     @GetMapping("/iim-registry/{immRegistryId}/$export-status")
-    public ResponseEntity bulkStatus(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl) {
+    public ResponseEntity bulkCheckStatus(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         Map<String, List<String>> result;
         // URL used is the one gotten from the kickoff, while authentication remains the same
@@ -154,7 +156,7 @@ public class BulkExportController {
             String encoded = Base64.getEncoder()
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));  //Java 8
-            con.setRequestProperty("Authorization", "Basic " + encoded);
+            con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
@@ -197,12 +199,8 @@ public class BulkExportController {
             url = new URL(contentUrl);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
-            con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
-            String encoded = Base64.getEncoder()
-                    .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
-                            .getBytes(StandardCharsets.UTF_8));  //Java 8
-            con.setRequestProperty("Authorization", "Basic " + encoded);
+            con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
@@ -239,10 +237,7 @@ public class BulkExportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/fhir+ndjson");
-            String encoded = Base64.getEncoder()
-                    .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
-                            .getBytes(StandardCharsets.UTF_8));  //Java 8
-            con.setRequestProperty("Authorization", "Basic " + encoded);
+            con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
@@ -314,4 +309,6 @@ public class BulkExportController {
         responseBuilder.append("\nNumber of successful load in facility ").append(facility.getNameDisplay()).append(": ").append(count);
         return ResponseEntity.ok(responseBuilder.toString());
     }
+
+
 }
