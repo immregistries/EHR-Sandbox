@@ -6,7 +6,6 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
-import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Parameters;
@@ -92,10 +91,11 @@ public class BulkExportController {
                         .withAdditionalHeader("Prefer", "respond-sync")
                         .execute();
         IHttpResponse response = capturingInterceptor.getLastResponse();
-        if (response.getStatus() != 200) {
-            throw new RuntimeException(response.getStatusInfo());
+        if (response.getStatus() == 200) {
+            return ResponseEntity.ok(response.readEntity().readAllBytes());
+        } else {
+            return ResponseEntity.badRequest().body(response.getStatusInfo().getBytes(StandardCharsets.UTF_8));
         }
-        return ResponseEntity.ok(response.readEntity().readAllBytes());
     }
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-asynch")
@@ -128,11 +128,11 @@ public class BulkExportController {
                 .withAdditionalHeader("Prefer", "respond-async")
                 .execute();
         IHttpResponse response = capturingInterceptor.getLastResponse();
-        if (response.getStatus() != 202) {
-            throw new RuntimeException(response.getStatusInfo());
+        if (response.getStatus() == 202) {
+            String contentLocationUrl = response.getHeaders("Content-Location").get(0);
+            return ResponseEntity.ok(contentLocationUrl);
         }
-        String contentLocationUrl = response.getHeaders("Content-Location").get(0);
-        return ResponseEntity.ok(contentLocationUrl);
+        return ResponseEntity.internalServerError().body(response.getStatusInfo());
     }
 
     @GetMapping("/iim-registry/{immRegistryId}/$export-status")
@@ -158,8 +158,6 @@ public class BulkExportController {
 
             int status = con.getResponseCode();
             if (status == 200) {
-//                wait();
-//                return ResponseEntity.ok(con.getHeaderFields());
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else if (status == 202) {
                 StringBuilder builder = new StringBuilder();
@@ -172,7 +170,7 @@ public class BulkExportController {
                 }
                 return ResponseEntity.ok(builder.toString());
             } else {
-                return ResponseEntity.ok("ERROR");
+                return ResponseEntity.internalServerError().body(con.getResponseMessage());
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -204,7 +202,7 @@ public class BulkExportController {
             if (status == 202) {
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
-                return ResponseEntity.ok("ERROR");
+                return ResponseEntity.internalServerError().body(con.getResponseMessage());
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -224,8 +222,6 @@ public class BulkExportController {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
-//        IGenericClient client = customClientBuilder.newGenericClient(contentLocationUrl,ir.getIisPassword(),ir.getIisUsername());
-//        client.operation().onInstance(new IdType("Group",));
         HttpURLConnection con = null;
         URL url;
         try {
@@ -245,7 +241,7 @@ public class BulkExportController {
                 }
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
-                return ResponseEntity.ok("ERROR");
+                return ResponseEntity.internalServerError().body(con.getResponseMessage());
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

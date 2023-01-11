@@ -9,44 +9,65 @@ import { FhirService } from '../../_services/fhir.service';
 })
 export class FhirBulkComponent implements OnInit {
 
-
-
   ngOnInit(): void {
   }
 
   constructor(public fhir: FhirService) { }
+
+  @Input() asynchronous: boolean = true;
 
   groupId: string = ''
   exportArguments: string = '_type=Patient,Immunization'
   autofillContentUrl: boolean = true;
   exportResult: string = ''
   exportLoading = false
-  @Input() asynchronous: boolean = true;
+  exportError = false
   export() {
-    if (this.groupId) {
-      if (this.asynchronous) {
-        this.exportLoading = true
-        this.fhir.groupExportAsynch(this.groupId, this.exportArguments).subscribe((res) => {
-          this.exportResult = res.trim()
-          this.exportLoading = false
-          if (this.autofillContentUrl) {
-            this.contentUrl = res.trim()
-          }
-        })
-      } else {
-        this.exportLoading = true
-        this.fhir.groupExportSynch(this.groupId, this.exportArguments).subscribe((res) => {
-          this.exportResult = res.trim()
-          this.exportLoading = false
-          if (res.startsWith('{')) {
-            this.resultList = JSON.parse(res).output ?? []
-            if (this.autofillContentUrl) {
-              this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
-            }
-          }
-        })
-      }
+    if (this.asynchronous) {
+      this.exportAsynch()
+    } else {
+      this.exportSynch()
+    }
+  }
 
+  exportAsynch() {
+    if (this.groupId) {
+      this.exportLoading = true
+      this.fhir.groupExportAsynch(this.groupId, this.exportArguments).subscribe((res) => {
+        this.exportResult = res.trim()
+        this.exportLoading = false
+        this.exportError = false
+        if (this.autofillContentUrl) {
+          this.contentUrl = res.trim()
+        }
+      }, (err) => {
+        this.exportResult = err.message
+        console.error(err)
+        this.exportLoading = false
+        this.exportError = true
+      })
+    }
+  }
+
+  exportSynch() {
+    if (this.groupId) {
+      this.exportLoading = true
+      this.fhir.groupExportSynch(this.groupId, this.exportArguments).subscribe((res) => {
+        this.exportResult = res.trim()
+        this.exportLoading = false
+        this.exportError = false
+        if (res.startsWith('{')) {
+          this.resultList = JSON.parse(res).output ?? []
+          if (this.autofillContentUrl) {
+            this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
+          }
+        }
+      }, (err) => {
+        this.exportResult = err.message
+        console.error(err)
+        this.exportLoading = false
+        this.exportError = true
+      })
     }
   }
 
@@ -55,6 +76,7 @@ export class FhirBulkComponent implements OnInit {
   contentUrl: string = ''
   statusResult: string = ''
   statusLoading = false
+  statusError = false
   autofillNdUrl: boolean = true
   status() {
     if (this.contentUrl) {
@@ -68,6 +90,11 @@ export class FhirBulkComponent implements OnInit {
             this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
           }
         }
+      }, (err) => {
+        this.statusResult = err.message
+        console.error(err)
+        this.statusLoading = false
+        this.statusError = true
       })
     }
   }
@@ -76,7 +103,14 @@ export class FhirBulkComponent implements OnInit {
     if (this.contentUrl) {
       this.statusLoading = true
       this.fhir.groupExportDelete(this.contentUrl).subscribe((res) => {
+        this.statusResult = res
         this.statusLoading = false
+        this.statusError = false
+      }, (err) => {
+        this.statusResult = err.message
+        console.error(err)
+        this.statusLoading = false
+        this.statusError = true
       })
     }
   }
@@ -84,6 +118,7 @@ export class FhirBulkComponent implements OnInit {
   ndUrl: string = ''
   ndResult: string = ''
   ndLoading = false
+  ndError = false
   loadInFacility: boolean = false
   ndJson() {
     if (this.ndUrl) {
@@ -91,9 +126,14 @@ export class FhirBulkComponent implements OnInit {
       this.fhir.groupNdJson(this.ndUrl, this.loadInFacility).subscribe((res) => {
         this.ndResult = res.trim()
         this.ndLoading = false
-        if (this.loadInFacility) {
+        // if (this.loadInFacility) {
 
-        }
+        // }
+      }, (err) => {
+        this.ndResult = err.message
+        console.error(err)
+        this.ndLoading = false
+        this.ndError = true
       })
     }
   }

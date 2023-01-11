@@ -22,7 +22,7 @@
         </div>
         <div>
           <mat-progress-bar mode="query" *ngIf="exportLoading"></mat-progress-bar>
-          <textarea class="result-space">{{exportResult}}</textarea>
+          <textarea class="result-space" [style]="{color: exportError? 'red':'black'}">{{exportResult}}</textarea>
         </div>
       </div>
     </mat-grid-tile>
@@ -42,7 +42,7 @@
         </div>
         <div>
           <mat-progress-bar mode="query" *ngIf="statusLoading"></mat-progress-bar>
-          <textarea  class="result-space" >{{statusResult}}</textarea>
+          <textarea  class="result-space" [style]="{color: statusError? 'red':'black'}">{{statusResult}}</textarea>
         </div>
       </div>
     </mat-grid-tile>
@@ -68,7 +68,7 @@
 
         <div>
           <mat-progress-bar mode="query" *ngIf="ndLoading"></mat-progress-bar>
-          <textarea class="result-space">{{ndResult}}</textarea>
+          <textarea class="result-space" [style]="{color: ndError? 'red':'black'}">{{ndResult}}</textarea>
         </div>
       </div>
     </mat-grid-tile>
