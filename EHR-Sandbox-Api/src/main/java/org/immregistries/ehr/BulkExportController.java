@@ -39,25 +39,18 @@ import java.util.*;
 @RestController
 public class BulkExportController {
     private static final Logger logger = LoggerFactory.getLogger(BulkExportController.class);
-
     @Autowired
     FhirContext fhirContext;
-
     @Autowired
     ImmRegistryController immRegistryController;
-
     @Autowired
     CustomClientBuilder customClientBuilder;
-
     @Autowired
     FacilityRepository facilityRepository;
-
     @Autowired
     ApplicationContext context;
-
     @Autowired
     PatientProviderR4 patientProvider;
-
     @Autowired
     ImmunizationProviderR4 immunizationProvider;
 
@@ -67,6 +60,9 @@ public class BulkExportController {
             ,@RequestParam Optional<String> _type
             ,@RequestParam Optional<Date> _since
             ,@RequestParam Optional<String> _typeFilter
+            ,@RequestParam Optional<String> _elements
+            ,@RequestParam Optional<String> includeAssociatedData
+            ,@RequestParam Optional<String> patient
             ,@RequestParam Optional<Boolean> _mdm
     ) throws IOException {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
@@ -77,10 +73,12 @@ public class BulkExportController {
 
         Parameters inParams = new Parameters();
         _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new StringType(s)));
-        logger.info("_type {}", _type.get());
         _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new StringType(s)));
         _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new DateType(d)));
         _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
+        _elements.ifPresent(s -> inParams.addParameter().setName("_elements").setValue(new StringType(s)));
+        patient.ifPresent(s -> inParams.addParameter().setName("patient").setValue(new StringType(s)));
+        includeAssociatedData.ifPresent(s -> inParams.addParameter().setName("includeAssociatedData").setValue(new StringType(s)));
         _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
         Parameters outParams = client.operation()

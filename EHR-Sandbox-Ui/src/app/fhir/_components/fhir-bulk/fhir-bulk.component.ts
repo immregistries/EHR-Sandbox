@@ -58,6 +58,9 @@ export class FhirBulkComponent implements OnInit {
         this.exportError = false
         if (res.startsWith('{')) {
           this.resultList = JSON.parse(res).output ?? []
+          if (JSON.parse(res).error && JSON.parse(res).error[0]){
+            this.resultList?.push(JSON.parse(res).error[0])
+          }
           if (this.autofillContentUrl) {
             this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
           }
@@ -86,6 +89,9 @@ export class FhirBulkComponent implements OnInit {
         this.statusLoading = false
         if (res.startsWith('{')) {
           this.resultList = JSON.parse(res).output ?? []
+          if (JSON.parse(res).error && JSON.parse(res).error[0]){
+            this.resultList?.push(JSON.parse(res).error[0])
+          }
           if (this.autofillNdUrl) {
             this.ndUrl = this.resultList?.find((value: {type: string,url:string})  => value.type == "Patient" )?.url ?? ''
           }
