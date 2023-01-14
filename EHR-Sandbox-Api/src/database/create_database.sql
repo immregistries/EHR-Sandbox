@@ -28,7 +28,8 @@ CREATE TABLE `immunization_registry` (
   `iis_FHIR_url` varchar(256) NOT NULL,
   `iis_username` varchar(256) NOT NULL,
   `iis_facility_id` varchar(256) NOT NULL,
-  `iis_password` varchar(256) NOT NULL,
+  `iis_password` varchar(2048) NOT NULL,
+  `headers` varchar(512) DEFAULT '',
   PRIMARY KEY (`immunization_registry_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)

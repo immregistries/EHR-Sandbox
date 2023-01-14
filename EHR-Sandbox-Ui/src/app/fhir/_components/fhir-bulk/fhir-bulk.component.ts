@@ -127,7 +127,7 @@ export class FhirBulkComponent implements OnInit {
   ndError = false
   loadInFacility: boolean = false
   ndJson() {
-    if (this.ndUrl) {
+    if (this.ndUrl && this.ndUrl.length > 1) {
       this.ndLoading = true
       this.fhir.groupNdJson(this.ndUrl, this.loadInFacility).subscribe((res) => {
         this.ndResult = res.trim()
@@ -140,6 +140,12 @@ export class FhirBulkComponent implements OnInit {
         console.error(err)
         this.ndLoading = false
         this.ndError = true
+      })
+    } else if (this.ndResult) {
+      this.ndLoading = true
+      this.fhir.loadNdJson(this.ndResult).subscribe((res) => {
+        // this.ndResult = res.trim()
+        this.ndLoading = false
       })
     }
   }

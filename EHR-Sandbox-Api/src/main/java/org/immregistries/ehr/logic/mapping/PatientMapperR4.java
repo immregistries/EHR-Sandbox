@@ -203,12 +203,13 @@ public class PatientMapperR4 {
     }
     int raceNumber = 0;
     CodeableConcept races = MappingHelper.extensionGetCodeableConcept(p.getExtensionByUrl(RACE));
-    for (Coding coding : races.getCoding()) {
-      raceNumber++;
-      switch (raceNumber) {
-        case 1: {
-          patient.setRace(coding.getCode());
-        }
+    if (races != null) {
+      for (Coding coding : races.getCoding()) {
+        raceNumber++;
+        switch (raceNumber) {
+          case 1: {
+            patient.setRace(coding.getCode());
+          }
 //        case 2: {
 //          patient.setRace2(coding.getCode());
 //        }
@@ -224,7 +225,9 @@ public class PatientMapperR4 {
 //        case 6:{
 //          patient.setRace6(coding.getCode());
 //        }
+        }
       }
+
     }
     if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
       Coding ethnicity = MappingHelper.extensionGetCoding(p.getExtensionByUrl(ETHNICITY_EXTENSION));

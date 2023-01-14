@@ -33,13 +33,26 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
     private static final Logger logger = LoggerFactory.getLogger(CustomClientBuilder.class);
 
     public IGenericClient newGenericClient(ImmunizationRegistry registry){
-         return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword());
+         return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword(), registry.getHeaders());
     }
 
+    public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password, String headers) {
+        IGenericClient client = newGenericClient(serverURL, tenantId,  username,  password);
+        AdditionalRequestHeadersInterceptor additionalRequestHeadersInterceptor = new AdditionalRequestHeadersInterceptor();
+        for (String header: headers.split("\n")) {
+            String[] headsplit = header.split(":",1);
+            if (headsplit.length > 1) {
+                additionalRequestHeadersInterceptor.addHeaderValue(headsplit[0], headsplit[1]);
+            }
+        }
+        client.registerInterceptor(additionalRequestHeadersInterceptor);
+        return  client;
+    }
     public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password){
         IGenericClient client = newGenericClient(serverURL);
         // Register a tenancy interceptor to add /$tenantid to the url
         UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
+
         client.registerInterceptor(tenantSelection);
         IClientInterceptor authInterceptor;
         if (username == null || username.isBlank()) {

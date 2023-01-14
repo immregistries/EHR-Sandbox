@@ -34,8 +34,19 @@ public class ImmunizationRegistry {
     @Column(name = "iis_facility_id", nullable = false, length = 250)
     private String iisFacilityId = "";
 
-    @Column(name = "iis_password", nullable = false, length = 250)
+    @Column(name = "iis_password", nullable = false, length = 600)
     private String iisPassword = "";
+
+    public String getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(String headers) {
+        this.headers = headers;
+    }
+
+    @Column(name = "headers", nullable = false, length = 250)
+    private String headers = "";
 
     public String getIisPassword() {
         return iisPassword;

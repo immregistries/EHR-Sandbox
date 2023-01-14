@@ -57,6 +57,7 @@ export interface ImmunizationRegistry {
   iisUsername?: string;
   iisFacilityId?: string;
   iisPassword?: string;
+  headers?: string;
 }
 
 export interface NextOfKin {

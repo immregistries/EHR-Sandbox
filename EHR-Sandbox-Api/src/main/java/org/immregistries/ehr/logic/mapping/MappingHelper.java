@@ -93,28 +93,49 @@ public class MappingHelper {
 	}
 
 	public static CodeableConcept extensionGetCodeableConcept(Extension extension) {
-		return extension.getValueCodeableConcept();
+		if ( extension != null) {
+			return extension.getValueCodeableConcept();
+		} else {
+			return null;
+		}
 	}
 
 	public static org.hl7.fhir.r4.model.CodeableConcept extensionGetCodeableConcept(org.hl7.fhir.r4.model.Extension extension) {
-		return extension.castToCodeableConcept(extension.getValue());
+		if ( extension != null) {
+			return extension.castToCodeableConcept(extension.getValue());
+		} else return null;
 	}
 
 	public static Coding extensionGetCoding(Extension extension) {
-		return extension.getValueCoding();
+		if ( extension != null) {
+			return extension.getValueCoding();
+		} else return null;
 	}
 
 	public static org.hl7.fhir.r4.model.Coding extensionGetCoding(org.hl7.fhir.r4.model.Extension extension) {
-		return extension.castToCoding(extension.getValue());
+		if ( extension != null) {
+			return extension.castToCoding(extension.getValue());
+		} else {
+			return null;
+		}
 	}
 
 
 	public static Date extensionGetDate(Extension extension) {
-		return extension.getValueDateType().getValue();
+		if ( extension != null) {
+			return extension.getValueDateType().getValue();
+		} else {
+			return null;
+		}
+
 	}
 
 	public static Date extensionGetDate(org.hl7.fhir.r4.model.Extension extension) {
-		return extension.castToDate(extension.getValue()).getValue();
+		if ( extension != null) {
+			return extension.castToDate(extension.getValue()).getValue();
+		} else {
+			return null;
+		}
 	}
 
 }

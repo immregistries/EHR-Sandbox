@@ -227,7 +227,9 @@ public class BulkExportController {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
-            con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+            if (!contentUrl.contains("x-amz-security-token")) {
+                con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+            }
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
@@ -254,13 +256,33 @@ public class BulkExportController {
         }
     }
 
+    @PostMapping("/iim-registry/{immRegistryId}/facility/{facilityId}/$load")
+    public ResponseEntity bulkResultLoad(@PathVariable() Integer immRegistryId, @RequestBody String ndjson, @PathVariable Integer facilityId) {
+        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+
+        Facility facility = facilityRepository.findById(facilityId)
+                .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
+        return loadNdJson(ir, facility,ndjson);
+    }
+
     private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, InputStream ndJsonStream) {
+        IParser parser = fhirContext.newNDJsonParser();
+        Bundle bundle = (Bundle) parser.parseResource(ndJsonStream);
+        return  loadNdJson(immunizationRegistry,facility, bundle);
+    }
+    private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, String ndJson) {
+        IParser parser = fhirContext.newNDJsonParser();
+        Bundle bundle = (Bundle) parser.parseResource(ndJson);
+        return  loadNdJson(immunizationRegistry,facility, bundle);
+    }
+    private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, Bundle bundle ) {
         Map<Integer,Map<String,Integer>> immunizationIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("ImmunizationIdentifier");
         Map<Integer,Map<String,Integer>> patientIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("PatientIdentifier");
         immunizationIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
         patientIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
-        IParser parser = fhirContext.newNDJsonParser();
-        Bundle bundle = (Bundle) parser.parseResource(ndJsonStream);
+//        IParser parser = fhirContext.newNDJsonParser();
+//        Bundle bundle = (Bundle) parser.parseResource(ndJson);
         StringBuilder responseBuilder = new StringBuilder();
         int count = 0;
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
@@ -280,7 +302,12 @@ public class BulkExportController {
                     Immunization immunization = (Immunization) entry.getResource();
                     Integer dbId; // = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
                     String receivedId = immunization.getId().split("Immunization/")[1].split("/")[0];
-                    String receivedPatientId = immunization.getPatient().getReference().split("Patient/")[1].split("/")[0];
+                    String receivedPatientId;
+                    if (immunization.getPatient().getReference().contains("Patient/")){
+                        receivedPatientId = immunization.getPatient().getReference().split("Patient/")[1].split("/")[0];
+                    } else {
+                        receivedPatientId = immunization.getPatient().getReference();
+                    }
                     Integer dbPatientId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedPatientId,-1);
                     if (dbPatientId == -1) {
                         responseBuilder.append("\nERROR : ").append(immunization.getPatient().getReference()).append(" Unknown");

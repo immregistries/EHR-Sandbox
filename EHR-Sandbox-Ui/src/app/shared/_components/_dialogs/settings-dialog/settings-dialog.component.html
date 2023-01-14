@@ -76,11 +76,16 @@
       </mat-card-footer>
     </mat-card>
   </mat-grid-tile>
-  <!-- <mat-grid-tile [colspan]="4">
+  <mat-grid-tile [colspan]="2">
     <mat-card>
-
+      <mat-card-content class="dashboard-card-content">
+        <mat-form-field appearance="fill">
+          <mat-label >Extra headers</mat-label>
+          <input matInput [(ngModel)]="immunizationRegistry.headers">
+        </mat-form-field>
+      </mat-card-content>
     </mat-card>
-  </mat-grid-tile> -->
+  </mat-grid-tile>
 </mat-grid-list>
 <h3 style="text-align: left;">Authentication options:</h3>
 <ul class="w3-ul">

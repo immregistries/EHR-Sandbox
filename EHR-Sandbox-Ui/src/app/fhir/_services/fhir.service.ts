@@ -228,6 +228,14 @@ export class FhirService {
 
   }
 
+  loadNdJson(body: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    const facilityId: number = this.facilityService.getFacilityId()
+
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/iim-registry/${immId}/facility/${facilityId}/$load`, body);
+  }
+
   // readOperationOutcome(): Observable<any> {
   //   const tenantId: number = this.tenantService.getTenantId()
   //   const facilityId: number = this.facilityService.getFacilityId()

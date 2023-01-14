@@ -68,7 +68,11 @@
 
         <div>
           <mat-progress-bar mode="query" *ngIf="ndLoading"></mat-progress-bar>
-          <textarea class="result-space" [style]="{color: ndError? 'red':'black'}">{{ndResult}}</textarea>
+          <mat-form-field style="width: 100%;">
+            <mat-label>Fhir Resource</mat-label>
+            <textarea class="result-space" [style]="{color: ndError? 'red':'black'}" matInput placeholder="" [(ngModel)]="ndResult" ></textarea>
+
+          </mat-form-field>
         </div>
       </div>
     </mat-grid-tile>
