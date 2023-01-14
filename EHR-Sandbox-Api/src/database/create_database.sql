@@ -232,3 +232,5 @@ CREATE TABLE `subscription_info` (
       REFERENCES `ehr`.`subscription_store` (`identifier`)
       ON DELETE CASCADE
       ON UPDATE NO ACTION);
+
+insert into `user` (user_id, username, password) values (1, 'Connectathon', 'SundaysR0ck!');

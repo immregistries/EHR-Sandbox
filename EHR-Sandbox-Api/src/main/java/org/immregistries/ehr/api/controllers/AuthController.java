@@ -81,8 +81,8 @@ public class AuthController {
         immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
         immunizationRegistryOnline.setIisUsername(newUser.getUsername());
         immunizationRegistryOnline.setIisPassword(newUser.getUsername());
-        immunizationRegistryOnline.setIisHl7Url("http://florence.immregistries.org/iis-sandbox-jpa/soap");
-        immunizationRegistryOnline.setIisFhirUrl("http://florence.immregistries.org/iis-sandbox-jpa/fhir");
+        immunizationRegistryOnline.setIisHl7Url("https://bulksandbox.pagekite.me/iis-sandbox-jpa/soap");
+        immunizationRegistryOnline.setIisFhirUrl("https://bulksandbox.pagekite.me/iis-sandbox-jpa/fhir");
         immunizationRegistryOnline.setUser(newUser);
         immunizationRegistryRepository.save(immunizationRegistryOnline);
         return registerUser(user);
