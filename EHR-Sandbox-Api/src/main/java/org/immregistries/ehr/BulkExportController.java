@@ -151,7 +151,9 @@ public class BulkExportController {
             String encoded = Base64.getEncoder()
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));  //Java 8
-            con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+            if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
+                con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+            }
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
@@ -175,6 +177,7 @@ public class BulkExportController {
         } catch (ProtocolException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
             if (con != null) {
@@ -193,7 +196,10 @@ public class BulkExportController {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             con.setRequestProperty("Accept", "application/json");
-            con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+
+            if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
+                con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+            }
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
@@ -227,13 +233,14 @@ public class BulkExportController {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
-            if (!contentUrl.contains("x-amz-security-token")) {
+            if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
                 con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
-            if (status == 200) {
+            logger.info("RESPONSE {}", status);
+            if (status == 200 || status == 202) {
                 if (loadInFacility.isPresent()) {
                     Facility facility = facilityRepository.findById(loadInFacility.get()).orElseThrow(
                             () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
@@ -243,11 +250,11 @@ public class BulkExportController {
             } else {
                 return ResponseEntity.internalServerError().body(con.getResponseMessage());
             }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (ProtocolException e) {
+        } catch (MalformedURLException | ProtocolException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
             if (con != null) {

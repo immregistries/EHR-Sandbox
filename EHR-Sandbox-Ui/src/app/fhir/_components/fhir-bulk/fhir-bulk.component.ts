@@ -87,6 +87,7 @@ export class FhirBulkComponent implements OnInit {
       this.fhir.groupExportStatus(this.contentUrl).subscribe((res) => {
         this.statusResult = res.trim()
         this.statusLoading = false
+        this.statusError = false
         if (res.startsWith('{')) {
           this.resultList = JSON.parse(res).output ?? []
           if (JSON.parse(res).error && JSON.parse(res).error[0]){
@@ -132,6 +133,8 @@ export class FhirBulkComponent implements OnInit {
       this.fhir.groupNdJson(this.ndUrl, this.loadInFacility).subscribe((res) => {
         this.ndResult = res.trim()
         this.ndLoading = false
+        this.ndError = false
+
         // if (this.loadInFacility) {
 
         // }
@@ -146,6 +149,7 @@ export class FhirBulkComponent implements OnInit {
       this.fhir.loadNdJson(this.ndResult).subscribe((res) => {
         // this.ndResult = res.trim()
         this.ndLoading = false
+        this.ndError = false
       })
     }
   }

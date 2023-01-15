@@ -157,7 +157,11 @@ public class ImmunizationMapperR4 {
 //		v.setVaccinationReportedExternalLink(MappingHelper.filterIdentifier(i.getIdentifier(),MappingHelper.VACCINATION_REPORTED).getValue());
 
     v.setCreatedDate(i.getRecorded());
-    v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
+    if (i.hasOccurrenceDateTimeType()) {
+      v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
+    } else if (i.hasOccurrenceStringType()){
+//      v.setAdministeredDate(i.getOccurrenceStringType().dateTimeValue().getValue());
+    }
 
     i.getVaccineCode().getCoding().forEach(coding -> {
       switch (coding.getSystem()) {
@@ -178,7 +182,9 @@ public class ImmunizationMapperR4 {
 
     v.setVaccineMvxCode(i.getManufacturer().getIdentifier().getValue());
 
-    v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
+    if (i.getDoseQuantity().getValue() != null){
+      v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
+    }
 
     v.setInformationSource(i.getReportOrigin().getCodingFirstRep().getCode());
     v.setUpdatedDate(new Date());
