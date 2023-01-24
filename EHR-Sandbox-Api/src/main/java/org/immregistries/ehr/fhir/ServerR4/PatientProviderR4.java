@@ -8,12 +8,14 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 
 @Controller
+@Conditional(OnR4Condition.class)
 public class PatientProviderR4 implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(PatientProviderR4.class);
 

@@ -11,14 +11,17 @@ import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@Conditional(OnR5Condition.class)
 public class BundleProviderR5 implements IResourceProvider {
         private static final Logger logger = LoggerFactory.getLogger(BundleProviderR5.class);
 

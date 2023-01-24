@@ -13,14 +13,17 @@ import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.api.entities.SubscriptionStore;
 import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
 import org.immregistries.ehr.fhir.ServerR5.OperationOutcomeProviderR5;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
 
 @Controller
+@Conditional(OnR5Condition.class)
 public class SubscriptionStatusProviderR5 implements IResourceProvider {
     @Autowired
     SubscriptionStoreRepository subscriptionStoreRepository;

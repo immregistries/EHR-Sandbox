@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir.ServerR4;
+package org.immregistries.ehr.fhir.ServerR5;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
@@ -10,9 +10,11 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.web.servlet.FrameworkServlet;
 
 import javax.servlet.ServletException;
@@ -20,24 +22,25 @@ import javax.servlet.annotation.WebServlet;
 import java.util.ArrayList;
 import java.util.List;
 
-//@WebServlet(urlPatterns = {"/fhir/R4/*"}, displayName = "FHIR Server for subscription endpoint")
-public class EhrFhirServerR4 extends RestfulServer {
-    private static final Logger logger = LoggerFactory.getLogger(EhrFhirServerR4.class);
+//@WebServlet(urlPatterns = {"/fhir/R5/*"}, displayName = "FHIR Server for subscription endpoint")
+//@Conditional(OnR5Condition.class)
+public class EhrFhirServerR5 extends RestfulServer {
+    private static final Logger logger = LoggerFactory.getLogger(EhrFhirServerR5.class);
 
     @Autowired
-    BundleProviderR4 bundleProvider;
+    BundleProviderR5 bundleProvider;
     @Autowired
-    OperationOutcomeProviderR4 operationOutcomeProvider;
-//    @Autowired
-//    SubscriptionStatusProvider subscriptionStatusProvider;
+    OperationOutcomeProviderR5 operationOutcomeProvider;
     @Autowired
-    SubscriptionProviderR4 subscriptionProvider;
+    SubscriptionStatusProviderR5 subscriptionStatusProvider;
     @Autowired
-    PatientProviderR4 patientProvider;
+    SubscriptionProviderR5 subscriptionProvider;
     @Autowired
-    ImmunizationProviderR4 immunizationProvider;
+    PatientProviderR5 patientProvider;
+    @Autowired
+    ImmunizationProviderR5 immunizationProvider;
 
-    public EhrFhirServerR4(FhirContext ctx) {
+    public EhrFhirServerR5(FhirContext ctx) {
         super(ctx);
     }
 
@@ -74,8 +77,8 @@ public class EhrFhirServerR4 extends RestfulServer {
         setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
-//        resourceProviders.add(subscriptionProvider);
-//        resourceProviders.add(subscriptionStatusProvider); TODO
+        resourceProviders.add(subscriptionProvider);
+        resourceProviders.add(subscriptionStatusProvider);
         resourceProviders.add(operationOutcomeProvider);
         resourceProviders.add(bundleProvider);
         resourceProviders.add(patientProvider);

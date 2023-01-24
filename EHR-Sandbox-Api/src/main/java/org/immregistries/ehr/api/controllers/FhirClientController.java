@@ -4,15 +4,15 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.Patient;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
-import org.immregistries.ehr.logic.mapping.PatientMapperR4;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
+import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +38,9 @@ public class FhirClientController {
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
-    private ImmunizationMapperR4 immunizationHandler;
+    private ImmunizationMapperR5 immunizationHandler;
     @Autowired
-    private PatientMapperR4 patientHandler;
+    private PatientMapperR5 patientHandler;
     @Autowired
     FhirContext fhirContext;
     @Autowired
@@ -62,7 +62,7 @@ public class FhirClientController {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        org.hl7.fhir.r4.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient,
+        org.hl7.fhir.r5.model.Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient,
                 request.getRequestURI().split("/patients")[0]);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
@@ -83,7 +83,7 @@ public class FhirClientController {
     @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> updatePatient(@PathVariable() Integer immRegistryId, @RequestBody String message) {
         IParser parser = parser(message);
-        org.hl7.fhir.r4.model.Patient patient = parser.parseResource(org.hl7.fhir.r4.model.Patient.class, message);
+        org.hl7.fhir.r5.model.Patient patient = parser.parseResource(org.hl7.fhir.r5.model.Patient.class, message);
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(patient, "Patient", patient.getIdentifierFirstRep(), ir);
         if (outcome.getOperationOutcome() != null) {

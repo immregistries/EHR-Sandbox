@@ -1,4 +1,7 @@
 #spring.jpa.hibernate.ddl-auto:none
+hapi:
+  fhir:
+    fhir_version: R5
 spring:
   profiles.active: '@activatedProperties@'
   datasource:

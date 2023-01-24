@@ -12,10 +12,12 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Patient;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +28,7 @@ import java.util.Optional;
 /**
  * NOT FINISHED
  */
+@Conditional(OnR4Condition.class)
 public class RelatedPersonProviderR4 implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(RelatedPersonProviderR4.class);
 

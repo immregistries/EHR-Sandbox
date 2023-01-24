@@ -4,6 +4,9 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.immregistries.ehr.api.IdentifierRegistryConfig;
 import org.immregistries.ehr.fhir.ServerR4.EhrFhirServerR4;
+import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -33,8 +37,14 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 
 	public static String VERSION = "1.2.2-January-Connectathon";
 	@Bean
-	public FhirContext fhirContext() {
+	@Conditional(OnR4Condition.class)
+	public FhirContext fhirContextR4() {
 		return new FhirContext(FhirVersionEnum.R4);
+	}
+	@Bean
+	@Conditional(OnR5Condition.class)
+	public FhirContext fhirContextR5() {
+		return new FhirContext(FhirVersionEnum.R5);
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(EhrApiApplication.class);
@@ -56,9 +66,22 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	public ServletRegistrationBean<EhrFhirServerR4> popServletRegistrationBean() {
+	@Conditional(OnR4Condition.class)
+	public ServletRegistrationBean<EhrFhirServerR4> ServerR4RegistrationBean() {
 		ServletRegistrationBean<EhrFhirServerR4>  registrationBean = new ServletRegistrationBean<>();
-		EhrFhirServerR4 servlet = new EhrFhirServerR4(context.getBean(FhirContext.class));
+		EhrFhirServerR4 servlet = new EhrFhirServerR4(context.getBean(FhirContext.class)); //TODO change to R4 specifically
+		beanFactory.autowireBean(servlet);
+		registrationBean.setServlet(servlet);
+		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");
+		registrationBean.setLoadOnStartup(1);
+		return registrationBean;
+	}
+
+	@Bean
+	@Conditional(OnR5Condition.class)
+	public ServletRegistrationBean<EhrFhirServerR5> ServerR5RegistrationBean() {
+		ServletRegistrationBean<EhrFhirServerR5>  registrationBean = new ServletRegistrationBean<>();
+		EhrFhirServerR5 servlet = new EhrFhirServerR5(context.getBean(FhirContext.class));
 		beanFactory.autowireBean(servlet);
 		registrationBean.setServlet(servlet);
 		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");

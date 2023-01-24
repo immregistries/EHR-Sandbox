@@ -6,21 +6,20 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
-import ca.uhn.fhir.rest.server.interceptor.validation.fields.IValidator;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
-import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Parameters;
-import org.hl7.fhir.r4.model.StringType;
-import org.hl7.fhir.r4.model.DateType;
+import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r5.model.IdType;
+import org.hl7.fhir.r5.model.Parameters;
+import org.hl7.fhir.r5.model.StringType;
+import org.hl7.fhir.r5.model.DateType;
 import org.immregistries.ehr.api.controllers.ImmRegistryController;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.ServerR4.ImmunizationProviderR4;
-import org.immregistries.ehr.fhir.ServerR4.PatientProviderR4;
+import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
+import org.immregistries.ehr.fhir.ServerR5.PatientProviderR5;
 import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +53,9 @@ public class BulkExportController {
     @Autowired
     ApplicationContext context;
     @Autowired
-    PatientProviderR4 patientProvider;
+    PatientProviderR5 patientProvider;
     @Autowired
-    ImmunizationProviderR4 immunizationProvider;
+    ImmunizationProviderR5 immunizationProvider;
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
     public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId

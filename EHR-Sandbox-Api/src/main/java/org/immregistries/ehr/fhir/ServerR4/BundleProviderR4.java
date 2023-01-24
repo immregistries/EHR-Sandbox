@@ -9,14 +9,17 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.OperationOutcome;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@Conditional(OnR4Condition.class)
 public class BundleProviderR4 implements IResourceProvider {
         private static final Logger logger = LoggerFactory.getLogger(BundleProviderR4.class);
 

@@ -9,9 +9,11 @@ import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.StringType;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Controller
+@Conditional(OnR5Condition.class)
 public class OperationOutcomeProviderR5 implements IResourceProvider {
     @Autowired
     private FeedbackRepository feedbackRepository;

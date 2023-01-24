@@ -11,6 +11,7 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.VaccineRepository;
 import org.immregistries.ehr.fhir.ServerR4.PatientProviderR4;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
@@ -18,11 +19,13 @@ import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
+@Conditional(OnR4Condition.class)
 public class ImmunizationProviderR4 implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationProviderR4.class);
 
