@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ehr-sandbox-api</artifactId>
-	<version>1.2.2-January-Connectathon</version>
+	<version>1.2.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<parent>
 		<groupId>org.immregistries.ehr</groupId>
 		<artifactId>ehr-sandbox</artifactId>
-		<version>1.2.2-January-Connectathon</version>
+		<version>1.2.3-SNAPSHOT</version>
 	</parent>
 
 	<name>EHR Sandbox API</name>
