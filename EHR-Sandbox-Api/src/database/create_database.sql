@@ -60,7 +60,7 @@ CREATE TABLE `patient` (
   `patient_id` int(11) NOT NULL AUTO_INCREMENT,
   `facility_id` int(11) NOT NULL,
   `tenant_id` int(11) NOT NULL,
-  `created_date` datetime NOT NULL,
+  `created_date` datetime NULL,
   `updated_date` datetime NOT NULL,
   `birth_date` date NOT NULL,
   `name_last` varchar(250) DEFAULT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE `next_of_kin` (
 
 CREATE TABLE `vaccine` (
   `vaccine_id` int(11) NOT NULL AUTO_INCREMENT,
-  `created_date` datetime NOT NULL,
+  `created_date` datetime NULL,
   `updated_date` datetime NOT NULL,
   `administered_date` date NOT NULL,
   `vaccine_cvx_code` varchar(250) NOT NULL,

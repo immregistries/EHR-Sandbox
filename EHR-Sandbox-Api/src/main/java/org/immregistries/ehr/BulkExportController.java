@@ -6,6 +6,10 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.validation.fields.IValidator;
+import ca.uhn.fhir.validation.FhirValidator;
+import ca.uhn.fhir.validation.IValidatorModule;
+import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Parameters;
@@ -288,8 +292,6 @@ public class BulkExportController {
         Map<Integer,Map<String,Integer>> patientIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("PatientIdentifier");
         immunizationIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
         patientIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
-//        IParser parser = fhirContext.newNDJsonParser();
-//        Bundle bundle = (Bundle) parser.parseResource(ndJson);
         StringBuilder responseBuilder = new StringBuilder();
         int count = 0;
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
@@ -302,6 +304,7 @@ public class BulkExportController {
                     dbId = Integer.parseInt(methodOutcome.getId().getValue());
                     patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(receivedId, dbId);
                     responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
+                    logger.info("Patient  {}  loaded as patient  {}",receivedId,dbId);
                     count++;
                     break;
                 }
@@ -318,12 +321,15 @@ public class BulkExportController {
                     Integer dbPatientId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedPatientId,-1);
                     if (dbPatientId == -1) {
                         responseBuilder.append("\nERROR : ").append(immunization.getPatient().getReference()).append(" Unknown");
+                        logger.info("ERROR : Patient  {}  Unknown",immunization.getPatient().getReference());
+
                     } else {
                         immunization.setPatient(new Reference("Patient/" + dbPatientId));
                         MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
                         dbId = Integer.parseInt(methodOutcome.getId().getValue());
                         immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(receivedId, dbId);
                         responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
+                        logger.info("Immunization {} loaded as Immunization {}",receivedId,dbId);
                         count++;
                     }
                     break;
@@ -332,6 +338,17 @@ public class BulkExportController {
         }
         responseBuilder.append("\nNumber of successful load in facility ").append(facility.getNameDisplay()).append(": ").append(count);
         return ResponseEntity.ok(responseBuilder.toString());
+    }
+
+    private String validateNdJsonBundle(Bundle bundle ) {
+//        IValidator validator = new
+        FhirValidator validator = fhirContext.newValidator();
+
+//        IValidatorModule coreModule = new
+        IValidatorModule module = new FhirInstanceValidator(fhirContext);
+        validator.registerValidatorModule(module);
+
+        return "";
     }
 
 

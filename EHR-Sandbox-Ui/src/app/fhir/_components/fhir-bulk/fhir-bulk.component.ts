@@ -150,6 +150,11 @@ export class FhirBulkComponent implements OnInit {
         // this.ndResult = res.trim()
         this.ndLoading = false
         this.ndError = false
+      }, (err) => {
+        this.ndResult = err.message
+        console.error(err)
+        this.ndLoading = false
+        this.ndError = true
       })
     }
   }

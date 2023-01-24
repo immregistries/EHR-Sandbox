@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -133,8 +135,16 @@ public class ImmunizationMapperR4 {
 //      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
 //    }
     for (Immunization.ImmunizationPerformerComponent performer: i.getPerformer()) {
-      if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()){
-        Integer performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+      if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()
+       && performer.getActor().getType().equals("Clinician") //TODO support more actor types
+        ){
+        String performerRef = performer.getActor().getReference();
+        Integer performerId;
+        if ( performerRef.split("Clinician/").length > 1) {
+          performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+        } else {
+          performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[0]); // TODO
+        }
         switch (performer.getFunction().getCodingFirstRep().getCode()){ // TODO make sure system is FUNCTION
           case ADMINISTERING: {
             ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO
@@ -150,6 +160,8 @@ public class ImmunizationMapperR4 {
     return  ve;
   }
 
+
+
   public Vaccine vaccineFromFhir(Immunization i) {
     Vaccine v = new Vaccine();
     v.setUpdatedDate(i.getMeta().getLastUpdated());
@@ -160,7 +172,13 @@ public class ImmunizationMapperR4 {
     if (i.hasOccurrenceDateTimeType()) {
       v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
     } else if (i.hasOccurrenceStringType()){
-//      v.setAdministeredDate(i.getOccurrenceStringType().dateTimeValue().getValue());
+      SimpleDateFormat parser=new SimpleDateFormat("yyyy-mm-dd");
+      try {
+        v.setAdministeredDate(parser.parse(i.getOccurrenceStringType().getValueNotNull()));
+      } catch (ParseException e) {
+        e.printStackTrace();
+//        throw new RuntimeException(e);
+      }
     }
 
     i.getVaccineCode().getCoding().forEach(coding -> {

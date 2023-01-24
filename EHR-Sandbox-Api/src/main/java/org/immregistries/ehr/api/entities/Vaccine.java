@@ -16,7 +16,7 @@ public class Vaccine {
     @Column(name = "vaccine_id", nullable = false)
     private Integer id;
 
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_date", nullable = true)
     private Date createdDate;
 
     @Column(name = "updated_date", nullable = false)
