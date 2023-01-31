@@ -1,0 +1,25 @@
+version: "3"
+services:
+  ehr-sandbox-mysql:
+    image: mysql:latest
+    container_name: ehr-sandbox-mysql
+    command:
+      --lower_case_table_names=1
+    restart: always
+    environment:
+#      MYSQL_USER: 'ehr_web'
+#      MYSQL_PASSWORD: 'SharkBaitHooHaHa'
+      MYSQL_ROOT_PASSWORD: 'password123456789'
+    volumes:
+      - ./EHR-Sandbox-Api/src/database/create_user.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./EHR-Sandbox-Api/src/database/create_database.sql:/docker-entrypoint-initdb.d/2.sql
+  ehr-sandbox:
+    build: .
+    container_name: ehr-sandbox
+    restart: on-failure
+    ports:
+      - "9091:9091"
+
+volumes:
+  hapi-fhir-postgres:
+  sandbox-mysql:
