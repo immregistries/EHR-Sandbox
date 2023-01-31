@@ -18,7 +18,7 @@ services:
     container_name: ehr-sandbox
     restart: on-failure
     ports:
-      - "9091:9091"
+      - "9091:8080"
 
 volumes:
   hapi-fhir-postgres:

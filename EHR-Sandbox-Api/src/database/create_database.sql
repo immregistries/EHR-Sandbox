@@ -1,4 +1,3 @@
-DROP DATABASE ehr;
 CREATE DATABASE ehr;
 
 USE ehr;
