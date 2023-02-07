@@ -160,7 +160,6 @@ public class RandomGenerator {
         vaccine.setExpirationDate(randomDate);
         vaccine.setUpdatedDate(currentDate);
 
-        vaccine.setId(randomN);
 
         vaccine.setAdministeredAmount(randomN +".5");
         vaccine.setActionCode("A");
