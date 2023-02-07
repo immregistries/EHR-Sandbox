@@ -1,7 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
@@ -26,7 +26,7 @@ import java.util.Optional;
 public class PatientController {
 
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired

@@ -12,7 +12,7 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
@@ -36,7 +36,7 @@ public class PatientProviderR5 implements IResourceProvider {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
 
@@ -54,7 +54,7 @@ public class PatientProviderR5 implements IResourceProvider {
 
     public MethodOutcome createPatient(Patient fhirPatient, Facility facility) {
         MethodOutcome methodOutcome = new MethodOutcome();
-        EhrPatient patient = patientMapper.fromFhir(fhirPatient);
+        EhrPatient patient = patientMapper.toEhrPatient(fhirPatient);
         patient.setFacility(facility);
         patient.setTenant(facility.getTenant());
         patient.setCreatedDate(new Date());
@@ -86,7 +86,7 @@ public class PatientProviderR5 implements IResourceProvider {
         // TODO Historical registering
         EhrPatient oldPatient = patientRepository.findById(dbPatientId).get();
         // Save old patient in other table or annotate or SQL Temporal Tables
-        EhrPatient ehrPatient = patientMapper.fromFhir(patient);
+        EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
         ehrPatient.setId(dbPatientId);
         ehrPatient.setCreatedDate(oldPatient.getCreatedDate());
         ehrPatient.setUpdatedDate(new Date());
@@ -96,7 +96,7 @@ public class PatientProviderR5 implements IResourceProvider {
         ehrPatient = patientRepository.save(ehrPatient);
         MethodOutcome methodOutcome = new MethodOutcome();
         methodOutcome.setId(new IdType().setValue(ehrPatient.getId()));
-        methodOutcome.setResource(patientMapper.dbPatientToFhirPatient(ehrPatient));
+        methodOutcome.setResource(patientMapper.toFhirPatient(ehrPatient));
         return methodOutcome;
     }
 

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private TenantRepository tenantRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired

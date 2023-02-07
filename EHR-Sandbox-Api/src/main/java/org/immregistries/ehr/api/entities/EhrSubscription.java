@@ -7,14 +7,15 @@ import java.util.Date;
 
 /**
  * based on Fhir Subscription, made to register them in the database
+ * TODO materialize cardinality properly
  */
 @Entity
-@Table(name = "subscription_store")
-public class SubscriptionStore {
-    public SubscriptionStore() {
+@Table(name = "ehr_subscription")
+public class EhrSubscription {
+    public EhrSubscription() {
     }
 
-    public SubscriptionStore(Subscription subscription) {
+    public EhrSubscription(Subscription subscription) {
         externalId = new IdType(subscription.getId()).getIdPart();
         identifier = subscription.getIdentifierFirstRep().getValue();
         name = subscription.getName();
@@ -28,7 +29,7 @@ public class SubscriptionStore {
         timeout = subscription.getTimeout();
         contentType = subscription.getContentType();
         content = subscription.hasContent() ? subscription.getContent().toCode() : null;
-        notificationUrlLocation = subscription.getEndpoint(); //TODO verify
+        notificationUrlLocation = subscription.getEndpoint();
         maxCount = subscription.getMaxCount();
     }
 
@@ -77,7 +78,7 @@ public class SubscriptionStore {
     @Column(name = "channelType", length = 45)
     private String channelType;
 
-    @Column(name = "header", length = 45)
+    @Column(name = "header", length = 612)
     private String header;
 
     @Column(name = "heartbeatPeriod")
@@ -98,9 +99,9 @@ public class SubscriptionStore {
     @Column(name = "maxCount")
     private Integer maxCount;
 
-    @OneToOne(mappedBy = "subscriptionStore", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "ehrSubscription", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    private SubscriptionInfo subscriptionInfo;
+    private EhrSubscriptionInfo subscriptionInfo;
 
     @ManyToOne
     @JoinColumn(name = "immunization_registry_id")
@@ -226,11 +227,11 @@ public class SubscriptionStore {
         this.identifier = identifier;
     }
 
-    public SubscriptionInfo getSubscriptionInfo() {
+    public EhrSubscriptionInfo getSubscriptionInfo() {
         return subscriptionInfo;
     }
 
-    public void setSubscriptionInfo(SubscriptionInfo subscriptionInfo) {
+    public void setSubscriptionInfo(EhrSubscriptionInfo subscriptionInfo) {
         this.subscriptionInfo = subscriptionInfo;
     }
 }

@@ -4,10 +4,8 @@ import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
 import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -34,135 +32,132 @@ public class PatientMapperR5 {
 
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-  public Patient dbPatientToFhirPatient(EhrPatient dbPatient, String identifier_system) {
-    Patient fhirPatient = dbPatientToFhirPatient(dbPatient);
+  public Patient toFhirPatient(EhrPatient dbPatient, String identifier_system) {
+    Patient fhirPatient = toFhirPatient(dbPatient);
     Identifier identifier = fhirPatient.addIdentifier();
     identifier.setValue(""+dbPatient.getId());
     identifier.setSystem(identifier_system);
     return fhirPatient;
   }
 
-  public Patient dbPatientToFhirPatient(EhrPatient dbPatient) {
-    Patient fhirPatient = new Patient();
-//    fhirPatient.setId("" + dbPatient.getId());
-    
-//    Identifier identifier = fhirPatient.addIdentifier(); Dealt with in Controller
-//    identifier.setValue(""+dbPatient.getId());
-//    identifier.setSystem("EHR-Sandbox");
+  public Patient toFhirPatient(EhrPatient ehrPatient) {
+    Patient p = new Patient();
+//    p.setId("" + ehrPatient.getId());
 
 
-    fhirPatient.addName()
-            .addGiven(dbPatient.getNameFirst())
-            .addGiven(dbPatient.getNameMiddle())
-            .setFamily(dbPatient.getNameLast());
 
-    fhirPatient.addAddress()
-            .addLine(dbPatient.getAddressLine1())
-            .addLine(dbPatient.getAddressLine2())
-            .setCity(dbPatient.getAddressCity())
-            .setCountry(dbPatient.getAddressCountry())
-            .setState(dbPatient.getAddressState())
-            .setPostalCode(dbPatient.getAddressZip());
+    p.addName()
+            .addGiven(ehrPatient.getNameFirst())
+            .addGiven(ehrPatient.getNameMiddle())
+            .setFamily(ehrPatient.getNameLast());
 
-    fhirPatient.addTelecom()
-            .setValue(dbPatient.getPhone())
+    p.addAddress()
+            .addLine(ehrPatient.getAddressLine1())
+            .addLine(ehrPatient.getAddressLine2())
+            .setCity(ehrPatient.getAddressCity())
+            .setCountry(ehrPatient.getAddressCountry())
+            .setState(ehrPatient.getAddressState())
+            .setPostalCode(ehrPatient.getAddressZip());
+
+    p.addTelecom()
+            .setValue(ehrPatient.getPhone())
             .setSystem(ContactPointSystem.PHONE);
-    fhirPatient.addTelecom()
-            .setValue(dbPatient.getEmail())
+    p.addTelecom()
+            .setValue(ehrPatient.getEmail())
             .setSystem(ContactPointSystem.EMAIL);
 
-    fhirPatient.setBirthDate(dbPatient.getBirthDate());
-    if (dbPatient.getBirthOrder() != null && !dbPatient.getBirthOrder().equals("")) {
-      fhirPatient.setMultipleBirth(new IntegerType().setValue(Integer.parseInt(dbPatient.getBirthOrder())));
-    } else if (dbPatient.getBirthFlag().equals(YES)) {
-      fhirPatient.setMultipleBirth(new BooleanType(true));
+    p.setBirthDate(ehrPatient.getBirthDate());
+    if (ehrPatient.getBirthOrder() != null && !ehrPatient.getBirthOrder().equals("")) {
+      p.setMultipleBirth(new IntegerType().setValue(Integer.parseInt(ehrPatient.getBirthOrder())));
+    } else if (ehrPatient.getBirthFlag().equals(YES)) {
+      p.setMultipleBirth(new BooleanType(true));
     }
-    if (dbPatient.getSex().equals("M")) {
-      fhirPatient.setGender(AdministrativeGender.MALE);
-    } else if (dbPatient.getSex().equals("F")) {
-      fhirPatient.setGender(AdministrativeGender.FEMALE);
+    if (ehrPatient.getSex().equals("M")) {
+      p.setGender(AdministrativeGender.MALE);
+    } else if (ehrPatient.getSex().equals("F")) {
+      p.setGender(AdministrativeGender.FEMALE);
     } else {
-      fhirPatient.setGender(AdministrativeGender.OTHER);
+      p.setGender(AdministrativeGender.OTHER);
     }
 
     //Race and ethnicity
-    Extension raceExtension = fhirPatient.addExtension();
+    Extension raceExtension = p.addExtension();
     raceExtension.setUrl(RACE);
     CodeableConcept race = new CodeableConcept().setText(RACE_SYSTEM);
     raceExtension.setValue(race);
-    if (dbPatient.getRace() != null && !dbPatient.getRace().isEmpty()) {
-      race.addCoding().setCode(dbPatient.getRace());
+    if (ehrPatient.getRace() != null && !ehrPatient.getRace().isEmpty()) {
+      race.addCoding().setCode(ehrPatient.getRace());
     }
-    fhirPatient.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(dbPatient.getEthnicity()));
+    p.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()));
 
-//    fhirPatient.addExtension(ETHNICITY_EXTENSION,new CodeType().setSystem(ETHNICITY_SYSTEM).setValue(dbPatient.getEthnicity()));
+//    p.addExtension(ETHNICITY_EXTENSION,new CodeType().setSystem(ETHNICITY_SYSTEM).setValue(ehrPatient.getEthnicity()));
 
-    if (dbPatient.getDeathDate() != null) {
-      fhirPatient.getDeceasedDateTimeType().setValue(dbPatient.getDeathDate());
-    } else if (dbPatient.getDeathFlag().equals(YES)) {
-      fhirPatient.setDeceased(new BooleanType(true));
-    } else if (dbPatient.getDeathFlag().equals(NO)) {
-      fhirPatient.setDeceased(new BooleanType(false));
+    if (ehrPatient.getDeathDate() != null) {
+      p.getDeceasedDateTimeType().setValue(ehrPatient.getDeathDate());
+    } else if (ehrPatient.getDeathFlag().equals(YES)) {
+      p.setDeceased(new BooleanType(true));
+    } else if (ehrPatient.getDeathFlag().equals(NO)) {
+      p.setDeceased(new BooleanType(false));
     }
 
 
-    Extension publicity =  fhirPatient.addExtension();
+    Extension publicity =  p.addExtension();
     publicity.setUrl(PUBLICITY_EXTENSION);
     publicity.setValue(
             new Coding().setSystem(PUBLICITY_SYSTEM)
-                    .setCode(dbPatient.getPublicityIndicator()));
-    if (dbPatient.getPublicityIndicatorDate() != null) {
-      publicity.getValueCoding().setVersion(dbPatient.getPublicityIndicatorDate().toString());
+                    .setCode(ehrPatient.getPublicityIndicator()));
+    if (ehrPatient.getPublicityIndicatorDate() != null) {
+      publicity.getValueCoding().setVersion(ehrPatient.getPublicityIndicatorDate().toString());
     }
-    Extension protection =  fhirPatient.addExtension();
+    Extension protection =  p.addExtension();
     protection.setUrl(PROTECTION_EXTENSION);
     protection.setValue(
             new Coding().setSystem(PROTECTION_SYSTEM)
-                    .setCode(dbPatient.getProtectionIndicator()));
-    if (dbPatient.getProtectionIndicatorDate() != null) {
-      protection.getValueCoding().setVersion(dbPatient.getProtectionIndicatorDate().toString());
+                    .setCode(ehrPatient.getProtectionIndicator()));
+    if (ehrPatient.getProtectionIndicatorDate() != null) {
+      protection.getValueCoding().setVersion(ehrPatient.getProtectionIndicatorDate().toString());
     }
 
-    Extension registryStatus =  fhirPatient.addExtension();
+    Extension registryStatus =  p.addExtension();
     registryStatus.setUrl(REGISTRY_STATUS_EXTENSION);
     registryStatus.setValue(
             new Coding().setSystem(REGISTRY_STATUS_INDICATOR)
-                    .setCode(dbPatient.getRegistryStatusIndicator()));
-    if (dbPatient.getRegistryStatusIndicatorDate() != null) {
-      registryStatus.getValueCoding().setVersion(dbPatient.getRegistryStatusIndicatorDate().toString());
+                    .setCode(ehrPatient.getRegistryStatusIndicator()));
+    if (ehrPatient.getRegistryStatusIndicatorDate() != null) {
+      registryStatus.getValueCoding().setVersion(ehrPatient.getRegistryStatusIndicatorDate().toString());
     }
-    return fhirPatient;
+    return p;
   }
 
-  public EhrPatient fromFhir(Patient p) {
-    EhrPatient patient = new EhrPatient();
+  public EhrPatient toEhrPatient(Patient p) {
+    EhrPatient ehrPatient = new EhrPatient();
     // Identifiers are dealt with in the providers
 
-    patient.setUpdatedDate(p.getMeta().getLastUpdated());
+    ehrPatient.setUpdatedDate(p.getMeta().getLastUpdated());
 
-    patient.setBirthDate(p.getBirthDate());
+    ehrPatient.setBirthDate(p.getBirthDate());
 //    patient.setManagingOrganizationId(p.getManagingOrganization().getId());
     // Name
     HumanName name = p.getNameFirstRep();
-    patient.setNameLast(name.getFamily());
+    ehrPatient.setNameLast(name.getFamily());
     if (name.getGiven().size() > 0) {
-      patient.setNameFirst(name.getGiven().get(0).getValueNotNull());
+      ehrPatient.setNameFirst(name.getGiven().get(0).getValueNotNull());
     }
     if (name.getGiven().size() > 1) {
-      patient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
+      ehrPatient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
     }
 
 //		patient.setMotherMaiden(); TODO
     switch (p.getGender()) {
       case MALE:
-        patient.setSex("M");
+        ehrPatient.setSex("M");
         break;
       case FEMALE:
-        patient.setSex("F");
+        ehrPatient.setSex("F");
         break;
       case OTHER:
       default:
-        patient.setSex("");
+        ehrPatient.setSex("");
         break;
     }
     int raceNumber = 0;
@@ -170,7 +165,7 @@ public class PatientMapperR5 {
       raceNumber++;
       switch (raceNumber) {
         case 1:{
-          patient.setRace(coding.getCode());
+          ehrPatient.setRace(coding.getCode());
         }
 //        case 2:{ TODO race list
 //          patient.setRace2(coding.getCode());
@@ -190,15 +185,15 @@ public class PatientMapperR5 {
       }
     }
     if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
-      patient.setEthnicity(p.getExtensionByUrl(ETHNICITY_EXTENSION).getValueCoding().getCode());
+      ehrPatient.setEthnicity(p.getExtensionByUrl(ETHNICITY_EXTENSION).getValueCoding().getCode());
     }
 
     for (ContactPoint telecom : p.getTelecom()) {
       if (null != telecom.getSystem()) {
         if (telecom.getSystem().equals(ContactPointSystem.PHONE)) {
-          patient.setPhone(telecom.getValue());
+          ehrPatient.setPhone(telecom.getValue());
         } else if (telecom.getSystem().equals(ContactPointSystem.EMAIL)) {
-          patient.setEmail(telecom.getValue());
+          ehrPatient.setEmail(telecom.getValue());
         }
       }
     }
@@ -206,65 +201,65 @@ public class PatientMapperR5 {
     if (null != p.getDeceased()) {
       if (p.getDeceased().isBooleanPrimitive()) {
         if (p.getDeceasedBooleanType().booleanValue()) {
-          patient.setDeathFlag(YES);
+          ehrPatient.setDeathFlag(YES);
         } else {
-          patient.setDeathFlag(NO);
+          ehrPatient.setDeathFlag(NO);
         }
       }
       if (p.getDeceased().isDateTime()) {
-        patient.setDeathDate(p.getDeceasedDateTimeType().getValue());
+        ehrPatient.setDeathDate(p.getDeceasedDateTimeType().getValue());
       }
     }
     // Address
     Address address = p.getAddressFirstRep();
     if (address.getLine().size() > 0) {
-      patient.setAddressLine1(address.getLine().get(0).getValueNotNull());
+      ehrPatient.setAddressLine1(address.getLine().get(0).getValueNotNull());
     }
     if (address.getLine().size() > 1) {
-      patient.setAddressLine2(address.getLine().get(1).getValueNotNull());
+      ehrPatient.setAddressLine2(address.getLine().get(1).getValueNotNull());
     }
-    patient.setAddressCity(address.getCity());
-    patient.setAddressState(address.getState());
-    patient.setAddressZip(address.getPostalCode());
-    patient.setAddressCountry(address.getCountry());
-    patient.setAddressCountyParish(address.getDistrict());
+    ehrPatient.setAddressCity(address.getCity());
+    ehrPatient.setAddressState(address.getState());
+    ehrPatient.setAddressZip(address.getPostalCode());
+    ehrPatient.setAddressCountry(address.getCountry());
+    ehrPatient.setAddressCountyParish(address.getDistrict());
 
     if (null != p.getMultipleBirth() && !p.getMultipleBirth().isEmpty()) {
       if (p.getMultipleBirth().isBooleanPrimitive()) {
         if (p.getMultipleBirthBooleanType().booleanValue()) {
-          patient.setBirthFlag(YES);
+          ehrPatient.setBirthFlag(YES);
         } else {
-          patient.setBirthFlag(NO);
+          ehrPatient.setBirthFlag(NO);
         }
       } else {
-        patient.setBirthOrder(String.valueOf(p.getMultipleBirthIntegerType()));
+        ehrPatient.setBirthOrder(String.valueOf(p.getMultipleBirthIntegerType()));
       }
     }
 
     if (p.getExtensionByUrl(PUBLICITY_EXTENSION) != null) {
-      patient.setPublicityIndicator(p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getCode());
+      ehrPatient.setPublicityIndicator(p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getCode());
       if (p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion() != null && !p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion().isBlank() ) {
         try {
-          patient.setPublicityIndicatorDate(sdf.parse(p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion()));
+          ehrPatient.setPublicityIndicatorDate(sdf.parse(p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion()));
         } catch (ParseException e) {}
       }
     }
 
     if (p.getExtensionByUrl(PROTECTION_EXTENSION) != null) {
-      patient.setProtectionIndicator(p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getCode());
+      ehrPatient.setProtectionIndicator(p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getCode());
       if (p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getVersion() != null) {
         try {
-          patient.setProtectionIndicatorDate(sdf.parse(p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getVersion()));
+          ehrPatient.setProtectionIndicatorDate(sdf.parse(p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getVersion()));
         } catch (ParseException e) {}
       }
     }
 
     if (p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION) != null) {
-      patient.setRegistryStatusIndicator(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getCode());
+      ehrPatient.setRegistryStatusIndicator(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getCode());
       try {
-        patient.setRegistryStatusIndicatorDate(sdf.parse(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getVersion()));
+        ehrPatient.setRegistryStatusIndicatorDate(sdf.parse(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getVersion()));
       } catch (ParseException e) {}
     }
-    return patient;
+    return ehrPatient;
   }
 }

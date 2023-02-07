@@ -7,13 +7,13 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.SubscriptionInfo;
-import org.immregistries.ehr.api.entities.SubscriptionStore;
+import org.immregistries.ehr.api.entities.EhrSubscriptionInfo;
+import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
+import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
-import org.immregistries.ehr.api.repositories.SubscriptionInfoRepository;
+import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Random;
 
 
 @RestController
@@ -37,6 +38,9 @@ public class SubscriptionController {
     public static final String RESTHOOK = "rest-hook";
     public static final String EMAIL = "mailto:Clement.Hennequin@telecomnancy.net";
     private static final String LOCAL_TOPIC = "http://localhost:8080/SubscriptionTopic";
+
+    public static final String SECRET_HEADER_NAME = "Authorization-Subscription";
+    public static final String SECRET_PREFIX = " ";
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
@@ -44,18 +48,18 @@ public class SubscriptionController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private SubscriptionStoreRepository subscriptionStoreRepository;
+    private EhrSubscriptionRepository ehrSubscriptionRepository;
     @Autowired
-    private SubscriptionInfoRepository subscriptionInfoRepository;
+    private EhrSubscriptionInfoRepository subscriptionInfoRepository;
     @Autowired
     FhirContext fhirContext;
     @Autowired
     CustomClientBuilder customClientBuilder;
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
-    public Optional<SubscriptionStore> subscriptionStore(@PathVariable() String facilityId){
-        Optional<SubscriptionStore> subscriptionStore = subscriptionStoreRepository.findByIdentifier(facilityId);
-        return subscriptionStore;
+    public Optional<EhrSubscription> ehrSubscription(@PathVariable() String facilityId){
+        Optional<EhrSubscription> ehrSubscription = ehrSubscriptionRepository.findByIdentifier(facilityId);
+        return ehrSubscription;
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
@@ -71,11 +75,11 @@ public class SubscriptionController {
         if (outcome.getCreated()){
             outcomeSub.setStatus(Enumerations.SubscriptionStatusCodes.ACTIVE);
         }
-        SubscriptionStore subscriptionStore = new SubscriptionStore(outcomeSub);
-        subscriptionStore.setImmunizationRegistry(ir);
-        SubscriptionInfo subscriptionInfo = new SubscriptionInfo(subscriptionStore);
-//        subscriptionStore.setSubscriptionInfo(subscriptionInfo);
-        subscriptionStoreRepository.save(subscriptionStore);
+        EhrSubscription ehrSubscription = new EhrSubscription(outcomeSub);
+        ehrSubscription.setImmunizationRegistry(ir);
+        EhrSubscriptionInfo subscriptionInfo = new EhrSubscriptionInfo(ehrSubscription);
+//        ehrSubscription.setSubscriptionInfo(subscriptionInfo);
+        ehrSubscriptionRepository.save(ehrSubscription);
 //        switch(outcomeSub.getStatus()) {
 //            case ACTIVE: {
 //                // return positive message
@@ -104,10 +108,11 @@ public class SubscriptionController {
         sub.setTopic(LOCAL_TOPIC);
 
         sub.setReason("testing purposes");
-        sub.setName("EHR facility n" + facility.getId() + " " + facility.getNameDisplay());
+        /**
+         * Giving a name for display with facility number and name
+         */
+        sub.setName("EHR sandbox n" + facility.getId() + " " + facility.getNameDisplay());
 
-        // TODO set random secret
-        sub.addHeader("Authorization: Bearer secret-secret");
         sub.setHeartbeatPeriod(5);
         sub.setTimeout(30);
         sub.setEnd(new Date(System.currentTimeMillis() + 3 * 60 * 1000));
@@ -116,7 +121,21 @@ public class SubscriptionController {
 
         sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
         sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/" + facility.getId());
-//        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
+
+        /**
+         * Generating a key for identification
+         *
+         */
+        byte[] array = new byte[256];
+        new Random().nextBytes(array);
+        String generatedString = "jhadvfkajhsdvub";
+//        String generatedString = new String(array, Charset.forName("UTF-8"));
+        sub.addHeader(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + generatedString);
+
+        /**
+         * Fetching the topic as it is currently defined in the IIS Sandbox in order to fit
+         * TODO define canonical ?
+         */
         SubscriptionTopic topic;
         URL url;
         IParser parser = fhirContext.newJsonParser();

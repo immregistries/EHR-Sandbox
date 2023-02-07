@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface PatientRepository extends CrudRepository<EhrPatient, String> {
+public interface EhrPatientRepository extends CrudRepository<EhrPatient, String> {
 
     Iterable<EhrPatient> findByTenantIdAndFacilityId(Integer tenantId, Integer facilityId);
 

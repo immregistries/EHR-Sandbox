@@ -31,7 +31,7 @@ public class ImmunizationProviderR5 implements IResourceProvider {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
@@ -73,7 +73,7 @@ public class ImmunizationProviderR5 implements IResourceProvider {
         // TODO Historical registering
 
 
-        VaccinationEvent vaccinationEvent = immunizationMapper.fromFhir(immunization);
+        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
         String vaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
         VaccinationEvent old = vaccinationEventRepository.findById(vaccinationId).get();
 //        vaccinationEvent.getVaccine().setId(old.getVaccine().getId()); // TODO change fetchtype ?
@@ -88,7 +88,7 @@ public class ImmunizationProviderR5 implements IResourceProvider {
         vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
         MethodOutcome methodOutcome = new MethodOutcome();
         methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId()));
-        methodOutcome.setResource(immunizationMapper.dbVaccinationToFhirVaccination(vaccinationEvent,resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility)));
+        methodOutcome.setResource(immunizationMapper.toFhirImmunization(vaccinationEvent,resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility), resourceIdentificationService.getFacilityPatientIdentifierSystem(facility)));
         return methodOutcome;
     }
 
@@ -97,7 +97,7 @@ public class ImmunizationProviderR5 implements IResourceProvider {
 
     public MethodOutcome createImmunization(Immunization immunization, Facility facility) {
         MethodOutcome methodOutcome = new MethodOutcome();
-        VaccinationEvent vaccinationEvent = immunizationMapper.fromFhir(immunization);
+        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
         vaccinationEvent.setAdministeringFacility(facility);
         String patientId = new IdType(immunization.getPatient().getReference()).getIdPart();
         vaccinationEvent.setPatient(

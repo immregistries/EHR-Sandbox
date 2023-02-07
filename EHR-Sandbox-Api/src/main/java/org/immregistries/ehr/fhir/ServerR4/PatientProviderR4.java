@@ -12,7 +12,7 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class PatientProviderR4 implements IResourceProvider {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Override
     public Class<Patient> getResourceType() {
         return Patient.class;

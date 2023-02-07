@@ -9,26 +9,26 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "subscription_info")
-public class SubscriptionInfo {
+public class EhrSubscriptionInfo {
     @Id
-    @Column(name = "subscription_store")
+    @Column(name = "ehr_subscription")
     private String  subscriptionIdentifier;
     @OneToOne
     @MapsId
-    @JoinColumn(name = "subscription_store")
+    @JoinColumn(name = "ehr_subscription")
     @JsonIgnore
-    private SubscriptionStore subscriptionStore;
+    private EhrSubscription ehrSubscription;
 
     @Column(name = "events_since_start")
     private int eventsSinceSubscriptionStart;
 
-    public SubscriptionInfo(SubscriptionStore subscriptionStore) {
-        this.subscriptionIdentifier = subscriptionStore.getIdentifier();
-        this.subscriptionStore = subscriptionStore;
-        subscriptionStore.setSubscriptionInfo(this);
+    public EhrSubscriptionInfo(EhrSubscription ehrSubscription) {
+        this.subscriptionIdentifier = ehrSubscription.getIdentifier();
+        this.ehrSubscription = ehrSubscription;
+        ehrSubscription.setSubscriptionInfo(this);
     }
 
-    public SubscriptionInfo() {
+    public EhrSubscriptionInfo() {
     }
 
     public int getEventsSinceSubscriptionStart() {
@@ -39,12 +39,12 @@ public class SubscriptionInfo {
         this.eventsSinceSubscriptionStart = eventsSinceSubscriptionStart;
     }
 
-    public SubscriptionStore getSubscriptionStore() {
-        return subscriptionStore;
+    public EhrSubscription getSubscriptionStore() {
+        return ehrSubscription;
     }
 
-    public void setSubscriptionStore(SubscriptionStore subscriptionStore) {
-        this.subscriptionStore = subscriptionStore;
+    public void setSubscriptionStore(EhrSubscription ehrSubscription) {
+        this.ehrSubscription = ehrSubscription;
     }
 
     public String getSubscriptionIdentifier() {

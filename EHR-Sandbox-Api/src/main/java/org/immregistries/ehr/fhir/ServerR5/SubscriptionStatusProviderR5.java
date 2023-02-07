@@ -10,9 +10,8 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
-import org.immregistries.ehr.api.entities.SubscriptionStore;
-import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
-import org.immregistries.ehr.fhir.ServerR5.OperationOutcomeProviderR5;
+import org.immregistries.ehr.api.entities.EhrSubscription;
+import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,7 @@ import java.util.Optional;
 @Conditional(OnR5Condition.class)
 public class SubscriptionStatusProviderR5 implements IResourceProvider {
     @Autowired
-    SubscriptionStoreRepository subscriptionStoreRepository;
+    EhrSubscriptionRepository ehrSubscriptionRepository;
     @Autowired
     OperationOutcomeProviderR5 operationOutcomeProvider;
     @Autowired
@@ -48,21 +47,21 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
         logger.info("facility id {} status type {}", theRequestDetails.getTenantId(), status.getType());
         MethodOutcome methodOutcome = new MethodOutcome();
         IParser parser = fhirContext.newJsonParser();
-        Optional<SubscriptionStore> subscriptionStore;
+        Optional<EhrSubscription> ehrSubscription;
         if (status.getSubscription().getId() != null) {
-            subscriptionStore = subscriptionStoreRepository.findById(status.getSubscription().getId());
+            ehrSubscription = ehrSubscriptionRepository.findById(status.getSubscription().getId());
         } else  {
-            subscriptionStore = subscriptionStoreRepository.findByIdentifier(theRequestDetails.getTenantId());
+            ehrSubscription = ehrSubscriptionRepository.findByIdentifier(theRequestDetails.getTenantId());
         }
 
-        if (subscriptionStore.isPresent()) {
+        if (ehrSubscription.isPresent()) {
             switch (status.getType()){
                 case HANDSHAKE: {
-                    processHandshake(status, subscriptionStore.get(), theRequestDetails, methodOutcome);
+                    processHandshake(status, ehrSubscription.get(), theRequestDetails, methodOutcome);
                     break;
                 }
                 case HEARTBEAT: {
-                    processHeartbeat(status, subscriptionStore.get(),theRequestDetails, methodOutcome);
+                    processHeartbeat(status, ehrSubscription.get(),theRequestDetails, methodOutcome);
                     break;
                 }
                 case NULL: {
@@ -70,15 +69,15 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
                 }
                 case EVENTNOTIFICATION: {
 //                operationOutcomeProvider.registerOperationOutcome(theRequestDetails, status);
-//                    if (!subscriptionStore.get().getStatus().equals("Active")) {
+//                    if (!ehrSubscription.get().getStatus().equals("Active")) {
 //                        throw new InvalidRequestException("No active  subscription registered with this id");
 //                    }
                     logger.info("events number {}",status.getEventsSinceSubscriptionStartElement().getValue());
-                    if (status.getEventsSinceSubscriptionStartElement().getValue().intValue() != subscriptionStore.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
+                    if (status.getEventsSinceSubscriptionStartElement().getValue().intValue() != ehrSubscription.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
                         // TODO trigger problem when HAPI FHIR actually implements it
                     }
-                    subscriptionStore.get().getSubscriptionInfo().setEventsSinceSubscriptionStart(status.getEventsSinceSubscriptionStartElement().getValue().intValue());
-                    subscriptionStoreRepository.save(subscriptionStore.get());
+                    ehrSubscription.get().getSubscriptionInfo().setEventsSinceSubscriptionStart(status.getEventsSinceSubscriptionStartElement().getValue().intValue());
+                    ehrSubscriptionRepository.save(ehrSubscription.get());
                     break;
                 }
             }
@@ -89,21 +88,21 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
     }
 
 
-    private void processHandshake(SubscriptionStatus status,SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
+    private void processHandshake(SubscriptionStatus status, EhrSubscription ehrSubscription, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
         logger.info("Handshake {} {}", status.getSubscription(), status.getStatus());
-        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionStatusCodes.REQUESTED.toCode())) {
-            throw new InvalidRequestException("Subscription not requested, " + subscriptionStore.getStatus());
+        if (!ehrSubscription.getStatus().equals(Enumerations.SubscriptionStatusCodes.REQUESTED.toCode())) {
+            throw new InvalidRequestException("Subscription not requested, " + ehrSubscription.getStatus());
         }
-        subscriptionStore.setStatus(status.getStatus().toCode());
-        subscriptionStoreRepository.save(subscriptionStore);
+        ehrSubscription.setStatus(status.getStatus().toCode());
+        ehrSubscriptionRepository.save(ehrSubscription);
         methodOutcome.setCreated(true);
 
     }
 
-    private void processHeartbeat(SubscriptionStatus status, SubscriptionStore subscriptionStore, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
+    private void processHeartbeat(SubscriptionStatus status, EhrSubscription ehrSubscription, RequestDetails theRequestDetails, MethodOutcome methodOutcome) {
 //        checking if subscription still exists and is active on this side
         logger.info("Heartbeat {} {}", status.getSubscription(), status.getStatus());
-        if (!subscriptionStore.getStatus().equals(Enumerations.SubscriptionStatusCodes.ACTIVE.toCode())) {
+        if (!ehrSubscription.getStatus().equals(Enumerations.SubscriptionStatusCodes.ACTIVE.toCode())) {
             throw new InvalidRequestException("Subscription no longer active");
         }
     }

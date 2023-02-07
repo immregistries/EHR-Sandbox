@@ -1,7 +1,6 @@
 package org.immregistries.ehr.fhir.ServerR5;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -10,24 +9,23 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.SubscriptionStore;
+import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
+import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_HEADER_NAME;
+import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_PREFIX;
 
 @Controller
 @Conditional(OnR5Condition.class)
@@ -43,7 +41,7 @@ public class BundleProviderR5 implements IResourceProvider {
         @Autowired
         private SubscriptionStatusProviderR5 subscriptionStatusProvider;
         @Autowired
-        SubscriptionStoreRepository subscriptionStoreRepository;
+        EhrSubscriptionRepository ehrSubscriptionRepository;
         @Autowired
         FhirContext fhirContext;
         @Autowired
@@ -77,26 +75,28 @@ public class BundleProviderR5 implements IResourceProvider {
                  */
                 SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
                 Reference subscriptionReference = subscriptionStatus.getSubscription();
-                SubscriptionStore subscriptionStore = null;
+                EhrSubscription ehrSubscription = null;
                 if (subscriptionReference.getIdentifier() != null && subscriptionReference.getIdentifier().getValue() != null) {
-                        subscriptionStore = subscriptionStoreRepository.findById(subscriptionReference.getIdentifier().getValue())
+                        ehrSubscription = ehrSubscriptionRepository.findById(subscriptionReference.getIdentifier().getValue())
                                 .orElseThrow(() -> new InvalidRequestException("No active subscription found with identifier"));
                 } else {
-                        subscriptionStore = subscriptionStoreRepository.findByExternalId(new IdType(subscriptionReference.getReference()).getIdPart())
+                        ehrSubscription = ehrSubscriptionRepository.findByExternalId(new IdType(subscriptionReference.getReference()).getIdPart())
                                 .orElseThrow(() -> new InvalidRequestException("No active subscription found with id"));
                 }
 
                 /**
                  * Subscription Security check
-                 * TODO maybe move to an interceptor
                  */
-//                String secret = (String) requestDetails.getAttribute("subscription-header");
-//                if (!secret.equals(subscriptionStore.getHeader())) {
-//                        throw new AuthenticationException("Invalid header for subscription notification");
-//                }
+                String secret = request.getHeader(SECRET_HEADER_NAME);
+                logger.info("Subscription header is : {}", ehrSubscription.getHeader());
+                logger.info("Received header is : {}", SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret);
+
+                if (!ehrSubscription.getHeader().equals(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret)) {
+                        throw new AuthenticationException("Invalid header for subscription notification");
+                }
 
 
-                ImmunizationRegistry immunizationRegistry = subscriptionStore.getImmunizationRegistry();
+                ImmunizationRegistry immunizationRegistry = ehrSubscription.getImmunizationRegistry();
                 outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
                 switch (subscriptionStatus.getTopic()) { //TODO check topic
                         default: {

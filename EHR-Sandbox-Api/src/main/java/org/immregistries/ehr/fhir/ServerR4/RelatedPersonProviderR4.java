@@ -11,7 +11,7 @@ import org.hl7.fhir.r4.model.RelatedPerson;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class RelatedPersonProviderR4 implements IResourceProvider {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Override
     public Class<RelatedPerson> getResourceType() {
         return RelatedPerson.class;

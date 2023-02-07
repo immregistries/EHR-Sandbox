@@ -33,7 +33,7 @@ public class FhirClientController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
@@ -73,7 +73,7 @@ public class FhirClientController {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
 
-        Patient fhirPatient = patientHandler.dbPatientToFhirPatient(patient,
+        Patient fhirPatient = patientHandler.toFhirPatient(patient,
                 resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
         fhirPatient.setText(null);
         String resource = parser.encodeResourceToString(fhirPatient);
@@ -129,8 +129,8 @@ public class FhirClientController {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
         Immunization immunization =
-                immunizationHandler.dbVaccinationToFhirVaccination(vaccinationEvent,
-                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
+                immunizationHandler.toFhirImmunization(vaccinationEvent,
+                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility), resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
     }

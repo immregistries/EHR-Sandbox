@@ -26,7 +26,7 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
@@ -34,7 +34,7 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
-    private SubscriptionStoreRepository subscriptionStoreRepository;
+    private EhrSubscriptionRepository ehrSubscriptionRepository;
     private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProviderR5.class);
 
     @Override

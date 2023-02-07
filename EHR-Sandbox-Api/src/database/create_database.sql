@@ -202,7 +202,7 @@ CREATE TABLE `ehr`.`feedback` (
     ON UPDATE NO ACTION);
 
 
-CREATE TABLE `subscription_store` (
+CREATE TABLE `ehr_subscription` (
   `identifier` varchar(45) NOT NULL,
   `external_id` varchar(45) NOT NULL,
   `name` varchar(45) DEFAULT NULL,
@@ -211,7 +211,7 @@ CREATE TABLE `subscription_store` (
   `end` datetime DEFAULT NULL,
   `reason` varchar(90) DEFAULT NULL,
   `channel_type` varchar(45) DEFAULT NULL,
-  `header` varchar(45) DEFAULT NULL,
+  `header` varchar(612) DEFAULT NULL,
   `heartbeat_period` int DEFAULT NULL,
   `timeout` int DEFAULT NULL,
   `content_type` varchar(45) DEFAULT NULL,
@@ -226,12 +226,12 @@ CREATE TABLE `subscription_store` (
 );
 
 CREATE TABLE `subscription_info` (
-  `subscription_store` varchar(45) NOT NULL,
+  `ehr_subscription` varchar(45) NOT NULL,
   `events_since_start` int DEFAULT 0,
-  PRIMARY KEY (`subscription_store`),
-  CONSTRAINT `fk_subscription_store`
-      FOREIGN KEY (`subscription_store`)
-      REFERENCES `ehr`.`subscription_store` (`identifier`)
+  PRIMARY KEY (`ehr_subscription`),
+  CONSTRAINT `fk_ehr_subscription`
+      FOREIGN KEY (`ehr_subscription`)
+      REFERENCES `ehr`.`ehr_subscription` (`identifier`)
       ON DELETE CASCADE
       ON UPDATE NO ACTION);
 

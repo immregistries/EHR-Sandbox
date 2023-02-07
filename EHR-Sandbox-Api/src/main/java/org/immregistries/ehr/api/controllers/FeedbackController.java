@@ -20,7 +20,7 @@ import java.util.Optional;
 public class FeedbackController {
 
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired

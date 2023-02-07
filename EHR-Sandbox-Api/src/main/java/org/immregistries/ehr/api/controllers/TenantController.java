@@ -1,6 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
-import org.immregistries.ehr.api.repositories.PatientRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.TenantRepository;
@@ -22,7 +22,7 @@ public class TenantController {
     @Autowired
     private TenantRepository tenantRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 

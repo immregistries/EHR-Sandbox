@@ -43,19 +43,19 @@ public class ImmunizationMapperR5 {
   public static final String FUNDING_ELIGIBILITY = "fundingEligibility";
 
 
-  public Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination, String identifier_system) {
-    Immunization i = dbVaccinationToFhirVaccination(dbVaccination);
+  public Immunization toFhirImmunization(VaccinationEvent vaccinationEvent, String identifier_system, String patient_identifier_system) {
+    Immunization i = toFhirImmunization(vaccinationEvent);
     Identifier identifier = i.addIdentifier();
-    identifier.setValue(""+dbVaccination.getId());
+    identifier.setValue(""+vaccinationEvent.getId());
     identifier.setSystem(identifier_system);
-    i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId())
+    i.setPatient(new Reference("Patient/" + vaccinationEvent.getPatient().getId())
             .setIdentifier(new Identifier()
-                    .setValue("" + dbVaccination.getPatient().getId())
-                    .setSystem(identifier_system)));
+                    .setValue(vaccinationEvent.getPatient().getId())
+                    .setSystem(patient_identifier_system)));
     return  i;
   }
   
-  private Immunization dbVaccinationToFhirVaccination(VaccinationEvent dbVaccination) {
+  private Immunization toFhirImmunization(VaccinationEvent dbVaccination) {
 
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
@@ -118,7 +118,7 @@ public class ImmunizationMapperR5 {
     return i;
   }
 
-  public VaccinationEvent fromFhir(Immunization i) {
+  public VaccinationEvent toVaccinationEvent(Immunization i) {
     VaccinationEvent ve = new VaccinationEvent();
     ve.setVaccine(vaccineFromFhir(i));
 //    ve.setExternalLink(i.getIdentifierFirstRep().getValue());

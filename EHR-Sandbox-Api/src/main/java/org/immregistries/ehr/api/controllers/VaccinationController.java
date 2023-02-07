@@ -34,7 +34,7 @@ public class VaccinationController {
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
-    private PatientRepository patientRepository;
+    private EhrPatientRepository patientRepository;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
