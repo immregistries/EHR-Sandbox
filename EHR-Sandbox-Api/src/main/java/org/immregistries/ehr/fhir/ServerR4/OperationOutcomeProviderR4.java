@@ -6,7 +6,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.slf4j.Logger;
@@ -105,11 +105,11 @@ public class OperationOutcomeProviderR4 implements IResourceProvider {
                 while (scanner.hasNext()) {
                     next = scanner.next();
                     if (next.equals("Patient") && scanner.hasNextInt()) { // TODO Define format for identifier specification, or use fhirpath more accurately
-                        Optional<Patient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.nextInt());
+                        Optional<EhrPatient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.next());
                         patient.ifPresent(feedback::setPatient);
                     }
                     if (next.equals("Immunization") && scanner.hasNextInt()) {
-                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), scanner.nextInt());
+                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), scanner.next());
                         if(vaccinationEvent.isPresent()){
                             feedback.setVaccinationEvent(vaccinationEvent.get());
                             feedback.setPatient(vaccinationEvent.get().getPatient());

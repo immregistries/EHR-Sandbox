@@ -78,12 +78,12 @@
       </div>
     </div>
   </mat-tab>
-  <mat-tab label="Bulk Import Asynch">
+  <!-- <mat-tab label="Bulk Import Asynch">
       <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
   </mat-tab>
    <mat-tab label="Bulk Import Synch">
     <app-fhir-bulk [asynchronous]="false"></app-fhir-bulk>
-  </mat-tab>
+  </mat-tab> -->
   <mat-tab label="Settings">
     <div style="padding: 5px;"></div>
     <app-select-immregistry></app-select-immregistry>
@@ -92,5 +92,13 @@
     <div style="padding: 5px;"></div>
     <app-fhir-post></app-fhir-post>
   </mat-tab>
+  <mat-tab disabled>
+    <ng-template mat-tab-label>
+      <app-select-immregistry style="transform: scale(0.8);"></app-select-immregistry>
+    </ng-template>
+  </mat-tab>
 </mat-tab-group>
 
+<!-- <div style="float: right;">
+  <app-select-immregistry style="position:fixed;"></app-select-immregistry>
+</div> -->

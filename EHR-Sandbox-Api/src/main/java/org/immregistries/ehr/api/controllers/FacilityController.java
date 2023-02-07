@@ -42,7 +42,7 @@ public class FacilityController {
     @GetMapping("/{facilityId}/vaccinations/{vaccinationId}")
     public Optional<VaccinationEvent> getVaccination(@PathVariable() int tenantId,
                                                   @PathVariable() int facilityId,
-                                                  @PathVariable() int vaccinationId) {
+                                                  @PathVariable() String vaccinationId) {
         return vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId,vaccinationId);
     }
 

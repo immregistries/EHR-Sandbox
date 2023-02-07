@@ -1,7 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import org.immregistries.ehr.api.repositories.PatientRepository;
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -37,7 +37,7 @@ public class TenantController {
     }
 
     @GetMapping("/{tenantId}/patients")
-    public Iterable<Patient> patients(@PathVariable() int tenantId) {
+    public Iterable<EhrPatient> patients(@PathVariable() int tenantId) {
         return patientRepository.findByTenantId(tenantId);
     }
 

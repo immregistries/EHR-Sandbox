@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.SubscriptionInfo;
 import org.immregistries.ehr.api.entities.SubscriptionStore;
@@ -60,7 +61,8 @@ public class SubscriptionController {
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIIS(@PathVariable() Integer immRegistryId, @PathVariable() int facilityId , @RequestBody String body) {
         ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
-        Subscription sub = generateRestHookSubscription(facilityId, ir.getIisFhirUrl());
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
+        Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = customClientBuilder.newGenericClient(ir);
 
         MethodOutcome outcome = client.create().resource(sub).execute();
@@ -94,15 +96,15 @@ public class SubscriptionController {
         return outcome.getCreated();
     }
 
-    public Subscription generateRestHookSubscription(Integer facilityId, String iis_uri) {
+    public Subscription generateRestHookSubscription(Facility facility, String iis_uri) {
         Subscription sub = new Subscription();
-        sub.addIdentifier().setValue(facilityId + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
+        sub.addIdentifier().setValue(facility.getId() + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
 //        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
         sub.setTopic(LOCAL_TOPIC);
 
         sub.setReason("testing purposes");
-        sub.setName("Ehr sandbox facility n" + facilityId);
+        sub.setName("EHR facility n" + facility.getId() + " " + facility.getNameDisplay());
 
         // TODO set random secret
         sub.addHeader("Authorization: Bearer secret-secret");
@@ -113,7 +115,7 @@ public class SubscriptionController {
         sub.setContentType("application/fhir+json");
 
         sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
-        sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/" + facilityId);
+        sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/" + facility.getId());
 //        sub.setEndpoint(theRequestDetails.getFhirServerBase() + "/" + facilityId + "/OperationOutcome");
         SubscriptionTopic topic;
         URL url;

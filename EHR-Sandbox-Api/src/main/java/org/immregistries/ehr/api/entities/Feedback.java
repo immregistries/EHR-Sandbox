@@ -26,7 +26,7 @@ public class Feedback {
     @JoinColumn(name = "patient_id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("patient")
-    private Patient patient;
+    private EhrPatient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id")
@@ -104,11 +104,11 @@ public class Feedback {
         this.facility = facility;
     }
 
-    public Patient getPatient() {
+    public EhrPatient getPatient() {
         return patient;
     }
 
-    public void setPatient(Patient patient) {
+    public void setPatient(EhrPatient patient) {
         this.patient = patient;
     }
 

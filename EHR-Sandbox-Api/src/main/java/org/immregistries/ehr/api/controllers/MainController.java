@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.ehr.CodeMapManager;
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -26,17 +26,12 @@ public class MainController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping("/new_patient")
-    public Patient patient() {
-        return new Patient();
-    }
-
-    @GetMapping("/random_patient")
-    public Patient randomPatient() {
+    @GetMapping("/$random_patient")
+    public EhrPatient randomPatient() {
         return randomGenerator.randomPatient(null,null);
     }
 
-    @GetMapping("/random_vaccination")
+    @GetMapping("/$random_vaccination")
     public VaccinationEvent randomVaccination() {
         return randomGenerator.randomVaccinationEvent(null,null);
     }

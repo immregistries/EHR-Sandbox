@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Feedback } from 'src/app/core/_model/rest';
@@ -11,7 +11,8 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
 @Component({
   selector: 'app-fhir-messaging',
   templateUrl: './fhir-messaging.component.html',
-  styleUrls: ['./fhir-messaging.component.css']
+  styleUrls: ['./fhir-messaging.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class FhirMessagingComponent implements AfterViewInit {
   patientLoading: Boolean = false

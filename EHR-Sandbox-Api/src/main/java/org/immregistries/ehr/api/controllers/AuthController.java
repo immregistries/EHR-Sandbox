@@ -33,14 +33,11 @@ public class AuthController {
     UserRepository userRepository;
     @Autowired
     ImmunizationRegistryRepository immunizationRegistryRepository;
-
     @Autowired
     PasswordEncoder encoder;
-
     @Autowired
     JwtUtils jwtUtils;
-
-
+    
     @PostMapping( consumes = {"application/xml","application/json"})
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         if (user.getPassword().isBlank()) {
@@ -57,34 +54,44 @@ public class AuthController {
             return ResponseEntity.ok(new JwtResponse(jwt,
                     userDetails.getId(),
                     userDetails.getUsername()));
+        } else {
+            createUser(user);
+            return registerUser(user);
         }
-        // Create new user's account
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(newUser);
+    }
 
+    private synchronized void createUser( User user) {
         /**
-         * Defining default IIS's automatically on first login
+         * Checking the existence again since method is synchronised and might create duplicates with request spam
          */
-        ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
-        immunizationRegistry.setName("Localhost");
-        immunizationRegistry.setIisFacilityId(newUser.getUsername());
-        immunizationRegistry.setIisUsername(newUser.getUsername());
-        immunizationRegistry.setIisPassword(newUser.getUsername());
-        immunizationRegistry.setIisHl7Url("http://localhost:8080/iis-sandbox-jpa/soap");
-        immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis-sandbox-jpa/fhir");
-        immunizationRegistry.setUser(newUser);
-        immunizationRegistryRepository.save(immunizationRegistry);
-        ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
-        immunizationRegistryOnline.setName("Online");
-        immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
-        immunizationRegistryOnline.setIisUsername(newUser.getUsername());
-        immunizationRegistryOnline.setIisPassword(newUser.getUsername());
-        immunizationRegistryOnline.setIisHl7Url("https://bulksandbox.pagekite.me/iis-sandbox-jpa/soap");
-        immunizationRegistryOnline.setIisFhirUrl("https://bulksandbox.pagekite.me/iis-sandbox-jpa/fhir");
-        immunizationRegistryOnline.setUser(newUser);
-        immunizationRegistryRepository.save(immunizationRegistryOnline);
-        return registerUser(user);
+        if (!userRepository.existsByUsername(user.getUsername())) {
+            // Create new user's account
+            User newUser = new User();
+            newUser.setUsername(user.getUsername());
+            newUser.setPassword(encoder.encode(user.getPassword()));
+            userRepository.save(newUser);
+
+            /**
+             * Defining default IIS's automatically on first login
+             */
+            ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
+            immunizationRegistry.setName("Localhost");
+            immunizationRegistry.setIisFacilityId(newUser.getUsername());
+            immunizationRegistry.setIisUsername(newUser.getUsername());
+            immunizationRegistry.setIisPassword(newUser.getUsername());
+            immunizationRegistry.setIisHl7Url("http://localhost:8080/iis-sandbox-jpa/soap");
+            immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis-sandbox-jpa/fhir");
+            immunizationRegistry.setUser(newUser);
+            immunizationRegistryRepository.save(immunizationRegistry);
+            ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
+            immunizationRegistryOnline.setName("Online");
+            immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
+            immunizationRegistryOnline.setIisUsername(newUser.getUsername());
+            immunizationRegistryOnline.setIisPassword(newUser.getUsername());
+            immunizationRegistryOnline.setIisHl7Url("https://bulksandbox.pagekite.me/iis-sandbox-jpa/soap");
+            immunizationRegistryOnline.setIisFhirUrl("https://bulksandbox.pagekite.me/iis-sandbox-jpa/fhir");
+            immunizationRegistryOnline.setUser(newUser);
+            immunizationRegistryRepository.save(immunizationRegistryOnline);
+        }
     }
 }

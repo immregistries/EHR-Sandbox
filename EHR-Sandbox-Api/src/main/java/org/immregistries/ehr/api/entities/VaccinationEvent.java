@@ -15,13 +15,13 @@ public class VaccinationEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vaccination_event_id", nullable = false)
-    private Integer id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("patient")
-    private Patient patient;
+    private EhrPatient patient;
 
     @JsonProperty("patient")
     public void setPatient(int id) {
@@ -40,7 +40,7 @@ public class VaccinationEvent {
     @JoinColumn(name = "administering_clinician_id")
     private Clinician administeringClinician;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vaccine_id")
     private Vaccine vaccine;
 
@@ -101,19 +101,19 @@ public class VaccinationEvent {
         this.enteringClinician = enteringClinician;
     }
 
-    public Patient getPatient() {
+    public EhrPatient getPatient() {
         return patient;
     }
 
-    public void setPatient(Patient patient) {
+    public void setPatient(EhrPatient patient) {
         this.patient = patient;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

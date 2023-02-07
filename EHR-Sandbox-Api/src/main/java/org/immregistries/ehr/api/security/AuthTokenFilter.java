@@ -76,14 +76,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private boolean isAuthorizedURI(String url) throws IOException {
         int tenantId = -1;
         int facilityId = -1;
-        int patientId = -1;
-        int vaccinationId = -1;
+        String patientId = null;
+        String vaccinationId = null;
         // Parsing the URI
         String[] split = url.split("/");
         int len = split.length;
         Scanner scanner = new Scanner(url).useDelimiter("/");
         String item = "";
-        if(scanner.hasNext() && tenantId == -1) {
+        if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("ehr-sandbox") ) {
                 if (scanner.hasNext()) {
@@ -104,7 +104,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
-        if(scanner.hasNext() && facilityId == -1 ) {
+        if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("facilities") ) {
                 if (scanner.hasNextInt()) {
@@ -115,31 +115,31 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
-        if(scanner.hasNext() && patientId == -1 && vaccinationId == -1 ) {
+        if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("patients") ) {
                 if (scanner.hasNextInt()) {
-                    patientId = scanner.nextInt();
-                    if (!patientRepository.existsByFacilityIdAndId(facilityId,patientId)){
+                    patientId = scanner.next();
+                    if (!patientId.contains("$") && !patientRepository.existsByFacilityIdAndId(facilityId,patientId)){
                         return  false;
                     }
                 }
             }
             if (item.equals("vaccinations") ) {
                 if (scanner.hasNextInt()) {
-                    vaccinationId = scanner.nextInt();
-                    if (!vaccinationEventRepository.existsByAdministeringFacilityIdAndId(facilityId,vaccinationId)){
+                    vaccinationId = scanner.next();
+                    if (!vaccinationId.contains("$") &&!vaccinationEventRepository.existsByAdministeringFacilityIdAndId(facilityId,vaccinationId)){
                         return  false;
                     }
                 }
             }
         }
-        if(scanner.hasNext() && vaccinationId == -1 ) {
+        if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("vaccinations") ) {
                 if (scanner.hasNextInt()) {
-                    vaccinationId = scanner.nextInt();
-                    if (!vaccinationEventRepository.existsByPatientIdAndId(patientId,vaccinationId)){
+                    vaccinationId = scanner.next();
+                    if (!vaccinationId.contains("$") && !vaccinationEventRepository.existsByPatientIdAndId(patientId,vaccinationId)){
                         return  false;
                     }
                 }

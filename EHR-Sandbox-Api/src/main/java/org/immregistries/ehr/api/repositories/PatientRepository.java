@@ -1,19 +1,19 @@
 package org.immregistries.ehr.api.repositories;
 
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface PatientRepository extends CrudRepository<Patient, Integer> {
+public interface PatientRepository extends CrudRepository<EhrPatient, String> {
 
-    Iterable<Patient> findByTenantIdAndFacilityId(Integer tenantId, Integer facilityId);
+    Iterable<EhrPatient> findByTenantIdAndFacilityId(Integer tenantId, Integer facilityId);
 
-    Optional<Patient> findByTenantIdAndFacilityIdAndId(Integer tenantId, Integer facilityId, Integer id);
+    Optional<EhrPatient> findByTenantIdAndFacilityIdAndId(Integer tenantId, Integer facilityId, String id);
 
-    Optional<Patient> findByFacilityIdAndId(Integer facilityId, Integer id);
-    Boolean existsByFacilityIdAndId(Integer facilityId, Integer id);
+    Optional<EhrPatient> findByFacilityIdAndId(Integer facilityId, String id);
+    Boolean existsByFacilityIdAndId(Integer facilityId, String id);
 
 
-    Iterable<Patient> findByTenantId(Integer tenantId);
+    Iterable<EhrPatient> findByTenantId(Integer tenantId);
 }

@@ -1,9 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
-import org.hl7.fhir.r5.model.Coding;
-import org.hl7.fhir.r5.model.Enumerations;
-import org.hl7.fhir.r5.model.Identifier;
-import org.hl7.fhir.r5.model.Subscription;
+import org.hl7.fhir.r5.model.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -18,6 +15,7 @@ public class SubscriptionStore {
     }
 
     public SubscriptionStore(Subscription subscription) {
+        externalId = new IdType(subscription.getId()).getIdPart();
         identifier = subscription.getIdentifierFirstRep().getValue();
         name = subscription.getName();
         status = subscription.hasStatus() ? subscription.getStatus().toCode() : null;
@@ -36,6 +34,7 @@ public class SubscriptionStore {
 
     public Subscription toSubscription(){
         Subscription subscription = new Subscription();
+        subscription.setId(externalId);
         subscription.addIdentifier(new Identifier().setValue(identifier));
         subscription.setName(name);
         subscription.setStatus(Enumerations.SubscriptionStatusCodes.valueOf(status));
@@ -56,6 +55,9 @@ public class SubscriptionStore {
     @Id
     @Column(name = "identifier", nullable = false, length = 45)
     private String identifier;
+
+    @Column(name = "external_id", nullable = false, length = 45)
+    private String externalId = "";
 
     @Column(name = "name", length = 45)
     private String name;

@@ -56,7 +56,7 @@ public class ImmunizationProviderR4 implements IResourceProvider {
         MethodOutcome methodOutcome = new MethodOutcome();
         VaccinationEvent vaccinationEvent = immunizationMapperR4.fromFhir(immunization);
         vaccinationEvent.setAdministeringFacility(facility);
-        Integer patientId = Integer.parseInt(immunization.getPatient().getReference().split("Patient/")[1]);//TODO Identifier
+        String patientId = new IdType(immunization.getPatient().getReference()).getIdPart();//TODO Identifier
         vaccinationEvent.setPatient(
                 patientRepository.findByFacilityIdAndId(facility.getId(), patientId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id")));

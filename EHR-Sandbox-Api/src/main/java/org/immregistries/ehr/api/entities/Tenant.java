@@ -33,13 +33,13 @@ public class Tenant {
     @OneToMany(mappedBy = "tenant")
 //    @JsonManagedReference("tenant-patient")
     @JsonIgnore
-    private Set<Patient> patients = new LinkedHashSet<>();
+    private Set<EhrPatient> patients = new LinkedHashSet<>();
 
-    public Set<Patient> getPatients() {
+    public Set<EhrPatient> getPatients() {
         return patients;
     }
 
-    public void setPatients(Set<Patient> patients) {
+    public void setPatients(Set<EhrPatient> patients) {
         this.patients = patients;
     }
 

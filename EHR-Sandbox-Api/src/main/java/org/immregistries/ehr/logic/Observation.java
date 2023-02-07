@@ -1,6 +1,6 @@
 package org.immregistries.ehr.logic;
 
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ public class Observation implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private int observationReportedId = 0;
-  private Patient patientReported = null;
+  private EhrPatient patientReported = null;
   private VaccinationEvent vaccinationReported = null;
   private Date reportedDate = null;
   private Date updatedDate = null;
@@ -39,11 +39,11 @@ public class Observation implements Serializable {
     this.observationReportedId = observationReportedId;
   }
 
-  public Patient getPatient() {
+  public EhrPatient getPatient() {
     return patientReported;
   }
 
-  public void setPatientReported(Patient patientReported) {
+  public void setPatientReported(EhrPatient patientReported) {
     this.patientReported = patientReported;
   }
 

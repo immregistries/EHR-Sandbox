@@ -14,13 +14,13 @@ import java.util.*;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
-        scope = Patient.class)
-public class Patient {
+        scope = EhrPatient.class)
+public class EhrPatient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id", nullable = false)
-    private Integer id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
@@ -34,6 +34,10 @@ public class Patient {
     @JsonProperty("tenant")
     private Tenant tenant;
 
+    /**
+     * Empty method required for spring boot
+     * @param id
+     */
     @JsonProperty("tenant")
     public void setTenant(int id) {
         // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
@@ -455,11 +459,11 @@ public class Patient {
         this.facility = facility;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -7,18 +7,27 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
-import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.OperationOutcome;
-import org.hl7.fhir.r5.model.SubscriptionStatus;
+import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.SubscriptionStore;
+import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.api.repositories.SubscriptionStoreRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Conditional(OnR5Condition.class)
@@ -28,9 +37,17 @@ public class BundleProviderR5 implements IResourceProvider {
         @Autowired
         private OperationOutcomeProviderR5 operationOutcomeProvider;
         @Autowired
+        private ImmunizationProviderR5 immunizationProvider;
+        @Autowired
+        private PatientProviderR5 patientProvider;
+        @Autowired
         private SubscriptionStatusProviderR5 subscriptionStatusProvider;
         @Autowired
+        SubscriptionStoreRepository subscriptionStoreRepository;
+        @Autowired
         FhirContext fhirContext;
+        @Autowired
+        private ImmunizationRegistryRepository immunizationRegistryRepository;
 
         /**
          * The getResourceType method comes from IResourceProvider, and must
@@ -46,56 +63,74 @@ public class BundleProviderR5 implements IResourceProvider {
         @Create()
         public MethodOutcome create(@ResourceParam Bundle bundle, RequestDetails requestDetails, HttpServletRequest request) {
                 // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
+                logger.info("BUNDLE " + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
 
-                IParser parser = fhirContext.newJsonParser();
-                logger.info("BUNDLE " + parser.encodeResourceToString(bundle));
-//
                 MethodOutcome outcome = new MethodOutcome();
-                Bundle outcomeBundle = new Bundle();
+                List<MethodOutcome> outcomeList = new ArrayList<>();
+//                Bundle outcomeBundle = new Bundle();
                 if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
                       throw new InvalidRequestException("Bundles other than Subscription notification not supported");
                 }
 
+                /**
+                 * Subscription Bundle first entry required to be Subscription Status
+                 */
                 SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
+                Reference subscriptionReference = subscriptionStatus.getSubscription();
+                SubscriptionStore subscriptionStore = null;
+                if (subscriptionReference.getIdentifier() != null && subscriptionReference.getIdentifier().getValue() != null) {
+                        subscriptionStore = subscriptionStoreRepository.findById(subscriptionReference.getIdentifier().getValue())
+                                .orElseThrow(() -> new InvalidRequestException("No active subscription found with identifier"));
+                } else {
+                        subscriptionStore = subscriptionStoreRepository.findByExternalId(new IdType(subscriptionReference.getReference()).getIdPart())
+                                .orElseThrow(() -> new InvalidRequestException("No active subscription found with id"));
+                }
+
+                /**
+                 * Subscription Security check
+                 * TODO maybe move to an interceptor
+                 */
+//                String secret = (String) requestDetails.getAttribute("subscription-header");
+//                if (!secret.equals(subscriptionStore.getHeader())) {
+//                        throw new AuthenticationException("Invalid header for subscription notification");
+//                }
+
+
+                ImmunizationRegistry immunizationRegistry = subscriptionStore.getImmunizationRegistry();
                 outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
-                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
-                        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
-                                outcome = processPostEntry(entry,requestDetails, request);
-//
-//
-//
-////                        switch (entry.getRequest().getMethod()) {
-////                                case POST: {
-////                                        outcome = processPostEntry(entry,requestDetails);
-////                                        // TODO combine outcomes ?
-//////                                        outcomeBundle.addEntry().setResource(processPostEntry(entry,requestDetails));
-////                                        break;
-////                                }
-////                        }
+                switch (subscriptionStatus.getTopic()) { //TODO check topic
+                        default: {
+                                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
+                                        /**
+                                         * First load patients, then immunization to solve references
+                                         * TODO distinct POST AND PUT
+                                         */
+
+                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.Patient))).iterator().forEachRemaining(entry -> {
+                                                outcomeList.add(
+                                                        patientProvider.updatePatient((Patient) entry.getResource(),requestDetails, immunizationRegistry)
+                                                );
+                                        });
+                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.Immunization))).iterator().forEachRemaining(entry -> {
+                                                outcomeList.add(
+                                                        immunizationProvider.updateImmunization((Immunization) entry.getResource(),requestDetails, immunizationRegistry)
+                                                );
+                                        });
+                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.OperationOutcome))).iterator().forEachRemaining(entry -> {
+                                                outcomeList.add(
+                                                        operationOutcomeProvider.registerOperationOutcome((OperationOutcome) entry.getResource(),requestDetails, request)
+                                                );
+                                        });;
+                                }
                         }
                 }
+                // TODO make proper outcome
+//                for (MethodOutcome methodOutcome: outcomeList) {
+//
+//                }
                 return outcome;
         }
 
-        private MethodOutcome processPostEntry(Bundle.BundleEntryComponent entry, RequestDetails requestDetails, HttpServletRequest request) {
-                MethodOutcome methodOutcome = new MethodOutcome();
-                switch (entry.getResource().getResourceType()){
-                        case OperationOutcome: {
-                                methodOutcome = operationOutcomeProvider.registerOperationOutcome((OperationOutcome) entry.getResource(),requestDetails, request);
-                                break;
-                        }
-//                        case SubscriptionStatus: {
-//                                methodOutcome = subscriptionStatusProvider.create((SubscriptionStatus) entry.getResource(),requestDetails);
-//                                break;
-//                        }
-                }
-                return methodOutcome;
-        }
 
-//        private IResourceProvider getProvider(ResourceType type) {
-//                return  server.getResourceProviders().stream().filter(
-//                        iResourceProvider -> iResourceProvider.getResourceType().getName().equals(type.name())
-//                ).findFirst().get();
-//        }
 
 }

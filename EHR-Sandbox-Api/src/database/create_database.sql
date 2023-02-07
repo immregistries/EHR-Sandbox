@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS ehr;
 CREATE DATABASE ehr;
 
 USE ehr;
@@ -203,6 +204,7 @@ CREATE TABLE `ehr`.`feedback` (
 
 CREATE TABLE `subscription_store` (
   `identifier` varchar(45) NOT NULL,
+  `external_id` varchar(45) NOT NULL,
   `name` varchar(45) DEFAULT NULL,
   `status` varchar(45) NOT NULL,
   `topic` varchar(90) NOT NULL,
@@ -230,6 +232,42 @@ CREATE TABLE `subscription_info` (
   CONSTRAINT `fk_subscription_store`
       FOREIGN KEY (`subscription_store`)
       REFERENCES `ehr`.`subscription_store` (`identifier`)
+      ON DELETE CASCADE
+      ON UPDATE NO ACTION);
+
+CREATE TABLE `patient_identifier` (
+  `patient_id` int(11) NOT NULL,
+  `immunization_registry_id` int(11) NOT NULL,
+  `identifier`  varchar(45) NOT NULL,
+  PRIMARY KEY (`patient_id`,`immunization_registry_id`),
+  KEY `patient_id` (`patient_id`),
+  KEY `immunization_registry_id` (`immunization_registry_id`),
+  CONSTRAINT `patient_identifier_fk1`
+      FOREIGN KEY (`patient_id`)
+      REFERENCES `ehr`.`patient` (`patient_id`)
+      ON DELETE CASCADE
+      ON UPDATE NO ACTION,
+  CONSTRAINT `patient_identifier_fk2`
+      FOREIGN KEY (`immunization_registry_id`)
+      REFERENCES `ehr`.`immunization_registry` (`immunization_registry_id`)
+      ON DELETE CASCADE
+      ON UPDATE NO ACTION);
+
+CREATE TABLE `immunization_identifier` (
+  `vaccination_event_id` int(11) NOT NULL,
+  `immunization_registry_id` int(11) NOT NULL,
+  `identifier`  varchar(45) NOT NULL,
+  PRIMARY KEY (`vaccination_event_id`,`immunization_registry_id`),
+  KEY `vaccination_event_id` (`vaccination_event_id`),
+  KEY `immunization_registry_id` (`immunization_registry_id`),
+  CONSTRAINT `immunization_identifier_fk1`
+      FOREIGN KEY (`vaccination_event_id`)
+      REFERENCES `ehr`.`vaccination_event` (`vaccination_event_id`)
+      ON DELETE CASCADE
+      ON UPDATE NO ACTION,
+  CONSTRAINT `immunization_identifier_fk2`
+      FOREIGN KEY (`immunization_registry_id`)
+      REFERENCES `ehr`.`immunization_registry` (`immunization_registry_id`)
       ON DELETE CASCADE
       ON UPDATE NO ACTION);
 

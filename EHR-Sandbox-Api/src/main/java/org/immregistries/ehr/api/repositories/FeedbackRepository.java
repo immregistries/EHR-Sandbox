@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
-    Optional<Feedback>  findByPatientId(Integer patientId);
+    Optional<Feedback>  findByPatientId(String patientId);
 
 }

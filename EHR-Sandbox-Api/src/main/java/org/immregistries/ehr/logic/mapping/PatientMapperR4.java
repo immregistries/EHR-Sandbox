@@ -2,7 +2,7 @@ package org.immregistries.ehr.logic.mapping;
 
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class PatientMapperR4 {
 
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-  public Patient dbPatientToFhirPatient(org.immregistries.ehr.api.entities.Patient dbPatient, String identifier_system) {
+  public Patient dbPatientToFhirPatient(EhrPatient dbPatient, String identifier_system) {
     Patient fhirPatient = dbPatientToFhirPatient(dbPatient);
     Identifier identifier = fhirPatient.addIdentifier();
     identifier.setValue(""+dbPatient.getId());
@@ -44,7 +44,7 @@ public class PatientMapperR4 {
     return fhirPatient;
   }
 
-  public Patient dbPatientToFhirPatient(org.immregistries.ehr.api.entities.Patient dbPatient) {
+  public Patient dbPatientToFhirPatient(EhrPatient dbPatient) {
     Patient p = new Patient();
     
     p.setBirthDate(dbPatient.getBirthDate());
@@ -169,8 +169,8 @@ public class PatientMapperR4 {
     return p;
   }
 
-  public org.immregistries.ehr.api.entities.Patient fromFhir(Patient p) {
-    org.immregistries.ehr.api.entities.Patient patient = new org.immregistries.ehr.api.entities.Patient();
+  public EhrPatient fromFhir(Patient p) {
+    EhrPatient patient = new EhrPatient();
 //    patient.setId(Integer.valueOf(new IdType(p.getId()).getIdPart()));
     patient.setUpdatedDate(p.getMeta().getLastUpdated());
 

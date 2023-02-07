@@ -41,7 +41,7 @@ public class Facility {
     @OneToMany(mappedBy = "facility")
 //    @JsonManagedReference("facility-patient")
     @JsonIgnore
-    private Set<Patient> patients = new LinkedHashSet<>();
+    private Set<EhrPatient> patients = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
 //    @JsonManagedReference( value = "facility-feedback")
@@ -56,11 +56,11 @@ public class Facility {
         this.feedbacks = feedbacks;
     }
 
-    public Set<Patient> getPatients() {
+    public Set<EhrPatient> getPatients() {
         return patients;
     }
 
-    public void setPatients(Set<Patient> patients) {
+    public void setPatients(Set<EhrPatient> patients) {
         this.patients = patients;
     }
 

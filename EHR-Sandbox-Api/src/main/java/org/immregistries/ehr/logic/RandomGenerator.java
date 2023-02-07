@@ -23,7 +23,7 @@ public class RandomGenerator {
     @Autowired
     CodeMapManager codeMapManager;
 
-    public Patient randomPatient(Tenant tenant, Facility facility){
+    public EhrPatient randomPatient(Tenant tenant, Facility facility){
         Faker faker = new Faker();
 
         int randDay = (int) (Math.random()*30+1);
@@ -51,7 +51,7 @@ public class RandomGenerator {
         Date registryStatusIndicatorDate = between(twoYearsAgo, tenDaysAgo);
         Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
 
-        Patient patient = new Patient();
+        EhrPatient patient = new EhrPatient();
         patient.setTenant(tenant);
         patient.setFacility(facility);
 
@@ -130,7 +130,7 @@ public class RandomGenerator {
         return new Date(randomMillisSinceEpoch);
     }
 
-    public VaccinationEvent randomVaccinationEvent(Patient patient, Facility facility){
+    public VaccinationEvent randomVaccinationEvent(EhrPatient patient, Facility facility){
         VaccinationEvent vaccinationEvent = new VaccinationEvent();
         vaccinationEvent.setPatient(patient);
         vaccinationEvent.setAdministeringFacility(facility);

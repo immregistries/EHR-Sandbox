@@ -40,7 +40,7 @@ export class VaccinationService {
 
   readRandom(): Observable<VaccinationEvent> {
     return this.http.get<VaccinationEvent>(
-      this.settings.getApiUrl() + '/random_vaccination', httpOptions);
+      this.settings.getApiUrl() + '/$random_vaccination', httpOptions);
   }
 
   quickReadVaccinations(patientId: number): Observable<VaccinationEvent[]>{

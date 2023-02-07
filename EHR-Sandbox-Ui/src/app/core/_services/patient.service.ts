@@ -64,14 +64,6 @@ export class PatientService {
       })
     }
 
-  /**
-   *
-   * @returns Empty patient object
-   */
-  readEmpty(): Observable<Patient> {
-    return this.http.get<Patient>(
-      this.settings.getApiUrl() + '/new_patient', httpOptions);
-  }
 
   /**
    *
@@ -79,7 +71,7 @@ export class PatientService {
    */
   readRandom(): Observable<Patient> {
     return this.http.get<Patient>(
-      this.settings.getApiUrl() + '/random_patient', httpOptions);
+      this.settings.getApiUrl() + '/$random_patient', httpOptions);
   }
 
   /**

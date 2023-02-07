@@ -106,11 +106,11 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
                 while (scanner.hasNext()) {
                     next = scanner.next();
                     if (next.equals("Patient") && scanner.hasNextInt()) { // TODO Define format for identifier specification, or use fhirpath more accurately
-                        Optional<Patient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.nextInt());
+                        Optional<EhrPatient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.next());
                         patient.ifPresent(feedback::setPatient);
                     }
                     if (next.equals("Immunization") && scanner.hasNextInt()) {
-                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), scanner.nextInt());
+                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), scanner.next());
                         if(vaccinationEvent.isPresent()){
                             feedback.setVaccinationEvent(vaccinationEvent.get());
                             feedback.setPatient(vaccinationEvent.get().getPatient());

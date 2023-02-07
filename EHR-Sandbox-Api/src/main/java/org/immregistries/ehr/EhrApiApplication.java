@@ -2,7 +2,6 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import org.immregistries.ehr.api.IdentifierRegistryConfig;
 import org.immregistries.ehr.fhir.ServerR4.EhrFhirServerR4;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
@@ -27,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @ServletComponentScan
 @Import({
-	IdentifierRegistryConfig.class
+	FhirConfig.class
 })
 public class EhrApiApplication extends SpringBootServletInitializer {
 	@Autowired

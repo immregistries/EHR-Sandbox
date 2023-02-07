@@ -3,8 +3,11 @@ package org.immregistries.ehr.logic.mapping;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
+import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -31,7 +34,7 @@ public class PatientMapperR5 {
 
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-  public Patient dbPatientToFhirPatient(org.immregistries.ehr.api.entities.Patient dbPatient, String identifier_system) {
+  public Patient dbPatientToFhirPatient(EhrPatient dbPatient, String identifier_system) {
     Patient fhirPatient = dbPatientToFhirPatient(dbPatient);
     Identifier identifier = fhirPatient.addIdentifier();
     identifier.setValue(""+dbPatient.getId());
@@ -39,7 +42,7 @@ public class PatientMapperR5 {
     return fhirPatient;
   }
 
-  public Patient dbPatientToFhirPatient(org.immregistries.ehr.api.entities.Patient dbPatient) {
+  public Patient dbPatientToFhirPatient(EhrPatient dbPatient) {
     Patient fhirPatient = new Patient();
 //    fhirPatient.setId("" + dbPatient.getId());
     
@@ -90,7 +93,9 @@ public class PatientMapperR5 {
     if (dbPatient.getRace() != null && !dbPatient.getRace().isEmpty()) {
       race.addCoding().setCode(dbPatient.getRace());
     }
-    fhirPatient.addExtension(ETHNICITY_EXTENSION,new CodeType().setSystem(ETHNICITY_SYSTEM).setValue(dbPatient.getEthnicity()));
+    fhirPatient.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(dbPatient.getEthnicity()));
+
+//    fhirPatient.addExtension(ETHNICITY_EXTENSION,new CodeType().setSystem(ETHNICITY_SYSTEM).setValue(dbPatient.getEthnicity()));
 
     if (dbPatient.getDeathDate() != null) {
       fhirPatient.getDeceasedDateTimeType().setValue(dbPatient.getDeathDate());
@@ -129,10 +134,9 @@ public class PatientMapperR5 {
     return fhirPatient;
   }
 
-  public org.immregistries.ehr.api.entities.Patient fromFhir(Patient p) {
-    org.immregistries.ehr.api.entities.Patient patient = new org.immregistries.ehr.api.entities.Patient();
-//    patient.setExternalLink(p.getIdentifierFirstRep().getValue()); TODO add identifier
-//    patient.setAuthority(p.getIdentifierFirstRep().getSystem());
+  public EhrPatient fromFhir(Patient p) {
+    EhrPatient patient = new EhrPatient();
+    // Identifiers are dealt with in the providers
 
     patient.setUpdatedDate(p.getMeta().getLastUpdated());
 
@@ -186,7 +190,7 @@ public class PatientMapperR5 {
       }
     }
     if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
-      patient.setEthnicity(p.getExtensionByUrl(ETHNICITY_EXTENSION).getValueCodeType().getValue());
+      patient.setEthnicity(p.getExtensionByUrl(ETHNICITY_EXTENSION).getValueCoding().getCode());
     }
 
     for (ContactPoint telecom : p.getTelecom()) {

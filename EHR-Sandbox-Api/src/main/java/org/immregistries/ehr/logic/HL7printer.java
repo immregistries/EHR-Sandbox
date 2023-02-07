@@ -11,7 +11,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Vaccine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class HL7printer {
     private static final String QUERY_TOO_MANY = "TM";
     private static final String QUERY_APPLICATION_ERROR = "AE";
 
-    public String buildVxu(Vaccine vaccination, Patient patient, Facility facility) {
+    public String buildVxu(Vaccine vaccination, EhrPatient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
         CodeMap codeMap = codeMapManager.getCodeMap();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -191,7 +191,7 @@ public class HL7printer {
         return sb.toString();
     }
 
-    public String printQueryNK1(Patient patient, StringBuilder sb, CodeMap codeMap) {
+    public String printQueryNK1(EhrPatient patient, StringBuilder sb, CodeMap codeMap) {
         if (patient != null) {
             if (!patient.getGuardianRelationship().equals("")
                     && !(patient.getGuardianLast()== null ? "": patient.getGuardianLast()).equals("")
@@ -213,7 +213,7 @@ public class HL7printer {
         return sb.toString();
     }
 
-    public String printQueryPID(Patient patient, StringBuilder sb,
+    public String printQueryPID(EhrPatient patient, StringBuilder sb,
                                 SimpleDateFormat sdf, int pidCount) {
         // PID
         sb.append("PID");
@@ -608,7 +608,7 @@ public class HL7printer {
     }
 
 
-    public void printPD1(Patient patient, StringBuilder sb,
+    public void printPD1(EhrPatient patient, StringBuilder sb,
                          SimpleDateFormat sdf) {
         sb.append("PD1");
         // PD1-1

@@ -3,3 +3,11 @@
   align-items: baseline;
   justify-content: space-between;
 }
+
+
+.mat-tab-label:last-child {
+  opacity: 1;
+  min-width: 20px;
+  padding: 0;
+  
+}

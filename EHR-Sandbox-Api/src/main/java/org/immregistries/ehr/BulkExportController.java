@@ -16,11 +16,17 @@ import org.hl7.fhir.r5.model.StringType;
 import org.hl7.fhir.r5.model.DateType;
 import org.immregistries.ehr.api.controllers.ImmRegistryController;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.PatientIdentifier;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.api.repositories.ImmunizationIdentifierRepository;
+import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.api.repositories.PatientIdentifierRepository;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.fhir.ServerR5.PatientProviderR5;
 import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
+import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +62,20 @@ public class BulkExportController {
     PatientProviderR5 patientProvider;
     @Autowired
     ImmunizationProviderR5 immunizationProvider;
+
+
+    @Autowired
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
+
+
+    @Autowired
+    private ImmunizationIdentifierRepository immunizationIdentifierRepository;
+    @Autowired
+    private PatientIdentifierRepository patientIdentifierRepository;
+
+    @Autowired
+    private ResourceIdentificationService resourceIdentificationService;
+
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
     public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
@@ -287,21 +307,17 @@ public class BulkExportController {
         return  loadNdJson(immunizationRegistry,facility, bundle);
     }
     private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, Bundle bundle ) {
-        Map<Integer,Map<String,Integer>> immunizationIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("ImmunizationIdentifier");
-        Map<Integer,Map<String,Integer>> patientIdentifier = (Map<Integer, Map<String, Integer>>) context.getBean("PatientIdentifier");
-        immunizationIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
-        patientIdentifier.putIfAbsent(immunizationRegistry.getId(),new HashMap<>(100));
         StringBuilder responseBuilder = new StringBuilder();
         int count = 0;
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
             switch (entry.getResource().getResourceType()) {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
-                    String receivedId = patient.getId().split("Patient/")[1].split("/")[0];
-                    Integer dbId; // = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedId,-1);
+                    String receivedId = new IdType(patient.getId()).getIdPart();
+                    String dbId; // = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedId,-1);
                     MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
-                    dbId = Integer.parseInt(methodOutcome.getId().getValue());
-                    patientIdentifier.get(immunizationRegistry.getId()).putIfAbsent(receivedId, dbId);
+                    dbId = methodOutcome.getId().getValue();
+                    patientIdentifierRepository.save(new PatientIdentifier(dbId,immunizationRegistry.getId(),receivedId));
                     responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
                     logger.info("Patient  {}  loaded as patient  {}",receivedId,dbId);
                     count++;
@@ -309,27 +325,21 @@ public class BulkExportController {
                 }
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
-                    Integer dbId; // = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
-                    String receivedId = immunization.getId().split("Immunization/")[1].split("/")[0];
-                    String receivedPatientId;
-                    if (immunization.getPatient().getReference().contains("Patient/")){
-                        receivedPatientId = immunization.getPatient().getReference().split("Patient/")[1].split("/")[0];
-                    } else {
-                        receivedPatientId = immunization.getPatient().getReference();
-                    }
-                    Integer dbPatientId = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedPatientId,-1);
-                    if (dbPatientId == -1) {
-                        responseBuilder.append("\nERROR : ").append(immunization.getPatient().getReference()).append(" Unknown");
-                        logger.info("ERROR : Patient  {}  Unknown",immunization.getPatient().getReference());
-
-                    } else {
-                        immunization.setPatient(new Reference("Patient/" + dbPatientId));
+                    String dbId; // = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
+                    String receivedId = new IdType(immunization.getId()).getIdPart();
+                    String receivedPatientId = new IdType(immunization.getPatient().getReference()).getIdPart();
+                    Optional<PatientIdentifier> patientIdentifier = patientIdentifierRepository.findByPatientIdAndImmunizationRegistryId(receivedPatientId,immunizationRegistry.getId());
+                    if (patientIdentifier.isPresent()) {
+                        immunization.setPatient(new Reference("Patient/" + patientIdentifier.get().getPatientId()));
                         MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
-                        dbId = Integer.parseInt(methodOutcome.getId().getValue());
-                        immunizationIdentifier.get(immunizationRegistry.getId()).putIfAbsent(receivedId, dbId);
+                        dbId = methodOutcome.getId().getValue();
+                        immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId,immunizationRegistry.getId(),receivedId));
                         responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
                         logger.info("Immunization {} loaded as Immunization {}",receivedId,dbId);
                         count++;
+                    } else {
+                        responseBuilder.append("\nERROR : ").append(immunization.getPatient().getReference()).append(" Unknown");
+                        logger.info("ERROR : Patient  {}  Unknown",immunization.getPatient().getReference());
                     }
                     break;
                 }

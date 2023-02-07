@@ -49,27 +49,27 @@ public class VaccinationController {
     private static final Logger logger = LoggerFactory.getLogger(VaccinationController.class);
 
     @GetMapping()
-    public Iterable<VaccinationEvent> vaccinationEvents(@PathVariable() int patientId) {
+    public Iterable<VaccinationEvent> vaccinationEvents(@PathVariable() String patientId) {
         return vaccinationEventRepository.findByPatientId(patientId);
     }
 
     @GetMapping("/{vaccinationId}")
-    public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() int vaccinationId) {
+    public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() String vaccinationId) {
         return  vaccinationEventRepository.findById(vaccinationId);
     }
 
     @GetMapping("/random")
     public VaccinationEvent random( @PathVariable() int facilityId,
-                                    @PathVariable() int patientId) {
-        Patient patient = patientRepository.findByFacilityIdAndId(facilityId,patientId)
+                                    @PathVariable() String patientId) {
+        EhrPatient patient = patientRepository.findByFacilityIdAndId(facilityId,patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return randomGenerator.randomVaccinationEvent(patient, patient.getFacility());
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@PathVariable() int patientId,
+    public ResponseEntity<String> postVaccinationEvents(@PathVariable() String patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
-        Patient patient = patientRepository.findById(patientId)
+        EhrPatient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
         vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
@@ -87,11 +87,11 @@ public class VaccinationController {
 
     @PutMapping()
     public VaccinationEvent putVaccinationEvents(@PathVariable() int facilityId,
-                                                 @PathVariable() int patientId,
+                                                 @PathVariable() String patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
-        Patient patient = patientRepository.findById(patientId)
+        EhrPatient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         VaccinationEvent oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccination.getId())
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
@@ -105,12 +105,12 @@ public class VaccinationController {
     }
 
     @GetMapping("/{vaccinationId}/vxu")
-    public ResponseEntity<String> vxu(@PathVariable() int vaccinationId) {
+    public ResponseEntity<String> vxu(@PathVariable() String vaccinationId) {
         GsonJsonParser gson = new GsonJsonParser();
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
         Vaccine vaccine = vaccinationEvent.getVaccine();
-        Patient patient = vaccinationEvent.getPatient();
+        EhrPatient patient = vaccinationEvent.getPatient();
         Facility facility = vaccinationEvent.getAdministeringFacility();
         String vxu = hl7printer.buildVxu(vaccine, patient, facility);
         return ResponseEntity.ok(vxu);

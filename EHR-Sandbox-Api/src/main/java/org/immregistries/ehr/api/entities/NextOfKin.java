@@ -16,7 +16,7 @@ public class NextOfKin {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
     @JsonBackReference("patient-nextOfKin")
-    private Patient patient;
+    private EhrPatient patient;
 
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
@@ -205,11 +205,11 @@ public class NextOfKin {
         this.birthDate = birthDate;
     }
 
-    public Patient getPatient() {
+    public EhrPatient getPatient() {
         return patient;
     }
 
-    public void setPatient(Patient patient) {
+    public void setPatient(EhrPatient patient) {
         this.patient = patient;
     }
 

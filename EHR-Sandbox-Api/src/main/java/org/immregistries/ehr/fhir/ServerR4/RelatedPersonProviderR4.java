@@ -9,7 +9,7 @@ import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.RelatedPerson;
 import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
@@ -52,9 +52,9 @@ public class RelatedPersonProviderR4 implements IResourceProvider {
 
     public MethodOutcome createRelatedPerson(RelatedPerson relatedPerson, Facility facility) {
         MethodOutcome methodOutcome = new MethodOutcome();
-        Optional<Patient> dbPatient = patientRepository.findByFacilityIdAndId(
+        Optional<EhrPatient> dbPatient = patientRepository.findByFacilityIdAndId(
                 facility.getId(),
-                Integer.parseInt(relatedPerson.getPatient().getReference()));
+                relatedPerson.getPatient().getReference());
         if (dbPatient.isPresent()) {
             HumanName gardianName = relatedPerson.getNameFirstRep();
             if (gardianName.getGiven().size() > 0) {
@@ -71,7 +71,7 @@ public class RelatedPersonProviderR4 implements IResourceProvider {
         }
 
         // TODO set received information status and make sure history of patient info if already exists
-        Patient saved = patientRepository.save(dbPatient.get());
+        EhrPatient saved = patientRepository.save(dbPatient.get());
         return methodOutcome.setId(new IdType().setValue(saved.getId().toString()));
     }
 

@@ -15,24 +15,21 @@ import org.springframework.stereotype.Service;
 @Conditional(OnR5Condition.class)
 public class ResourceClientR5 extends ResourceClient<Identifier>{
 
-    public MethodOutcome delete(String resourceType, String iisUrl, String resourceId, String tenantId, String username, String password) {
-        IGenericClient client = customClientBuilder.newGenericClient(iisUrl, tenantId, username, password);
+    public MethodOutcome delete(String resourceType, String resourceId, IGenericClient client) {
         MethodOutcome outcome = client.delete().resourceById(new IdType(resourceType, resourceId)).execute();
         OperationOutcome opeOutcome = (OperationOutcome) outcome.getOperationOutcome();
         return outcome;
     }
 
-    public MethodOutcome update(IBaseResource resource, String resourceId, String iisUrl, String tenantId, String username, String password) {
-        IGenericClient client = customClientBuilder.newGenericClient(iisUrl, tenantId, username, password);
+    public MethodOutcome update(IBaseResource resource, String resourceId, IGenericClient client) {
         MethodOutcome outcome = client.update().resource(resource).execute();
         return outcome;
     }
 
     public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, ImmunizationRegistry ir) {
-        return  updateOrCreate(resource, type, identifier, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
+        return  updateOrCreate(resource, type, identifier, customClientBuilder.newGenericClient(ir));
     }
-    public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, String iisUrl, String tenantId, String username, String password) {
-        IGenericClient client = customClientBuilder.newGenericClient(iisUrl, tenantId, username, password);
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, IGenericClient client) {
         MethodOutcome outcome;
         try {
             if (identifier != null && identifier.getValue() != null && !identifier.getValue().isEmpty()) {

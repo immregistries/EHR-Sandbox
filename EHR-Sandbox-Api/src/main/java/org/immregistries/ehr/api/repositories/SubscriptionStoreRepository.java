@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface SubscriptionStoreRepository extends CrudRepository<SubscriptionStore, String> {
     Optional<SubscriptionStore> findByIdentifier(String id);
+    Optional<SubscriptionStore> findByExternalId(String externalId);
 
 }

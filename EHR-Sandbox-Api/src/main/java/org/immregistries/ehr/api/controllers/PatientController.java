@@ -3,7 +3,7 @@ package org.immregistries.ehr.api.controllers;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.PatientRepository;
 import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.api.repositories.TenantRepository;
@@ -40,33 +40,23 @@ public class PatientController {
 
 
     @GetMapping()
-    public Iterable<Patient> patients(@PathVariable() int tenantId,
-                                      @PathVariable() int facilityId) {
+    public Iterable<EhrPatient> patients(@PathVariable() int tenantId,
+                                         @PathVariable() int facilityId) {
         return  patientRepository.findByTenantIdAndFacilityId(tenantId,facilityId);
     }
 
     @GetMapping("/{patientId}")
-    public Optional<Patient> patient(@PathVariable() int tenantId,
-                                     @PathVariable() int facilityId,
-                                     @PathVariable() int patientId) {
+    public Optional<EhrPatient> patient(@PathVariable() int tenantId,
+                                        @PathVariable() int facilityId,
+                                        @PathVariable() String patientId) {
         return  patientRepository.findById(patientId);
     }
 
-    @GetMapping("/random")
-    public Patient random(@PathVariable() int tenantId,
-                          @PathVariable() int facilityId) {
-        Optional<Facility> facility = facilityRepository.findByIdAndTenantId(facilityId,tenantId);
-        if (!facility.isPresent()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id");
-        }
-        return randomGenerator.randomPatient(facility.get().getTenant(), facility.get());
-    }
 
     @PostMapping()
     public ResponseEntity<String> postPatient(@PathVariable() int tenantId,
                                                @PathVariable() int facilityId,
-                                               @RequestBody Patient patient) {
+                                               @RequestBody EhrPatient patient) {
         // patient data check + flavours
         Optional<Tenant> tenant = tenantRepository.findById(tenantId);
         Optional<Facility> facility = facilityRepository.findById(facilityId);
@@ -78,7 +68,7 @@ public class PatientController {
         patient.setFacility(facility.get());
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
-        Patient newEntity = patientRepository.save(patient);
+        EhrPatient newEntity = patientRepository.save(patient);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newEntity.getId())
@@ -88,13 +78,13 @@ public class PatientController {
     }
 
     @PutMapping("")
-    public Patient putPatient(@PathVariable() int tenantId,
-                              @PathVariable() int facilityId,
-                              @RequestBody Patient patient) {
+    public EhrPatient putPatient(@PathVariable() int tenantId,
+                                 @PathVariable() int facilityId,
+                                 @RequestBody EhrPatient patient) {
         // patient data check + flavours
         Optional<Tenant> tenant = tenantRepository.findById(tenantId);
         Optional<Facility> facility = facilityRepository.findById(facilityId);
-        Optional<Patient> oldPatient = patientRepository.findByFacilityIdAndId(facilityId,patient.getId());
+        Optional<EhrPatient> oldPatient = patientRepository.findByFacilityIdAndId(facilityId,patient.getId());
         if (!tenant.isPresent() || !facility.isPresent() || !oldPatient.isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
@@ -102,7 +92,7 @@ public class PatientController {
         patient.setTenant(tenant.get());
         patient.setFacility(facility.get());
         patient.setUpdatedDate(new Date());
-        Patient newEntity = patientRepository.save(patient);
+        EhrPatient newEntity = patientRepository.save(patient);
         return newEntity;
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
     }

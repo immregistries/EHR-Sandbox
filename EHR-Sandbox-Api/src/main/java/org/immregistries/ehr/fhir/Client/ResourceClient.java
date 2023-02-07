@@ -24,44 +24,33 @@ public abstract class ResourceClient<Identifier> implements IResourceClient<Iden
     CustomClientBuilder customClientBuilder;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    private String add_timestamp(String message){
-        LocalDateTime now = LocalDateTime.now();  
-        return dtf.format(now) + " " + message;
-    }
 
     public String read(String resourceType, String resourceId, ImmunizationRegistry ir){
-        return read(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
+        return read(resourceType, resourceId, customClientBuilder.newGenericClient(ir));
     }
 
     public MethodOutcome create(IBaseResource resource, ImmunizationRegistry ir){
-        return create(resource, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
+        return create(resource, customClientBuilder.newGenericClient(ir));
     }
 
     public MethodOutcome delete(String resourceType, String resourceId, ImmunizationRegistry ir){
-        return delete(resourceType, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
+        return delete(resourceType, resourceId, customClientBuilder.newGenericClient(ir));
     }
 
     public MethodOutcome update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
-        return update(resource, resourceId, ir.getIisFhirUrl(), ir.getIisFacilityId(), ir.getIisUsername(), ir.getIisPassword());
+        return update(resource, resourceId, customClientBuilder.newGenericClient(ir));
     }
-  
-  
-    public String read(String resourceType, String resourceId, String iisUrl, String tenantId, String username, String password) {
-        IGenericClient client = customClientBuilder.newGenericClient(iisUrl, tenantId, username, password);
+
+    public String read(String resourceType, String resourceId, IGenericClient client) {
         IBaseResource resource;
         resource = client.read().resource(resourceType).withId(resourceId).execute();
         return fhirContext.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
     }
-  
-  
-    public MethodOutcome create(IBaseResource resource, String iisUrl, String tenantId, String username, String password) {
-        IGenericClient client = customClientBuilder.newGenericClient(iisUrl, tenantId, username, password);
+
+    public MethodOutcome create(IBaseResource resource, IGenericClient client) {
         MethodOutcome outcome;
         outcome = client.create().resource(resource).execute();
         return outcome;
     }
-
-  
-
     
 }

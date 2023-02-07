@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR4;
@@ -47,7 +48,7 @@ public class PatientProviderR4 implements IResourceProvider {
 
     public MethodOutcome createPatient(Patient fhirPatient, Facility facility) {
         MethodOutcome methodOutcome = new MethodOutcome();
-        org.immregistries.ehr.api.entities.Patient patient = patientHandler.fromFhir(fhirPatient);
+        EhrPatient patient = patientHandler.fromFhir(fhirPatient);
         patient.setFacility(facility);
         patient.setTenant(facility.getTenant());
         patient.setCreatedDate(new Date());
