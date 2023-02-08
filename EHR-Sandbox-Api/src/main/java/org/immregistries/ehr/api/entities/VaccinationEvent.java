@@ -1,16 +1,21 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "vaccination_event")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
         property="id",
         scope = VaccinationEvent.class)
+@Audited
 public class VaccinationEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +35,17 @@ public class VaccinationEvent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entering_clinician_id")
+    @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician enteringClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordering_clinician_id")
+    @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician orderingClinician;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administering_clinician_id")
+    @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician administeringClinician;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -47,10 +55,12 @@ public class VaccinationEvent {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "administering_facility_id", nullable = false)
     @JsonBackReference("facility-vaccinationEvent")
+    @Audited(targetAuditMode = NOT_AUDITED)
     private Facility administeringFacility;
 
     @OneToMany(mappedBy = "vaccinationEvent")
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
+    @NotAudited
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

@@ -1,15 +1,19 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+
 @Entity
 @Table(name = "vaccine")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@Audited
 public class Vaccine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

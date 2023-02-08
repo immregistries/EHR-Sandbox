@@ -1,10 +1,14 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 
 import java.util.*;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "patient", indexes = {
@@ -15,6 +19,7 @@ import java.util.*;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = EhrPatient.class)
+@Audited(targetAuditMode = NOT_AUDITED)
 public class EhrPatient {
 
     @Id
@@ -25,6 +30,7 @@ public class EhrPatient {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
     @JsonBackReference("facility-patient")
+    @Audited(targetAuditMode = NOT_AUDITED)
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -32,6 +38,7 @@ public class EhrPatient {
 //    @JsonBackReference("tenant-patient")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("tenant")
+    @Audited(targetAuditMode = NOT_AUDITED)
     private Tenant tenant;
 
     /**
@@ -149,9 +156,11 @@ public class EhrPatient {
 
     @OneToMany(mappedBy = "patient")
     @JsonManagedReference("patient-nextOfKin")
+    @NotAudited // TODO maybe change
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "patient")
+    @NotAudited
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 

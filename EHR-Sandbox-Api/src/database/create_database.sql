@@ -168,7 +168,6 @@ CREATE TABLE `vaccination_event` (
   CONSTRAINT `vaccination_event_ibfk_4` FOREIGN KEY (`administering_clinician_id`) REFERENCES `clinician` (`clinician_id`),
   CONSTRAINT `vaccination_event_ibfk_5` FOREIGN KEY (`administering_facility_id`) REFERENCES `facility` (`facility_id`),
   CONSTRAINT `vaccination_event_ibfk_6` FOREIGN KEY (`vaccine_id`) REFERENCES `vaccine` (`vaccine_id`)
-  
 );
 
 CREATE TABLE `ehr`.`feedback` (
