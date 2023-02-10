@@ -2,78 +2,25 @@
   <mat-grid-list [cols]="asynchronous? 3 : 2" [rowHeight]="rowHeight()">
     <mat-grid-tile>
       <div class="tile-content">
-        <div class="bulk-header">
-          <div>
-            <mat-form-field appearance="fill" style="width: 20%; padding-right: 5px" class="w3-padding-left" >
-              <mat-label>Group ID</mat-label>
-              <input matInput [(ngModel)]="groupId" required>
-            </mat-form-field>
-            <mat-form-field appearance="fill" style="width: 79%;">
-              <mat-label>Parameters</mat-label>
-              <input matInput [(ngModel)]="exportArguments">
-            </mat-form-field>
-          </div>
-          <p>{{"Request URI : /Group/" + (groupId.length>0? groupId : "{groupId}") + "/$export"
-            + (exportArguments.length>0? "?" + exportArguments : "")}}
-          </p>
-          <!-- <mat-checkbox class="" appearance="fill" [(ngModel)]="asynchronous">Asynchronous</mat-checkbox> -->
-          <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">{{asynchronous? "Autofill content URL" : "Autofill Patient Result URL"}}</mat-checkbox>
-          <button mat-raised-button class="w3-right" (click)="export()">Initial Operation</button>
-        </div>
-        <div>
-          <mat-progress-bar mode="query" *ngIf="exportLoading"></mat-progress-bar>
-          <textarea class="result-space" [style]="{color: exportError? 'red':'black'}">{{exportResult}}</textarea>
-        </div>
+        <app-fhir-bulk-operation [asynchronous]="asynchronous" [type]="'Group'"
+        (contentUrl)="contentUrl = $event"
+        (ndUrl)="ndUrl = $event"
+        (resultListEmmitter)="resultList = $event">
+        </app-fhir-bulk-operation>
       </div>
     </mat-grid-tile>
 
     <mat-grid-tile *ngIf="asynchronous">
       <div class="tile-content">
-        <mat-form-field appearance="fill" style="width: 100%">
-          <mat-label>Content & Status check URL</mat-label>
-          <input matInput [(ngModel)]="contentUrl" required>
-        </mat-form-field>
-        <div>
-          <mat-checkbox appearance="fill" [(ngModel)]="autofillNdUrl">Autofill Result URL</mat-checkbox>
-          <div class="w3-right">
-            <button mat-raised-button  (click)="status()">Check Status</button>
-            <button mat-raised-button  (click)="cancel()">Cancel</button>
-          </div>
-        </div>
-        <div>
-          <mat-progress-bar mode="query" *ngIf="statusLoading"></mat-progress-bar>
-          <textarea  class="result-space" [style]="{color: statusError? 'red':'black'}">{{statusResult}}</textarea>
-        </div>
+        <app-fhir-bulk-status-check [contentUrl]="contentUrl"
+        (ndUrl)="ndUrl = $event"
+        (resultListEmmitter)="resultList = $event"></app-fhir-bulk-status-check>
       </div>
     </mat-grid-tile>
 
     <mat-grid-tile>
       <div class="tile-content">
-        <mat-form-field appearance="fill" style="width: 100%">
-          <mat-label>Result File Url</mat-label>
-          <input matInput [(ngModel)]="ndUrl" required  [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let option of resultList" [value]="option.url">
-              <span>{{option.type}}</span> |
-              <span>{{option.url}}</span>
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-        <div>
-          <mat-checkbox appearance="fill" [(ngModel)]="loadInFacility">Load content in Current Facility</mat-checkbox>
-          <div class="w3-right">
-            <button mat-raised-button  (click)="ndJson()">Get NdJson file</button>
-          </div>
-        </div>
-
-        <div>
-          <mat-progress-bar mode="query" *ngIf="ndLoading"></mat-progress-bar>
-          <mat-form-field style="width: 100%;">
-            <mat-label>Fhir Resource</mat-label>
-            <textarea class="result-space" [style]="{color: ndError? 'red':'black'}" matInput placeholder="" [(ngModel)]="ndResult" ></textarea>
-
-          </mat-form-field>
-        </div>
+        <app-fhir-bulk-ndjson-import [ndUrl]="ndUrl" [resultList]="resultList"></app-fhir-bulk-ndjson-import>
       </div>
     </mat-grid-tile>
   </mat-grid-list>

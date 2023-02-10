@@ -30,6 +30,9 @@ import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.compo
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FhirBulkDashboardComponent } from '../fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FhirBulkOperationComponent } from './_components/fhir-bulk/fhir-bulk-operation/fhir-bulk-operation.component';
+import { FhirBulkStatusCheckComponent } from './_components/fhir-bulk/fhir-bulk-status-check/fhir-bulk-status-check.component';
+import { FhirBulkNdjsonImportComponent } from './_components/fhir-bulk/fhir-bulk-ndjson-import/fhir-bulk-ndjson-import.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +45,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     FhirPostComponent,
     FhirBulkComponent,
     FhirBulkDashboardComponent,
+    FhirBulkOperationComponent,
+    FhirBulkStatusCheckComponent,
+    FhirBulkNdjsonImportComponent,
   ],
   imports: [
     CommonModule,
@@ -78,6 +84,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     FhirPostComponent,
     FhirBulkComponent,
     FhirBulkDashboardComponent,
+    FhirBulkOperationComponent,
+    FhirBulkStatusCheckComponent,
+    FhirBulkNdjsonImportComponent,
   ]
 })
 export class FhirModule { }

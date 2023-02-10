@@ -1,0 +1,22 @@
+<div class="bulk-header">
+  <div>
+    <mat-form-field appearance="fill" style="width: 20%; padding-right: 5px" class="w3-padding-left" >
+      <mat-label>Group ID</mat-label>
+      <input matInput [(ngModel)]="resourceId" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 79%;">
+      <mat-label>Parameters</mat-label>
+      <input matInput [(ngModel)]="exportArguments">
+    </mat-form-field>
+  </div>
+  <p>{{"Request URI : /Group/" + (resourceId.length>0? resourceId : "{resourceId}") + "/$export"
+    + (exportArguments.length>0? "?" + exportArguments : "")}}
+  </p>
+  <!-- <mat-checkbox class="" appearance="fill" [(ngModel)]="asynchronous">Asynchronous</mat-checkbox> -->
+  <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">{{asynchronous? "Autofill content URL" : "Autofill Patient Result URL"}}</mat-checkbox>
+  <button mat-raised-button class="w3-right" (click)="export()">Initial Operation</button>
+</div>
+<div>
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+  <textarea class="result-space" [style]="{color: error? 'red':'black'}">{{result}}</textarea>
+</div>

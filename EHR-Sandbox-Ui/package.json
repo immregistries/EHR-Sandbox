@@ -2,11 +2,12 @@
   "name": "ehr-sandbox-ui",
   "version": "1.2.3-SNAPSHOT",
   "scripts": {
-    "ng": "ng",
+    "ng": "nx",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "postinstall": "node ./decorate-angular-cli.js"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +22,7 @@
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
     "@ngneat/reactive-forms": "^4.1.0",
+    "@nrwl/angular": "14.1.11",
     "angular": "^1.8.3",
     "mat-select-filter": "^2.4.1",
     "moment": "^2.29.1",
@@ -34,6 +36,8 @@
     "@angular-devkit/build-angular": "~13.2.5",
     "@angular/cli": "~13.2.5",
     "@angular/compiler-cli": "~13.2.0",
+    "@nrwl/nx-cloud": "14.7.0",
+    "@nrwl/workspace": "14.1.11",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
     "jasmine-core": "~4.0.0",
@@ -42,6 +46,7 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "nx": "14.1.11",
     "typescript": "~4.5.2"
   }
 }
