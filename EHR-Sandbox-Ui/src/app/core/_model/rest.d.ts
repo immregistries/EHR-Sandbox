@@ -83,6 +83,7 @@ export interface NextOfKin {
 
 export interface Patient {
   id?: number;
+  mrn?: string;
   createdDate?: Date;
   updatedDate?: Date;
   birthDate?: Date;
@@ -142,6 +143,7 @@ export interface VaccinationEvent {
   administeringClinician: Clinician;
   vaccine: Vaccine;
   feedbacks?: (Feedback)[];
+  primarySource?: boolean;
 }
 
 export interface Vaccine {
@@ -164,4 +166,8 @@ export interface Vaccine {
   fundingSource?: string;
   fundingEligibility?: string;
   vaccinationEvents?: VaccinationEvent[];
+}
+
+export interface revision {
+
 }

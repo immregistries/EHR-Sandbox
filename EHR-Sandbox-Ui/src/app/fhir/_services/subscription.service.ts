@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { SubscriptionStore } from '../../core/_model/rest';
 import { FacilityService } from '../../core/_services/facility.service';
 import { SettingsService } from '../../core/_services/settings.service';
@@ -29,7 +29,7 @@ export class SubscriptionService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private immRegistriesService: ImmRegistriesService) {
+    private immRegistriesService: ImmunizationRegistryService) {
       this.refresh = new BehaviorSubject<boolean>(false)
   }
 

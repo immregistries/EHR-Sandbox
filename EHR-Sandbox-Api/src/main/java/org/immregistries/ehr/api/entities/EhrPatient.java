@@ -59,6 +59,9 @@ public class EhrPatient {
     @Column(name = "birth_date", nullable = false)
     private Date birthDate;
 
+    @Column(name = "mrn", length = 125)
+    private String mrn = "";
+
     @Column(name = "name_last", length = 250)
     private String nameLast = "";
 
@@ -475,5 +478,14 @@ public class EhrPatient {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getMrn() {
+        return mrn;
+    }
+
+    public void setMrn(String mrn) {
+        this.mrn = mrn;
+    }
+
 
 }

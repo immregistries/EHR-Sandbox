@@ -73,7 +73,7 @@ public class PatientController {
                 .path("/{id}")
                 .buildAndExpand(newEntity.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(newEntity.getId());
 //        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
     }
 

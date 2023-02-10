@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
-import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { SettingsService } from 'src/app/core/_services/settings.service';
 
 @Component({
@@ -12,7 +12,7 @@ export class SettingsDialogComponent implements OnInit {
   @Input()
   immunizationRegistry!: ImmunizationRegistry
 
-  constructor(private immRegistryService: ImmRegistriesService) { }
+  constructor(private immRegistryService: ImmunizationRegistryService) { }
 
   ngOnInit(): void {
     this.immRegistryService.getObservableImmRegistry().subscribe(res => {

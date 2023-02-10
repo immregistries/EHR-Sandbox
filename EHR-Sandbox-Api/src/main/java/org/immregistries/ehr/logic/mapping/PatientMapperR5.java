@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 @Service
 public class PatientMapperR5 {
   private  static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
+  public static final String MRN_SYSTEM = "urn:mrns";
   private static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
   private static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
   private static final String ETHNICITY_EXTENSION = "ethnicity";
@@ -30,8 +31,8 @@ public class PatientMapperR5 {
   private static final String YES = "Y";
   private static final String NO = "N";
 
-
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
+
   public Patient toFhirPatient(EhrPatient dbPatient, String identifier_system) {
     Patient fhirPatient = toFhirPatient(dbPatient);
     Identifier identifier = fhirPatient.addIdentifier();
@@ -43,8 +44,9 @@ public class PatientMapperR5 {
   public Patient toFhirPatient(EhrPatient ehrPatient) {
     Patient p = new Patient();
 //    p.setId("" + ehrPatient.getId());
-
-
+    if (!ehrPatient.getMrn().isBlank()){
+      p.addIdentifier().setSystem(MRN_SYSTEM).setValue(ehrPatient.getMrn());
+    }
 
     p.addName()
             .addGiven(ehrPatient.getNameFirst())

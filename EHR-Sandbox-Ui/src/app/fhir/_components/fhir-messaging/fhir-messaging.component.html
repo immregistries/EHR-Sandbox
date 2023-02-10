@@ -1,5 +1,7 @@
 <mat-tab-group>
-  <mat-tab label="Send resources to IIS">
+
+  <!-- TODO make selected on init  and place iis selector fisst in list-->
+  <mat-tab label="Send resources to IIS" isActive>
     <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
       <div [style]="(vaccinationId > -1)? 'width: 50%': 'width: 100%'">
         <mat-progress-bar mode="query" *ngIf="patientLoading"></mat-progress-bar>
@@ -84,17 +86,20 @@
    <mat-tab label="Bulk Import Synch">
     <app-fhir-bulk [asynchronous]="false"></app-fhir-bulk>
   </mat-tab> -->
-  <mat-tab label="Settings">
+  <!-- <mat-tab label="Settings">
     <div style="padding: 5px;"></div>
     <app-select-immregistry></app-select-immregistry>
-  </mat-tab>
+  </mat-tab> -->
   <mat-tab label="Any Post">
     <div style="padding: 5px;"></div>
     <app-fhir-post></app-fhir-post>
   </mat-tab>
   <mat-tab disabled>
     <ng-template mat-tab-label>
-      <app-select-immregistry style="transform: scale(0.8);"></app-select-immregistry>
+      <!-- <app-select-immregistry style="transform: scale(0.8);"></app-select-immregistry> -->
+
+      <app-immunization-registry-menu></app-immunization-registry-menu>
     </ng-template>
   </mat-tab>
+
 </mat-tab-group>

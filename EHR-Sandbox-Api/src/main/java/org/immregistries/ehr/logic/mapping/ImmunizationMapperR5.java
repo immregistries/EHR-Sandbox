@@ -60,6 +60,14 @@ public class ImmunizationMapperR5 {
     Vaccine vaccine = dbVaccination.getVaccine();
     Facility facility = dbVaccination.getAdministeringFacility();
     Immunization i = new Immunization();
+    i.setPrimarySource(dbVaccination.isPrimarySource());
+
+    if (!dbVaccination.getPatient().getMrn().isBlank()) {
+      i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId())
+              .setIdentifier(new Identifier()
+                      .setValue(dbVaccination.getPatient().getId())
+                      .setSystem(PatientMapperR5.MRN_SYSTEM)));
+    }
 
 //    i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotNumber());
@@ -121,6 +129,7 @@ public class ImmunizationMapperR5 {
   public VaccinationEvent toVaccinationEvent(Immunization i) {
     VaccinationEvent ve = new VaccinationEvent();
     ve.setVaccine(vaccineFromFhir(i));
+    ve.setPrimarySource(i.getPrimarySource());
 //    ve.setExternalLink(i.getIdentifierFirstRep().getValue());
     if (i.getPatient() != null && i.getPatient().getReference() != null && !i.getPatient().getReference().isBlank()) {
     }

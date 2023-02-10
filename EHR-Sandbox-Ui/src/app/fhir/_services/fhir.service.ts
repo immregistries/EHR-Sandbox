@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { SettingsService } from '../../core/_services/settings.service';
 import { FacilityService } from '../../core/_services/facility.service';
 import { TenantService } from '../../core/_services/tenant.service';
-import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,7 +21,7 @@ export class FhirService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private immRegistries: ImmRegistriesService) { }
+    private immRegistries: ImmunizationRegistryService) { }
 
   postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number,parentId: number, referenceId: string): Observable<string> {
     switch(type){

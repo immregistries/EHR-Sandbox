@@ -49,6 +49,15 @@
                   </select>
                 </div>
 
+                <div *ngSwitchCase="'boolean'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <select [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <option [hidden]="!vaccination.vaccine[form.attribute]" value=""></option>
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
+                </div>
+
                 <div *ngSwitchCase="'select'">
                   <mat-label class="short-label">{{form.title}}</mat-label>
                   <select *ngIf="form.options; else short" [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >

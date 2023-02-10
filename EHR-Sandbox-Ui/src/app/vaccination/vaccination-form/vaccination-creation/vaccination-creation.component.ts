@@ -59,7 +59,7 @@ export class VaccinationCreationComponent implements OnInit {
         next: (res: HttpResponse<string>) => {
           console.log(res)
           if (res.body) {
-            this._snackBar.open(res.body, 'close')
+            this._snackBar.open("Success message: " + res.body, 'close')
           }
           this._dialogRef.close(true)
         },

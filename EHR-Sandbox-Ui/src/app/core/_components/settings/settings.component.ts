@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ImmunizationRegistry } from '../../_model/rest';
-import { ImmRegistriesService } from '../../_services/imm-registries.service';
+import { ImmunizationRegistryService } from '../../_services/immunization-registry.service';
 
 @Component({
   selector: 'app-settings',
@@ -10,7 +10,7 @@ import { ImmRegistriesService } from '../../_services/imm-registries.service';
 export class SettingsComponent implements OnInit {
   // imm!: ImmunizationRegistry
 
-  constructor(private immRegistryService: ImmRegistriesService) { }
+  constructor(private immRegistryService: ImmunizationRegistryService) { }
 
   ngOnInit(): void {
     // this.immRegistryService.getObservableImmRegistry().subscribe(res => {

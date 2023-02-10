@@ -58,6 +58,8 @@ public class VaccinationEvent {
     @Audited(targetAuditMode = NOT_AUDITED)
     private Facility administeringFacility;
 
+    @Column(name = "primary_source")
+    private boolean primarySource;
     @OneToMany(mappedBy = "vaccinationEvent")
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     @NotAudited
@@ -127,6 +129,12 @@ public class VaccinationEvent {
         this.id = id;
     }
 
+    public boolean isPrimarySource() {
+        return primarySource;
+    }
 
+    public void setPrimarySource(boolean primarySource) {
+        this.primarySource = primarySource;
+    }
 
 }

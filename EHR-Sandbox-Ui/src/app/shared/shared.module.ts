@@ -31,6 +31,8 @@ import { SelectImmregistryComponent } from './_components/select-immregistry/sel
 import { MatSelectModule } from '@angular/material/select';
 import { CodeMapsPipe } from './_pipes/code-maps.pipe';
 import { TextShortenPipe } from './_pipes/text-shorten.pipe';
+import { ImmunizationRegistryMenuComponent } from './_components/_menus/immunization-registry-menu/immunization-registry-menu.component';
+import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
 
 
 @NgModule({
@@ -50,6 +52,8 @@ import { TextShortenPipe } from './_pipes/text-shorten.pipe';
     SelectImmregistryComponent,
     CodeMapsPipe,
     TextShortenPipe,
+    ImmunizationRegistryMenuComponent,
+    LocalCopyDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -96,6 +100,8 @@ import { TextShortenPipe } from './_pipes/text-shorten.pipe';
 
     CodeMapsPipe,
      TextShortenPipe,
+     ImmunizationRegistryMenuComponent,
+     LocalCopyDialogComponent,
   ],
 })
 export class SharedModule { }

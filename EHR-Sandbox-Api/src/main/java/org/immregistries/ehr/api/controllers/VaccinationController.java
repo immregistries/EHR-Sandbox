@@ -82,7 +82,7 @@ public class VaccinationController {
                 .path("/{id}")
                 .buildAndExpand(newEntity.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(newEntity.getId());
     }
 
     @PutMapping()

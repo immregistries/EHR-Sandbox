@@ -43,6 +43,7 @@ export class PatientFormComponent implements OnInit {
       {type: formType.text, title: 'Middle name', attribute: 'nameMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'nameLast'},
       {type: formType.text, title: 'Mother maiden name', attribute: 'motherMaiden'},
+      {type: formType.text, title: 'Mrn Identifier', attribute: 'mrn'},
     ]},
     {title: 'Birth',  cols: 1, rows: 1, patientForms: [
       {type: formType.date, title: 'Birth date', attribute: 'birthDate'},

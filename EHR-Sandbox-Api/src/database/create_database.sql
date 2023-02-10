@@ -58,6 +58,7 @@ CREATE TABLE `facility` (
 
 CREATE TABLE `patient` (
   `patient_id` int(11) NOT NULL AUTO_INCREMENT,
+  `mrn` varchar(125) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `tenant_id` int(11) NOT NULL,
   `created_date` datetime NULL,
@@ -155,6 +156,7 @@ CREATE TABLE `vaccination_event` (
   `administering_facility_id` int(11) NOT NULL,
   `patient_id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
+  `primary_source` BOOLEAN DEFAULT NULL,
   PRIMARY KEY (`vaccination_event_id`),
   KEY `patient_id` (`patient_id`),
   KEY `administering_clinician_id` (`administering_clinician_id`),

@@ -32,14 +32,14 @@ export class SettingsService {
     return this.apiUrl
   }
 
-  public getSettings(id: string): Observable<ImmunizationRegistry>{
-    return this.http.get<ImmunizationRegistry>(
-      this.getApiUrl() + '/settings', httpOptions);
-  }
+  // public getSettings(id: string): Observable<ImmunizationRegistry>{
+  //   return this.http.get<ImmunizationRegistry>(
+  //     this.getApiUrl() + '/settings', httpOptions);
+  // }
 
-  public putSettings(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
-    return this.http.put<ImmunizationRegistry>(
-      this.getApiUrl() + '/settings', i, httpOptions);
-  }
+  // public putSettings(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
+  //   return this.http.put<ImmunizationRegistry>(
+  //     this.getApiUrl() + '/settings', i, httpOptions);
+  // }
 
 }

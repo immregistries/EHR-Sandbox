@@ -8,6 +8,7 @@ CREATE TABLE `patient_aud` (
   `rev` INTEGER NOT NULL,
   `revtype` TINYINT NOT NULL,
   `patient_id` int(11) NOT NULL,
+  `mrn` varchar(125) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `tenant_id` int(11) NOT NULL,
   `created_date` datetime NULL,
@@ -85,6 +86,7 @@ CREATE TABLE `vaccination_event_aud` (
   `administering_facility_id` int(11) NOT NULL,
   `patient_id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
+  `primary_source` BOOLEAN DEFAULT NULL,
   PRIMARY KEY (`vaccination_event_id`,`rev`),
   CONSTRAINT `idfk_vaccine_revinfo_rev_id`
     FOREIGN KEY (`rev`) REFERENCES `revinfo` (`rev`)

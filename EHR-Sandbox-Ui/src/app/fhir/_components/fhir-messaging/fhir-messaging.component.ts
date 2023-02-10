@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
@@ -41,7 +41,7 @@ export class FhirMessagingComponent implements AfterViewInit {
     private vaccinationService: VaccinationService,
     private _snackBar: MatSnackBar,
     private feedbackService: FeedbackService,
-    private immRegistriesService: ImmRegistriesService) {
+    private immRegistriesService: ImmunizationRegistryService) {
   }
 
   public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
-import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 
 @Component({
   selector: 'app-select-immregistry',
@@ -10,7 +10,7 @@ import { ImmRegistriesService } from 'src/app/core/_services/imm-registries.serv
 export class SelectImmregistryComponent implements OnInit {
   immunizationRegistries: ImmunizationRegistry[] = []
 
-  constructor(public immRegistryService: ImmRegistriesService) {}
+  constructor(public immRegistryService: ImmunizationRegistryService) {}
 
   ngOnInit(): void {
     this.immRegistryService.getRefresh().subscribe(refresh => {
