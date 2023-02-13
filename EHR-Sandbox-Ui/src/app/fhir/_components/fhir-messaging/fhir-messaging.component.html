@@ -1,5 +1,11 @@
-<mat-tab-group>
+<mat-tab-group #tabs>
+  <mat-tab disabled>
+    <ng-template mat-tab-label>
+      <!-- <app-select-immregistry style="transform: scale(0.8);"></app-select-immregistry> -->
 
+      <app-immunization-registry-menu></app-immunization-registry-menu>
+    </ng-template>
+  </mat-tab>
   <!-- TODO make selected on init  and place iis selector fisst in list-->
   <mat-tab label="Send resources to IIS" isActive>
     <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
@@ -94,12 +100,4 @@
     <div style="padding: 5px;"></div>
     <app-fhir-post></app-fhir-post>
   </mat-tab>
-  <mat-tab disabled>
-    <ng-template mat-tab-label>
-      <!-- <app-select-immregistry style="transform: scale(0.8);"></app-select-immregistry> -->
-
-      <app-immunization-registry-menu></app-immunization-registry-menu>
-    </ng-template>
-  </mat-tab>
-
 </mat-tab-group>

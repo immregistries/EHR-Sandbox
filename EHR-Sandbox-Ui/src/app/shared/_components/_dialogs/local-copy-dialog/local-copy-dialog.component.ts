@@ -20,15 +20,29 @@ export class LocalCopyDialogComponent implements OnInit {
   patient?: Patient;
   vaccination?: VaccinationEvent;
 
+  // function loadPatient (patient: Patient | number): patient is Patient {
+
+
+  // }
+
   constructor(private tenantService: TenantService,
     public facilityService: FacilityService,
     private vaccinationService: VaccinationService,
     private patientService: PatientService,
     private _snackBar: MatSnackBar,
     public _dialogRef: MatDialogRef<LocalCopyDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {patient?: Patient, vaccination?: VaccinationEvent}) {
+    @Inject(MAT_DIALOG_DATA) public data: {patient?: Patient | number, vaccination?: VaccinationEvent}) {
       if(data.patient) {
-        this.patient = JSON.parse(JSON.stringify(data.patient)) ;
+        console.log(data.patient)
+        console.log(typeof data.patient)
+        if (typeof data.patient === "number" ||  "string") {
+          this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
+            this.patient = res
+          });
+        } else {
+          this.patient = JSON.parse(JSON.stringify(data.patient));
+
+        }
       }
       if(data.vaccination){
         this.vaccination =  JSON.parse(JSON.stringify(data.vaccination));
@@ -53,22 +67,24 @@ export class LocalCopyDialogComponent implements OnInit {
     if (this.patient) {
       this.patient.id = undefined
       this.patientService.postPatient(this.tenantService.getTenantId(),facility.id,this.patient).subscribe((res) => {
-        this._snackBar.open("Copied to facility")
-        this._dialogRef.close()
-        if(this.vaccination ) {
+        // this._snackBar.open("Patient copied to facility")
+        console.log(res)
+        if(this.vaccination) {
           if (res.body) {
             this.vaccination.id = undefined
             this.vaccination.vaccine.id = undefined
+            this.vaccination.vaccine.vaccinationEvents = undefined
             this.vaccinationService.postVaccination(this.tenantService.getTenantId(),facility.id,+res.body,this.vaccination).subscribe((res) => {
-              this._snackBar.open("Copied to facility")
+              this._snackBar.open("Vaccination copied to facility")
               this._dialogRef.close()
               // if (vaccinationId)
             })
           } else {
             this._snackBar.open("Vaccination not copied problem happened in referencing patient")
           }
-
         }
+        this._dialogRef.close()
+
       })
 
     } else {

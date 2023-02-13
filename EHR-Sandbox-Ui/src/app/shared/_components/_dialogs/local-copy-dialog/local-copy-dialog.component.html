@@ -1,12 +1,12 @@
 <h2>Copy patient to facility</h2>
 <p>This functionality allows you to create a new entity, with the same information, in another facility. The main purpose is to experiment with IIS information merging and subscription workflows</p>
 <p>Please note that copying the same patient several times to other facilities will lead to duplicate </p>
-<mat-selection-list #facilities  [multiple]="false" >
-  <mat-list-option *ngFor="let facility of facilityList" (click)="selectFacility(facility)" [selected]="facilityService.getFacilityId() === facility.id">
+<mat-list #facilities>
+  <mat-list-item *ngFor="let facility of facilityList" (click)="selectFacility(facility)">
     <div>
-      {{facility.nameDisplay}}
-      <button class="w3-right" mat-raised-button (click)="copy(facility)">Copy</button>
+
+      <button class="w3-right" mat-raised-button (click)="copy(facility)">Copy to facility: {{facility.nameDisplay}}</button>
     </div>
     <mat-divider></mat-divider>
-  </mat-list-option>
-</mat-selection-list>
+  </mat-list-item>
+</mat-list>

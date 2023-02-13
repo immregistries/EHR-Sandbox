@@ -2,7 +2,7 @@
   <mat-grid-list [cols]="asynchronous? 3 : 2" [rowHeight]="rowHeight()">
     <mat-grid-tile>
       <div class="tile-content">
-        <app-fhir-bulk-operation [asynchronous]="asynchronous" [type]="'Group'"
+        <app-fhir-bulk-operation [asynchronous]="asynchronous" [resourceType]="'Group'"
         (contentUrl)="contentUrl = $event"
         (ndUrl)="ndUrl = $event"
         (resultListEmmitter)="resultList = $event">

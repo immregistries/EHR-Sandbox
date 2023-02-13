@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, Inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTabGroup } from '@angular/material/tabs';
 import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
@@ -14,7 +15,9 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
   styleUrls: ['./fhir-messaging.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class FhirMessagingComponent implements AfterViewInit {
+export class FhirMessagingComponent implements AfterViewInit, OnInit, AfterViewChecked {
+  @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
+
   patientLoading: Boolean = false
   vaccinationLoading: Boolean = false
   patientRequestLoading: Boolean = false
@@ -47,6 +50,13 @@ export class FhirMessagingComponent implements AfterViewInit {
   public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
   public immunizationOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
 
+  ngOnInit(): void {
+  }
+  ngAfterViewChecked(): void {
+    // this.tabGroup.focusTab(1)
+    // this.tabGroup.selectedIndex = 1;
+    // this.tabGroup.animationDone.next();
+  }
   ngAfterViewInit(): void {
     this.patientLoading = true
     this.fhirService.quickGetPatientResource(this.patientId).subscribe((resource) => {
@@ -60,6 +70,11 @@ export class FhirMessagingComponent implements AfterViewInit {
         this.vaccinationLoading = false
       })
     }
+    this.tabGroup.focusTab(1)
+
+    this.tabGroup.selectedIndex = 1;
+
+
   }
 
   sendPatient() {

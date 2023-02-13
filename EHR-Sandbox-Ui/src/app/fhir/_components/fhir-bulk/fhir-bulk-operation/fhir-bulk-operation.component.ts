@@ -9,7 +9,7 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
 export class FhirBulkOperationComponent implements OnInit {
 
   @Input() asynchronous: boolean = true;
-  @Input() type: "Patient" | "Group" = "Group";
+  @Input() resourceType: "Patient" | "Group" = "Group";
 
   constructor(public fhir: FhirService) { }
 
