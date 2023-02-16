@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
+import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -21,6 +22,12 @@ public class Facility {
     @JoinColumn(name = "tenant_id", nullable = false)
     @JsonBackReference("tenant-facility")
     private Tenant tenant;
+
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    @JoinFormula()
+//    @JsonBackReference("tenant-facility")
+//    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_facility_id")

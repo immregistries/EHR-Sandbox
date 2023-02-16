@@ -4,8 +4,7 @@
 <mat-list #facilities>
   <mat-list-item *ngFor="let facility of facilityList" (click)="selectFacility(facility)">
     <div>
-
-      <button class="w3-right" mat-raised-button (click)="copy(facility)">Copy to facility: {{facility.nameDisplay}}</button>
+      <button mat-raised-button (click)="copy(facility)">Copy to facility: {{facility.nameDisplay}}</button>
     </div>
     <mat-divider></mat-divider>
   </mat-list-item>

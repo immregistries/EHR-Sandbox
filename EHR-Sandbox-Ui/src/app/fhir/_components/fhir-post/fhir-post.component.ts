@@ -1,8 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
@@ -54,7 +51,6 @@ export class FhirPostComponent implements OnInit {
   constructor(private fhirService: FhirService,
     private patientService: PatientService,
     private vaccinationService: VaccinationService,
-    private _snackBar: MatSnackBar,
     private feedbackService: FeedbackService,
     private immRegistriesService: ImmunizationRegistryService) { }
 

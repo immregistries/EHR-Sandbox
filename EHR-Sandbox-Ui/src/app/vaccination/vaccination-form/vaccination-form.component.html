@@ -10,6 +10,13 @@
               </mat-card-title>
             </mat-card-header>
             <mat-card-content class="dashboard-card-content">
+
+
+
+
+
+
+
 <!-- Vaccine forms -->
               <ng-container *ngFor="let form of card.vaccineForms" [ngSwitch]="form.type">
                 <div class="text-field" *ngSwitchCase="'text'">
@@ -90,9 +97,22 @@
                 <div *ngSwitchDefault></div>
               </ng-container>
 
+  <!-- Vaccination forms -->
+              <ng-container *ngFor="let form of card.vaccinationForms" [ngSwitch]="form.type">
+                <div *ngSwitchCase="'boolean'">
+                  <mat-label class="short-label">{{form.title}}</mat-label>
+                  <!-- TODO Change temporary fix -->
+                  <select [(ngModel)]="vaccination.primarySource" name="{{form.attribute}}"  aria-label="Font Style" >
+                    <option [hidden]="!vaccination[form.attribute]" value=""></option>
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
+                </div>
+              </ng-container>
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>
+
 <!-- Metadata dates -->
         <mat-grid-tile>
           <mat-card class="dashboard-card">

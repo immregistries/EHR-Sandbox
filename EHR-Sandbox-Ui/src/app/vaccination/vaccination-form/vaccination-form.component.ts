@@ -1,13 +1,11 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference} from 'src/app/core/_model/structure';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { NgForm, Validators } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { randexp } from 'randexp';
 
 @Component({
@@ -130,6 +128,8 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     {title: "Vaccine",rows: 1, cols: 1, vaccineForms: [
       {type: formType.date, title: "Administered", attribute: "administeredDate"},
       {type: formType.short, title: "Admininistered amount", attribute: "administeredAmount" },
+    ], vaccinationForms: [
+      {type: formType.boolean, title: "Primary Source", attribute: "primarySource"},
     ]},
     {title: "Codes",rows: 1, cols: 2, vaccineForms: [
       {type: formType.code, title: "Vaccine type (Cvx)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE"},

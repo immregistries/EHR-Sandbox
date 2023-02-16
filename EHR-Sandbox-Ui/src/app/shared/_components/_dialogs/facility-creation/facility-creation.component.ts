@@ -2,9 +2,9 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Facility } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class FacilityCreationComponent implements OnInit {
   constructor(
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private _snackBar: MatSnackBar,
+    private snackBarService: SnackBarService,
     public _dialogRef: MatDialogRef<FacilityCreationComponent>) { }
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class FacilityCreationComponent implements OnInit {
       },
       error: (err) => {
         console.log(err.error)
-        this._snackBar.open(`Error : ${err.error.error}`, 'close')
+        this.snackBarService.errorMessage(err.error.error)
       }
     });
   }

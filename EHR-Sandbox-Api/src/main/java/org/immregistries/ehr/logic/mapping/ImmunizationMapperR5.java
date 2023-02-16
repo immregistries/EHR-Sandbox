@@ -48,24 +48,26 @@ public class ImmunizationMapperR5 {
     Identifier identifier = i.addIdentifier();
     identifier.setValue(""+vaccinationEvent.getId());
     identifier.setSystem(identifier_system);
-    i.setPatient(new Reference("Patient/" + vaccinationEvent.getPatient().getId())
-            .setIdentifier(new Identifier()
-                    .setValue(vaccinationEvent.getPatient().getId())
-                    .setSystem(patient_identifier_system)));
+//    i.setPatient(new Reference()
+////            .setReference("Patient/" + vaccinationEvent.getPatient().getId())
+//            .setIdentifier(new Identifier()
+//                    .setValue(vaccinationEvent.getPatient().getId())
+//                    .setSystem(patient_identifier_system)));
     return  i;
   }
   
-  private Immunization toFhirImmunization(VaccinationEvent dbVaccination) {
+  private Immunization toFhirImmunization(VaccinationEvent vaccinationEvent) {
 
-    Vaccine vaccine = dbVaccination.getVaccine();
-    Facility facility = dbVaccination.getAdministeringFacility();
+    Vaccine vaccine = vaccinationEvent.getVaccine();
+    Facility facility = vaccinationEvent.getAdministeringFacility();
     Immunization i = new Immunization();
-    i.setPrimarySource(dbVaccination.isPrimarySource());
+    i.setPrimarySource(vaccinationEvent.isPrimarySource());
 
-    if (!dbVaccination.getPatient().getMrn().isBlank()) {
-      i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId())
+    if (!vaccinationEvent.getPatient().getMrn().isBlank()) {
+      i.setPatient(new Reference()
+//              .setReference("Patient/" + dbVaccination.getPatient().getId())
               .setIdentifier(new Identifier()
-                      .setValue(dbVaccination.getPatient().getId())
+                      .setValue(vaccinationEvent.getPatient().getMrn())
                       .setSystem(PatientMapperR5.MRN_SYSTEM)));
     }
 

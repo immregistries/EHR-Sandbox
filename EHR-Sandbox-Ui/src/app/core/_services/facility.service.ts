@@ -54,6 +54,12 @@ export class FacilityService {
     this.refresh = new BehaviorSubject<boolean>(false)
    }
 
+  readAllFacilities(): Observable<Facility[]> {
+    return this.http.get<Facility[]>(
+      `${this.settings.getApiUrl()}/facilities`,
+      httpOptions);
+  }
+
   readFacilities(tenantId: number): Observable<Facility[]> {
     if (tenantId > 0){
       return this.http.get<Facility[]>(

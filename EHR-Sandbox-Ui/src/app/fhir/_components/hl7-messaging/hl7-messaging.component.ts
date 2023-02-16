@@ -1,8 +1,8 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Hl7Service } from 'src/app/fhir/_services/hl7.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 
 @Component({
   selector: 'app-hl7-messaging',
@@ -22,7 +22,7 @@ export class Hl7MessagingComponent implements OnInit {
 
   constructor(private vaccinationService: VaccinationService,
     private hl7Service: Hl7Service,
-    private _snackBar: MatSnackBar,
+    private snackBackService: SnackBarService,
     public _dialogRef: MatDialogRef<Hl7MessagingComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId: number}) {
       this.patientId = data.patientId

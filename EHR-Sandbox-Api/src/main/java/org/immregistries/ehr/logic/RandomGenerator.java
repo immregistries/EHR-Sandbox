@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic;
 
 import com.github.javafaker.Faker;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -11,11 +12,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.max;
 
 @Service
 public class RandomGenerator {
@@ -51,13 +57,22 @@ public class RandomGenerator {
         Date registryStatusIndicatorDate = between(twoYearsAgo, tenDaysAgo);
         Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+        String lastname = faker.name().lastName();
+        int length = lastname.length();
+        String mrn = lastname.substring(max(0, length-4), length)
+//                + sdf.format(birthDate)
+                + RandomStringUtils.random(11, true, true);;
+
         EhrPatient patient = new EhrPatient();
         patient.setTenant(tenant);
         patient.setFacility(facility);
 
         patient.setNameFirst(faker.name().firstName());
-        patient.setNameLast(faker.name().lastName());
+        patient.setNameLast(lastname);
         patient.setNameMiddle(faker.name().firstName());
+
+        patient.setMrn(mrn);
 
         patient.setBirthDate(birthDate);
         if(randMonth%2==0) {

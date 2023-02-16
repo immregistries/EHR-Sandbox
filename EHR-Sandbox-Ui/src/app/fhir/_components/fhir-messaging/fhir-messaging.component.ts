@@ -1,11 +1,10 @@
 import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
 
@@ -42,7 +41,7 @@ export class FhirMessagingComponent implements AfterViewInit, OnInit, AfterViewC
   constructor(private fhirService: FhirService,
     private patientService: PatientService,
     private vaccinationService: VaccinationService,
-    private _snackBar: MatSnackBar,
+    private snackBarService: SnackBarService,
     private feedbackService: FeedbackService,
     private immRegistriesService: ImmunizationRegistryService) {
   }
@@ -70,11 +69,8 @@ export class FhirMessagingComponent implements AfterViewInit, OnInit, AfterViewC
         this.vaccinationLoading = false
       })
     }
-    this.tabGroup.focusTab(1)
-
-    this.tabGroup.selectedIndex = 1;
-
-
+    // this.tabGroup.focusTab(1)
+    // this.tabGroup.selectedIndex = 1;
   }
 
   sendPatient() {

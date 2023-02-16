@@ -1,9 +1,9 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Patient } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 @Component({
   selector: 'app-patient-form-dialog',
   templateUrl: './patient-form-dialog.component.html',
@@ -15,7 +15,7 @@ export class PatientFormDialogComponent implements OnInit {
   isEditionMode: boolean = false;
 
   constructor(private patientService: PatientService,
-    private _snackBar: MatSnackBar,
+    private snackBarService: SnackBarService,
     public _dialogRef: MatDialogRef<PatientFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {patient: Patient}) {
       if (data.patient){
@@ -37,21 +37,21 @@ export class PatientFormDialogComponent implements OnInit {
         },
         error: (err) => {
           console.log(err.error)
-          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+          this.snackBarService.errorMessage(err.error.error);
         }
       });
     } else {
       this.patientService.quickPostPatient( this.patient).subscribe({
         next: (res: HttpResponse<string>) => {
           if (res.body) {
-            this._snackBar.open(res.body, 'close')
+            // this.snackBarService.successMessage(res.body)
           }
           this.patientService.doRefresh()
           this._dialogRef.close(true)
         },
         error: (err) => {
           console.log(err.error)
-          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+          this.snackBarService.errorMessage(err.error.error);
         }
       });
     }

@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { HttpResponse } from '@angular/common/http';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 
 @Component({
   selector: 'app-vaccination-creation',
@@ -21,7 +21,7 @@ export class VaccinationCreationComponent implements OnInit {
 
   public isEditionMode: boolean = false
 
-  constructor(private _snackBar: MatSnackBar,
+  constructor(private snackBarService: SnackBarService,
     public _dialogRef: MatDialogRef<VaccinationCreationComponent>,
     private vaccinationService: VaccinationService,
     @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent}) {
@@ -51,7 +51,7 @@ export class VaccinationCreationComponent implements OnInit {
         },
         error: (err) => {
           console.log(err.error)
-          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+          this.snackBarService.errorMessage(err.error.error)
         }
       });
     } else {
@@ -59,13 +59,13 @@ export class VaccinationCreationComponent implements OnInit {
         next: (res: HttpResponse<string>) => {
           console.log(res)
           if (res.body) {
-            this._snackBar.open("Success message: " + res.body, 'close')
+            this.snackBarService.successMessage(res.body);
           }
           this._dialogRef.close(true)
         },
         error: (err) => {
           console.log(err.error)
-          this._snackBar.open(`Error : ${err.error.error}`, 'close')
+          this.snackBarService.errorMessage(err.error.error)
         }
       });
     }

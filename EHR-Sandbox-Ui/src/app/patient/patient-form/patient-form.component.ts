@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Facility, Patient, Tenant } from 'src/app/core/_model/rest';
 import { FormCard, formType, Reference } from 'src/app/core/_model/structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -26,7 +25,6 @@ export class PatientFormComponent implements OnInit {
 
   constructor(private patientService: PatientService,
     private breakpointObserver: BreakpointObserver,
-    private _snackBar: MatSnackBar,
     ) { }
 
   // Allows Date type casting in HTML template
