@@ -64,32 +64,28 @@ export class LocalCopyDialogComponent implements OnInit {
   }
 
   copy(facility: Facility) {
-    if (this.patient) {
+    if (this.patient && facility.tenant) {
       this.patient.id = undefined
       this.patient.facility = facility.id
-      // this.patient
-      this.patientService.postPatient(this.tenantService.getTenantId(),facility.id,this.patient).subscribe((res) => {
-        // this._snackBar.open("Patient copied to facility")
-        console.log(res)
-        if(this.vaccination) {
+      this.patientService.postPatient(facility.tenant,facility.id,this.patient).subscribe((res) => {
+        if(this.vaccination && facility.tenant) {
           if (res.body) {
             this.vaccination.id = undefined
             this.vaccination.vaccine.id = undefined
             this.vaccination.vaccine.vaccinationEvents = undefined
-            // this.vaccination.
-            this.vaccinationService.postVaccination(this.tenantService.getTenantId(),facility.id,+res.body,this.vaccination).subscribe((res) => {
+            this.vaccinationService.postVaccination(facility.tenant,facility.id,+res.body,this.vaccination).subscribe((res) => {
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()
               // if (vaccinationId)
             })
           } else {
-            this.snackBarService.successMessage("Vaccination not copied problem happened in referencing patient")
+            this.snackBarService.errorMessage("Vaccination not copied problem happened in referencing patient")
           }
+        } else {
+          this.snackBarService.successMessage("Vaccination copied to facility")
+          this._dialogRef.close()
         }
-        this._dialogRef.close()
-
       })
-
     } else {
 
     }

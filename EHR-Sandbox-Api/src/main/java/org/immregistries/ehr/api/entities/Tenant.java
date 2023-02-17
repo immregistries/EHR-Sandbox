@@ -27,7 +27,7 @@ public class Tenant {
     private String nameDisplay;
 
     @OneToMany(mappedBy = "tenant")
-    @JsonManagedReference("tenant-facility")
+//    @JsonManagedReference("tenant-facility")
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "tenant")

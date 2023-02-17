@@ -46,6 +46,7 @@ export interface Facility {
   facilities?: (Facility | number)[];
   patients?: (Patient | number)[];
   feedbacks?: (Feedback | number)[];
+  tenant?: number;
 }
 
 export interface ImmunizationRegistry {

@@ -20,14 +20,10 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonBackReference("tenant-facility")
+//    @JsonBackReference("tenant-facility")
+    @JsonIdentityReference()
     private Tenant tenant;
 
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    @JoinFormula()
-//    @JsonBackReference("tenant-facility")
-//    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_facility_id")
