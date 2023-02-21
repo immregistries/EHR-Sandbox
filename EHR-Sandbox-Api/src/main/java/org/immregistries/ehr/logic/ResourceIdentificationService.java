@@ -1,13 +1,14 @@
 package org.immregistries.ehr.logic;
 
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.PatientIdentifier;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @Service
 public class ResourceIdentificationService {
@@ -33,14 +34,22 @@ public class ResourceIdentificationService {
     PatientIdentifierRepository patientIdentifierRepository;
     @Autowired
     ImmunizationIdentifierRepository immunizationIdentifierRepository;
+    @Autowired
+    private EhrPatientRepository ehrPatientRepository;
 
 
     public String getPatientLocalId(Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
         String id;
         /**
-         * first we check if the patient has known identifier for the facility system
+         * first we check if the patient has known identifier for the facility system or MRN
          */
         for (Identifier identifier: remotePatient.getIdentifier()) {
+            if (identifier.getSystem().equals(MRN_SYSTEM)) { // TODO exception or flavor
+                Optional<EhrPatient> ehrPatient = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(),identifier.getValue());
+                if (ehrPatient.isPresent()) {
+                    return ehrPatient.get().getId();
+                }
+            }
             id = getPatientLocalId(identifier, immunizationRegistry, facility);
             if ( id != null && !id.isBlank()) {
                 return id;

@@ -50,7 +50,7 @@ public class PatientProviderR4 implements IResourceProvider {
         MethodOutcome methodOutcome = new MethodOutcome();
         EhrPatient patient = patientHandler.fromFhir(fhirPatient);
         patient.setFacility(facility);
-        patient.setTenant(facility.getTenant());
+        // patient.setTenant(facility.getTenant());
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
         // TODO set received information status and make sure history of patient info if already exists

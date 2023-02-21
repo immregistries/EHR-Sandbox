@@ -60,7 +60,6 @@ CREATE TABLE `patient` (
   `patient_id` int(11) NOT NULL AUTO_INCREMENT,
   `mrn` varchar(125) NOT NULL,
   `facility_id` int(11) NOT NULL,
-  `tenant_id` int(11) NOT NULL,
   `created_date` datetime NULL,
   `updated_date` datetime NOT NULL,
   `birth_date` date NOT NULL,
@@ -96,9 +95,7 @@ CREATE TABLE `patient` (
   `guardian_relationship` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`patient_id`),
   KEY `facility_id` (`facility_id`),
-  KEY `tenant_id` (`tenant_id`),
-  CONSTRAINT `patient_ibfk_1` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`facility_id`),
-  CONSTRAINT `patient_ibfk_2` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`tenant_id`)
+  CONSTRAINT `patient_ibfk_1` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`facility_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `next_of_kin` (

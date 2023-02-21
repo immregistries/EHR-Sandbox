@@ -12,7 +12,6 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "patient", indexes = {
-        @Index(name = "tenant_id", columnList = "tenant_id"),
         @Index(name = "facility_id", columnList = "facility_id")
 })
 @JsonIdentityInfo(
@@ -32,23 +31,6 @@ public class EhrPatient {
     @JsonBackReference("facility-patient")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Facility facility;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tenant_id", nullable = false)
-//    @JsonBackReference("tenant-patient")
-    @JsonIdentityReference(alwaysAsId = true)
-    @JsonProperty("tenant")
-    @Audited(targetAuditMode = NOT_AUDITED)
-    private Tenant tenant;
-
-    /**
-     * Empty method required for spring boot
-     * @param id
-     */
-    @JsonProperty("tenant")
-    public void setTenant(int id) {
-        // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
-    }
 
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
@@ -453,14 +435,6 @@ public class EhrPatient {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public Tenant getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(Tenant tenant) {
-        this.tenant = tenant;
     }
 
     public Facility getFacility() {

@@ -56,7 +56,7 @@ public class PatientProviderR5 implements IResourceProvider {
         MethodOutcome methodOutcome = new MethodOutcome();
         EhrPatient patient = patientMapper.toEhrPatient(fhirPatient);
         patient.setFacility(facility);
-        patient.setTenant(facility.getTenant());
+        // patient.setTenant(facility.getTenant());
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
         // TODO set received information status and make sure history of patient info if already exists
@@ -91,7 +91,7 @@ public class PatientProviderR5 implements IResourceProvider {
         ehrPatient.setCreatedDate(oldPatient.getCreatedDate());
         ehrPatient.setUpdatedDate(new Date());
         ehrPatient.setFacility(facility);
-        ehrPatient.setTenant(facility.getTenant());
+//        ehrPatient.setTenant(facility.getTenant().getId());
 
         ehrPatient = patientRepository.save(ehrPatient);
         MethodOutcome methodOutcome = new MethodOutcome();

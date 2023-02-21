@@ -65,7 +65,7 @@ public class RandomGenerator {
                 + RandomStringUtils.random(11, true, true);;
 
         EhrPatient patient = new EhrPatient();
-        patient.setTenant(tenant);
+        // patient.setTenant(tenant);
         patient.setFacility(facility);
 
         patient.setNameFirst(faker.name().firstName());

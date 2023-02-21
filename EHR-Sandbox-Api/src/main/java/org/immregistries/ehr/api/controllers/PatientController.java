@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients"})
+@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
 public class PatientController {
 
     @Autowired
@@ -40,13 +40,12 @@ public class PatientController {
 
 
     @GetMapping()
-    public Iterable<EhrPatient> patients(@PathVariable() int tenantId,
-                                         @PathVariable() int facilityId) {
-        return  patientRepository.findByTenantIdAndFacilityId(tenantId,facilityId);
+    public Iterable<EhrPatient> patients(@PathVariable() int facilityId) {
+        return  patientRepository.findByFacilityId(facilityId);
     }
 
     @GetMapping("/{patientId}")
-    public Optional<EhrPatient> patient(@PathVariable() int tenantId,
+    public Optional<EhrPatient> patient(
                                         @PathVariable() int facilityId,
                                         @PathVariable() String patientId) {
         return  patientRepository.findById(patientId);
@@ -54,17 +53,20 @@ public class PatientController {
 
 
     @PostMapping()
-    public ResponseEntity<String> postPatient(@PathVariable() int tenantId,
+    public ResponseEntity<String> postPatient(
+//            @PathVariable() int tenantId,
                                                @PathVariable() int facilityId,
                                                @RequestBody EhrPatient patient) {
         // patient data check + flavours
-        Optional<Tenant> tenant = tenantRepository.findById(tenantId);
+//        Optional<Tenant> tenant = tenantRepository.findById(tenantId);
         Optional<Facility> facility = facilityRepository.findById(facilityId);
-        if (!tenant.isPresent() || !facility.isPresent()){
+        if (
+//                !tenant.isPresent() ||
+                !facility.isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id or facilityId");
         }
-        patient.setTenant(tenant.get());
+        // patient.setTenant(tenant.get());
         patient.setFacility(facility.get());
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
@@ -89,7 +91,7 @@ public class PatientController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
         }
-        patient.setTenant(tenant.get());
+        // patient.setTenant(tenant.get());
         patient.setFacility(facility.get());
         patient.setUpdatedDate(new Date());
         EhrPatient newEntity = patientRepository.save(patient);

@@ -33,8 +33,6 @@ export class LocalCopyDialogComponent implements OnInit {
     public _dialogRef: MatDialogRef<LocalCopyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {patient?: Patient | number, vaccination?: VaccinationEvent}) {
       if(data.patient) {
-        console.log(data.patient)
-        console.log(typeof data.patient)
         if (typeof data.patient === "number" ||  "string") {
           this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
             this.patient = res
@@ -67,13 +65,14 @@ export class LocalCopyDialogComponent implements OnInit {
     if (this.patient && facility.tenant) {
       this.patient.id = undefined
       this.patient.facility = facility.id
-      this.patientService.postPatient(facility.tenant,facility.id,this.patient).subscribe((res) => {
+      let tenantId: number = typeof facility.tenant === "number" ||  "string"? +facility.tenant : facility.tenant.id
+      this.patientService.postPatient(tenantId, facility.id,this.patient).subscribe((res) => {
         if(this.vaccination && facility.tenant) {
           if (res.body) {
             this.vaccination.id = undefined
             this.vaccination.vaccine.id = undefined
             this.vaccination.vaccine.vaccinationEvents = undefined
-            this.vaccinationService.postVaccination(facility.tenant,facility.id,+res.body,this.vaccination).subscribe((res) => {
+            this.vaccinationService.postVaccination(tenantId,facility.id,+res.body,this.vaccination).subscribe((res) => {
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()
               // if (vaccinationId)

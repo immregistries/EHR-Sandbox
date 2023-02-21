@@ -20,6 +20,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Filter checking for user authorization on each request
+ */
 public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtils jwtUtils;
@@ -73,6 +76,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         return null;
     }
 
+    /**
+     * TODO improve by reversing the logic
+     * @param url
+     * @return
+     * @throws IOException
+     */
     private boolean isAuthorizedURI(String url) throws IOException {
         int tenantId = -1;
         int facilityId = -1;
@@ -99,6 +108,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 if (scanner.hasNextInt()) {
                     tenantId = scanner.nextInt();
                     if (!tenantRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
+                        return  false;
+                    }
+                }
+            }
+            if (item.equals("facilities") ) {
+                if (scanner.hasNextInt()) {
+                    facilityId = scanner.nextInt();
+                    if (!facilityRepository.existsByUserAndId(userDetailsService.currentUser(), facilityId)){
                         return  false;
                     }
                 }

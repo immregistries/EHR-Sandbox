@@ -38,7 +38,7 @@ public class TenantController {
 
     @GetMapping("/{tenantId}/patients")
     public Iterable<EhrPatient> patients(@PathVariable() int tenantId) {
-        return patientRepository.findByTenantId(tenantId);
+        return patientRepository.findByTenantId(tenantRepository.findById(tenantId).orElseThrow());
     }
 
     @PostMapping()

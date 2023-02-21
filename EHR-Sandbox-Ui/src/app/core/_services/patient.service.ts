@@ -155,6 +155,17 @@ export class PatientService {
     }
   }
 
+  postPatientOnFacilityOnly(facilityId: number, patient: Patient): Observable<HttpResponse<string>> {
+    if (facilityId > 0){
+      return this.http.post<string>(
+        `${this.settings.getApiUrl()}/facilities/${facilityId}/patients`,
+        patient,
+        {observe: 'response'});
+    } else {
+      throw throwError(() => new Error("No facility selected"))
+    }
+  }
+
   quickPutPatient(patient: Patient): Observable<Patient>  {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()

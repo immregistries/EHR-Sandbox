@@ -8,7 +8,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "facility")
+@Table(name = "facility"
+//        ,indexes = {@Index(name = "tenant_id", columnList = "tenant_id")}
+)
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
         property="id",
         scope = Facility.class)
@@ -21,7 +23,7 @@ public class Facility {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
 //    @JsonBackReference("tenant-facility")
-    @JsonIdentityReference()
+//    @JsonIdentityReference()
     private Tenant tenant;
 
 

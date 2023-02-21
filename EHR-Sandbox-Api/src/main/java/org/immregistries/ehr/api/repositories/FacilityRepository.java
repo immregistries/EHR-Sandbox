@@ -13,6 +13,8 @@ public interface FacilityRepository extends CrudRepository<Facility, Integer>, J
 
     @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user")
     Iterable<Facility> findByUser(@Param("user") User user);
+    @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user AND f.id = :id")
+    Boolean existsByUserAndId(@Param("user") User user, @Param("id") Integer id);
     Iterable<Facility> findByTenantId(Integer tenantId);
     Optional<Facility> findByIdAndTenantId(Integer id,Integer tenantId);
     Boolean existsByTenantIdAndNameDisplay(Integer tenantId, String nameDisplay);

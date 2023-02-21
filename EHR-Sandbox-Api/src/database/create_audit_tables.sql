@@ -10,7 +10,6 @@ CREATE TABLE `patient_aud` (
   `patient_id` int(11) NOT NULL,
   `mrn` varchar(125) NOT NULL,
   `facility_id` int(11) NOT NULL,
-  `tenant_id` int(11) NOT NULL,
   `created_date` datetime NULL,
   `updated_date` datetime NOT NULL,
   `birth_date` date NOT NULL,
