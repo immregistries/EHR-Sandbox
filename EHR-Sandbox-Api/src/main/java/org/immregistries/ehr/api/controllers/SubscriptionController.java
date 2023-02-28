@@ -44,7 +44,7 @@ public class SubscriptionController {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private ImmRegistryController immRegistryController;
+    private ImmunizationRegistryController immRegistryController;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired

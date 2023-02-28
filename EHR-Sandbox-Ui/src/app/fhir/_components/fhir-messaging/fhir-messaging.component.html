@@ -70,7 +70,7 @@
     </div>
   </mat-tab>
 
-  <mat-tab label="Get resources from IIS">
+  <!-- <mat-tab label="Get resources from IIS">
     <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
       <div [style]="style">
         <app-fhir-get [resourceType]="'Patient'" [identifier]="(patientId >0)? patientId.toString(): ''"></app-fhir-get>
@@ -79,7 +79,7 @@
         <app-fhir-get [resourceType]="'Immunization'" [identifier]="(vaccinationId >0)? vaccinationId.toString(): ''"></app-fhir-get>
       </div>
     </div>
-  </mat-tab>
+  </mat-tab> -->
   <!-- <mat-tab label="Bulk Import Asynch">
       <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
   </mat-tab>
@@ -90,9 +90,13 @@
     <div style="padding: 5px;"></div>
     <app-select-immregistry></app-select-immregistry>
   </mat-tab> -->
-  <mat-tab label="Any Post">
+  <!-- <mat-tab label="Any Post">
     <div style="padding: 5px;"></div>
     <app-fhir-post></app-fhir-post>
+  </mat-tab> -->
+  <mat-tab label="Operation">
+    <div style="padding: 5px;"></div>
+    <app-fhir-operation [resourceId]="''+patientId"></app-fhir-operation>
   </mat-tab>
   <mat-tab disabled>
     <ng-template mat-tab-label>

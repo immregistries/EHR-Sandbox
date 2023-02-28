@@ -51,7 +51,7 @@ export class FhirService {
       params: new HttpParams().append("type", "Group")
     };
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/fhir-client/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/imm-registry/${immId}`,
       resource,
       options);
   }
@@ -146,21 +146,35 @@ export class FhirService {
   getFromIIS( resourceType: string, identifier: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/${resourceType}/${identifier}`,
+      `${this.settings.getApiUrl()}/imm-registry/${immId}/${resourceType}/${identifier}`,
       { responseType: 'text' });
   }
 
   get( urlEnd: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}${urlEnd}`,
+      `${this.settings.getApiUrl()}/imm-registry/${immId}${urlEnd}`,
       { responseType: 'text' });
+  }
+
+
+  operation(operationType: string, target: string ,parameters: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.post(
+      `${this.settings.getApiUrl()}/imm-registry/${immId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
+      parameters,
+      {
+        responseType: 'text',
+        // params: {
+        //   parameters:
+        // }
+      });
   }
 
   groupExportSynch(groupId: string, paramsString: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export-synch?${paramsString}`,
+      `${this.settings.getApiUrl()}/imm-registry/${immId}/Group/${groupId}/$export-synch?${paramsString}`,
       {
         responseType: 'text',
       });
@@ -230,10 +244,20 @@ export class FhirService {
 
   loadNdJson(body: string): Observable<string> {
     const immId = this.immRegistries.getImmRegistryId()
+    const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
 
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/facility/${facilityId}/$load`, body);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/iim-registry/${immId}/$loadNdJson`, body);
+  }
+
+  loadJson(body: string): Observable<string> {
+    const immId = this.immRegistries.getImmRegistryId()
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/iim-registry/${immId}/$loadJson`, body);
   }
 
   // readOperationOutcome(): Observable<any> {

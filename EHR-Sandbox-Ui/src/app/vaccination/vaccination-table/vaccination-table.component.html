@@ -26,6 +26,12 @@
     <th mat-header-cell *matHeaderCellDef> Lot number </th>
     <td mat-cell *matCellDef="let element"> {{element.vaccine.lotNumber}} </td>
   </ng-container>
+  <ng-container matColumnDef="primarySource">
+    <th mat-header-cell *matHeaderCellDef> Primary source </th>
+    <td mat-cell *matCellDef="let element">
+      {{element.primarySource}}
+    </td>
+  </ng-container>
   <ng-container matColumnDef="alerts" >
     <th mat-header-cell *matHeaderCellDef> Alerts </th>
     <td mat-cell *matCellDef="let element">

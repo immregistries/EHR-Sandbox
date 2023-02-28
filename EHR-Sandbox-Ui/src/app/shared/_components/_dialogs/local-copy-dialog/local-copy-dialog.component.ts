@@ -25,6 +25,8 @@ export class LocalCopyDialogComponent implements OnInit {
 
   // }
 
+  setPrimarySourceToFalse: boolean = true;
+
   constructor(private tenantService: TenantService,
     public facilityService: FacilityService,
     private vaccinationService: VaccinationService,
@@ -64,14 +66,24 @@ export class LocalCopyDialogComponent implements OnInit {
   copy(facility: Facility) {
     if (this.patient && facility.tenant) {
       this.patient.id = undefined
-      this.patient.facility = facility.id
-      let tenantId: number = typeof facility.tenant === "number" ||  "string"? +facility.tenant : facility.tenant.id
+      this.patient.facility = undefined
+      let tenantId: number = (typeof facility.tenant === "object" )? facility.tenant.id : +facility.tenant
+      console.log(facility.id)
+      console.log(typeof facility.tenant)
+      console.log(tenantId)
       this.patientService.postPatient(tenantId, facility.id,this.patient).subscribe((res) => {
         if(this.vaccination && facility.tenant) {
           if (res.body) {
             this.vaccination.id = undefined
             this.vaccination.vaccine.id = undefined
             this.vaccination.vaccine.vaccinationEvents = undefined
+            /**
+             * vaccination set as historical
+             *
+             */
+            if (this.setPrimarySourceToFalse){
+              this.vaccination.primarySource = false
+            }
             this.vaccinationService.postVaccination(tenantId,facility.id,+res.body,this.vaccination).subscribe((res) => {
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()

@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities", "/facilities"})
+@RequestMapping({"/tenants/{tenantId}/facilities"})
 public class FacilityController {
 
     @Autowired

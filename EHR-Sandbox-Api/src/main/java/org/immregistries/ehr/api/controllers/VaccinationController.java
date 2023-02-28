@@ -42,7 +42,7 @@ public class VaccinationController {
     @Autowired
     private VaccineRepository vaccineRepository;
     @Autowired
-    private ImmRegistryController immRegistryController;
+    private ImmunizationRegistryController immRegistryController;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 

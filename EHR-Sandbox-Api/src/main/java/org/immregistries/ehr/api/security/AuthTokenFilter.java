@@ -6,10 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.api.repositories.TenantRepository;
-import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
+import org.immregistries.ehr.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +33,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private FacilityRepository facilityRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
+
+    @Autowired
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
     @Override
@@ -83,6 +83,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
      * @throws IOException
      */
     private boolean isAuthorizedURI(String url) throws IOException {
+//        logger.info("{}", url);
         int tenantId = -1;
         int facilityId = -1;
         String patientId = null;
@@ -94,15 +95,29 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String item = "";
         if(scanner.hasNext()) {
             item = scanner.next();
-            if (item.equals("ehr-sandbox") ) {
-                if (scanner.hasNext()) {
-                    item = scanner.next();
-                } else {
-                    return true;
-                }
-            }
-            if (item.equals("fhir") || item.equals("fhir-client") ) {
+//            if (item.equals("ehr-sandbox") ) {
+//                if (scanner.hasNext()) {
+//                    item = scanner.next();
+//                } else {
+//                    return true;
+//                }
+//            }
+            /**
+             * Fhir Server
+             */
+            if (item.equals("fhir")) {
                 return true;
+            }
+            /**
+             * Fhir client
+             */
+            if (item.equals("imm-registry")) {
+                if (scanner.hasNextInt()) {
+                    tenantId = scanner.nextInt();
+                    if (!immunizationRegistryRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
+                        return  false;
+                    }
+                }
             }
             if (item.equals("tenants") ) {
                 if (scanner.hasNextInt()) {
@@ -121,6 +136,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
+
+
         if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("facilities") ) {
@@ -132,6 +149,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
+
+
         if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("patients") ) {
@@ -151,6 +170,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
+
+
         if(scanner.hasNext()) {
             item = scanner.next();
             if (item.equals("vaccinations") ) {

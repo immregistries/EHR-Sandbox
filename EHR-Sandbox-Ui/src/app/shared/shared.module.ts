@@ -33,6 +33,8 @@ import { CodeMapsPipe } from './_pipes/code-maps.pipe';
 import { TextShortenPipe } from './_pipes/text-shorten.pipe';
 import { ImmunizationRegistryMenuComponent } from './_components/_menus/immunization-registry-menu/immunization-registry-menu.component';
 import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
+import { KeysPipe } from './_pipes/keys.pipe';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -54,6 +56,7 @@ import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dial
     TextShortenPipe,
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
+    KeysPipe,
   ],
   imports: [
     CommonModule,
@@ -74,6 +77,7 @@ import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dial
     MatGridListModule,
     MatButtonModule,
     MatSelectModule,
+    MatCheckboxModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -102,6 +106,7 @@ import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dial
      TextShortenPipe,
      ImmunizationRegistryMenuComponent,
      LocalCopyDialogComponent,
+     KeysPipe,
   ],
 })
 export class SharedModule { }

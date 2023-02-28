@@ -11,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Optional;
 
 @RestController
-public class ImmRegistryController {
+public class ImmunizationRegistryController {
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired

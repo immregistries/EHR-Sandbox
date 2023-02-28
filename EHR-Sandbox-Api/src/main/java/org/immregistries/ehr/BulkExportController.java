@@ -2,7 +2,6 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
@@ -14,23 +13,15 @@ import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Parameters;
 import org.hl7.fhir.r5.model.StringType;
 import org.hl7.fhir.r5.model.DateType;
-import org.immregistries.ehr.api.controllers.ImmRegistryController;
+import org.immregistries.ehr.api.controllers.ImmunizationRegistryController;
 import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.PatientIdentifier;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.ImmunizationIdentifierRepository;
-import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.api.repositories.PatientIdentifierRepository;
-import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
-import org.immregistries.ehr.fhir.ServerR5.PatientProviderR5;
 import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
-import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.BundleImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,36 +36,23 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
+
 @RestController
 public class BulkExportController {
+
     private static final Logger logger = LoggerFactory.getLogger(BulkExportController.class);
     @Autowired
     FhirContext fhirContext;
     @Autowired
-    ImmRegistryController immRegistryController;
+    ImmunizationRegistryController immRegistryController;
     @Autowired
     CustomClientBuilder customClientBuilder;
     @Autowired
     FacilityRepository facilityRepository;
-    @Autowired
-    ApplicationContext context;
-    @Autowired
-    PatientProviderR5 patientProvider;
-    @Autowired
-    ImmunizationProviderR5 immunizationProvider;
-
 
     @Autowired
-    private ImmunizationRegistryRepository immunizationRegistryRepository;
-
-
-    @Autowired
-    private ImmunizationIdentifierRepository immunizationIdentifierRepository;
-    @Autowired
-    private PatientIdentifierRepository patientIdentifierRepository;
-
-    @Autowired
-    private ResourceIdentificationService resourceIdentificationService;
+    BundleImportService bundleImportService;
 
 
     @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
@@ -267,7 +245,9 @@ public class BulkExportController {
                 if (loadInFacility.isPresent()) {
                     Facility facility = facilityRepository.findById(loadInFacility.get()).orElseThrow(
                             () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
-                    return loadNdJson(ir, facility,con.getInputStream());
+                    IParser parser = fhirContext.newNDJsonParser();
+                    Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
+                    return bundleImportService.importBundle(ir,facility, bundle);
                 }
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
@@ -285,80 +265,5 @@ public class BulkExportController {
             }
         }
     }
-
-    @PostMapping("/iim-registry/{immRegistryId}/facility/{facilityId}/$load")
-    public ResponseEntity bulkResultLoad(@PathVariable() Integer immRegistryId, @RequestBody String ndjson, @PathVariable Integer facilityId) {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
-
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
-        return loadNdJson(ir, facility,ndjson);
-    }
-
-    private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, InputStream ndJsonStream) {
-        IParser parser = fhirContext.newNDJsonParser();
-        Bundle bundle = (Bundle) parser.parseResource(ndJsonStream);
-        return  loadNdJson(immunizationRegistry,facility, bundle);
-    }
-    private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, String ndJson) {
-        IParser parser = fhirContext.newNDJsonParser();
-        Bundle bundle = (Bundle) parser.parseResource(ndJson);
-        return  loadNdJson(immunizationRegistry,facility, bundle);
-    }
-    private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, Bundle bundle ) {
-        StringBuilder responseBuilder = new StringBuilder();
-        int count = 0;
-        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
-            switch (entry.getResource().getResourceType()) {
-                case Patient: {
-                    Patient patient = (Patient) entry.getResource();
-                    String receivedId = new IdType(patient.getId()).getIdPart();
-                    String dbId; // = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedId,-1);
-                    MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
-                    dbId = methodOutcome.getId().getValue();
-                    patientIdentifierRepository.save(new PatientIdentifier(dbId,immunizationRegistry.getId(),receivedId));
-                    responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
-                    logger.info("Patient  {}  loaded as patient  {}",receivedId,dbId);
-                    count++;
-                    break;
-                }
-                case Immunization: {
-                    Immunization immunization = (Immunization) entry.getResource();
-                    String dbId; // = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
-                    String receivedId = new IdType(immunization.getId()).getIdPart();
-                    String receivedPatientId = new IdType(immunization.getPatient().getReference()).getIdPart();
-                    Optional<PatientIdentifier> patientIdentifier = patientIdentifierRepository.findByPatientIdAndImmunizationRegistryId(receivedPatientId,immunizationRegistry.getId());
-                    if (patientIdentifier.isPresent()) {
-                        immunization.setPatient(new Reference("Patient/" + patientIdentifier.get().getPatientId()));
-                        MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
-                        dbId = methodOutcome.getId().getValue();
-                        immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId,immunizationRegistry.getId(),receivedId));
-                        responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
-                        logger.info("Immunization {} loaded as Immunization {}",receivedId,dbId);
-                        count++;
-                    } else {
-                        responseBuilder.append("\nERROR : ").append(immunization.getPatient().getReference()).append(" Unknown");
-                        logger.info("ERROR : Patient  {}  Unknown",immunization.getPatient().getReference());
-                    }
-                    break;
-                }
-            }
-        }
-        responseBuilder.append("\nNumber of successful load in facility ").append(facility.getNameDisplay()).append(": ").append(count);
-        return ResponseEntity.ok(responseBuilder.toString());
-    }
-
-    private String validateNdJsonBundle(Bundle bundle ) {
-//        IValidator validator = new
-        FhirValidator validator = fhirContext.newValidator();
-
-//        IValidatorModule coreModule = new
-        IValidatorModule module = new FhirInstanceValidator(fhirContext);
-        validator.registerValidatorModule(module);
-
-        return "";
-    }
-
 
 }

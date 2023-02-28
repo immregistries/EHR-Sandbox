@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 @Service
 public class RandomGenerator {
@@ -60,9 +61,8 @@ public class RandomGenerator {
         SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
         String lastname = faker.name().lastName();
         int length = lastname.length();
-        String mrn = lastname.substring(max(0, length-4), length)
-//                + sdf.format(birthDate)
-                + RandomStringUtils.random(11, true, true);;
+        String mrn = lastname.substring(0, min(length,4))
+                + RandomStringUtils.random(11, true, true);
 
         EhrPatient patient = new EhrPatient();
         // patient.setTenant(tenant);

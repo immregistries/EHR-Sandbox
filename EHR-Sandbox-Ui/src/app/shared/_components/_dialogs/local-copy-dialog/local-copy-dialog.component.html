@@ -1,6 +1,9 @@
 <h2>Copy patient to facility</h2>
 <p>This functionality allows you to create a new entity, with the same information, in another facility. The main purpose is to experiment with IIS information merging and subscription workflows</p>
 <p>Please note that copying the same patient several times to other facilities will lead to duplicate </p>
+<div>
+  <mat-checkbox appearance="fill" *ngIf="vaccination" [(ngModel)]="setPrimarySourceToFalse">Set copied vaccination primary source to false</mat-checkbox>
+</div>
 <mat-list #facilities>
   <mat-list-item *ngFor="let facility of facilityList" (click)="selectFacility(facility)">
     <div>

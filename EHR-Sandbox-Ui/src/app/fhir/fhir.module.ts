@@ -33,6 +33,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FhirBulkOperationComponent } from './_components/fhir-bulk/fhir-bulk-operation/fhir-bulk-operation.component';
 import { FhirBulkStatusCheckComponent } from './_components/fhir-bulk/fhir-bulk-status-check/fhir-bulk-status-check.component';
 import { FhirBulkNdjsonImportComponent } from './_components/fhir-bulk/fhir-bulk-ndjson-import/fhir-bulk-ndjson-import.component';
+import { FhirOperationComponent } from './_components/fhir-operation/fhir-operation.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -48,6 +50,7 @@ import { FhirBulkNdjsonImportComponent } from './_components/fhir-bulk/fhir-bulk
     FhirBulkOperationComponent,
     FhirBulkStatusCheckComponent,
     FhirBulkNdjsonImportComponent,
+    FhirOperationComponent,
   ],
   imports: [
     CommonModule,
@@ -67,6 +70,7 @@ import { FhirBulkNdjsonImportComponent } from './_components/fhir-bulk/fhir-bulk
     MatProgressSpinnerModule,
     MatToolbarModule,
     MatAutocompleteModule,
+    MatDatepickerModule,
 
     SharedModule,
   ],
@@ -87,6 +91,7 @@ import { FhirBulkNdjsonImportComponent } from './_components/fhir-bulk/fhir-bulk
     FhirBulkOperationComponent,
     FhirBulkStatusCheckComponent,
     FhirBulkNdjsonImportComponent,
+    FhirOperationComponent,
   ]
 })
 export class FhirModule { }

@@ -31,6 +31,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
     "vaccineCvxCode",
     "administeredDate",
     "lotNumber",
+    "primarySource",
     "alerts",
   ]
 
