@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -86,6 +87,17 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");
 		registrationBean.setLoadOnStartup(1);
 		return registrationBean;
+	}
+
+
+	/**
+	 * Required to get access to httpRequest qnd session through spring, important to use the fhir client inside the servlets
+	 *
+	 * @return
+	 */
+	@Bean
+	public RequestContextListener requestContextListener() {
+		return new RequestContextListener();
 	}
 
 }

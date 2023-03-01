@@ -39,6 +39,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { VaccinationModule } from '../vaccination/vaccination.module';
 import { PatientDashboardDialogComponent } from './patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
 import { PatientMenuComponent } from './patient-menu/patient-menu.component';
+import { PatientHistoryComponent } from './patient-history/patient-history.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { PatientMenuComponent } from './patient-menu/patient-menu.component';
     PatientFormDialogComponent,
     PatientDashboardComponent,
     PatientDashboardDialogComponent,
-    PatientMenuComponent
+    PatientMenuComponent,
+    PatientHistoryComponent
   ],
   imports: [
     CommonModule,
@@ -95,7 +97,8 @@ import { PatientMenuComponent } from './patient-menu/patient-menu.component';
     PatientTableComponent,
     PatientDetailsComponent,
     PatientDashboardComponent,
-    PatientMenuComponent
+    PatientMenuComponent,
+    PatientHistoryComponent
   ],
 })
 export class PatientModule { }

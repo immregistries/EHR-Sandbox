@@ -50,7 +50,6 @@ export class PatientTableComponent implements AfterViewInit {
       this.expandedElement = event
     }
     this.patientService.setPatient(this.expandedElement)
-
   }
 
   constructor(private tenantService: TenantService,

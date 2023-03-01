@@ -9,6 +9,7 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.api.AuditRevisionListener;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
@@ -95,8 +96,14 @@ public class BundleProviderR5 implements IResourceProvider {
                         throw new AuthenticationException("Invalid header for subscription notification");
                 }
 
-
                 ImmunizationRegistry immunizationRegistry = ehrSubscription.getImmunizationRegistry();
+
+                /**
+                 * Done for Historical log un Audit revision tables
+                 */
+                request.setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID,immunizationRegistry.getId()); // TODO link with subscription for origin analysis
+                request.setAttribute(AuditRevisionListener.SUBSCRIPTION_ID,ehrSubscription.getIdentifier()); // TODO link with subscription for origin analysis
+
                 outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
                 switch (subscriptionStatus.getTopic()) { //TODO check topic
                         default: {

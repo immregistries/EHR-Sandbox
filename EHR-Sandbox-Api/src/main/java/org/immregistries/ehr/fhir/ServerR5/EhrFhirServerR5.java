@@ -10,6 +10,7 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
+import org.immregistries.ehr.fhir.FhirAuthInterceptor;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,8 @@ public class EhrFhirServerR5 extends RestfulServer {
     PatientProviderR5 patientProvider;
     @Autowired
     ImmunizationProviderR5 immunizationProvider;
+    @Autowired
+    FhirAuthInterceptor fhirAuthInterceptor;
 
     public EhrFhirServerR5(FhirContext ctx) {
         super(ctx);
@@ -70,6 +73,8 @@ public class EhrFhirServerR5 extends RestfulServer {
 
         ResponseHighlighterInterceptor responseHighlighterInterceptor = new ResponseHighlighterInterceptor();
         registerInterceptor(responseHighlighterInterceptor);
+
+        registerInterceptor(fhirAuthInterceptor);
 
 //        setTenantIdentificationStrategy(new CustomIdentificationStrategy());
         setTenantIdentificationStrategy(new UrlBaseTenantIdentificationStrategy());

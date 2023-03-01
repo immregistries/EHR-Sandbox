@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { Patient} from '../_model/rest';
+import { Patient, Revision} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 
@@ -130,6 +130,14 @@ export class PatientService {
   readPatient(tenantId: number, facilityId: number, patientId: number): Observable<Patient> {
     return this.http.get<Patient>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}`,
+      httpOptions);
+  }
+
+  readPatientHistory(patientId: number): Observable<Revision<Patient>[]> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.http.get<Revision<Patient>[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/$history`,
       httpOptions);
   }
 

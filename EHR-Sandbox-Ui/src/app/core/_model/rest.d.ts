@@ -169,6 +169,34 @@ export interface Vaccine {
   vaccinationEvents?: VaccinationEvent[];
 }
 
-export interface revision {
+/**
+ * Used for History of resources with default hibernate envers fields
+ * TODO
+ */
+export interface Revision<T> {
+  entity: T,
+  metadata: {
+    delegate: {
+      id: number,
+      immunizationRegistryId: string,
+      subscriptionId: string,
+      user: string,
+    }
+    revisionType: string,
+    revisionDate?: Date,
+    requiredRevisionInstant: Date,
+    requiredRevisionNumber: number,
+    revisionInstant?: Date,
+    revisionNumber?: number,
+  },
+  requiredRevisionInstant: Date,
+  requiredRevisionNumber: number,
+  revisionInstant?: Date,
+  revisionNumber?: number,
+}
 
+export interface Revisions<T> {
+  content: Revision<T>[],
+  latestRevision: Revision<T>,
+  empty: boolean
 }

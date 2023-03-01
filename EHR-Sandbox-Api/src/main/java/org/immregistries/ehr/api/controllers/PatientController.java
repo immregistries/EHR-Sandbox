@@ -11,6 +11,8 @@ import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
@@ -49,6 +53,15 @@ public class PatientController {
                                         @PathVariable() int facilityId,
                                         @PathVariable() String patientId) {
         return  patientRepository.findById(patientId);
+    }
+    @GetMapping("/{patientId}/$history")
+    public List<Revision<Integer, EhrPatient>> patientHistory(
+                                        @PathVariable() int facilityId,
+                                        @PathVariable() String patientId) {
+
+        Revisions<Integer, EhrPatient> revisions = patientRepository.findRevisions(patientId);
+        logger.info("{}", revisions.getLatestRevision() );
+        return revisions.getContent();
     }
 
 

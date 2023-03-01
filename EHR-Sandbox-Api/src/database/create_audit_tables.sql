@@ -1,7 +1,9 @@
 CREATE TABLE `revinfo` (
     `rev` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `revtstmp` BIGINT(20) NOT NULL,
-    `user` VARCHAR(50) DEFAULT 'test'
+    `user` VARCHAR(50) DEFAULT '-1',
+    `immunization_registry_id` INTEGER NULL,
+    `subscription_id` VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE `patient_aud` (
