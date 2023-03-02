@@ -3,7 +3,7 @@ CREATE TABLE `revinfo` (
     `revtstmp` BIGINT(20) NOT NULL,
     `user` VARCHAR(50) DEFAULT '-1',
     `immunization_registry_id` INTEGER NULL,
-    `subscription_id` VARCHAR(50) NOT NULL
+    `subscription_id` VARCHAR(50) DEFAULT NULL
 );
 
 CREATE TABLE `patient_aud` (

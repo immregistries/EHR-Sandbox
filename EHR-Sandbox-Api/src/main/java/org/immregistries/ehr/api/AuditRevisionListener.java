@@ -37,8 +37,12 @@ public class AuditRevisionListener implements RevisionListener {
             /**
              * Reading values set by FHIR server interceptors and providers
              */
-            audit.setImmunizationRegistryId( (int) request.getAttribute(IMMUNIZATION_REGISTRY_ID));
-            audit.setSubscriptionId((String) request.getAttribute(SUBSCRIPTION_ID));
+            if (request.getAttribute(IMMUNIZATION_REGISTRY_ID) != null) {
+                audit.setImmunizationRegistryId( (int) request.getAttribute(IMMUNIZATION_REGISTRY_ID));
+            }
+            if (request.getAttribute(SUBSCRIPTION_ID) != null) {
+                audit.setSubscriptionId((String) request.getAttribute(SUBSCRIPTION_ID));
+            }
         } catch (ClassCastException e) {}
 
         try {
