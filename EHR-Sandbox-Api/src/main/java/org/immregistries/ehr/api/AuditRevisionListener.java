@@ -2,7 +2,6 @@ package org.immregistries.ehr.api;
 
 import org.hibernate.envers.RevisionListener;
 import org.immregistries.ehr.api.entities.AuditRevisionEntity;
-import org.immregistries.ehr.api.entities.User;
 import org.immregistries.ehr.api.security.UserDetailsImpl;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Iterator;
 
 @Service
 public class AuditRevisionListener implements RevisionListener {
