@@ -1,5 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hl7.fhir.r5.model.*;
 
 import javax.persistence.*;
@@ -11,6 +13,9 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ehr_subscription")
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
+        property="identifier",
+        scope = EhrSubscription.class)
 public class EhrSubscription {
     public EhrSubscription() {
     }

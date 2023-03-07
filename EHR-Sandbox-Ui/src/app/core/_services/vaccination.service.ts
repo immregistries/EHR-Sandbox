@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { Patient, VaccinationEvent} from '../_model/rest';
+import { Patient, Revision, VaccinationEvent} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 
@@ -116,6 +116,15 @@ export class VaccinationService {
     } else {
       throw throwError(() => new Error("No patient selected"))
     }
+  }
+
+
+  readVaccinationHistory(patientId: number, vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.http.get<Revision<VaccinationEvent>[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/$history`,
+      httpOptions);
   }
 
 

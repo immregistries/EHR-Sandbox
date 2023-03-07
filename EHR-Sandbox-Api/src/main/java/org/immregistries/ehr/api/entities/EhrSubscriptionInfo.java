@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class EhrSubscriptionInfo {
     @MapsId
     @JoinColumn(name = "ehr_subscription")
     @JsonIgnore
+    @JsonBackReference("subscription")
     private EhrSubscription ehrSubscription;
 
     @Column(name = "events_since_start")

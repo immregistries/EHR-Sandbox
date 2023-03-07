@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.GsonJsonParser;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -130,5 +133,12 @@ public class VaccinationController {
             e1.printStackTrace();
             return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/{vaccinationId}/$history")
+    public List<Revision<Integer, VaccinationEvent>> vaccinationHistory(
+            @PathVariable() String vaccinationId) {
+        Revisions<Integer, VaccinationEvent> revisions = vaccinationEventRepository.findRevisions(vaccinationId);
+        return revisions.getContent();
     }
 }

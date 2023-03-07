@@ -35,6 +35,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VaccinationDashboardComponent } from './vaccination-dashboard/vaccination-dashboard.component';
 import { VaccinationDashboardDialogComponent } from './vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
 import { VaccinationDetailsComponent } from './vaccination-details/vaccination-details.component';
+import { VaccinationHistoryComponent } from './vaccination-history/vaccination-history.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { VaccinationDetailsComponent } from './vaccination-details/vaccination-d
     VaccinationDashboardComponent,
     VaccinationDashboardDialogComponent,
     VaccinationDetailsComponent,
+    VaccinationHistoryComponent,
   ],
   imports: [
     CommonModule,
