@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.r5.model.IdType;
+import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Patient;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+
+import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @Controller
 @Conditional(OnR5Condition.class)
@@ -82,16 +85,29 @@ public class PatientProviderR5 implements IResourceProvider {
          * TODO identifiers
          * if not recognised store unmatched reference ?
          */
-        String dbPatientId = resourceIdentificationService.getPatientLocalId(patient,immunizationRegistry,facility);
-        // TODO Historical registering
-        EhrPatient oldPatient = patientRepository.findById(dbPatientId).get();
-        // Save old patient in other table or annotate or SQL Temporal Tables
-        EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
-        ehrPatient.setId(dbPatientId);
-        ehrPatient.setCreatedDate(oldPatient.getCreatedDate());
-        ehrPatient.setUpdatedDate(new Date());
+        String dbPatientId;
+        Identifier mrn = patient.getIdentifier().stream().filter((Identifier i) -> i.getSystem().equals(MRN_SYSTEM)).findFirst().orElse(null);
+        EhrPatient oldPatient = null;
+        if (mrn != null) {
+            oldPatient = patientRepository.findByFacilityIdAndMrn(facility.getId(),mrn.getValue()).orElse(null);
+        } else {
+            dbPatientId = resourceIdentificationService.getPatientLocalId(patient,immunizationRegistry,facility);
+            if (dbPatientId != null) {
+                oldPatient = patientRepository.findById(dbPatientId).orElse(null);
+            }
+        }
+
+        EhrPatient ehrPatient;
+        ehrPatient = patientMapper.toEhrPatient(patient);
         ehrPatient.setFacility(facility);
-//        ehrPatient.setTenant(facility.getTenant().getId());
+        ehrPatient.setUpdatedDate(new Date());
+        if (oldPatient == null) {
+            ehrPatient.setCreatedDate(new Date());
+        } else {
+            // old patient is still stored in hibernate envers table
+            ehrPatient.setId(oldPatient.getId());
+            ehrPatient.setCreatedDate(oldPatient.getCreatedDate());
+        }
 
         ehrPatient = patientRepository.save(ehrPatient);
         MethodOutcome methodOutcome = new MethodOutcome();

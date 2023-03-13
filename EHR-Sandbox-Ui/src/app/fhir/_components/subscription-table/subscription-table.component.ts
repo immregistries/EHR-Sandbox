@@ -2,6 +2,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { merge, startWith, tap } from 'rxjs';
 import { Facility, SubscriptionStore } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
@@ -52,18 +53,17 @@ export class SubscriptionTableComponent implements OnInit {
   }
 
   ngOnChanges(): void {
-    this.facilityService.getObservableFacility().subscribe(facility =>{
-      this.facility = facility
-      this.subscriptionService.getRefresh().subscribe(bool => {
-        // this.loading = true
-        this.subscriptionService.readSubscription().subscribe(res => {
-          if (res) {
-            this.dataSource.data = [res];
-          } else {
-            this.dataSource.data = [];
-          }
-          this.loading = false
-        })
+    merge(this.subscriptionService.getRefresh(),
+      this.facilityService.getObservableFacility().pipe(tap(facility =>{this.facility = facility}))
+    ).pipe(startWith(tap(() => this.loading = true)))
+    .subscribe(() => {
+      this.subscriptionService.readSubscription().pipe(tap()).subscribe(res => {
+        this.loading = false
+        if (res) {
+          this.dataSource.data = [res];
+        } else {
+          this.dataSource.data = [];
+        }
       })
     })
   }

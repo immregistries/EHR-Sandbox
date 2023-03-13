@@ -47,7 +47,6 @@ export class VaccinationHistoryComponent implements OnInit {
     if (this.vaccinationId) {
       this.vaccinationService.readVaccinationHistory(this.patientId,this.vaccinationId).subscribe((res) => {
         this.history.data = res
-        console.log(res)
       })
     }
   }

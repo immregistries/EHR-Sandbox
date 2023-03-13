@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { switchMap } from 'rxjs';
+import { merge, switchMap, tap } from 'rxjs';
 import { FeedbackDialogComponent } from 'src/app/shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { Facility, Patient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
@@ -26,11 +26,12 @@ import { PatientDashboardDialogComponent } from '../patient-dashboard/patient-da
 export class PatientTableComponent implements AfterViewInit {
 
   dataSource = new MatTableDataSource<Patient>([]);
-  expandedElement: Patient | null = null;
+  // expandedElement: Patient | null = null;
 
   @Input() facility: Facility = {id: -1};
   @Input() title: string = 'Patients'
   loading: boolean= false
+  lastIdSelectedBeforeRefresh: number = -1;
 
   columns: (keyof Patient | 'alerts')[] = [
     "nameFirst",
@@ -44,17 +45,16 @@ export class PatientTableComponent implements AfterViewInit {
   asDate(val: any) : Date { return val; }
 
   onSelection(event: Patient) {
-    if (this.expandedElement && this.expandedElement.id == event.id){
-      this.expandedElement = {}
+    if (this.patientService.getPatientId() == event.id){
+      this.patientService.setPatient({})
     } else {
-      this.expandedElement = event
+      this.patientService.setPatient(event)
     }
-    this.patientService.setPatient(this.expandedElement)
   }
 
   constructor(private tenantService: TenantService,
     private facilityService: FacilityService,
-    private patientService: PatientService,
+    public patientService: PatientService,
     private dialog: MatDialog) { }
 
   applyFilter(event: Event) {
@@ -64,31 +64,21 @@ export class PatientTableComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // Set filter rules for research
-
     this.dataSource.filterPredicate = (data: Patient, filter: string) =>{
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
-    this.facilityService.getObservableFacility().pipe(switchMap(facility =>{
-      this.facility = facility
-      // if (!facility || facility.id <= 0){
-      //   this.tenantService.getObservableTenant().subscribe(() => {
-      //     return this.patientService.readAllPatients(this.tenantService.getTenantId())
-      //   })
-      //   return this.patientService.readAllPatients(this.tenantService.getTenantId())
-      // }
-      return this.patientService.readPatients(this.tenantService.getTenantId(), facility.id)
 
-    })).subscribe((res) => {
-      this.patientService.setPatient({})
+    merge(
+      this.facilityService.getObservableFacility()
+        .pipe(tap(facility => {this.facility = facility; this.patientService.updateLastRefreshtime()})),
+      this.patientService.getRefresh()
+    ).subscribe(() =>  {
       this.loading = true
-      this.patientService.getRefresh().subscribe((bool) => {
-        this.dataSource.data = res
+      this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((list) => {
         this.loading = false
-      })
-    })
-    // this.patientService.getObservablePatient().subscribe(patient => {
-    //   this.expandedElement = patient
-    // })
+        this.dataSource.data = list
+        this.patientService.setPatient(list.find((patient: Patient) => {return patient.id === this.patientService.getPatientId()}) ?? {})
+    })})
   }
 
   openCreation() {

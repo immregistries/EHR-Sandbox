@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Facility, Feedback } from '../_model/rest';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Feedback } from '../_model/rest';
+import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
@@ -60,6 +60,6 @@ export class FeedbackService {
     }
     return this.http.get<Feedback[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/feedbacks`,
-      httpOptions);
+      httpOptions).pipe(share());
   }
 }

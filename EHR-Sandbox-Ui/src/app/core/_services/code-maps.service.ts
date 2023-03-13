@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, take } from 'rxjs';
 import { Code, CodeBaseMap, CodeMap } from '../_model/structure';
 import { SettingsService } from './settings.service';
 
@@ -37,7 +37,10 @@ export class CodeMapsService {
   getCodeMap(label: string | undefined): CodeMap  {
     if (label){
       if (!this.codeBaseMap) {
-        this.readCodeMaps().subscribe({
+        /**
+         * TODO clean this up there may be some unnecesary steps now that take(1) was added
+         */
+        this.readCodeMaps().pipe(take(1)).subscribe({
           next: (codeMap) => {
             this.codeBaseMap.next(codeMap["codeBaseMap"])
             return this.codeBaseMap.value[label];

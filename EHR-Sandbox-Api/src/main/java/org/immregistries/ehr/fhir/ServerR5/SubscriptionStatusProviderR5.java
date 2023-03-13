@@ -73,10 +73,11 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
 //                        throw new InvalidRequestException("No active  subscription registered with this id");
 //                    }
                     logger.info("events number {}",status.getEventsSinceSubscriptionStartElement().getValue());
-                    if (status.getEventsSinceSubscriptionStartElement().getValue().intValue() != ehrSubscription.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
-                        // TODO trigger problem when HAPI FHIR actually implements it
-                    }
-                    ehrSubscription.get().getSubscriptionInfo().setEventsSinceSubscriptionStart(status.getEventsSinceSubscriptionStartElement().getValue().intValue());
+//                    if (status.getEventsSinceSubscriptionStartElement().getValue() != null
+//                            && status.getEventsSinceSubscriptionStartElement().getValue().intValue() != ehrSubscription.get().getSubscriptionInfo().getEventsSinceSubscriptionStart() + 1) {
+//                        // TODO trigger problem when HAPI FHIR actually implements it
+//                    }
+//                    ehrSubscription.get().getSubscriptionInfo().setEventsSinceSubscriptionStart(status.getEventsSinceSubscriptionStartElement().getValue().intValue());
                     ehrSubscriptionRepository.save(ehrSubscription.get());
                     break;
                 }

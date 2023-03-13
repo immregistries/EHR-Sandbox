@@ -35,7 +35,6 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
 
   columns!: (keyof Feedback | 'remove')[]
 
-
   onSelection(event: Feedback) {
     if (this.expandedElement && this.expandedElement.id == event.id){
       this.expandedElement = null
@@ -84,23 +83,13 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
     this.feedbackService.getRefresh().subscribe(bool => {
-      this.ngOnChanges()
+      this.refreshData()
     })
   }
 
   ngOnChanges(): void {
     this.ngOnInit()
     this.refreshData()
-    if (!this.patient && !this.vaccination ) {
-      // this.patientService.getObservablePatient().subscribe((patient) => {
-      //   this.patient = patient
-      //   this.refreshData()
-      //   })
-      this.facilityService.getObservableFacility().subscribe(facility =>{
-        this.facility = facility
-        this.refreshData()
-      })
-    }
   }
 
   refreshData(){

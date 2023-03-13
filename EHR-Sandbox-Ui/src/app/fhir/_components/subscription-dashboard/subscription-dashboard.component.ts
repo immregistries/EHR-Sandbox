@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { merge } from 'rxjs';
 import { SubscriptionStore } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
@@ -33,7 +34,6 @@ export class SubscriptionDashboardComponent implements OnInit {
   }
 
   subscribeToIIS() {
-    console.log("subscribe")
     this.loading = true
     this.subscriptionService.createSubscription().subscribe(res => {
       this.loading = false

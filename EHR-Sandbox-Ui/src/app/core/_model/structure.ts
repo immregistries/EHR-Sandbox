@@ -1,4 +1,4 @@
-import { Clinician, Patient, VaccinationEvent, Vaccine } from "./rest";
+import { Clinician, Facility, Patient, VaccinationEvent, Vaccine } from "./rest";
 /**
  * Interface for codemaps lists
  */
@@ -67,4 +67,9 @@ export interface VaccineForm extends Form{
 export interface ClinicianForm extends Form{
   attribute: keyof Clinician,
   role: "enteringClinician" | "orderingClinician" | "administeringClinician"
+}
+
+export interface NotificationPrototype {
+  facility: Facility | number,
+  timestamp: string,
 }

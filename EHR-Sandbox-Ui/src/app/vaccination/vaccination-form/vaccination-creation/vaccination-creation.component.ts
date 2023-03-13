@@ -46,7 +46,6 @@ export class VaccinationCreationComponent implements OnInit {
       // TODO PUT implementation
       this.vaccinationService.quickPutVaccination( this.patientId, this.vaccination).subscribe({
         next: (res: VaccinationEvent) => {
-          console.log(res)
           this._dialogRef.close(true)
         },
         error: (err) => {
@@ -57,10 +56,9 @@ export class VaccinationCreationComponent implements OnInit {
     } else {
       this.vaccinationService.quickPostVaccination( this.patientId, this.vaccination).subscribe({
         next: (res: HttpResponse<string>) => {
-          console.log(res)
-          if (res.body) {
-            this.snackBarService.successMessage(res.body);
-          }
+          // if (res.body) {
+          //   this.snackBarService.successMessage(res.body);
+          // }
           this._dialogRef.close(true)
         },
         error: (err) => {

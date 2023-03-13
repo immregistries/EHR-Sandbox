@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, share, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { Patient, Revision, VaccinationEvent} from '../_model/rest';
 import { FacilityService } from './facility.service';
@@ -79,7 +79,7 @@ export class VaccinationService {
     if (tenantId > 0 && facilityId > 0 && vaccinationId > 0){
       return this.http.get<VaccinationEvent>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}`,
-        httpOptions);
+        httpOptions).pipe(share());
     } else {
       return of()
     }

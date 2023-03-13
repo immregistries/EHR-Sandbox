@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Facility } from '../_model/rest';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { SettingsService } from './settings.service';
 
 const httpOptions = {
@@ -64,7 +64,7 @@ export class FacilityService {
     if (tenantId > 0){
       return this.http.get<Facility[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
-        httpOptions);
+        httpOptions).pipe(share());
     }
     return of([])
   }

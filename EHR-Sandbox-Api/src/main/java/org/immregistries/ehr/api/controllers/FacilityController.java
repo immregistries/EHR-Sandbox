@@ -1,12 +1,10 @@
 package org.immregistries.ehr.api.controllers;
 
-import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
+import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
-import org.immregistries.ehr.api.repositories.FeedbackRepository;
-import org.immregistries.ehr.api.repositories.TenantRepository;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +25,10 @@ public class FacilityController {
     private FeedbackRepository feedbackRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
+    @Autowired
+    AuditRevisionEntityRepository auditRevisionEntityRepository;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     @GetMapping()
     public Iterable<Facility> getFacilities(@PathVariable() int tenantId) {
@@ -62,5 +64,17 @@ public class FacilityController {
             Facility newEntity = facilityRepository.save(facility);
             return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
         }
+    }
+
+    /**
+     * Used by frontend to check if a refresh is needed on the current facility it is displaying
+     * @return
+     */
+    @GetMapping("/$notification/{timestamp}")
+    public Boolean notificationCheck(@PathVariable Optional<Long> timestamp,
+                                     @PathVariable() int facilityId) {
+        return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
+                userDetailsService.currentUserId(),
+                timestamp.orElse(new Long(0))); // TODO add facility to audit revision
     }
 }

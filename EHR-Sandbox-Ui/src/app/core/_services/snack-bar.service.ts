@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { FeedbackService } from './feedback.service';
+import { PatientService } from './patient.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SnackBarService {
 
-  constructor(private _snackBar: MatSnackBar) { }
+  constructor(private _snackBar: MatSnackBar,
+    private patientService: PatientService,
+    private feedbackService: FeedbackService,
+    ) { }
 
   open(message: string) {
     this.successMessage(message)
@@ -16,6 +21,12 @@ export class SnackBarService {
     this._snackBar.open(message,`close`,{
       duration: 1000,
    })
+  }
+
+  notification(isNotif: boolean) {
+    this._snackBar.open("Data received, refresh required",`refresh`,{
+      duration: 15000,
+          }).onAction().subscribe(() => {this.patientService.doRefresh();this.feedbackService.doRefresh()})
   }
 
   errorMessage(message: string) {

@@ -7,6 +7,7 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/")
 public class MainController {
@@ -24,6 +27,7 @@ public class MainController {
     @Autowired
     RandomGenerator randomGenerator;
 
+
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
@@ -31,6 +35,8 @@ public class MainController {
 
     @Autowired
     private FacilityRepository facilityRepository;
+    @Autowired
+    AuditRevisionEntityRepository auditRevisionEntityRepository;
 
     @GetMapping("/$random_patient")
     public EhrPatient randomPatient() {
@@ -40,6 +46,17 @@ public class MainController {
     @GetMapping("/$random_vaccination")
     public VaccinationEvent randomVaccination() {
         return randomGenerator.randomVaccinationEvent(null,null);
+    }
+
+    /**
+     * USed by frontend to check if a refresh is nedded on the current facility it is displaying
+     * @return
+     */
+    @GetMapping("/$notification/{timestamp}")
+    public Boolean notificationCheck(@PathVariable Optional<Long> timestamp) {
+        return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
+                userDetailsService.currentUserId(),
+                timestamp.orElse(new Long(0)));
     }
 
     @GetMapping("/code_maps")

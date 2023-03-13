@@ -71,7 +71,6 @@ export class FhirOperationComponent implements OnInit {
 
 
   send() {
-    console.log(this.parameters)
     this.fhir.operation(this.operation, this.resourceType + this.as_path_variable(this.resourceId), this.parameter_string()).subscribe((res) => {
       this.result = res
     })

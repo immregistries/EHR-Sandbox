@@ -37,7 +37,6 @@ export class PatientHistoryComponent implements OnInit {
   ngOnInit(): void {
     this.patientService.readPatientHistory(this.patientId).subscribe((res) => {
       this.history.data = res
-      console.log(res)
     })
   }
 

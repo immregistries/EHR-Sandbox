@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { merge, startWith, switchMap } from 'rxjs';
+import { merge, startWith, switchMap, tap } from 'rxjs';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
 import { Code, CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
@@ -41,11 +41,10 @@ export class VaccinationTableComponent implements AfterViewInit  {
   dataSource = new MatTableDataSource<VaccinationEvent>([]);
   expandedElement: VaccinationEvent | null = null;
 
-  @Input() patientId: number= -1
+  @Input() patientId: number = -1
   @Input() title: string = 'Vaccination history'
 
-  resultsLength = 0;
-  isLoadingResults = true;
+  loading = false;
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
@@ -78,20 +77,16 @@ export class VaccinationTableComponent implements AfterViewInit  {
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
 
-    this.vaccinationService.getRefresh().subscribe((refresh) => {
-      this.patientService.getObservablePatient().subscribe((patient) => {
-        if (patient.id) {
-          this.patientId = patient.id
-          this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
-            this.dataSource.data = res
-          })
-        } else {
-          this.dataSource.data = []
-        }
+    merge(
+      this.vaccinationService.getRefresh(),
+      this.patientService.getObservablePatient().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
+    ).subscribe(() => {
+      this.loading = true
+      this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
+        this.loading = false
+        this.dataSource.data = res
+        this.expandedElement = res.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
       })
-    })
-    this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
-      this.dataSource.data = res
     })
   }
 

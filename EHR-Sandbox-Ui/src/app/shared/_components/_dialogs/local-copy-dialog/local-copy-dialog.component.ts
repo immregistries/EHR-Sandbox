@@ -68,9 +68,6 @@ export class LocalCopyDialogComponent implements OnInit {
       this.patient.id = undefined
       this.patient.facility = undefined
       let tenantId: number = (typeof facility.tenant === "object" )? facility.tenant.id : +facility.tenant
-      console.log(facility.id)
-      console.log(typeof facility.tenant)
-      console.log(tenantId)
       this.patientService.postPatient(tenantId, facility.id,this.patient).subscribe((res) => {
         if(this.vaccination && facility.tenant) {
           if (res.body) {

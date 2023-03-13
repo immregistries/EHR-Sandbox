@@ -30,7 +30,6 @@ export class AuthInterceptor implements HttpInterceptor {
     if (error.status === 401) {
       // Do your thing here
       const pathname = JSON.parse(JSON.stringify(document.location.pathname))
-      // console.log(pathname)
       if( pathname === '/home') {
         this.router.navigate(['/home'], {queryParams: {
           loginError: 2,
