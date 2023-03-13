@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AuditRevisionListener implements RevisionListener {
     public static final String IMMUNIZATION_REGISTRY_ID = "immunization_registry_id";
     public static final String SUBSCRIPTION_ID = "subscription_id";
+    public static final String USER_ID = "user_id";
     Logger logger = LoggerFactory.getLogger(AuditRevisionListener.class);
 
     @Autowired
@@ -40,6 +41,9 @@ public class AuditRevisionListener implements RevisionListener {
             }
             if (request.getAttribute(SUBSCRIPTION_ID) != null) {
                 audit.setSubscriptionId((String) request.getAttribute(SUBSCRIPTION_ID));
+            }
+            if (request.getAttribute(USER_ID) != null) {
+                audit.setUser((Integer) request.getAttribute(USER_ID));
             }
         } catch (ClassCastException e) {}
 

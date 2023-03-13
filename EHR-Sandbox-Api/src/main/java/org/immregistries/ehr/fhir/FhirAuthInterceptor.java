@@ -30,6 +30,7 @@ public class FhirAuthInterceptor {
          */
         theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID,-1); // TODO link with subscription for origin analysis
         theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.SUBSCRIPTION_ID,"-1"); // TODO link with subscription for origin analysis
+        theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.USER_ID,"-1"); // TODO link with subscription for origin analysis
 
     }
 

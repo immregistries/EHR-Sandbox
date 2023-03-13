@@ -103,6 +103,7 @@ public class BundleProviderR5 implements IResourceProvider {
                  */
                 request.setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID,immunizationRegistry.getId()); // TODO link with subscription for origin analysis
                 request.setAttribute(AuditRevisionListener.SUBSCRIPTION_ID,ehrSubscription.getIdentifier()); // TODO link with subscription for origin analysis
+                request.setAttribute(AuditRevisionListener.USER_ID,immunizationRegistry.getUser().getId()); // TODO link with subscription for origin analysis
 
                 outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
                 switch (subscriptionStatus.getTopic()) { //TODO check topic
