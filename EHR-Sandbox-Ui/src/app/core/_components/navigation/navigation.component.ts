@@ -55,7 +55,7 @@ export class NavigationComponent {
            * checking if current facility was modified since last load ?
            */
           this.notificationCheckService.readNotification(this.patientService.getLastRefreshTime()).pipe(filter((notif) => {return notif})).subscribe((notification) => {
-            snackBarService.notification(notification)
+            snackBarService.notification()
           })
         }
       })
