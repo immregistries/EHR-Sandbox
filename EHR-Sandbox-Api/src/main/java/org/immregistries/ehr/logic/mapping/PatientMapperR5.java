@@ -260,7 +260,7 @@ public class PatientMapperR5 {
       ehrPatient.setRegistryStatusIndicator(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getCode());
       try {
         ehrPatient.setRegistryStatusIndicatorDate(sdf.parse(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getVersion()));
-      } catch (ParseException e) {}
+      } catch (ParseException | NullPointerException e) {}
     }
     return ehrPatient;
   }
