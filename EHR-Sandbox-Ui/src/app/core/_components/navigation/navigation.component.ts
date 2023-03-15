@@ -28,7 +28,6 @@ export class NavigationComponent {
       shareReplay()
     );
 
-  notification: boolean = false
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -38,7 +37,6 @@ export class NavigationComponent {
     public patientService: PatientService,
     private tokenService: TokenStorageService,
     private notificationCheckService: NotificationCheckService,
-    private snackBarService: SnackBarService,
     private feedbackService: FeedbackService,
     public router: Router) {
       this.router.events.subscribe(
@@ -47,18 +45,6 @@ export class NavigationComponent {
             this.pathname = event.url
           }
         });
-
-      interval(15000).pipe().subscribe(() => {
-        if (!this.pathname.startsWith('/home')) {
-          this.notification = !this.notification
-          /**
-           * checking if current facility was modified since last load ?
-           */
-          this.notificationCheckService.readNotification(this.patientService.getLastRefreshTime()).pipe(filter((notif) => {return notif})).subscribe((notification) => {
-            snackBarService.notification()
-          })
-        }
-      })
     }
 
   logout() {
@@ -75,10 +61,6 @@ export class NavigationComponent {
   //   this.dialog.open(AuthenticationDialogComponent)
   // }
 
-  triggerRefresh() {
-    // this.facilityService.doRefresh()
-    this.patientService.doRefresh()
-  }
 
 
 }

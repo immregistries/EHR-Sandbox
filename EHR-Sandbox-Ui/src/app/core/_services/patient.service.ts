@@ -27,23 +27,14 @@ export class PatientService {
   /**
    * TODO maybe move to facility table
    */
-  private lastRefreshTime: number;
 
-  public getLastRefreshTime(): number {
-    return this.lastRefreshTime;
-  }
-
-  public updateLastRefreshtime(): number {
-    this.lastRefreshTime = new Date().getTime()
-    return this.lastRefreshTime;
-  }
   public getRefresh(): Observable<boolean> {
     return this.refresh.asObservable();
   }
 
   public doRefresh(): void{
     this.refresh.next(!this.refresh.value)
-    this.lastRefreshTime = new Date().getTime()
+    // this.lastRefreshTime = new Date().getTime()
   }
 
   public getObservablePatient(): Observable<Patient> {
@@ -72,7 +63,6 @@ export class PatientService {
     private tenantService: TenantService ) {
       this.patient = new BehaviorSubject<Patient>({id:-1})
       this.refresh = new BehaviorSubject<boolean>(false)
-      this.lastRefreshTime = new Date().getTime()
       this.facilityService.getObservableFacility().subscribe((facility) => {
         this.setPatient({})
       })

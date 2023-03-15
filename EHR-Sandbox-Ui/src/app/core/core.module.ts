@@ -45,6 +45,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { VaccinationModule } from '../vaccination/vaccination.module';
 import { SettingsComponent } from './_components/settings/settings.component';
+import { RefreshNotificationComponent } from './_components/refresh-notification/refresh-notification.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { SettingsComponent } from './_components/settings/settings.component';
     HomeComponent,
     DashboardComponent,
     SettingsComponent,
+    RefreshNotificationComponent,
   ],
   imports: [
     CommonModule,

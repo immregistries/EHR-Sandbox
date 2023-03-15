@@ -4,6 +4,8 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import org.apache.commons.text.CharacterPredicates;
+import org.apache.commons.text.RandomStringGenerator;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -14,6 +16,7 @@ import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
+import org.immregistries.ehr.fhir.Client.IResourceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -55,6 +60,8 @@ public class SubscriptionController {
     FhirContext fhirContext;
     @Autowired
     CustomClientBuilder customClientBuilder;
+    @Autowired
+    IResourceClient resourceClient;
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
     public Optional<EhrSubscription> ehrSubscription(@PathVariable() String facilityId){
@@ -69,10 +76,10 @@ public class SubscriptionController {
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = customClientBuilder.newGenericClient(ir);
 
-        MethodOutcome outcome = client.create().resource(sub).execute();
-        IParser parser  = fhirContext.newJsonParser();
+//        MethodOutcome outcome = client.create().resource(sub).execute();
+        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
         Subscription outcomeSub = (Subscription) outcome.getResource();
-        if (outcome.getCreated()){
+        if ((outcome.getCreated() != null && outcome.getCreated()) || (outcome.getResource()!=null)){
             outcomeSub.setStatus(Enumerations.SubscriptionStatusCodes.ACTIVE);
         }
         EhrSubscription ehrSubscription = new EhrSubscription(outcomeSub);
@@ -102,7 +109,7 @@ public class SubscriptionController {
 
     public Subscription generateRestHookSubscription(Facility facility, String iis_uri) {
         Subscription sub = new Subscription();
-        sub.addIdentifier().setValue(facility.getId() + "").setSystem("EHR Sandbox"); // Currently facilityIds are used as identifiers
+        sub.addIdentifier().setValue(facility.getId() + "").setSystem("EHR_Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
 //        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
         sub.setTopic(LOCAL_TOPIC);
@@ -128,8 +135,12 @@ public class SubscriptionController {
          */
         byte[] array = new byte[256];
         new Random().nextBytes(array);
-        String generatedString = "jhadvfkajhsdvub";
-//        String generatedString = new String(array, Charset.forName("UTF-8"));
+        RandomStringGenerator randomStringGenerator =
+                new RandomStringGenerator.Builder()
+                        .withinRange('0', 'z')
+                        .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                        .build();
+        String generatedString = randomStringGenerator.generate(64);
         sub.addHeader(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + generatedString);
 
         /**

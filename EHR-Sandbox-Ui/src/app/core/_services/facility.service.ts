@@ -23,12 +23,24 @@ export class FacilityService {
    */
   private refresh: BehaviorSubject<boolean>;
 
+  private lastRefreshTime: number;
+
+  public getLastRefreshTime(): number {
+    return this.lastRefreshTime;
+  }
+
+  public updateLastRefreshtime(): number {
+    this.lastRefreshTime = new Date().getTime()
+    return this.lastRefreshTime;
+  }
+
   public getRefresh(): Observable<boolean> {
     return this.refresh.asObservable();
   }
 
   public doRefresh(): void{
     this.refresh.next(!this.refresh.value)
+    this.updateLastRefreshtime()
   }
 
   public getObservableFacility(): Observable<Facility> {
@@ -45,6 +57,7 @@ export class FacilityService {
 
   public setFacility(facility: Facility) {
     this.facility.next(facility)
+    this.updateLastRefreshtime()
   }
 
   constructor(private http: HttpClient,
@@ -52,6 +65,7 @@ export class FacilityService {
     ) {
     this.facility = new BehaviorSubject<Facility>({id:-1})
     this.refresh = new BehaviorSubject<boolean>(false)
+    this.lastRefreshTime = new Date().getTime()
    }
 
   readAllFacilities(): Observable<Facility[]> {

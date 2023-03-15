@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { merge } from 'rxjs';
 import { SubscriptionStore } from 'src/app/core/_model/rest';
@@ -22,23 +23,30 @@ export class SubscriptionDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.facilityService.getRefresh().subscribe(res => {
-      this.subscriptionService.readSubscription().subscribe(res => {
-        this.subscription = res
-        this.subscriptionService.doRefresh()
-        this.error = ""
-      },
-      err => {
-        this.error = `${err.status} : ${err.error}`
-      })
+      this.subscriptionService.readSubscription().subscribe({
+        next: res => {
+          this.subscription = res
+          this.subscriptionService.doRefresh()
+          this.error = ""
+        },
+        error: err => {
+          this.error = `${err.status} : ${err.error}`
+        }})
     })
   }
 
   subscribeToIIS() {
     this.loading = true
-    this.subscriptionService.createSubscription().subscribe(res => {
-      this.loading = false
-      this.ngOnInit()
-    })
+    this.subscriptionService.createSubscription().subscribe({
+      next: (res) => {
+        console.log(res)
+        this.loading = false
+        this.ngOnInit()
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading = false
+        this.error = `${err.status} : ${err.statusText}`
+      }})
   }
 
 }

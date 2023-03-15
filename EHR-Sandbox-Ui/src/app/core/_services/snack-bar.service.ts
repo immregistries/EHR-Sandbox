@@ -24,9 +24,8 @@ export class SnackBarService {
   }
 
   notification() {
-    this._snackBar.open("Data received, refresh required",`refresh`,{
-      duration: 15000,
-          }).onAction().subscribe(() => {this.patientService.doRefresh();this.feedbackService.doRefresh()})
+    this._snackBar.open("Data received, refresh required",`refresh`,
+    {duration: 15000}).onAction().subscribe(() => {this.patientService.doRefresh();this.feedbackService.doRefresh()})
   }
 
   errorMessage(message: string) {

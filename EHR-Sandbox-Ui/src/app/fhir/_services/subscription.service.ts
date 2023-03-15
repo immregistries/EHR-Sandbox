@@ -33,7 +33,7 @@ export class SubscriptionService {
       this.refresh = new BehaviorSubject<boolean>(false)
   }
 
-  createSubscription(): Observable<any> {
+  createSubscription(): Observable<boolean | null> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     const immRegistryId: number | undefined = this.immRegistriesService.getImmRegistryId()

@@ -117,9 +117,6 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
       panelClass: 'dialog-with-bar',
       data: {patient: patient},
     });
-    // dialogRef.afterClosed().subscribe(result => {
-    //   this.patientService.doRefresh()
-    // });
   }
 
   openVaccination(vaccination: VaccinationEvent | number){
