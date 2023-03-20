@@ -3,8 +3,8 @@
        [dataSource]="history" multiTemplateDataRows
        class="mat-elevation-z8">
   <ng-container matColumnDef="revisionInstant" >
-    <th mat-header-cell *matHeaderCellDef>Time</th>
-    <td mat-cell *matCellDef="let element">{{element.revisionInstant}}</td>
+    <th mat-header-cell *matHeaderCellDef> Time </th>
+    <td mat-cell *matCellDef="let element">{{element.revisionInstant | date: 'short'}}</td>
   </ng-container>
   <ng-container matColumnDef="revisionType" >
     <th mat-header-cell *matHeaderCellDef> Type </th>

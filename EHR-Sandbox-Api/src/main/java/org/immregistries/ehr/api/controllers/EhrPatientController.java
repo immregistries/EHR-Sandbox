@@ -23,11 +23,10 @@ import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
-public class PatientController {
+public class EhrPatientController {
 
     @Autowired
     private EhrPatientRepository patientRepository;
@@ -40,7 +39,7 @@ public class PatientController {
     @Autowired
     RandomGenerator randomGenerator;
 
-    private static final Logger logger = LoggerFactory.getLogger(PatientController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
 
 
     @GetMapping()
@@ -60,7 +59,7 @@ public class PatientController {
                                         @PathVariable() String patientId) {
 
         Revisions<Integer, EhrPatient> revisions = patientRepository.findRevisions(patientId);
-        logger.info("{}", revisions.getLatestRevision() );
+//        logger.info("{}", revisions.getLatestRevision() );
         return revisions.getContent();
     }
 

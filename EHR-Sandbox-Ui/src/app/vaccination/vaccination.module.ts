@@ -36,6 +36,7 @@ import { VaccinationDashboardComponent } from './vaccination-dashboard/vaccinati
 import { VaccinationDashboardDialogComponent } from './vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
 import { VaccinationDetailsComponent } from './vaccination-details/vaccination-details.component';
 import { VaccinationHistoryComponent } from './vaccination-history/vaccination-history.component';
+import { RecommendationTableComponent } from './recommandation-table/recommendation-table.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { VaccinationHistoryComponent } from './vaccination-history/vaccination-h
     VaccinationDashboardDialogComponent,
     VaccinationDetailsComponent,
     VaccinationHistoryComponent,
+    RecommendationTableComponent,
   ],
   imports: [
     CommonModule,
@@ -86,6 +88,7 @@ import { VaccinationHistoryComponent } from './vaccination-history/vaccination-h
     VaccinationCreationComponent,
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
+    RecommendationTableComponent,
   ]
 })
 export class VaccinationModule { }

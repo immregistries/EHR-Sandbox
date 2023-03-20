@@ -11,6 +11,7 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationCreationComponent } from '../vaccination-form/vaccination-creation/vaccination-creation.component';
 import { FeedbackDialogComponent } from '../../shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { VaccinationDashboardDialogComponent } from '../vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
+import { Bundle } from 'fhir/r5';
 
 @Component({
   selector: 'app-vaccination-table',

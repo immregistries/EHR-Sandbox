@@ -47,4 +47,6 @@ export class PatientHistoryComponent implements OnInit {
       this.expandedElement = event
     }
   }
+
+
 }

@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
     "@ngneat/reactive-forms": "^4.1.0",
+    "@types/fhir": "^0.0.36",
     "angular": "^1.8.3",
     "mat-select-filter": "^2.4.1",
     "moment": "^2.29.1",
