@@ -1,8 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterContentInit, AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, Self, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { switchMap } from 'rxjs';
 import { Facility, Feedback, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
@@ -51,7 +50,15 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     private feedbackService: FeedbackService,
     private patientService: PatientService,
     private snackBarService: SnackBarService,
-    ) { }
+    @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient, vaccination: VaccinationEvent}) {
+      if (data?.patient){
+        this.patient = data.patient;
+      }
+      if (data?.vaccination){
+        this.vaccination = data.vaccination;
+      }
+    }
 
 
   applyFilter(event: Event) {

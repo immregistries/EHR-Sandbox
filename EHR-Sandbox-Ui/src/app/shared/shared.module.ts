@@ -15,7 +15,6 @@ import { TenantMenuComponent } from './_components/_menus/tenant-menu/tenant-men
 import { FacilityMenuComponent } from './_components/_menus/facility-menu/facility-menu.component';
 import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/settings-dialog.component';
 import { FeedbackTableComponent } from './_components/feedback-table/feedback-table.component';
-import { FeedbackDialogComponent } from './_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
@@ -48,7 +47,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FacilityMenuComponent,
     SettingsDialogComponent,
     FeedbackTableComponent,
-    FeedbackDialogComponent,
     HoverMenuComponent,
     EmptyListMessageComponent,
     SelectImmregistryComponent,
@@ -97,7 +95,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FacilityMenuComponent,
     SettingsDialogComponent,
     FeedbackTableComponent,
-    FeedbackDialogComponent,
     HoverMenuComponent,
     EmptyListMessageComponent,
     SelectImmregistryComponent,

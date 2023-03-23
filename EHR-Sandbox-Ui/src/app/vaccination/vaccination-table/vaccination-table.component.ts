@@ -2,16 +2,15 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { merge, startWith, switchMap, tap } from 'rxjs';
+import { merge, tap } from 'rxjs';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
-import { Code, CodeBaseMap } from 'src/app/core/_model/structure';
+import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FeedbackDialogComponent } from '../../shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { VaccinationDashboardDialogComponent } from '../vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
-import { Bundle } from 'fhir/r5';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
+import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -107,7 +106,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
 
 
   openFeedback(element: VaccinationEvent) {
-    const dialogRef = this.dialog.open(FeedbackDialogComponent, {
+    const dialogRef = this.dialog.open(FeedbackTableComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

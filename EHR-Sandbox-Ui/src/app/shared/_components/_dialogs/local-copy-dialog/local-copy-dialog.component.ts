@@ -14,16 +14,9 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 })
 export class LocalCopyDialogComponent implements OnInit {
 
-
-  // facility!: Facility;
   facilityList!: Facility[];
   patient?: EhrPatient;
   vaccination?: VaccinationEvent;
-
-  // function loadPatient (patient: Patient | number): patient is Patient {
-
-
-  // }
 
   setPrimarySourceToFalse: boolean = true;
 

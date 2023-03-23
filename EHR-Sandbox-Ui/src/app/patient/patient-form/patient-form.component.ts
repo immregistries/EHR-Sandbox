@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
-import { Facility, EhrPatient, Tenant } from 'src/app/core/_model/rest';
+import { EhrPatient } from 'src/app/core/_model/rest';
 import { FormCard, formType, Reference } from 'src/app/core/_model/structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -46,7 +46,6 @@ export class PatientFormComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
   fillRandom(): void {
     this.patientService.readRandom().subscribe((res) => this.patient = res)
   }
@@ -56,9 +55,7 @@ export class PatientFormComponent implements OnInit {
       this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: EhrPatient) => {
           this.patientService.doRefresh()
-          if (this._dialogRef) {
-            this._dialogRef.close(true)
-          }
+          this._dialogRef?.close(true)
         },
         error: (err) => {
           console.log(err.error)
@@ -68,13 +65,8 @@ export class PatientFormComponent implements OnInit {
     } else {
       this.patientService.quickPostPatient( this.patient).subscribe({
         next: (res: HttpResponse<string>) => {
-          if (res.body) {
-            // this.snackBarService.successMessage(res.body)
-          }
           this.patientService.doRefresh()
-          if (this._dialogRef) {
-            this._dialogRef.close(true)
-          }
+          this._dialogRef?.close(true)
         },
         error: (err) => {
           console.log(err.error)

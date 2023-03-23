@@ -3,11 +3,11 @@ import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { merge, switchMap, tap } from 'rxjs';
-import { FeedbackDialogComponent } from 'src/app/shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
+import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
 import { PatientDashboardDialogComponent } from '../patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 
@@ -97,7 +97,7 @@ export class PatientTableComponent implements AfterViewInit {
 
 
   openFeedback(element: EhrPatient) {
-    const dialogRef = this.dialog.open(FeedbackDialogComponent, {
+    const dialogRef = this.dialog.open(FeedbackTableComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
