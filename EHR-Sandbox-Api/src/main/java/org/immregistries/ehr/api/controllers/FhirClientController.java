@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -144,6 +145,7 @@ public class FhirClientController {
     }
 
     @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @Transactional
     public ResponseEntity<String> updateImmunization(
             @PathVariable() Integer facilityId,
             @PathVariable() String patientId,
@@ -167,6 +169,14 @@ public class FhirClientController {
              */
             immunizationIdentifierRepository.save(new ImmunizationIdentifier(
                     vaccinationId, immunizationRegistry.getId(),outcome.getId().getIdPart()));
+
+            /**
+             * If no fatal exception caught : stored fatal feedbacks are erased for the vaccination
+             * TODO do the same for Patient ?
+             */
+            feedbackRepository.deleteByVaccinationEventIdAndSeverity(
+                    vaccinationId,
+                    "fatal");
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
         } catch (BaseServerResponseException baseServerResponseException) {

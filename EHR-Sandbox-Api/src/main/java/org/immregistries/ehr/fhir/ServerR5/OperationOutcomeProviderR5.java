@@ -4,12 +4,11 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.OperationOutcome;
-import org.hl7.fhir.r5.model.StringType;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
+import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,10 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
     private EhrSubscriptionRepository ehrSubscriptionRepository;
+
+    @Autowired
+    private ResourceIdentificationService resourceIdentificationService;
+
     private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProviderR5.class);
 
     @Override
@@ -91,27 +94,28 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
             feedback.setSeverity(issue.getSeverity().toCode());
             feedback.setCode(issue.getCode().toCode());
             feedback.setTimestamp(new Timestamp(new Date().getTime()));
+            Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
             if (request != null && request.getRemoteAddr() != null) {
-                Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()),request.getRemoteAddr());
+                immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()),request.getRemoteAddr()); //TODO change this and do smtg similar to immunizationprovider
                 if (immunizationRegistry.isPresent()) {
                     feedback.setIis(immunizationRegistry.get().getName());
                 } else {
                     feedback.setIis(request.getRemoteAddr());
                 }
             }
-            // Using deprecated field "Location to refer to the right resource for the issue"
+            /**
+             * Using deprecated field "Location to refer to the right resource for the issue"
+             */
             for (StringType location: issue.getLocation()) {
-                Scanner scanner = new Scanner(location.getValueNotNull());
-                scanner.useDelimiter("/|\\?|#");
-                while (scanner.hasNext()) {
-                    next = scanner.next();
-                    if (next.equals("Patient") && scanner.hasNextInt()) { // TODO Define format for identifier specification, or use fhirpath more accurately
-                        Optional<EhrPatient> patient = patientRepository.findByFacilityIdAndId(facility.getId(),scanner.next());
-                        patient.ifPresent(feedback::setPatient);
-                    }
-                    if (next.equals("Immunization") && scanner.hasNextInt()) {
-                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), scanner.next());
-                        if(vaccinationEvent.isPresent()){
+                String localUrl = resourceIdentificationService.getLocalUrnFromUrn(location.getValueNotNull(),immunizationRegistry.get(),facility);
+                if (localUrl != null) {
+                    String[] idArray = localUrl.split("/");
+                    if (idArray[0].equals("Patient")){
+                        patientRepository.findByFacilityIdAndId(facility.getId(), idArray[1])
+                                .ifPresent(feedback::setPatient);
+                    } else if (idArray[0].equals("Immunization")) {
+                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), idArray[1]);
+                        if (vaccinationEvent.isPresent()){
                             feedback.setVaccinationEvent(vaccinationEvent.get());
                             feedback.setPatient(vaccinationEvent.get().getPatient());
                         }

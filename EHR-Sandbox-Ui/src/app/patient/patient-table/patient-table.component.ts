@@ -8,7 +8,7 @@ import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
-import { PatientDashboardDialogComponent } from '../patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
+import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 
 @Component({
@@ -96,19 +96,8 @@ export class PatientTableComponent implements AfterViewInit {
   }
 
 
-  openFeedback(element: EhrPatient) {
-    const dialogRef = this.dialog.open(FeedbackTableComponent, {
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      height: 'fit-content',
-      width: '100%',
-      panelClass: 'dialog-with-bar',
-      data: {patient: element},
-    });
-  }
-
   openPatient(patient: EhrPatient){
-    const dialogRef = this.dialog.open(PatientDashboardDialogComponent, {
+    const dialogRef = this.dialog.open(PatientDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

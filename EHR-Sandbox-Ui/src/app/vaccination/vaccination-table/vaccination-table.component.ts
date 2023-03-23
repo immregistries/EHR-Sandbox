@@ -8,9 +8,9 @@ import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { VaccinationDashboardDialogComponent } from '../vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
+import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -117,7 +117,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
   }
 
   openVaccination(vaccination: VaccinationEvent | number){
-    const dialogRef = this.dialog.open(VaccinationDashboardDialogComponent, {
+    const dialogRef = this.dialog.open(VaccinationDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

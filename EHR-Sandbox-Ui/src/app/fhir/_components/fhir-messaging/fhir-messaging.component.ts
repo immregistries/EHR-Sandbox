@@ -136,6 +136,7 @@ sendVaccination() {
         this.vaccinationAnswer = "Error"
       }
       this.feedbackService.doRefresh()
+      this.snackBarService.fatalFhirMessage("", this.patientId)
       // const feedback: Feedback = {iis: "fhirTest", content: this.vaccinationAnswer, severity: "error", date: new Date()}
       // this.feedbackService.postVaccinationFeedback(this.patientId, this.vaccinationId, feedback).subscribe((res) => {
       //   console.log(res)

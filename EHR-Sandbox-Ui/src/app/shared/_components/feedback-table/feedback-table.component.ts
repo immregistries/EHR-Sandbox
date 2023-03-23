@@ -8,8 +8,8 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { PatientDashboardDialogComponent } from 'src/app/patient/patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
-import { VaccinationDashboardDialogComponent } from 'src/app/vaccination/vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
+import { PatientDashboardComponent } from 'src/app/patient/patient-dashboard/patient-dashboard.component';
+import { VaccinationDashboardComponent } from 'src/app/vaccination/vaccination-dashboard/vaccination-dashboard.component';
 
 @Component({
   selector: 'app-feedback-table',
@@ -119,7 +119,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
 
 
   openPatient(patient: EhrPatient | number){
-    const dialogRef = this.dialog.open(PatientDashboardDialogComponent, {
+    const dialogRef = this.dialog.open(PatientDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
@@ -130,7 +130,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   }
 
   openVaccination(vaccination: VaccinationEvent | number){
-    const dialogRef = this.dialog.open(VaccinationDashboardDialogComponent, {
+    const dialogRef = this.dialog.open(VaccinationDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

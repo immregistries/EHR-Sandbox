@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Scanner;
+
 import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @Service
@@ -88,7 +90,7 @@ public class ResourceIdentificationService {
          * first we check if the patient has known identifier for the facility system
          */
         for (Identifier identifier: remoteImmunization.getIdentifier()) {
-            id = getImmunizationLocalId(identifier, immunizationRegistry, facility);
+            id = getImmunizationLocalId(identifier, facility);
             if ( id != null && !id.isBlank()) {
                 return id;
             }
@@ -104,7 +106,7 @@ public class ResourceIdentificationService {
         if (reference.getReference() != null && !reference.getReference().isBlank()) {
             return getImmunizationLocalId(new IdType(reference.getReference()), immunizationRegistry);
         } else if (reference.getIdentifier() != null){
-            return getImmunizationLocalId(reference.getIdentifier(), immunizationRegistry, facility);
+            return getImmunizationLocalId(reference.getIdentifier(), facility);
         } else {
             return null;
         }
@@ -113,12 +115,51 @@ public class ResourceIdentificationService {
         return immunizationIdentifierRepository.findByIdentifierAndImmunizationRegistryId(idType.getIdPart(),immunizationRegistry.getId())
                 .orElse(new ImmunizationIdentifier()).getVaccinationEventId();
     }
-    public String getImmunizationLocalId(Identifier identifier, ImmunizationRegistry immunizationRegistry, Facility facility) {
+    public String getImmunizationLocalId(Identifier identifier, Facility facility) {
         if (identifier.getSystem().equals(getFacilityImmunizationIdentifierSystem(facility))) { //
             return identifier.getValue();
         } else {
             return null;
         }
+    }
+
+    public String getLocalUrnFromUrn(String urn, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        try {
+            IdType idType = new IdType(urn);
+            if (idType.getResourceType().equals("Patient")){
+                return "Patient/" + this.getPatientLocalId(idType,immunizationRegistry);
+            } else if (idType.getResourceType().equals("Immunization")) {
+                return "Immunization/" + this.getImmunizationLocalId(new IdType(urn), immunizationRegistry);
+            }
+        } catch (Exception e) {
+            System.out.println(urn);
+            e.printStackTrace();
+        }
+        Scanner scanner = new Scanner(urn);
+        scanner.useDelimiter("/|#");
+        String next = "";
+        String prev = "";
+        while (scanner.hasNext()) {
+            prev = next;
+            next = scanner.next();
+            if (next.equals("?identifier=")) {
+                String identifierFirstPart = scanner.next("\\|");
+                Identifier identifier = new Identifier();
+                if (scanner.hasNext("\\|")) {
+                    identifier.setSystem(identifierFirstPart)
+                            .setValue(scanner.next("\\|"));
+                } else {
+                    identifier.setValue(identifierFirstPart);
+                }
+
+                if (prev.equals("Patient")) {
+                    return "Patient/" + this.getPatientLocalId(identifier,facility);
+                } else if (prev.equals("Immunization")) {
+                    return "Immunization/" + this.getImmunizationLocalId(identifier,facility);
+                }
+            }
+        }
+        return null;
     }
 
 

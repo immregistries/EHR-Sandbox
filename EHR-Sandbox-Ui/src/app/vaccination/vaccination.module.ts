@@ -32,7 +32,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { LayoutModule } from '@angular/cdk/layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VaccinationDashboardComponent } from './vaccination-dashboard/vaccination-dashboard.component';
-import { VaccinationDashboardDialogComponent } from './vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
 import { VaccinationDetailsComponent } from './vaccination-details/vaccination-details.component';
 import { VaccinationHistoryComponent } from './vaccination-history/vaccination-history.component';
 import { RecommendationTableComponent } from './recommandation-table/recommendation-table.component';
@@ -43,7 +42,6 @@ import { RecommendationTableComponent } from './recommandation-table/recommendat
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
     VaccinationDashboardComponent,
-    VaccinationDashboardDialogComponent,
     VaccinationDetailsComponent,
     VaccinationHistoryComponent,
     RecommendationTableComponent,

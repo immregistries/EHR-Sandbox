@@ -34,6 +34,7 @@ import { ImmunizationRegistryMenuComponent } from './_components/_menus/immuniza
 import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
 import { KeysPipe } from './_pipes/keys.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FeedbackIconComponent } from './_components/feedback-icon/feedback-icon.component';
 
 
 @NgModule({
@@ -55,6 +56,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
     KeysPipe,
+    FeedbackIconComponent,
   ],
   imports: [
     CommonModule,
@@ -104,6 +106,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
      ImmunizationRegistryMenuComponent,
      LocalCopyDialogComponent,
      KeysPipe,
+     FeedbackIconComponent,
   ],
 })
 export class SharedModule { }

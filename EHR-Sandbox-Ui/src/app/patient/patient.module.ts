@@ -36,7 +36,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { PatientDashboardComponent } from './patient-dashboard/patient-dashboard.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { VaccinationModule } from '../vaccination/vaccination.module';
-import { PatientDashboardDialogComponent } from './patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
 import { PatientMenuComponent } from './patient-menu/patient-menu.component';
 import { PatientHistoryComponent } from './patient-history/patient-history.component';
 
@@ -48,7 +47,6 @@ import { PatientHistoryComponent } from './patient-history/patient-history.compo
     PatientTableComponent,
     PatientDetailsComponent,
     PatientDashboardComponent,
-    PatientDashboardDialogComponent,
     PatientMenuComponent,
     PatientHistoryComponent
   ],

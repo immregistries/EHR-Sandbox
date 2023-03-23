@@ -17,7 +17,7 @@ export class PatientDashboardComponent {
     private patientService: PatientService,
     public _dialogRef: MatDialogRef<PatientDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient?: EhrPatient | number}) {
-      if(data.patient) {
+      if(data?.patient) {
         if (typeof data.patient === "number" ||  "string") {
           this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
             this.patient = res
