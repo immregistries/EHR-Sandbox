@@ -1,0 +1,10 @@
+<button mat-icon-button *ngIf="element.feedbacks && element.feedbacks.length > 0"
+  style="color: red;"
+  matTooltip="{{element.feedbacks[0].content}}"
+  matTooltipClass="example-tooltip-red"
+  (click)="openFeedback(element); $event.stopPropagation();">
+  <mat-icon>
+    warning
+  </mat-icon>
+  {{element.feedbacks.length}}
+</button>
