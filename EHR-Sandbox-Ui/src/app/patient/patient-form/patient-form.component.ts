@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Facility, Patient, Tenant } from 'src/app/core/_model/rest';
+import { Facility, EhrPatient, Tenant } from 'src/app/core/_model/rest';
 import { FormCard, formType, Reference } from 'src/app/core/_model/structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -13,9 +13,9 @@ import { BehaviorSubject } from 'rxjs';
 export class PatientFormComponent implements OnInit {
 
   @Input()
-  patient: Patient = {id: -1};
+  patient: EhrPatient = {id: -1};
   @Output()
-  patientChange = new EventEmitter<Patient>();
+  patientChange = new EventEmitter<EhrPatient>();
 
   /**
    * Currently unusused, just initialised

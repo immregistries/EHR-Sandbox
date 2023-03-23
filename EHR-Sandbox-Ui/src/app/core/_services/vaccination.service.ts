@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, share, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { Patient, Revision, VaccinationEvent} from '../_model/rest';
+import { EhrPatient, Revision, VaccinationEvent} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 

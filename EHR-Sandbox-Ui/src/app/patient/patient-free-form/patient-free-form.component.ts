@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Patient } from 'src/app/core/_model/rest';
+import { EhrPatient } from 'src/app/core/_model/rest';
 import { FormCard } from 'src/app/core/_model/structure';
 
 @Component({
@@ -10,9 +10,9 @@ import { FormCard } from 'src/app/core/_model/structure';
 export class PatientFreeFormComponent implements OnInit {
 
   @Input()
-  patient: Patient = {id: -1};
+  patient: EhrPatient = {id: -1};
   @Output()
-  patientChange = new EventEmitter<Patient>();
+  patientChange = new EventEmitter<EhrPatient>();
 
   @Input()
   formCards!: FormCard[]

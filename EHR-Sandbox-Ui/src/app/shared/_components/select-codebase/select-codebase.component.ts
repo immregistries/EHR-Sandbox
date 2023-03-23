@@ -2,7 +2,7 @@ import { KeyValuePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { BehaviorSubject, map, Observable, of, startWith, Subscription } from 'rxjs';
-import { Patient, VaccinationEvent } from 'src/app/core/_model/rest';
+import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { Code, CodeMap, Form, Reference, ReferenceLink } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 

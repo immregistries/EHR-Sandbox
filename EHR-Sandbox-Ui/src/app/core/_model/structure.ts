@@ -1,4 +1,4 @@
-import { Clinician, Facility, Patient, VaccinationEvent, Vaccine } from "./rest";
+import { Clinician, Facility, EhrPatient, VaccinationEvent, Vaccine } from "./rest";
 /**
  * Interface for codemaps lists
  */
@@ -56,7 +56,7 @@ export interface Form {
   options?: {value: string, label?: string}[],
 }
 export interface PatientForm extends Form{
-  attribute: keyof Patient,
+  attribute: keyof EhrPatient,
 }
 export interface VaccinationForm extends Form{
   attribute: keyof VaccinationEvent,

@@ -2,6 +2,10 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
+import org.hl7.fhir.r5.model.ImmunizationRecommendation;
+import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.User;
 import org.immregistries.ehr.fhir.ServerR4.EhrFhirServerR4;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
@@ -22,6 +26,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 @SpringBootApplication
@@ -98,6 +106,15 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	@Bean
 	public RequestContextListener requestContextListener() {
 		return new RequestContextListener();
+	}
+
+	@Bean
+	/**
+	 * Map<FacilityId,Map<EhrPatientId, Set<ImmunizationRecommendation>>>
+	 */
+	public Map<Integer, Map<String, Set<ImmunizationRecommendation>>> immunizationRecommendations() {
+		Map<Integer,Map<String, Set<ImmunizationRecommendation>>> map = new HashMap<>(10);
+		return map;
 	}
 
 }

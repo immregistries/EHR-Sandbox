@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { merge } from 'rxjs';
-import { SubscriptionStore } from 'src/app/core/_model/rest';
+import { EhrSubscription } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
 import { FhirService } from '../../_services/fhir.service';
@@ -17,7 +17,7 @@ export class SubscriptionDashboardComponent implements OnInit {
     private subscriptionService: SubscriptionService,
     public facilityService: FacilityService) { }
 
-  subscription?: SubscriptionStore;
+  subscription?: EhrSubscription;
   error: string = "";
   loading: boolean = false;
 

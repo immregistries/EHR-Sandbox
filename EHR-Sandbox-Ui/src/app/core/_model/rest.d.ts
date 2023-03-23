@@ -2,7 +2,7 @@
 /* eslint-disable */
 // Generated using typescript-generator version 2.35.1025 on 2022-03-11 10:41:27.
 
-export interface SubscriptionStore {
+export interface EhrSubscription {
   identifier?: number;
   name?: string;
   status?: string;
@@ -24,7 +24,7 @@ export interface SubscriptionStore {
 export interface Feedback {
   id?: number;
   iis?: string;
-  patient?: Patient  | number;
+  patient?: EhrPatient  | number;
   vaccinationEvent?: VaccinationEvent | number;
   facility?: Facility | number;
   content?: string;
@@ -44,7 +44,7 @@ export interface Facility {
   id: number;
   nameDisplay?: string;
   facilities?: (Facility | number)[];
-  patients?: (Patient | number)[];
+  patients?: (EhrPatient | number)[];
   feedbacks?: (Feedback | number)[];
   tenant?: number | Tenant;
 }
@@ -82,7 +82,7 @@ export interface NextOfKin {
   ethnicity?: string;
 }
 
-export interface Patient {
+export interface EhrPatient {
   id?: number;
   mrn?: string;
   createdDate?: Date;

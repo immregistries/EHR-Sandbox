@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { merge, switchMap, tap } from 'rxjs';
 import { FeedbackDialogComponent } from 'src/app/shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
-import { Facility, Patient } from 'src/app/core/_model/rest';
+import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -25,7 +25,7 @@ import { PatientDashboardDialogComponent } from '../patient-dashboard/patient-da
 })
 export class PatientTableComponent implements AfterViewInit {
 
-  dataSource = new MatTableDataSource<Patient>([]);
+  dataSource = new MatTableDataSource<EhrPatient>([]);
   // expandedElement: Patient | null = null;
 
   @Input() facility: Facility = {id: -1};
@@ -33,7 +33,7 @@ export class PatientTableComponent implements AfterViewInit {
   loading: boolean= false
   lastIdSelectedBeforeRefresh: number = -1;
 
-  columns: (keyof Patient | 'alerts')[] = [
+  columns: (keyof EhrPatient | 'alerts')[] = [
     "nameFirst",
     "nameMiddle",
     "nameLast",
@@ -44,7 +44,7 @@ export class PatientTableComponent implements AfterViewInit {
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
 
-  onSelection(event: Patient) {
+  onSelection(event: EhrPatient) {
     if (this.patientService.getPatientId() == event.id){
       this.patientService.setPatient({})
     } else {
@@ -64,7 +64,7 @@ export class PatientTableComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // Set filter rules for research
-    this.dataSource.filterPredicate = (data: Patient, filter: string) =>{
+    this.dataSource.filterPredicate = (data: EhrPatient, filter: string) =>{
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
 
@@ -77,7 +77,7 @@ export class PatientTableComponent implements AfterViewInit {
       this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((list) => {
         this.loading = false
         this.dataSource.data = list
-        this.patientService.setPatient(list.find((patient: Patient) => {return patient.id === this.patientService.getPatientId()}) ?? {})
+        this.patientService.setPatient(list.find((patient: EhrPatient) => {return patient.id === this.patientService.getPatientId()}) ?? {})
     })})
   }
 
@@ -96,7 +96,7 @@ export class PatientTableComponent implements AfterViewInit {
   }
 
 
-  openFeedback(element: Patient) {
+  openFeedback(element: EhrPatient) {
     const dialogRef = this.dialog.open(FeedbackDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -107,7 +107,7 @@ export class PatientTableComponent implements AfterViewInit {
     });
   }
 
-  openPatient(patient: Patient){
+  openPatient(patient: EhrPatient){
     const dialogRef = this.dialog.open(PatientDashboardDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -116,9 +116,9 @@ export class PatientTableComponent implements AfterViewInit {
       panelClass: 'dialog-with-bar',
       data: {patient: patient.id},
     });
-    // dialogRef.afterClosed().subscribe(result => {
-    //   this.patientService.doRefresh()
-    // });
+    dialogRef.afterClosed().subscribe(result => {
+      this.patientService.doRefresh()
+    });
   }
 
 }

@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Patient } from 'src/app/core/_model/rest';
+import { EhrPatient } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 @Component({
@@ -11,13 +11,13 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 })
 export class PatientFormDialogComponent implements OnInit {
 
-  patient: Patient = {id: -1};
+  patient: EhrPatient = {id: -1};
   isEditionMode: boolean = false;
 
   constructor(private patientService: PatientService,
     private snackBarService: SnackBarService,
     public _dialogRef: MatDialogRef<PatientFormDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {patient: Patient}) {
+    @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient}) {
       if (data.patient){
         this.patient = data.patient;
         this.isEditionMode = true
@@ -31,7 +31,7 @@ export class PatientFormDialogComponent implements OnInit {
   save(): void {
     if (this.isEditionMode) {
       this.patientService.quickPutPatient(this.patient).subscribe({
-        next: (res: Patient) => {
+        next: (res: EhrPatient) => {
           this.patientService.doRefresh()
           this._dialogRef.close(true)
         },

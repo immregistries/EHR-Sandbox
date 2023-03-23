@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { Patient, Revision} from '../_model/rest';
+import { EhrPatient, Revision} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 
@@ -18,7 +18,7 @@ const httpOptions = {
  */
 export class PatientService {
 
-  private patient: BehaviorSubject<Patient>;
+  private patient: BehaviorSubject<EhrPatient>;
 
   /**
    * Global observable used to trigger a refresh for all the lists of patients, when a new patient was created
@@ -37,11 +37,11 @@ export class PatientService {
     // this.lastRefreshTime = new Date().getTime()
   }
 
-  public getObservablePatient(): Observable<Patient> {
+  public getObservablePatient(): Observable<EhrPatient> {
     return this.patient.asObservable();
   }
 
-  public getPatient(): Patient {
+  public getPatient(): EhrPatient {
     return this.patient.value
   }
 
@@ -53,7 +53,7 @@ export class PatientService {
     }
   }
 
-  public setPatient(patient: Patient) {
+  public setPatient(patient: EhrPatient) {
     this.patient.next(patient)
   }
 
@@ -61,7 +61,7 @@ export class PatientService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService ) {
-      this.patient = new BehaviorSubject<Patient>({id:-1})
+      this.patient = new BehaviorSubject<EhrPatient>({id:-1})
       this.refresh = new BehaviorSubject<boolean>(false)
       this.facilityService.getObservableFacility().subscribe((facility) => {
         this.setPatient({})
@@ -73,8 +73,8 @@ export class PatientService {
    *
    * @returns Patient object filled with random information
    */
-  readRandom(): Observable<Patient> {
-    return this.http.get<Patient>(
+  readRandom(): Observable<EhrPatient> {
+    return this.http.get<EhrPatient>(
       this.settings.getApiUrl() + '/$random_patient', httpOptions);
   }
 
@@ -82,7 +82,7 @@ export class PatientService {
    *
    * @returns list of patients associated to the tenant and facility selected in their respected services
    */
-   quickReadPatients(): Observable<Patient[]> {
+   quickReadPatients(): Observable<EhrPatient[]> {
     const tenantId = this.tenantService.getTenantId()
     const facilityId = this.facilityService.getFacilityId()
     return this.readPatients(tenantId, facilityId)
@@ -95,9 +95,9 @@ export class PatientService {
    * @param facilityId
    * @returns list of patients associated to the tenant and facility
    */
-  readPatients(tenantId: number, facilityId: number): Observable<Patient[]> {
+  readPatients(tenantId: number, facilityId: number): Observable<EhrPatient[]> {
     if (tenantId > 0 && facilityId > 0){
-      return this.http.get<Patient[]>(
+      return this.http.get<EhrPatient[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         httpOptions);
     }
@@ -109,16 +109,16 @@ export class PatientService {
    * @param tenantId
    * @returns list of patients associated to the tenant
    */
-  readAllPatients(tenantId: number): Observable<Patient[]> {
+  readAllPatients(tenantId: number): Observable<EhrPatient[]> {
     if (tenantId > 0){
-      return this.http.get<Patient[]>(
+      return this.http.get<EhrPatient[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/patients`,
         httpOptions);
     }
     return of([])
   }
 
-  quickReadPatient(patientId: number):  Observable<Patient> {
+  quickReadPatient(patientId: number):  Observable<EhrPatient> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.readPatient(tenantId,facilityId,patientId)
@@ -131,16 +131,16 @@ export class PatientService {
    * @param patientId
    * @returns patient Get Response
    */
-  readPatient(tenantId: number, facilityId: number, patientId: number): Observable<Patient> {
-    return this.http.get<Patient>(
+  readPatient(tenantId: number, facilityId: number, patientId: number): Observable<EhrPatient> {
+    return this.http.get<EhrPatient>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}`,
       httpOptions);
   }
 
-  readPatientHistory(patientId: number): Observable<Revision<Patient>[]> {
+  readPatientHistory(patientId: number): Observable<Revision<EhrPatient>[]> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.http.get<Revision<Patient>[]>(
+    return this.http.get<Revision<EhrPatient>[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/$history`,
       httpOptions);
   }
@@ -150,13 +150,13 @@ export class PatientService {
    * @param patient
    * @returns Post patient Response
    */
-  quickPostPatient(patient: Patient): Observable<HttpResponse<string>>  {
+  quickPostPatient(patient: EhrPatient): Observable<HttpResponse<string>>  {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.postPatient(tenantId,facilityId,patient)
   }
 
-  postPatient(tenantId: number, facilityId: number, patient: Patient): Observable<HttpResponse<string>> {
+  postPatient(tenantId: number, facilityId: number, patient: EhrPatient): Observable<HttpResponse<string>> {
     if (tenantId > 0 && facilityId > 0){
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
@@ -167,7 +167,7 @@ export class PatientService {
     }
   }
 
-  postPatientOnFacilityOnly(facilityId: number, patient: Patient): Observable<HttpResponse<string>> {
+  postPatientOnFacilityOnly(facilityId: number, patient: EhrPatient): Observable<HttpResponse<string>> {
     if (facilityId > 0){
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/facilities/${facilityId}/patients`,
@@ -178,15 +178,15 @@ export class PatientService {
     }
   }
 
-  quickPutPatient(patient: Patient): Observable<Patient>  {
+  quickPutPatient(patient: EhrPatient): Observable<EhrPatient>  {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.putPatient(tenantId,facilityId,patient)
   }
 
-  putPatient(tenantId: number, facilityId: number, patient: Patient,): Observable<Patient> {
+  putPatient(tenantId: number, facilityId: number, patient: EhrPatient,): Observable<EhrPatient> {
     if (tenantId > 0 && facilityId > 0 ){
-      return this.http.put<Patient>(
+      return this.http.put<EhrPatient>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         patient, httpOptions);
     } else {

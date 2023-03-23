@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { Patient } from 'src/app/core/_model/rest';
+import { EhrPatient } from 'src/app/core/_model/rest';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -9,7 +9,7 @@ import { Patient } from 'src/app/core/_model/rest';
   styleUrls: ['./patient-dashboard.component.css']
 })
 export class PatientDashboardComponent {
-  @Input() patient!: Patient
+  @Input() patient!: EhrPatient
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 }

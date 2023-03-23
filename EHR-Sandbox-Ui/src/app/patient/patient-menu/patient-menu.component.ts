@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Patient } from 'src/app/core/_model/rest';
+import { EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
@@ -15,7 +15,7 @@ export class PatientMenuComponent implements OnInit {
   constructor(public patientService: PatientService, public facilityService: FacilityService, public dialog: MatDialog) { }
 
 
-  list?: Patient[];
+  list?: EhrPatient[];
 
   ngOnInit(): void {
 
@@ -26,7 +26,7 @@ export class PatientMenuComponent implements OnInit {
     })
   }
 
-  onSelection(event: Patient) {
+  onSelection(event: EhrPatient) {
     if (this.patientService.getPatientId() == event.id) { // unselect
       this.patientService.setPatient({})
     } else {

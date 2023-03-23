@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { merge, startWith, tap } from 'rxjs';
-import { Facility, SubscriptionStore } from 'src/app/core/_model/rest';
+import { Facility, EhrSubscription } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
 import { FhirService } from '../../_services/fhir.service';
@@ -24,13 +24,13 @@ export class SubscriptionTableComponent implements OnInit {
   @Input() facility: Facility = {id: -1};
   @Input() title: string = 'Registered Subscriptions'
   loading: boolean = false
-  columns: (keyof SubscriptionStore | "event_since_start")[] = [
+  columns: (keyof EhrSubscription | "event_since_start")[] = [
     "name", "status", "identifier","notificationUrlLocation"
     , "event_since_start"
   ]
 
-  dataSource = new MatTableDataSource<SubscriptionStore>([]);
-  expandedElement: SubscriptionStore | null = null;
+  dataSource = new MatTableDataSource<EhrSubscription>([]);
+  expandedElement: EhrSubscription | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -47,7 +47,7 @@ export class SubscriptionTableComponent implements OnInit {
   }
   ngAfterViewInit(): void {
     // Set filter rules for research
-    this.dataSource.filterPredicate = (data: SubscriptionStore | number, filter: string) =>{
+    this.dataSource.filterPredicate = (data: EhrSubscription | number, filter: string) =>{
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
   }
@@ -68,7 +68,7 @@ export class SubscriptionTableComponent implements OnInit {
     })
   }
 
-  onSelection(event: SubscriptionStore) {
+  onSelection(event: EhrSubscription) {
     if (this.expandedElement && this.expandedElement.identifier == event.identifier){
       this.expandedElement = null
     } else {

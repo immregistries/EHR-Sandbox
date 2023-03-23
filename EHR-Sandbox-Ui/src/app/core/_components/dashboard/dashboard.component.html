@@ -1,5 +1,5 @@
 <div class="grid-container">
-  <mat-grid-list cols="2"  [rowHeight]="rowHeight()">
+  <mat-grid-list cols="7"  [rowHeight]="rowHeight()">
   <!-- <mat-grid-list cols="7"  rowHeight="{{rowHeight}}"> -->
     <!-- <mat-grid-tile>
       <mat-card class="dashboard-card">
@@ -25,24 +25,31 @@
         </mat-card-content>
       </mat-card>
     </mat-grid-tile> -->
-    <mat-grid-tile [colspan]="1" >
+    <mat-grid-tile [colspan]="4" >
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
           <app-patient-table></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="1" >
+    <mat-grid-tile [colspan]="3" >
       <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content" >
+        <mat-card-content class="dashboard-card-content" #feedback>
           <app-feedback-table [facility]="facilityService.getFacility()"></app-feedback-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-grid-tile [colspan]="4" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #vaccinations>
           <app-vaccination-table [patientId]="patientService.getPatientId()"></app-vaccination-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="3" [rowspan]="1">
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content" #recommendations>
+          <app-recommendation-table [patientId]="patientService.getPatientId()"></app-recommendation-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { SubscriptionStore } from '../../core/_model/rest';
+import { EhrSubscription } from '../../core/_model/rest';
 import { FacilityService } from '../../core/_services/facility.service';
 import { SettingsService } from '../../core/_services/settings.service';
 import { TenantService } from '../../core/_services/tenant.service';
@@ -42,13 +42,13 @@ export class SubscriptionService {
       httpOptions);
   }
 
-  readSubscription(): Observable<SubscriptionStore> {
+  readSubscription(): Observable<EhrSubscription> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId = this.facilityService.getFacilityId()
     if (facilityId < 0) {
       return of()
     }
-    return this.http.get<SubscriptionStore>(
+    return this.http.get<EhrSubscription>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/subscription`,
       httpOptions);
   }

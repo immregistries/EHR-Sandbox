@@ -6,7 +6,6 @@ import org.immregistries.ehr.api.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
@@ -44,13 +43,7 @@ public class ResourceIdentificationService {
          * first we check if the patient has known identifier for the facility system or MRN
          */
         for (Identifier identifier: remotePatient.getIdentifier()) {
-            if (identifier.getSystem().equals(MRN_SYSTEM)) { // TODO exception or flavor
-                Optional<EhrPatient> ehrPatient = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(),identifier.getValue());
-                if (ehrPatient.isPresent()) {
-                    return ehrPatient.get().getId();
-                }
-            }
-            id = getPatientLocalId(identifier, immunizationRegistry, facility);
+            id = getPatientLocalId(identifier, facility);
             if ( id != null && !id.isBlank()) {
                 return id;
             }
@@ -65,7 +58,7 @@ public class ResourceIdentificationService {
         if (reference.getReference() != null && !reference.getReference().isBlank()) {
             return getPatientLocalId(new IdType(reference.getReference()), immunizationRegistry);
         } else if (reference.getIdentifier() != null){
-            return getPatientLocalId(reference.getIdentifier(), immunizationRegistry, facility);
+            return getPatientLocalId(reference.getIdentifier(), facility);
         } else {
             return null;
         }
@@ -75,10 +68,15 @@ public class ResourceIdentificationService {
         return patientIdentifierRepository.findByIdentifierAndImmunizationRegistryId(idType.getIdPart(),immunizationRegistry.getId())
                 .orElse(new PatientIdentifier()).getPatientId();
     }
-    public String getPatientLocalId(Identifier identifier, ImmunizationRegistry immunizationRegistry, Facility facility) {
+
+    public String getPatientLocalId(Identifier identifier, Facility facility) {
         if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
             return identifier.getValue();
-        } else {
+        } else if (identifier.getSystem().equals(MRN_SYSTEM)) {
+            System.out.println(identifier.getValue());
+            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
+                    .map(EhrPatient::getId).orElse(null);
+        }else {
             return null;
         }
     }

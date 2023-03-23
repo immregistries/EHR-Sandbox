@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Patient, VaccinationEvent } from 'src/app/core/_model/rest';
+import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirDialogComponent } from 'src/app/fhir/_components/fhir-dialog/fhir-dialog.component';
 import { Hl7MessagingComponent } from 'src/app/fhir/_components/hl7-messaging/hl7-messaging.component';

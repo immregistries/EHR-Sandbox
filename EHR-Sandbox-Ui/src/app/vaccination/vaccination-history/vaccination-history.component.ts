@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Patient, Revision, VaccinationEvent } from 'src/app/core/_model/rest';
+import { EhrPatient, Revision, VaccinationEvent } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 

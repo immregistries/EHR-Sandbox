@@ -35,6 +35,7 @@ export class RecommendationTableComponent implements OnInit {
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
     private recommendationService: RecommendationService,
+    private vaccinationService: VaccinationService,
     private patientService: PatientService) { }
 
   ngOnInit(): void {
@@ -60,7 +61,7 @@ export class RecommendationTableComponent implements OnInit {
     // this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
 
     merge(
-      // this.vaccinationService.getRefresh(),
+      this.vaccinationService.getRefresh(),
       this.patientService.getObservablePatient().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
     ).subscribe(() => {
       this.loading = true

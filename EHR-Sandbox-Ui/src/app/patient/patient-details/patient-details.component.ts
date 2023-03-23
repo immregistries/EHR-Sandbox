@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FhirDialogComponent } from 'src/app/fhir/_components/fhir-dialog/fhir-dialog.component';
 import { LocalCopyDialogComponent } from 'src/app/shared/_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
-import { Patient } from '../../core/_model/rest';
+import { EhrPatient } from '../../core/_model/rest';
 import { PatientService } from '../../core/_services/patient.service';
 import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
 
@@ -12,7 +12,7 @@ import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/
   styleUrls: ['./patient-details.component.css']
 })
 export class PatientDetailsComponent implements OnInit {
-  @Input() patient!: Patient
+  @Input() patient!: EhrPatient
 
   constructor(private dialog: MatDialog,
     private patientService: PatientService,) { }
@@ -20,7 +20,7 @@ export class PatientDetailsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openEdition(element: Patient) {
+  openEdition(element: EhrPatient) {
     const dialogRef = this.dialog.open(PatientFormDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -34,7 +34,7 @@ export class PatientDetailsComponent implements OnInit {
     });
   }
 
-  openFhir(element: Patient) {
+  openFhir(element: EhrPatient) {
     const dialogRef = this.dialog.open(FhirDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
@@ -48,7 +48,7 @@ export class PatientDetailsComponent implements OnInit {
     });
   }
 
-  openCopy(element: Patient) {
+  openCopy(element: EhrPatient) {
     const dialogRef = this.dialog.open(LocalCopyDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',

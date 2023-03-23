@@ -3,10 +3,11 @@ import { AfterContentInit, AfterViewInit, Component, ElementRef, Input, OnChange
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs';
-import { Facility, Feedback, Patient, VaccinationEvent } from 'src/app/core/_model/rest';
+import { Facility, Feedback, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientDashboardDialogComponent } from 'src/app/patient/patient-dashboard/patient-dashboard-dialog/patient-dashboard-dialog.component';
 import { VaccinationDashboardDialogComponent } from 'src/app/vaccination/vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
@@ -28,7 +29,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   expandedElement: Feedback | null = null;
 
   @Input() facility: Facility = {id: -1};
-  @Input() patient?: Patient;
+  @Input() patient?: EhrPatient;
   @Input() vaccination?: VaccinationEvent;
   @Input() title: string = 'Feedback from IIS'
   loading: boolean = false
@@ -49,6 +50,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     private facilityService: FacilityService,
     private feedbackService: FeedbackService,
     private patientService: PatientService,
+    private snackBarService: SnackBarService,
     ) { }
 
 
@@ -74,7 +76,6 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     if (this.vaccination) {
       this.columns = this.columns.filter((attribute => attribute != "vaccinationEvent"))
     }
-
   }
 
   ngAfterViewInit(): void {
@@ -108,7 +109,9 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     }
   }
 
-  openPatient(patient: Patient | number){
+
+
+  openPatient(patient: EhrPatient | number){
     const dialogRef = this.dialog.open(PatientDashboardDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',

@@ -38,6 +38,8 @@ public class BundleProviderR5 implements IResourceProvider {
         @Autowired
         private ImmunizationProviderR5 immunizationProvider;
         @Autowired
+        private ImmunizationRecommendationProviderR5 immunizationRecommendationProvider;
+        @Autowired
         private PatientProviderR5 patientProvider;
         @Autowired
         private SubscriptionStatusProviderR5 subscriptionStatusProvider;
@@ -62,7 +64,6 @@ public class BundleProviderR5 implements IResourceProvider {
         @Create()
         public MethodOutcome create(@ResourceParam Bundle bundle, RequestDetails requestDetails, HttpServletRequest request) {
                 // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
-                logger.info("BUNDLE " + fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
 
                 MethodOutcome outcome = new MethodOutcome();
                 List<MethodOutcome> outcomeList = new ArrayList<>();
@@ -89,8 +90,6 @@ public class BundleProviderR5 implements IResourceProvider {
                  * Subscription Security check
                  */
                 String secret = request.getHeader(SECRET_HEADER_NAME);
-                logger.info("Subscription header is : {}", ehrSubscription.getHeader());
-                logger.info("Received header is : {}", SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret);
 
                 if (!ehrSubscription.getHeader().equals(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret)) {
                         throw new AuthenticationException("Invalid header for subscription notification");
@@ -122,6 +121,11 @@ public class BundleProviderR5 implements IResourceProvider {
                                         bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.Immunization))).iterator().forEachRemaining(entry -> {
                                                 outcomeList.add(
                                                         immunizationProvider.updateImmunization((Immunization) entry.getResource(),requestDetails, immunizationRegistry)
+                                                );
+                                        });
+                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.ImmunizationRecommendation))).iterator().forEachRemaining(entry -> {
+                                                outcomeList.add(
+                                                        immunizationRecommendationProvider.updateImmunizationRecommendation((ImmunizationRecommendation) entry.getResource(),requestDetails, immunizationRegistry)
                                                 );
                                         });
                                         bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.OperationOutcome))).iterator().forEachRemaining(entry -> {

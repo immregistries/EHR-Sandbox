@@ -8,6 +8,8 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
@@ -23,6 +25,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,6 +56,12 @@ public class FhirClientController {
     CustomClientBuilder customClientBuilder;
 
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
+    @Autowired
+    private FeedbackRepository feedbackRepository;
+    @Autowired
+    private EhrPatientRepository ehrPatientRepository;
+    @Autowired
+    private VaccinationEventRepository vaccinationEventRepository;
 
 
     @GetMapping("/iim-registry/{immRegistryId}/{resourceType}/{id}")
@@ -120,28 +130,23 @@ public class FhirClientController {
             @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class, message);
-
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immunizationRegistryId);
         if (patientFhirId != null && !patientFhirId.isEmpty()) {
             immunization.setPatient(new Reference().setReference("Patient/" + new IdType(patientFhirId).getIdPart()));
         }
-        MethodOutcome outcome;
-        try {
-            ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immunizationRegistryId);
-            outcome = resourceClient.create(immunization, immunizationRegistry);
-            /**
-             * Registering received id as external id
-             */
-            immunizationIdentifierRepository.save(new ImmunizationIdentifier(
-                    vaccinationId, immunizationRegistry.getId(),outcome.getId().getIdPart()));
-            return ResponseEntity.ok(outcome.getId().getIdPart());
-
-        } catch (Exception e) {
-            throw e;
-        }
+        MethodOutcome outcome = resourceClient.create(immunization, immunizationRegistry);
+        /**
+         * Registering received id as external id
+         */
+        immunizationIdentifierRepository.save(new ImmunizationIdentifier(
+                vaccinationId, immunizationRegistry.getId(),outcome.getId().getIdPart()));
+        return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
     @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> updateImmunization(
+            @PathVariable() Integer facilityId,
+            @PathVariable() String patientId,
             @PathVariable() Integer immRegistryId,
             @PathVariable() String vaccinationId,
             @RequestBody String message,
@@ -150,15 +155,10 @@ public class FhirClientController {
         Immunization immunization = parser.parseResource(Immunization.class, message);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immRegistryId);
         if (patientFhirId != null && !patientFhirId.isEmpty()) {
-            if (patientFhirId.startsWith("Patient/")) {
-                immunization.setPatient(new Reference().setReference(patientFhirId));
-            } else {
-                immunization.setPatient(new Reference().setReference("Patient/" + patientFhirId));
-            }
+            immunization.setPatient(new Reference().setReference("Patient/" + new IdType(patientFhirId).getIdPart()));
         }
-        MethodOutcome outcome;
         try {
-            outcome = resourceClient.updateOrCreate(immunization,
+            MethodOutcome outcome = resourceClient.updateOrCreate(immunization,
                     "Immunization",
                     immunization.getIdentifierFirstRep(),
                     immunizationRegistry);
@@ -169,8 +169,17 @@ public class FhirClientController {
                     vaccinationId, immunizationRegistry.getId(),outcome.getId().getIdPart()));
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
-        } catch (Exception e) {
-            throw e;
+        } catch (BaseServerResponseException baseServerResponseException) {
+            Feedback feedback = new Feedback();
+            feedback.setFacility(facilityRepository.findById(facilityId).orElseThrow());
+            feedback.setPatient(ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow());
+            feedback.setVaccinationEvent(vaccinationEventRepository.findByPatientIdAndId(patientId,vaccinationId).orElseThrow());
+            feedback.setCode("invalid");
+            feedback.setSeverity("fatal");
+            feedback.setTimestamp(new Timestamp(new Date().getTime()));
+            feedback.setContent(baseServerResponseException.getMessage());
+            feedbackRepository.save(feedback);
+            throw baseServerResponseException;
         }
     }
 

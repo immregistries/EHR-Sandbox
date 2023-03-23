@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { switchMap } from 'rxjs';
-import { Facility, Patient } from 'src/app/core/_model/rest';
+import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -14,10 +14,10 @@ import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/
 })
 export class PatientListComponent implements OnInit {
 
-  @Input() public list?: Patient[];
+  @Input() public list?: EhrPatient[];
   @Input() facility?: Facility;
 
-  selectedOption?: Patient;
+  selectedOption?: EhrPatient;
 
 
   constructor(private tenantService: TenantService,
@@ -58,7 +58,7 @@ export class PatientListComponent implements OnInit {
     });
   }
 
-  onSelection(event: Patient) {
+  onSelection(event: EhrPatient) {
     if (this.selectedOption && this.selectedOption.id == event.id){
       this.selectedOption = undefined
       this.patientService.setPatient({})

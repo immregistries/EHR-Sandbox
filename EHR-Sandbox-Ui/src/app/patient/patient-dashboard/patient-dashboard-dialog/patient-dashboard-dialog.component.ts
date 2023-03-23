@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Patient } from 'src/app/core/_model/rest';
+import { EhrPatient } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
   styleUrls: ['./patient-dashboard-dialog.component.css']
 })
 export class PatientDashboardDialogComponent implements OnInit {
-  patient!: Patient
+  patient!: EhrPatient
 
   constructor( private patientService: PatientService,
     public _dialogRef: MatDialogRef< PatientDashboardDialogComponent>,

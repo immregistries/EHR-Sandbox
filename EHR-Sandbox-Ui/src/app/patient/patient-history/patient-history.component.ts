@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Patient, Revision } from 'src/app/core/_model/rest';
+import { EhrPatient, Revision } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({
@@ -27,8 +27,8 @@ export class PatientHistoryComponent implements OnInit {
     "origin"
   ]
 
-  history = new MatTableDataSource<Revision<Patient>>([]);
-  expandedElement: Revision<Patient> | any = null;
+  history = new MatTableDataSource<Revision<EhrPatient>>([]);
+  expandedElement: Revision<EhrPatient> | any = null;
 
   constructor(private patientService: PatientService) {
 
@@ -40,7 +40,7 @@ export class PatientHistoryComponent implements OnInit {
     })
   }
 
-  onSelection(event: Revision<Patient>) {
+  onSelection(event: Revision<EhrPatient>) {
     if (this.expandedElement && this.expandedElement.requiredRevisionNumber == event.requiredRevisionNumber){
       this.expandedElement = {}
     } else {
