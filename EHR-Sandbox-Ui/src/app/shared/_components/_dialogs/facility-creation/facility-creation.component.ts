@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
@@ -18,7 +18,7 @@ export class FacilityCreationComponent implements OnInit {
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private snackBarService: SnackBarService,
-    public _dialogRef: MatDialogRef<FacilityCreationComponent>) { }
+    @Optional() public _dialogRef: MatDialogRef<FacilityCreationComponent>) { }
 
   ngOnInit(): void {
   }
@@ -34,7 +34,7 @@ export class FacilityCreationComponent implements OnInit {
           this.facilityService.setFacility(res.body);
         }
         this.facilityService.doRefresh()
-        this._dialogRef.close(true)
+        this._dialogRef?.close(true)
       },
       error: (err) => {
         console.log(err.error)
