@@ -1,9 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { Facility, EhrPatient, Tenant } from 'src/app/core/_model/rest';
 import { FormCard, formType, Reference } from 'src/app/core/_model/structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { BehaviorSubject } from 'rxjs';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-patient-form',
@@ -17,6 +20,8 @@ export class PatientFormComponent implements OnInit {
   @Output()
   patientChange = new EventEmitter<EhrPatient>();
 
+  isEditionMode: boolean = false;
+
   /**
    * Currently unusused, just initialised
    */
@@ -25,13 +30,58 @@ export class PatientFormComponent implements OnInit {
 
   constructor(private patientService: PatientService,
     private breakpointObserver: BreakpointObserver,
-    ) { }
+    private snackBarService: SnackBarService,
+    @Optional() public _dialogRef: MatDialogRef<PatientFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient}) {
+      if (data && data.patient) {
+        this.patient = data.patient;
+        this.isEditionMode = true
+      }
+    }
 
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
   asString(val: any) : string { return val; }
 
   ngOnInit(): void {
+  }
+
+
+  fillRandom(): void {
+    this.patientService.readRandom().subscribe((res) => this.patient = res)
+  }
+
+  save(): void {
+    if (this.isEditionMode) {
+      this.patientService.quickPutPatient(this.patient).subscribe({
+        next: (res: EhrPatient) => {
+          this.patientService.doRefresh()
+          if (this._dialogRef) {
+            this._dialogRef.close(true)
+          }
+        },
+        error: (err) => {
+          console.log(err.error)
+          this.snackBarService.errorMessage(err.error.error);
+        }
+      });
+    } else {
+      this.patientService.quickPostPatient( this.patient).subscribe({
+        next: (res: HttpResponse<string>) => {
+          if (res.body) {
+            // this.snackBarService.successMessage(res.body)
+          }
+          this.patientService.doRefresh()
+          if (this._dialogRef) {
+            this._dialogRef.close(true)
+          }
+        },
+        error: (err) => {
+          console.log(err.error)
+          this.snackBarService.errorMessage(err.error.error);
+        }
+      });
+    }
   }
 
 

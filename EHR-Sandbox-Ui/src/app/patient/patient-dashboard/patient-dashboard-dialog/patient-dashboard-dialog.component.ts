@@ -13,21 +13,19 @@ export class PatientDashboardDialogComponent implements OnInit {
 
   constructor( private patientService: PatientService,
     public _dialogRef: MatDialogRef< PatientDashboardDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {patient: number}) {
+    @Inject(MAT_DIALOG_DATA) public data: {patient?: EhrPatient | number}) {
       if(data.patient) {
-        this.patientService.quickReadPatient(data.patient).subscribe((res) => {
-          this.patient = res
-        })
-        // if (typeof(data.patient) === 'number') {
-        //   this.patientService.quickReadPatient(data.patient).subscribe((res) => {
-        //     this.patient = res
-        //   })
-        // } else {
-        //   this.patient = data.patient
-        // }
+        if (typeof data.patient === "number" ||  "string") {
+          this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
+            this.patient = res
+          });
+        } else if (data.patient.id) {
+          this.patientService.quickReadPatient(data.patient.id).subscribe((res) => {
+            this.patient = res
+          });
+        }
       }
      }
-
   ngOnInit(): void {
   }
 

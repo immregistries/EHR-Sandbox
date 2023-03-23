@@ -41,7 +41,6 @@ export class LocalCopyDialogComponent implements OnInit {
           });
         } else {
           this.patient = JSON.parse(JSON.stringify(data.patient));
-
         }
       }
       if(data.vaccination){

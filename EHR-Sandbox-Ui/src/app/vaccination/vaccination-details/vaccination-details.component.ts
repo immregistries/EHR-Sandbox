@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirDialogComponent } from 'src/app/fhir/_components/fhir-dialog/fhir-dialog.component';
+import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from 'src/app/fhir/_components/hl7-messaging/hl7-messaging.component';
 import { LocalCopyDialogComponent } from 'src/app/shared/_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
-import { VaccinationCreationComponent } from '../vaccination-form/vaccination-creation/vaccination-creation.component';
+import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 
 @Component({
   selector: 'app-vaccination-details',
@@ -23,7 +23,7 @@ export class VaccinationDetailsComponent implements OnInit {
   }
 
   openEdition() {
-    const dialogRef = this.dialog.open(VaccinationCreationComponent, {
+    const dialogRef = this.dialog.open(VaccinationFormComponent, {
       maxWidth: '98vw',
       maxHeight: '95vh',
       height: 'fit-content',
@@ -51,7 +51,7 @@ export class VaccinationDetailsComponent implements OnInit {
   }
 
   openFhir() {
-    const dialogRef = this.dialog.open(FhirDialogComponent, {
+    const dialogRef = this.dialog.open(FhirMessagingComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

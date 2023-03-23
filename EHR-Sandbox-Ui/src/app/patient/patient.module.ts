@@ -32,8 +32,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { CoreModule } from '../core/core.module';
-import { PatientFormDialogComponent } from './patient-form/patient-form-dialog/patient-form-dialog.component';
+// import { CoreModule } from '../core/core.module';
 import { PatientDashboardComponent } from './patient-dashboard/patient-dashboard.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { VaccinationModule } from '../vaccination/vaccination.module';
@@ -48,7 +47,6 @@ import { PatientHistoryComponent } from './patient-history/patient-history.compo
     PatientFreeFormComponent,
     PatientTableComponent,
     PatientDetailsComponent,
-    PatientFormDialogComponent,
     PatientDashboardComponent,
     PatientDashboardDialogComponent,
     PatientMenuComponent,
@@ -93,7 +91,6 @@ import { PatientHistoryComponent } from './patient-history/patient-history.compo
     PatientFormComponent,
     PatientListComponent,
     PatientFreeFormComponent,
-    PatientFormDialogComponent,
     PatientTableComponent,
     PatientDetailsComponent,
     PatientDashboardComponent,

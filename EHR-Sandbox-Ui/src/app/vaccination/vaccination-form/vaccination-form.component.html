@@ -143,3 +143,8 @@
   </mat-tab>
   <button matButton></button>
 </mat-tab-group>
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button *ngIf="!isEditionMode" (click)="fillRandom()">Fill with random Information</button>
+  <button mat-raised-button (click)="save()" cdkFocusInitial>Save</button>
+</mat-dialog-actions>

@@ -1,4 +1,5 @@
-import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
@@ -43,8 +44,16 @@ export class FhirMessagingComponent implements AfterViewInit, OnInit, AfterViewC
     private vaccinationService: VaccinationService,
     private snackBarService: SnackBarService,
     private feedbackService: FeedbackService,
-    private immRegistriesService: ImmunizationRegistryService) {
-  }
+    private immRegistriesService: ImmunizationRegistryService,
+    @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId?: number}) {
+      if (data) {
+        this.patientId = data.patientId
+        if (data.vaccinationId) {
+          this.vaccinationId = data.vaccinationId
+        }
+      }
+     }
 
   public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
   public immunizationOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";

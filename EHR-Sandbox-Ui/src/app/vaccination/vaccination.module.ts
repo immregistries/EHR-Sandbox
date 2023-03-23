@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
-import { VaccinationCreationComponent } from './vaccination-form/vaccination-creation/vaccination-creation.component';
 import { VaccinationTableComponent } from './vaccination-table/vaccination-table.component';
 import { VaccinationFreeFormComponent } from './vaccination-form/vaccination-free-form/vaccination-free-form.component';
 import { SharedModule } from '../shared/shared.module';
@@ -41,7 +40,6 @@ import { RecommendationTableComponent } from './recommandation-table/recommendat
 @NgModule({
   declarations: [
     VaccinationFormComponent,
-    VaccinationCreationComponent,
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
     VaccinationDashboardComponent,
@@ -85,7 +83,6 @@ import { RecommendationTableComponent } from './recommandation-table/recommendat
   ],
   exports: [
     VaccinationFormComponent,
-    VaccinationCreationComponent,
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
     RecommendationTableComponent,

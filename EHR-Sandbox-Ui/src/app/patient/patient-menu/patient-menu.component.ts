@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
+import { PatientFormComponent } from '../patient-form/patient-form.component';
 
 @Component({
   selector: 'app-patient-menu',
@@ -35,7 +35,7 @@ export class PatientMenuComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(PatientFormDialogComponent, {
+    const dialogRef = this.dialog.open(PatientFormComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',

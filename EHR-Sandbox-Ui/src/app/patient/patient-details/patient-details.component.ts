@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FhirDialogComponent } from 'src/app/fhir/_components/fhir-dialog/fhir-dialog.component';
+import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { LocalCopyDialogComponent } from 'src/app/shared/_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
 import { EhrPatient } from '../../core/_model/rest';
 import { PatientService } from '../../core/_services/patient.service';
-import { PatientFormDialogComponent } from '../patient-form/patient-form-dialog/patient-form-dialog.component';
+import { PatientFormComponent } from '../patient-form/patient-form.component';
 
 @Component({
   selector: 'app-patient-details',
@@ -21,7 +21,7 @@ export class PatientDetailsComponent implements OnInit {
   }
 
   openEdition(element: EhrPatient) {
-    const dialogRef = this.dialog.open(PatientFormDialogComponent, {
+    const dialogRef = this.dialog.open(PatientFormComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
@@ -35,7 +35,7 @@ export class PatientDetailsComponent implements OnInit {
   }
 
   openFhir(element: EhrPatient) {
-    const dialogRef = this.dialog.open(FhirDialogComponent, {
+    const dialogRef = this.dialog.open(FhirMessagingComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
       height: 'fit-content',

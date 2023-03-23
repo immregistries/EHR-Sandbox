@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { FhirService } from './_services/fhir.service';
 import { Hl7Service } from './_services/hl7.service';
-import { FhirDialogComponent } from './_components/fhir-dialog/fhir-dialog.component';
 import { FhirGetComponent } from './_components/fhir-get/fhir-get.component';
 import { FhirMessagingComponent } from './_components/fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from './_components/hl7-messaging/hl7-messaging.component';
@@ -41,7 +40,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     Hl7MessagingComponent,
     FhirMessagingComponent,
     FhirGetComponent,
-    FhirDialogComponent,
     SubscriptionDashboardComponent,
     SubscriptionTableComponent,
     FhirPostComponent,
@@ -83,7 +81,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     Hl7MessagingComponent,
     FhirMessagingComponent,
     FhirGetComponent,
-    FhirDialogComponent,
     SubscriptionDashboardComponent,
     FhirPostComponent,
     FhirBulkComponent,

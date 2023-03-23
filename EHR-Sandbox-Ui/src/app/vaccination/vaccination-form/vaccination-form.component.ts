@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference} from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
@@ -7,6 +7,9 @@ import { KeyValue } from '@angular/common';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { randexp } from 'randexp';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -18,6 +21,58 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   @Input() vaccination: VaccinationEvent = {id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {}};
   @Output() vaccinationChange = new EventEmitter<VaccinationEvent>();
 
+
+  public patientId: number = -1
+  public isEditionMode: boolean = false
+
+  constructor(public codeMapsService: CodeMapsService,
+    private snackBarService: SnackBarService,
+    private vaccinationService: VaccinationService,
+    @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent}) {
+      if (data) {
+        this.patientId = data.patientId;
+        if (data.vaccination){
+          this.vaccination=data.vaccination
+          this.isEditionMode = true
+        }
+      }
+  }
+
+  fillRandom(): void {
+    this.vaccinationService.readRandom().subscribe((res) => {
+      this.vaccination=res
+    })
+  }
+
+  save(): void {
+    if (this.isEditionMode == true){
+      // TODO PUT implementation
+      this.vaccinationService.quickPutVaccination( this.patientId, this.vaccination).subscribe({
+        next: (res: VaccinationEvent) => {
+          this._dialogRef?.close(true)
+        },
+        error: (err) => {
+          console.log(err.error)
+          this.snackBarService.errorMessage(err.error.error)
+        }
+      });
+    } else {
+      this.vaccinationService.quickPostVaccination( this.patientId, this.vaccination).subscribe({
+        next: (res: HttpResponse<string>) => {
+          this._dialogRef?.close(true)
+        },
+        error: (err) => {
+          console.log(err.error)
+          this.snackBarService.errorMessage(err.error.error)
+        }
+      });
+    }
+
+  }
+
+
+
   private codeBaseMap!:  CodeBaseMap;
   private codeBaseMapKeys!:  string[];
   private codeBaseMapValues!:  CodeMap[];
@@ -26,11 +81,8 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
   public filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
-
-  constructor(public codeMapsService: CodeMapsService,
-    private vaccinationService: VaccinationService) {}
-
   private formChangesSubscription!: Subscription;
+
   ngOnInit() {
     if (this.vaccination) {
       this.vaccination.vaccine ? null : this.vaccination.vaccine = {};
@@ -48,6 +100,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       this.references.next(this.references.getValue())
     })
   }
+
   ngAfterViewInit() {
     setTimeout(() => {
       this.vaccinationForm.form.controls['lotNumber'].valueChanges.subscribe((lotNumber) => {
@@ -118,11 +171,6 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
    */
   asString(val: any) : string { return val; }
 
-  fillRandom(): void {
-    this.vaccinationService.readRandom().subscribe((res) => {
-      this.vaccination=res
-    })
-  }
 
   formCards: FormCard[] = [
     {title: "Vaccine",rows: 1, cols: 1, vaccineForms: [

@@ -8,10 +8,10 @@ import { Code, CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { VaccinationCreationComponent } from '../vaccination-form/vaccination-creation/vaccination-creation.component';
 import { FeedbackDialogComponent } from '../../shared/_components/feedback-table/feedback-dialog/feedback-dialog.component';
 import { VaccinationDashboardDialogComponent } from '../vaccination-dashboard/vaccination-dashboard-dialog/vaccination-dashboard-dialog.component';
 import { Bundle } from 'fhir/r5';
+import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -92,7 +92,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
   }
 
   openCreation() {
-    const dialogRef = this.dialog.open(VaccinationCreationComponent, {
+    const dialogRef = this.dialog.open(VaccinationFormComponent, {
       maxWidth: '99vw',
       maxHeight: '95vh',
       minHeight: 'fit-content',
