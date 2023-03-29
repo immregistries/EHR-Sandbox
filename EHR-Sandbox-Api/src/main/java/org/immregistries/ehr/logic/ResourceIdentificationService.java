@@ -126,15 +126,14 @@ public class ResourceIdentificationService {
     public String getLocalUrnFromUrn(String urn, ImmunizationRegistry immunizationRegistry, Facility facility) {
         try {
             IdType idType = new IdType(urn);
-            if (idType.getResourceType().equals("Patient")){
-                return "Patient/" + this.getPatientLocalId(idType,immunizationRegistry);
-            } else if (idType.getResourceType().equals("Immunization")) {
-                return "Immunization/" + this.getImmunizationLocalId(new IdType(urn), immunizationRegistry);
+            if (idType.getResourceType() != null){
+                if (idType.getResourceType().equals("Patient")){
+                    return "Patient/" + this.getPatientLocalId(idType,immunizationRegistry);
+                } else if (idType.getResourceType().equals("Immunization")) {
+                    return "Immunization/" + this.getImmunizationLocalId(new IdType(urn), immunizationRegistry);
+                }
             }
-        } catch (Exception e) {
-            System.out.println(urn);
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         Scanner scanner = new Scanner(urn);
         scanner.useDelimiter("/|#");
         String next = "";

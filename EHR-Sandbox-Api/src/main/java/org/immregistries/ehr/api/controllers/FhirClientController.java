@@ -73,6 +73,18 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryController.settings(immRegistryId)));
     }
 
+    @PostMapping("/iim-registry/{immRegistryId}/{resourceType}/search")
+    public ResponseEntity<String> searchFhirResourceFromIIS(
+            @PathVariable() Integer immRegistryId,
+            @PathVariable() String resourceType,
+            @RequestBody Identifier identifier) {
+        Bundle bundle = customClientBuilder.newGenericClient(immRegistryId).search()
+                .forResource(resourceType)
+                .where(Patient.IDENTIFIER.exactly().identifier(identifier.getValue()))
+                .returnBundle(Bundle.class).execute();
+        return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
+    }
+
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> postPatient(
             @PathVariable() Integer immRegistryId,
@@ -246,26 +258,15 @@ public class FhirClientController {
             @PathVariable() Integer immRegistryId,
             @PathVariable() String target,
             @PathVariable() Optional<String> targetId,
-            @RequestBody String parametersString,
             @RequestParam Map<String,String> allParams) {
         Parameters parameters = new Parameters();
-        /**
-         * parsing parameters, removing ? at the beginning
-         */
-        parametersString.replaceFirst("\\?","");
         for (Map.Entry<String,String> entry: allParams.entrySet()) {
-//            logger.info("Params {} {}",entry.getKey(),entry.getValue());
             parameters.addParameter(entry.getKey(),entry.getValue());
         }
         operationType = operationType.replaceFirst("\\$","");
 
         IGenericClient client = customClientBuilder.newGenericClient(immunizationRegistryController.settings(immRegistryId));
-        /**
-         * Allows access to last response received by client
-         */
-        CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
-        client.registerInterceptor(capturingInterceptor);
-        Parameters out;
+
         IOperation iOperation = client.operation();
         IOperationUnnamed iOperationUnnamed;
         if (targetId.isPresent()) {
@@ -273,22 +274,12 @@ public class FhirClientController {
         } else {
             iOperationUnnamed = iOperation.onType(target);
         }
-        out = iOperationUnnamed.named(operationType)
+        Bundle bundle = iOperationUnnamed.named(operationType)
                 .withParameters(parameters)
-                .prettyPrint().useHttpGet()
+                .prettyPrint().useHttpGet().returnResourceType(Bundle.class)
                 .execute();
 
-        IHttpResponse response =  capturingInterceptor.getLastResponse();
-        try {
-            Bundle bundle = fhirContext.newJsonParser().setPrettyPrint(true)
-                    .parseResource(Bundle.class, response.readEntity());
-            for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
-                logger.info("entry {}", entry.getResource());
-            }
-            return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
     }
 
 

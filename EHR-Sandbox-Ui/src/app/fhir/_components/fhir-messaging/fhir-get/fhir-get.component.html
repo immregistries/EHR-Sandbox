@@ -5,6 +5,5 @@
 <button mat-raised-button  (click)="get()">GET</button>
 <div>
   <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-  <textarea  class="w3-margin-bottom" style="height: 50vh; width: 95%;">
-    {{result}}</textarea>
+  <textarea [style]="{height: '50vh', width: '95%',color: error? 'red':'black'}" class="w3-margin-bottom" readonly>{{result}}</textarea>
 </div>

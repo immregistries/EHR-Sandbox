@@ -28,7 +28,7 @@ export class LocalCopyDialogComponent implements OnInit {
     public _dialogRef: MatDialogRef<LocalCopyDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {patient?: EhrPatient | number, vaccination?: VaccinationEvent}) {
       if(data.patient) {
-        if (typeof data.patient === "number" ||  "string") {
+        if (typeof data.patient === "number" || typeof data.patient ===  "string") {
           this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
             this.patient = res
           });

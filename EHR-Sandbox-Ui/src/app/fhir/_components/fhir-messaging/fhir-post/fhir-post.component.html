@@ -7,6 +7,10 @@
 
     <div class="footer">
       <div>
+        <mat-form-field appearance="fill" matTooltip="">
+          <mat-label>Resource Type</mat-label>
+          <input matInput [(ngModel)]="resourceType">
+        </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Operation</mat-label>
           <mat-select [(ngModel)]="operation" name="operation">
@@ -15,10 +19,10 @@
             <!-- <mat-option [value]="'Update'">Update</mat-option> -->
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="fill" matTooltip="">
-          <mat-label>Resource Type</mat-label>
-          <input matInput [(ngModel)]="type">
-        </mat-form-field>
+        <!-- <mat-checkbox appearance="fill" *ngIf="resourceInternId > -1"
+          [(ngModel)]="autofillId">
+          Autofill server Id in immunization
+        </mat-checkbox> -->
       </div>
 
       <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>

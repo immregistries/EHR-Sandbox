@@ -1,86 +1,28 @@
 <mat-tab-group #tabs>
 
   <!-- TODO make selected on init  and place iis selector fisst in list-->
-  <mat-tab label="Send resources to IIS" isActive>
+  <mat-tab label="Send resources to IIS">
     <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
       <div [style]="(vaccinationId > -1)? 'width: 50%': 'width: 100%'">
-        <mat-progress-bar mode="query" *ngIf="patientLoading"></mat-progress-bar>
-        <mat-form-field style="width: 100%;" appearance="fill">
-          <mat-label>Patient Fhir Resource</mat-label>
-          <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="patientResource"> </textarea>
-        </mat-form-field>
-
-        <div class="footer">
-          <div>
-            <mat-form-field appearance="fill">
-              <mat-label>Operation</mat-label>
-              <mat-select [(ngModel)]="patientOperation" name="patientOperation">
-                <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
-                <mat-option [value]="'Create'">Create</mat-option>
-                <!-- <mat-option [value]="'Update'">Update</mat-option> -->
-              </mat-select>
-            </mat-form-field>
-            <mat-checkbox appearance="fill" *ngIf="vaccinationId > -1"
-              [(ngModel)]="autofillId">
-              Autofill server Id in immunization
-            </mat-checkbox>
-          </div>
-
-          <button mat-raised-button class="w3-right" (click)="sendPatient()" cdkFocusInitial>Send to IIS</button>
-        </div>
-
-        <mat-progress-bar *ngIf="patientRequestLoading" mode="query"></mat-progress-bar>
-        <p *ngIf="patientAnswer" [ngClass]="patientError ? 'w3-red w3-center' : 'w3-green  w3-center'">
-          {{(patientError ? "Error: " : "Answer (usually the resource ID): ") + patientAnswer}}
-        </p>
+        <app-fhir-post [resourceType]="'Patient'" [resource]="patientResource" [resourceInternId]="patientId"></app-fhir-post>
       </div>
-
-
       <div style="width: 50%;" *ngIf="vaccinationId > -1">
-        <mat-progress-bar mode="query" *ngIf="vaccinationLoading"></mat-progress-bar>
-        <mat-form-field style="width: 100%;" appearance="fill">
-          <mat-label>Vaccination Fhir Resource</mat-label>
-          <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="vaccinationResource"> </textarea>
-        </mat-form-field>
-
-        <div class="footer">
-          <div>
-            <mat-form-field appearance="fill">
-              <mat-label>Operation</mat-label>
-              <mat-select [(ngModel)]="immunizationOperation" name="immunizationOperation">
-                <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
-                <mat-option [value]="'Create'">Create</mat-option>
-                <!-- <mat-option [value]="'Update'">Update</mat-option> -->
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="fill" matTooltip="Overrides specified patient id in resource, can be automatically filled by created patient">
-              <mat-label>Use Patient Id</mat-label>
-              <input matInput [(ngModel)]="patientFhirId">
-            </mat-form-field>
-          </div>
-
-          <button mat-raised-button class="w3-right" (click)="sendVaccination()" cdkFocusInitial>Send to IIS</button>
-        </div>
-
-        <mat-progress-bar *ngIf="vaccinationRequestLoading" mode="query" class='w3-center'></mat-progress-bar>
-        <p *ngIf="vaccinationAnswer" [ngClass]="vaccinationError ? 'w3-red w3-center' : 'w3-green w3-center'">
-          {{(vaccinationError ? "Error: " : "Answer (usually the resource ID): ") + vaccinationAnswer}}
-        </p>
+        <app-fhir-post [resourceType]="'Immunization'" [resource]="vaccinationResource" [parentId]="patientId" [resourceInternId]="vaccinationId" [overridingReferences]="{'patient': patientFhirId}"></app-fhir-post>
       </div>
     </div>
   </mat-tab>
 
-  <!-- <mat-tab label="Get resources from IIS">
+  <mat-tab label="Get resources from IIS">
     <div style="display: flex; justify-content: space-between; gap: 5px 5px"  >
       <div [style]="style">
-        <app-fhir-get [resourceType]="'Patient'" [identifier]="(patientId >0)? patientId.toString(): ''"></app-fhir-get>
+        <app-fhir-get [resourceType]="'Patient'" [identifierString]="(patientId >0)? patientId.toString(): ''"></app-fhir-get>
       </div>
       <div style="width: 50%;" >
-        <app-fhir-get [resourceType]="'Immunization'" [identifier]="(vaccinationId >0)? vaccinationId.toString(): ''"></app-fhir-get>
+        <app-fhir-get [resourceType]="'Immunization'" [identifierString]="(vaccinationId >0)? vaccinationId.toString(): ''"></app-fhir-get>
       </div>
     </div>
-  </mat-tab> -->
-  <!-- <mat-tab label="Bulk Import Asynch">
+  </mat-tab>
+   <!-- <mat-tab label="Bulk Import Asynch">
       <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
   </mat-tab>
    <mat-tab label="Bulk Import Synch">
@@ -94,14 +36,15 @@
     <div style="padding: 5px;"></div>
     <app-fhir-post></app-fhir-post>
   </mat-tab> -->
-  <mat-tab label="Operation">
-    <div style="padding: 5px;"></div>
-    <app-fhir-operation [resourceId]="''+patientId"></app-fhir-operation>
+  <mat-tab label="Import remote information">
+    <app-fhir-operation [operation]="'$everything'" [resourceId]="''+patientFhirId"></app-fhir-operation>
+  </mat-tab>
+  <mat-tab label="load test">
+    <button mat-flat-button (click)="loadEverythingFromPatient()">fetch and load vaccination history from IIS</button>
   </mat-tab>
   <mat-tab disabled>
     <ng-template mat-tab-label>
       <!-- <app-select-immregistry style="transform: scale(0.8);"></app-select-immregistry> -->
-
       <app-immunization-registry-menu></app-immunization-registry-menu>
     </ng-template>
   </mat-tab>

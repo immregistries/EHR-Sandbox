@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.AuditRevisionListener;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -62,12 +63,13 @@ public class BundleProviderR5 implements IResourceProvider {
         }
 
         @Create()
-        public MethodOutcome create(@ResourceParam Bundle bundle, RequestDetails requestDetails, HttpServletRequest request) {
+        public MethodOutcome create(@ResourceParam Bundle bundle, ServletRequestDetails requestDetails) {
                 // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
 
-                MethodOutcome outcome = new MethodOutcome();
+                HttpServletRequest request = requestDetails.getServletRequest();
+                MethodOutcome outcome;
                 List<MethodOutcome> outcomeList = new ArrayList<>();
-//                Bundle outcomeBundle = new Bundle();
+
                 if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
                       throw new InvalidRequestException("Bundles other than Subscription notification not supported");
                 }
@@ -130,7 +132,7 @@ public class BundleProviderR5 implements IResourceProvider {
                                         });
                                         bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.OperationOutcome))).iterator().forEachRemaining(entry -> {
                                                 outcomeList.add(
-                                                        operationOutcomeProvider.registerOperationOutcome((OperationOutcome) entry.getResource(),requestDetails, request)
+                                                        operationOutcomeProvider.registerOperationOutcome((OperationOutcome) entry.getResource(),requestDetails, immunizationRegistry)
                                                 );
                                         });;
                                 }

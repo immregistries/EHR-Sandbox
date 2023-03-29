@@ -5,11 +5,11 @@
 <div>
   <mat-checkbox appearance="fill" [(ngModel)]="autofillNdUrl">Autofill Result URL</mat-checkbox>
   <div class="w3-right">
-    <button mat-raised-button  (click)="status()">Check Status</button>
-    <button mat-raised-button  (click)="cancel()">Cancel</button>
+    <button mat-raised-button (click)="status()">Check Status</button>
+    <button mat-raised-button (click)="cancel()">Cancel</button>
   </div>
 </div>
 <div>
   <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-  <textarea  class="result-space" [style]="{color: error? 'red':'black'}">{{result}}</textarea>
+  <textarea class="result-space" [style]="{color: error? 'red':'black'}" readonly>{{result}}</textarea>
 </div>

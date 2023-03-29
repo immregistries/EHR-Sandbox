@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { map, merge, Observable, tap } from 'rxjs';
 
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
 
@@ -16,7 +18,7 @@ export class FhirPostComponent implements OnInit {
   requestLoading: Boolean = false
 
   @Input()
-  type: string = "Group";
+  resourceType: string = "Group";
   @Input()
   resource: string = `{
     "resourceType": "Group",
@@ -41,18 +43,16 @@ export class FhirPostComponent implements OnInit {
   @Input()
   operation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
   @Input()
-  resourceInternId:  number = -1;
+  resourceInternId: number = -1;
   @Input()
   parentId: number = -1;
   @Input()
-  referenceId: string = "";
+  overridingReferences: {[reference: string]: string} = {};
 
 
   constructor(private fhirService: FhirService,
-    private patientService: PatientService,
-    private vaccinationService: VaccinationService,
-    private feedbackService: FeedbackService,
-    private immRegistriesService: ImmunizationRegistryService) { }
+    private snackBarService: SnackBarService,
+    private feedbackService: FeedbackService) { }
 
   ngOnInit(): void {
   }
@@ -60,15 +60,15 @@ export class FhirPostComponent implements OnInit {
   send() {
     this.answer = ""
     this.requestLoading = true
-    console.log(this.type)
-    this.fhirService.postResource(this.type,this.resource,this.operation,this.resourceInternId,this.parentId,this.referenceId).subscribe({
+    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceInternId,this.parentId, this.overridingReferences).pipe(tap(() => {
+      this.requestLoading = false
+      this.feedbackService.doRefresh()
+    })).subscribe({
       next: (res) => {
-        this.requestLoading = false
-        this.answer = res
         this.error = false
+        this.answer = res
       },
       error: (err) => {
-        this.requestLoading = false
         this.error = true
         if (err.error.error) {
           this.answer = err.error.error
@@ -78,6 +78,7 @@ export class FhirPostComponent implements OnInit {
           this.answer = "Error"
         }
         console.error(err)
+        this.snackBarService.fatalFhirMessage("", this.resourceInternId)
       }
     })
   }

@@ -1,4 +1,3 @@
-import { KeyValue } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, Pipe, PipeTransform, TrackByFunction } from '@angular/core';
 import { FhirService } from '../../_services/fhir.service';
 

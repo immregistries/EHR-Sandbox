@@ -8,9 +8,12 @@ import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.*;
 import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +34,17 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
 
     LoggingInterceptor loggingInterceptor;
     private static final Logger logger = LoggerFactory.getLogger(CustomClientBuilder.class);
+    @Autowired
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
+
+
+    public IGenericClient newGenericClient(Integer registryId){
+         return newGenericClient(immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsServiceImpl.currentUserId()).orElseThrow(
+                 ()-> new RuntimeException("Invalid registry id") //TODO better exception message
+         ));
+    }
 
     public IGenericClient newGenericClient(ImmunizationRegistry registry){
          return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword(), registry.getHeaders());

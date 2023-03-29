@@ -14,7 +14,7 @@ import { TenantService } from '../../_services/tenant.service';
 })
 export class RefreshNotificationComponent implements OnInit {
 
-  public pathname = window.location.pathname;
+  public pathname = window.location.href.split('#')[1];
   notification: boolean = false
 
 

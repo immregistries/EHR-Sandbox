@@ -70,36 +70,47 @@ public class ImmunizationProviderR5 implements IResourceProvider {
          */
         String dbPatientId = resourceIdentificationService.getPatientLocalId(immunization.getPatient(), immunizationRegistry, facility);
         immunization.getPatient().setId(dbPatientId + "");
-        // TODO Historical registering
+        logger.info("{}", dbPatientId);
+        return  updateImmunization(immunization, requestDetails, immunizationRegistry, facility, dbPatientId);
+    }
 
-
+    public MethodOutcome updateImmunization(@ResourceParam Immunization immunization, RequestDetails requestDetails, ImmunizationRegistry immunizationRegistry, Facility facility, String dbPatientId) {
         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
         String vaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
-        VaccinationEvent old = vaccinationEventRepository.findById(vaccinationId).get();
+        if (vaccinationId == null) {
+            return createImmunization(immunization,facility, dbPatientId);
+        } else {
+            VaccinationEvent old = vaccinationEventRepository.findById(vaccinationId).get();
 //        vaccinationEvent.getVaccine().setId(old.getVaccine().getId()); // TODO change fetchtype ?
-        vaccinationEvent.setAdministeringFacility(facility);
-        vaccinationEvent.setId(vaccinationId);
-        vaccinationEvent.setPatient(
-                patientRepository.findByFacilityIdAndId(facility.getId(), dbPatientId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id")));
+            vaccinationEvent.setAdministeringFacility(facility);
+            vaccinationEvent.setId(vaccinationId);
+            vaccinationEvent.setPatient(
+                    patientRepository.findByFacilityIdAndId(facility.getId(), dbPatientId)
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id")));
 
-        vaccinationEvent.setVaccine(vaccineRepository.save(vaccinationEvent.getVaccine()));
+            vaccinationEvent.setVaccine(vaccineRepository.save(vaccinationEvent.getVaccine()));
 
-        vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
-        MethodOutcome methodOutcome = new MethodOutcome();
-        methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId()));
-        methodOutcome.setResource(immunizationMapper.toFhirImmunization(vaccinationEvent,resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility), resourceIdentificationService.getFacilityPatientIdentifierSystem(facility)));
-        return methodOutcome;
+            vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
+            MethodOutcome methodOutcome = new MethodOutcome();
+            methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId()));
+            methodOutcome.setResource(immunizationMapper.toFhirImmunization(vaccinationEvent,
+                    resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility),
+                    resourceIdentificationService.getFacilityPatientIdentifierSystem(facility)));
+            return methodOutcome;
+        }
     }
 
 
 
 
     public MethodOutcome createImmunization(Immunization immunization, Facility facility) {
+        String patientId = new IdType(immunization.getPatient().getReference()).getIdPart();
+        return  createImmunization(immunization,facility,patientId);
+    }
+    public MethodOutcome createImmunization(Immunization immunization, Facility facility, String patientId) {
         MethodOutcome methodOutcome = new MethodOutcome();
         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
         vaccinationEvent.setAdministeringFacility(facility);
-        String patientId = new IdType(immunization.getPatient().getReference()).getIdPart();
         vaccinationEvent.setPatient(
                 patientRepository.findByFacilityIdAndId(facility.getId(), patientId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id")));

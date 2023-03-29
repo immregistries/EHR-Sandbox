@@ -20,7 +20,7 @@ import { FeedbackService } from '../../_services/feedback.service';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent {
-  public pathname = window.location.pathname;
+  public pathname = window.location.href.split('#')[1];
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(

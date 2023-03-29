@@ -39,7 +39,7 @@ export class PatientDetailsComponent implements OnInit {
       maxWidth: '95vw',
       maxHeight: '98vh',
       height: 'fit-content',
-      width: '50%',
+      width: '100%',
       panelClass: 'dialog-without-bar',
       data: {patientId: element.id},
     });
@@ -61,5 +61,6 @@ export class PatientDetailsComponent implements OnInit {
       this.patientService.doRefresh()
     });
   }
+
 
 }

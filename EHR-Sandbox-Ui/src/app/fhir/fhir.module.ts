@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { FhirService } from './_services/fhir.service';
 import { Hl7Service } from './_services/hl7.service';
-import { FhirGetComponent } from './_components/fhir-get/fhir-get.component';
+import { FhirGetComponent } from './_components/fhir-messaging/fhir-get/fhir-get.component';
 import { FhirMessagingComponent } from './_components/fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from './_components/hl7-messaging/hl7-messaging.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -23,7 +23,7 @@ import { MatCardModule } from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import { SubscriptionService } from './_services/subscription.service';
-import { FhirPostComponent } from './_components/fhir-post/fhir-post.component';
+import { FhirPostComponent } from './_components/fhir-messaging/fhir-post/fhir-post.component';
 import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { FhirBulkComponent } from '../fhir/_components/fhir-bulk/fhir-bulk.component';
 import { MatToolbarModule } from '@angular/material/toolbar';

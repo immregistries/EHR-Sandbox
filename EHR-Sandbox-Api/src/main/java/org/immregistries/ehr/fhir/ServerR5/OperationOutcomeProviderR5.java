@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
@@ -13,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -67,10 +70,9 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
     @Update
     public MethodOutcome updateOperationOutcome(
             @ResourceParam OperationOutcome operationOutcome,
-            RequestDetails theRequestDetails,
-            HttpServletRequest request
+            ServletRequestDetails theRequestDetails
     ) {
-        return registerOperationOutcome(operationOutcome,theRequestDetails,request);
+        return registerOperationOutcome(operationOutcome,theRequestDetails);
     }
 
 
@@ -78,12 +80,23 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
     // Endpoint for Subscription
     public MethodOutcome registerOperationOutcome(
             @ResourceParam OperationOutcome operationOutcome,
-            RequestDetails theRequestDetails,
-            HttpServletRequest request
+            ServletRequestDetails theRequestDetails
             ) {
-//        String[] ids = CustomIdentificationStrategy.deconcatenateIds(theRequestDetails.getTenantId());
-//        Integer tenantId = Integer.parseInt(ids[0]);
-        Facility facility = facilityRepository.findById(Integer.parseInt(theRequestDetails.getTenantId())).get();
+        HttpServletRequest request = theRequestDetails.getServletRequest();
+        Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
+        if (request != null && request.getRemoteAddr() != null) {
+            immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()),request.getRemoteAddr()); //TODO change this and do smtg similar to immunizationprovider
+        }
+        return registerOperationOutcome(operationOutcome,theRequestDetails,immunizationRegistry.orElse(null));
+    }
+
+
+    public MethodOutcome registerOperationOutcome(
+            @ResourceParam OperationOutcome operationOutcome,
+            ServletRequestDetails requestDetails,
+            ImmunizationRegistry immunizationRegistry) {
+        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
 
@@ -94,20 +107,16 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
             feedback.setSeverity(issue.getSeverity().toCode());
             feedback.setCode(issue.getCode().toCode());
             feedback.setTimestamp(new Timestamp(new Date().getTime()));
-            Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
-            if (request != null && request.getRemoteAddr() != null) {
-                immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()),request.getRemoteAddr()); //TODO change this and do smtg similar to immunizationprovider
-                if (immunizationRegistry.isPresent()) {
-                    feedback.setIis(immunizationRegistry.get().getName());
-                } else {
-                    feedback.setIis(request.getRemoteAddr());
-                }
+            if (immunizationRegistry != null) {
+                feedback.setIis(immunizationRegistry.getName());
+            } else {
+                feedback.setIis(requestDetails.getServletRequest().getRemoteAddr());
             }
             /**
              * Using deprecated field "Location to refer to the right resource for the issue"
              */
             for (StringType location: issue.getLocation()) {
-                String localUrl = resourceIdentificationService.getLocalUrnFromUrn(location.getValueNotNull(),immunizationRegistry.get(),facility);
+                String localUrl = resourceIdentificationService.getLocalUrnFromUrn(location.getValueNotNull(),immunizationRegistry,facility);
                 if (localUrl != null) {
                     String[] idArray = localUrl.split("/");
                     if (idArray[0].equals("Patient")){
