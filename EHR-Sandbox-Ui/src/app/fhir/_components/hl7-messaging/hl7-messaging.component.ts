@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Hl7Service } from 'src/app/fhir/_services/hl7.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-hl7-messaging',
@@ -16,7 +17,7 @@ export class Hl7MessagingComponent implements OnInit {
 
   loading: boolean = false
 
-  public vxu: string = "";
+  public hl7Message: string = "";
   public answer: string = "";
   public error: string = "";
 
@@ -31,27 +32,55 @@ export class Hl7MessagingComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true
-    this.hl7Service.quickGetVXU(this.patientId,this.vaccinationId).subscribe((res) => {
-      this.vxu = res
-      this.loading = false
-    })
+    if (this.vaccinationId > 0){
+      this.hl7Service.getVXU(this.patientId,this.vaccinationId).subscribe((res) => {
+        this.hl7Message = res
+        this.loading = false
+      })
+    } else {
+      this.hl7Service.getQBP(this.patientId).subscribe((res) => {
+        this.hl7Message = res
+        this.loading = false
+      })
+    }
+
   }
 
   send() {
-    this.hl7Service.quickPostVXU(this.patientId,this.vaccinationId, this.vxu).subscribe(
-      (res) => {
-        this.answer = res
-        this.error = ""
-      },
-      (err) => {
-        this.answer = ""
-        if (err.error.text) {
-          this.error = err.error.text
-        } else {
-          this.error = err.error
+    this.loading = true
+    if (this.vaccinationId > 0){
+      this.hl7Service.quickPostVXU(this.patientId,this.vaccinationId, this.hl7Message).pipe(tap(() => {this.loading = false})).subscribe({
+        next: (res) => {
+          this.answer = res
+          this.error = ""
+        },
+        error : (err) => {
+          this.answer = ""
+          if (err.error.text) {
+            this.error = err.error.text
+          } else {
+            this.error = err.error
+          }
+          console.error(err)
         }
-        console.error(err)
-      }
-    )
+      })
+    } else {
+      this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).pipe(tap(() => {this.loading = false})).subscribe({
+        next: (res) => {
+          this.answer = res
+          this.error = ""
+        },
+        error : (err) => {
+          this.answer = ""
+          if (err.error.text) {
+            this.error = err.error.text
+          } else {
+            this.error = err.error
+          }
+          console.error(err)
+        }
+      })
+    }
+
   }
 }

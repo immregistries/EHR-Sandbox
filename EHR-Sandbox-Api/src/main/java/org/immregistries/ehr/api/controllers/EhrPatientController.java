@@ -8,21 +8,21 @@ import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import ca.uhn.fhir.rest.gclient.TokenCriterion;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.repositories.ClinicianRepository;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Tenant;
+import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
+import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.smm.tester.connectors.Connector;
+import org.immregistries.smm.tester.connectors.SoapConnector;
+import org.immregistries.smm.tester.manager.query.QueryConverter;
+import org.immregistries.smm.tester.manager.query.QueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
@@ -66,6 +66,13 @@ public class EhrPatientController {
     private ImmunizationProviderR5 immunizationProviderR5;
     @Autowired
     private ClinicianRepository clinicianRepository;
+    @Autowired
+    private VaccinationEventRepository vaccinationEventRepository;
+
+    @Autowired
+    HL7printer hl7printer;
+    @Autowired
+    ImmunizationRegistryController immRegistryController;
 
 
     @GetMapping()
@@ -184,5 +191,33 @@ public class EhrPatientController {
             }
         }
         return ResponseEntity.internalServerError().body("IDENTIFIER ERROR");
+    }
+
+    @GetMapping("/{patientId}/qbp")
+    public ResponseEntity<String> vxu(@PathVariable() String patientId) {
+        QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
+        EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
+//        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientId(patientId);
+//        Vaccine vaccine = vaccinationEvent.getVaccine()
+        Facility facility = ehrPatient.getFacility();
+        String vxu = hl7printer.buildVxu(null, ehrPatient, facility);
+        return ResponseEntity.ok(queryConverter.convert(vxu));
+    }
+
+    @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
+    public ResponseEntity<String>  vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
+        Connector connector;
+        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
+        try {
+            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
+            connector.setUserid(immunizationRegistry.getIisUsername());
+            connector.setPassword(immunizationRegistry.getIisPassword());
+            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
+            return ResponseEntity.ok(connector.submitMessage(message, false));
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

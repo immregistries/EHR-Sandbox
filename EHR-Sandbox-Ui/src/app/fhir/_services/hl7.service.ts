@@ -24,12 +24,6 @@ export class Hl7Service {
     private tenantService: TenantService,
     private immRegistries: ImmunizationRegistryService) { }
 
-  quickGetVXU(patientId: number, vaccinationId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-    return this.getVXU(tenantId,facilityId,patientId,vaccinationId)
-  }
-
   /**
    *
    * @param tenantId
@@ -38,9 +32,26 @@ export class Hl7Service {
    * @param vaccinationId
    * @returns Hl7v2 VXU message
    */
-  getVXU(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<string> {
+  getVXU(patientId: number, vaccinationId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
     return this.http.get(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
+      { responseType: 'text' });
+  }
+
+  /**
+   *
+   * @param tenantId
+   * @param facilityId
+   * @param patientId
+   * @returns Hl7v2 VXU message
+   */
+  getQBP(patientId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp`,
       { responseType: 'text' });
   }
 
@@ -58,6 +69,23 @@ export class Hl7Service {
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu/imm-registry/${immId}`,
       vxu,
+      httpOptions);
+  }
+
+  /**
+   * Helping function for sending post request with Vxu Message to the IIS
+   * @param patientId
+   * @param vaccinationId
+   * @param qbp
+   * @returns IIS answer
+   */
+  quickPostQBP(patientId: number, qbp: string): Observable<string> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
+    const immId = this.immRegistries.getImmRegistryId()
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp/imm-registry/${immId}`,
+      qbp,
       httpOptions);
   }
 

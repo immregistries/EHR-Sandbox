@@ -33,7 +33,7 @@ public class HL7printer {
     private static final String QUERY_TOO_MANY = "TM";
     private static final String QUERY_APPLICATION_ERROR = "AE";
 
-    public String buildVxu(Vaccine vaccination, EhrPatient patient, Facility facility) {
+    public String buildVxu(Vaccine vaccine, EhrPatient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
         CodeMap codeMap = codeMapManager.getCodeMap();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -44,26 +44,26 @@ public class HL7printer {
 
         int obxSetId = 0;
         int obsSubId = 0;
-        {
+        if (vaccine != null) {
             Code cvxCode = codeMap.getCodeForCodeset(
                     CodesetType.VACCINATION_CVX_CODE,
-                    vaccination.getVaccineCvxCode());
+                    vaccine.getVaccineCvxCode());
             if (cvxCode != null) {
-                printORC(facility, sb, vaccination);
+                printORC(facility, sb, vaccine);
                 sb.append("RXA");
                 // RXA-1
                 sb.append("|0");
                 // RXA-2
                 sb.append("|1");
                 // RXA-3
-                sb.append("|" + sdf.format(vaccination.getAdministeredDate()));
+                sb.append("|" + sdf.format(vaccine.getAdministeredDate()));
                 // RXA-4
                 sb.append("|");
                 // RXA-5
                 sb.append("|" + cvxCode.getValue() + "^" + cvxCode.getLabel() + "^CVX");
-                if (!vaccination.getVaccineNdcCode().equals("")) {
+                if (!vaccine.getVaccineNdcCode().equals("")) {
                     Code ndcCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE,
-                            vaccination.getVaccineNdcCode());
+                            vaccine.getVaccineNdcCode());
                     if (ndcCode != null) {
                         sb.append("~" + ndcCode.getValue() + "^" + ndcCode.getLabel() + "^NDC");
                     }
@@ -72,9 +72,9 @@ public class HL7printer {
                     // RXA-6
                     sb.append("|");
                     double adminAmount = 0.0;
-                    if (!vaccination.getAdministeredAmount().equals("")) {
+                    if (!vaccine.getAdministeredAmount().equals("")) {
                         try {
-                            adminAmount = Double.parseDouble(vaccination.getAdministeredAmount());
+                            adminAmount = Double.parseDouble(vaccine.getAdministeredAmount());
                         } catch (NumberFormatException nfe) {
                             adminAmount = 0.0;
                         }
@@ -94,9 +94,9 @@ public class HL7printer {
                 sb.append("|");
                 {
                     Code informationCode = null;
-                    if (vaccination.getInformationSource() != null) {
+                    if (vaccine.getInformationSource() != null) {
                         informationCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_INFORMATION_SOURCE,
-                                vaccination.getInformationSource());
+                                vaccine.getInformationSource());
                     }
                     if (informationCode != null) {
                         sb.append(informationCode.getValue() + "^" + informationCode.getLabel() + "^NIP001");
@@ -115,55 +115,55 @@ public class HL7printer {
                 sb.append("|");
                 // RXA-15
                 sb.append("|");
-                if (vaccination.getLotNumber() != null) {
-                    sb.append(vaccination.getLotNumber());
+                if (vaccine.getLotNumber() != null) {
+                    sb.append(vaccine.getLotNumber());
                 }
                 // RXA-16
                 sb.append("|");
-                if (vaccination.getExpirationDate() != null) {
-                    sb.append(sdf.format(vaccination.getExpirationDate()));
+                if (vaccine.getExpirationDate() != null) {
+                    sb.append(sdf.format(vaccine.getExpirationDate()));
                 }
                 // RXA-17
                 sb.append("|");
-                sb.append(printCode(vaccination.getVaccineMvxCode(),
+                sb.append(printCode(vaccine.getVaccineMvxCode(),
                         CodesetType.VACCINATION_MANUFACTURER_CODE, "MVX", codeMap));
                 // RXA-18
                 sb.append("|");
-                sb.append(printCode(vaccination.getRefusalReasonCode(),
+                sb.append(printCode(vaccine.getRefusalReasonCode(),
                         CodesetType.VACCINATION_REFUSAL, "NIP002", codeMap));
                 // RXA-19
                 sb.append("|");
                 // RXA-20
                 sb.append("|");
-                String completionStatus = vaccination.getCompletionStatus();
+                String completionStatus = vaccine.getCompletionStatus();
                 if (completionStatus == null || completionStatus.equals("")) {
                     completionStatus = "CP";
                 }
                 sb.append(printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, null, codeMap));
 
                 // RXA-21
-                String actionCode = vaccination.getActionCode();
+                String actionCode = vaccine.getActionCode();
                 if (actionCode == null || actionCode.equals("")
                         || (!actionCode.equals("A") && !actionCode.equals("D"))) {
                     actionCode = "A";
                 }
                 sb.append("|" );
-                sb.append(vaccination.getActionCode());
+                sb.append(vaccine.getActionCode());
                 sb.append("\r");
-                if (vaccination.getBodyRoute() != null
-                        && !vaccination.getBodyRoute().equals("")) {
+                if (vaccine.getBodyRoute() != null
+                        && !vaccine.getBodyRoute().equals("")) {
                     sb.append("RXR");
                     // RXR-1
                     sb.append("|");
-                    sb.append(printCode(vaccination.getBodyRoute(), CodesetType.BODY_ROUTE, "NCIT",
+                    sb.append(printCode(vaccine.getBodyRoute(), CodesetType.BODY_ROUTE, "NCIT",
                             codeMap));
                     // RXR-2
                     sb.append("|");
-                    sb.append(printCode(vaccination.getBodySite(), CodesetType.BODY_SITE, "HL70163",
+                    sb.append(printCode(vaccine.getBodySite(), CodesetType.BODY_SITE, "HL70163",
                             codeMap));
                     sb.append("\r");
                 }
-                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,vaccination.getVaccineCvxCode());
+                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,vaccine.getVaccineCvxCode());
                 obsSubId++;
                 obxSetId++;
                 String loinc = "64994-7";
@@ -182,7 +182,7 @@ public class HL7printer {
                 obxSetId++;
                 loinc = "59781-5";
                 loincLabel = "Dose validity";
-                value = vaccination.getAdministeredAmount();
+                value = vaccine.getAdministeredAmount();
                 valueLabel = value; //don't know what to put here
                 valueTable = "99107";
                 printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
@@ -222,7 +222,11 @@ public class HL7printer {
         // PID-2
         sb.append("|");
         // PID-3
+        if (!patient.getMrn().isBlank()) {
+            sb.append("|" + patient.getMrn() + "^^^urns:mrn^MR");
+        } else {
         sb.append("|" + patient.getId() + "^^^EHR^MR");
+        }
         // PID-4
         sb.append("|");
         // PID-5
