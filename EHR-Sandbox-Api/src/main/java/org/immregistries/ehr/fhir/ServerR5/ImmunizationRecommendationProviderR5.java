@@ -38,11 +38,13 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationRecommendationProviderR5.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
-
+    @Override
     public Class<ImmunizationRecommendation> getResourceType() {
         return ImmunizationRecommendation.class;
     }
-
+    public ResourceType getResourceName() {
+        return ResourceType.ImmunizationRecommendation;
+    }
     @Resource
     Map<Integer, Set<ImmunizationRecommendation>> immunizationRecommendationsStore;
     @Autowired

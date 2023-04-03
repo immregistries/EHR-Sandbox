@@ -123,7 +123,7 @@ public class BundleProviderR5 implements IResourceProvider {
 
 
             for (EhrFhirProvider provider : providers) {
-                bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.fromCode(provider.getResourceType().getName())))).iterator().forEachRemaining(entry -> {
+                bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(provider.getResourceName()))).iterator().forEachRemaining(entry -> {
                     switch (entry.getRequest().getMethodElement().getValue()) {
                         case POST:
                         case PUT: {

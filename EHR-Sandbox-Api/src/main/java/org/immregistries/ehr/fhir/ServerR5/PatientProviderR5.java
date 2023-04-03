@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Patient;
+import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -51,6 +52,10 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
     @Override
     public Class<Patient> getResourceType() {
         return Patient.class;
+    }
+    @Override
+    public ResourceType getResourceName() {
+        return ResourceType.Patient;
     }
 
     @Create

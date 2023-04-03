@@ -48,6 +48,9 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
     public Class<OperationOutcome> getResourceType() {
         return OperationOutcome.class;
     }
+    public ResourceType getResourceName() {
+        return ResourceType.OperationOutcome;
+    }
 
     @Search
     public OperationOutcome search(RequestDetails theRequestDetails) {

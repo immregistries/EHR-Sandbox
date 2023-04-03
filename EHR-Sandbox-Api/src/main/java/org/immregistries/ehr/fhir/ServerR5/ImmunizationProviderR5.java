@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Immunization;
+import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
@@ -46,6 +47,10 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
     @Override
     public Class<Immunization> getResourceType() {
         return Immunization.class;
+    }
+    @Override
+    public ResourceType getResourceName() {
+        return ResourceType.Immunization;
     }
 
     @Create
