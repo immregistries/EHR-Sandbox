@@ -198,10 +198,12 @@ public class FhirClientController {
             feedback.setVaccinationEvent(vaccinationEventRepository.findByPatientIdAndId(patientId,vaccinationId).orElseThrow());
             feedback.setCode("invalid");
             feedback.setSeverity("fatal");
+            feedback.setIis(String.valueOf(immunizationRegistry.getId()));
             feedback.setTimestamp(new Timestamp(new Date().getTime()));
             feedback.setContent(baseServerResponseException.getMessage());
             feedbackRepository.save(feedback);
-            throw baseServerResponseException;
+            return ResponseEntity.badRequest().body(baseServerResponseException.getMessage());
+//            throw baseServerResponseException;
         }
     }
 

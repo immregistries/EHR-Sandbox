@@ -39,7 +39,7 @@
       </ng-container>
       <ng-container matColumnDef="timestamp" >
         <th mat-header-cell *matHeaderCellDef>Date</th>
-        <td mat-cell *matCellDef="let element"> {{element.timestamp | date: 'shortDate'}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.timestamp | date: 'yyyy-MM-dd'}} </td>
       </ng-container>
       <ng-container matColumnDef="iis" >
         <th mat-header-cell *matHeaderCellDef>IIS</th>

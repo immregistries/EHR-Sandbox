@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import java.util.*;
 
 @Controller
 @Conditional(OnR5Condition.class)
-public class OperationOutcomeProviderR5 implements IResourceProvider {
+public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirProvider<OperationOutcome> {
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
@@ -68,17 +69,17 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
     }
 
     @Update
-    public MethodOutcome updateOperationOutcome(
+    public MethodOutcome update(
             @ResourceParam OperationOutcome operationOutcome,
             ServletRequestDetails theRequestDetails
     ) {
-        return registerOperationOutcome(operationOutcome,theRequestDetails);
+        return create(operationOutcome,theRequestDetails);
     }
 
 
     @Create
     // Endpoint for Subscription
-    public MethodOutcome registerOperationOutcome(
+    public MethodOutcome create(
             @ResourceParam OperationOutcome operationOutcome,
             ServletRequestDetails theRequestDetails
             ) {
@@ -87,11 +88,11 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
         if (request != null && request.getRemoteAddr() != null) {
             immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()),request.getRemoteAddr()); //TODO change this and do smtg similar to immunizationprovider
         }
-        return registerOperationOutcome(operationOutcome,theRequestDetails,immunizationRegistry.orElse(null));
+        return update(operationOutcome,theRequestDetails,immunizationRegistry.orElse(null));
     }
 
 
-    public MethodOutcome registerOperationOutcome(
+    public MethodOutcome update(
             @ResourceParam OperationOutcome operationOutcome,
             ServletRequestDetails requestDetails,
             ImmunizationRegistry immunizationRegistry) {
@@ -135,5 +136,9 @@ public class OperationOutcomeProviderR5 implements IResourceProvider {
         }
         feedbackRepository.saveAll(feedbackList);
         return new MethodOutcome().setOperationOutcome(operationOutcome).setCreated(true).setResource(operationOutcome);
+    }
+
+    public MethodOutcome deleteConditional(IdType theId, String theConditionalUrl, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
+        return new MethodOutcome(); //TODO
     }
 }

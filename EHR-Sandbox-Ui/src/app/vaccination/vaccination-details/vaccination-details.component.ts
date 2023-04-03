@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
+import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from 'src/app/fhir/_components/hl7-messaging/hl7-messaging.component';
@@ -17,7 +18,9 @@ export class VaccinationDetailsComponent implements OnInit {
   @Input() vaccination!: VaccinationEvent;
 
   constructor(private dialog: MatDialog,
-    private vaccinationService: VaccinationService) { }
+    private vaccinationService: VaccinationService,
+    private patientService: PatientService,
+    ) { }
 
   ngOnInit(): void {
   }
@@ -46,7 +49,7 @@ export class VaccinationDetailsComponent implements OnInit {
       data: {patientId: this.patientId, vaccinationId: this.vaccination.id},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.vaccinationService.doRefresh()
+      this.patientService.doRefresh()
     });
   }
 
@@ -60,7 +63,10 @@ export class VaccinationDetailsComponent implements OnInit {
       data: {patientId: this.patientId, vaccinationId: this.vaccination.id},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.vaccinationService.doRefresh()
+      /**
+       * patient refresh is called because of feedback update
+       */
+      this.patientService.doRefresh()
     });
   }
 
@@ -72,9 +78,6 @@ export class VaccinationDetailsComponent implements OnInit {
       width: '100%',
       panelClass: 'dialog-without-bar',
       data: {patient: this.patientId, vaccination: this.vaccination},
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.vaccinationService.doRefresh()
     });
   }
 

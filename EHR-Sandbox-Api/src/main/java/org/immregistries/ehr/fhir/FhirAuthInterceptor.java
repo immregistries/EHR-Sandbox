@@ -26,12 +26,11 @@ public class FhirAuthInterceptor {
             Pointcut thePointcut,
             HttpRequest httpRequest) {
         /**
-         * attributes are also set in BundleProvider, TODO clarify where it must be done
+         * attributes are currently set in BundleProvider, TODO clarify where it must be done
+         *         theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID,-1);
+         *         theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.SUBSCRIPTION_ID,"-1");
+         *         theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.USER_ID,"-1");
          */
-        theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID,-1); // TODO link with subscription for origin analysis
-        theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.SUBSCRIPTION_ID,"-1"); // TODO link with subscription for origin analysis
-        theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.USER_ID,"-1"); // TODO link with subscription for origin analysis
-
     }
 
 }

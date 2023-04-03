@@ -70,15 +70,25 @@ export class FhirPostComponent implements OnInit {
       },
       error: (err) => {
         this.error = true
-        if (err.error.error) {
-          this.answer = err.error.error
-        }else if (err.error.text) {
-          this.answer = err.error.text
-        } else {
-          this.answer = "Error"
-        }
+        // if (err.error.error) {
+        //   this.answer = err.error.error
+        // }else if (err.error.text) {
+        //   this.answer = err.error.text
+        // } else {
+        //   this.answer = "Error"
+        // }
+        this.answer = err.error
         console.error(err)
-        this.snackBarService.fatalFhirMessage("", this.resourceInternId)
+        switch(this.resourceType) {
+          case "Patient" : {
+            this.snackBarService.fatalFhirMessage(this.answer, this.resourceInternId)
+            break;
+          }
+          case "Immunization" : {
+            this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceInternId)
+            break;
+          }
+        }
       }
     })
   }

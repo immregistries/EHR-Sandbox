@@ -44,9 +44,8 @@ public class BundleImportService {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     String receivedId = new IdType(patient.getId()).getIdPart();
-                    String dbId; // = patientIdentifier.get(immunizationRegistry.getId()).getOrDefault(receivedId,-1);
-                    MethodOutcome methodOutcome = patientProvider.createPatient(patient,facility);
-                    dbId = methodOutcome.getId().getValue();
+                    MethodOutcome methodOutcome = patientProvider.create(patient,facility);
+                    String dbId = methodOutcome.getId().getValue();
                     patientIdentifierRepository.save(new PatientIdentifier(dbId,immunizationRegistry.getId(),receivedId));
                     responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
                     logger.info("Patient  {}  loaded as patient  {}",receivedId,dbId);
@@ -55,14 +54,13 @@ public class BundleImportService {
                 }
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
-                    String dbId; // = immunizationIdentifier.get(immunizationRegistry.getId()).getOrDefault(immunization.getId(),-1);
                     String receivedId = new IdType(immunization.getId()).getIdPart();
                     String receivedPatientId = new IdType(immunization.getPatient().getReference()).getIdPart();
                     Optional<PatientIdentifier> patientIdentifier = patientIdentifierRepository.findByPatientIdAndImmunizationRegistryId(receivedPatientId,immunizationRegistry.getId());
                     if (patientIdentifier.isPresent()) {
                         immunization.setPatient(new Reference("Patient/" + patientIdentifier.get().getPatientId()));
-                        MethodOutcome methodOutcome = immunizationProvider.createImmunization(immunization,facility);
-                        dbId = methodOutcome.getId().getValue();
+                        MethodOutcome methodOutcome = immunizationProvider.create(immunization,facility);
+                        String dbId = methodOutcome.getId().getValue();
                         immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId,immunizationRegistry.getId(),receivedId));
                         responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
                         logger.info("Immunization {} loaded as Immunization {}",receivedId,dbId);

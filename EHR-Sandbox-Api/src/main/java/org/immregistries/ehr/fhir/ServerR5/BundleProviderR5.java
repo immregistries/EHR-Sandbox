@@ -4,7 +4,6 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
@@ -15,6 +14,7 @@ import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
+import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,119 +32,121 @@ import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRE
 @Controller
 @Conditional(OnR5Condition.class)
 public class BundleProviderR5 implements IResourceProvider {
-        private static final Logger logger = LoggerFactory.getLogger(BundleProviderR5.class);
+    private static final Logger logger = LoggerFactory.getLogger(BundleProviderR5.class);
 
-        @Autowired
-        private OperationOutcomeProviderR5 operationOutcomeProvider;
-        @Autowired
-        private ImmunizationProviderR5 immunizationProvider;
-        @Autowired
-        private ImmunizationRecommendationProviderR5 immunizationRecommendationProvider;
-        @Autowired
-        private PatientProviderR5 patientProvider;
-        @Autowired
-        private SubscriptionStatusProviderR5 subscriptionStatusProvider;
-        @Autowired
-        EhrSubscriptionRepository ehrSubscriptionRepository;
-        @Autowired
-        FhirContext fhirContext;
-        @Autowired
-        private ImmunizationRegistryRepository immunizationRegistryRepository;
+    @Autowired
+    private OperationOutcomeProviderR5 operationOutcomeProvider;
+    @Autowired
+    private ImmunizationProviderR5 immunizationProvider;
+    @Autowired
+    private ImmunizationRecommendationProviderR5 immunizationRecommendationProvider;
+    @Autowired
+    private PatientProviderR5 patientProvider;
+    @Autowired
+    private SubscriptionStatusProviderR5 subscriptionStatusProvider;
+    @Autowired
+    EhrSubscriptionRepository ehrSubscriptionRepository;
+    @Autowired
+    FhirContext fhirContext;
+    @Autowired
+    private ImmunizationRegistryRepository immunizationRegistryRepository;
+
+    /**
+     * The getResourceType method comes from IResourceProvider, and must
+     * be overridden to indicate what type of resource this provider
+     * supplies.
+     */
+
+    @Override
+    public Class<Bundle> getResourceType() {
+        return Bundle.class;
+    }
+
+    @Create()
+    public MethodOutcome create(@ResourceParam Bundle bundle, ServletRequestDetails requestDetails) {
+        // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
+
+        HttpServletRequest request = requestDetails.getServletRequest();
+
+
+        if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
+            throw new InvalidRequestException("Bundles other than Subscription notification not supported");
+        }
 
         /**
-         * The getResourceType method comes from IResourceProvider, and must
-         * be overridden to indicate what type of resource this provider
-         * supplies.
+         * Subscription Bundle first entry required to be Subscription Status
          */
-
-        @Override
-        public Class<Bundle> getResourceType() {
-            return Bundle.class;
+        SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
+        Reference subscriptionReference = subscriptionStatus.getSubscription();
+        EhrSubscription ehrSubscription = null;
+        if (subscriptionReference.getIdentifier() != null && subscriptionReference.getIdentifier().getValue() != null) {
+            ehrSubscription = ehrSubscriptionRepository.findById(subscriptionReference.getIdentifier().getValue())
+                    .orElseThrow(() -> new InvalidRequestException("No active subscription found with identifier"));
+        } else {
+            ehrSubscription = ehrSubscriptionRepository.findByExternalId(new IdType(subscriptionReference.getReference()).getIdPart())
+                    .orElseThrow(() -> new InvalidRequestException("No active subscription found with id"));
         }
 
-        @Create()
-        public MethodOutcome create(@ResourceParam Bundle bundle, ServletRequestDetails requestDetails) {
-                // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
+        /**
+         * Subscription Security check
+         */
+        String secret = request.getHeader(SECRET_HEADER_NAME);
 
-                HttpServletRequest request = requestDetails.getServletRequest();
-                MethodOutcome outcome;
-                List<MethodOutcome> outcomeList = new ArrayList<>();
+        if (!ehrSubscription.getHeader().equals(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret)) {
+            throw new AuthenticationException("Invalid header for subscription notification");
+        }
 
-                if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
-                      throw new InvalidRequestException("Bundles other than Subscription notification not supported");
-                }
+        ImmunizationRegistry immunizationRegistry = ehrSubscription.getImmunizationRegistry();
 
-                /**
-                 * Subscription Bundle first entry required to be Subscription Status
-                 */
-                SubscriptionStatus subscriptionStatus = (SubscriptionStatus) bundle.getEntryFirstRep().getResource();
-                Reference subscriptionReference = subscriptionStatus.getSubscription();
-                EhrSubscription ehrSubscription = null;
-                if (subscriptionReference.getIdentifier() != null && subscriptionReference.getIdentifier().getValue() != null) {
-                        ehrSubscription = ehrSubscriptionRepository.findById(subscriptionReference.getIdentifier().getValue())
-                                .orElseThrow(() -> new InvalidRequestException("No active subscription found with identifier"));
-                } else {
-                        ehrSubscription = ehrSubscriptionRepository.findByExternalId(new IdType(subscriptionReference.getReference()).getIdPart())
-                                .orElseThrow(() -> new InvalidRequestException("No active subscription found with id"));
-                }
+        /**
+         * Done for Historical log in Audit revision tables, as it is done in a spring bean
+         */
+        request.setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID, immunizationRegistry.getId()); // TODO link with subscription for origin analysis
+        request.setAttribute(AuditRevisionListener.SUBSCRIPTION_ID, ehrSubscription.getIdentifier());
+        request.setAttribute(AuditRevisionListener.USER_ID, immunizationRegistry.getUser().getId());
 
-                /**
-                 * Subscription Security check
-                 */
-                String secret = request.getHeader(SECRET_HEADER_NAME);
+        List<MethodOutcome> outcomeList = new ArrayList<>(bundle.getEntry().size());
+        outcomeList.add(subscriptionStatusProvider.create(subscriptionStatus, requestDetails));
+        //TODO check topic, do a different topic for operationOutcome?
 
-                if (!ehrSubscription.getHeader().equals(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret)) {
-                        throw new AuthenticationException("Invalid header for subscription notification");
-                }
+        if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)) {
+            /**
+             * First load patients, then immunization to solve references, then immunizationRecommendations
+             *
+             */
+            EhrFhirProvider[] providers = new EhrFhirProvider[]{
+                    patientProvider,
+                    immunizationProvider,
+                    immunizationRecommendationProvider,
+                    operationOutcomeProvider
+            };
 
-                ImmunizationRegistry immunizationRegistry = ehrSubscription.getImmunizationRegistry();
 
-                /**
-                 * Done for Historical log un Audit revision tables
-                 */
-                request.setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID,immunizationRegistry.getId()); // TODO link with subscription for origin analysis
-                request.setAttribute(AuditRevisionListener.SUBSCRIPTION_ID,ehrSubscription.getIdentifier()); // TODO link with subscription for origin analysis
-                request.setAttribute(AuditRevisionListener.USER_ID,immunizationRegistry.getUser().getId()); // TODO link with subscription for origin analysis
-
-                outcome = subscriptionStatusProvider.create(subscriptionStatus ,requestDetails);
-                switch (subscriptionStatus.getTopic()) { //TODO check topic
-                        default: {
-                                if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)){
-                                        /**
-                                         * First load patients, then immunization to solve references
-                                         * TODO distinct POST AND PUT
-                                         */
-
-                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.Patient))).iterator().forEachRemaining(entry -> {
-                                                outcomeList.add(
-                                                        patientProvider.updatePatient((Patient) entry.getResource(),requestDetails, immunizationRegistry)
-                                                );
-                                        });
-                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.Immunization))).iterator().forEachRemaining(entry -> {
-                                                outcomeList.add(
-                                                        immunizationProvider.updateImmunization((Immunization) entry.getResource(),requestDetails, immunizationRegistry)
-                                                );
-                                        });
-                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.ImmunizationRecommendation))).iterator().forEachRemaining(entry -> {
-                                                outcomeList.add(
-                                                        immunizationRecommendationProvider.updateImmunizationRecommendation((ImmunizationRecommendation) entry.getResource(),requestDetails, immunizationRegistry)
-                                                );
-                                        });
-                                        bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.OperationOutcome))).iterator().forEachRemaining(entry -> {
-                                                outcomeList.add(
-                                                        operationOutcomeProvider.registerOperationOutcome((OperationOutcome) entry.getResource(),requestDetails, immunizationRegistry)
-                                                );
-                                        });;
-                                }
+            for (EhrFhirProvider provider : providers) {
+                bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(ResourceType.fromCode(provider.getResourceType().getName())))).iterator().forEachRemaining(entry -> {
+                    switch (entry.getRequest().getMethodElement().getValue()) {
+                        case POST:
+                        case PUT: {
+                            outcomeList.add(
+                                    provider.update(entry.getResource(), requestDetails, immunizationRegistry)
+                            );
+                            break;
                         }
-                }
-                // TODO make proper outcome
-//                for (MethodOutcome methodOutcome: outcomeList) {
-//
-//                }
-                return outcome;
+                        case DELETE: {
+                            outcomeList.add(
+                                    provider.deleteConditional(entry.getResource().getIdElement(), entry.getRequest().getUrl(), requestDetails, immunizationRegistry)
+                            );
+                            break;
+                        }
+                    }
+                });
+            }
         }
-
+//      for (MethodOutcome methodOutcome: outcomeList) {
+//          TODO make proper outcome
+//      }
+        return outcomeList.get(0);
+    }
 
 
 }

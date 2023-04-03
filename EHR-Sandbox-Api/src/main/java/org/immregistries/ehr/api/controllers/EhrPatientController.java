@@ -4,8 +4,6 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
-import ca.uhn.fhir.rest.gclient.TokenCriterion;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
@@ -22,7 +20,6 @@ import org.immregistries.smm.tester.manager.query.QueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
@@ -31,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
@@ -183,7 +179,7 @@ public class EhrPatientController {
             requestDetails.setTenantId(String.valueOf(facilityId));
             for (Bundle.BundleEntryComponent entry: outBundle.getEntry()) {
                 try {
-                    MethodOutcome methodOutcome = immunizationProviderR5.updateImmunization((Immunization) entry.getResource(), requestDetails,immunizationRegistry, facility, patientId);
+                    MethodOutcome methodOutcome = immunizationProviderR5.update((Immunization) entry.getResource(), immunizationRegistry, facility, patientId);
                 } catch (ClassCastException classCastException ){
                     //Ignoring other resources
                 }

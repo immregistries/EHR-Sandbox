@@ -112,8 +112,8 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	/**
 	 * Map<FacilityId,Map<EhrPatientId, Set<ImmunizationRecommendation>>>
 	 */
-	public Map<Integer, Map<String, Set<ImmunizationRecommendation>>> immunizationRecommendations() {
-		Map<Integer,Map<String, Set<ImmunizationRecommendation>>> map = new HashMap<>(10);
+	public Map<Integer,  Set<ImmunizationRecommendation>> immunizationRecommendations() {
+		Map<Integer, Set<ImmunizationRecommendation>> map = new HashMap<>(20);
 		return map;
 	}
 

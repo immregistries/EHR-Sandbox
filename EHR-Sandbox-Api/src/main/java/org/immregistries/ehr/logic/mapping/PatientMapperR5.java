@@ -162,13 +162,14 @@ public class PatientMapperR5 {
         ehrPatient.setSex("");
         break;
     }
-    int raceNumber = 0;
-    for (Coding coding: p.getExtensionByUrl(RACE).getValueCodeableConcept().getCoding()) {
-      raceNumber++;
-      switch (raceNumber) {
-        case 1:{
-          ehrPatient.setRace(coding.getCode());
-        }
+    if (p.getExtensionByUrl(RACE) != null) {
+      int raceNumber = 0;
+      for (Coding coding: p.getExtensionByUrl(RACE).getValueCodeableConcept().getCoding()) {
+        raceNumber++;
+        switch (raceNumber) {
+          case 1:{
+            ehrPatient.setRace(coding.getCode());
+          }
 //        case 2:{ TODO race list
 //          patient.setRace2(coding.getCode());
 //        }
@@ -184,8 +185,10 @@ public class PatientMapperR5 {
 //        case 6:{
 //          patient.setRace6(coding.getCode());
 //        }
+        }
       }
     }
+
     if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
       ehrPatient.setEthnicity(p.getExtensionByUrl(ETHNICITY_EXTENSION).getValueCoding().getCode());
     }
