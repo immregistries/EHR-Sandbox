@@ -9,7 +9,7 @@
           [dataSource]="dataSource" multiTemplateDataRows
           class="mat-elevation-z8">
       <ng-container matColumnDef="severity" >
-        <th mat-header-cell *matHeaderCellDef> Severity </th>
+        <th mat-header-cell *matHeaderCellDef>Severity</th>
         <td mat-cell *matCellDef="let element"> {{element.severity | textShorten: 12}} </td>
       </ng-container>
       <ng-container matColumnDef="code" >
@@ -30,9 +30,9 @@
       <ng-container matColumnDef="vaccinationEvent" >
         <th mat-header-cell *matHeaderCellDef>Vaccination</th>
         <td mat-cell *matCellDef="let element">
-          {{ element.vaccinationEvent ? element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode : element.vaccinationEvent : ''}}
           <button mat-icon-button *ngIf="element.vaccinationEvent"  color="primary"
           (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();">
+          {{ element.vaccinationEvent ? element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode : element.vaccinationEvent : ''}}
             <mat-icon>open_in_new</mat-icon>
           </button>
         </td>

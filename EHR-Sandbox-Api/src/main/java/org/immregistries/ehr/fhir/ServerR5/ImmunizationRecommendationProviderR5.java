@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +47,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
         return ResourceType.ImmunizationRecommendation;
     }
     @Resource
-    Map<Integer, Set<ImmunizationRecommendation>> immunizationRecommendationsStore;
+    Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendationsStore;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
     @Autowired
@@ -74,39 +75,41 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
         String dbPatientID = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
         immunizationRecommendation.setPatient(new Reference(dbPatientID));
 
-        immunizationRecommendationsStore.putIfAbsent(facility.getId(), new HashSet<>(10));
-        immunizationRecommendationsStore.get(facility.getId()).add(immunizationRecommendation); // TODO add
+        immunizationRecommendationsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
+        immunizationRecommendationsStore.get(facility.getId()).putIfAbsent(dbPatientID, new HashMap<>(1));
+        immunizationRecommendationsStore.get(facility.getId()).get(dbPatientID).put(immunizationRegistry.getId(), immunizationRecommendation); // TODO add
         return new MethodOutcome();
     }
 
 
     public MethodOutcome deleteConditional(IdType theId, String theConditionalUrl, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-
-//        String dbPatientID = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
-//        immunizationRecommendation.setPatient(new Reference(dbPatientID));
-        Predicate<ImmunizationRecommendation> predicate;
-        if (theId != null && !StringUtils.isBlank(theId.getIdPart())) {
-            predicate = immunizationRecommendation -> immunizationRecommendation.getId().equals(theId.getIdPart());
-        } else  {
-            UrlType urlType = new UrlType(theConditionalUrl);
-            String[] paramIdentifier = Stream.of(urlType.getValue().split("\\?")[1].split("&"))
-                    .map(kv -> kv.split("="))
-                    .filter(kv -> "identifier".equalsIgnoreCase(kv[0]))
-                    .map(kv -> kv[1])
-                    .findFirst()
-                    .orElse("|").split("\\|",2);
-            Predicate<Identifier> identifierPredicate;
-            if (paramIdentifier.length > 1) {
-                identifierPredicate = identifier -> identifier.getSystem().equals(paramIdentifier[0]) && identifier.getValue().equals(paramIdentifier[1]);
-            } else {
-                identifierPredicate = identifier ->  identifier.getValue().equals(paramIdentifier[0]);
-            }
-            predicate = immunizationRecommendation -> immunizationRecommendation.getIdentifier().stream().anyMatch(identifierPredicate);
-        }
-        immunizationRecommendationsStore.getOrDefault(facility.getId(), new HashSet<>(0))
-                .removeIf(predicate);
+//        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
+//
+////        String dbPatientID = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
+////        immunizationRecommendation.setPatient(new Reference(dbPatientID));
+//        Predicate<ImmunizationRecommendation> predicate;
+//        if (theId != null && !StringUtils.isBlank(theId.getIdPart())) {
+//            predicate = immunizationRecommendation -> immunizationRecommendation.getId().equals(theId.getIdPart());
+//        } else  {
+//            UrlType urlType = new UrlType(theConditionalUrl);
+//            String[] paramIdentifier = Stream.of(urlType.getValue().split("\\?")[1].split("&"))
+//                    .map(kv -> kv.split("="))
+//                    .filter(kv -> "identifier".equalsIgnoreCase(kv[0]))
+//                    .map(kv -> kv[1])
+//                    .findFirst()
+//                    .orElse("|").split("\\|",2);
+//            Predicate<Identifier> identifierPredicate;
+//            if (paramIdentifier.length > 1) {
+//                identifierPredicate = identifier -> identifier.getSystem().equals(paramIdentifier[0]) && identifier.getValue().equals(paramIdentifier[1]);
+//            } else {
+//                identifierPredicate = identifier ->  identifier.getValue().equals(paramIdentifier[0]);
+//            }
+//            predicate = immunizationRecommendation -> immunizationRecommendation.getIdentifier().stream().anyMatch(identifierPredicate);
+//        }
+//        immunizationRecommendationsStore.getOrDefault(facility.getId(), new HashMap<>(0))
+//                .getOrDefault(pa)
+//                .removeIf(predicate);
 //        immunizationRecommendationsStore.get(facility.getId()).get(theId)
         return new MethodOutcome();
     }

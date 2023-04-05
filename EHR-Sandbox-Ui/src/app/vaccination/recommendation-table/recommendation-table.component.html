@@ -9,24 +9,19 @@
 <table mat-table
        [dataSource]="dataSource" multiTemplateDataRows
        class="mat-elevation-z8">
-  <ng-container matColumnDef="vaccineCode" >
-    <th mat-header-cell *matHeaderCellDef>Vaccine Code</th>
+  <ng-container matColumnDef="identifier" >
+    <th mat-header-cell *matHeaderCellDef>Identifier</th>
     <td mat-cell *matCellDef="let element">
-      {{
-        (element.recommendation[0].vaccineCode[0].coding[0].code ? (element.recommendation[0].vaccineCode[0].coding[0].code | codeMaps: "VACCINATION_CVX_CODE").label : "")
-        + ' (' + (element.recommendation[0].vaccineCode[0].coding[0].code ?? "-None-") + ')'
-        + (element.recommendation.length > 1 ? "+ " + element.recommendation.length : "")
-      }}
-
+        {{element.identifier[0].value}}
     </td>
   </ng-container>
   <ng-container matColumnDef="date" >
-    <th mat-header-cell *matHeaderCellDef>Date </th>
+    <th mat-header-cell *matHeaderCellDef>Updated Date</th>
     <td mat-cell *matCellDef="let element"> {{element.date | date: 'yyyy-MM-dd'}} </td>
   </ng-container>
-  <ng-container matColumnDef="dateCriterion" >
-    <th mat-header-cell *matHeaderCellDef> Date Criterion </th>
-    <td mat-cell *matCellDef="let element"> {{element.recommendation[0].dateCriterion[0].code.coding[0].display}} </td>
+  <ng-container matColumnDef="authority" >
+    <th mat-header-cell *matHeaderCellDef>Authority</th>
+    <td mat-cell *matCellDef="let element">{{element.authority.reference ?? element.authority.identifier.value }}</td>
   </ng-container>
 
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
@@ -34,11 +29,8 @@
     <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
       <div class="element-detail"
       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-      <div *ngFor="let reco of element.recommendation">
-        {{(reco.vaccineCode[0].coding[0].code ? (reco.vaccineCode[0].coding[0].code | codeMaps: "VACCINATION_CVX_CODE").label : "")
-          + ' (' + (reco.vaccineCode[0].coding[0].code ?? "-None-") + ')'}}
+        <app-recommendation-component-table [components]="element.recommendation"></app-recommendation-component-table>
       </div>
-    </div>
 
     </td>
   </ng-container>
@@ -50,5 +42,5 @@
       [class.expanded-row]="expandedElement === element"
       (click)="expandedElement = expandedElement === element ? null : element">
   </tr>
-  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"> </tr>
 </table>

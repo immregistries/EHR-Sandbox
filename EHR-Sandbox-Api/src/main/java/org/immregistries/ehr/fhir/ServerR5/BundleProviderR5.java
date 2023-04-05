@@ -134,7 +134,7 @@ public class BundleProviderR5 implements IResourceProvider {
                         }
                         case DELETE: {
                             outcomeList.add(
-                                    provider.deleteConditional(entry.getResource().getIdElement(), entry.getRequest().getUrl(), requestDetails, immunizationRegistry)
+                                    provider.deleteConditional(null, entry.getRequest().getUrl(), requestDetails, immunizationRegistry)
                             );
                             break;
                         }

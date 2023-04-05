@@ -34,9 +34,10 @@ export class PatientTableComponent implements AfterViewInit {
   lastIdSelectedBeforeRefresh: number = -1;
 
   columns: (keyof EhrPatient | 'alerts')[] = [
-    "nameFirst",
-    "nameMiddle",
+    "mrn",
     "nameLast",
+    "nameFirst",
+    // "nameMiddle",
     "birthDate",
     'alerts'
   ]

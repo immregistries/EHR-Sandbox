@@ -34,7 +34,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VaccinationDashboardComponent } from './vaccination-dashboard/vaccination-dashboard.component';
 import { VaccinationDetailsComponent } from './vaccination-details/vaccination-details.component';
 import { VaccinationHistoryComponent } from './vaccination-history/vaccination-history.component';
-import { RecommendationTableComponent } from './recommandation-table/recommendation-table.component';
+import { RecommendationTableComponent } from './recommendation-table/recommendation-table.component';
+import { RecommendationComponentTableComponent } from './recommendation-table/recommendation-component-table/recommendation-component-table.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { RecommendationTableComponent } from './recommandation-table/recommendat
     VaccinationDetailsComponent,
     VaccinationHistoryComponent,
     RecommendationTableComponent,
+    RecommendationComponentTableComponent,
   ],
   imports: [
     CommonModule,
@@ -84,6 +86,7 @@ import { RecommendationTableComponent } from './recommandation-table/recommendat
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
     RecommendationTableComponent,
+    RecommendationComponentTableComponent,
   ]
 })
 export class VaccinationModule { }

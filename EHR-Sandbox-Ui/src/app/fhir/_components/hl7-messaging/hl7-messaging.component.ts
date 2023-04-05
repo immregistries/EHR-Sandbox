@@ -49,12 +49,14 @@ export class Hl7MessagingComponent implements OnInit {
   send() {
     this.loading = true
     if (this.vaccinationId > 0){
-      this.hl7Service.quickPostVXU(this.patientId,this.vaccinationId, this.hl7Message).pipe(tap(() => {this.loading = false})).subscribe({
+      this.hl7Service.quickPostVXU(this.patientId,this.vaccinationId, this.hl7Message).subscribe({
         next: (res) => {
+          this.loading = false
           this.answer = res
           this.error = ""
         },
         error : (err) => {
+          this.loading = false
           this.answer = ""
           if (err.error.text) {
             this.error = err.error.text
@@ -65,12 +67,14 @@ export class Hl7MessagingComponent implements OnInit {
         }
       })
     } else {
-      this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).pipe(tap(() => {this.loading = false})).subscribe({
+      this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).subscribe({
         next: (res) => {
+          this.loading = false
           this.answer = res
           this.error = ""
         },
         error : (err) => {
+          this.loading = false
           this.answer = ""
           if (err.error.text) {
             this.error = err.error.text

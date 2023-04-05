@@ -27,7 +27,8 @@ public class RecommendationController {
     FhirContext fhirContext;
 
     @Autowired
-    Map<Integer, Set<ImmunizationRecommendation>> immunizationRecommendationsStore;
+            
+    Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendationsStore;
     @Autowired
     private FacilityRepository facilityRepository;
 
@@ -35,10 +36,11 @@ public class RecommendationController {
     public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable String patientId) {
         IParser parser = fhirContext.newJsonParser();
         Set<String> set = immunizationRecommendationsStore
-                .getOrDefault(facilityId, new HashSet<>())
-                .stream()
-                .filter(immunizationRecommendation -> immunizationRecommendation.getPatient().getReference().equals(patientId))
-                .map(parser::encodeResourceToString).collect(Collectors.toSet());
+                .getOrDefault(facilityId, new HashMap<>(0))
+                .getOrDefault(patientId, new HashMap<>(0)).entrySet().stream().map(
+                        entry -> parser.encodeResourceToString(entry.getValue()))
+                .collect(Collectors.toSet());
+
         return ResponseEntity.ok(set);
     }
 

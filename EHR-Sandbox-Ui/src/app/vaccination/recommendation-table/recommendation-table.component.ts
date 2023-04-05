@@ -25,10 +25,11 @@ import { RecommendationService } from 'src/app/core/_services/recommendation.ser
 export class RecommendationTableComponent implements OnInit {
   private codeBaseMap!: CodeBaseMap;
 
-  columns: (keyof ImmunizationRecommendation | keyof ImmunizationRecommendationRecommendation)[] = [
-    "vaccineCode",
+  columns: (keyof ImmunizationRecommendation)[] = [
+    "identifier",
     "date",
-    "dateCriterion",
+    "authority",
+
   ]
 
 
