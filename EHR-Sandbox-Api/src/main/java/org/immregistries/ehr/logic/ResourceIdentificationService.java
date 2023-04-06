@@ -75,7 +75,6 @@ public class ResourceIdentificationService {
         if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
             return identifier.getValue();
         } else if (identifier.getSystem().equals(MRN_SYSTEM)) {
-            System.out.println(identifier.getValue());
             return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
                     .map(EhrPatient::getId).orElse(null);
         }else {

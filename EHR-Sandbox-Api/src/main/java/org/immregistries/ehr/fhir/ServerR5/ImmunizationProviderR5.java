@@ -129,10 +129,6 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
         // TODO set received information status and make sure history of patient info if already exists
         vaccineRepository.save(vaccinationEvent.getVaccine());
         vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
-        return methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId()));
-    }
-
-    public MethodOutcome deleteConditional(IdType theId, String theConditionalUrl, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        return new MethodOutcome(); //TODO
+        return methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId())).setCreated(true);
     }
 }

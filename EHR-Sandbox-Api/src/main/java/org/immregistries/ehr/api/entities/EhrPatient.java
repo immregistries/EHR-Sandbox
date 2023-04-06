@@ -141,7 +141,7 @@ public class EhrPatient {
 
     @OneToMany(mappedBy = "patient")
     @JsonManagedReference("patient-nextOfKin")
-    @NotAudited // TODO maybe change
+    @NotAudited
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "patient")

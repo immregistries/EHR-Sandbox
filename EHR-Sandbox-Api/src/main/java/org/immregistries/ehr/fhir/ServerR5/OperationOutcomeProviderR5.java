@@ -138,10 +138,6 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
             feedbackList.add(feedback);
         }
         feedbackRepository.saveAll(feedbackList);
-        return new MethodOutcome().setOperationOutcome(operationOutcome).setCreated(true).setResource(operationOutcome);
-    }
-
-    public MethodOutcome deleteConditional(IdType theId, String theConditionalUrl, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        return new MethodOutcome(); //TODO
+        return new MethodOutcome().setCreated(true).setResource(operationOutcome);
     }
 }

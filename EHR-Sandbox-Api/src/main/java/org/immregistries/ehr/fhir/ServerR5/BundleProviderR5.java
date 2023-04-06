@@ -64,11 +64,7 @@ public class BundleProviderR5 implements IResourceProvider {
 
     @Create()
     public MethodOutcome create(@ResourceParam Bundle bundle, ServletRequestDetails requestDetails) {
-        // TODO Security checks, secrets ib headers or bundle (maybe in interceptors)
-
         HttpServletRequest request = requestDetails.getServletRequest();
-
-
         if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
             throw new InvalidRequestException("Bundles other than Subscription notification not supported");
         }
@@ -105,10 +101,10 @@ public class BundleProviderR5 implements IResourceProvider {
         request.setAttribute(AuditRevisionListener.SUBSCRIPTION_ID, ehrSubscription.getIdentifier());
         request.setAttribute(AuditRevisionListener.USER_ID, immunizationRegistry.getUser().getId());
 
-        List<MethodOutcome> outcomeList = new ArrayList<>(bundle.getEntry().size());
-        outcomeList.add(subscriptionStatusProvider.create(subscriptionStatus, requestDetails));
+        MethodOutcome statusOutcome = subscriptionStatusProvider.create(subscriptionStatus, requestDetails);
         //TODO check topic, do a different topic for operationOutcome?
-
+        Bundle outcomeBundle = new Bundle().setType(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION); // TODO
+        outcomeBundle.addEntry().setResource((Resource) statusOutcome.getOperationOutcome());
         if (subscriptionStatus.getType().equals(SubscriptionStatus.SubscriptionNotificationType.EVENTNOTIFICATION)) {
             /**
              * First load patients, then immunization to solve references, then immunizationRecommendations
@@ -120,32 +116,25 @@ public class BundleProviderR5 implements IResourceProvider {
                     immunizationRecommendationProvider,
                     operationOutcomeProvider
             };
-
-
             for (EhrFhirProvider provider : providers) {
                 bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(provider.getResourceName()))).iterator().forEachRemaining(entry -> {
                     switch (entry.getRequest().getMethodElement().getValue()) {
                         case POST:
                         case PUT: {
-                            outcomeList.add(
-                                    provider.update(entry.getResource(), requestDetails, immunizationRegistry)
-                            );
+                            outcomeBundle.addEntry().setRequest(entry.getRequest())
+                                    .setResource((Resource) provider.update(entry.getResource(), requestDetails, immunizationRegistry)
+                                            .getOperationOutcome());
                             break;
                         }
-                        case DELETE: {
-                            outcomeList.add(
-                                    provider.deleteConditional(null, entry.getRequest().getUrl(), requestDetails, immunizationRegistry)
-                            );
-                            break;
-                        }
+//                        case DELETE: {
+//                            break;
+//                        }
                     }
                 });
             }
         }
-//      for (MethodOutcome methodOutcome: outcomeList) {
-//          TODO make proper outcome
-//      }
-        return outcomeList.get(0);
+        MethodOutcome aglomeratedOutcome = new MethodOutcome().setResource(outcomeBundle);
+        return aglomeratedOutcome;
     }
 
 

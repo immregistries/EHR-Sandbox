@@ -110,7 +110,7 @@ public class ImmunizationMapperR4 {
 //    }
 
 //    if (vaccine.getEnteredBy() != null) {
-////		  i.setInformationSource(new Reference(MappingHelper.PRACTITIONER+"/" + vaccine.getEnteredBy().getPersonId())); TODO
+////		  i.setInformationSource(new Reference(MappingHelper.PRACTITIONER+"/" + vaccine.getEnteredBy().getPersonId()));
 //    }
 //    if (vaccine.getOrderingProvider() != null) {
 //      i.addPerformer(performer(vaccine.getOrderingProvider(),ORDERING, ORDERING_DISPLAY));
@@ -131,7 +131,7 @@ public class ImmunizationMapperR4 {
 //      ve.setOrgLocation(fhirRequests.readOrgLocation(i.getLocation().getReference()));
     }
 //    if (i.hasInformationSourceReference() && i.getInformationSourceReference().getReference() != null && !i.getInformationSourceReference().getReference().isBlank()) {
-//      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]); // TODO
+//      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]);
 //      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
 //    }
     for (Immunization.ImmunizationPerformerComponent performer: i.getPerformer()) {
@@ -141,17 +141,17 @@ public class ImmunizationMapperR4 {
         String performerRef = performer.getActor().getReference();
         Integer performerId;
         if ( performerRef.split("Clinician/").length > 1) {
-          performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+          performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]);
         } else {
-          performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[0]); // TODO
+          performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[0]);
         }
         switch (performer.getFunction().getCodingFirstRep().getCode()){ // TODO make sure system is FUNCTION
           case ADMINISTERING: {
-            ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO
+            ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());
             break;
           }
           case ORDERING: {
-            ve.setOrderingClinician(clinicianRepository.findById(performerId).get());//TODO
+            ve.setOrderingClinician(clinicianRepository.findById(performerId).get());
             break;
           }
         }

@@ -12,7 +12,7 @@ public interface EhrFhirProvider<FhirResourceType extends IBaseResource> {
     ResourceType getResourceName();
     MethodOutcome update(FhirResourceType resourceType, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry);
 //    MethodOutcome delete(IdType theId, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry);
-    MethodOutcome deleteConditional(IdType theId, String theConditionalUrl, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry);
+//    MethodOutcome deleteConditional(IdType theId, String theConditionalUrl, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry);
 
 
 }

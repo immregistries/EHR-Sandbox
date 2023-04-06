@@ -3,10 +3,6 @@ package org.immregistries.ehr;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.hl7.fhir.r5.model.ImmunizationRecommendation;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.User;
-import org.immregistries.ehr.fhir.ServerR4.EhrFhirServerR4;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -73,17 +69,17 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 		};
 	}
 
-	@Bean
-	@Conditional(OnR4Condition.class)
-	public ServletRegistrationBean<EhrFhirServerR4> ServerR4RegistrationBean() {
-		ServletRegistrationBean<EhrFhirServerR4>  registrationBean = new ServletRegistrationBean<>();
-		EhrFhirServerR4 servlet = new EhrFhirServerR4(context.getBean(FhirContext.class)); //TODO change to R4 specifically
-		beanFactory.autowireBean(servlet);
-		registrationBean.setServlet(servlet);
-		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");
-		registrationBean.setLoadOnStartup(1);
-		return registrationBean;
-	}
+//	@Bean
+//	@Conditional(OnR4Condition.class)
+//	public ServletRegistrationBean<EhrFhirServerR4> ServerR4RegistrationBean() {
+//		ServletRegistrationBean<EhrFhirServerR4>  registrationBean = new ServletRegistrationBean<>();
+//		EhrFhirServerR4 servlet = new EhrFhirServerR4(context.getBean(FhirContext.class));
+//		beanFactory.autowireBean(servlet);
+//		registrationBean.setServlet(servlet);
+//		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");
+//		registrationBean.setLoadOnStartup(1);
+//		return registrationBean;
+//	}
 
 	@Bean
 	@Conditional(OnR5Condition.class)

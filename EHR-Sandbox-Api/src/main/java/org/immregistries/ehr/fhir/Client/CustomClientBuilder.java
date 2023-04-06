@@ -42,7 +42,7 @@ public class CustomClientBuilder extends ApacheRestfulClientFactory implements I
 
     public IGenericClient newGenericClient(Integer registryId){
          return newGenericClient(immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsServiceImpl.currentUserId()).orElseThrow(
-                 ()-> new RuntimeException("Invalid registry id") //TODO better exception message
+                 ()-> new RuntimeException("Invalid immunization registry id")
          ));
     }
 

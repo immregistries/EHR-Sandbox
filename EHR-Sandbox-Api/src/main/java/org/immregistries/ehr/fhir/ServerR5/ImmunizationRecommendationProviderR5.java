@@ -78,7 +78,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
         immunizationRecommendationsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
         immunizationRecommendationsStore.get(facility.getId()).putIfAbsent(dbPatientID, new HashMap<>(1));
         immunizationRecommendationsStore.get(facility.getId()).get(dbPatientID).put(immunizationRegistry.getId(), immunizationRecommendation); // TODO add
-        return new MethodOutcome();
+        return new MethodOutcome().setResource(immunizationRecommendation);
     }
 
 
