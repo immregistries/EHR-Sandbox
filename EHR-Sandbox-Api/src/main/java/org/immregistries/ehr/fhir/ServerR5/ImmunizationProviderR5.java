@@ -85,7 +85,6 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
          */
         String dbPatientId = resourceIdentificationService.getPatientLocalId(immunization.getPatient(), immunizationRegistry, facility);
         immunization.getPatient().setId(dbPatientId + "");
-        logger.info("{}", dbPatientId);
         return update(immunization, immunizationRegistry, facility, dbPatientId);
     }
 

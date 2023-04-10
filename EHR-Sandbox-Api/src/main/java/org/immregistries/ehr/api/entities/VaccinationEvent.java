@@ -28,8 +28,12 @@ public class VaccinationEvent {
     @JsonProperty("patient")
     private EhrPatient patient;
 
+    /**
+     * DO NOT USE THIS METHOD
+     * @param id
+     */
     @JsonProperty("patient")
-    public void setPatient(int id) {
+    public void setPatient(String id) {
         // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
     }
 

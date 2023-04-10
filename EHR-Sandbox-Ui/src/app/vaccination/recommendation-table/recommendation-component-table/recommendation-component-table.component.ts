@@ -27,6 +27,9 @@ export class RecommendationComponentTableComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.dataSource.filterPredicate = (data, filter) => {
+      return JSON.stringify(data).includes(filter)
+    }
   }
 
   applyFilter(event: Event) {

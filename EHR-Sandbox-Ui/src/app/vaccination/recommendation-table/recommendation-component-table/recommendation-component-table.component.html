@@ -13,10 +13,9 @@
     <th mat-header-cell *matHeaderCellDef>Vaccine Code</th>
     <td mat-cell *matCellDef="let element">
       {{
-        (element.vaccineCode[0].coding[0].code ? (element.vaccineCode[0].coding[0].code | codeMaps: "VACCINATION_CVX_CODE").label : "")
+        element.vaccineCode[0].coding[0].display
         + ' (' + (element.vaccineCode[0].coding[0].code ?? "-None-") + ')'
       }}
-
     </td>
   </ng-container>
   <ng-container matColumnDef="dateCriterion" >

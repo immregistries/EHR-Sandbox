@@ -13,6 +13,7 @@ import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.immregistries.smm.tester.manager.query.QueryConverter;
@@ -69,6 +70,9 @@ public class EhrPatientController {
     HL7printer hl7printer;
     @Autowired
     ImmunizationRegistryController immRegistryController;
+
+    @Autowired
+    ImmunizationMapperR5 immunizationMapper;
 
 
     @GetMapping()
@@ -142,7 +146,7 @@ public class EhrPatientController {
     }
 
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
-    public ResponseEntity<String> fetchAndLoadImmunizationsFromIIS(@PathVariable() int facilityId,
+    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() int facilityId,
                                                       @PathVariable() String patientId,
                                                       @PathVariable() Integer immRegistryId,
                                                       @RequestParam Optional<Long> _since) {
@@ -168,6 +172,9 @@ public class EhrPatientController {
             Parameters in = new Parameters()
                     .addParameter("_mdm", "true")
                     .addParameter("_type", "Immunization,ImmunizationRecommendation");
+            if (_since.isPresent()) {
+                in.addParameter("_since", String.valueOf(_since.get()));
+            }
             Bundle outBundle = client.operation()
                     .onInstance("Patient/" + id)
                     .named("$everything")
@@ -175,18 +182,27 @@ public class EhrPatientController {
                     .prettyPrint()
                     .useHttpGet()
                     .returnResourceType(Bundle.class).execute();
+            Set<VaccinationEvent> set = new HashSet<>(outBundle.getEntry().size());
+
             RequestDetails requestDetails = new ServletRequestDetails();
             requestDetails.setTenantId(String.valueOf(facilityId));
+
             for (Bundle.BundleEntryComponent entry: outBundle.getEntry()) {
                 try {
-                    MethodOutcome methodOutcome = immunizationProviderR5.update((Immunization) entry.getResource(), immunizationRegistry, facility, patientId);
+                    Immunization immunization = (Immunization) entry.getResource();
+                    immunization.setPatient(new Reference().setReference(patientId));
+                    VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
+                    vaccinationEvent.setPatient(patient);
+                    vaccinationEvent.setAdministeringFacility(facility);
+                    set.add(immunizationMapper.toVaccinationEvent(immunization));
                 } catch (ClassCastException classCastException ){
                     //Ignoring other resources
                 }
                 //TODO Recommendations
             }
+            return ResponseEntity.accepted().body(set);
         }
-        return ResponseEntity.internalServerError().body("IDENTIFIER ERROR");
+        return ResponseEntity.badRequest().body(new HashSet<>());
     }
 
     @GetMapping("/{patientId}/qbp")

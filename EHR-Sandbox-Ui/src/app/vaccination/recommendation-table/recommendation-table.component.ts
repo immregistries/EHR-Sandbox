@@ -29,7 +29,7 @@ export class RecommendationTableComponent implements OnInit {
     "identifier",
     "date",
     "authority",
-
+    "recommendation"
   ]
 
 
