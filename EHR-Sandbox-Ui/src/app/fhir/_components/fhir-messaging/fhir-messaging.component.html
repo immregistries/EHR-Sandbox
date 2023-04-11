@@ -39,8 +39,9 @@
   <mat-tab label="Import remote information">
     <app-fhir-operation [operation]="'$everything'" [resourceId]="''+patientFhirId"></app-fhir-operation>
   </mat-tab>
-  <mat-tab label="load test">
-    <button mat-flat-button (click)="loadEverythingFromPatient()">fetch and load vaccination history from IIS</button>
+  <mat-tab label="Load everything from Patient">
+    <app-fetch-and-load [patientId]="patientId"> </app-fetch-and-load>
+    <!-- <button mat-flat-button (click)="loadEverythingFromPatient()">fetch and load vaccination history from IIS</button> -->
   </mat-tab>
   <mat-tab disabled>
     <ng-template mat-tab-label>

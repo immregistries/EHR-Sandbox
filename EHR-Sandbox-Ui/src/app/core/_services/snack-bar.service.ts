@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PatientDashboardComponent } from 'src/app/patient/patient-dashboard/patient-dashboard.component';
-import { VaccinationDashboardComponent } from 'src/app/vaccination/vaccination-dashboard/vaccination-dashboard.component';
+import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
+import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { EhrPatient, VaccinationEvent } from '../_model/rest';
 import { FeedbackService } from './feedback.service';
 import { PatientService } from './patient.service';

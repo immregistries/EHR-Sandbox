@@ -38,18 +38,42 @@ export class VaccinationTableComponent implements AfterViewInit  {
   // Allows Date type casting in HTML template
   asDate(val: any) : Date { return val; }
 
+  @Input() title: string = 'Vaccination history'
+  @Input() allowCreation: boolean = true
   dataSource = new MatTableDataSource<VaccinationEvent>([]);
   expandedElement: VaccinationEvent | null = null;
-
-  @Input() patientId: number = -1
-  @Input() title: string = 'Vaccination history'
-
   loading = false;
+
+  private listManuallySet = false
+  @Input()
+  set vaccinations(values: VaccinationEvent[]) {
+    this.listManuallySet = true
+    this.setVaccinations(values)
+  }
+  private setVaccinations(values: VaccinationEvent[]) {
+    this.loading = false
+    this.dataSource.data = values;
+    this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
+  }
+
+  private _patientId: number = -1;
+  @Input()
+  public set patientId(value: number | undefined) {
+    this._patientId = value ?? -1;
+    if (this.listManuallySet == false) {
+      this.loading = true
+      this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
+        this.setVaccinations(res)
+      })
+    }
+  }
+  public get patientId(): number {
+    return this._patientId;
+  }
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
-    private vaccinationService: VaccinationService,
-    private patientService: PatientService) { }
+    private vaccinationService: VaccinationService) { }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -76,17 +100,8 @@ export class VaccinationTableComponent implements AfterViewInit  {
     });
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
-
-    merge(
-      this.vaccinationService.getRefresh(),
-      this.patientService.getObservablePatient().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
-    ).subscribe(() => {
-      this.loading = true
-      this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
-        this.loading = false
-        this.dataSource.data = res
-        this.expandedElement = res.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
-      })
+    this.vaccinationService.getRefresh().subscribe(() => {
+      this.patientId = this.patientId // trigger refresh through setter
     })
   }
 

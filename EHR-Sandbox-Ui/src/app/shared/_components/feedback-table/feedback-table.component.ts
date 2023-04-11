@@ -8,8 +8,8 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { PatientDashboardComponent } from 'src/app/patient/patient-dashboard/patient-dashboard.component';
-import { VaccinationDashboardComponent } from 'src/app/vaccination/vaccination-dashboard/vaccination-dashboard.component';
+import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
+import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 
 @Component({
   selector: 'app-feedback-table',

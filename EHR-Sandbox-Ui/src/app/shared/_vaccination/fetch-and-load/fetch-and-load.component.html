@@ -1,0 +1,20 @@
+<button mat-flat-button (click)="loadEverythingFromPatient()">fetch and load vaccination history from IIS</button>
+
+<mat-grid-list cols="2">
+  <mat-grid-tile [colspan]="1" >
+    <mat-card class="dashboard-card">
+      <mat-card-content class="dashboard-card-content">
+        <app-vaccination-table [patientId]="patientId" [allowCreation]="false"></app-vaccination-table>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" >
+    <mat-card class="dashboard-card">
+      <mat-card-content class="dashboard-card-content">
+        <app-vaccination-table [vaccinations]="vaccinationEvents" [patientId]="patientId" [allowCreation]="false" ></app-vaccination-table>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
+
+

@@ -6,6 +6,7 @@ import { FacilityService } from '../../core/_services/facility.service';
 import { TenantService } from '../../core/_services/tenant.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { Identifier } from 'fhir/r5';
+import { VaccinationEvent } from 'src/app/core/_model/rest';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -146,11 +147,11 @@ export class FhirService {
       httpOptions);
   }
 
-  loadEverythingFromPatient(patientId: number): Observable<string> {
+  loadEverythingFromPatient(patientId: number): Observable<VaccinationEvent[]> {
     const immId = this.immRegistries.getImmRegistryId()
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
-    return this.http.get<string>(
+    return this.http.get<VaccinationEvent[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}/$fetchAndLoad`,
       httpOptions);
   }

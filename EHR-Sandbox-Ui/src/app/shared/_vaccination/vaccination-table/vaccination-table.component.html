@@ -2,7 +2,7 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
     <span class="custom-title">{{title}}</span>
-    <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(patientId && patientId > 0)" matTooltip="New Record">
+    <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(patientId && patientId > 0)"  *ngIf="allowCreation"  matTooltip="New Record">
       <mat-icon>add</mat-icon>
     </button>
   </div>
@@ -71,6 +71,6 @@
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
-<button mat-mini-fab [disabled]="!(patientId && patientId > 0)"  (click)="openCreation()" color="primary" >
+<button mat-mini-fab [disabled]="!(patientId && patientId > 0)" *ngIf="allowCreation"  (click)="openCreation()" color="primary" >
   <mat-icon>add</mat-icon>
 </button>

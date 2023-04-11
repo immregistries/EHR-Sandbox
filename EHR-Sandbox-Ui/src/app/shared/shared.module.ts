@@ -35,6 +35,26 @@ import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dial
 import { KeysPipe } from './_pipes/keys.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FeedbackIconComponent } from './_components/feedback-icon/feedback-icon.component';
+import { VaccinationComparePipe } from './_pipes/vaccination-compare.pipe';
+import { VaccinationFormComponent } from './_vaccination/vaccination-form/vaccination-form.component';
+import { FetchAndLoadComponent } from './_vaccination/fetch-and-load/fetch-and-load.component';
+import { RecommendationComponentTableComponent } from './_vaccination/recommendation-table/recommendation-component-table/recommendation-component-table.component';
+import { RecommendationTableComponent } from './_vaccination/recommendation-table/recommendation-table.component';
+import { VaccinationDashboardComponent } from './_vaccination/vaccination-dashboard/vaccination-dashboard.component';
+import { VaccinationDetailsComponent } from './_vaccination/vaccination-details/vaccination-details.component';
+import { VaccinationFreeFormComponent } from './_vaccination/vaccination-form/vaccination-free-form/vaccination-free-form.component';
+import { VaccinationHistoryComponent } from './_vaccination/vaccination-history/vaccination-history.component';
+import { VaccinationTableComponent } from './_vaccination/vaccination-table/vaccination-table.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PatientDashboardComponent } from './_patient/patient-dashboard/patient-dashboard.component';
+import { PatientDetailsComponent } from './_patient/patient-details/patient-details.component';
+import { PatientFormComponent } from './_patient/patient-form/patient-form.component';
+import { PatientFreeFormComponent } from './_patient/patient-free-form/patient-free-form.component';
+import { PatientHistoryComponent } from './_patient/patient-history/patient-history.component';
+import { PatientListComponent } from './_patient/patient-list/patient-list.component';
+import { PatientMenuComponent } from './_patient/patient-menu/patient-menu.component';
+import { PatientTableComponent } from './_patient/patient-table/patient-table.component';
 
 
 @NgModule({
@@ -57,6 +77,26 @@ import { FeedbackIconComponent } from './_components/feedback-icon/feedback-icon
     LocalCopyDialogComponent,
     KeysPipe,
     FeedbackIconComponent,
+    VaccinationComparePipe,
+
+    VaccinationFormComponent,
+    VaccinationTableComponent,
+    VaccinationFreeFormComponent,
+    VaccinationDashboardComponent,
+    VaccinationDetailsComponent,
+    VaccinationHistoryComponent,
+    RecommendationTableComponent,
+    RecommendationComponentTableComponent,
+    FetchAndLoadComponent,
+
+    PatientFormComponent,
+    PatientListComponent,
+    PatientFreeFormComponent,
+    PatientTableComponent,
+    PatientDetailsComponent,
+    PatientDashboardComponent,
+    PatientMenuComponent,
+    PatientHistoryComponent
   ],
   imports: [
     CommonModule,
@@ -78,6 +118,24 @@ import { FeedbackIconComponent } from './_components/feedback-icon/feedback-icon
     MatButtonModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatTabsModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatGridListModule,
+    MatCardModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatDialogModule,
+    MatTableModule,
+    MatSelectModule,
+    MatAutocompleteModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatBadgeModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -101,12 +159,32 @@ import { FeedbackIconComponent } from './_components/feedback-icon/feedback-icon
     EmptyListMessageComponent,
     SelectImmregistryComponent,
 
+    VaccinationFormComponent,
+    VaccinationTableComponent,
+    VaccinationFreeFormComponent,
+    VaccinationDashboardComponent,
+    VaccinationDetailsComponent,
+    VaccinationHistoryComponent,
+    RecommendationTableComponent,
+    RecommendationComponentTableComponent,
+    FetchAndLoadComponent,
+
+    PatientFormComponent,
+    PatientListComponent,
+    PatientFreeFormComponent,
+    PatientTableComponent,
+    PatientDetailsComponent,
+    PatientDashboardComponent,
+    PatientMenuComponent,
+    PatientHistoryComponent,
+
     CodeMapsPipe,
      TextShortenPipe,
      ImmunizationRegistryMenuComponent,
      LocalCopyDialogComponent,
      KeysPipe,
      FeedbackIconComponent,
+
   ],
 })
 export class SharedModule { }

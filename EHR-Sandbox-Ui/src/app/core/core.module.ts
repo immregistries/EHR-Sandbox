@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SharedModule } from '../shared/shared.module';
 import { FhirModule } from '../fhir/fhir.module';
-import { PatientModule } from '../patient/patient.module';
 
 import { SettingsService } from './_services/settings.service';
 import { PatientService } from './_services/patient.service';
@@ -43,9 +42,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { VaccinationModule } from '../vaccination/vaccination.module';
 import { SettingsComponent } from './_components/settings/settings.component';
 import { RefreshNotificationComponent } from './_components/refresh-notification/refresh-notification.component';
+import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pipe';
 
 @NgModule({
   declarations: [
@@ -66,9 +65,6 @@ import { RefreshNotificationComponent } from './_components/refresh-notification
 
     AuthenticationModule,
     FhirModule,
-    PatientModule,
-    VaccinationModule,
-
     SharedModule,
 
     MatToolbarModule,
@@ -106,6 +102,7 @@ import { RefreshNotificationComponent } from './_components/refresh-notification
     SettingsComponent,
   ],
   providers: [
+    VaccinationComparePipe,
     SettingsService,
     PatientService,
     FeedbackService,

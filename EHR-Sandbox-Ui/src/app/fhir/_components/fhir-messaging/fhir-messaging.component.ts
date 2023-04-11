@@ -9,6 +9,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { VaccinationComparePipe } from 'src/app/shared/_pipes/vaccination-compare.pipe';
 
 @Component({
   selector: 'app-fhir-messaging',
@@ -81,10 +82,6 @@ export class FhirMessagingComponent implements AfterViewInit, OnInit, AfterViewC
     // this.tabGroup.selectedIndex = 1;
   }
 
-  loadEverythingFromPatient() {
-    this.fhirService.loadEverythingFromPatient(this.patientId).subscribe((res) => {
-      console.log(res)
-    })
-  }
+
 
 }
