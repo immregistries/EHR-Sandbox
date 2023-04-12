@@ -85,10 +85,18 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     if (this.vaccination) {
-      this.vaccination.vaccine ? null : this.vaccination.vaccine = {};
-      this.vaccination.enteringClinician ? null : this.vaccination.enteringClinician = {};
-      this.vaccination.administeringClinician ? null : this.vaccination.administeringClinician = {};
-      this.vaccination.orderingClinician ? null : this.vaccination.orderingClinician = {};
+      if (!this.vaccination.vaccine) {
+        this.vaccination.vaccine = {};
+      }
+      if (this.vaccination.enteringClinician) {
+        this.vaccination.enteringClinician = {};
+      }
+      if (this.vaccination.administeringClinician ) {
+        this.vaccination.administeringClinician  = {};
+      }
+      if (this.vaccination.orderingClinician) {
+        this.vaccination.orderingClinician = {};
+      }
     }
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       this.codeBaseMap = codeBaseMap

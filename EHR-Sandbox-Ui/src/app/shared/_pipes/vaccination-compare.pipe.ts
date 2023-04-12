@@ -5,35 +5,38 @@ import { VaccinationEvent } from 'src/app/core/_model/rest';
   name: 'vaccinationCompare'
 })
 export class VaccinationComparePipe implements PipeTransform {
+  private fields_to_ignore: string[] = [
+    'vaccinationEvents'
+  ]
 
   transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): string {
     return JSON.stringify(this.recursiveComparison(value, args[0]));
   }
 
-  recursiveComparison(a: any, b: any) : ComparisonResult | string | null {
+  recursiveComparison(a: any, b: any) : ComparisonResult | Comparison | null {
     if (a === b) return null;
     if (a instanceof Date && b instanceof Date && (a.getTime() === b.getTime())) return null;
     if ((a === null || a === undefined) && (b === null || b === undefined)) return null;
-    if (a === null || a === undefined) {
-      return a
-    }
-    if (b === null || b === undefined) {
+    if (a === null || a === undefined  || b === null || b === undefined) {
       return a
     }
     // if (a.prototype !== b.prototype) return false;
+    if ((typeof a === 'string' && a === "" && !b) || (typeof b === 'string' && b === "" && !a)) {
+      return null
+    }
     if (typeof a === 'string' || typeof b === 'string') {
-      return a;
+      return {received: a, stored: b}
     }
     let result: ComparisonResult = {};
     for (const key in b) {
-      if (Object.prototype.hasOwnProperty.call(b, key) && !Object.prototype.hasOwnProperty.call(a, key) ) {
-        result[key] = ""
+      if (Object.prototype.hasOwnProperty.call(b, key) && !Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key) ) {
+        result[key] = {received: a, stored: b}
       }
     }
     for (const key in a) {
-      if (Object.prototype.hasOwnProperty.call(a, key)) {
+      if (Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key) ) {
         if (Object.prototype.hasOwnProperty.call(b, key)) {
-          let next : ComparisonResult | string | null = this.recursiveComparison(a[key], b[key]);
+          let next : ComparisonResult | Comparison | null = this.recursiveComparison(a[key], b[key]);
           if (next != null) {
             result[key] = next;
           }
@@ -52,4 +55,5 @@ export class VaccinationComparePipe implements PipeTransform {
   }
 }
 
-export interface ComparisonResult {[index:string]: ComparisonResult | string | null}
+export interface ComparisonResult {[index:string]: ComparisonResult | Comparison | null}
+export interface Comparison {received: string, stored: string}

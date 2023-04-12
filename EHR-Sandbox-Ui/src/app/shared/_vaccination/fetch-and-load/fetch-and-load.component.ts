@@ -15,6 +15,8 @@ export class FetchAndLoadComponent implements OnInit {
   @Input()
   patientId?: number;
 
+  loading: boolean = false;
+
   selectedVaccination: VaccinationEvent | null = null;
 
   vaccinationEvents: VaccinationEvent[] = [];
@@ -23,17 +25,16 @@ export class FetchAndLoadComponent implements OnInit {
     public vaccinationService: VaccinationService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number}) {
-      if (data) {
-        this.patientId = data.patientId
-      }
-
+      this.patientId = data?.patientId
      }
 
   ngOnInit(): void {
   }
 
   loadEverythingFromPatient() {
+    this.loading = true
     this.fhirService.loadEverythingFromPatient(this.patientId ?? -1).subscribe((res) => {
+      this.loading = false
       this.vaccinationEvents = res
     })
   }

@@ -18,7 +18,6 @@ export class VaccinationDetailsComponent implements OnInit {
   @Input() vaccination!: VaccinationEvent;
 
   constructor(private dialog: MatDialog,
-    private vaccinationService: VaccinationService,
     private patientService: PatientService,
     ) { }
 
@@ -35,7 +34,7 @@ export class VaccinationDetailsComponent implements OnInit {
       data: {patientId: this.patientId, vaccination: this.vaccination},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.vaccinationService.doRefresh()
+      this.patientService.doRefresh()
     });
   }
 
