@@ -55,6 +55,7 @@ import { PatientHistoryComponent } from './_patient/patient-history/patient-hist
 import { PatientListComponent } from './_patient/patient-list/patient-list.component';
 import { PatientMenuComponent } from './_patient/patient-menu/patient-menu.component';
 import { PatientTableComponent } from './_patient/patient-table/patient-table.component';
+import { VaccinationReceivedTableComponent } from './_vaccination/vaccination-received-table/vaccination-received-table.component';
 
 
 @NgModule({
@@ -96,7 +97,8 @@ import { PatientTableComponent } from './_patient/patient-table/patient-table.co
     PatientDetailsComponent,
     PatientDashboardComponent,
     PatientMenuComponent,
-    PatientHistoryComponent
+    PatientHistoryComponent,
+    VaccinationReceivedTableComponent
   ],
   imports: [
     CommonModule,

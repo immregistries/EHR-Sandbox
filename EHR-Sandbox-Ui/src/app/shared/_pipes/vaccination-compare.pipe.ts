@@ -6,7 +6,7 @@ import { VaccinationEvent } from 'src/app/core/_model/rest';
 })
 export class VaccinationComparePipe implements PipeTransform {
 
-  transform(value: VaccinationEvent, ...args: VaccinationEvent[]): string {
+  transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): string {
     return JSON.stringify(this.recursiveComparison(value, args[0]));
   }
 
@@ -14,6 +14,12 @@ export class VaccinationComparePipe implements PipeTransform {
     if (a === b) return null;
     if (a instanceof Date && b instanceof Date && (a.getTime() === b.getTime())) return null;
     if ((a === null || a === undefined) && (b === null || b === undefined)) return null;
+    if (a === null || a === undefined) {
+      return a
+    }
+    if (b === null || b === undefined) {
+      return a
+    }
     // if (a.prototype !== b.prototype) return false;
     if (typeof a === 'string' || typeof b === 'string') {
       return a;

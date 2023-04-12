@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { merge, tap } from 'rxjs';
@@ -41,8 +41,11 @@ export class VaccinationTableComponent implements AfterViewInit  {
   @Input() title: string = 'Vaccination history'
   @Input() allowCreation: boolean = true
   dataSource = new MatTableDataSource<VaccinationEvent>([]);
-  expandedElement: VaccinationEvent | null = null;
   loading = false;
+
+  expandedElement: VaccinationEvent | null = null;
+  @Output()
+  selectedEmitter = new EventEmitter<VaccinationEvent | null>();
 
   private listManuallySet = false
   @Input()
@@ -54,6 +57,11 @@ export class VaccinationTableComponent implements AfterViewInit  {
     this.loading = false
     this.dataSource.data = values;
     this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
+  }
+
+  selectElement(element: VaccinationEvent) {
+    this.expandedElement = this.expandedElement === element ? null : element
+    this.selectedEmitter.emit(this.expandedElement);
   }
 
   private _patientId: number = -1;
