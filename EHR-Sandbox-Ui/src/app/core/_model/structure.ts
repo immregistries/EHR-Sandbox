@@ -14,17 +14,17 @@ export interface Code {
   "label": string,
   "description"?: string,
   "codeStatus"?: string,
-  "reference"?: Reference,
+  "reference"?: CodeReference,
   "useDate"?: Date,
   "useAge"?: string,
   "conceptType"?: string,
   "testAge"?: string
 }
-export interface Reference {
-  linkTo: ReferenceLink[]
+export interface CodeReference {
+  linkTo: CodeReferenceLink[]
 }
 
-export interface ReferenceLink {
+export interface CodeReferenceLink {
   value: string,
   codeset: string
 }
@@ -48,23 +48,23 @@ export enum formType {
   code = 'code',
   textarea = 'textarea',
 }
-export interface Form {
+export interface BaseForm {
   type: formType,
   title: string,
   attribute: string,
   codeMapLabel?: string,
   options?: {value: string, label?: string}[],
 }
-export interface PatientForm extends Form{
+export interface PatientForm extends BaseForm{
   attribute: keyof EhrPatient,
 }
-export interface VaccinationForm extends Form{
+export interface VaccinationForm extends BaseForm{
   attribute: keyof VaccinationEvent,
 }
-export interface VaccineForm extends Form{
+export interface VaccineForm extends BaseForm{
   attribute: keyof Vaccine,
 }
-export interface ClinicianForm extends Form{
+export interface ClinicianForm extends BaseForm{
   attribute: keyof Clinician,
   role: "enteringClinician" | "orderingClinician" | "administeringClinician"
 }
@@ -73,3 +73,6 @@ export interface NotificationPrototype {
   facility: Facility | number,
   timestamp: string,
 }
+
+
+export interface ComparisonResult {[index:string]: ComparisonResult | any | null}

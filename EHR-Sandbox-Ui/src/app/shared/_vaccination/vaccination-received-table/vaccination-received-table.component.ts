@@ -6,6 +6,8 @@ import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
 import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
+import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
+import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({
   selector: 'app-vaccination-received-table',
@@ -59,7 +61,8 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
-    private vaccinationService: VaccinationService) { }
+    public vaccinationService: VaccinationService,
+    public patientService: PatientService) { }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -87,5 +90,20 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
   }
+
+  merge(element: VaccinationEvent) {
+    const dialogRef = this.dialog.open(VaccinationFormComponent, {
+      maxWidth: '98vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: {patientId: this.patientId, vaccination: element, comparedVaccination: this.vaccinationToCompare},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.patientService.doRefresh()
+    });
+  }
+
 
 }

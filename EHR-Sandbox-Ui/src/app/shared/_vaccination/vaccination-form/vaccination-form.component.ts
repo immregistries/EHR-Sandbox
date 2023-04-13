@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import { Code, CodeBaseMap, CodeMap, Form, FormCard, formType, Reference} from 'src/app/core/_model/structure';
+import { Code, CodeBaseMap, CodeMap, ComparisonResult, BaseForm, FormCard, formType, CodeReference} from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
@@ -10,6 +10,7 @@ import { randexp } from 'randexp';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpResponse } from '@angular/common/http';
+import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -18,23 +19,49 @@ import { HttpResponse } from '@angular/common/http';
 })
 export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestroy{
 
-  @Input() vaccination: VaccinationEvent = {id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {}};
-  @Output() vaccinationChange = new EventEmitter<VaccinationEvent>();
+  private _vaccination: VaccinationEvent = {id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {}};
+  @Input()
+  public set vaccination(v: VaccinationEvent) {
+    this._vaccination = v;
+    if (this._vaccination) {
+      if (!this._vaccination.vaccine) {
+        this._vaccination.vaccine = {};
+      }
+      if (!this._vaccination.enteringClinician) {
+        this._vaccination.enteringClinician = {};
+      }
+      if (!this._vaccination.administeringClinician) {
+        this._vaccination.administeringClinician = {};
+      }
+      if (!this._vaccination.orderingClinician) {
+        this._vaccination.orderingClinician = {};
+      }
+    }
+  }
+  public get vaccination(): VaccinationEvent {
+    return this._vaccination
+  }
 
+  @Output() vaccinationChange = new EventEmitter<VaccinationEvent>();
 
   public patientId: number = -1
   public isEditionMode: boolean = false
+  public compareTo: ComparisonResult | any | null = null
 
   constructor(public codeMapsService: CodeMapsService,
     private snackBarService: SnackBarService,
     private vaccinationService: VaccinationService,
+    private vaccineComparePipe: VaccinationComparePipe,
     @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent}) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent}) {
       if (data) {
         this.patientId = data.patientId;
         if (data.vaccination){
-          this.vaccination=data.vaccination
+          this.vaccination = data.vaccination
           this.isEditionMode = true
+          if (data.comparedVaccination) {
+            this.compareTo = vaccineComparePipe.transform(this.vaccination, data.comparedVaccination)
+          }
         }
       }
   }
@@ -71,38 +98,13 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   }
 
-
-
-  private codeBaseMap!:  CodeBaseMap;
-  private codeBaseMapKeys!:  string[];
-  private codeBaseMapValues!:  CodeMap[];
-
-  public references: BehaviorSubject<{[key:string]: {reference: Reference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: Reference, value: string}}>({});
+  public references: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>({});
   @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
   public filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
   private formChangesSubscription!: Subscription;
 
   ngOnInit() {
-    if (this.vaccination) {
-      if (!this.vaccination.vaccine) {
-        this.vaccination.vaccine = {};
-      }
-      if (this.vaccination.enteringClinician) {
-        this.vaccination.enteringClinician = {};
-      }
-      if (this.vaccination.administeringClinician ) {
-        this.vaccination.administeringClinician  = {};
-      }
-      if (this.vaccination.orderingClinician) {
-        this.vaccination.orderingClinician = {};
-      }
-    }
-    this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
-      this.codeBaseMap = codeBaseMap
-      this.codeBaseMapKeys = Object.keys(codeBaseMap)
-      this.codeBaseMapValues = Object.values(codeBaseMap)
-    })
     this.formChangesSubscription = this.vaccinationForm.form.valueChanges.subscribe(x => {
       // this.references.next({})
       this.references.next(this.references.getValue())
@@ -130,9 +132,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     this.formChangesSubscription.unsubscribe();
   }
 
-  referencesChange(emitted: {reference: Reference, value: string}, codeMapKey?: string): void {
+  referencesChange(emitted: {reference: CodeReference, value: string}, codeMapKey?: string): void {
     if (codeMapKey ){
-      let newRefList: {[key:string]: {reference: Reference, value: string}} = JSON.parse(JSON.stringify(this.references.value))
+      let newRefList: {[key:string]: {reference: CodeReference, value: string}} = JSON.parse(JSON.stringify(this.references.value))
       if (emitted) {
         newRefList[codeMapKey] = emitted
         this.checkLotNumberValidity(emitted.reference)
@@ -144,7 +146,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public lotNumberValid: boolean = true
-  checkLotNumberValidity(reference: Reference): boolean {
+  checkLotNumberValidity(reference: CodeReference): boolean {
     let scanned = false
     let regexFit = false
     for (const ref of reference.linkTo) {

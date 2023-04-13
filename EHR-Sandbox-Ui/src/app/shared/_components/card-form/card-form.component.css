@@ -1,24 +1,3 @@
-.grid-container {
-  margin: 5x;
-}
-
-.dashboard-card {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
-  overflow: auto;
-}
-
-.dashboard-card-content {
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 5px 5px;
-}
 
 mat-form-field {
   /* margin-right: 5px; */
@@ -34,8 +13,7 @@ mat-raised-button {
   max-width: 10em;
 }
 
-::ng-deep .select-field {
-  /* max-width: 125px; */
+.select-field {
   width: 100%;
 }
 
@@ -53,4 +31,14 @@ mat-raised-button {
 
 .short-label {
   color: rgb(121, 121, 121);
+}
+
+.error {
+  font-size: 10px;
+  color: red;
+}
+
+.mat-button-toggle-group {
+  height: 22px;
+  align-items: center;
 }

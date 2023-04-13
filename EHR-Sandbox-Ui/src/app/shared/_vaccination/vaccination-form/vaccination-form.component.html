@@ -1,7 +1,7 @@
 <mat-tab-group>
   <mat-tab label="New entry">
     <form #vaccinationForm="ngForm" class="grid-container">
-      <mat-grid-list cols="5" rowHeight="190px">
+      <mat-grid-list cols="5" rowHeight="199px">
         <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header *ngIf="card.title">
@@ -11,90 +11,27 @@
             </mat-card-header>
             <mat-card-content class="dashboard-card-content">
 
-
-
-
-
-
-
 <!-- Vaccine forms -->
               <ng-container *ngFor="let form of card.vaccineForms" [ngSwitch]="form.type">
-                <div class="text-field" *ngSwitchCase="'text'">
-                  <mat-form-field class="text-field" appearance="outline"   >
-                    <mat-label>{{form.title}}</mat-label>
-                    <input matInput name="{{form.attribute}}" type="{{form.type}}"  [(ngModel)]="vaccination.vaccine[form.attribute]" [disabled]="false">
-                  </mat-form-field>
-                  <!-- Errors -->
-                  <div *ngIf="!lotNumberValid && form.attribute == 'lotNumber'" class="error">Not matching manufacturer patterns</div>
-                </div>
-
-                <app-select-codebase *ngSwitchCase="'code'"
-                  [model]="asString(vaccination.vaccine[form.attribute])"
-                  (modelChange)="vaccination.vaccine[form.attribute] = $event"
+                <app-card-form class="card-form"
                   [form]="form"
-                  class="select-field"
+                  [model]="vaccination.vaccine[form.attribute]"
+                  (modelChange)="vaccination.vaccine[form.attribute] = $event"
                   [referenceFilter]="references"
                   (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
-                  ></app-select-codebase>
-                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="asDate(vaccination.vaccine[form.attribute])" (ngModelChange)="vaccination.vaccine[form.attribute] = $event" >
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-                <div *ngSwitchCase="'short'">
-                  <mat-label class="short-label">{{form.title}} </mat-label>
-                  <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
-                </div>
-
-                <div *ngSwitchCase="'yesNo'">
-                  <mat-label class="short-label">{{form.title}}</mat-label>
-                  <select [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
-                    <option [hidden]="!vaccination.vaccine[form.attribute]" value=""></option>
-                    <option value="Y">Y</option>
-                    <option value="N">N</option>
-                  </select>
-                </div>
-
-                <div *ngSwitchCase="'boolean'">
-                  <mat-label class="short-label">{{form.title}}</mat-label>
-                  <select [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
-                    <option [hidden]="!vaccination.vaccine[form.attribute]" value=""></option>
-                    <option value="true">True</option>
-                    <option value="false">False</option>
-                  </select>
-                </div>
-
-                <div *ngSwitchCase="'select'">
-                  <mat-label class="short-label">{{form.title}}</mat-label>
-                  <select *ngIf="form.options; else short" [(ngModel)]="vaccination.vaccine[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
-                    <option [hidden]="!vaccination.vaccine[form.attribute]" value=""></option>
-                    <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
-                  </select>
-                  <ng-template #short >
-                    <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination.vaccine[form.attribute]">
-                  </ng-template>
-                </div>
-
-                <div *ngSwitchDefault></div>
+                  [lotNumberValid]="lotNumberValid"
+                  [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"></app-card-form>
               </ng-container>
 <!-- Clinician forms -->
               <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
-                <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput  type="{{form.type}}" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
-                </mat-form-field>
-                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="asDate(vaccination[form.role][form.attribute])" (ngModelChange)="vaccination[form.role][form.attribute] = $event" >
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-                <div *ngSwitchCase="'short'">
-                  <mat-label class="short-label">{{form.title}} </mat-label>
-                  <input  name="{{form.attribute}}" class="short-text-field" [(ngModel)]="vaccination[form.role][form.attribute]">
-                </div>
-                <div *ngSwitchDefault></div>
+                <app-card-form class="card-form"
+                  [form]="form"
+                  [model]="vaccination[form.role][form.attribute]"
+                  (modelChange)="vaccination[form.role][form.attribute] = $event"
+                  [referenceFilter]="references"
+                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
+                  [lotNumberValid]="lotNumberValid"
+                  [compareTo]="(compareTo && compareTo[form.role])?  compareTo[form.role][form.attribute] : null"></app-card-form>
               </ng-container>
 
   <!-- Vaccination forms -->

@@ -56,6 +56,7 @@ import { PatientListComponent } from './_patient/patient-list/patient-list.compo
 import { PatientMenuComponent } from './_patient/patient-menu/patient-menu.component';
 import { PatientTableComponent } from './_patient/patient-table/patient-table.component';
 import { VaccinationReceivedTableComponent } from './_vaccination/vaccination-received-table/vaccination-received-table.component';
+import { CardFormComponent } from './_components/card-form/card-form.component';
 
 
 @NgModule({
@@ -98,7 +99,8 @@ import { VaccinationReceivedTableComponent } from './_vaccination/vaccination-re
     PatientDashboardComponent,
     PatientMenuComponent,
     PatientHistoryComponent,
-    VaccinationReceivedTableComponent
+    VaccinationReceivedTableComponent,
+    CardFormComponent
   ],
   imports: [
     CommonModule,
@@ -186,6 +188,7 @@ import { VaccinationReceivedTableComponent } from './_vaccination/vaccination-re
      LocalCopyDialogComponent,
      KeysPipe,
      FeedbackIconComponent,
+     CardFormComponent,
 
   ],
 })

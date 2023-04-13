@@ -1,9 +1,11 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
+import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({
   selector: 'app-fetch-and-load',
@@ -21,8 +23,11 @@ export class FetchAndLoadComponent implements OnInit {
 
   vaccinationEvents: VaccinationEvent[] = [];
 
-  constructor(private fhirService: FhirService,
+  constructor(
+    private dialog: MatDialog,
+    private fhirService: FhirService,
     public vaccinationService: VaccinationService,
+    public patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number}) {
       this.patientId = data?.patientId

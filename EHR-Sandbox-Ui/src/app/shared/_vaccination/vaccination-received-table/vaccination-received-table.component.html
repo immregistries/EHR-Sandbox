@@ -36,7 +36,10 @@
     <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
       <div class="element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <p>{{element | vaccinationCompare: vaccinationToCompare}}</p>
+           <div>
+            <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="!vaccinationToCompare">Merge</button>
+           </div>
+           <pre><p>{{element | vaccinationCompare: vaccinationToCompare | json}}</p></pre>
       </div>
     </td>
   </ng-container>

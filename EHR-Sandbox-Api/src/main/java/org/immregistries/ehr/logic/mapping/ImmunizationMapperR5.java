@@ -110,7 +110,7 @@ public class ImmunizationMapperR5 {
     i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
     i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
     i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility())));
-
+    i.getInformationSource().setConcept(new CodeableConcept(new Coding().setSystem(INFORMATION_SOURCE).setCode(vaccine.getInformationSource())));
     i.getVaccineCode().addCoding()
             .setSystem(CVX)
             .setCode(vaccine.getVaccineCvxCode());
@@ -175,7 +175,6 @@ public class ImmunizationMapperR5 {
 
     v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
 
-//    v.setInformationSource(i.getInformationSourceCodeableConcept().getCode(INFORMATION_SOURCE));
     v.setUpdatedDate(new Date());
 
     v.setLotNumber(i.getLotNumber());
@@ -203,8 +202,14 @@ public class ImmunizationMapperR5 {
     v.setRefusalReasonCode(i.getReasonFirstRep().getConcept().getCodingFirstRep().getCode());
     v.setBodySite(i.getSite().getCodingFirstRep().getCode());
     v.setBodyRoute(i.getRoute().getCodingFirstRep().getCode());
+
     v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
-//    v.setFundingEligibility(i.getProgramEligibilityFirstRep().getCodingFirstRep().getCode());
+    if (i.hasProgramEligibility()){
+      v.setFundingEligibility(i.getProgramEligibilityFirstRep().getProgram().getCodingFirstRep().getCode());
+    }
+    if (i.hasInformationSource() && i.getInformationSource().getConcept() != null) {
+      v.setInformationSource(i.getInformationSource().getConcept().getCodingFirstRep().getCode());
+    }
 
     return v;
   }

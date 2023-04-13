@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormControl, NgForm } from '@angular/forms';
 import { BehaviorSubject, map, Observable, of, startWith, Subscription } from 'rxjs';
 import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
-import { Code, CodeMap, Form, Reference, ReferenceLink } from 'src/app/core/_model/structure';
+import { Code, CodeMap, ComparisonResult, BaseForm, CodeReference, CodeReferenceLink } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
 @Component({
@@ -12,10 +12,10 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent implements OnInit {
-	@Input() referenceFilter!: BehaviorSubject<{[key:string]: {reference: Reference, value: string}}>;
-  @Output() referenceEmitter = new EventEmitter<{reference: Reference, value: string}>();
+	@Input() referenceFilter!: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>;
+  @Output() referenceEmitter = new EventEmitter<{reference: CodeReference, value: string}>();
 
-  @Input() form!: Form;
+  @Input() form!: BaseForm;
 
   @Input() warningCheck!: EventListener;
 
@@ -25,6 +25,7 @@ export class SelectCodebaseComponent implements OnInit {
   @ViewChild('selectForm', { static: true }) selectForm!: NgForm;
 
   @Input() toolTipDisabled: boolean = false;
+  @Input() compareTo?: ComparisonResult | any | null;
 
   codeMap!: CodeMap;
   filteredOptions!: Code[];

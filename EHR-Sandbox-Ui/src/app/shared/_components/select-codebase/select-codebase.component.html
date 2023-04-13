@@ -1,12 +1,17 @@
 <form #selectForm="ngForm">
   <mat-form-field  appearance="outline"  class="select-field">
     <mat-label>{{form.title}}</mat-label>
-    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"
-      matBadge="!" [matBadgeHidden]="!warning" matBadgeColor="warn"
+    <input matInput [(ngModel)]="model"
+      [matAutocomplete]="auto" class="select-field"
+      matBadge="priority_high"
+      [matBadgeHidden]="warning == false"
+      matBadgeColor="accent"
       (ngModelChange)="filterChange($event)" name="{{form.attribute}}"
       [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
     <button matSuffix mat-icon-button *ngIf="model" (click)="clear()"
-      matBadge="!" [matBadgeHidden]="warning == false" [matBadgeColor]="'warn'"
+      matBadge="priority_high"
+      [matBadgeHidden]="warning == false"
+      matBadgeColor="warn"
       [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
       <mat-icon>cancel</mat-icon>
     </button>

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import { FormCard, formType, Reference } from 'src/app/core/_model/structure';
+import { FormCard, formType, CodeReference } from 'src/app/core/_model/structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { BehaviorSubject } from 'rxjs';
@@ -25,7 +25,7 @@ export class PatientFormComponent implements OnInit {
   /**
    * Currently unusused, just initialised
    */
-  public references: BehaviorSubject<{[key:string]: {reference: Reference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: Reference, value: string}}>({});
+  public references: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>({});
 
 
   constructor(private patientService: PatientService,
