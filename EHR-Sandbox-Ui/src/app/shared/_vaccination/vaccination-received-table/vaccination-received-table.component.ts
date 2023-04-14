@@ -12,7 +12,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 @Component({
   selector: 'app-vaccination-received-table',
   templateUrl: './vaccination-received-table.component.html',
-  styleUrls: ['./vaccination-received-table.component.css'],
+  styleUrls: ['./vaccination-received-table.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -92,6 +92,7 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
   }
 
   merge(element: VaccinationEvent) {
+    element.id = this.vaccinationToCompare?.id
     const dialogRef = this.dialog.open(VaccinationFormComponent, {
       maxWidth: '98vw',
       maxHeight: '95vh',

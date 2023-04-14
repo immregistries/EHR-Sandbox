@@ -48,8 +48,16 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let element; columns: columns;"
       class="element-row"
+      [class.match-row]="(element | vaccinationCompare: vaccinationToCompare) == 'MATCH'"
+      [class.no-match-row]="false"
+      [class.potential-match-row]="false"
       [class.expanded-row]="expandedElement === element"
       (click)="expandedElement = expandedElement === element ? null : element">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
+<span>
+  <span class="legend-match">Match </span>
+  <span class="legend-potential-match">Potential Match </span>
+  <span class="legend-no-match">Not match </span>
+</span>

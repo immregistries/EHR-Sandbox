@@ -10,6 +10,7 @@
   (click)="selectFirstOrCreate()"
   *ngIf="tenantService.getTenantId() > 0" [color]="facilityService.getFacilityId() > 0 ? 'primary' : 'basic'">
     {{(facilityService.getFacility().id > 0)? ("Facility: " + facilityService.getFacility().nameDisplay) : "Select Facility" }}
+    <mat-icon>arrow_drop_down</mat-icon>
   </button>
   <div content>
     <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)"> {{item.nameDisplay}}</button>
