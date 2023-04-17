@@ -37,9 +37,9 @@
       <div class="element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
            <div>
-            <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="!vaccinationToCompare">Merge</button>
+            <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="!vaccinationToCompare || isMatch(element)">Merge</button>
            </div>
-           <pre><p>{{element | vaccinationCompare: vaccinationToCompare | json}}</p></pre>
+           <pre *ngIf="vaccinationToCompare && !isMatch(element)"><p>Differences : {{differences | json}}</p></pre>
       </div>
     </td>
   </ng-container>
@@ -52,7 +52,7 @@
       [class.no-match-row]="false"
       [class.potential-match-row]="false"
       [class.expanded-row]="expandedElement === element"
-      (click)="expandedElement = expandedElement === element ? null : element">
+      (click)="selectElement(element)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>

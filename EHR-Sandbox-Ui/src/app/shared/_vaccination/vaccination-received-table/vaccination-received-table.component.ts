@@ -8,6 +8,7 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 
 @Component({
   selector: 'app-vaccination-received-table',
@@ -31,22 +32,27 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
     "primarySource",
   ]
 
-  // Allows Date type casting in HTML template
-  asDate(val: any) : Date { return val; }
-
   @Input() title: string = 'Vaccinations received'
-  dataSource = new MatTableDataSource<VaccinationEvent>([]);
-  expandedElement: VaccinationEvent | null = null;
+  differences: any = ''
   loading = false;
 
-  @Input()
-  vaccinationToCompare!: VaccinationEvent | null;
-
+  expandedElement: VaccinationEvent | null = null;
+  dataSource = new MatTableDataSource<VaccinationEvent>([]);
   @Input()
   set vaccinations(values: VaccinationEvent[]) {
     this.loading = false
     this.dataSource.data = values;
     this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
+  }
+
+  private _vaccinationToCompare!: VaccinationEvent | null;
+  @Input()
+  public get vaccinationToCompare(): VaccinationEvent | null {
+    return this._vaccinationToCompare;
+  }
+  public set vaccinationToCompare(value: VaccinationEvent | null) {
+    this._vaccinationToCompare = value;
+    this.updateDifferences()
   }
 
   private _patientId: number = -1;
@@ -62,7 +68,8 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
     public vaccinationService: VaccinationService,
-    public patientService: PatientService) { }
+    public patientService: PatientService,
+    public vaccinationComparePipe: VaccinationComparePipe) { }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -106,5 +113,21 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
     });
   }
 
+  selectElement(element: VaccinationEvent | null) {
+    this.expandedElement = this.expandedElement === element ? null : element
+    this.updateDifferences()
+  }
+
+  isMatch(element: VaccinationEvent | null): boolean {
+     return (this.expandedElement && this.differences == 'MATCH') ? true : false;
+  }
+
+  private updateDifferences() {
+    if (this._vaccinationToCompare && this.expandedElement) {
+      this.differences = this.vaccinationComparePipe.transform(this.expandedElement, this._vaccinationToCompare)
+    } else {
+      this.differences = null
+    }
+  }
 
 }

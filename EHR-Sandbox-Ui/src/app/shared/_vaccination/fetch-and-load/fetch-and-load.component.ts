@@ -4,7 +4,6 @@ import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
-import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({

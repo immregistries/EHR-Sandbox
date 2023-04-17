@@ -6,6 +6,7 @@ import { LocalCopyDialogComponent } from 'src/app/shared/_components/_dialogs/lo
 import { EhrPatient } from '../../../core/_model/rest';
 import { PatientService } from '../../../core/_services/patient.service';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
+import { FetchAndLoadComponent } from '../../_vaccination/fetch-and-load/fetch-and-load.component';
 
 @Component({
   selector: 'app-patient-details',
@@ -66,6 +67,20 @@ export class PatientDetailsComponent implements OnInit {
   openHl7() {
     const dialogRef = this.dialog.open(Hl7MessagingComponent, {
       maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: {patientId: this.patient.id},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.patientService.doRefresh()
+    });
+  }
+
+  openFetch() {
+    const dialogRef = this.dialog.open(FetchAndLoadComponent, {
+      maxWidth: '98vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',

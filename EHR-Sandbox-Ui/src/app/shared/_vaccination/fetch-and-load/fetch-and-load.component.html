@@ -1,13 +1,28 @@
-<button mat-stroked-button color="primary" (click)="loadEverythingFromPatient()">Fetch vaccination history from IIS</button>
-<mat-grid-list cols="2">
+
+<mat-grid-list cols="5" [rowHeight]="'70vh'">
   <mat-grid-tile [colspan]="1" >
+    <mat-card class="dashboard-card">
+      <mat-card-title>Fetch Vaccination History from IIS</mat-card-title>
+      <mat-card-content class="dashboard-card-content">
+        <button mat-stroked-button color="primary" (click)="loadEverythingFromPatient()">Fetch history</button>
+        <app-immunization-registry-menu></app-immunization-registry-menu>
+      </mat-card-content>
+      <mat-card-footer>
+        This prototype uses FHIR Operation $everything to query the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.
+
+
+      </mat-card-footer>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile [colspan]="2" >
     <mat-card class="dashboard-card">
       <mat-card-content class="dashboard-card-content">
         <app-vaccination-table [patientId]="patientId" [allowCreation]="false" (selectedEmitter)="selectedVaccination = $event"></app-vaccination-table>
       </mat-card-content>
     </mat-card>
   </mat-grid-tile>
-  <mat-grid-tile [colspan]="1" >
+  <mat-grid-tile [colspan]="2" >
     <mat-card class="dashboard-card">
       <mat-card-content class="dashboard-card-content">
         <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
@@ -22,5 +37,3 @@
     </mat-card>
   </mat-grid-tile> -->
 </mat-grid-list>
-
-
