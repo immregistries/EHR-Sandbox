@@ -9,13 +9,21 @@ services:
     environment:
 #      MYSQL_USER: 'ehr_web'
 #      MYSQL_PASSWORD: 'SharkBaitHooHaHa'
-      MYSQL_ROOT_PASSWORD: 'password123456789'
+      MYSQL_ROOT_PASSWORD: 'DearPrudenceWontYouComeOutAndPlay'
+#      TODO generate better password
     volumes:
-      - ./EHR-Sandbox-Api/src/database/create_user.sql:/docker-entrypoint-initdb.d/1.sql
-      - ./EHR-Sandbox-Api/src/database/create_database.sql:/docker-entrypoint-initdb.d/2.sql
+      - ./EHR-Sandbox-Api/src/database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./EHR-Sandbox-Api/src/database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
+#    ports:
+#      - "3306:3306"
   ehr-sandbox:
     build: .
     container_name: ehr-sandbox
+    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      DEPLOYMENT_URL: localhost:9091/ehr-sandbox
+#      TODO
     restart: on-failure
     ports:
       - "9091:8080"
