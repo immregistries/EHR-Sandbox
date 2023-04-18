@@ -22,8 +22,9 @@ services:
     environment:
 #      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
       SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
-      DEPLOYMENT_URL: localhost:9091/ehr-sandbox
-#      TODO
+#      DEPLOYMENT_URL: localhost:9091/ehr
+#      DEPLOYMENT_URL: https://sabbia.immregistries.org/ehr TODO
+    #      TODO
     restart: on-failure
     ports:
       - "9091:8080"

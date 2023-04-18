@@ -229,7 +229,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>ehr-sandbox</finalName>
+		<finalName>ehr</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

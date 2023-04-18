@@ -51,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/auth/**","/code_maps", "/" ,"/*.css", "/*.js","/fhir/**","/ehr-sandbox/fhir/**").permitAll()
+                .authorizeRequests().antMatchers("/auth/**","/code_maps", "/" ,"/*.css", "/*.js","/fhir/**","/ehr/fhir/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

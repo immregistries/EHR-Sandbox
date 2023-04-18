@@ -68,7 +68,7 @@
     <resources>
       <resource>
         <!-- we copy the content of the frontend directory in the final artifact -->
-        <directory>dist/ehr-sandbox</directory>
+        <directory>dist/ehr</directory>
       </resource>
     </resources>
   </build>
