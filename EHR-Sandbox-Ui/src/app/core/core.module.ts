@@ -36,7 +36,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSelectFilterModule } from 'mat-select-filter';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -83,7 +82,6 @@ import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pip
     MatDialogModule,
     MatTableModule,
     MatSelectModule,
-    MatSelectFilterModule,
     MatAutocompleteModule,
     MatTooltipModule,
     MatProgressBarModule,
