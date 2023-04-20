@@ -1,10 +1,10 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { FhirService } from 'src/app/fhir/_services/fhir.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { VaccinationEvent } from 'src/app/core/_model/rest';
 
 @Component({
   selector: 'app-fetch-and-load',

@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from 'src/app/fhir/_components/hl7-messaging/hl7-messaging.component';
 import { LocalCopyDialogComponent } from 'src/app/shared/_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
+import { VaccinationEvent } from 'src/app/core/_model/rest';
 
 @Component({
   selector: 'app-vaccination-details',

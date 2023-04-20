@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ImmunizationRecommendation, ImmunizationRecommendationRecommendation } from 'fhir/r5';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
@@ -9,6 +8,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { merge, tap } from 'rxjs';
 import { RecommendationService } from 'src/app/core/_services/recommendation.service';
+import { ImmunizationRecommendation } from 'fhir/r5';
 
 @Component({
   selector: 'app-recommendation-table',
