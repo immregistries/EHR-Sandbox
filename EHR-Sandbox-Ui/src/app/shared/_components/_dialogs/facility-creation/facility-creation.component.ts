@@ -1,6 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit, Optional } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
@@ -23,7 +23,7 @@ export class FacilityCreationComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  newFacilityForm: FormControl = new FormControl("")
+  newFacilityForm: UntypedFormControl = new UntypedFormControl("")
   newFacility?: Facility;
   create() {
     this.newFacility = {id: -1, nameDisplay: this.newFacilityForm.value}

@@ -1,6 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit, Optional } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Tenant } from 'src/app/core/_model/rest';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -20,7 +20,7 @@ export class TenantCreationComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  newTenantForm: FormControl = new FormControl("")
+  newTenantForm: UntypedFormControl = new UntypedFormControl("")
   newTenant?: Tenant;
   create() {
     this.newTenant = {id: -1, nameDisplay: this.newTenantForm.value}

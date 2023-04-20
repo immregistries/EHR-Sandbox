@@ -1,5 +1,5 @@
 import { Component, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { User } from 'src/app/core/_model/rest';
 import { AuthService } from 'src/app/core/authentication/_services/auth.service';
 import { TokenStorageService } from 'src/app/core/authentication/_services/token-storage.service';
@@ -15,7 +15,7 @@ export class AuthenticationFormComponent implements OnInit {
   constructor(private authService: AuthService, private tokenStorage: TokenStorageService) { }
 
 
-  authFormGroup = new FormGroup({username: new FormControl(''), password: new FormControl(''), email: new FormControl('')})
+  authFormGroup = new UntypedFormGroup({username: new UntypedFormControl(''), password: new UntypedFormControl(''), email: new UntypedFormControl('')})
 
   user: User = {id: 0, username: '', password: ''};
   isLoggedIn = false;

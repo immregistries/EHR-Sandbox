@@ -129,5 +129,7 @@
       }
     }
   },
-  "defaultProject": "ehr-sandbox-ui"
+  "cli": {
+    "analytics": false
+  }
 }
