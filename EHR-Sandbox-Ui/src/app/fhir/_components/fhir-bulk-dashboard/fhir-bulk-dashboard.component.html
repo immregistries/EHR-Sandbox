@@ -1,4 +1,9 @@
-<mat-tab-group>
+<mat-tab-group #tabs>
+  <mat-tab disabled>
+    <ng-template mat-tab-label>
+      <app-immunization-registry-menu></app-immunization-registry-menu>
+    </ng-template>
+  </mat-tab>
   <mat-tab label="Bulk Import Asynch">
     <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
   </mat-tab>

@@ -1,4 +1,4 @@
-version: "3"
+version: "4"
 services:
   ehr-sandbox-mysql:
     image: mysql:latest
@@ -14,8 +14,6 @@ services:
     volumes:
       - ./EHR-Sandbox-Api/src/database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
       - ./EHR-Sandbox-Api/src/database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
-#    ports:
-#      - "3306:3306"
   ehr-sandbox:
     build: .
     container_name: ehr-sandbox

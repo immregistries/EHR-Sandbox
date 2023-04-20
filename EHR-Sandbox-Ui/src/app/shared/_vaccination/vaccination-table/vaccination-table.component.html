@@ -55,7 +55,7 @@
       <div class="element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
         <app-vaccination-details [vaccination]="element" [patientId]="patientId"></app-vaccination-details>
-        <button mat-icon-button color="primary" (click)="openVaccination(element.id); $event.stopPropagation();">
+        <button mat-icon-button color="primary" (click)="openVaccination(element.id); $event.stopPropagation();" matTooltip="Open Dashboard">
           <mat-icon>open_in_new</mat-icon>
         </button>
       </div>

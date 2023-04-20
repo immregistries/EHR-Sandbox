@@ -1,16 +1,22 @@
 
+
 <mat-grid-list cols="5" [rowHeight]="'70vh'">
   <mat-grid-tile [colspan]="1" >
     <mat-card class="dashboard-card">
       <mat-card-title>Fetch Vaccination History from IIS</mat-card-title>
       <mat-card-content class="dashboard-card-content">
-        <button mat-stroked-button color="primary" (click)="loadEverythingFromPatient()">Fetch history</button>
-        <app-immunization-registry-menu></app-immunization-registry-menu>
+        <!-- <app-immunization-registry-menu></app-immunization-registry-menu> -->
+        <app-select-immregistry></app-select-immregistry>
+
+        <button mat-stroked-button class="w3-right w3-bottom" matTooltip="Fetch and merge remote vaccination history" color="primary" (click)="loadEverythingFromPatient()">
+          <mat-icon>cloud_download</mat-icon>
+          Fetch
+        </button>
       </mat-card-content>
       <mat-card-footer>
-        This prototype uses FHIR Operation $everything to query the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.
-
-
+        <p>
+          This prototype uses FHIR Operation $everything. Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.
+        </p>
       </mat-card-footer>
     </mat-card>
   </mat-grid-tile>

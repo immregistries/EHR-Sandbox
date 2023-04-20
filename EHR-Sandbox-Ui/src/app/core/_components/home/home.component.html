@@ -62,7 +62,7 @@
               {{'Currently logged in as '}}
               <b> {{token.getUser().username}} </b>
             </h4>
-            <button mat-raised-button (click)="token.signOut()">Sign out</button>
+            <button mat-raised-button matTooltip="Sign out" (click)="token.signOut()">Sign out</button>
           </ng-template>
         </mat-card-content>
       </mat-card>

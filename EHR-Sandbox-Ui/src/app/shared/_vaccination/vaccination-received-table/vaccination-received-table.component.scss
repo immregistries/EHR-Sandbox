@@ -41,8 +41,8 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 }
 
 
-$match-color: hsl(114, 100%, 45%);
-$potential-match-color: hsl(42, 100%, 45%);
+$match-color: hsl(0, 0%, 40%);
+$potential-match-color: hsl(0, 0%, 100%);
 $no-match-color: hsl(0, 0%, 50%);
 
 .legend-match {

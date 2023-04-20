@@ -25,3 +25,9 @@
   /* align-items: flex-start;
   justify-content: flex-start; */
 }
+
+.mat-tab-label:first-child {
+  opacity: 1;
+  /* min-width: 20px; */
+  padding: 0;
+}

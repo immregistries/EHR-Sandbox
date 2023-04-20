@@ -17,11 +17,6 @@ export class DashboardComponent {
     public facilityService: FacilityService,
     public patientService: PatientService) {}
 
-
-    // rowHeight: string = '370px';
-
-
-
   rowHeight(): string {
     return (window.innerHeight/2 - 35) + 'px'
   }

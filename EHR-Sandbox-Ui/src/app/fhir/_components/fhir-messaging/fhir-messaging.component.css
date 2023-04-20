@@ -5,9 +5,8 @@
 }
 
 
-.mat-tab-label:last-child {
+.mat-tab-label:first-child {
   opacity: 1;
   min-width: 20px;
   padding: 0;
-
 }

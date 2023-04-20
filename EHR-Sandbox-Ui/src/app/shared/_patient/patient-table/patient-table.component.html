@@ -44,7 +44,7 @@
       <div class="element-detail"
            [@detailExpand]="element.id == patientService.getPatientId() ? 'expanded' : 'collapsed'">
         <app-patient-details [patient]="element"></app-patient-details>
-        <button mat-icon-button color="primary" (click)="openPatient(element); $event.stopPropagation();">
+        <button mat-icon-button color="primary" (click)="openPatient(element); $event.stopPropagation();" matTooltip="Open Dashboard">
           <mat-icon>open_in_new</mat-icon>
         </button>
       </div>

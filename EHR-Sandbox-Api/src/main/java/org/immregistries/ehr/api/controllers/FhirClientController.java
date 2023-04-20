@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
@@ -186,11 +187,15 @@ public class FhirClientController {
              * If no fatal exception caught : stored fatal feedbacks are erased for the vaccination
              * TODO do the same for Patient ?
              */
-            feedbackRepository.deleteByVaccinationEventIdAndSeverity(
+            feedbackRepository.deleteByVaccinationEventIdAndIisAndSeverity(
                     vaccinationId,
+                    immunizationRegistry.getId(),
                     "fatal");
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
+        } catch ( FhirClientConnectionException f) {
+            f.printStackTrace();
+            return ResponseEntity.badRequest().body(f.getMessage());
         } catch (BaseServerResponseException baseServerResponseException) {
             Feedback feedback = new Feedback();
             feedback.setFacility(facilityRepository.findById(facilityId).orElseThrow());

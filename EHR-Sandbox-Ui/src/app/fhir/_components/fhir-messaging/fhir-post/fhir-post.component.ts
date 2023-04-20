@@ -60,35 +60,37 @@ export class FhirPostComponent implements OnInit {
   send() {
     this.answer = ""
     this.requestLoading = true
-    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceInternId,this.parentId, this.overridingReferences).pipe(tap(() => {
-      this.requestLoading = false
-      this.feedbackService.doRefresh()
-    })).subscribe({
+    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceInternId,this.parentId, this.overridingReferences)
+    .subscribe({
       next: (res) => {
+        this.requestLoading = false
+        this.feedbackService.doRefresh()
         this.error = false
         this.answer = res
       },
       error: (err) => {
+        this.requestLoading = false
+        this.feedbackService.doRefresh()
         this.error = true
-        // if (err.error.error) {
-        //   this.answer = err.error.error
-        // }else if (err.error.text) {
-        //   this.answer = err.error.text
-        // } else {
-        //   this.answer = "Error"
-        // }
         this.answer = err.error
         console.error(err)
-        switch(this.resourceType) {
-          case "Patient" : {
-            this.snackBarService.fatalFhirMessage(this.answer, this.resourceInternId)
-            break;
+        if(err.status == 400) {
+          this.answer = err.error
+          console.error(err)
+          switch(this.resourceType) {
+            case "Patient" : {
+              this.snackBarService.fatalFhirMessage(this.answer, this.resourceInternId)
+              break;
+            }
+            case "Immunization" : {
+              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceInternId)
+              break;
+            }
           }
-          case "Immunization" : {
-            this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceInternId)
-            break;
-          }
+        } else {
+          this.answer = JSON.stringify(err.error)
         }
+
       }
     })
   }
