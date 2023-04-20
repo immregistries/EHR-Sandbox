@@ -1,9 +1,9 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-vaccination-dashboard',

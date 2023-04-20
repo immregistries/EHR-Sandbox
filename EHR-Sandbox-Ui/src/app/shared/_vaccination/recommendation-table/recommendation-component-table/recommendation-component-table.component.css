@@ -19,11 +19,10 @@ tr.detail-row {
   border-bottom-width: 0;
 }
 
-.element-detail {
+/* .element-detail {
   overflow: hidden;
   display: flex;
-}
-
+} */
 .element-description {
   padding: 16px;
 }

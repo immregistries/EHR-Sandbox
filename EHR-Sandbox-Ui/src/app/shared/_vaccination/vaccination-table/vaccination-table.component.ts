@@ -1,7 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 import { merge, tap } from 'rxjs';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
 import { CodeBaseMap } from 'src/app/core/_model/structure';
@@ -11,6 +10,7 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
 import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-vaccination-table',

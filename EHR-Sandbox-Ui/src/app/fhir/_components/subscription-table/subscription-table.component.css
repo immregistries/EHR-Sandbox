@@ -15,10 +15,10 @@ tr.detail-row {
   border-bottom-width: 0;
 }
 
-.element-detail {
+/* .element-detail {
   overflow: hidden;
   display: flex;
-}
+} */
 
 .element-description {
   padding: 16px;
@@ -35,10 +35,6 @@ tr.detail-row {
 }
 
 
-.search-bar {
-  padding-right: 1em;
-  padding-left: 0px;
-}
 
 th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type {
   padding-right: 12px;

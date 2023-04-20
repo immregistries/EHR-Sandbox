@@ -45,10 +45,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .custom-title {
-  margin-right: 3px;
+  /* margin-right: 3px;
   margin-left: 3px;
   font-size: 1.4em;
-  font-weight: 590;
+  font-weight: 590; */
   /* margin-top: auto; */
   /* margin-bottom: -5px; */
 }
@@ -111,6 +111,14 @@ tr.element-row:not(.expanded-row):hover {
 tr.element-row:not(.expanded-row):active {
   background: #efefef;
 }
+.mat-mdc-table .mdc-data-table__row {
+  height: 30px;
+}
+
+.mat-mdc-table .mdc-data-table__header-row {
+  height: 30px;
+}
+
 
 th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type {
   padding-right: 12px;
@@ -118,3 +126,15 @@ th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:la
 th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
   padding-left: 12px;
 }
+
+.element-detail {
+  align-items: center;
+  overflow: hidden;
+  display: flex;
+}
+
+.search-bar {
+  padding-right: 1em;
+  padding-left: 0px;
+}
+

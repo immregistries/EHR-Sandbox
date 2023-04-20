@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FacilityCreationComponent } from '../../_dialogs/facility-creation/facility-creation.component';
 import { Facility } from 'src/app/core/_model/rest';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-facility-menu',

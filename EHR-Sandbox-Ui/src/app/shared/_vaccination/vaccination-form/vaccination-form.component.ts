@@ -8,9 +8,9 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { randexp } from 'randexp';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpResponse } from '@angular/common/http';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-vaccination-form',

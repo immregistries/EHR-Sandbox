@@ -1,9 +1,9 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Hl7Service } from 'src/app/fhir/_services/hl7.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { tap } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-hl7-messaging',

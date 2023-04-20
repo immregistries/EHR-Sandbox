@@ -1,7 +1,6 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
 import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
@@ -9,6 +8,7 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-vaccination-received-table',

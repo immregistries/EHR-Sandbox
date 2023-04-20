@@ -2,7 +2,6 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { interval, Observable, timer } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
 import { AuthenticationDialogComponent } from '../../authentication/_components/authentication-form/authentication-dialog/authentication-dialog.component';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientService } from 'src/app/core/_services/patient.service';

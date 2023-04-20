@@ -1,6 +1,6 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
-    <span class="custom-title">{{title}}</span>
+    <h4 class="custom-title">{{title}}</h4>
     <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(facility && facility.id > 0)" matTooltip="New Patient">
       <mat-icon>add</mat-icon>
     </button>
@@ -11,27 +11,27 @@
 <table mat-table
        [dataSource]="dataSource" multiTemplateDataRows
        class="mat-elevation-z8">
-  <ng-container matColumnDef="nameFirst" >
+  <ng-container matColumnDef="nameFirst">
     <th mat-header-cell *matHeaderCellDef> First name </th>
-    <td mat-cell *matCellDef="let element"> {{element.nameFirst}} </td>
+    <td mat-cell *matCellDef="let element">{{element.nameFirst}}</td>
   </ng-container>
   <ng-container matColumnDef="mrn" >
     <th mat-header-cell *matHeaderCellDef> Identifier </th>
-    <td mat-cell *matCellDef="let element"> {{element.mrn}} </td>
+    <td mat-cell *matCellDef="let element">{{element.mrn}}</td>
   </ng-container>
-  <ng-container matColumnDef="nameMiddle" >
+  <ng-container matColumnDef="nameMiddle">
     <th mat-header-cell *matHeaderCellDef> Middle name </th>
-    <td mat-cell *matCellDef="let element"> {{element.nameMiddle}} </td>
+    <td mat-cell *matCellDef="let element">{{element.nameMiddle}}</td>
   </ng-container>
-  <ng-container matColumnDef="nameLast" >
+  <ng-container matColumnDef="nameLast">
     <th mat-header-cell *matHeaderCellDef> Last name </th>
     <td mat-cell *matCellDef="let element">{{element.nameLast}}</td>
   </ng-container>
-  <ng-container matColumnDef="birthDate" >
+  <ng-container matColumnDef="birthDate">
     <th mat-header-cell *matHeaderCellDef> Birth date </th>
-    <td mat-cell *matCellDef="let element"> {{element.birthDate | date: 'yyyy-MM-dd'}} </td>
+    <td mat-cell *matCellDef="let element">{{element.birthDate | date: 'yyyy-MM-dd'}} </td>
   </ng-container>
-  <ng-container matColumnDef="alerts" >
+  <ng-container matColumnDef="alerts">
     <th mat-header-cell *matHeaderCellDef> Alerts </th>
     <td mat-cell *matCellDef="let element">
       <app-feedback-icon [element]="element"></app-feedback-icon>

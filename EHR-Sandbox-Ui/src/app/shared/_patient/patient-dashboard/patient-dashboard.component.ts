@@ -2,8 +2,8 @@ import { Component, Inject, Input, Optional } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-patient-dashboard',

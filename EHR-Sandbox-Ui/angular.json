@@ -30,6 +30,9 @@
               "src/theme.scss",
               "src/styles.css"
             ],
+            "allowedCommonJsDependencies": [
+              "randexp"
+            ],
             "scripts": [],
             "baseHref": "/ehr/"
           },
