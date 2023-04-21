@@ -8,8 +8,7 @@ import { MatTabGroup } from '@angular/material/tabs';
   styleUrls: ['./fhir-bulk.component.css'],
   // encapsulation: ViewEncapsulation.None
 })
-export class FhirBulkComponent implements AfterViewInit, AfterViewChecked {
-  @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
+export class FhirBulkComponent implements OnInit {
 
   ngOnInit(): void {
   }
@@ -23,15 +22,6 @@ export class FhirBulkComponent implements AfterViewInit, AfterViewChecked {
   contentUrl: string = ''
 
   ndUrl: string = ''
-
-  ngAfterViewInit(): void {
-    this.tabGroup.animationDuration = 0
-    this.tabGroup.selectedIndex = 1;
-  }
-  ngAfterViewChecked(): void {
-    this.tabGroup.animationDuration = 500
-  }
-
 
 
   rowHeight(): string {

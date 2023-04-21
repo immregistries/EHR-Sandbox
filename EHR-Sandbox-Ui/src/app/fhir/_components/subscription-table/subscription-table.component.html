@@ -1,5 +1,5 @@
 <div style="display: flex; align-self: baseline;">
-  <h4 class="custom-title">{{title}}</h4>
+  <span class="custom-title">{{title}}</span>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>
 <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>

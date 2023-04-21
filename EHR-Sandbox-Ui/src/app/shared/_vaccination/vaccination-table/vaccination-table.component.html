@@ -1,7 +1,7 @@
 
 <div class="sticky-header">
   <div class="sticky-header-prefix">
-    <h4 class="custom-title">{{title}}</h4>
+    <span class="custom-title">{{title}}</span>
     <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(patientId && patientId > 0)"  *ngIf="allowCreation"  matTooltip="New Record">
       <mat-icon>add</mat-icon>
     </button>

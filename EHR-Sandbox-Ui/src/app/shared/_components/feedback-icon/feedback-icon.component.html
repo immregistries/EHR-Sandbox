@@ -1,10 +1,14 @@
-<button mat-icon-button *ngIf="element.feedbacks && element.feedbacks.length > 0"
-  style="color: red;"
-  matTooltip="{{element.feedbacks[0].content}}"
-  matTooltipClass="example-tooltip-red"
-  (click)="openFeedback(element); $event.stopPropagation();">
-  <mat-icon>
+<mat-icon-button
+      *ngIf="element.feedbacks && element.feedbacks.length > 0"
+      style="color: red;"
+      matTooltip="Errors documented: {{element.feedbacks.length}}"
+      matTooltipClass="example-tooltip-red"
+      (click)="openFeedback(element); $event.stopPropagation();">
+  <mat-icon
+      matBadge="1"
+      matBadgeSize="small"
+      matBadgeOverlap="true"
+      matBadgePosition="below">
     warning
   </mat-icon>
-  {{element.feedbacks.length}}
-</button>
+</mat-icon-button>

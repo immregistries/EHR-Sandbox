@@ -12,7 +12,7 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
   styleUrls: ['./fhir-messaging.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class FhirMessagingComponent implements AfterViewInit, AfterViewChecked {
+export class FhirMessagingComponent implements AfterViewInit {
   @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
 
   patientLoading: Boolean = false
@@ -54,8 +54,6 @@ export class FhirMessagingComponent implements AfterViewInit, AfterViewChecked {
   public immunizationOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
 
   ngAfterViewInit(): void {
-
-    this.tabGroup.animationDuration = 0
     this.tabGroup.selectedIndex = 1;
     this.patientLoading = true
     this.fhirService.quickGetPatientResource(this.patientId).subscribe((resource) => {
@@ -71,8 +69,5 @@ export class FhirMessagingComponent implements AfterViewInit, AfterViewChecked {
     }
   }
 
-  ngAfterViewChecked(): void {
-    this.tabGroup.animationDuration = 500
-  }
 
 }

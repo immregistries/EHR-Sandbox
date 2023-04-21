@@ -20,11 +20,6 @@
   gap: 5px 5px;
 }
 
-mat-form-field {
-  /* margin-right: 5px; */
-  height: 35px;
-}
-
 mat-raised-button {
   padding: 15px;
 }
@@ -50,15 +45,6 @@ mat-raised-button {
   color: rgb(121, 121, 121);
   margin-right: 3px;
 }
-
-/* To change form fields height */
-/* ::ng-deep .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
-::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
-
-::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
-    transform: translateY(-1.1em) scale(.75);
-    width: 133.33333%;
-} */
 
 .mat-button-toggle-group {
   height: 22px;

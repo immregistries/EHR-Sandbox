@@ -22,7 +22,15 @@ $ehr-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
 // $ehr-theme: mat-light-theme($ehr-primary, $ehr-accent, $ehr-warn);
+$ehr-colors: ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $ehr-warn);
+
 $ehr-theme: mat.define-light-theme((
+  'color':  $ehr-colors,
+  'typography': mat.define-typography-config(),
+  'density': -3,
+  ));
+
+$button-theme: mat.define-light-theme((
   'color':  ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $ehr-warn),
   'typography': mat.define-typography-config(),
   'density': 0,
@@ -32,17 +40,65 @@ $ehr-theme: mat.define-light-theme((
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 
-@include mat.all-component-themes($ehr-theme);
+// @include mat.all-component-themes($ehr-theme);
+@include mat.all-component-colors($ehr-theme);
+@include mat.all-component-typographies(mat.define-typography-config());
 
-.mat-badge-content {
+@include mat.form-field-density(-3);
+@include mat.icon-button-density(-3);
+@include mat.autocomplete-density(-3);
+@include mat.list-density(0);
+
+// mat-raised-button {
+//   @include mat.button-density($button-theme);
+// }
+
+// mdc-button {
+//   @include mat.button-density($button-theme);
+// }
+
+.mat-mdc-badge-content {
   font-family: 'Material Icons';
 }
 
-.mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px;}
-.mat-form-field-label-wrapper { top: -1.5em; }
+// .mdc-text-field .mdc-floating-label {
+//   top: 100%
+// }
 
-.mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
-    transform: translateY(-1.1em) scale(.75);
-    width: 133.33333%;
+// .mat-mdc-form-field-flex > .mat-mdc-form-field-infix { padding: 0.4em 0px;}
+// .mat-mdc-form-field-label-wrapper { top: -1.5em; }
+
+// .mat-mdc-form-field-appearance-outline.mat-mdc-form-field-can-float.mat-mdc-form-field-should-float .mat-mdc-form-field-label {
+//     transform: translateY(-1.1em) scale(.75);
+//     width: 133.33333%;
+// }
+
+// .mat-mdc-text-field-wrapper {
+//   // height: auto;
+//   flex: auto;
+// }
+
+// .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+//   padding-top: 4px;
+//   padding-bottom: 4px;
+// }
+
+// .mat-mdc-form-field-infix {
+//   min-height: 28px;
+// }
+
+
+th.mat-mdc-header-cell:last-of-type, td.mat-mdc-cell:last-of-type, td.mat-mdc-footer-cell:last-of-type
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+  padding-right: 12px;
 }
 
+.mat-mdc-table .mdc-data-table__row {
+  height: 2.5em;
+  padding: 8px;
+}
+
+.mat-mdc-table .mdc-data-table__header-row {
+  height: 2.5em;
+  padding: 8px;
+}

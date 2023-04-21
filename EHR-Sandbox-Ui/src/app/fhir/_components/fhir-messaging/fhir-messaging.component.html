@@ -1,4 +1,4 @@
-<mat-tab-group #tabs [disableRipple]="true">
+<mat-tab-group #tabs>
   <mat-tab disabled>
     <ng-template mat-tab-label>
       <app-immunization-registry-menu></app-immunization-registry-menu>
@@ -25,12 +25,6 @@
       </div>
     </div>
   </mat-tab>
-   <!-- <mat-tab label="Bulk Import Asynch">
-      <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
-  </mat-tab>
-   <mat-tab label="Bulk Import Synch">
-    <app-fhir-bulk [asynchronous]="false"></app-fhir-bulk>
-  </mat-tab> -->
   <!-- <mat-tab label="Settings">
     <div style="padding: 5px;"></div>
     <app-select-immregistry></app-select-immregistry>

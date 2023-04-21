@@ -1,6 +1,6 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
-    <h4 class="custom-title">{{title}}</h4>
+    <span class="custom-title">{{title}}</span>
     <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(facility && facility.id > 0)" matTooltip="New Patient">
       <mat-icon>add</mat-icon>
     </button>
@@ -13,7 +13,7 @@
        class="mat-elevation-z8">
   <ng-container matColumnDef="nameFirst">
     <th mat-header-cell *matHeaderCellDef> First name </th>
-    <td mat-cell *matCellDef="let element">{{element.nameFirst}}</td>
+    <td mat-cell *matCellDef="let element">{{element.nameFirst}} </td>
   </ng-container>
   <ng-container matColumnDef="mrn" >
     <th mat-header-cell *matHeaderCellDef> Identifier </th>
