@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class PatientDetailsComponent implements OnInit {
   @Input() patient!: EhrPatient
+  @Input() flex?: boolean = false;
 
   constructor(private dialog: MatDialog,
     private patientService: PatientService,) { }

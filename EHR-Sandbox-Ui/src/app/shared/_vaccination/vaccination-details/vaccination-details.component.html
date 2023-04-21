@@ -1,18 +1,21 @@
-<button mat-icon-button  matTooltip="Edit" color="primary" (click)="openEdition()">
-  <mat-icon>edit</mat-icon>
-</button>
-<button mat-stroked-button matTooltip="Send Hl7v2 VXU Message" color="primary" (click)="openHl7()">
-  <mat-icon>send</mat-icon>
-  HL7v2
-</button>
-<button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
-  <mat-icon>send</mat-icon>
-  FHIR
-</button>
-<button mat-stroked-button matTooltip="Copy to local facility" color="primary" (click)="openCopy()">
-  <mat-icon>file_copy</mat-icon>
-  Local facility
-</button>
+<span [style]="flex? '' : 'display: flex; align-items: center;'">
+  <button mat-icon-button  matTooltip="Edit" color="primary" (click)="openEdition()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-stroked-button matTooltip="Send Hl7v2 VXU Message" color="primary" (click)="openHl7()">
+    <mat-icon>send</mat-icon>
+    HL7v2
+  </button>
+  <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
+    <mat-icon>send</mat-icon>
+    FHIR
+  </button>
+  <button mat-stroked-button matTooltip="Copy to local facility" color="primary" (click)="openCopy()">
+    <mat-icon>file_copy</mat-icon>
+    Local facility
+  </button>
+</span>
+
 <!-- <p>
   {{codeMapsService.getCodeMap("VACCINATION_CVX_CODE")[element.vaccine.vaccineCvxCode].description }}
 </p> -->

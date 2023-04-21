@@ -1,15 +1,18 @@
-<mat-form-field appearance="fill" style="width: 100%">
-  <mat-label>Content & Status check URL</mat-label>
-  <input matInput [(ngModel)]="contentUrl" required>
-</mat-form-field>
-<div>
-  <mat-checkbox appearance="fill" [(ngModel)]="autofillNdUrl">Autofill Result URL</mat-checkbox>
-  <div class="w3-right">
-    <button mat-raised-button (click)="status()">Check Status</button>
-    <button mat-raised-button (click)="cancel()">Cancel</button>
+<div style="padding-top: 5px;">
+  <mat-form-field appearance="outline" style="width: 100%">
+    <mat-label>Content & Status check URL</mat-label>
+    <input matInput [(ngModel)]="contentUrl" required>
+  </mat-form-field>
+  <div>
+    <mat-checkbox appearance="outline" [(ngModel)]="autofillNdUrl">Autofill Result URL</mat-checkbox>
+    <div class="w3-right">
+      <button mat-raised-button (click)="status()">Check Status</button>
+      <button mat-raised-button (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+  <div>
+    <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+    <textarea class="result-space" [style]="{color: error? 'red':'black'}" readonly>{{result}}</textarea>
   </div>
 </div>
-<div>
-  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-  <textarea class="result-space" [style]="{color: error? 'red':'black'}" readonly>{{result}}</textarea>
-</div>
+

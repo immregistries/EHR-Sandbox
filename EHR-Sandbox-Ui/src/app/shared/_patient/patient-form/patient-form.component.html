@@ -1,7 +1,7 @@
 <mat-tab-group>
   <mat-tab label="Patient information">
     <div class="grid-container">
-      <mat-grid-list cols="6" rowHeight="190px">
+      <mat-grid-list cols="6" rowHeight="195px">
         <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card class="dashboard-card">
             <mat-card-header *ngIf="card.title">
