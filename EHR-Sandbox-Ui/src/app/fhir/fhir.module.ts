@@ -33,6 +33,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import {MatCardModule} from '@angular/material/card';
+import { FhirBulkNdjsonManualComponent } from './_components/fhir-bulk/fhir-bulk-ndjson-manual/fhir-bulk-ndjson-manual.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import {MatCardModule} from '@angular/material/card';
     FhirBulkStatusCheckComponent,
     FhirBulkNdjsonImportComponent,
     FhirOperationComponent,
+    FhirBulkNdjsonManualComponent,
   ],
   imports: [
     CommonModule,

@@ -20,30 +20,12 @@
   gap: 5px 5px;
 }
 
+.card-form {
+  /* width: 100%; */
+}
+
 mat-raised-button {
   padding: 15px;
-}
-
-.date-field {
-  /* max-width: 125px; */
-  max-width: 9.3em;
-}
-
-.text-field {
-  /* max-width: 45%; */
-  min-width: 10em;
-}
-.short-text-field {
-  max-width: 1.8em;
-  margin-top: 2px;
-  /* margin-right: 5px; */
-  /* box-shadow: 0 0 3px #CC0000; */
-  border-color: lightgrey;
-}
-
-.short-label {
-  color: rgb(121, 121, 121);
-  margin-right: 3px;
 }
 
 .mat-button-toggle-group {

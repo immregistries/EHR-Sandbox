@@ -1,45 +1,62 @@
+<h2 mat-dialog-title>Fetch Vaccination History from IIS</h2>
 
+<div mat-dialog-content>
+  <mat-toolbar >
+    <!-- <span style="flex: 1 1 auto;"></span> -->
+    <app-immunization-registry-menu></app-immunization-registry-menu>
+    <button mat-stroked-button  matTooltip="Fetch and merge remote vaccination history" color="primary" (click)="loadEverythingFromPatient()">
+      <mat-icon>cloud_download</mat-icon>
+      Fetch
+    </button>
+  </mat-toolbar>
 
-<mat-grid-list cols="5" [rowHeight]="'70vh'">
-  <mat-grid-tile [colspan]="1" >
-    <mat-card class="dashboard-card">
-      <mat-card-title>Fetch Vaccination History from IIS</mat-card-title>
-      <mat-card-content class="dashboard-card-content">
-        <!-- <app-immunization-registry-menu></app-immunization-registry-menu> -->
-        <app-select-immregistry></app-select-immregistry>
+  <mat-grid-list cols="4" [rowHeight]="'40vh'">
+    <!-- <mat-grid-tile [colspan]="1" >
+      <mat-card class="dashboard-card">
+        <mat-card-title>Fetch Vaccination History from IIS</mat-card-title>
+        <mat-card-content class="dashboard-card-content">
+          <app-select-immregistry></app-select-immregistry>
+          <button mat-stroked-button class="w3-right w3-bottom" matTooltip="Fetch and merge remote vaccination history" color="primary" (click)="loadEverythingFromPatient()">
+            <mat-icon>cloud_download</mat-icon>
+            Fetch
+          </button>
+        </mat-card-content>
+        <mat-card-footer>
+          <ul class="w3-ul">
+            <li>This prototype uses FHIR Operation $everything.</li>
+            <li>Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.</li>
+          </ul>
+        </mat-card-footer>
+      </mat-card>
+    </mat-grid-tile> -->
 
-        <button mat-stroked-button class="w3-right w3-bottom" matTooltip="Fetch and merge remote vaccination history" color="primary" (click)="loadEverythingFromPatient()">
-          <mat-icon>cloud_download</mat-icon>
-          Fetch
-        </button>
-      </mat-card-content>
-      <mat-card-footer>
-        <p>
-          This prototype uses FHIR Operation $everything. Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.
-        </p>
-      </mat-card-footer>
-    </mat-card>
-  </mat-grid-tile>
+    <mat-grid-tile [colspan]="2" >
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <app-vaccination-table [patientId]="patientId" [allowCreation]="false" (selectedEmitter)="selectedVaccination = $event"></app-vaccination-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="2" >
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
+          <app-vaccination-received-table [vaccinations]="vaccinationEvents" [patientId]="patientId" [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <!-- <mat-grid-tile [colspan]="1" >
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile> -->
+  </mat-grid-list>
+  <div>
+    <ul class="w3-ul">
+      <li>This prototype uses FHIR Operation $everything.</li>
+      <li>Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.</li>
+    </ul>
+  </div>
+</div>
 
-  <mat-grid-tile [colspan]="2" >
-    <mat-card class="dashboard-card">
-      <mat-card-content class="dashboard-card-content">
-        <app-vaccination-table [patientId]="patientId" [allowCreation]="false" (selectedEmitter)="selectedVaccination = $event"></app-vaccination-table>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile [colspan]="2" >
-    <mat-card class="dashboard-card">
-      <mat-card-content class="dashboard-card-content">
-        <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
-        <app-vaccination-received-table [vaccinations]="vaccinationEvents" [patientId]="patientId" [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <!-- <mat-grid-tile [colspan]="1" >
-    <mat-card class="dashboard-card">
-      <mat-card-content class="dashboard-card-content">
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile> -->
-</mat-grid-list>

@@ -1,5 +1,5 @@
 <div style="padding-top: 5px;">
-  <mat-form-field appearance="outline" style="width: 100%">
+  <mat-form-field appearance="fill" style="width: 100%">
     <mat-label>Result File Url</mat-label>
     <input matInput [(ngModel)]="ndUrl" required  [matAutocomplete]="auto" placeholder="Result File Url">
     <mat-autocomplete #auto="matAutocomplete">
@@ -10,7 +10,7 @@
     </mat-autocomplete>
   </mat-form-field>
   <div>
-    <mat-checkbox appearance="outline" [(ngModel)]="loadInFacility">Load content in Current Facility</mat-checkbox>
+    <mat-checkbox appearance="fill" [(ngModel)]="loadInFacility">Load content in Current Facility</mat-checkbox>
     <div class="w3-right">
       <button mat-raised-button  (click)="ndJson()">Get NdJson file</button>
     </div>

@@ -10,59 +10,18 @@
               </mat-card-title>
             </mat-card-header>
             <mat-card-content class="dashboard-card-content">
-              <ng-container *ngFor="let form of card.patientForms" [ngSwitch]="form.type">
-
-                <mat-form-field  appearance="outline" class="text-field"  *ngSwitchCase="'text'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput  type="{{form.type}}"  [(ngModel)]="patient[form.attribute]">
-                </mat-form-field>
-
-                <mat-form-field  appearance="outline" class="date-field" *ngSwitchCase="'date'">
-                  <mat-label>{{form.title}}</mat-label>
-                  <input matInput [matDatepicker]="picker" [ngModel]="asDate(patient[form.attribute])" (ngModelChange)="patient[form.attribute] = $event" >
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-
-                <app-select-codebase *ngSwitchCase="'code'"
-                  [model]="asString(patient[form.attribute])"
-                  (modelChange)="patient[form.attribute] = $event"
-                  [form]="form"
-                  [referenceFilter]="references"
-                  class="select-field"
-                  ></app-select-codebase>
-
-                <div *ngSwitchCase="'short'">
-                  <mat-label class="short-label">{{form.title}} </mat-label>
-                  <input  class="short-text-field" [(ngModel)]="patient[form.attribute]">
-                </div>
-
-                <div *ngSwitchCase="'yesNo'">
-                  <mat-label class="short-label">{{form.title}}</mat-label>
-                  <select [(ngModel)]="patient[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
-                    <option [hidden]="!patient[form.attribute]" value=""></option>
-                    <option value="Y">Y</option>
-                    <option value="N">N</option>
-                  </select>
-                </div>
-
-                <div *ngSwitchCase="'select'">
-                  <mat-label class="short-label">{{form.title}}</mat-label>
-                  <select  *ngIf="form.options; else short" [(ngModel)]="patient[form.attribute]" name="{{form.attribute}}"  aria-label="Font Style" >
-                    <option [hidden]="!patient[form.attribute]" value=""></option>
-                    <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
-                  </select>
-                  <ng-template #short >
-                    <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="patient[form.attribute]">
-                  </ng-template>
-                </div>
-                <div *ngSwitchDefault></div>
+              <ng-container *ngFor="let form of card.patientForms" >
+                <app-card-form class="card-form high-density"
+                [form]="form"
+                [model]="patient[form.attribute]"
+                (modelChange)="patient[form.attribute] = $event"
+                [referenceFilter]="references"></app-card-form>
               </ng-container>
 
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>
-        <mat-grid-tile>
+        <!-- <mat-grid-tile>
           <mat-card class="dashboard-card">
             <mat-card-header>
               <mat-card-title>
@@ -82,7 +41,7 @@
               </mat-form-field>
             </mat-card-content>
           </mat-card>
-        </mat-grid-tile>
+        </mat-grid-tile> -->
 
       </mat-grid-list>
     </div>

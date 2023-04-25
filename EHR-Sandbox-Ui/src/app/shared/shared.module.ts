@@ -58,6 +58,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RegistryNamePipe } from './_pipes/registry-name.pipe';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 
 @NgModule({
@@ -143,6 +144,7 @@ import { RegistryNamePipe } from './_pipes/registry-name.pipe';
     MatTooltipModule,
     MatProgressBarModule,
     MatBadgeModule,
+    MatToolbarModule,
   ],
   exports: [
     ReactiveFormsModule,

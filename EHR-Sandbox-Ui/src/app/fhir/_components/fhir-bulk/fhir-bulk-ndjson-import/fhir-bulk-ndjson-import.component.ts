@@ -38,18 +38,6 @@ export class FhirBulkNdjsonImportComponent implements OnInit {
         this.loading = false
         this.error = true
       })
-    } else if (this.result) {
-      this.loading = true
-      this.fhir.loadNdJson(this.result).subscribe((res) => {
-        // this.ndResult = res.trim()
-        this.loading = false
-        this.error = false
-      }, (err) => {
-        this.result = err.message
-        console.error(err)
-        this.loading = false
-        this.error = true
-      })
     }
   }
 

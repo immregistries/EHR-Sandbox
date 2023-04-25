@@ -1,9 +1,6 @@
-
-
-
 .date-field {
   /* max-width: 125px; */
-  max-width: 10em;
+  max-width: 9.3em;
 }
 
 .select-field {
@@ -11,9 +8,10 @@
 }
 
 .text-field {
-  max-width: 45%;
+  max-width: 95%;
   min-width: 10em;
 }
+
 .short-text-field {
   max-width: 3em;
   margin-top: 2px;

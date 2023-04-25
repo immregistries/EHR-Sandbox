@@ -12,7 +12,7 @@
             <mat-card-content class="dashboard-card-content">
 
 <!-- Vaccine forms -->
-              <ng-container *ngFor="let form of card.vaccineForms" [ngSwitch]="form.type">
+              <ng-container *ngFor="let form of card.vaccineForms" >
                 <app-card-form class="card-form"
                   [form]="form"
                   [model]="vaccination.vaccine[form.attribute]"
@@ -23,7 +23,7 @@
                   [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"></app-card-form>
               </ng-container>
 <!-- Clinician forms -->
-              <ng-container *ngFor="let form of card.clinicianForms" [ngSwitch]="form.type">
+              <ng-container *ngFor="let form of card.clinicianForms" >
                 <app-card-form class="card-form"
                   [form]="form"
                   [model]="vaccination[form.role][form.attribute]"
@@ -35,7 +35,7 @@
               </ng-container>
 
   <!-- Vaccination forms -->
-              <ng-container *ngFor="let form of card.vaccinationForms" [ngSwitch]="form.type">
+              <ng-container *ngFor="let form of card.vaccinationForms">
                 <div *ngSwitchCase="'boolean'">
                   <mat-label class="short-label">{{form.title}}</mat-label>
                   <!-- TODO Change temporary fix -->

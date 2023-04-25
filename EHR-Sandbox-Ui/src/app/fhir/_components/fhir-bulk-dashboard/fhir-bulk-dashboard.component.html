@@ -11,7 +11,14 @@
     <app-fhir-bulk [asynchronous]="false"></app-fhir-bulk>
   </mat-tab>
   <mat-tab label="NDJson Bundle import">
-    <app-fhir-bulk-ndjson-import ></app-fhir-bulk-ndjson-import>
+    <mat-grid-list cols="2">
+      <mat-grid-tile>
+        <app-fhir-bulk-ndjson-import style="width: 100%; height: 100%;"></app-fhir-bulk-ndjson-import>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <app-fhir-bulk-ndjson-manual style="width: 100%; height: 100%;"></app-fhir-bulk-ndjson-manual>
+      </mat-grid-tile>
+    </mat-grid-list>
   </mat-tab>
   <mat-tab label="Settings">
     <div style="padding: 5px;"></div>

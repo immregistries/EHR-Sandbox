@@ -38,7 +38,7 @@ $ehr-theme: mat.define-light-theme((
 @include mat.all-component-colors($ehr-theme);
 @include mat.all-component-typographies(mat.define-typography-config());
 
-@include mat.form-field-density(-5);
+@include mat.form-field-density(0);
 @include mat.icon-button-density(-3);
 @include mat.autocomplete-density(-3);
 @include mat.list-density(0);
@@ -59,6 +59,18 @@ $ehr-theme: mat.define-light-theme((
   );
 
   @include mat.badge-typography($my-custom-level);
+}
+.low-density {
+  @include mat.form-field-density(0);
+  @include mat.icon-button-density(0);
+  @include mat.autocomplete-density(0);
+
+}
+
+.high-density {
+  @include mat.form-field-density(-5);
+  @include mat.icon-button-density(-3);
+  @include mat.autocomplete-density(-3);
 }
 
 // .mat-badge-content {
