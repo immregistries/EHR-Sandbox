@@ -20,10 +20,6 @@ tr.detail-row {
   display: flex;
 } */
 
-.element-description {
-  padding: 16px;
-}
-
 .element-description-attribution {
   opacity: 0.5;
 }

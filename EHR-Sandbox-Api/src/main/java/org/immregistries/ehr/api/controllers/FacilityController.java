@@ -41,12 +41,6 @@ public class FacilityController {
         return facilityRepository.findByIdAndTenantId(facilityId,tenantId);
     }
 
-    @GetMapping("/{facilityId}/vaccinations/{vaccinationId}")
-    public Optional<VaccinationEvent> getVaccination(@PathVariable() int tenantId,
-                                                  @PathVariable() int facilityId,
-                                                  @PathVariable() String vaccinationId) {
-        return vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId,vaccinationId);
-    }
 
     @PostMapping()
     public ResponseEntity<Facility> postFacility(@PathVariable() int tenantId,

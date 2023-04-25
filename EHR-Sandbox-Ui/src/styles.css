@@ -10,7 +10,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   right:-24px;
 }
 
-.form-dialog-container .mat-dialog-container {
+.form-dialog-container .mat-mdc-dialog-container {
   /* add your styles */
   margin: 0px;
   padding: 0px;
@@ -20,7 +20,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 90%; */
 }
 
-.full-screen-modal .mat-dialog-container {
+.full-screen-modal .mat-mdc-dialog-container {
   /* add your styles */
   margin: 10px;
   /* padding: 2px; */
@@ -32,7 +32,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 90%; */
 }
 
-.dialog-without-bar .mat-dialog-container {
+.dialog-without-bar .mat-mdc-dialog-container {
   margin: 0px;
   padding-bottom: 0px;
 }
@@ -89,21 +89,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   overflow: auto;
 }
 
-.custom-fab-button {
-  /* display: block; */
-  /* background-color: #eee;
-  width: 1em;
-  height: 1em;
-  font-size: 16px; */
-  /* font; */
-  padding-left: 1em;
-}
-
-.custom-fab-icon {
-  /* font-size: 16px; */
-  /* margin-top: -8px; */
-}
-
 tr.element-row:not(.expanded-row):hover {
   background: whitesmoke;
 }
@@ -118,8 +103,6 @@ tr.element-row:not(.expanded-row):active {
   display: flex;
 }
 
-.search-bar {
-  padding-right: 1em;
-  padding-left: 0px;
-}
-
+/* .mat-badge-content {
+  font-family: 'Material Icons';
+} */

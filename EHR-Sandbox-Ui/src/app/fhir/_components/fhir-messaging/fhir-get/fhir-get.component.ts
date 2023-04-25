@@ -15,26 +15,26 @@ export class FhirGetComponent {
   result: string = ''
   loading = false
   error: boolean = false
-  identifier: Identifier = {};
+  // identifier: Identifier = {};
 
   constructor(public fhir: FhirService) {}
 
-  search() {
-    if (this.identifier.value) {
-      this.loading = true
-      this.chooseRequest(this.identifierString).pipe(tap((res) => {
-          this.loading = false
-          this.result = res
-        })).subscribe({
-          next: (res) => {
-            this.error = false
-          },
-          error: (err) => {
-            this.error = true
-          },
-        })
-    }
-  }
+  // search() {
+  //   if (this.identifier.value) {
+  //     this.loading = true
+  //     this.chooseRequest(this.identifierString).pipe(tap((res) => {
+  //         this.loading = false
+  //         this.result = res
+  //       })).subscribe({
+  //         next: (res) => {
+  //           this.error = false
+  //         },
+  //         error: (err) => {
+  //           this.error = true
+  //         },
+  //       })
+  //   }
+  // }
 
   get() {
     if (this.identifierString) {

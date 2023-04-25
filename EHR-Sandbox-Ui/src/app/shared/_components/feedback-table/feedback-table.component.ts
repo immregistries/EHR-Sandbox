@@ -2,9 +2,10 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { Facility, Feedback, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
+import { Facility, Feedback, EhrPatient, VaccinationEvent, ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -35,6 +36,11 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
 
   columns!: (keyof Feedback | 'remove')[]
 
+  registries!: ImmunizationRegistry[];
+  public registryName(id: string | undefined): string {
+    return this.registries?.find((reg) => id == reg.id)?.name ?? '' + id
+  }
+
   onSelection(event: Feedback) {
     if (this.expandedElement && this.expandedElement.id == event.id){
       this.expandedElement = null
@@ -50,6 +56,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     private feedbackService: FeedbackService,
     private patientService: PatientService,
     private snackBarService: SnackBarService,
+    private immunizationRegistryService: ImmunizationRegistryService,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient, vaccination: VaccinationEvent}) {
       if (data?.patient){
@@ -83,12 +90,18 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     if (this.vaccination) {
       this.columns = this.columns.filter((attribute => attribute != "vaccinationEvent"))
     }
+
+    this.immunizationRegistryService.getRefresh().subscribe(() => {
+      this.immunizationRegistryService.readImmRegistries().subscribe((res) => {
+        this.registries = res
+      })
+    })
   }
 
   ngAfterViewInit(): void {
     // Set filter rules for research
-    this.dataSource.filterPredicate = (data: Feedback | number, filter: string) =>{
-      return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
+    this.dataSource.filterPredicate = (data: Feedback, filter: string) => {
+      return (JSON.stringify(data) + this.registryName(data.iis)).trim().toLowerCase().indexOf(filter) !== -1
     };
     this.feedbackService.getRefresh().subscribe(bool => {
       this.refreshData()

@@ -119,13 +119,20 @@ export class VaccinationService {
   }
 
 
-  readVaccinationHistory(patientId: number, vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
+  readVaccinationHistory(vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
     const tenantId: number = this.tenantService.getTenantId()
     const facilityId: number = this.facilityService.getFacilityId()
     return this.http.get<Revision<VaccinationEvent>[]>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/$history`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}/$history`,
       httpOptions);
   }
+  // readVaccinationHistory(patientId: number, vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
+  //   const tenantId: number = this.tenantService.getTenantId()
+  //   const facilityId: number = this.facilityService.getFacilityId()
+  //   return this.http.get<Revision<VaccinationEvent>[]>(
+  //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/$history`,
+  //     httpOptions);
+  // }
 
 
 

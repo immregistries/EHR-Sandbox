@@ -10,7 +10,7 @@
        [dataSource]="dataSource" multiTemplateDataRows
        class="mat-elevation-z8">
   <ng-container matColumnDef="vaccineCvxCode" >
-    <th mat-header-cell *matHeaderCellDef> Cvx </th>
+    <th mat-header-cell *matHeaderCellDef> Code (CVX) </th>
     <td mat-cell *matCellDef="let element">
       {{(element.vaccine && element.vaccine.vaccineCvxCode ? (element.vaccine.vaccineCvxCode | codeMaps: "VACCINATION_CVX_CODE").label : "")
       + ' (' + (element.vaccine.vaccineCvxCode  ?? "-None-") + ')'}}

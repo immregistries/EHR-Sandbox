@@ -1,0 +1,13 @@
+.dashboard-card {
+  width: 95%
+}
+
+
+.dashboard-card-content {
+  /* text-align: center; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 5px 5px;
+}

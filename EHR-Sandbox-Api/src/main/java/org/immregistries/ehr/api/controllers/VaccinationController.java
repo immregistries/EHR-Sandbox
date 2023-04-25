@@ -27,7 +27,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations"})
+@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations","/tenants/{tenantId}/facilities/{facilityId}/vaccinations"})
 public class VaccinationController {
     @Autowired
     HL7printer hl7printer;
@@ -52,8 +52,12 @@ public class VaccinationController {
     private static final Logger logger = LoggerFactory.getLogger(VaccinationController.class);
 
     @GetMapping()
-    public Iterable<VaccinationEvent> vaccinationEvents(@PathVariable() String patientId) {
-        return vaccinationEventRepository.findByPatientId(patientId);
+    public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() int facilityId, @PathVariable() Optional<String> patientId) {
+        if(patientId.isPresent()) {
+            return vaccinationEventRepository.findByPatientId(patientId.get());
+        } else {
+            return vaccinationEventRepository.findByAdministeringFacilityId(facilityId);
+        }
     }
 
     @GetMapping("/{vaccinationId}")
@@ -63,16 +67,19 @@ public class VaccinationController {
 
     @GetMapping("/random")
     public VaccinationEvent random( @PathVariable() int facilityId,
-                                    @PathVariable() String patientId) {
-        EhrPatient patient = patientRepository.findByFacilityIdAndId(facilityId,patientId)
+                                    @PathVariable() Optional<String> patientId) {
+        String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+        EhrPatient patient = patientRepository.findByFacilityIdAndId(facilityId,patientId1)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return randomGenerator.randomVaccinationEvent(patient, patient.getFacility());
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@PathVariable() String patientId,
+    public ResponseEntity<String> postVaccinationEvents(@PathVariable() Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
-        EhrPatient patient = patientRepository.findById(patientId)
+        String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+
+        EhrPatient patient = patientRepository.findById(patientId1)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
         vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
@@ -90,13 +97,15 @@ public class VaccinationController {
 
     @PutMapping()
     public VaccinationEvent putVaccinationEvents(@PathVariable() int facilityId,
-                                                 @PathVariable() String patientId,
+                                                 @PathVariable() Optional<String> patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
+        String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
-        EhrPatient patient = patientRepository.findById(patientId)
+        EhrPatient patient = patientRepository.findById(patientId1)
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-        VaccinationEvent oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccination.getId())
+        VaccinationEvent oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patientId1, vaccination.getId())
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
         vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
         vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));

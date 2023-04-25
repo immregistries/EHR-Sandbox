@@ -10,6 +10,7 @@ public interface VaccinationEventRepository extends CrudRepository<VaccinationEv
 
     Optional<VaccinationEvent> findByPatientIdAndId(String patientId, String id);
     Optional<VaccinationEvent> findByAdministeringFacilityIdAndId(Integer facilityId, String id);
+    Iterable<VaccinationEvent> findByAdministeringFacilityId(Integer facilityId);
     Boolean existsByAdministeringFacilityIdAndId(Integer facilityId, String id);
     Boolean existsByPatientIdAndId(String patientId, String id);
     Iterable<VaccinationEvent> findByPatientId(String patientId);

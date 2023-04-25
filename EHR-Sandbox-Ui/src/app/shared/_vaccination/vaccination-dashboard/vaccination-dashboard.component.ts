@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { VaccinationEvent } from 'src/app/core/_model/rest';
+import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
@@ -18,7 +18,7 @@ export class VaccinationDashboardComponent implements OnInit {
     private patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<VaccinationDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {vaccination: number | VaccinationEvent}) {
-      if(data?.vaccination) {
+      if(data?.vaccination ) {
         this.patientService.getRefresh().subscribe((res) => {
           if (typeof data.vaccination === "number" ||  "string") {
             this.vaccinationService.quickReadVaccinationFromFacility(+data.vaccination).subscribe((res) => {

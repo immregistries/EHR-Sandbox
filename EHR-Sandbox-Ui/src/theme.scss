@@ -42,15 +42,28 @@ $ehr-theme: mat.define-light-theme((
 @include mat.icon-button-density(-3);
 @include mat.autocomplete-density(-3);
 @include mat.list-density(0);
+@include mat.table-density(-4);
 
 .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
   line-height: var(--mdc-typography-caption-line-height, 10px);
   height: 0;
 }
 
-.mat-badge-content {
-  font-family: 'Material Icons';
+.special-icon-badge {
+  $my-custom-level: mat.define-typography-level(
+    $font-family: Material Icons,
+    $font-weight: 400,
+    $font-size: 1rem,
+    $line-height: 1,
+    $letter-spacing: normal,
+  );
+
+  @include mat.badge-typography($my-custom-level);
 }
+
+// .mat-badge-content {
+//   font-family: 'Material Icons';
+// }
 
 // .mdc-text-field .mdc-floating-label {
 //   top: 100%
@@ -79,17 +92,11 @@ $ehr-theme: mat.define-light-theme((
 // }
 
 
-th.mat-mdc-header-cell:last-of-type, td.mat-mdc-cell:last-of-type, td.mat-mdc-footer-cell:last-of-type
-th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
-  padding-right: 12px;
-}
+// th.mat-mdc-header-cell:last-of-type, td.mat-mdc-cell:last-of-type, td.mat-mdc-footer-cell:last-of-type
+// th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+//   padding-right: 12px;
+// }
 
-.mat-mdc-table .mdc-data-table__row {
-  height: 2.5em;
-  padding: 8px;
-}
-
-.mat-mdc-table .mdc-data-table__header-row {
-  height: 2.5em;
-  padding: 8px;
-}
+// .mdc-data-table__cell, .mdc-data-table__header-cell {
+//   padding: 0 8px 0 8px;
+// }

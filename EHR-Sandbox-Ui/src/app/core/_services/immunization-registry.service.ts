@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, share } from 'rxjs';
 import { ImmunizationRegistry } from '../_model/rest';
 import { SettingsService } from './settings.service';
 
@@ -47,7 +47,7 @@ export class ImmunizationRegistryService {
 
   public readImmRegistries(): Observable<ImmunizationRegistry[]>{
     return this.http.get<ImmunizationRegistry[]>(
-      this.settings.getApiUrl() + `/imm-registry`, httpOptions);
+      this.settings.getApiUrl() + `/imm-registry`, httpOptions).pipe(share());
   }
 
   public putImmRegistry(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{

@@ -1,6 +1,6 @@
-<mat-form-field appearance="fill">
+<mat-form-field appearance="outline">
   <mat-label>{{resourceType + ' '}} identifier</mat-label>
-  <input matInput [(ngModel)]="identifier">
+  <input type="text" matInput [(ngModel)]="identifierString">
 </mat-form-field>
 <button mat-raised-button  (click)="get()">GET</button>
 <div>

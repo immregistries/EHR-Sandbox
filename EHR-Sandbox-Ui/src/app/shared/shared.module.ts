@@ -57,6 +57,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RegistryNamePipe } from './_pipes/registry-name.pipe';
 
 
 @NgModule({
@@ -75,6 +76,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     SelectImmregistryComponent,
     CodeMapsPipe,
     TextShortenPipe,
+
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
     KeysPipe,
@@ -100,7 +102,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     PatientMenuComponent,
     PatientHistoryComponent,
     VaccinationReceivedTableComponent,
-    CardFormComponent
+    CardFormComponent,
+    RegistryNamePipe
   ],
   imports: [
     CommonModule,
@@ -184,6 +187,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
     CodeMapsPipe,
      TextShortenPipe,
+    RegistryNamePipe,
+
      ImmunizationRegistryMenuComponent,
      LocalCopyDialogComponent,
      KeysPipe,

@@ -18,9 +18,6 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
   ],
 })
 export class VaccinationHistoryComponent implements OnInit {
-
-  @Input()
-  patientId: number = -1;
   @Input()
   vaccinationId?: number;
 
@@ -41,11 +38,8 @@ export class VaccinationHistoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.patientId < 0) {
-      this.patientId = this.patientService.getPatientId()
-    }
     if (this.vaccinationId) {
-      this.vaccinationService.readVaccinationHistory(this.patientId,this.vaccinationId).subscribe((res) => {
+      this.vaccinationService.readVaccinationHistory(this.vaccinationId).subscribe((res) => {
         this.history.data = res
       })
     }
