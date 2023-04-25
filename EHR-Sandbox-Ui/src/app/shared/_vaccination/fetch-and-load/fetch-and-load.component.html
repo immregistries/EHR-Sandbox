@@ -1,10 +1,10 @@
 <h2 mat-dialog-title>Fetch Vaccination History from IIS</h2>
 
 <div mat-dialog-content>
-  <mat-toolbar >
+  <mat-toolbar color="basic">
     <!-- <span style="flex: 1 1 auto;"></span> -->
     <app-immunization-registry-menu></app-immunization-registry-menu>
-    <button mat-stroked-button  matTooltip="Fetch and merge remote vaccination history" color="primary" (click)="loadEverythingFromPatient()">
+    <button mat-raised-button  matTooltip="Fetch and merge remote vaccination history" color="basic" (click)="loadEverythingFromPatient()">
       <mat-icon>cloud_download</mat-icon>
       Fetch
     </button>
@@ -45,12 +45,6 @@
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <!-- <mat-grid-tile [colspan]="1" >
-      <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content">
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile> -->
   </mat-grid-list>
   <div>
     <ul class="w3-ul">
