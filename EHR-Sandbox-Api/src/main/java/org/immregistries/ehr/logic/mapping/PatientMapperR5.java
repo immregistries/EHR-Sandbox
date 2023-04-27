@@ -16,20 +16,25 @@ import java.text.SimpleDateFormat;
  */
 @Service
 public class PatientMapperR5 {
-  private  static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
+  private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
   public static final String MRN_SYSTEM = "urn:mrns";
-  private static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
-  private static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
-  private static final String ETHNICITY_EXTENSION = "ethnicity";
-  private static final String ETHNICITY_SYSTEM = "ethnicity";
-  private static final String RACE = "race";
-  private static final String RACE_SYSTEM = "race";
-  private static final String PUBLICITY_EXTENSION = "publicity";
-  private static final String PUBLICITY_SYSTEM = "publicityIndicator";
-  private static final String PROTECTION_EXTENSION = "protection";
-  private static final String PROTECTION_SYSTEM = "protectionIndicator";
-  private static final String YES = "Y";
-  private static final String NO = "N";
+
+  public static final String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
+  public static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
+  public static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
+  public static final String ETHNICITY_EXTENSION = "ethnicity";
+  public static final String ETHNICITY_SYSTEM = "ethnicity";
+  public static final String RACE = "race";
+  public static final String RACE_SYSTEM = "race";
+  public static final String PUBLICITY_EXTENSION = "publicity";
+  public static final String PUBLICITY_SYSTEM = "publicityIndicator";
+  public static final String PROTECTION_EXTENSION = "protection";
+  public static final String PROTECTION_SYSTEM = "protectionIndicator";
+  public static final String YES = "Y";
+  public static final String NO = "N";
+
+  public static final String MALE_SEX = "M";
+  public static final String FEMALE_SEX = "F";
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
 
@@ -149,13 +154,22 @@ public class PatientMapperR5 {
       ehrPatient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
     }
 
-//		patient.setMotherMaiden(); TODO
+    ehrPatient.setMrn(
+      p.getIdentifier().stream().filter(identifier -> identifier.getSystem().equals(MRN_SYSTEM)).findFirst()
+              .orElse(p.getIdentifierFirstRep())
+              .getValue()
+    );
+
+    Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME);
+    if (motherMaiden != null) {
+      ehrPatient.setMotherMaiden(motherMaiden.getValue().toString());
+    }
     switch (p.getGender()) {
       case MALE:
-        ehrPatient.setSex("M");
+        ehrPatient.setSex(MALE_SEX);
         break;
       case FEMALE:
-        ehrPatient.setSex("F");
+        ehrPatient.setSex(FEMALE_SEX);
         break;
       case OTHER:
       default:
@@ -189,8 +203,9 @@ public class PatientMapperR5 {
       }
     }
 
-    if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
-      ehrPatient.setEthnicity(p.getExtensionByUrl(ETHNICITY_EXTENSION).getValueCoding().getCode());
+    Extension ethnicity = p.getExtensionByUrl(ETHNICITY_EXTENSION);
+    if (ethnicity != null) {
+      ehrPatient.setEthnicity(ethnicity.getValueCoding().getCode());
     }
 
     for (ContactPoint telecom : p.getTelecom()) {
@@ -241,29 +256,41 @@ public class PatientMapperR5 {
       }
     }
 
-    if (p.getExtensionByUrl(PUBLICITY_EXTENSION) != null) {
-      ehrPatient.setPublicityIndicator(p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getCode());
-      if (p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion() != null && !p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion().isBlank() ) {
+    Extension publicity = p.getExtensionByUrl(PUBLICITY_EXTENSION);
+    if (publicity != null) {
+      Coding value = publicity.getValueCoding();
+      ehrPatient.setPublicityIndicator(value.getCode());
+      if (value.getVersion() != null && !value.getVersion().isBlank()) {
         try {
-          ehrPatient.setPublicityIndicatorDate(sdf.parse(p.getExtensionByUrl(PUBLICITY_EXTENSION).getValueCoding().getVersion()));
-        } catch (ParseException e) {}
+          ehrPatient.setPublicityIndicatorDate(MappingHelper.sdf.parse(value.getVersion()));
+        } catch (ParseException e) {
+//					throw new RuntimeException(e);
+        }
       }
     }
-
-    if (p.getExtensionByUrl(PROTECTION_EXTENSION) != null) {
-      ehrPatient.setProtectionIndicator(p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getCode());
-      if (p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getVersion() != null) {
+    Extension protection = p.getExtensionByUrl(PROTECTION_EXTENSION);
+    if (protection != null) {
+      Coding value = protection.getValueCoding();
+      ehrPatient.setProtectionIndicator(value.getCode());
+      if (value.getVersion() != null && !value.getVersion().isBlank()) {
         try {
-          ehrPatient.setProtectionIndicatorDate(sdf.parse(p.getExtensionByUrl(PROTECTION_EXTENSION).getValueCoding().getVersion()));
-        } catch (ParseException e) {}
+          ehrPatient.setProtectionIndicatorDate(MappingHelper.sdf.parse(value.getVersion()));
+        } catch (ParseException e) {
+//					throw new RuntimeException(e);
+        }
       }
     }
-
-    if (p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION) != null) {
-      ehrPatient.setRegistryStatusIndicator(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getCode());
-      try {
-        ehrPatient.setRegistryStatusIndicatorDate(sdf.parse(p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION).getValueCoding().getVersion()));
-      } catch (ParseException | NullPointerException e) {}
+    Extension registry = p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION);
+    if (registry != null) {
+      Coding value = registry.getValueCoding();
+      ehrPatient.setRegistryStatusIndicator(value.getCode());
+      if (value.getVersion() != null && !value.getVersion().isBlank()) {
+        try {
+          ehrPatient.setRegistryStatusIndicatorDate(MappingHelper.sdf.parse(value.getVersion()));
+        } catch (ParseException e) {
+//				throw new RuntimeException(e);
+        }
+      }
     }
     return ehrPatient;
   }

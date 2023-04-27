@@ -6,6 +6,7 @@ import { FeedbackService } from './feedback.service';
 import { PatientService } from './patient.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FacilityService } from './facility.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class SnackBarService {
 
   constructor(private _snackBar: MatSnackBar,
     private patientService: PatientService,
+    private facilityService: FacilityService,
     private feedbackService: FeedbackService,
     private dialog: MatDialog,
     ) { }
@@ -30,7 +32,7 @@ export class SnackBarService {
 
   notification() {
     this._snackBar.open("Data received, refresh required",`refresh`,
-    {duration: 15000}).onAction().subscribe(() => {this.patientService.doRefresh();this.feedbackService.doRefresh()})
+    {duration: 15000}).onAction().subscribe(() => {this.facilityService.doRefresh();this.patientService.doRefresh;this.feedbackService.doRefresh()})
   }
 
   errorMessage(message: string) {

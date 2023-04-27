@@ -1,11 +1,11 @@
 <div style="padding-top: 5px;">
   <mat-form-field appearance="fill" style="width: 100%">
     <mat-label>NdJson</mat-label>
-    <textarea rows="18"  matInput [(ngModel)]="ndJsonInput" required placeholder="NdJson"></textarea>
+    <textarea rows="14"  matInput [(ngModel)]="ndJsonInput" required placeholder="NdJson"></textarea>
   </mat-form-field>
   <div>
     <div class="w3-right">
-      <button mat-raised-button  (click)="load()">Load NdJson</button>
+      <button mat-raised-button (click)="load()">Load NdJson</button>
     </div>
   </div>
   <textarea class="result-space" [style]="{color: error? 'red':'black'}" placeholder="" readonly>{{result}}</textarea>
