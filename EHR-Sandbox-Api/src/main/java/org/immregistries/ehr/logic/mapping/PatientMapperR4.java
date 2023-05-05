@@ -10,30 +10,14 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import static org.immregistries.ehr.logic.mapping.PatientMapperR5.*;
+
 /**
  * Maps the Database with FHIR for patient resources
  */
 @Service
 public class PatientMapperR4 {
   private  static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
-  private static final String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
-  private static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
-  private static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
-  private static final String ETHNICITY_EXTENSION = "ethnicity";
-  private static final String ETHNICITY_SYSTEM = "ethnicity";
-  private static final String RACE = "race";
-  private static final String RACE_SYSTEM = "race";
-  private static final String PUBLICITY_EXTENSION = "publicity";
-  private static final String PUBLICITY_SYSTEM = "publicityIndicator";
-  private static final String PROTECTION_EXTENSION = "protection";
-  private static final String PROTECTION_SYSTEM = "protectionIndicator";
-  private static final String YES = "Y";
-  private static final String NO = "N";
-  private static final String MALE_SEX = "M";
-  private static final String FEMALE_SEX = "F";
-  
-  
-
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
   public Patient dbPatientToFhirPatient(EhrPatient dbPatient, String identifier_system) {

@@ -73,6 +73,7 @@ export class PatientTableComponent implements AfterViewInit {
       this.facilityService.getObservableFacility()
         .pipe(tap(facility => {this.facility = facility})),
       this.patientService.getRefresh(),
+      this.facilityService.getRefresh(),
     ).subscribe(() =>  {
       this.loading = true
       this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((list) => {
