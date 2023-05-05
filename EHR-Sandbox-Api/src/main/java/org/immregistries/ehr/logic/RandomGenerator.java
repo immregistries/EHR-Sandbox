@@ -145,7 +145,7 @@ public class RandomGenerator {
         return new Date(randomMillisSinceEpoch);
     }
 
-    public VaccinationEvent randomVaccinationEvent(EhrPatient patient, Facility facility){
+    public VaccinationEvent randomVaccinationEvent(EhrPatient patient, Tenant tenant, Facility facility){
         VaccinationEvent vaccinationEvent = new VaccinationEvent();
         vaccinationEvent.setPatient(patient);
         vaccinationEvent.setAdministeringFacility(facility);
@@ -153,9 +153,9 @@ public class RandomGenerator {
         Vaccine vaccine = randomVaccine();
         vaccinationEvent.setVaccine(vaccine);
 
-        vaccinationEvent.setEnteringClinician(randomClinician());
-        vaccinationEvent.setOrderingClinician(randomClinician());
-        vaccinationEvent.setAdministeringClinician(randomClinician());
+        vaccinationEvent.setEnteringClinician(randomClinician(tenant));
+        vaccinationEvent.setOrderingClinician(randomClinician(tenant));
+        vaccinationEvent.setAdministeringClinician(randomClinician(tenant));
         return vaccinationEvent;
     }
 
@@ -254,9 +254,10 @@ public class RandomGenerator {
         return vaccine;
     }
 
-    public static Clinician randomClinician(){
+    public static Clinician randomClinician(Tenant tenant){
         Faker faker = new Faker();
         Clinician clinician = new Clinician();
+        clinician.setTenant(tenant);
         clinician.setNameFirst(faker.name().firstName());
         clinician.setNameLast(faker.name().lastName());
         clinician.setNameMiddle(faker.name().firstName());

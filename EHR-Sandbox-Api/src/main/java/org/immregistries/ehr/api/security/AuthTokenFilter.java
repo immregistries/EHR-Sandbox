@@ -33,6 +33,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private FacilityRepository facilityRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
+    @Autowired
+    private ClinicianRepository clinicianRepository;
 
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
@@ -145,6 +147,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     facilityId = scanner.nextInt();
                     if (!facilityRepository.existsByTenantIdAndId(tenantId,facilityId)){
                         return  false;
+                    }
+                }
+            }else if (item.equals("clinicians") ) {
+                if (scanner.hasNextInt()) {
+                    facilityId = scanner.nextInt();
+                    if (!clinicianRepository.existsByTenantIdAndId(tenantId,facilityId)){
+                        return false;
                     }
                 }
             }

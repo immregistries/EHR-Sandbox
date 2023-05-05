@@ -5,6 +5,7 @@ USE ehr;
 
 CREATE TABLE `clinician` (
   `clinician_id` int(11) NOT NULL AUTO_INCREMENT,
+  `tenant_id` int(11) NOT NULL,
   `name_last` varchar(250) NOT NULL,
   `name_middle` varchar(250) DEFAULT NULL,
   `name_first` varchar(250) NOT NULL,

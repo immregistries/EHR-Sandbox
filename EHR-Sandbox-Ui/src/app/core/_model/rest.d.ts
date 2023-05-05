@@ -35,6 +35,7 @@ export interface Feedback {
 
 export interface Clinician {
   id?: number;
+  tenant_id?: number | Tenant;
   nameLast?: string;
   nameMiddle?: string;
   nameFirst?: string;
@@ -143,7 +144,7 @@ export interface VaccinationEvent {
   orderingClinician: Clinician;
   administeringClinician: Clinician;
   vaccine: Vaccine;
-  feedbacks?: (Feedback)[];
+  feedbacks?: Feedback[];
   primarySource?: boolean;
 }
 

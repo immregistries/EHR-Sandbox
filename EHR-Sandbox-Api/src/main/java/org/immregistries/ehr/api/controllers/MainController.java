@@ -45,7 +45,7 @@ public class MainController {
 
     @GetMapping("/$random_vaccination")
     public VaccinationEvent randomVaccination() {
-        return randomGenerator.randomVaccinationEvent(null,null);
+        return randomGenerator.randomVaccinationEvent(null,null,null);
     }
 
     /**
@@ -56,7 +56,7 @@ public class MainController {
     public Boolean notificationCheck(@PathVariable Optional<Long> timestamp) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
                 userDetailsService.currentUserId(),
-                timestamp.orElse(new Long(0)));
+                timestamp.orElse(0L));
     }
 
     @GetMapping("/code_maps")

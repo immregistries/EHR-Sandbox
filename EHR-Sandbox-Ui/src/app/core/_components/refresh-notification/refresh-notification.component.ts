@@ -27,7 +27,7 @@ export class RefreshNotificationComponent implements OnInit {
 
   ngOnInit(): void {
 
-    interval(5000).pipe().subscribe(() => {
+    interval(30000).pipe().subscribe(() => {
       if (!this.pathname.startsWith('/home')) {
         // this.notification = !this.notification
         /**

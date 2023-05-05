@@ -47,6 +47,7 @@ export enum formType {
   yesNo = 'yesNo',
   code = 'code',
   textarea = 'textarea',
+  clinician = 'clinician',
 }
 export interface BaseForm {
   type: formType,
@@ -59,14 +60,15 @@ export interface PatientForm extends BaseForm{
   attribute: keyof EhrPatient,
 }
 export interface VaccinationForm extends BaseForm{
-  attribute: keyof VaccinationEvent,
+  // attribute: keyof VaccinationEvent,
+  attribute: "enteringClinician" | "orderingClinician" | "administeringClinician" | "primarySource"
 }
 export interface VaccineForm extends BaseForm{
   attribute: keyof Vaccine,
 }
 export interface ClinicianForm extends BaseForm{
   attribute: keyof Clinician,
-  role: "enteringClinician" | "orderingClinician" | "administeringClinician"
+  role?: "enteringClinician" | "orderingClinician" | "administeringClinician"
 }
 
 export interface NotificationPrototype {

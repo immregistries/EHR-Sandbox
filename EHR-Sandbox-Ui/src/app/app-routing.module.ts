@@ -11,6 +11,7 @@ import { FeedbackTableComponent } from './shared/_components/feedback-table/feed
 import { SubscriptionDashboardComponent } from './fhir/_components/subscription-dashboard/subscription-dashboard.component';
 import { SettingsComponent } from './core/_components/settings/settings.component';
 import { FhirBulkDashboardComponent } from './fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
+import { ClinicianFormComponent } from './shared/_clinician/clinician-form/clinician-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'feedback', component: FeedbackTableComponent },
   { path: 'subscription', component: SubscriptionDashboardComponent },
   { path: 'bulk', component: FhirBulkDashboardComponent },
+  { path: 'clinicians', component: ClinicianFormComponent },
 ];
 
 @NgModule({

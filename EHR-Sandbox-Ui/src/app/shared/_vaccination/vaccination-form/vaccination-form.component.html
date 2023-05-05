@@ -13,7 +13,7 @@
 
 <!-- Vaccine forms -->
               <ng-container *ngFor="let form of card.vaccineForms" >
-                <app-card-form class="card-form"
+                <app-card-form class="card-form high-density"
                   [form]="form"
                   [model]="vaccination.vaccine[form.attribute]"
                   (modelChange)="vaccination.vaccine[form.attribute] = $event"
@@ -23,28 +23,39 @@
                   [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"></app-card-form>
               </ng-container>
 <!-- Clinician forms -->
-              <ng-container *ngFor="let form of card.clinicianForms" >
-                <app-card-form class="card-form"
+              <!-- <ng-container *ngFor="let form of card.clinicianForms" > -->
+
+                <!-- <app-clinician-select [model]="vaccination.vaccine[form.attribute]">
+
+                </app-clinician-select> -->
+                <!-- <app-card-form class="card-form high-density"
                   [form]="form"
                   [model]="vaccination[form.role][form.attribute]"
                   (modelChange)="vaccination[form.role][form.attribute] = $event"
                   [referenceFilter]="references"
                   (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
                   [lotNumberValid]="lotNumberValid"
-                  [compareTo]="(compareTo && compareTo[form.role])?  compareTo[form.role][form.attribute] : null"></app-card-form>
-              </ng-container>
+                  [compareTo]="(compareTo && compareTo[form.role])?  compareTo[form.role][form.attribute] : null"></app-card-form> -->
+              <!-- </ng-container> -->
 
   <!-- Vaccination forms -->
               <ng-container *ngFor="let form of card.vaccinationForms">
-                <div *ngSwitchCase="'boolean'">
+                <app-card-form class="card-form high-density"
+                  [form]="form"
+                  [model]="vaccination[form.attribute]"
+                  (modelChange)="vaccination[form.attribute] = $event"
+                  [referenceFilter]="references"
+                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
+                  [lotNumberValid]="lotNumberValid"
+                  [compareTo]="compareTo? compareTo[form.attribute] : null"></app-card-form>
+                <!-- <div *ngSwitchCase="'boolean'">
                   <mat-label class="short-label">{{form.title}}</mat-label>
-                  <!-- TODO Change temporary fix -->
                   <select [(ngModel)]="vaccination.primarySource" name="{{form.attribute}}"  aria-label="Font Style" >
                     <option [hidden]="!vaccination[form.attribute]" value=""></option>
                     <option value="true">True</option>
                     <option value="false">False</option>
                   </select>
-                </div>
+                </div> -->
               </ng-container>
             </mat-card-content>
           </mat-card>

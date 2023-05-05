@@ -38,9 +38,11 @@ export class VaccinationService {
       this.refresh = new BehaviorSubject<boolean>(false)
      }
 
-  readRandom(): Observable<VaccinationEvent> {
+  readRandom(patientId: number): Observable<VaccinationEvent> {
+    const tenantId: number = this.tenantService.getTenantId()
+    const facilityId: number = this.facilityService.getFacilityId()
     return this.http.get<VaccinationEvent>(
-      this.settings.getApiUrl() + '/$random_vaccination', httpOptions);
+      this.settings.getApiUrl() + `/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/$random`, httpOptions);
   }
 
   quickReadVaccinations(patientId: number): Observable<VaccinationEvent[]>{

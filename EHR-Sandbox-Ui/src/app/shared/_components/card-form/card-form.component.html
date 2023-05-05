@@ -24,6 +24,11 @@
     [compareTo]="compareTo"
     (referenceEmitter)="referencesChange($event)"></app-select-codebase>
 
+  <app-clinician-select *ngSwitchCase="'clinician'"
+    [model]="model"
+    (modelChange)="model = $event"
+    class="select-field"></app-clinician-select>
+
   <mat-form-field *ngSwitchCase="'date'"
     appearance="outline" class="date-field"
     [matTooltipDisabled]="!compareTo"

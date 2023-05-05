@@ -1,7 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -10,11 +9,19 @@ import java.util.Set;
 @Entity
 @Table(name = "clinician")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
+//        property = "id",
+//        scope = Clinician.class)
 public class Clinician {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "clinician_id", nullable = false)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "tenant_id")
+//    @JsonBackReference("clinician_tenant")
+    private Tenant tenant;
 
     @Column(name = "name_last", nullable = false, length = 250)
     private String nameLast = "";
@@ -39,6 +46,14 @@ public class Clinician {
 //    @JsonManagedReference("administeringClinician")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
+    }
 
     public Set<VaccinationEvent> getVaccinationEvents() {
         return vaccinationEvents;

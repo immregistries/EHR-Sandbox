@@ -10,6 +10,8 @@ import { TenantService } from './_services/tenant.service';
 import { FacilityService } from './_services/facility.service';
 import { CodeMapsService } from './_services/code-maps.service';
 import { FeedbackService } from './_services/feedback.service';
+import { ClinicianService } from './_services/clinician.service';
+
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -107,6 +109,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     TenantService,
     FacilityService,
     CodeMapsService,
+    ClinicianService,
   ]
 })
 export class CoreModule { }

@@ -59,6 +59,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RegistryNamePipe } from './_pipes/registry-name.pipe';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { ClinicianSelectComponent } from './_clinician/clinician-select/clinician-select.component';
+import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-form.component';
 
 
 @NgModule({
@@ -104,7 +106,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     PatientHistoryComponent,
     VaccinationReceivedTableComponent,
     CardFormComponent,
-    RegistryNamePipe
+    RegistryNamePipe,
+    ClinicianSelectComponent,
+    ClinicianFormComponent
   ],
   imports: [
     CommonModule,
@@ -196,6 +200,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
      KeysPipe,
      FeedbackIconComponent,
      CardFormComponent,
+     ClinicianSelectComponent,
+     ClinicianFormComponent,
 
   ],
 })

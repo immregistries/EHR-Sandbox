@@ -67,7 +67,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   fillRandom(): void {
-    this.vaccinationService.readRandom().subscribe((res) => {
+    this.vaccinationService.readRandom(this.patientId).subscribe((res) => {
       this.vaccination=res
     })
   }
@@ -116,7 +116,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       this.vaccinationForm.form.controls['lotNumber'].valueChanges.subscribe((lotNumber) => {
         this.lotNumberValid = true
         if (lotNumber) {
-          for (const ref  in this.references.getValue()) {
+          for (const ref in this.references.getValue()) {
             // stops checking as soon as validity is assessed
             if (!this.checkLotNumberValidity(this.references.getValue()[ref].reference)) {
               break;
@@ -215,21 +215,21 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       {type: formType.code, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL"},
     ]},
 
-    {title: "Entering clinician",rows: 1, cols: 1, clinicianForms: [
-      {type: formType.text, title: "First name", attribute: "nameFirst", role: "enteringClinician"},
-      {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "enteringClinician"},
-      {type: formType.text, title: "Last name", attribute: "nameLast", role: "enteringClinician"}
+    {title: "Clinicians",rows: 1, cols: 3, vaccinationForms: [
+      {type: formType.clinician, title: "Entering", attribute: "enteringClinician"},
+      {type: formType.clinician, title: "Ordering", attribute: "orderingClinician"},
+      {type: formType.clinician, title: "Administering", attribute: "administeringClinician"}
     ]},
-    {title: "Ordering clinician",rows: 1, cols: 1, clinicianForms: [
-      {type: formType.text, title: "First name", attribute: "nameFirst", role: "orderingClinician"},
-      {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "orderingClinician"},
-      {type: formType.text, title: "Last name", attribute: "nameLast", role: "orderingClinician"}
-    ]},
-    {title: "Administering clin.",rows: 1, cols: 1, clinicianForms: [
-      {type: formType.text, title: "First name", attribute: "nameFirst", role: "administeringClinician"},
-      {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "administeringClinician"},
-      {type: formType.text, title: "Last name", attribute: "nameLast", role: "administeringClinician"}
-    ]},
+    // {title: "Ordering clinician",rows: 1, cols: 1, clinicianForms: [
+    //   {type: formType.text, title: "First name", attribute: "nameFirst", role: "orderingClinician"},
+    //   {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "orderingClinician"},
+    //   {type: formType.text, title: "Last name", attribute: "nameLast", role: "orderingClinician"}
+    // ]},
+    // {title: "Administering clin.",rows: 1, cols: 1, clinicianForms: [
+    //   {type: formType.text, title: "First name", attribute: "nameFirst", role: "administeringClinician"},
+    //   {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "administeringClinician"},
+    //   {type: formType.text, title: "Last name", attribute: "nameLast", role: "administeringClinician"}
+    // ]},
   ]
 
 }

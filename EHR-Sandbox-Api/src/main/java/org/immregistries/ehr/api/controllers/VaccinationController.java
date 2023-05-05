@@ -50,6 +50,8 @@ public class VaccinationController {
     private UserDetailsServiceImpl userDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(VaccinationController.class);
+    @Autowired
+    private TenantRepository tenantRepository;
 
     @GetMapping()
     public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() int facilityId, @PathVariable() Optional<String> patientId) {
@@ -65,13 +67,14 @@ public class VaccinationController {
         return  vaccinationEventRepository.findById(vaccinationId);
     }
 
-    @GetMapping("/random")
-    public VaccinationEvent random( @PathVariable() int facilityId,
+    @GetMapping("/$random")
+    public VaccinationEvent random( @PathVariable() int tenantId, @PathVariable() int facilityId,
                                     @PathVariable() Optional<String> patientId) {
+        Tenant tenant = tenantRepository.findById(tenantId).get();
         String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         EhrPatient patient = patientRepository.findByFacilityIdAndId(facilityId,patientId1)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-        return randomGenerator.randomVaccinationEvent(patient, patient.getFacility());
+        return randomGenerator.randomVaccinationEvent(patient, tenant, patient.getFacility());
     }
 
     @PostMapping()
