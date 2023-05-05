@@ -1,0 +1,25 @@
+<form #selectClinicianForm="ngForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Interacting IIS</mat-label>
+    <!-- <mat-select [ngModel]="model" (ngModelChange)="onSelect($event)" name="immunizationRegistry">
+      <mat-option *ngFor="let clinician of options" [value]="clinician" >{{clinician.nameLast + " " + clinician.nameFirst}}</mat-option>
+    </mat-select> -->
+
+    <input matInput
+    [(ngModel)]="model"
+    [matAutocomplete]="auto"
+    class="select-field"
+    (ngModelChange)="filterChange($event)"
+    name="clinician">
+
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="valueChanged()" (optionActivated)="valueChanged()">
+      <mat-option
+        *ngFor="let clinician of filteredOptions"
+        [value]="clinician.id"
+        (onSelectionChange)="valueChanged()">
+        {{clinician.nameLast + " " + clinician.nameFirst}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+</form>
