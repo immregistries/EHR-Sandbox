@@ -35,7 +35,7 @@ export interface Feedback {
 
 export interface Clinician {
   id?: number;
-  tenant_id?: number | Tenant;
+  tenant?: number | Tenant;
   nameLast?: string;
   nameMiddle?: string;
   nameFirst?: string;

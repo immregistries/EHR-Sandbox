@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription, concat, merge } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
+import { ClinicianFormComponent } from '../clinician-form/clinician-form.component';
 
 @Component({
   selector: 'app-clinician-select',
@@ -18,26 +20,25 @@ export class ClinicianSelectComponent {
     this.formChangesSubscription.unsubscribe();
   }
 
-  // @Input() model!: string;
-  filter: string = ''
-
   private _clinician?: Clinician;
+  firstInit: boolean = true;
   @Input()
   set model(clinician: Clinician | number | undefined) {
     if (!clinician) {
       this._clinician = undefined
-      this.filter = ''
+      this.filterChange('')
     } else if (typeof clinician === "number" || typeof clinician ===  "string") {
-      this.clinicianService.readClinician(this.tenantService.getTenantId(),clinician).subscribe((res) => {
-        this._clinician = res
-        this.filter = this.displayFn(this._clinician)
-
-      })
+      if (this.firstInit) {
+        this.clinicianService.readClinician(this.tenantService.getTenantId(),clinician).subscribe((res) => {
+          this._clinician = res
+        })
+      } else {
+        this._clinician = this.options.find((opt) => opt.id == clinician)
+      }
     } else {
       this._clinician = clinician
-      this.filter = this.displayFn(this._clinician)
-
     }
+    this.firstInit = false
   }
 
   get model(): Clinician | number | undefined {
@@ -48,7 +49,8 @@ export class ClinicianSelectComponent {
   @Output() modelChange: EventEmitter<Clinician> = new EventEmitter()
 
   constructor(public clinicianService: ClinicianService,
-    private tenantService: TenantService) {
+    private tenantService: TenantService,
+    private dialog: MatDialog) {
 
   }
 
@@ -56,8 +58,11 @@ export class ClinicianSelectComponent {
   options: Clinician[] = []
   filteredOptions: Clinician[] = []
   ngOnInit() {
-    this.tenantService.getObservableTenant().subscribe((tenant) => {
-      this.clinicianService.readClinicians(tenant.id).subscribe((res) => {
+    concat(
+      this.clinicianService.getRefresh(),
+      this.tenantService.getObservableTenant()
+    ).subscribe(() => {
+      this.clinicianService.readClinicians(this.tenantService.getTenantId()).subscribe((res) => {
         this.options = res
         this.filterChange('')
        })
@@ -69,6 +74,7 @@ export class ClinicianSelectComponent {
 
   onSelect(c: number) {
     this.model = c
+    this.filterChange('')
   }
 
   displayFn(clinician: Clinician): string {
@@ -93,12 +99,47 @@ export class ClinicianSelectComponent {
     }
   }
 
-
-
   valueChanged(){
     this.modelChange.emit(this._clinician)
+  }
+
+  openEdition() {
 
   }
+
+  add() {
+    const dialogRef = this.dialog.open(ClinicianFormComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '30vw',
+      panelClass: 'dialog-with-bar',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.clinicianService.doRefresh()
+      this.model = result
+    });
+
+  }
+
+  edit(cli: Clinician) {
+    const dialogRef = this.dialog.open(ClinicianFormComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '30vw',
+      panelClass: 'dialog-with-bar',
+      data: {clinician: cli}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.clinicianService.doRefresh()
+      // this.ngOnInit()
+      // this.model = result
+    });
+
+  }
+
+
 
 
 }

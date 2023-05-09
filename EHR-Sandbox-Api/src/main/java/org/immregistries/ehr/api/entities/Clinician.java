@@ -8,10 +8,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "clinician")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
-//        property = "id",
-//        scope = Clinician.class)
+//@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Clinician.class)
 public class Clinician {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

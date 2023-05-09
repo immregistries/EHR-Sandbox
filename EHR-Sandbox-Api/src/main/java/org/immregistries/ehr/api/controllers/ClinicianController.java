@@ -6,6 +6,7 @@ import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
+import org.immregistries.ehr.logic.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,9 @@ public class ClinicianController {
     @Autowired
     private TenantRepository tenantRepository;
 
+    @Autowired
+    private RandomGenerator randomGenerator;
+
     @GetMapping()
     public Iterable<Clinician> clinicians(@PathVariable Integer tenantId) {
         return  clinicianRepository.findByTenantId(tenantId);
@@ -30,6 +34,11 @@ public class ClinicianController {
     @GetMapping("/{clinicianId}")
     public Optional<Clinician> clinician(@PathVariable Integer clinicianId) {
         return  clinicianRepository.findById(clinicianId);
+    }
+
+    @GetMapping("/$random")
+    public Clinician random(@PathVariable Integer tenantId) {
+        return  randomGenerator.randomClinician(tenantRepository.findById(tenantId).get());
     }
 
 

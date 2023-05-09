@@ -31,29 +31,22 @@ public class Tenant {
     @JsonIgnore()
     private Set<Facility> facilities = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "tenant")
+//    @JsonManagedReference("tenant-facility")
+    @JsonIgnore()
+    private Set<Clinician> clinicians = new LinkedHashSet<>();
+
     public Tenant() {
     }
 
-    public Tenant(Integer id, User user, String nameDisplay, Set<Facility> facilities) {
+    public Tenant(Integer id, User user, String nameDisplay, Set<Facility> facilities, Set<Clinician> clinicians) {
         this.id = id;
         this.user = user;
         this.nameDisplay = nameDisplay;
         this.facilities = facilities;
+        this.clinicians = clinicians;
     }
 
-
-//    @OneToMany(mappedBy = "tenant")
-////    @JsonManagedReference("tenant-patient")
-//    @JsonIgnore
-//    private Set<EhrPatient> patients = new LinkedHashSet<>();
-
-//    public Set<EhrPatient> getPatients() {
-//        return patients;
-//    }
-//
-//    public void setPatients(Set<EhrPatient> patients) {
-//        this.patients = patients;
-//    }
 
     public Set<Facility> getFacilities() {
         return facilities;
@@ -87,4 +80,11 @@ public class Tenant {
         this.id = id;
     }
 
+    public Set<Clinician> getClinicians() {
+        return clinicians;
+    }
+
+    public void setClinicians(Set<Clinician> clinicians) {
+        this.clinicians = clinicians;
+    }
 }

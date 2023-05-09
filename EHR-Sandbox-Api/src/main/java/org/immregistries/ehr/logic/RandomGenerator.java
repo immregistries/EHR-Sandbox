@@ -254,7 +254,7 @@ public class RandomGenerator {
         return vaccine;
     }
 
-    public static Clinician randomClinician(Tenant tenant){
+    public Clinician randomClinician(Tenant tenant){
         Faker faker = new Faker();
         Clinician clinician = new Clinician();
         clinician.setTenant(tenant);

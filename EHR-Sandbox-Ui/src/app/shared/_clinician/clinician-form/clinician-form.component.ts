@@ -16,6 +16,9 @@ export class ClinicianFormComponent {
     private clinicianService: ClinicianService,
     @Optional() public _dialogRef: MatDialogRef<ClinicianFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {clinician: Clinician}) {
+      if (data && data.clinician) {
+        this.model = data.clinician
+      }
 
   }
 
@@ -23,7 +26,6 @@ export class ClinicianFormComponent {
    * Currently unusused, just initialised
    */
   public references: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>({});
-
 
   @Input()
   model: Clinician = {}
@@ -41,12 +43,22 @@ export class ClinicianFormComponent {
   save() {
     if (this.model.id && this.model.id > -1){
 
+      this.clinicianService.putClinician(this.tenantService.getTenantId(), this.model).subscribe((res) => {
+        // console.log(res)
+        this._dialogRef?.close(res)
+      })
     } else {
       this.clinicianService.postClinician(this.tenantService.getTenantId(), this.model).subscribe((res) => {
-        console.log(res)
-        this._dialogRef?.close()
+        // console.log(res)
+        this._dialogRef?.close(res)
       })
     }
+  }
+
+  fillRandom() {
+    this.clinicianService.random(this.tenantService.getTenantId()).subscribe((res) => {
+      this.model = res
+    })
   }
 
 

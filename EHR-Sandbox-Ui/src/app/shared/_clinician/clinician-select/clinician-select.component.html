@@ -17,8 +17,11 @@
         *ngFor="let clinician of filteredOptions"
         [value]="clinician.id"
         (onSelectionChange)="valueChanged()">
-        {{clinician.nameLast + " " + clinician.nameFirst}}
+
+        {{clinician.nameFirst + " " + clinician.nameLast}}
+        <mat-icon class="w3-right" (click)="$event.stopPropagation(); edit(clinician);">edit</mat-icon>
       </mat-option>
+      <mat-option (click)="$event.stopPropagation(); add(); "><mat-icon> add</mat-icon></mat-option>
     </mat-autocomplete>
   </mat-form-field>
 
