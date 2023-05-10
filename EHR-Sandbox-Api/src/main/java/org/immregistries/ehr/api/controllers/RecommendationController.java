@@ -27,7 +27,6 @@ public class RecommendationController {
     FhirContext fhirContext;
 
     @Autowired
-            
     Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendationsStore;
     @Autowired
     private FacilityRepository facilityRepository;

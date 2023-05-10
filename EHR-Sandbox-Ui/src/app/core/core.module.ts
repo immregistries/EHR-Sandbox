@@ -46,6 +46,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { GroupDashboardComponent } from './_components/group-dashboard/group-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DashboardComponent,
     SettingsComponent,
     RefreshNotificationComponent,
+    GroupDashboardComponent,
   ],
   imports: [
     CommonModule,

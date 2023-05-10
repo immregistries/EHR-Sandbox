@@ -134,7 +134,7 @@ export class ClinicianSelectComponent {
     dialogRef.afterClosed().subscribe(result => {
       this.clinicianService.doRefresh()
       // this.ngOnInit()
-      // this.model = result
+      this.model = result
     });
 
   }

@@ -2,6 +2,7 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
+import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.ImmunizationRecommendation;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
@@ -110,6 +111,16 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	 */
 	public Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendations() {
 		Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> map = new HashMap<>(20);
+		return map;
+	}
+
+
+	@Bean
+	/**
+	 * Map<FacilityId, MAP<RegistryID, Group>>
+	 */
+	public Map<Integer, Map<Integer, Group>> groups() {
+		Map<Integer, Map<Integer, Group>> map = new HashMap<>(20);
 		return map;
 	}
 

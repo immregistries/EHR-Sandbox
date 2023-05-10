@@ -43,6 +43,7 @@ $ehr-theme: mat.define-light-theme((
 @include mat.autocomplete-density(-3);
 @include mat.list-density(0);
 @include mat.table-density(-4);
+// @include mat.icon-density(-5);
 
 .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
   line-height: var(--mdc-typography-caption-line-height, 10px);
@@ -64,6 +65,7 @@ $ehr-theme: mat.define-light-theme((
   @include mat.form-field-density(0);
   @include mat.icon-button-density(0);
   @include mat.autocomplete-density(0);
+  // @include mat.icon-density(0);
 
 }
 
@@ -71,6 +73,7 @@ $ehr-theme: mat.define-light-theme((
   @include mat.form-field-density(-5);
   @include mat.icon-button-density(-3);
   @include mat.autocomplete-density(-3);
+  // @include mat.icon-density(-5);
 }
 
 // .mat-badge-content {
