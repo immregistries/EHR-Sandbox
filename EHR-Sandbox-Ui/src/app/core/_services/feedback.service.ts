@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
+import { RefreshService } from './refresh.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -14,28 +15,18 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class FeedbackService {
-  private refresh: BehaviorSubject<boolean>;
-
-  public getRefresh(): Observable<boolean> {
-    return this.refresh.asObservable();
-  }
-
-  public doRefresh(): void{
-    this.refresh.next(!this.refresh.value)
-  }
-
+export class FeedbackService extends RefreshService {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService ) {
-      this.refresh = new BehaviorSubject<boolean>(false)
+      super()
     }
 
   postPatientFeedback(patientId: number, feedback: Feedback): Observable<Feedback> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<Feedback>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/feedbacks`,
@@ -44,8 +35,8 @@ export class FeedbackService {
   }
 
   postVaccinationFeedback(patientId: number, vaccinationId: number, feedback: Feedback): Observable<Feedback> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<Feedback>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/feedbacks`,
@@ -54,7 +45,7 @@ export class FeedbackService {
   }
 
   readFacilityFeedback(facilityId: number): Observable<Feedback[]> {
-    const tenantId: number = this.tenantService.getTenantId()
+    const tenantId: number = this.tenantService.getCurrentId()
     if (facilityId < 0) {
       return of()
     }

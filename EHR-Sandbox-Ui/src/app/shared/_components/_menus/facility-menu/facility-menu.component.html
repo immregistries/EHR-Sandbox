@@ -1,5 +1,5 @@
-<!-- <button mat-stroked-button style="min-width: 10em;" [matMenuTriggerFor]="menu" *ngIf="tenantService.getTenantId() > 0">
-  {{(facilityService.getFacility().id > 0)? ("Facility: " + facilityService.getFacility().nameDisplay) : "Select Facility" }}
+<!-- <button mat-stroked-button style="min-width: 10em;" [matMenuTriggerFor]="menu" *ngIf="tenantService.getCurrentId() > 0">
+  {{(facilityService.getCurrent().id > 0)? ("Facility: " + facilityService.getCurrent().nameDisplay) : "Select Facility" }}
 </button>
 <mat-menu #menu="matMenu">
   <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)"> {{item.nameDisplay}}</button>
@@ -8,8 +8,8 @@
 <app-hover-menu>
   <button trigger mat-raised-button
   (click)="selectFirstOrCreate()"
-  *ngIf="tenantService.getTenantId() > 0" [color]="facilityService.getFacilityId() > 0 ? 'primary' : 'basic'">
-    {{(facilityService.getFacility().id > 0)? ("Facility: " + facilityService.getFacility().nameDisplay) : "Select Facility" }}
+  *ngIf="tenantService.getCurrentId() > 0" [color]="facilityService.getCurrentId() > 0 ? 'primary' : 'basic'">
+    {{(facilityService.getCurrent().id > 0)? ("Facility: " + facilityService.getCurrent().nameDisplay) : "Select Facility" }}
 
 
     <mat-icon>arrow_drop_down</mat-icon>

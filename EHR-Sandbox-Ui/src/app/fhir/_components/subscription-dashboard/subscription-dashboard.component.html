@@ -9,8 +9,8 @@
             <app-select-immregistry></app-select-immregistry>
           </div>
           <div>
-            <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getFacilityId() < 0}}">Subscribe to IIS</button>
-            <p class="w3-red" *ngIf="facilityService.getFacilityId() < 0">No facility selected</p>
+            <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getCurrentId() < 0}}">Subscribe to IIS</button>
+            <p class="w3-red" *ngIf="facilityService.getCurrentId() < 0">No facility selected</p>
             <p class="w3-red" *ngIf="error">{{error}}</p>
             <mat-progress-bar *ngIf="loading" mode="query" ></mat-progress-bar>
           </div>

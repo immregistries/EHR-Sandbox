@@ -27,11 +27,11 @@ export class FacilityCreationComponent implements OnInit {
   newFacility?: Facility;
   create() {
     this.newFacility = {id: -1, nameDisplay: this.newFacilityForm.value}
-    this.facilityService.postFacility(this.tenantService.getTenantId(), this.newFacility).subscribe({
+    this.facilityService.postFacility(this.tenantService.getCurrentId(), this.newFacility).subscribe({
       next: (res: HttpResponse<Facility>) => {
         if (res.body) {
           // this._snackBar.open("OK", 'close')
-          this.facilityService.setFacility(res.body);
+          this.facilityService.setCurrent(res.body);
         }
         this.facilityService.doRefresh()
         this._dialogRef?.close(true)

@@ -16,8 +16,8 @@ export class SelectImmregistryComponent implements OnInit {
     this.immRegistryService.getRefresh().subscribe(refresh => {
       this.immRegistryService.readImmRegistries().subscribe(res => {
         this.immunizationRegistries = res
-        if (!this.immRegistryService.getImmRegistryId() && this.immunizationRegistries.length > 0) {
-          this.immRegistryService.setImmRegistry(this.immunizationRegistries[0]);
+        if (!this.immRegistryService.getCurrentId() && this.immunizationRegistries.length > 0) {
+          this.immRegistryService.setCurrent(this.immunizationRegistries[0]);
         }
       })
     })
@@ -26,7 +26,7 @@ export class SelectImmregistryComponent implements OnInit {
   onSelect(newId: number): void {
     for (const registry of this.immunizationRegistries) {
       if (registry.id && registry.id === newId) {
-        this.immRegistryService.setImmRegistry(registry);
+        this.immRegistryService.setCurrent(registry);
         break;
       }
     }

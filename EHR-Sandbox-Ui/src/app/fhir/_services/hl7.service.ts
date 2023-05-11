@@ -33,8 +33,8 @@ export class Hl7Service {
    * @returns Hl7v2 VXU message
    */
   getVXU(patientId: number, vaccinationId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
       { responseType: 'text' });
@@ -48,8 +48,8 @@ export class Hl7Service {
    * @returns Hl7v2 VXU message
    */
   getQBP(patientId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp`,
       { responseType: 'text' });
@@ -63,9 +63,9 @@ export class Hl7Service {
    * @returns IIS answer
    */
   quickPostVXU(patientId: number, vaccinationId: number, vxu: string): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-    const immId = this.immRegistries.getImmRegistryId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu/imm-registry/${immId}`,
       vxu,
@@ -80,9 +80,9 @@ export class Hl7Service {
    * @returns IIS answer
    */
   quickPostQBP(patientId: number, qbp: string): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-    const immId = this.immRegistries.getImmRegistryId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp/imm-registry/${immId}`,
       qbp,

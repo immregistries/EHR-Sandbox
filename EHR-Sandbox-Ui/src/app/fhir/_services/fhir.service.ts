@@ -49,7 +49,7 @@ export class FhirService {
   }
 
   postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     const options = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       params: new HttpParams().append("type", "Group")
@@ -67,16 +67,16 @@ export class FhirService {
    * @returns Vaccination information converted to XML FHIR Immunization resource
    */
   quickGetImmunizationResource(patientId: number, vaccinationId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/resource`,
       { responseType: 'text' });
   }
 
   quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", patientFhirId?: string): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     switch(operation) {
       case "Create" : {
         return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource,patientFhirId)
@@ -89,7 +89,7 @@ export class FhirService {
   }
 
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${immId}`,
       resource,
@@ -97,7 +97,7 @@ export class FhirService {
   }
 
   putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.put<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${immId}`,
       resource,
@@ -106,8 +106,8 @@ export class FhirService {
   }
 
   quickGetPatientResource(patientId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     if (tenantId < 0 || facilityId < 0 || patientId < 0 ){
       return of('')
     } else {
@@ -118,8 +118,8 @@ export class FhirService {
   }
 
   quickPostPatient(patientId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     switch(operation) {
       case "Create" : {
         return this.postPatient(tenantId,facilityId,patientId,resource)
@@ -132,7 +132,7 @@ export class FhirService {
   }
 
   putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.put<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}`,
       resource,
@@ -140,7 +140,7 @@ export class FhirService {
   }
 
   postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}`,
       resource,
@@ -148,16 +148,16 @@ export class FhirService {
   }
 
   loadEverythingFromPatient(patientId: number): Observable<VaccinationEvent[]> {
-    const immId = this.immRegistries.getImmRegistryId()
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const immId = this.immRegistries.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<VaccinationEvent[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}/$fetchAndLoad`,
       httpOptions);
   }
 
   getFromIIS(resourceType: string, identifier: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/imm-registry/${immId}/${resourceType}/${identifier}`,
       { responseType: 'text' });
@@ -171,7 +171,7 @@ export class FhirService {
   // }
 
   search(resourceType: string, identifier: Identifier): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.post(
       `${this.settings.getApiUrl()}/imm-registry/${immId}/${resourceType}/search`,
       identifier,
@@ -180,7 +180,7 @@ export class FhirService {
 
 
   operation(operationType: string, target: string ,parameters: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.post(
       `${this.settings.getApiUrl()}/imm-registry/${immId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
       parameters,
@@ -193,7 +193,7 @@ export class FhirService {
   }
 
   groupExportSynch(groupId: string, paramsString: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/imm-registry/${immId}/Group/${groupId}/$export-synch?${paramsString}`,
       {
@@ -202,7 +202,7 @@ export class FhirService {
   }
 
   groupExportAsynch(groupId: string, paramsString: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export-asynch?${paramsString}`,
       {
@@ -211,7 +211,7 @@ export class FhirService {
   }
 
   groupExportStatus(contentUrl: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-status`,
       {
@@ -222,7 +222,7 @@ export class FhirService {
       });
   }
   groupExportDelete(contentUrl: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     return this.http.delete(
       `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-status`,
       {
@@ -234,9 +234,9 @@ export class FhirService {
   }
 
   groupNdJson(contentUrl: string, loadInFacility: boolean): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
+    const immId = this.immRegistries.getCurrentId()
     if (loadInFacility) {
-      const facilityId = this.facilityService.getFacilityId()
+      const facilityId = this.facilityService.getCurrentId()
       if ( facilityId > -1) {
         return this.http.get(
           `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
@@ -264,18 +264,18 @@ export class FhirService {
   }
 
   loadNdJson(body: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const immId = this.immRegistries.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/iim-registry/${immId}/$loadNdJson`, body);
   }
 
   loadJson(body: string): Observable<string> {
-    const immId = this.immRegistries.getImmRegistryId()
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const immId = this.immRegistries.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/iim-registry/${immId}/$loadJson`, body);

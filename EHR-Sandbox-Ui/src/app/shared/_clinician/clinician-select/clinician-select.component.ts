@@ -13,6 +13,11 @@ import { ClinicianFormComponent } from '../clinician-form/clinician-form.compone
   styleUrls: ['./clinician-select.component.css']
 })
 export class ClinicianSelectComponent {
+
+  constructor(public clinicianService: ClinicianService,
+    private tenantService: TenantService,
+    private dialog: MatDialog) {}
+
   @ViewChild('selectClinicianForm', { static: true }) selectClinicianForm!: NgForm;
 
   private formChangesSubscription!: Subscription
@@ -29,7 +34,7 @@ export class ClinicianSelectComponent {
       this.filterChange('')
     } else if (typeof clinician === "number" || typeof clinician ===  "string") {
       if (this.firstInit) {
-        this.clinicianService.readClinician(this.tenantService.getTenantId(),clinician).subscribe((res) => {
+        this.clinicianService.readClinician(this.tenantService.getCurrentId(),clinician).subscribe((res) => {
           this._clinician = res
         })
       } else {
@@ -48,21 +53,14 @@ export class ClinicianSelectComponent {
 
   @Output() modelChange: EventEmitter<Clinician> = new EventEmitter()
 
-  constructor(public clinicianService: ClinicianService,
-    private tenantService: TenantService,
-    private dialog: MatDialog) {
-
-  }
-
-
   options: Clinician[] = []
   filteredOptions: Clinician[] = []
   ngOnInit() {
     concat(
       this.clinicianService.getRefresh(),
-      this.tenantService.getObservableTenant()
+      this.tenantService.getCurrentObservable()
     ).subscribe(() => {
-      this.clinicianService.readClinicians(this.tenantService.getTenantId()).subscribe((res) => {
+      this.clinicianService.readClinicians(this.tenantService.getCurrentId()).subscribe((res) => {
         this.options = res
         this.filterChange('')
        })

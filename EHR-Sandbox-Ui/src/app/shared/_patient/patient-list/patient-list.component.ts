@@ -26,15 +26,15 @@ export class PatientListComponent implements OnInit {
     private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.facilityService.getObservableFacility().pipe(switchMap(facility =>{
+    this.facilityService.getCurrentObservable().pipe(switchMap(facility =>{
       this.facility = facility
       if (!facility || facility.id <= 0){
-        this.tenantService.getObservableTenant().subscribe(() => {
-          return this.patientService.readAllPatients(this.tenantService.getTenantId())
+        this.tenantService.getCurrentObservable().subscribe(() => {
+          return this.patientService.readAllPatients(this.tenantService.getCurrentId())
         })
-        return this.patientService.readAllPatients(this.tenantService.getTenantId())
+        return this.patientService.readAllPatients(this.tenantService.getCurrentId())
       } else {
-        return this.patientService.readPatients(this.tenantService.getTenantId(), facility.id)
+        return this.patientService.readPatients(this.tenantService.getCurrentId(), facility.id)
       }
     })).subscribe((res) => {
       this.list = res
@@ -51,7 +51,7 @@ export class PatientListComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (this.facility){
-        this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((res) => {
+        this.patientService.readPatients(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
           this.list = res
         })
       }
@@ -61,10 +61,10 @@ export class PatientListComponent implements OnInit {
   onSelection(event: EhrPatient) {
     if (this.selectedOption && this.selectedOption.id == event.id){
       this.selectedOption = undefined
-      this.patientService.setPatient({})
+      this.patientService.setCurrent({})
     } else {
       this.selectedOption = event
-      this.patientService.setPatient(event)
+      this.patientService.setCurrent(event)
     }
   }
 

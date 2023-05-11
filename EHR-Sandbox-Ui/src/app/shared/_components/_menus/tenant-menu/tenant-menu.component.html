@@ -1,6 +1,6 @@
 <app-hover-menu>
-  <button trigger mat-raised-button class="button-protected" (click)="selectFirstOrCreate()" [color]="tenantService.getTenantId() > 0 ? 'primary' : 'basic'" >
-    {{(tenantService.getTenantId() > 0)? ("Tenant: " + tenantService.getTenant().nameDisplay) : "Select Tenant" }}
+  <button trigger mat-raised-button class="button-protected" (click)="selectFirstOrCreate()" [color]="tenantService.getCurrentId() > 0 ? 'primary' : 'basic'" >
+    {{(tenantService.getCurrentId() > 0)? ("Tenant: " + tenantService.getCurrent().nameDisplay) : "Select Tenant" }}
     <mat-icon>arrow_drop_down</mat-icon>
   </button>
   <div content>

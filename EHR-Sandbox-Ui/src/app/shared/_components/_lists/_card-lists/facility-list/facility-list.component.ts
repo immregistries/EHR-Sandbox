@@ -21,7 +21,7 @@ export class FacilityListComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.tenantService.getObservableTenant().subscribe(tenant => {
+    this.tenantService.getCurrentObservable().subscribe(tenant => {
       this.facilityService.getRefresh().subscribe((bool) => {
         this.facilityService.readFacilities(tenant.id ?? -1).subscribe((res) => {
           this.list = res
@@ -38,10 +38,10 @@ export class FacilityListComponent implements OnInit {
   }
 
   onSelection(event: Facility) {
-    if (this.facilityService.getFacilityId() == event.id) { // unselect
-      this.facilityService.setFacility({id: -1})
+    if (this.facilityService.getCurrentId() == event.id) { // unselect
+      this.facilityService.setCurrent({id: -1})
     } else {
-      this.facilityService.setFacility(event)
+      this.facilityService.setCurrent(event)
     }
   }
 

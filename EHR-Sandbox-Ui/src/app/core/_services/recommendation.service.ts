@@ -22,8 +22,8 @@ export class RecommendationService {
 
   }
   readRecommendations(patientId: number): Observable<ImmunizationRecommendation[]>{
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     if (tenantId > 0 && facilityId > 0 && patientId > 0){
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/recommendations`,

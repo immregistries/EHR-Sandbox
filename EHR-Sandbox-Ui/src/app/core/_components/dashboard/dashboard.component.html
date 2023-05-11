@@ -35,21 +35,21 @@
     <mat-grid-tile [colspan]="3" >
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #feedback>
-          <app-feedback-table [facility]="facilityService.getFacility()"></app-feedback-table>
+          <app-feedback-table [facility]="facilityService.getCurrent()"></app-feedback-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="4" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #vaccinations>
-          <app-vaccination-table [patientId]="patientService.getPatientId()"></app-vaccination-table>
+          <app-vaccination-table [patientId]="patientService.getCurrentId()"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="3" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #recommendations>
-          <app-recommendation-table [patientId]="patientService.getPatientId()"></app-recommendation-table>
+          <app-recommendation-table [patientId]="patientService.getCurrentId()"></app-recommendation-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

@@ -51,9 +51,8 @@ public class GroupController {
         IParser parser = fhirContext.newJsonParser();
         groupsStore.putIfAbsent(facilityId, new HashMap<>(5));
         groupsStore.get(facilityId).putIfAbsent(immunizationRegistry.getId(), group);
-        // TODO send to IIS
+        // TODO send to IIS & deal with ID
         return ResponseEntity.ok(parser.encodeResourceToString(group));
-
     }
 
 

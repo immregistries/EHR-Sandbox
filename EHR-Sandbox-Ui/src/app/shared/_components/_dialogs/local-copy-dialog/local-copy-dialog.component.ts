@@ -40,14 +40,14 @@ export class LocalCopyDialogComponent implements OnInit {
         this.vaccination =  JSON.parse(JSON.stringify(data.vaccination));
       }
       this.facilityService.readAllFacilities().subscribe((list) => {
-        this.facilityList = list.filter((facility) => {return facility.id != this.facilityService.getFacilityId()})
+        this.facilityList = list.filter((facility) => {return facility.id != this.facilityService.getCurrentId()})
       })
      }
 
   ngOnInit(): void {
-    // this.facilityService.readFacilities(this.tenantService.getTenantId()).subscribe((list) => {
+    // this.facilityService.readFacilities(this.tenantService.getCurrentId()).subscribe((list) => {
     //   this.facilityList = list
-    //   //.filter((facility) => {facility.id != this.facilityService.getFacilityId()})
+    //   //.filter((facility) => {facility.id != this.facilityService.getCurrentId()})
     // })
   }
 

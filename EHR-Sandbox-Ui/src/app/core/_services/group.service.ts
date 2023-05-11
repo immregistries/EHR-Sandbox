@@ -6,6 +6,7 @@ import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
 import { ImmunizationRegistryService } from './immunization-registry.service';
+import { RefreshService } from './refresh.service';
 
 
 const httpOptions = {
@@ -14,19 +15,19 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class GroupService {
+export class GroupService extends RefreshService {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private immunizationRegistryService: ImmunizationRegistryService) {
-
+      super()
   }
   readGroups(): Observable<Group[]>{
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-    const immRegistryId: number | undefined = this.immunizationRegistryService.getImmRegistryId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const immRegistryId: number | undefined = this.immunizationRegistryService.getCurrentId()
     if (tenantId > 0 && facilityId > 0 && immRegistryId && immRegistryId > 0){
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${immRegistryId}/groups`,

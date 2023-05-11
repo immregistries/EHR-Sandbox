@@ -1,10 +1,10 @@
 <app-hover-menu>
     <button trigger mat-raised-button
-     [color]="'primary'">IIS: {{service.getImmRegistry().name}}
+     [color]="'primary'">IIS: {{service.getCurrent().name}}
      <mat-icon>arrow_drop_down</mat-icon>
     </button>
     <div content>
-      <button mat-menu-item *ngFor="let item of list" (click)="service.setImmRegistry(item)"> {{item.name}}</button>
+      <button mat-menu-item *ngFor="let item of list" (click)="service.setCurrent(item)"> {{item.name}}</button>
       <!-- <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button> -->
     </div>
   </app-hover-menu>

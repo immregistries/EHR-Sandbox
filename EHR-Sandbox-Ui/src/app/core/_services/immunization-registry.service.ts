@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, share } from 'rxjs';
 import { ImmunizationRegistry } from '../_model/rest';
 import { SettingsService } from './settings.service';
+import { RefreshService } from './refresh.service';
+import { CurrentSelectedService } from './current-selected.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -11,38 +13,9 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class ImmunizationRegistryService {
-  private refresh: BehaviorSubject<boolean>;
-  public getRefresh(): Observable<boolean> {
-    return this.refresh.asObservable();
-  }
-  public doRefresh(): void{
-    this.refresh.next(!this.refresh.value)
-  }
-
-
-
-  private immRegistry: BehaviorSubject<ImmunizationRegistry>;
-
-  public getObservableImmRegistry(): Observable<ImmunizationRegistry> {
-    return this.immRegistry.asObservable();
-  }
-
-  public getImmRegistry(): ImmunizationRegistry {
-    return this.immRegistry.value
-  }
-
-  public getImmRegistryId(): number | undefined{
-    return this.immRegistry.value.id
-  }
-
-  public setImmRegistry(immRegistry: ImmunizationRegistry) {
-    this.immRegistry.next(immRegistry)
-  }
-
+export class ImmunizationRegistryService extends CurrentSelectedService<ImmunizationRegistry> {
   constructor(private http: HttpClient, private settings: SettingsService) {
-    this.immRegistry = new BehaviorSubject<ImmunizationRegistry>({})
-    this.refresh = new BehaviorSubject<boolean>(false)
+    super(new BehaviorSubject<ImmunizationRegistry>({}))
   }
 
   public readImmRegistries(): Observable<ImmunizationRegistry[]>{

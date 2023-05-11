@@ -14,9 +14,9 @@ export class TokenStorageService {
     private immService: ImmunizationRegistryService) { }
   signOut(): void {
     window.sessionStorage.clear();
-    this.facilityService.setFacility({id:-1})
-    this.tenantService.setTenant({id:-1})
-    this.immService.setImmRegistry({})
+    this.facilityService.setCurrent({id:-1})
+    this.tenantService.setCurrent({id:-1})
+    this.immService.setCurrent({})
   }
   public saveToken(token: string): void {
     window.sessionStorage.removeItem(TOKEN_KEY);

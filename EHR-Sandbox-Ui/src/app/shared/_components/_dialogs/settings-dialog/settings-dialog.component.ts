@@ -15,20 +15,20 @@ export class SettingsDialogComponent implements OnInit {
   constructor(private immRegistryService: ImmunizationRegistryService) { }
 
   ngOnInit(): void {
-    this.immRegistryService.getObservableImmRegistry().subscribe(res => {
+    this.immRegistryService.getCurrentObservable().subscribe(res => {
       this.immunizationRegistry = res
     })
   }
 
   save() {
-    this.immRegistryService.putImmRegistry(this.immRegistryService.getImmRegistry()).subscribe(res => {
+    this.immRegistryService.putImmRegistry(this.immRegistryService.getCurrent()).subscribe(res => {
       this.immRegistryService.doRefresh();
-      this.immRegistryService.setImmRegistry(res);
+      this.immRegistryService.setCurrent(res);
     })
   }
 
   new() {
-    this.immRegistryService.setImmRegistry({});
+    this.immRegistryService.setCurrent({});
     // this.immRegistryService.putImmRegistry(this.imm).subscribe(res => {
     //   this.immRegistryService.setImmRegistry(res);
     //   this.immRegistryService.doRefresh();

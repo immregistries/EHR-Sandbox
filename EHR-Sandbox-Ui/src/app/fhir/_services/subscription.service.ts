@@ -34,17 +34,17 @@ export class SubscriptionService {
   }
 
   createSubscription(): Observable<boolean | null> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
-    const immRegistryId: number | undefined = this.immRegistriesService.getImmRegistryId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const immRegistryId: number | undefined = this.immRegistriesService.getCurrentId()
     return this.http.post<any>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${immRegistryId}/subscription`,
       httpOptions);
   }
 
   readSubscription(): Observable<EhrSubscription> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId = this.facilityService.getCurrentId()
     if (facilityId < 0) {
       return of()
     }

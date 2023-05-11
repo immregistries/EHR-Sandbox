@@ -5,6 +5,8 @@ import { SettingsService } from './settings.service';
 import { EhrPatient, Revision} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
+import { RefreshService } from './refresh.service';
+import { CurrentSelectedService } from './current-selected.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -16,55 +18,15 @@ const httpOptions = {
 /**
  * Patient Service interacting with the API, and providing the global selected patient as an observable
  */
-export class PatientService {
-
-  private patient: BehaviorSubject<EhrPatient>;
-
-  /**
-   * Global observable used to trigger a refresh for all the lists of patients, when a new patient was created
-   */
-  private refresh: BehaviorSubject<boolean>;
-  /**
-   * TODO maybe move to facility table
-   */
-
-  public getRefresh(): Observable<boolean> {
-    return this.refresh.asObservable();
-  }
-
-  public doRefresh(): void{
-    this.refresh.next(!this.refresh.value)
-    // this.lastRefreshTime = new Date().getTime()
-  }
-
-  public getObservablePatient(): Observable<EhrPatient> {
-    return this.patient.asObservable();
-  }
-
-  public getPatient(): EhrPatient {
-    return this.patient.value
-  }
-
-  public getPatientId(): number {
-    if (this.patient.value.id) {
-      return this.patient.value.id
-    } else {
-      return -1
-    }
-  }
-
-  public setPatient(patient: EhrPatient) {
-    this.patient.next(patient)
-  }
+export class PatientService extends  CurrentSelectedService<EhrPatient> {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService ) {
-      this.patient = new BehaviorSubject<EhrPatient>({id:-1})
-      this.refresh = new BehaviorSubject<boolean>(false)
-      this.facilityService.getObservableFacility().subscribe((facility) => {
-        this.setPatient({})
+      super(new BehaviorSubject<EhrPatient>({id:-1}))
+      this.facilityService.getCurrentObservable().subscribe((facility) => {
+        this.setCurrent({})
       })
     }
 
@@ -83,8 +45,8 @@ export class PatientService {
    * @returns list of patients associated to the tenant and facility selected in their respected services
    */
    quickReadPatients(): Observable<EhrPatient[]> {
-    const tenantId = this.tenantService.getTenantId()
-    const facilityId = this.facilityService.getFacilityId()
+    const tenantId = this.tenantService.getCurrentId()
+    const facilityId = this.facilityService.getCurrentId()
     return this.readPatients(tenantId, facilityId)
   }
 
@@ -119,8 +81,8 @@ export class PatientService {
   }
 
   quickReadPatient(patientId: number):  Observable<EhrPatient> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.readPatient(tenantId,facilityId,patientId)
   }
 
@@ -138,8 +100,8 @@ export class PatientService {
   }
 
   readPatientHistory(patientId: number): Observable<Revision<EhrPatient>[]> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<Revision<EhrPatient>[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/$history`,
       httpOptions);
@@ -151,8 +113,8 @@ export class PatientService {
    * @returns Post patient Response
    */
   quickPostPatient(patient: EhrPatient): Observable<HttpResponse<string>>  {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.postPatient(tenantId,facilityId,patient)
   }
 
@@ -179,8 +141,8 @@ export class PatientService {
   }
 
   quickPutPatient(patient: EhrPatient): Observable<EhrPatient>  {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.putPatient(tenantId,facilityId,patient)
   }
 

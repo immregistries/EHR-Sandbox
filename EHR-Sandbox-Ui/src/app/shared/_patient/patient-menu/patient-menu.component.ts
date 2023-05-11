@@ -19,7 +19,7 @@ export class PatientMenuComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.facilityService.getObservableFacility().subscribe(facility => {
+    this.facilityService.getCurrentObservable().subscribe(facility => {
       this.patientService.quickReadPatients().subscribe((res) => {
         this.list = res
       })
@@ -27,10 +27,10 @@ export class PatientMenuComponent implements OnInit {
   }
 
   onSelection(event: EhrPatient) {
-    if (this.patientService.getPatientId() == event.id) { // unselect
-      this.patientService.setPatient({})
+    if (this.patientService.getCurrentId() == event.id) { // unselect
+      this.patientService.setCurrent({})
     } else {
-      this.patientService.setPatient(event)
+      this.patientService.setCurrent(event)
     }
   }
 

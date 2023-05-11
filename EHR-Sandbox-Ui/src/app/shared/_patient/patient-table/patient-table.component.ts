@@ -46,10 +46,10 @@ export class PatientTableComponent implements AfterViewInit {
   asDate(val: any) : Date { return val; }
 
   onSelection(event: EhrPatient) {
-    if (this.patientService.getPatientId() == event.id){
-      this.patientService.setPatient({})
+    if (this.patientService.getCurrentId() == event.id){
+      this.patientService.setCurrent({})
     } else {
-      this.patientService.setPatient(event)
+      this.patientService.setCurrent(event)
     }
   }
 
@@ -70,16 +70,16 @@ export class PatientTableComponent implements AfterViewInit {
     };
 
     merge(
-      this.facilityService.getObservableFacility()
+      this.facilityService.getCurrentObservable()
         .pipe(tap(facility => {this.facility = facility})),
       this.patientService.getRefresh(),
       this.facilityService.getRefresh(),
     ).subscribe(() =>  {
       this.loading = true
-      this.patientService.readPatients(this.tenantService.getTenantId(), this.facility.id).subscribe((list) => {
+      this.patientService.readPatients(this.tenantService.getCurrentId(), this.facility.id).subscribe((list) => {
         this.loading = false
         this.dataSource.data = list
-        this.patientService.setPatient(list.find((patient: EhrPatient) => {return patient.id === this.patientService.getPatientId()}) ?? {})
+        this.patientService.setCurrent(list.find((patient: EhrPatient) => {return patient.id === this.patientService.getCurrentId()}) ?? {})
     })})
   }
 

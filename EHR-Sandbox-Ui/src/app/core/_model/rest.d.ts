@@ -2,6 +2,10 @@
 /* eslint-disable */
 // Generated using typescript-generator version 2.35.1025 on 2022-03-11 10:41:27.
 
+export interface ObjectWithID{
+  id?: number;
+}
+
 export interface EhrSubscription {
   identifier?: number;
   name?: string;
@@ -32,6 +36,7 @@ export interface Feedback {
   severity?: string;
   timestamp?: number;
 }
+
 
 export interface Clinician {
   id?: number;

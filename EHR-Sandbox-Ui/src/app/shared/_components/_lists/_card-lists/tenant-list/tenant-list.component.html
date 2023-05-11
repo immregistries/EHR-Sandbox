@@ -1,5 +1,5 @@
 <mat-selection-list #tenants  [multiple]="false"  >
-  <mat-list-option *ngFor="let tenant of list" (click)="onSelection(tenant)" [selected]="tenantService.getTenantId() == tenant.id">
+  <mat-list-option *ngFor="let tenant of list" (click)="onSelection(tenant)" [selected]="tenantService.getCurrentId() == tenant.id">
     {{tenant.nameDisplay}}
     <mat-divider></mat-divider>
   </mat-list-option>

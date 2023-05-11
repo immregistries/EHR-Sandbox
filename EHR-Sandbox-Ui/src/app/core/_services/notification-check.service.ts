@@ -20,8 +20,8 @@ export class NotificationCheckService {
     private tenantService: TenantService) { }
 
   readNotification(lastRefreshTime: number): Observable<boolean> {
-    const tenantId = this.tenantService.getTenantId()
-    const facilityId = this.facilityService.getFacilityId()
+    const tenantId = this.tenantService.getCurrentId()
+    const facilityId = this.facilityService.getCurrentId()
     if (tenantId > 0 && facilityId > 0) {
       return this.http.get<boolean>(
         `${this.settings.getApiUrl()}/$notification/${lastRefreshTime}`, httpOptions);

@@ -5,6 +5,8 @@ import { BehaviorSubject, EMPTY, from, Observable } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { observeNotification } from 'rxjs/internal/Notification';
 import { FacilityService } from './facility.service';
+import { RefreshService } from './refresh.service';
+import { CurrentSelectedService } from './current-selected.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -16,45 +18,10 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class TenantService {
-  private tenant: BehaviorSubject<Tenant>;
-  private refresh: BehaviorSubject<boolean>;
-
-  public getRefresh(): Observable<boolean> {
-    return this.refresh.asObservable();
-  }
-
-  public doRefresh(): void{
-    this.refresh.next(!this.refresh.value)
-  }
-
-
-  public getObservableTenant(): Observable<Tenant> {
-    return this.tenant.asObservable();
-  }
-
-  public getTenant(): Tenant {
-    return this.tenant.value
-  }
-
-  public getTenantId(): number {
-    return this.tenant.value.id
-  }
-
-  public setTenant(tenant: Tenant) {
-    if (tenant.id != this.tenant.value.id){
-      this.facilityService.setFacility({id: -1})
-    }
-    this.tenant.next(tenant)
-  }
-
-  public setTenantEmpty() {
-    this.tenant.next({id: -1})
-  }
+export class TenantService extends CurrentSelectedService<Tenant> {
 
   constructor(private http: HttpClient, private settings: SettingsService, private facilityService: FacilityService ) {
-    this.tenant = new BehaviorSubject<Tenant>({id:-1})
-    this.refresh = new BehaviorSubject<boolean>(false)
+    super(new BehaviorSubject<Tenant>({id:-1}))
    }
 
   readTenants(): Observable<Tenant[]> {

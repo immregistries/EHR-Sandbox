@@ -54,7 +54,7 @@ export class SubscriptionTableComponent implements OnInit {
 
   ngOnChanges(): void {
     merge(this.subscriptionService.getRefresh(),
-      this.facilityService.getObservableFacility().pipe(tap(facility =>{this.facility = facility}))
+      this.facilityService.getCurrentObservable().pipe(tap(facility =>{this.facility = facility}))
     ).pipe(startWith(tap(() => this.loading = true)))
     .subscribe(() => {
       this.subscriptionService.readSubscription().pipe(tap()).subscribe(res => {

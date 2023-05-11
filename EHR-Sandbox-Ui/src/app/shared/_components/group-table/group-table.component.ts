@@ -5,15 +5,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { CodeBaseMap } from 'src/app/core/_model/structure';
-import { merge, tap } from 'rxjs';
-import { RecommendationService } from 'src/app/core/_services/recommendation.service';
-import { ImmunizationRecommendation } from 'fhir/r5';
+import { merge } from 'rxjs';
+import { GroupService } from 'src/app/core/_services/group.service';
+import { Group } from 'fhir/r5';
+import { Facility } from 'src/app/core/_model/rest';
+import { FacilityService } from 'src/app/core/_services/facility.service';
+import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 
 @Component({
-  selector: 'app-recommendation-table',
-  templateUrl: './recommendation-table.component.html',
-  styleUrls: ['./recommendation-table.component.css'],
+  selector: 'app-group-table',
+  templateUrl: './group-table.component.html',
+  styleUrls: ['./group-table.component.css'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -22,21 +24,22 @@ import { ImmunizationRecommendation } from 'fhir/r5';
     ]),
   ],
 })
-export class RecommendationTableComponent implements OnInit {
+export class GroupTableComponent {
 
-  columns: (keyof ImmunizationRecommendation)[] = [
+  columns: (string)[] = [
     "identifier",
     "date",
     "authority",
-    "recommendation"
+    "group"
   ]
 
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
-    private recommendationService: RecommendationService,
-    private vaccinationService: VaccinationService,
-    private patientService: PatientService) { }
+    private groupService: GroupService,
+    private facilityService: FacilityService,
+    private registryService: ImmunizationRegistryService
+    ) { }
 
   ngOnInit(): void {
 
@@ -47,25 +50,25 @@ export class RecommendationTableComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  dataSource = new MatTableDataSource<ImmunizationRecommendation>([]);
-  expandedElement: ImmunizationRecommendation | null = null;
+  dataSource = new MatTableDataSource<Group>([]);
+  expandedElement: Group | null = null;
   loading = false;
 
-  @Input() patientId: number = -1
+  @Input() patientId?: number = -1
+
 
   ngAfterViewInit(): void {
     // Set filter rules for research
     // this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
 
     merge(
-      this.vaccinationService.getRefresh(),
-      this.patientService.getCurrentObservable().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
+      this.facilityService.getRefresh(),
     ).subscribe(() => {
       this.loading = true
-      this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
+      this.groupService.readGroups().subscribe((res) => {
         this.loading = false
         this.dataSource.data = res
-        this.expandedElement = res.find((reco: ImmunizationRecommendation) => {return reco.id == this.expandedElement?.id}) ?? null
+        this.expandedElement = res.find((reco: Group) => {return reco.id == this.expandedElement?.id}) ?? null
       })
     })
   }

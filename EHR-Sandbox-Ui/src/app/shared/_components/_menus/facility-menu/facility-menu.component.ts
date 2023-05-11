@@ -20,7 +20,7 @@ export class FacilityMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.facilityService.getRefresh().subscribe((bool) => {
-      this.tenantService.getObservableTenant().subscribe(tenant => {
+      this.tenantService.getCurrentObservable().subscribe(tenant => {
         this.facilityService.readFacilities(tenant.id).subscribe((res) => {
           this.list = res
         })
@@ -36,15 +36,15 @@ export class FacilityMenuComponent implements OnInit {
   }
 
   onSelection(event: Facility) {
-    if (this.facilityService.getFacilityId() == event.id) { // unselect
-      this.facilityService.setFacility({id: -1})
+    if (this.facilityService.getCurrentId() == event.id) { // unselect
+      this.facilityService.setCurrent({id: -1})
     } else {
-      this.facilityService.setFacility(event)
+      this.facilityService.setCurrent(event)
     }
   }
 
   selectFirstOrCreate() {
-    if (this.facilityService.getFacilityId() < 0) {
+    if (this.facilityService.getCurrentId() < 0) {
       if (this.list && this.list[0] ) {
         this.onSelection(this.list[0])
       } else {

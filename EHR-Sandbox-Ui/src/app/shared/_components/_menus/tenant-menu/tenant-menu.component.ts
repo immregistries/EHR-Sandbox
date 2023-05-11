@@ -34,16 +34,16 @@ export class TenantMenuComponent implements AfterViewInit {
   }
 
   onSelection(event: Tenant) {
-    if (this.tenantService.getTenantId() == event.id) { // unselect
-      this.tenantService.setTenant({id: -1})
+    if (this.tenantService.getCurrentId() == event.id) { // unselect
+      this.tenantService.setCurrent({id: -1})
     } else {
-      this.tenantService.setTenant(event)
+      this.tenantService.setCurrent(event)
     }
-    this.facilityService.setFacility({id: -1})
+    this.facilityService.setCurrent({id: -1})
   }
 
   selectFirstOrCreate() {
-    if (this.tenantService.getTenantId() < 0) {
+    if (this.tenantService.getCurrentId() < 0) {
       if (this.list && this.list[0]) {
         this.onSelection(this.list[0])
       } else {

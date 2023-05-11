@@ -34,10 +34,10 @@ export class TenantListComponent implements OnInit {
   }
 
   onSelection(event: Tenant) {
-    if (this.tenantService.getTenantId() == event.id) { // unselect
-      this.tenantService.setTenant({id: -1})
+    if (this.tenantService.getCurrentId() == event.id) { // unselect
+      this.tenantService.setCurrent({id: -1})
     } else {
-      this.tenantService.setTenant(event)
+      this.tenantService.setCurrent(event)
     }
   }
 }

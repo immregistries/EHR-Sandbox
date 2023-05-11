@@ -5,6 +5,7 @@ import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 import { Revision, VaccinationEvent } from '../_model/rest';
+import { RefreshService } from './refresh.service';
 
 
 const httpOptions = {
@@ -16,38 +17,26 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class VaccinationService {
-  /**
-   * Global observable used to trigger a refresh for all the lists of vaccination
-   */
-  private refresh: BehaviorSubject<boolean>;
-
-  public getRefresh(): Observable<boolean> {
-    return this.refresh.asObservable();
-  }
-
-  public doRefresh(): void{
-    this.refresh.next(!this.refresh.value)
-  }
+export class VaccinationService extends RefreshService {
 
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService ) {
-      this.refresh = new BehaviorSubject<boolean>(false)
+      super()
      }
 
   readRandom(patientId: number): Observable<VaccinationEvent> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<VaccinationEvent>(
       this.settings.getApiUrl() + `/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/$random`, httpOptions);
   }
 
   quickReadVaccinations(patientId: number): Observable<VaccinationEvent[]>{
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.readVaccinations(tenantId,facilityId,patientId)
   }
 
@@ -72,8 +61,8 @@ export class VaccinationService {
   }
 
   quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent>{
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.readVaccinationFromFacility(tenantId,facilityId,vaccinationId)
   }
 
@@ -88,8 +77,8 @@ export class VaccinationService {
   }
 
   quickPostVaccination(patientId: number, vaccination: VaccinationEvent): Observable<HttpResponse<string>>  {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.postVaccination(tenantId,facilityId,patientId,vaccination)
   }
 
@@ -105,8 +94,8 @@ export class VaccinationService {
   }
 
   quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent>  {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.putVaccination(tenantId,facilityId,patientId,vaccination)
   }
 
@@ -122,15 +111,15 @@ export class VaccinationService {
 
 
   readVaccinationHistory(vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
-    const tenantId: number = this.tenantService.getTenantId()
-    const facilityId: number = this.facilityService.getFacilityId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<Revision<VaccinationEvent>[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}/$history`,
       httpOptions);
   }
   // readVaccinationHistory(patientId: number, vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
-  //   const tenantId: number = this.tenantService.getTenantId()
-  //   const facilityId: number = this.facilityService.getFacilityId()
+  //   const tenantId: number = this.tenantService.getCurrentId()
+  //   const facilityId: number = this.facilityService.getCurrentId()
   //   return this.http.get<Revision<VaccinationEvent>[]>(
   //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/$history`,
   //     httpOptions);
