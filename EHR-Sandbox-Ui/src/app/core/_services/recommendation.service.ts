@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ImmunizationRecommendation } from 'fhir/r5';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable, of, share } from 'rxjs';
 import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
@@ -28,7 +28,7 @@ export class RecommendationService {
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/recommendations`,
         httpOptions)
-          .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as ImmunizationRecommendation)})}));
+          .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as ImmunizationRecommendation)})}),share());
     } else {
       return of([])
     }

@@ -1,7 +1,10 @@
 package org.immregistries.ehr.api;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.RevisionListener;
 import org.immregistries.ehr.api.entities.AuditRevisionEntity;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.api.repositories.UserRepository;
 import org.immregistries.ehr.api.security.UserDetailsImpl;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
@@ -19,10 +22,16 @@ public class AuditRevisionListener implements RevisionListener {
     public static final String IMMUNIZATION_REGISTRY_ID = "immunization_registry_id";
     public static final String SUBSCRIPTION_ID = "subscription_id";
     public static final String USER_ID = "user_id";
+    public static final String COPIED_ENTITY_ID = "copied_entity_id";
+    public static final String COPIED_FACILITY_ID = "copied_facility_id";
     Logger logger = LoggerFactory.getLogger(AuditRevisionListener.class);
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+//    @Autowired
+//    private FacilityRepository facilityRepository;
+//    @Autowired
+//    private UserRepository userRepository;
     @Override
     public void newRevision(Object revisionEntity) {
         AuditRevisionEntity audit = (AuditRevisionEntity) revisionEntity;
@@ -45,7 +54,25 @@ public class AuditRevisionListener implements RevisionListener {
             if (request.getAttribute(USER_ID) != null) {
                 audit.setUser((Integer) request.getAttribute(USER_ID));
             }
+
         } catch (ClassCastException e) {}
+
+        /**
+         * To retrace origin when local copy functionality is used
+         */
+        try {
+            if (StringUtils.isNotBlank(request.getParameter(COPIED_ENTITY_ID))) {
+                audit.setCopiedId(request.getParameter(COPIED_ENTITY_ID));
+            }
+            if (StringUtils.isNotBlank(request.getParameter(COPIED_FACILITY_ID))) {
+                int f = Integer.parseInt(request.getParameter(COPIED_FACILITY_ID));
+                UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//                if (facilityRepository.existsById( f)) { TODO see why autowired are null
+//                if (facilityRepository.existsByUserAndId(userRepository.findById(userDetails.getId()).get(), f)) {
+                    audit.setCopiedFacilityId(f);
+//                }
+            }
+        }  catch (ClassCastException e) {}
 
         try {
             UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

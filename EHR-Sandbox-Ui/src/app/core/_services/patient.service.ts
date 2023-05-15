@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, share, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { EhrPatient, Revision} from '../_model/rest';
 import { FacilityService } from './facility.service';
@@ -96,7 +96,7 @@ export class PatientService extends  CurrentSelectedService<EhrPatient> {
   readPatient(tenantId: number, facilityId: number, patientId: number): Observable<EhrPatient> {
     return this.http.get<EhrPatient>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}`,
-      httpOptions);
+      httpOptions).pipe(share());
   }
 
   readPatientHistory(patientId: number): Observable<Revision<EhrPatient>[]> {
@@ -118,12 +118,12 @@ export class PatientService extends  CurrentSelectedService<EhrPatient> {
     return this.postPatient(tenantId,facilityId,patient)
   }
 
-  postPatient(tenantId: number, facilityId: number, patient: EhrPatient): Observable<HttpResponse<string>> {
+  postPatient(tenantId: number, facilityId: number, patient: EhrPatient, params?: HttpParams): Observable<HttpResponse<string>> {
     if (tenantId > 0 && facilityId > 0){
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         patient,
-        {observe: 'response'});
+        {observe: 'response', params: params});
     } else {
       throw throwError(() => new Error("No facility selected"))
     }

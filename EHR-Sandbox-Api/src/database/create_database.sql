@@ -275,7 +275,9 @@ CREATE TABLE `revinfo` (
     `revtstmp` BIGINT(20) NOT NULL,
     `user` VARCHAR(50) DEFAULT '-1',
     `immunization_registry_id` INTEGER NULL,
-    `subscription_id` VARCHAR(50) DEFAULT NULL
+    `subscription_id` VARCHAR(50) DEFAULT NULL,
+    `copied_entity_id` VARCHAR(50) DEFAULT NULL,
+    `copied_facility_id` INTEGER NULL
 );
 
 CREATE TABLE `patient_aud` (

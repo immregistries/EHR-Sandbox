@@ -1,15 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
-import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
-import { merge } from 'rxjs';
-import { GroupService } from 'src/app/core/_services/group.service';
+import { MatTableDataSource } from '@angular/material/table';
 import { Group } from 'fhir/r5';
-import { Facility } from 'src/app/core/_model/rest';
+import { merge } from 'rxjs';
+import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
+import { GroupService } from 'src/app/core/_services/group.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 
 @Component({
@@ -71,6 +68,14 @@ export class GroupTableComponent {
         this.expandedElement = res.find((reco: Group) => {return reco.id == this.expandedElement?.id}) ?? null
       })
     })
+  }
+
+  onSelection(event: Group) {
+    if (this.expandedElement && this.expandedElement.id == event.id){
+      this.expandedElement = null
+    } else {
+      this.expandedElement = event
+    }
   }
 
 }

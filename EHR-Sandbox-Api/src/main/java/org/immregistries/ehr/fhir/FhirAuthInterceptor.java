@@ -4,7 +4,6 @@ import ca.uhn.fhir.interceptor.api.Hook;
 import ca.uhn.fhir.interceptor.api.Interceptor;
 import ca.uhn.fhir.interceptor.api.Pointcut;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.immregistries.ehr.api.AuditRevisionListener;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
@@ -56,13 +57,18 @@ export class LocalCopyDialogComponent implements OnInit {
   }
 
   copy(facility: Facility) {
+    console.log(this.patient)
     if (this.patient && facility.tenant) {
+      let params = new HttpParams()
+        .append('copied_facility_id', this.facilityService.getCurrentId())
+        .append('copied_entity_id', this.patient.id + '')
       this.patient.id = undefined
       this.patient.facility = undefined
       let tenantId: number = (typeof facility.tenant === "object" )? facility.tenant.id : +facility.tenant
-      this.patientService.postPatient(tenantId, facility.id,this.patient).subscribe((res) => {
+      this.patientService.postPatient(tenantId, facility.id,this.patient, params).subscribe((res) => {
         if(this.vaccination && facility.tenant) {
           if (res.body) {
+            params.set('copied_entity_id', this.vaccination.id + '')
             this.vaccination.id = undefined
             this.vaccination.vaccine.id = undefined
             this.vaccination.vaccine.vaccinationEvents = undefined

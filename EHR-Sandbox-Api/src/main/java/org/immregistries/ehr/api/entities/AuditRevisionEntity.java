@@ -26,6 +26,12 @@ public class AuditRevisionEntity extends DefaultRevisionEntity {
     @Column(name = "subscription_id")
     private String subscriptionId;
 
+    @Column(name = "copied_entity_id")
+    private String copiedId;
+
+    @Column(name = "copied_facility_id")
+    private Integer copiedFacilityId;
+
     public Integer getUser() {
         return user;
     }
@@ -48,5 +54,21 @@ public class AuditRevisionEntity extends DefaultRevisionEntity {
 
     public void setSubscriptionId(String subscriptionId) {
         this.subscriptionId = subscriptionId;
+    }
+
+    public String getCopiedId() {
+        return copiedId;
+    }
+
+    public void setCopiedId(String copiedId) {
+        this.copiedId = copiedId;
+    }
+
+    public Integer getCopiedFacilityId() {
+        return copiedFacilityId;
+    }
+
+    public void setCopiedFacilityId(Integer copiedFacilityId) {
+        this.copiedFacilityId = copiedFacilityId;
     }
 }

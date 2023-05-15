@@ -13,7 +13,8 @@
   <ng-container matColumnDef="origin" >
     <th mat-header-cell *matHeaderCellDef> Origin </th>
     <td mat-cell *matCellDef="let element">
-      {{element.metadata.delegate.user? "Self" : "Subscription " + element.metadata.delegate.subscriptionId}}
+      {{element.metadata.delegate.user? (element.metadata.delegate.copiedFacilityId? 'copied from facility ' + element.metadata.delegate.copiedFacilityId : "Self" ): "Subscription " + element.metadata.delegate.subscriptionId}}
+      <!-- {{element.metadata.delegate.user? "Self" : "Subscription " + element.metadata.delegate.subscriptionId}} -->
     </td>
   </ng-container>
 
