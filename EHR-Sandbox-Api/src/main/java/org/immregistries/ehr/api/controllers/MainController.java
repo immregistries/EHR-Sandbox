@@ -49,14 +49,17 @@ public class MainController {
     }
 
     /**
-     * USed by frontend to check if a refresh is nedded on the current facility it is displaying
+     * USed by frontend to check if a refresh is needed on the current facility it is displaying
      * @return
      */
     @GetMapping("/$notification/{timestamp}")
     public Boolean notificationCheck(@PathVariable Optional<Long> timestamp) {
-        return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
+        return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThan(
                 userDetailsService.currentUserId(),
                 timestamp.orElse(0L));
+//        return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
+//                userDetailsService.currentUserId(),
+//                timestamp.orElse(0L));
     }
 
     @GetMapping("/code_maps")

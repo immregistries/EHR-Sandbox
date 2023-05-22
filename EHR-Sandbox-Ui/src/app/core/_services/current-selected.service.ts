@@ -37,6 +37,11 @@ export class CurrentSelectedService<T extends ObjectWithID> extends RefreshServi
     this.updateLastRefreshtime()
   }
 
+  public override doRefresh(): void{
+    super.doRefresh()
+    this.lastRefreshTime = new Date().getTime()
+  }
+
   constructor(subject : BehaviorSubject<T>
     ) {
       super()

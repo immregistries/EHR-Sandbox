@@ -10,9 +10,6 @@ export abstract class RefreshService {
    * Global observable used to trigger a refresh for all the lists of patients, when a new patient was created
    */
   private refresh: BehaviorSubject<boolean>;
-  /**
-   * TODO maybe move to facility table
-   */
 
   public getRefresh(): Observable<boolean> {
     return this.refresh.asObservable();

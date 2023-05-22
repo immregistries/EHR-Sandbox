@@ -73,7 +73,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7, headerAuth.length());
+            return headerAuth.substring(7);
         }
         return null;
     }
@@ -173,7 +173,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (item.equals("vaccinations") ) {
                 if (scanner.hasNextInt()) {
                     vaccinationId = scanner.next();
-                    if (!vaccinationId.contains("$") &&!vaccinationEventRepository.existsByAdministeringFacilityIdAndId(facilityId,vaccinationId)){
+                    if (!vaccinationId.contains("$") && !vaccinationEventRepository.existsByAdministeringFacilityIdAndId(facilityId,vaccinationId)){
                         return  false;
                     }
                 }

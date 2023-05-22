@@ -28,7 +28,7 @@ export class RecommendationService {
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/recommendations`,
         httpOptions)
-          .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as ImmunizationRecommendation)})}),share());
+          .pipe(share(),map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as ImmunizationRecommendation)})}));
     } else {
       return of([])
     }

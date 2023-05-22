@@ -58,7 +58,7 @@ export class RecommendationTableComponent implements OnInit {
     // this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
 
     merge(
-      this.vaccinationService.getRefresh(),
+      // this.vaccinationService.getRefresh(),
       this.patientService.getCurrentObservable().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
     ).subscribe(() => {
       this.loading = true

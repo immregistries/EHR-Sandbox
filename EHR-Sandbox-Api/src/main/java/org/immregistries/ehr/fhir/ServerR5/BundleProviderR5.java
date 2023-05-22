@@ -9,7 +9,6 @@ import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.AuditRevisionListener;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
@@ -26,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.immregistries.ehr.api.AuditRevisionListener.*;
 import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_HEADER_NAME;
 import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_PREFIX;
 
@@ -65,7 +65,7 @@ public class BundleProviderR5 implements IResourceProvider {
     @Create()
     public MethodOutcome create(@ResourceParam Bundle bundle, ServletRequestDetails requestDetails) {
         HttpServletRequest request = requestDetails.getServletRequest();
-        if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) {
+        if (!bundle.getType().equals(Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)) { // TODO support other
             throw new InvalidRequestException("Bundles other than Subscription notification not supported");
         }
 
@@ -97,9 +97,9 @@ public class BundleProviderR5 implements IResourceProvider {
         /**
          * Done for Historical log in Audit revision tables, as it is done in a spring bean
          */
-        request.setAttribute(AuditRevisionListener.IMMUNIZATION_REGISTRY_ID, immunizationRegistry.getId()); // TODO link with subscription for origin analysis
-        request.setAttribute(AuditRevisionListener.SUBSCRIPTION_ID, ehrSubscription.getIdentifier());
-        request.setAttribute(AuditRevisionListener.USER_ID, immunizationRegistry.getUser().getId());
+        request.setAttribute(IMMUNIZATION_REGISTRY_ID, immunizationRegistry.getId()); // TODO link with subscription for origin analysis
+        request.setAttribute(SUBSCRIPTION_ID, ehrSubscription.getIdentifier());
+        request.setAttribute(USER_ID, immunizationRegistry.getUser().getId());
 
         MethodOutcome statusOutcome = subscriptionStatusProvider.create(subscriptionStatus, requestDetails);
         //TODO check topic, do a different topic for operationOutcome?

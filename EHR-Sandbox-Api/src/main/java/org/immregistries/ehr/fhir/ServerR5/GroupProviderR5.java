@@ -27,8 +27,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGISTRY_ID;
-import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
+import static org.immregistries.ehr.api.AuditRevisionListener.*;
 
 @Controller
 @Conditional(OnR5Condition.class)
