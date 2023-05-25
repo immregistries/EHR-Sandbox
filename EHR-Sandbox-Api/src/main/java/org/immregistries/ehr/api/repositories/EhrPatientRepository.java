@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.repositories;
 
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
+import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.history.RevisionRepository;

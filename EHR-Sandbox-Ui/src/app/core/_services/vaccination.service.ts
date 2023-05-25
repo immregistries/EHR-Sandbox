@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, share, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
@@ -76,18 +76,18 @@ export class VaccinationService extends RefreshService {
     }
   }
 
-  quickPostVaccination(patientId: number, vaccination: VaccinationEvent): Observable<HttpResponse<string>>  {
+  quickPostVaccination(patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>>  {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.postVaccination(tenantId,facilityId,patientId,vaccination)
+    return this.postVaccination(tenantId,facilityId,patientId,vaccination, params)
   }
 
-  postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<HttpResponse<string>>  {
+  postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>>  {
     if (tenantId > 0 && facilityId > 0 && patientId > 0){
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
         vaccination,
-        {observe: 'response'});
+        {observe: 'response', params: params});
     } else {
       throw throwError(() => new Error("No patient selected"))
     }

@@ -57,43 +57,49 @@ export class LocalCopyDialogComponent implements OnInit {
   }
 
   copy(facility: Facility) {
-    console.log(this.patient)
     if (this.patient && facility.tenant) {
       let params = new HttpParams()
         .append('copied_facility_id', this.facilityService.getCurrentId())
         .append('copied_entity_id', this.patient.id + '')
-      this.patient.id = undefined
-      this.patient.facility = undefined
+      let patientCopy: EhrPatient = JSON.parse(JSON.stringify(this.patient))
+      patientCopy.id = undefined
+      patientCopy.facility = undefined
       let tenantId: number = (typeof facility.tenant === "object" )? facility.tenant.id : +facility.tenant
-      this.patientService.postPatient(tenantId, facility.id,this.patient, params).subscribe((res) => {
+      this.patientService.postPatient(tenantId, facility.id,patientCopy, params).subscribe((res) => {
         if(this.vaccination && facility.tenant) {
-          if (res.body) {
+          let vaccinationCopy: VaccinationEvent = JSON.parse(JSON.stringify(this.vaccination))
+          if (!res.body)  {
+            this.snackBarService.errorMessage("Vaccination not copied problem happened in referencing patient")
+          } else {
             params.set('copied_entity_id', this.vaccination.id + '')
-            this.vaccination.id = undefined
-            this.vaccination.vaccine.id = undefined
-            this.vaccination.vaccine.vaccinationEvents = undefined
+            vaccinationCopy.id = undefined
+            vaccinationCopy.vaccine.id = undefined
+            vaccinationCopy.vaccine.vaccinationEvents = undefined
+            /**
+             * TODO copy clinicians ?
+             */
+            vaccinationCopy.administeringClinician = {}
+            vaccinationCopy.enteringClinician = {}
+            vaccinationCopy.orderingClinician = {}
             /**
              * vaccination set as historical
              *
              */
             if (this.setPrimarySourceToFalse){
-              this.vaccination.primarySource = false
+              vaccinationCopy.primarySource = false
             }
-            this.vaccinationService.postVaccination(tenantId,facility.id,+res.body,this.vaccination).subscribe((res) => {
+            this.vaccinationService.postVaccination(tenantId,facility.id,+res.body,vaccinationCopy, params).subscribe((res) => {
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()
-              // if (vaccinationId)
             })
-          } else {
-            this.snackBarService.errorMessage("Vaccination not copied problem happened in referencing patient")
           }
         } else {
-          this.snackBarService.successMessage("Vaccination copied to facility")
+          this.snackBarService.successMessage("Patient copied to facility")
           this._dialogRef.close()
         }
       })
     } else {
-
+      this.snackBarService.errorMessage("unable to copy the data")
     }
   }
 

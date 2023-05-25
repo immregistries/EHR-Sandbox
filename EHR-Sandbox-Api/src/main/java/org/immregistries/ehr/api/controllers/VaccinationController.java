@@ -43,6 +43,8 @@ public class VaccinationController {
     @Autowired
     private ClinicianRepository clinicianRepository;
     @Autowired
+    ClinicianController clinicianController;
+    @Autowired
     private VaccineRepository vaccineRepository;
     @Autowired
     private ImmunizationRegistryController immRegistryController;
@@ -78,15 +80,23 @@ public class VaccinationController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@PathVariable() Optional<String> patientId,
+    public ResponseEntity<String> postVaccinationEvents(@PathVariable() int tenantId,
+                                                        @PathVariable() Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
+        logger.info("POST");
         String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
 
         EhrPatient patient = patientRepository.findById(patientId1)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-        vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
-        vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
-        vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
+        if (vaccination.getAdministeringClinician().getId() == null) {
+            vaccination.setAdministeringClinician(clinicianController.postClinicians(tenantId,vaccination.getAdministeringClinician()));
+        }
+        if (vaccination.getEnteringClinician().getId() == null) {
+            vaccination.setEnteringClinician(clinicianController.postClinicians(tenantId,vaccination.getEnteringClinician()));
+        }
+        if (vaccination.getOrderingClinician().getId() == null) {
+            vaccination.setOrderingClinician(clinicianController.postClinicians(tenantId,vaccination.getOrderingClinician()));
+        }
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
         vaccination.setPatient(patient);
         vaccination.setAdministeringFacility(patient.getFacility());
@@ -99,9 +109,12 @@ public class VaccinationController {
     }
 
     @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@PathVariable() int facilityId,
+    public VaccinationEvent putVaccinationEvents(@PathVariable() int tenantId,
+                                                 @PathVariable() int facilityId,
                                                  @PathVariable() Optional<String> patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
+        logger.info("PUT");
+
         String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
 
         Facility facility = facilityRepository.findById(facilityId)
@@ -110,9 +123,15 @@ public class VaccinationController {
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         VaccinationEvent oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patientId1, vaccination.getId())
                 .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
-        vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
-        vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
-        vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
+        if (vaccination.getAdministeringClinician().getId() == null) {
+            vaccination.setAdministeringClinician(clinicianController.postClinicians(tenantId,vaccination.getAdministeringClinician()));
+        }
+        if (vaccination.getEnteringClinician().getId() == null) {
+            vaccination.setEnteringClinician(clinicianController.postClinicians(tenantId,vaccination.getEnteringClinician()));
+        }
+        if (vaccination.getOrderingClinician().getId() == null) {
+            vaccination.setOrderingClinician(clinicianController.postClinicians(tenantId,vaccination.getOrderingClinician()));
+        }
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
         vaccination.setPatient(patient);
         vaccination.setAdministeringFacility(facility);

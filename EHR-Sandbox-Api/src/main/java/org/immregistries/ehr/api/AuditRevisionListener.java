@@ -3,8 +3,6 @@ package org.immregistries.ehr.api;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.RevisionListener;
 import org.immregistries.ehr.api.entities.AuditRevisionEntity;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.UserRepository;
 import org.immregistries.ehr.api.security.UserDetailsImpl;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
@@ -62,7 +60,7 @@ public class AuditRevisionListener implements RevisionListener {
          */
         try {
             if (StringUtils.isNotBlank(request.getParameter(COPIED_ENTITY_ID))) {
-                audit.setCopiedId(request.getParameter(COPIED_ENTITY_ID));
+                audit.setCopiedEntityId(request.getParameter(COPIED_ENTITY_ID));
             }
             if (StringUtils.isNotBlank(request.getParameter(COPIED_FACILITY_ID))) {
                 int f = Integer.parseInt(request.getParameter(COPIED_FACILITY_ID));

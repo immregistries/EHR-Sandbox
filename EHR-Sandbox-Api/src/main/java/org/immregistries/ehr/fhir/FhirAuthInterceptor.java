@@ -136,8 +136,8 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
          *         theRequestDetails.getServletRequest().setAttribute(AuditRevisionListener.USER_ID,"-1");
          */
         return new RuleBuilder().allow().create().resourcesOfType(Bundle.class)
-//                .with
-                .withCodeInValueSet("type", Bundle.BundleType.SUBSCRIPTIONNOTIFICATION.toString())
+                .withAnyId()
+//                .withCodeInValueSet("type", Bundle.BundleType.SUBSCRIPTIONNOTIFICATION.toString())
 //                .withFilter("Bundle?type=" + Bundle.BundleType.SUBSCRIPTIONNOTIFICATION)
                 .andThen()
                 .denyAll("Missing or invalid Authorization header value")
