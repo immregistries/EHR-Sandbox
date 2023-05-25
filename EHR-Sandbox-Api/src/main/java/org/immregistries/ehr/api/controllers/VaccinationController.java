@@ -83,9 +83,7 @@ public class VaccinationController {
     public ResponseEntity<String> postVaccinationEvents(@PathVariable() int tenantId,
                                                         @PathVariable() Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
-        logger.info("POST");
         String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-
         EhrPatient patient = patientRepository.findById(patientId1)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         if (vaccination.getAdministeringClinician().getId() == null) {
@@ -113,8 +111,6 @@ public class VaccinationController {
                                                  @PathVariable() int facilityId,
                                                  @PathVariable() Optional<String> patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
-        logger.info("PUT");
-
         String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
 
         Facility facility = facilityRepository.findById(facilityId)

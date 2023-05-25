@@ -116,32 +116,60 @@ public class EhrPatientController {
                 new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id or facilityId")
         );
         /**
-         * If patient was issued from the copy functionality, trying to avoid duplicates from this option
+         * If request was issued from the copy functionality, revision table is used to find out if a copy already exists to avoid duplicates
          */
         if (copiedEntityId.isPresent()) {
-            Stream<String> potentialIds = facilityRepository.findById(facilityId).get().getPatients().stream().map(EhrPatient::getId);
-            Optional<Revision<Integer, EhrPatient>> previousCopyRevision = potentialIds
-                    .map(((id) -> ehrPatientRepository.findRevisions(id).stream()
-                        .filter(revision -> revision.getMetadata().getRevisionType().equals(RevisionMetadata.RevisionType.INSERT))
-                        .findFirst().get()))
-                    .filter(revision -> {
+            Optional<Revision<Integer, EhrPatient>> previousCopyRevision = Optional.empty();
+
+            /**
+             * We check if the patient himself is a copy from a patient in the destination facility
+             */
+            if (copiedFacilityId.isPresent()){
+                previousCopyRevision = ehrPatientRepository.findRevisions(copiedEntityId.get()).stream().filter(revision -> {
                     AuditRevisionEntity audit = revision.getMetadata().getDelegate();
-                    if (audit.getCopiedEntityId() != null) {
-                        return audit.getCopiedEntityId().equals(copiedEntityId.get());
+                    if (audit.getCopiedFacilityId() != null) {
+                        return audit.getCopiedFacilityId().equals(facilityId);
                     } else {
                         return false;
-                    }
-                }).findFirst();
+                    }}).findFirst();
+            }
+
+            /**
+             * We check if a copy already exists in the destination facility
+             */
+            if (previousCopyRevision.isEmpty()) {
+                Stream<String> potentialIds = facilityRepository.findById(facilityId).get().getPatients().stream().map(EhrPatient::getId);
+                previousCopyRevision = potentialIds
+                        .map(((id) -> ehrPatientRepository.findRevisions(id).stream()
+                                .filter(revision -> revision.getMetadata().getRevisionType().equals(RevisionMetadata.RevisionType.INSERT))
+                                .findFirst().get()))
+                        .filter(revision -> {
+                            AuditRevisionEntity audit = revision.getMetadata().getDelegate();
+                            if (audit.getCopiedEntityId() != null) {
+                                return audit.getCopiedEntityId().equals(copiedEntityId.get());
+                            } else {
+                                return false;
+                            }
+                        }).findFirst();
+
+            }
 
             if (previousCopyRevision.isPresent()) {
 //                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already bearing a copy of this patient");
                 /**
-                 * returning the id of the older copy
+                 * returning the id of the older copy or original patient
                  * TODO : Update the copy ? flavor ?
                  */
                 return ResponseEntity.accepted().body(previousCopyRevision.get().getEntity().getId());
             }
+
+
+
+
+
         }
+
+
 
         patient.setFacility(facility);
         patient.setCreatedDate(new Date());
