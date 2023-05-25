@@ -237,7 +237,7 @@
 				<version>${spring.version}</version>
 				<configuration>
 					<mainClass>org.immregistries.ehr.EhrApiApplication</mainClass>
-					<outputDirectory>${project.build.directory}/../../</outputDirectory>
+					<outputDirectory>${project.build.directory}/../../target</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
