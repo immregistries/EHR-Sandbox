@@ -27,7 +27,7 @@ export class GroupTableComponent {
     "identifier",
     "date",
     "authority",
-    "group"
+    // "group"
   ]
 
 

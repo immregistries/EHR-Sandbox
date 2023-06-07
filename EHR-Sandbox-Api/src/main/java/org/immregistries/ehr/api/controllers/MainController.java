@@ -56,7 +56,7 @@ public class MainController {
     public Boolean notificationCheck(@PathVariable Optional<Long> timestamp) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThan(
                 userDetailsService.currentUserId(),
-                timestamp.orElse(0L));
+                timestamp.orElse(0L) + 10);
 //        return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
 //                userDetailsService.currentUserId(),
 //                timestamp.orElse(0L));

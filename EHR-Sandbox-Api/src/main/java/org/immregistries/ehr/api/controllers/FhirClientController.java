@@ -47,15 +47,12 @@ public class FhirClientController {
     private PatientIdentifierRepository patientIdentifierRepository;
     @Autowired
     private ImmunizationIdentifierRepository immunizationIdentifierRepository;
-
-
-
     @Autowired
-    FhirContext fhirContext;
+    private FhirContext fhirContext;
     @Autowired
-    ResourceClient resourceClient;
+    private ResourceClient resourceClient;
     @Autowired
-    CustomClientBuilder customClientBuilder;
+    private CustomClientBuilder customClientBuilder;
 
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
@@ -189,7 +186,7 @@ public class FhirClientController {
              */
             feedbackRepository.deleteByVaccinationEventIdAndIisAndSeverity(
                     vaccinationId,
-                    immunizationRegistry.getId(),
+                    immunizationRegistry.getId().toString(),
                     "fatal");
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
