@@ -7,7 +7,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
+import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
@@ -32,7 +32,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_ENTITY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_FACILITY_ID;
@@ -60,7 +59,7 @@ public class EhrPatientController {
 
     private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
-    private CustomClientBuilder customClientBuilder;
+    private CustomClientFactory customClientFactory;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
@@ -206,14 +205,14 @@ public class EhrPatientController {
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
     public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() int facilityId,
                                                                                   @PathVariable() String patientId,
-                                                                                  @PathVariable() Integer immRegistryId,
+                                                                                  @PathVariable() Integer registryId,
                                                                                   @RequestParam Optional<Long> _since) {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
 
         EhrPatient patient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow();
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immRegistryId);
-        IGenericClient client = customClientBuilder.newGenericClient(immRegistryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        IGenericClient client = customClientFactory.newGenericClient(registryId);
 
         Bundle searchBundle = client.search()
                 .forResource(Patient.class)
@@ -276,9 +275,9 @@ public class EhrPatientController {
     }
 
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String> vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
+    public ResponseEntity<String> vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
+        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

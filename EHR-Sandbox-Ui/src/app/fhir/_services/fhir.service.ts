@@ -25,15 +25,15 @@ export class FhirService {
     private tenantService: TenantService,
     private immRegistries: ImmunizationRegistryService) { }
 
-  postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number,parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
+  postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceLocalId: number, parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
     switch(type){
       case "Patient": {
-        return this.quickPostPatient(resourceId,resource,operation);
+        return this.quickPostPatient(resourceLocalId,resource,operation);
         break;
       }
       case "Immunization": {
         return this.quickPostImmunization(
-          parentId, resourceId, resource, operation,
+          parentId, resourceLocalId, resource, operation,
           overridingReferences? overridingReferences['patient'] : '');
         break;
       }
@@ -41,21 +41,42 @@ export class FhirService {
         break;
       }
       case "Group": {
-        return this.postGroup(resource,operation,resourceId);
+        return this.postGroup(resource,operation,resourceLocalId);
         break;
       }
     }
     return of("");
   }
 
+  matchResource(type: string,resource: string, resourceId: number,parentId: number): Observable<string> {
+    const registryId = this.immRegistries.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    switch(type){
+      case "Patient": {
+        return this.http.post<string>(
+          `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${resourceId}/fhir-client/imm-registry/${registryId}/$match`,
+          resource,
+          httpOptions);
+      }
+      case "Immunization": {
+        return this.http.post<string>(
+          `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${parentId}/vaccinations/${resourceId}/fhir-client/imm-registry/${registryId}/$match`,
+          resource,
+          httpOptions);
+      }
+    }
+    return of("");
+  }
+
   postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     const options = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       params: new HttpParams().append("type", "Group")
     };
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/imm-registry/${registryId}`,
       resource,
       options);
   }
@@ -89,17 +110,17 @@ export class FhirService {
   }
 
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${registryId}`,
       resource,
       this.immunizationOptions(patientFhirId));
   }
 
   putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${registryId}`,
       resource,
       this.immunizationOptions(patientFhirId),
       );
@@ -132,57 +153,57 @@ export class FhirService {
   }
 
   putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${registryId}`,
       resource,
       httpOptions);
   }
 
   postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${registryId}`,
       resource,
       httpOptions);
   }
 
   loadEverythingFromPatient(patientId: number): Observable<VaccinationEvent[]> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<VaccinationEvent[]>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${immId}/$fetchAndLoad`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${registryId}/$fetchAndLoad`,
       httpOptions);
   }
 
   getFromIIS(resourceType: string, identifier: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/imm-registry/${immId}/${resourceType}/${identifier}`,
+      `${this.settings.getApiUrl()}/imm-registry/${registryId}/${resourceType}/${identifier}`,
       { responseType: 'text' });
   }
 
   // get(urlEnd: string): Observable<string> {
-  //   const immId = this.immRegistries.getImmRegistryId()
+  //   const registryId = this.immRegistries.getregistryId()
   //   return this.http.get(
-  //     `${this.settings.getApiUrl()}/imm-registry/${immId}${urlEnd}`,
+  //     `${this.settings.getApiUrl()}/imm-registry/${registryId}${urlEnd}`,
   //     { responseType: 'text' });
   // }
 
   search(resourceType: string, identifier: Identifier): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/imm-registry/${immId}/${resourceType}/search`,
+      `${this.settings.getApiUrl()}/imm-registry/${registryId}/${resourceType}/search`,
       identifier,
       { responseType: 'text' });
   }
 
 
   operation(operationType: string, target: string ,parameters: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/imm-registry/${immId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
+      `${this.settings.getApiUrl()}/imm-registry/${registryId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
       parameters,
       {
         responseType: 'text',
@@ -193,27 +214,27 @@ export class FhirService {
   }
 
   groupExportSynch(groupId: string, paramsString: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/imm-registry/${immId}/Group/${groupId}/$export-synch?${paramsString}`,
+      `${this.settings.getApiUrl()}/imm-registry/${registryId}/Group/${groupId}/$export-synch?${paramsString}`,
       {
         responseType: 'text',
       });
   }
 
   groupExportAsynch(groupId: string, paramsString: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/Group/${groupId}/$export-asynch?${paramsString}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/Group/${groupId}/$export-asynch?${paramsString}`,
       {
         responseType: 'text',
       });
   }
 
   groupExportStatus(contentUrl: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-status`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/$export-status`,
       {
         responseType: 'text',
         params: {
@@ -222,9 +243,9 @@ export class FhirService {
       });
   }
   groupExportDelete(contentUrl: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.delete(
-      `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-status`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/$export-status`,
       {
         responseType: 'text',
         params: {
@@ -234,12 +255,12 @@ export class FhirService {
   }
 
   groupNdJson(contentUrl: string, loadInFacility: boolean): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     if (loadInFacility) {
       const facilityId = this.facilityService.getCurrentId()
       if ( facilityId > -1) {
         return this.http.get(
-          `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
+          `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
           {
             responseType: 'text',
             params: {
@@ -252,7 +273,7 @@ export class FhirService {
         }
       } else {
         return this.http.get(
-          `${this.settings.getApiUrl()}/iim-registry/${immId}/$export-result`,
+          `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
           {
             responseType: 'text',
             params: {
@@ -264,21 +285,21 @@ export class FhirService {
   }
 
   loadNdJson(body: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/iim-registry/${immId}/$loadNdJson`, body);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, body);
   }
 
   loadJson(body: string): Observable<string> {
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/iim-registry/${immId}/$loadJson`, body);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadJson`, body);
   }
 
   private immunizationOptions(patientFhirId?: string) {

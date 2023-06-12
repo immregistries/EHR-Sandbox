@@ -43,7 +43,7 @@ export class FhirPostComponent implements OnInit {
   @Input()
   operation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
   @Input()
-  resourceInternId: number = -1;
+  resourceLocalId: number = -1;
   @Input()
   parentId: number = -1;
   @Input()
@@ -60,7 +60,7 @@ export class FhirPostComponent implements OnInit {
   send() {
     this.answer = ""
     this.requestLoading = true
-    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceInternId,this.parentId, this.overridingReferences)
+    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceLocalId,this.parentId, this.overridingReferences)
     .subscribe({
       next: (res) => {
         this.requestLoading = false
@@ -79,11 +79,49 @@ export class FhirPostComponent implements OnInit {
           console.error(err)
           switch(this.resourceType) {
             case "Patient" : {
-              this.snackBarService.fatalFhirMessage(this.answer, this.resourceInternId)
+              this.snackBarService.fatalFhirMessage(this.answer, this.resourceLocalId)
               break;
             }
             case "Immunization" : {
-              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceInternId)
+              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceLocalId)
+              break;
+            }
+          }
+        } else {
+          this.answer = JSON.stringify(err.error)
+        }
+
+      }
+    })
+  }
+
+  match() {
+    this.answer = ""
+    this.requestLoading = true
+    this.fhirService.matchResource(this.resourceType,this.resource, this.resourceLocalId, this.parentId)
+    .subscribe({
+      next: (res) => {
+        this.requestLoading = false
+        this.feedbackService.doRefresh()
+        this.error = false
+        this.answer = JSON.stringify(res)
+      },
+      error: (err) => {
+        this.requestLoading = false
+        this.feedbackService.doRefresh()
+        this.error = true
+        this.answer = err.error
+        console.error(err)
+        if(err.status == 400) {
+          this.answer = err.error
+          console.error(err)
+          switch(this.resourceType) {
+            case "Patient" : {
+              this.snackBarService.fatalFhirMessage(this.answer, this.resourceLocalId)
+              break;
+            }
+            case "Immunization" : {
+              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceLocalId)
               break;
             }
           }

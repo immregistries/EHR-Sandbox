@@ -19,12 +19,13 @@
             <!-- <mat-option [value]="'Update'">Update</mat-option> -->
           </mat-select>
         </mat-form-field>
-        <!-- <mat-checkbox appearance="fill" *ngIf="resourceInternId > -1"
+        <!-- <mat-checkbox appearance="fill" *ngIf="resourceLocalId > -1"
           [(ngModel)]="autofillId">
           Autofill server Id in immunization
         </mat-checkbox> -->
       </div>
 
+      <button mat-raised-button class="w3-right" (click)="match()" cdkFocusInitial>$match</button>
       <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
     </div>
 

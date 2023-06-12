@@ -147,9 +147,9 @@ public class VaccinationController {
     }
 
     @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String>  vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
+    public ResponseEntity<String>  vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
+        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

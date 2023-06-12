@@ -36,9 +36,9 @@ export class SubscriptionService {
   createSubscription(): Observable<boolean | null> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    const immRegistryId: number | undefined = this.immRegistriesService.getCurrentId()
+    const registryId: number | undefined = this.immRegistriesService.getCurrentId()
     return this.http.post<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${immRegistryId}/subscription`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/subscription`,
       httpOptions);
   }
 

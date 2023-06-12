@@ -13,7 +13,6 @@ import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,14 +25,14 @@ import java.util.Base64;
  * 
  */
 @Component
-public class CustomClientBuilder extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
+public class CustomClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
 
     // Needs to be static object and built only one time in whole project
     @Autowired
     FhirContext fhirContext;
 
     LoggingInterceptor loggingInterceptor;
-    private static final Logger logger = LoggerFactory.getLogger(CustomClientBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomClientFactory.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired

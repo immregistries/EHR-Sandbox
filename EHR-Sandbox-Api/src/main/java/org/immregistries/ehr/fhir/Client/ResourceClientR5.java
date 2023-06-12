@@ -27,7 +27,7 @@ public class ResourceClientR5 extends ResourceClient<Identifier>{
     }
 
     public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, ImmunizationRegistry ir) {
-        return  updateOrCreate(resource, type, identifier, customClientBuilder.newGenericClient(ir));
+        return  updateOrCreate(resource, type, identifier, customClientFactory.newGenericClient(ir));
     }
     public MethodOutcome updateOrCreate(IBaseResource resource, String type, Identifier identifier, IGenericClient client) {
         MethodOutcome outcome;

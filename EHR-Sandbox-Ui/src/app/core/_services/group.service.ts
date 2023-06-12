@@ -27,10 +27,10 @@ export class GroupService extends RefreshService {
   readGroups(): Observable<Group[]>{
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    const immRegistryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0 && immRegistryId && immRegistryId > 0){
+    const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
       return this.http.get<string[]>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${immRegistryId}/groups`,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups`,
         httpOptions)
           .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
     } else {

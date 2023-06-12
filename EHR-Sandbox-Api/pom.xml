@@ -15,7 +15,7 @@
 	<description>Api for EHR Sandbox</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<spring.version>2.6.3</spring.version>
+<!--		<spring.version>2.6.3</spring.version>-->
 		<hapi.version>6.2.4-SUB</hapi.version>
 	</properties>
 
@@ -35,6 +35,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
 <!--			<version>${spring.version}</version>-->
@@ -43,14 +48,14 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>${spring-boot-tomcat.scope}</scope>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
@@ -62,7 +67,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
@@ -82,7 +87,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
@@ -234,7 +239,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.version}</version>
+<!--				<version>${spring.version}</version>-->
 				<configuration>
 					<mainClass>org.immregistries.ehr.EhrApiApplication</mainClass>
 					<outputDirectory>${project.build.directory}/../../target</outputDirectory>

@@ -3,16 +3,12 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.hl7.fhir.r5.model.Group;
-import org.hl7.fhir.r5.model.Parameters;
-import org.hl7.fhir.r5.model.Patient;
-import org.hl7.fhir.r5.model.Reference;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
-import org.immregistries.ehr.fhir.Client.ResourceClient;
+import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
@@ -37,7 +33,7 @@ public class GroupController {
     @Autowired
     FhirContext fhirContext;
     @Autowired
-    CustomClientBuilder customClientBuilder;
+    CustomClientFactory customClientFactory;
     @Autowired
     Map<Integer, Map<Integer, Group>> groupsStore;
     @Autowired
@@ -63,8 +59,8 @@ public class GroupController {
      * Disabled to be replaced by fhir operations
      */
 //    @PutMapping()
-//    public ResponseEntity<String> update(@RequestBody Group group, @PathVariable Integer facilityId, @PathVariable Integer immRegistryId) {
-//        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immRegistryId);
+//    public ResponseEntity<String> update(@RequestBody Group group, @PathVariable Integer facilityId, @PathVariable Integer registryId) {
+//        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
 //        IParser parser = fhirContext.newJsonParser();
 //        groupsStore.putIfAbsent(facilityId, new HashMap<>(5));
 //        groupsStore.get(facilityId).putIfAbsent(immunizationRegistry.getId(), group);
@@ -72,16 +68,18 @@ public class GroupController {
 //        return ResponseEntity.ok(parser.encodeResourceToString(group));
 //    }
 
-    public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer immRegistryId, @RequestParam String patientId) {
+    @PostMapping()
+    public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @RequestParam String patientId) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immRegistryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
         /**
          * First do match to get destination reference or identifier
          */
 //        IParser parser = fhirContext.newJsonParser();
         Parameters in = new Parameters()
-                .addParameter("patientReference", new Reference(patient.getId()));
+                .addParameter("patientIdentifier", patient.getIdentifierFirstRep())
+                .addParameter("providerIdentifier", new Identifier().setSystem("AIRA_TEST").setValue("test"));
         Parameters out = add_member_operation(facilityId,immunizationRegistry,in);
 
 
@@ -93,7 +91,7 @@ public class GroupController {
     }
 
     public Parameters add_member_operation(Integer facilityId, ImmunizationRegistry immunizationRegistry, Parameters in) {
-        IGenericClient client = customClientBuilder.newGenericClient(immunizationRegistry);
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
         Group group = groupsStore.getOrDefault(facilityId, new HashMap<>(0)).get(immunizationRegistry.getId());
 
         return client.operation().onInstance(group.getIdElement()).named("$add-member").withParameters(in).execute();

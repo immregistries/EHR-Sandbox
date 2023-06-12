@@ -90,10 +90,10 @@ public class FhirConversionController {
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")
     public ResponseEntity<String> loadNdJsonBundle(
             @PathVariable() Integer facilityId,
-            @PathVariable() Integer immRegistryId,
+            @PathVariable() Integer registryId,
             @RequestBody Bundle bundle) {
         return bundleImportService.importBundle(
-                immunizationRegistryController.settings(immRegistryId),
+                immunizationRegistryController.settings(registryId),
                 facilityRepository.findById(facilityId).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified")
                 ), bundle);
@@ -101,8 +101,8 @@ public class FhirConversionController {
 
 
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
-    public ResponseEntity bulkResultLoad(@PathVariable() Integer immRegistryId, @RequestBody String ndjson, @PathVariable Integer facilityId) {
-        ImmunizationRegistry ir = immunizationRegistryController.settings(immRegistryId);
+    public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @PathVariable Integer facilityId) {
+        ImmunizationRegistry ir = immunizationRegistryController.settings(registryId);
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));

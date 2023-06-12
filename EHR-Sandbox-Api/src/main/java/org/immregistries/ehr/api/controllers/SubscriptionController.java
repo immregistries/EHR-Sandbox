@@ -14,7 +14,7 @@ import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
+import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
 import org.immregistries.ehr.fhir.Client.IResourceClient;
 import org.slf4j.Logger;
@@ -28,8 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -59,7 +57,7 @@ public class SubscriptionController {
     @Autowired
     FhirContext fhirContext;
     @Autowired
-    CustomClientBuilder customClientBuilder;
+    CustomClientFactory customClientFactory;
     @Autowired
     IResourceClient resourceClient;
 
@@ -70,11 +68,11 @@ public class SubscriptionController {
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
-    public Boolean subscribeToIIS(@PathVariable() Integer immRegistryId, @PathVariable() int facilityId , @RequestBody String body) {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+    public Boolean subscribeToIIS(@PathVariable() Integer registryId, @PathVariable() int facilityId , @RequestBody String body) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
-        IGenericClient client = customClientBuilder.newGenericClient(ir);
+        IGenericClient client = customClientFactory.newGenericClient(ir);
 
 //        MethodOutcome outcome = client.create().resource(sub).execute();
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
