@@ -17,7 +17,7 @@ const httpOptions = {
 /**
  * Fhir service interacting with the API to parse and serialize resources, and interact with IIS's
  */
-export class FhirService {
+export class FhirClientService {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
@@ -81,20 +81,6 @@ export class FhirService {
       options);
   }
 
-  /**
-   *
-   * @param patientId
-   * @param vaccinationId
-   * @returns Vaccination information converted to XML FHIR Immunization resource
-   */
-  quickGetImmunizationResource(patientId: number, vaccinationId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-    return this.http.get(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/resource`,
-      { responseType: 'text' });
-  }
-
   quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", patientFhirId?: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
@@ -124,18 +110,6 @@ export class FhirService {
       resource,
       this.immunizationOptions(patientFhirId),
       );
-  }
-
-  quickGetPatientResource(patientId: number): Observable<string> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-    if (tenantId < 0 || facilityId < 0 || patientId < 0 ){
-      return of('')
-    } else {
-      return this.http.get(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/resource`,
-        { responseType: 'text' });
-    }
   }
 
   quickPostPatient(patientId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
@@ -211,95 +185,6 @@ export class FhirService {
         //   parameters:
         // }
       });
-  }
-
-  groupExportSynch(groupId: string, paramsString: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    return this.http.get(
-      `${this.settings.getApiUrl()}/imm-registry/${registryId}/Group/${groupId}/$export-synch?${paramsString}`,
-      {
-        responseType: 'text',
-      });
-  }
-
-  groupExportAsynch(groupId: string, paramsString: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    return this.http.get(
-      `${this.settings.getApiUrl()}/registry/${registryId}/Group/${groupId}/$export-asynch?${paramsString}`,
-      {
-        responseType: 'text',
-      });
-  }
-
-  groupExportStatus(contentUrl: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    return this.http.get(
-      `${this.settings.getApiUrl()}/registry/${registryId}/$export-status`,
-      {
-        responseType: 'text',
-        params: {
-          contentUrl: contentUrl
-        }
-      });
-  }
-  groupExportDelete(contentUrl: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    return this.http.delete(
-      `${this.settings.getApiUrl()}/registry/${registryId}/$export-status`,
-      {
-        responseType: 'text',
-        params: {
-          contentUrl: contentUrl
-        }
-      });
-  }
-
-  groupNdJson(contentUrl: string, loadInFacility: boolean): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    if (loadInFacility) {
-      const facilityId = this.facilityService.getCurrentId()
-      if ( facilityId > -1) {
-        return this.http.get(
-          `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
-          {
-            responseType: 'text',
-            params: {
-              contentUrl: contentUrl,
-              loadInFacility: facilityId
-            }
-          });
-        } else {
-          return of("")
-        }
-      } else {
-        return this.http.get(
-          `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
-          {
-            responseType: 'text',
-            params: {
-              contentUrl: contentUrl
-            }
-          });
-    }
-
-  }
-
-  loadNdJson(body: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-
-    return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, body);
-  }
-
-  loadJson(body: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-
-    return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadJson`, body);
   }
 
   private immunizationOptions(patientFhirId?: string) {

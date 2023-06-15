@@ -3,3 +3,9 @@
     align-items: baseline;
     justify-content: space-between;
   }
+
+.footer-end {
+  display: flex;
+  align-items: baseline;
+  justify-content: end;
+}

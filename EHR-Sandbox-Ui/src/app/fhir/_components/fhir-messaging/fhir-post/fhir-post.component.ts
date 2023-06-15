@@ -1,12 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { map, merge, Observable, tap } from 'rxjs';
+import { FacilityService } from 'src/app/core/_services/facility.service';
 
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
 
 @Component({
   selector: 'app-fhir-post',
@@ -20,21 +18,23 @@ export class FhirPostComponent implements OnInit {
   @Input()
   resourceType: string = "Group";
   @Input()
-  resource: string = `{
-    "resourceType": "Group",
-    "type": "person",
-    "actual": true,
-    "member": [
-      {
-        "entity": {
-          "reference": "Patient/"
-        },
-        "period": {
-          "start": "2014-10-08"
-        }
-      }
-    ]
-  }`;
+  resource: string =
+`{
+  "resourceType": "Group",
+  "type": "person",
+  "identifier": {
+    "system": "ehr-sandbox/group",
+    "value": "` + Math.trunc(Math.random() * Math.random() * 10000) + `"
+  }
+  "actual": true,
+  "managingEntity": {
+    "identifier": {
+      "system": "ehr-sandbox/facility",
+      "value": "`+ this.facilityService.getCurrentId() +`"
+    }
+  },
+  "description": "Generated sample Group in EHR sandbox for testing"
+}`;
   answer: string = "";
   error: boolean = false;
 
@@ -50,7 +50,8 @@ export class FhirPostComponent implements OnInit {
   overridingReferences: {[reference: string]: string} = {};
 
 
-  constructor(private fhirService: FhirService,
+  constructor(private fhirClient: FhirClientService,
+    private facilityService: FacilityService,
     private snackBarService: SnackBarService,
     private feedbackService: FeedbackService) { }
 
@@ -60,7 +61,7 @@ export class FhirPostComponent implements OnInit {
   send() {
     this.answer = ""
     this.requestLoading = true
-    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceLocalId,this.parentId, this.overridingReferences)
+    this.fhirClient.postResource(this.resourceType,this.resource,this.operation,this.resourceLocalId,this.parentId, this.overridingReferences)
     .subscribe({
       next: (res) => {
         this.requestLoading = false
@@ -98,7 +99,7 @@ export class FhirPostComponent implements OnInit {
   match() {
     this.answer = ""
     this.requestLoading = true
-    this.fhirService.matchResource(this.resourceType,this.resource, this.resourceLocalId, this.parentId)
+    this.fhirClient.matchResource(this.resourceType,this.resource, this.resourceLocalId, this.parentId)
     .subscribe({
       next: (res) => {
         this.requestLoading = false
@@ -112,23 +113,6 @@ export class FhirPostComponent implements OnInit {
         this.error = true
         this.answer = err.error
         console.error(err)
-        if(err.status == 400) {
-          this.answer = err.error
-          console.error(err)
-          switch(this.resourceType) {
-            case "Patient" : {
-              this.snackBarService.fatalFhirMessage(this.answer, this.resourceLocalId)
-              break;
-            }
-            case "Immunization" : {
-              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceLocalId)
-              break;
-            }
-          }
-        } else {
-          this.answer = JSON.stringify(err.error)
-        }
-
       }
     })
   }

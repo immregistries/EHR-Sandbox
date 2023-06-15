@@ -62,6 +62,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ClinicianSelectComponent } from './_clinician/clinician-select/clinician-select.component';
 import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-form.component';
 import { GroupTableComponent } from './_components/group-table/group-table.component';
+import { PatientMatchComponent } from './_patient/patient-match/patient-match.component';
+import { PatientReceivedTableComponent } from './_patient/patient-received-table/patient-received-table.component';
 
 
 @NgModule({
@@ -110,7 +112,9 @@ import { GroupTableComponent } from './_components/group-table/group-table.compo
     RegistryNamePipe,
     ClinicianSelectComponent,
     ClinicianFormComponent,
-    GroupTableComponent
+    GroupTableComponent,
+    PatientMatchComponent,
+    PatientReceivedTableComponent
   ],
   imports: [
     CommonModule,

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirBulkService } from 'src/app/fhir/_services/fhir-bulk.service';
 
 @Component({
   selector: 'app-fhir-bulk-operation',
@@ -11,7 +11,7 @@ export class FhirBulkOperationComponent implements OnInit {
   @Input() asynchronous: boolean = true;
   @Input() resourceType: "Patient" | "Group" = "Group";
 
-  constructor(public fhir: FhirService) { }
+  constructor(public fhirBulkService: FhirBulkService) { }
 
   ngOnInit(): void {
   }
@@ -44,7 +44,7 @@ export class FhirBulkOperationComponent implements OnInit {
   exportAsynch() {
     if (this.resourceId) {
       this.loading = true
-      this.fhir.groupExportAsynch(this.resourceId, this.exportArguments).subscribe((res) => {
+      this.fhirBulkService.groupExportAsynch(this.resourceId, this.exportArguments).subscribe((res) => {
         this.result = res.trim()
         this.loading = false
         this.error = false
@@ -63,7 +63,7 @@ export class FhirBulkOperationComponent implements OnInit {
   exportSynch() {
     if (this.resourceId) {
       this.loading = true
-      this.fhir.groupExportSynch(this.resourceId, this.exportArguments).subscribe((res) => {
+      this.fhirBulkService.groupExportSynch(this.resourceId, this.exportArguments).subscribe((res) => {
         this.result = res.trim()
         this.loading = false
         this.error = false

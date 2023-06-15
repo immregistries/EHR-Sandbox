@@ -4,7 +4,6 @@ import { merge } from 'rxjs';
 import { EhrSubscription } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
-import { FhirService } from '../../_services/fhir.service';
 
 @Component({
   selector: 'app-subscription-dashboard',
@@ -13,8 +12,7 @@ import { FhirService } from '../../_services/fhir.service';
 })
 export class SubscriptionDashboardComponent implements OnInit {
 
-  constructor(private fhir: FhirService,
-    private subscriptionService: SubscriptionService,
+  constructor(private subscriptionService: SubscriptionService,
     public facilityService: FacilityService) { }
 
   subscription?: EhrSubscription;

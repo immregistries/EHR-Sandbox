@@ -16,7 +16,7 @@ export class ImmunizationRegistryMenuComponent implements OnInit {
     this.service.getRefresh().subscribe((bool) => {
       this.service.readImmRegistries().subscribe((res) => {
         this.list = res
-        if (!this.service.getCurrentId() && this.list.length > 0) {
+        if ((!this.service.getCurrentId() || this.service.getCurrentId() < 0)  && this.list.length > 0) {
           this.service.setCurrent(this.list[0]);
         }
       })

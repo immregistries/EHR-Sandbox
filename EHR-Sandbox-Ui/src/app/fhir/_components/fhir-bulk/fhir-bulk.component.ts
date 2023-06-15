@@ -1,5 +1,4 @@
 import { AfterViewChecked, AfterViewInit, Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FhirService } from '../../_services/fhir.service';
 import { MatTabGroup } from '@angular/material/tabs';
 
 @Component({

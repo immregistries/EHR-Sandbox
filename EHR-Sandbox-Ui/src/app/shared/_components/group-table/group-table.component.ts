@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Group } from 'fhir/r5';
@@ -25,11 +25,10 @@ export class GroupTableComponent {
 
   columns: (string)[] = [
     "identifier",
-    "date",
+    // "date",
     "authority",
     // "group"
   ]
-
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
@@ -50,6 +49,8 @@ export class GroupTableComponent {
   dataSource = new MatTableDataSource<Group>([]);
   expandedElement: Group | null = null;
   loading = false;
+  @Output()
+  groupEmitter: EventEmitter<Group | null> = new EventEmitter<Group | null>()
 
   @Input() patientId?: number = -1
 
@@ -60,6 +61,8 @@ export class GroupTableComponent {
 
     merge(
       this.facilityService.getRefresh(),
+      this.facilityService.getCurrentObservable(),
+      this.registryService.getCurrentObservable(),
     ).subscribe(() => {
       this.loading = true
       this.groupService.readGroups().subscribe((res) => {
@@ -76,6 +79,8 @@ export class GroupTableComponent {
     } else {
       this.expandedElement = event
     }
+    this.groupEmitter.emit(this.expandedElement)
+
   }
 
 }

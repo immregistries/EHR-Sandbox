@@ -25,8 +25,11 @@
         </mat-checkbox> -->
       </div>
 
-      <button mat-raised-button class="w3-right" (click)="match()" cdkFocusInitial>$match</button>
-      <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
+      <div class="footer-end">
+        <button mat-raised-button class="w3-right" (click)="match()" cdkFocusInitial>$match</button>
+        <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
+      </div>
+
     </div>
 
     <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>

@@ -214,6 +214,7 @@ public class EhrPatientController {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
         IGenericClient client = customClientFactory.newGenericClient(registryId);
 
+        // TODO switch to $match ?
         Bundle searchBundle = client.search()
                 .forResource(Patient.class)
                 .where(Patient.IDENTIFIER.exactly().systemAndCode(MRN_SYSTEM, patient.getMrn()))

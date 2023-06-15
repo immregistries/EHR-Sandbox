@@ -3,12 +3,14 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
+import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ public class GroupController {
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
+    private GroupProviderR5 groupProviderR5;
+    @Autowired
     private PatientMapperR5 patientMapperR5;
 
     @GetMapping()
@@ -53,6 +57,32 @@ public class GroupController {
                         entry -> parser.encodeResourceToString(entry.getValue()))
                 .collect(Collectors.toSet());
         return ResponseEntity.ok(set);
+    }
+
+
+    /**
+     * Fetches remote groups from registry to store them locally and make them available
+     * @param facilityId
+     * @param registryId
+     * @return
+     */
+    @GetMapping("/$fetch")
+    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable Integer facilityId, @PathVariable Integer registryId) {
+        IParser parser = fhirContext.newJsonParser();
+        ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
+        servletRequestDetails.setTenantId(String.valueOf(facilityId));
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        Bundle bundle = customClientFactory.newGenericClient(immunizationRegistry).search().forResource(Group.class).returnBundle(Bundle.class)
+//                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
+                .execute();
+        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
+            if (entry.hasResource() && entry.getResource() instanceof Group) {
+                groupProviderR5.update((Group) entry.getResource(), servletRequestDetails, immunizationRegistry);
+            }
+        }
+//        Set<String> set = bundle.getEntry().stream().map()
+//                .collect(Collectors.toSet());
+        return getAll(facilityId);
     }
 
     /**

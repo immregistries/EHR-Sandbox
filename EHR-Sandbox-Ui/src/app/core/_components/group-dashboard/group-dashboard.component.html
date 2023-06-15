@@ -1,7 +1,38 @@
-<p>group-dashboard works!</p>
-<button>Add a member</button>
-<button>Remove a member</button>
-<button>FHIR Resource</button>
-<app-patient-table [dataSource]="patientDatasource" ></app-patient-table>
+<mat-tab-group #tabs>
+  <mat-tab disabled>
+    <ng-template mat-tab-label>
+      <app-immunization-registry-menu></app-immunization-registry-menu>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Manage groups" >
+    <div class="grid-container">
+      <mat-grid-list cols="2"  [rowHeight]="rowHeight()">
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <app-group-table (groupEmitter)="group = $event" ></app-group-table>
+          </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <button mat-raised-button (click)="groupService.triggerFetch().subscribe()">Fetch groups from registry</button>
+            <button mat-raised-button [disabled]="!group">Add a member</button>
+            <button mat-raised-button [disabled]="!group">Remove a member</button>
+            <button mat-raised-button [disabled]="!group">FHIR Resource</button>
+          </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="2">
+          <mat-card class="dashboard-card">
+            <app-patient-table [dataSource]="patientDatasource"></app-patient-table>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </mat-tab>
+  <mat-tab label="Create group" >
+    <app-fhir-post></app-fhir-post>
+    <button>link to subscription</button>
+  </mat-tab>
+</mat-tab-group>
+
 
 

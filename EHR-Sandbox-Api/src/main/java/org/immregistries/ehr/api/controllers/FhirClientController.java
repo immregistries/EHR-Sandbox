@@ -26,9 +26,11 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class FhirClientController {
+    private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     public static final String PATIENT_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/patients";
     public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";
     public static final String IMM_REGISTRY_SUFFIX = "/imm-registry/{registryId}";
@@ -48,15 +50,12 @@ public class FhirClientController {
     private ResourceClient resourceClient;
     @Autowired
     private CustomClientFactory customClientFactory;
-
-    private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
-
 
     @GetMapping(IMM_REGISTRY_SUFFIX + "/{resourceType}/{id}")
     public ResponseEntity<String> getFhirResourceFromIIS(
@@ -106,7 +105,10 @@ public class FhirClientController {
         Patient patient = parser.parseResource(Patient.class, message);
         Parameters parameters = new Parameters().addParameter("patientt", message);
         Bundle bundle = customClientFactory.newGenericClient(registryId).operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource",patient).returnResourceType(Bundle.class).execute();
-        return ResponseEntity.ok(parser.encodeResourceToString(bundle));
+//        return ResponseEntity.ok(parser.encodeResourceToString(bundle));
+        return ResponseEntity.ok(
+                bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.joining(","))
+        );
     }
 
     @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)

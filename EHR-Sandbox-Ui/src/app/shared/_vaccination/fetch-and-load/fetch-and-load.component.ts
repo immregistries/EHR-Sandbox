@@ -1,10 +1,10 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
 
 @Component({
   selector: 'app-fetch-and-load',
@@ -24,7 +24,7 @@ export class FetchAndLoadComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private fhirService: FhirService,
+    private fhirClient: FhirClientService,
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
@@ -37,7 +37,7 @@ export class FetchAndLoadComponent implements OnInit {
 
   loadEverythingFromPatient() {
     this.loading = true
-    this.fhirService.loadEverythingFromPatient(this.patientId ?? -1).subscribe((res) => {
+    this.fhirClient.loadEverythingFromPatient(this.patientId ?? -1).subscribe((res) => {
       this.loading = false
       this.vaccinationEvents = res
     })

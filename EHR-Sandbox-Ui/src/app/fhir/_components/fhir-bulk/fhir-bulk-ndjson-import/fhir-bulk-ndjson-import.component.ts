@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirBulkService } from 'src/app/fhir/_services/fhir-bulk.service';
 
 @Component({
   selector: 'app-fhir-bulk-ndjson-import',
@@ -8,7 +8,7 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
 })
 export class FhirBulkNdjsonImportComponent implements OnInit {
 
-  constructor(public fhir: FhirService) { }
+  constructor(public fhirBulkService: FhirBulkService) { }
 
   ngOnInit(): void {
   }
@@ -28,7 +28,7 @@ export class FhirBulkNdjsonImportComponent implements OnInit {
   ndJson() {
     if (this.ndUrl && this.ndUrl.length > 1) {
       this.loading = true
-      this.fhir.groupNdJson(this.ndUrl, this.loadInFacility).subscribe((res) => {
+      this.fhirBulkService.groupNdJson(this.ndUrl, this.loadInFacility).subscribe((res) => {
         this.result = res.trim()
         this.loading = false
         this.error = false
