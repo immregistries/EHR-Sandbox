@@ -14,10 +14,10 @@
         </mat-grid-tile>
         <mat-grid-tile>
           <mat-card class="dashboard-card">
-            <button mat-raised-button (click)="groupService.triggerFetch().subscribe()">Fetch groups from registry</button>
-            <button mat-raised-button [disabled]="!group">Add a member</button>
+            <button mat-raised-button (click)="triggerRefresh()">Fetch groups from registry</button>
+            <!-- <button mat-raised-button [disabled]="!group">Add a member</button>
             <button mat-raised-button [disabled]="!group">Remove a member</button>
-            <button mat-raised-button [disabled]="!group">FHIR Resource</button>
+            <button mat-raised-button [disabled]="!group">FHIR Resource</button> -->
           </mat-card>
         </mat-grid-tile>
         <mat-grid-tile colspan="2">

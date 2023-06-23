@@ -25,7 +25,7 @@ export class FhirPostComponent implements OnInit {
   "identifier": {
     "system": "ehr-sandbox/group",
     "value": "` + Math.trunc(Math.random() * Math.random() * 10000) + `"
-  }
+  },
   "actual": true,
   "managingEntity": {
     "identifier": {

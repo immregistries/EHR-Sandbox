@@ -76,7 +76,7 @@ public class GroupController {
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
                 .execute();
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
-            if (entry.hasResource() && entry.getResource() instanceof Group) {
+            if (entry.hasResource() && entry.getResource() instanceof Group && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))) {
                 groupProviderR5.update((Group) entry.getResource(), servletRequestDetails, immunizationRegistry);
             }
         }
@@ -85,20 +85,7 @@ public class GroupController {
         return getAll(facilityId);
     }
 
-    /**
-     * Disabled to be replaced by fhir operations
-     */
-//    @PutMapping()
-//    public ResponseEntity<String> update(@RequestBody Group group, @PathVariable Integer facilityId, @PathVariable Integer registryId) {
-//        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
-//        IParser parser = fhirContext.newJsonParser();
-//        groupsStore.putIfAbsent(facilityId, new HashMap<>(5));
-//        groupsStore.get(facilityId).putIfAbsent(immunizationRegistry.getId(), group);
-//        // TODO send to IIS & deal with ID
-//        return ResponseEntity.ok(parser.encodeResourceToString(group));
-//    }
-
-    @PostMapping()
+    @PostMapping("/$member-add")
     public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @RequestParam String patientId) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
@@ -108,8 +95,8 @@ public class GroupController {
          */
 //        IParser parser = fhirContext.newJsonParser();
         Parameters in = new Parameters()
-                .addParameter("patientIdentifier", patient.getIdentifierFirstRep())
-                .addParameter("providerIdentifier", new Identifier().setSystem("AIRA_TEST").setValue("test"));
+                .addParameter("memberId", patient.getIdentifierFirstRep())
+                .addParameter("providerNpi", new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId)));
         Parameters out = add_member_operation(facilityId,immunizationRegistry,in);
 
 
@@ -123,10 +110,7 @@ public class GroupController {
     public Parameters add_member_operation(Integer facilityId, ImmunizationRegistry immunizationRegistry, Parameters in) {
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
         Group group = groupsStore.getOrDefault(facilityId, new HashMap<>(0)).get(immunizationRegistry.getId());
-
-        return client.operation().onInstance(group.getIdElement()).named("$add-member").withParameters(in).execute();
-
-
+        return client.operation().onInstance(group.getIdElement()).named("$member-add").withParameters(in).execute();
     }
 
 

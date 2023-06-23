@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Group } from 'fhir/r5';
 import { map, Observable, of } from 'rxjs';
@@ -38,11 +38,29 @@ export class GroupService extends RefreshService {
     }
   }
 
+  addMember(patientId: string): Observable<Group[]>{
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
+    let params: HttpParams = new HttpParams().append("patientId", patientId)
+    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
+      return this.http.post<string[]>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/$member-add`, null,
+        {
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+          params: params
+        }
+        ).pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
+    } else {
+      return of([])
+    }
+  }
+
   triggerFetch(): Observable<Group[]>{
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0 && registryId  && registryId > 0){
+    if (tenantId > 0 && facilityId > 0  && registryId > 0){
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/$fetch`,
         httpOptions)

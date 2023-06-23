@@ -10,11 +10,15 @@
           class="mat-elevation-z8">
       <ng-container matColumnDef="identifier">
         <th mat-header-cell *matHeaderCellDef>Identifier</th>
-        <td mat-cell *matCellDef="let element">{{element.identifier ?? element.id}}</td>
+        <td mat-cell *matCellDef="let element">{{element.identifier ? element.identifier[0].value : element.id}}</td>
       </ng-container>
       <ng-container matColumnDef="authority">
         <th mat-header-cell *matHeaderCellDef>Authority</th>
         <td mat-cell *matCellDef="let element">{{element.managingEntity | json}}</td>
+      </ng-container>
+      <ng-container matColumnDef="member">
+        <th mat-header-cell *matHeaderCellDef>Members number</th>
+        <td mat-cell *matCellDef="let element">{{element.member ? element.member.length : 0}}</td>
       </ng-container>
       <!-- <ng-container matColumnDef="identifier">
         <th mat-header-cell *matHeaderCellDef>identifier</th>
@@ -26,8 +30,8 @@
           <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
 
             <!-- Group details, buttons to add member, list of members -->
-            <!-- <button mat-raised-button >Add a member</button>
-            <button mat-raised-button >Remove a member</button> -->
+            <button mat-raised-button (click)="addMember(element)">Add a member</button>
+            <button mat-raised-button >Remove a member</button>
             <button mat-raised-button >FHIR Resource</button>
           </div>
         </td>

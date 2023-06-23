@@ -68,6 +68,29 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
         Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
+        groupsStore.get(facility.getId()).put(immunizationRegistry.getId(), group);
+        return new MethodOutcome().setResource(group);
+    }
+
+    /**
+     * Currently unusable as is, as request
+     * @param group
+     * @param requestDetails
+     * @return
+     */
+    @Update
+    public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails) {
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
+                (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
+        ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
+        return create(group,requestDetails, immunizationRegistry) ;
+    }
+
+    public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
+        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
+        groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
         groupsStore.get(facility.getId()).putIfAbsent(immunizationRegistry.getId(), group);
         return new MethodOutcome().setResource(group);
     }

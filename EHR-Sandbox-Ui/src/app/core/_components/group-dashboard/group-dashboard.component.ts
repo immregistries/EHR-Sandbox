@@ -8,6 +8,7 @@ import { TenantService } from '../../_services/tenant.service';
 import { GroupService } from '../../_services/group.service';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Group } from 'fhir/r5';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-group-dashboard',
@@ -17,7 +18,18 @@ import { Group } from 'fhir/r5';
 export class GroupDashboardComponent implements AfterViewInit {
   public patientDatasource = new MatTableDataSource<EhrPatient>([]);
 
-  public group?: Group | null;
+  private _group?: Group | null | undefined;
+  public get group(): Group | null | undefined {
+
+    return this._group;
+  }
+  public set group(value: Group | null | undefined) {
+    this.patientService.quickReadPatients()
+      .pipe(filter((patient) => {
+      return true;
+    })).subscribe((res) => this.patientDatasource.data = res)
+    this._group = value;
+  }
 
   constructor(private tenantService: TenantService,
     private facilityService: FacilityService,
@@ -28,12 +40,18 @@ export class GroupDashboardComponent implements AfterViewInit {
     @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
 
     ngAfterViewInit(): void {
-      this.tabGroup.selectedIndex = 1;
+      this.tabGroup.selectedIndex = 1
       this.groupService.triggerFetch()
     }
 
     rowHeight(): string {
       return (window.innerHeight/2 - 60) + 'px'
+    }
+
+    triggerRefresh() {
+      this.groupService.triggerFetch().subscribe(() => {
+        this.facilityService.doRefresh()
+      })
     }
 
 

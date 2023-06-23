@@ -8,6 +8,7 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
+import { PatientListComponent } from '../../_patient/patient-list/patient-list.component';
 
 @Component({
   selector: 'app-group-table',
@@ -27,6 +28,7 @@ export class GroupTableComponent {
     "identifier",
     // "date",
     "authority",
+    "member"
     // "group"
   ]
 
@@ -34,7 +36,7 @@ export class GroupTableComponent {
     public codeMapsService: CodeMapsService,
     private groupService: GroupService,
     private facilityService: FacilityService,
-    private registryService: ImmunizationRegistryService
+    private registryService: ImmunizationRegistryService,
     ) { }
 
   ngOnInit(): void {
@@ -82,5 +84,32 @@ export class GroupTableComponent {
     this.groupEmitter.emit(this.expandedElement)
 
   }
+
+  addMember(group: Group) {
+
+    const dialogRef = this.dialog.open(PatientListComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+    });
+    dialogRef.afterClosed().subscribe(selectedPatientId => {
+      console.log(selectedPatientId)
+
+      this.groupService.addMember(selectedPatientId).subscribe((res) => {
+        console.log(res)
+        this.groupService.triggerFetch().subscribe()
+        this.groupService.readGroups().subscribe((res) => {
+          this.loading = false
+          this.dataSource.data = res
+          this.expandedElement = res.find((reco: Group) => {return reco.id == this.expandedElement?.id}) ?? null
+        })
+      });
+    });
+
+  }
+
+
 
 }

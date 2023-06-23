@@ -17,8 +17,7 @@ import java.text.SimpleDateFormat;
 @Service
 public class PatientMapperR5 {
   private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
-  public static final String MRN_SYSTEM = "urn:mrns";
-
+  public static final String MRN_SYSTEM = "sabbia:mrns";
   public static final String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
   public static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
   public static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
