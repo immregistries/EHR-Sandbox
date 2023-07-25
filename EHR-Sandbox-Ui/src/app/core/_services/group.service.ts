@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Group } from 'fhir/r5';
-import { map, Observable, of } from 'rxjs';
+import { Group, GroupMember } from 'fhir/r5';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
 import { ImmunizationRegistryService } from './immunization-registry.service';
-import { RefreshService } from './refresh.service';
+import { CurrentSelectedService } from './current-selected.service';
 
 
 const httpOptions = {
@@ -15,14 +15,14 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class GroupService extends RefreshService {
+export class GroupService extends CurrentSelectedService<Group> {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private immunizationRegistryService: ImmunizationRegistryService) {
-      super()
+      super(new BehaviorSubject<Group>({resourceType: "Group", type: "person", membership: "definitional"}))
   }
   readGroups(): Observable<Group[]>{
     const tenantId: number = this.tenantService.getCurrentId()
@@ -38,21 +38,39 @@ export class GroupService extends RefreshService {
     }
   }
 
-  addMember(patientId: string): Observable<Group[]>{
+  addMember(groupId:string, patientId: string): Observable<string>{
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
     let params: HttpParams = new HttpParams().append("patientId", patientId)
     if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
-      return this.http.post<string[]>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/$member-add`, null,
+      return this.http.post<string>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/${groupId}/$member-add`, null,
         {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
           params: params
         }
-        ).pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
+        )
     } else {
-      return of([])
+      return of("")
+    }
+  }
+
+  removeMember(groupId:string, patientId: string): Observable<string>{
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
+    let params: HttpParams = new HttpParams().append("patientId", patientId)
+    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
+      return this.http.post<string>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/${groupId}/$member-remove`, null,
+        {
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+          params: params
+        }
+        )
+    } else {
+      return of("")
     }
   }
 

@@ -64,6 +64,7 @@ import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-fo
 import { GroupTableComponent } from './_components/group-table/group-table.component';
 import { PatientMatchComponent } from './_patient/patient-match/patient-match.component';
 import { PatientReceivedTableComponent } from './_patient/patient-received-table/patient-received-table.component';
+import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
 
 
 @NgModule({
@@ -114,7 +115,8 @@ import { PatientReceivedTableComponent } from './_patient/patient-received-table
     ClinicianFormComponent,
     GroupTableComponent,
     PatientMatchComponent,
-    PatientReceivedTableComponent
+    PatientReceivedTableComponent,
+    JsonDialogComponent
   ],
   imports: [
     CommonModule,
@@ -196,6 +198,7 @@ import { PatientReceivedTableComponent } from './_patient/patient-received-table
     PatientDashboardComponent,
     PatientMenuComponent,
     PatientHistoryComponent,
+    PatientReceivedTableComponent,
 
     CodeMapsPipe,
      TextShortenPipe,

@@ -5,8 +5,7 @@ import { SettingsService } from './settings.service';
 import { EhrPatient, Revision} from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
-import { RefreshService } from './refresh.service';
-import { CurrentSelectedService } from './current-selected.service';
+import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,7 +17,7 @@ const httpOptions = {
 /**
  * Patient Service interacting with the API, and providing the global selected patient as an observable
  */
-export class PatientService extends  CurrentSelectedService<EhrPatient> {
+export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

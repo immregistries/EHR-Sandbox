@@ -17,14 +17,16 @@ export class FhirPostComponent implements OnInit {
 
   @Input()
   resourceType: string = "Group";
+  private randn = Math.trunc(Math.random() * Math.random() * 10000)
   @Input()
   resource: string =
 `{
   "resourceType": "Group",
   "type": "person",
+  "name": "group ` + this.randn + `",
   "identifier": {
     "system": "ehr-sandbox/group",
-    "value": "` + Math.trunc(Math.random() * Math.random() * 10000) + `"
+    "value": "` + this.randn + `"
   },
   "actual": true,
   "managingEntity": {

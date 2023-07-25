@@ -4,8 +4,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Facility } from '../_model/rest';
 import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { RefreshService } from './refresh.service';
-import { CurrentSelectedService } from './current-selected.service';
+import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -17,7 +16,7 @@ const httpOptions = {
 /**
  * Facility Service interacting with the API, and providing the global selected facility as an observable
  */
-export class FacilityService extends CurrentSelectedService<Facility> {
+export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
 
   constructor(private http: HttpClient,

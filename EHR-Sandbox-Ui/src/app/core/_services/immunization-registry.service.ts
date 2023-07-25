@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, share } from 'rxjs';
 import { ImmunizationRegistry } from '../_model/rest';
 import { SettingsService } from './settings.service';
-import { RefreshService } from './refresh.service';
-import { CurrentSelectedService } from './current-selected.service';
+import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,7 +12,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class ImmunizationRegistryService extends CurrentSelectedService<ImmunizationRegistry> {
+export class ImmunizationRegistryService extends CurrentSelectedWithIdService<ImmunizationRegistry> {
   constructor(private http: HttpClient, private settings: SettingsService) {
     super(new BehaviorSubject<ImmunizationRegistry>({}))
   }

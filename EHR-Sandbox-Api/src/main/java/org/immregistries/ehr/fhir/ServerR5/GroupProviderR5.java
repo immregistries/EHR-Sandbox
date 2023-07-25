@@ -43,7 +43,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
         return ResourceType.Group;
     }
     @Resource
-    Map<Integer, Map<Integer, Group>> groupsStore;
+    Map<Integer, Map<Integer, Map<String, Group>>> groupsStore;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
     @Autowired
@@ -68,7 +68,11 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
         Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
-        groupsStore.get(facility.getId()).put(immunizationRegistry.getId(), group);
+        groupsStore.get(facility.getId())
+                .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
+        groupsStore.get(facility.getId())
+                .get(immunizationRegistry.getId())
+                .put(group.getIdElement().getIdPart(), group);
         return new MethodOutcome().setResource(group);
     }
 
@@ -91,7 +95,11 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
         Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
-        groupsStore.get(facility.getId()).putIfAbsent(immunizationRegistry.getId(), group);
+        groupsStore.get(facility.getId())
+                .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
+        groupsStore.get(facility.getId())
+                .get(immunizationRegistry.getId())
+                .put(group.getIdElement().getIdPart(),group);
         return new MethodOutcome().setResource(group);
     }
 

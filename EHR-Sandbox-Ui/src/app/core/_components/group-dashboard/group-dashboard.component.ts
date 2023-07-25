@@ -18,17 +18,18 @@ import { filter } from 'rxjs';
 export class GroupDashboardComponent implements AfterViewInit {
   public patientDatasource = new MatTableDataSource<EhrPatient>([]);
 
-  private _group?: Group | null | undefined;
-  public get group(): Group | null | undefined {
+  private _group?: Group | undefined;
+  public get group(): Group | undefined {
 
     return this._group;
   }
-  public set group(value: Group | null | undefined) {
+  public set group(value: Group  | undefined) {
     this.patientService.quickReadPatients()
       .pipe(filter((patient) => {
       return true;
     })).subscribe((res) => this.patientDatasource.data = res)
     this._group = value;
+    this.groupService.setCurrent(this.group ?? {resourceType: "Group",type:"person",membership:"definitional"})
   }
 
   constructor(private tenantService: TenantService,

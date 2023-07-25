@@ -117,10 +117,10 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 
 	@Bean
 	/**
-	 * Map<FacilityId, MAP<RegistryID, Group>>
+	 * Map<FacilityId, MAP<RegistryID, , MAP<GroupID, Group>>>
 	 */
-	public Map<Integer, Map<Integer, Group>> groups() {
-		Map<Integer, Map<Integer, Group>> map = new HashMap<>(20);
+	public Map<Integer, Map<Integer, Map<String, Group>>> groups() {
+		Map<Integer, Map<Integer, Map<String, Group>>> map = new HashMap<>(20);
 		return map;
 	}
 

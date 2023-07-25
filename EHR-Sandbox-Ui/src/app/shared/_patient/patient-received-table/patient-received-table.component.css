@@ -1,0 +1,21 @@
+table {
+  width: 100%;
+}
+
+tr {
+  text-align: left;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.mat-badge-content {
+  font-family: 'Material Icons';
+}
+
+/* Colors dealt with in global style */

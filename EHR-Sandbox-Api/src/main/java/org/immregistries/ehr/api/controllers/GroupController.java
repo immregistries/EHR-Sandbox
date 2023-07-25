@@ -31,13 +31,13 @@ import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REG
 @Conditional(OnR5Condition.class)
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups"})
 public class GroupController {
-    Logger logger = LoggerFactory.getLogger(RecommendationController.class);
+    Logger logger = LoggerFactory.getLogger(GroupController.class);
     @Autowired
     FhirContext fhirContext;
     @Autowired
     CustomClientFactory customClientFactory;
     @Autowired
-    Map<Integer, Map<Integer, Group>> groupsStore;
+    Map<Integer, Map<Integer, Map<String, Group>>> groupsStore;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
@@ -50,10 +50,12 @@ public class GroupController {
     private PatientMapperR5 patientMapperR5;
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable Integer registryId) {
         IParser parser = fhirContext.newJsonParser();
         Set<String> set = groupsStore
-                .getOrDefault(facilityId, new HashMap<>(0)).entrySet().stream().map(
+                .getOrDefault(facilityId, new HashMap<>(0))
+                .getOrDefault(registryId,new HashMap<>(0))
+                .entrySet().stream().map(
                         entry -> parser.encodeResourceToString(entry.getValue()))
                 .collect(Collectors.toSet());
         return ResponseEntity.ok(set);
@@ -73,6 +75,7 @@ public class GroupController {
         servletRequestDetails.setTenantId(String.valueOf(facilityId));
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
         Bundle bundle = customClientFactory.newGenericClient(immunizationRegistry).search().forResource(Group.class).returnBundle(Bundle.class)
+//                .where(Group.MANAGING_ENTITY.hasId(String.valueOf(facilityId)))
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
                 .execute();
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
@@ -80,13 +83,11 @@ public class GroupController {
                 groupProviderR5.update((Group) entry.getResource(), servletRequestDetails, immunizationRegistry);
             }
         }
-//        Set<String> set = bundle.getEntry().stream().map()
-//                .collect(Collectors.toSet());
-        return getAll(facilityId);
+        return getAll(facilityId, registryId);
     }
 
-    @PostMapping("/$member-add")
-    public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @RequestParam String patientId) {
+    @PostMapping("/{groupId}/$member-add")
+    public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
@@ -97,21 +98,45 @@ public class GroupController {
         Parameters in = new Parameters()
                 .addParameter("memberId", patient.getIdentifierFirstRep())
                 .addParameter("providerNpi", new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId)));
-        Parameters out = add_member_operation(facilityId,immunizationRegistry,in);
 
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+        Group group = groupsStore.getOrDefault(facilityId, new HashMap<>(0))
+                .getOrDefault(registryId, new HashMap<>(0)).get(groupId);
+        Parameters out = client.operation().onInstance(group.getIdElement()).named("$member-add").withParameters(in).execute();
 
         /**
          * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
          */
 //        groupsStore.get(facilityId).put(immunizationRegistry.getId(), group);
+        fetchFromIis(facilityId,registryId);
         return ResponseEntity.ok("");
     }
 
-    public Parameters add_member_operation(Integer facilityId, ImmunizationRegistry immunizationRegistry, Parameters in) {
-        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
-        Group group = groupsStore.getOrDefault(facilityId, new HashMap<>(0)).get(immunizationRegistry.getId());
-        return client.operation().onInstance(group.getIdElement()).named("$member-add").withParameters(in).execute();
-    }
+    @PostMapping("/$member-remove")
+    public ResponseEntity<String> remove_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable Integer groupId, @RequestParam String patientId) {
+        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
+        Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        /**
+         * First do match to get destination reference or identifier
+         */
+//        IParser parser = fhirContext.newJsonParser();
+        Parameters in = new Parameters()
+                .addParameter("memberId", patient.getIdentifierFirstRep());
 
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+        Group group = groupsStore
+                .getOrDefault(facilityId, new HashMap<>(0))
+                .getOrDefault(registryId, new HashMap<>(0))
+                .get(groupId);
+        Parameters out = client.operation().onInstance(group.getIdElement()).named("$member-remove").withParameters(in).execute();
+
+        /**
+         * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
+         */
+//        groupsStore.get(facilityId).put(immunizationRegistry.getId(), group);
+        fetchFromIis(facilityId,registryId);
+        return ResponseEntity.ok("");
+    }
 
 }
