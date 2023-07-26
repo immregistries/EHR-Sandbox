@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Parameters;
@@ -145,9 +146,12 @@ public class BulkExportController {
             con.setRequestProperty("Accept", "application/json");
             String encoded = Base64.getEncoder()
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
-                            .getBytes(StandardCharsets.UTF_8));  //Java 8
-            if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
+                            .getBytes(StandardCharsets.UTF_8));
+            if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
                 con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+            } else {
+                con.setRequestProperty("Authorization", "Basic " + encoded);
+
             }
             con.setConnectTimeout(5000);
 

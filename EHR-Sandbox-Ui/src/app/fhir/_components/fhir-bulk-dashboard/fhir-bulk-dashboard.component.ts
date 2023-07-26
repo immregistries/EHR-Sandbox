@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 
 @Component({
@@ -10,11 +11,19 @@ import { MatTabGroup } from '@angular/material/tabs';
 export class FhirBulkDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
 
+  groupId: string = ""
+
   ngAfterViewInit(): void {
     this.tabGroup.selectedIndex = 1;
   }
 
-  constructor() { }
+  constructor(
+    @Optional() public _dialogRef: MatDialogRef<FhirBulkDashboardComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) private data: {groupId: string}) {
+    if (data && data.groupId) {
+      this.groupId = data.groupId;
+    }
+   }
 
   ngOnInit(): void {
   }

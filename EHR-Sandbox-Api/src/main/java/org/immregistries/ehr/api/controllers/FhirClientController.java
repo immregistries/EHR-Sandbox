@@ -35,21 +35,21 @@ public class FhirClientController {
     public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";
     public static final String IMM_REGISTRY_SUFFIX = "/imm-registry/{registryId}";
     @Autowired
-    private ImmunizationRegistryController immunizationRegistryController;
+    private FhirContext fhirContext;
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private ResourceClient resourceClient;
+    @Autowired
+    private CustomClientFactory customClientFactory;
+    @Autowired
+    private FhirConversionController fhirConversionController;
+    @Autowired
+    private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
     private PatientIdentifierRepository patientIdentifierRepository;
     @Autowired
     private ImmunizationIdentifierRepository immunizationIdentifierRepository;
-    @Autowired
-    private FhirContext fhirContext;
-    @Autowired
-    private ResourceClient resourceClient;
-    @Autowired
-    private CustomClientFactory customClientFactory;
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
@@ -98,18 +98,31 @@ public class FhirClientController {
     
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$match")
     public ResponseEntity<String> matchPatient(
+            @PathVariable() Integer facilityId,
             @PathVariable() Integer registryId,
             @PathVariable() String patientId,
             @RequestBody String message) {
-        IParser parser = parser(message);
-        Patient patient = parser.parseResource(Patient.class, message);
-        Parameters parameters = new Parameters().addParameter("patientt", message);
-        Bundle bundle = customClientFactory.newGenericClient(registryId).operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource",patient).returnResourceType(Bundle.class).execute();
-//        return ResponseEntity.ok(parser.encodeResourceToString(bundle));
+        Bundle bundle = matchPatientOperation(facilityId,registryId,patientId,message);
         return ResponseEntity.ok(
                 bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.joining(","))
         );
     }
+
+    public Bundle matchPatientOperation(
+            Integer facilityId,
+            Integer registryId,
+            String patientId,
+            String message) {
+        if(message == null) {
+            message = fhirConversionController.getPatientAsResource(patientId,facilityId).getBody();
+        }
+        IParser parser = parser(message);
+        Patient patient = parser.parseResource(Patient.class, message);
+        Parameters parameters = new Parameters();
+        return customClientFactory.newGenericClient(registryId).operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource",patient).returnResourceType(Bundle.class).execute();
+    }
+
+
 
     @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> updatePatient(

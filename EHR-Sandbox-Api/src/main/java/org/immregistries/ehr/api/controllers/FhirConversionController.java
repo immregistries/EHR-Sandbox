@@ -54,7 +54,6 @@ public class FhirConversionController {
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
     public ResponseEntity<String> getPatientAsResource(
-            HttpServletRequest request,
             @PathVariable() String patientId, @PathVariable() Integer facilityId) {
         EhrPatient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));

@@ -35,6 +35,7 @@ export class PatientReceivedTableComponent implements OnInit {
   @Input()
   public set group(value: Group | undefined | null) {
     this._group = value;
+    this.selectedElementIndex = -1
     this.dataSource.data = this.group?.member ?? []
     this.dataSource.data.forEach(element => {
       this.matching(element)
@@ -57,7 +58,6 @@ export class PatientReceivedTableComponent implements OnInit {
   }
 
   onSelection(index : number) {
-    console.log(index)
     if (this.selectedElementIndex === index) {
       this.selectedElementIndex = undefined
     } else {

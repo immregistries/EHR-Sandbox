@@ -42,7 +42,9 @@ export class GroupService extends CurrentSelectedService<Group> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    let params: HttpParams = new HttpParams().append("patientId", patientId)
+    let params: HttpParams = new HttpParams()
+      .append("patientId", patientId)
+      .append("match",true)
     if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/${groupId}/$member-add`, null,

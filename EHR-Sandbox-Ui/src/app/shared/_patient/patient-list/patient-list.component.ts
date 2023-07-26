@@ -24,8 +24,6 @@ export class PatientListComponent implements OnInit {
   constructor(private tenantService: TenantService,
     private facilityService: FacilityService,
     private patientService: PatientService,
-    private groupService: GroupService,
-    private dialog: MatDialog,
     @Optional() public _dialogRef: MatDialogRef<PatientListComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {}) {
 

@@ -12,6 +12,7 @@ import { PatientListComponent } from '../../_patient/patient-list/patient-list.c
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
 import { JsonDialogComponent } from '../json-dialog/json-dialog.component';
+import { FhirBulkDashboardComponent } from 'src/app/fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 
 @Component({
   selector: 'app-group-table',
@@ -126,6 +127,20 @@ export class GroupTableComponent {
     //   panelClass: 'dialog-without-bar',
     //   data : content,
     // })
+  }
+
+  openBulk(group: Group){
+    const dialogRef = this.dialog.open(FhirBulkDashboardComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-without-bar',
+      data: {groupId: group.id},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.groupService.doRefresh()
+    });
   }
 
 

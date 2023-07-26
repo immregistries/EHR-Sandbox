@@ -27,6 +27,7 @@ export class FhirBulkOperationComponent implements OnInit {
   @Output()
   resultListEmmitter: EventEmitter<[key:{type: string,url:string}]> = new EventEmitter<[key:{type: string,url:string}]>();
 
+  @Input()
   resourceId: string = ''
   exportArguments: string = '_type=Patient,Immunization'
   autofillContentUrl: boolean = true;

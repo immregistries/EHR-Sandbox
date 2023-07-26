@@ -5,7 +5,7 @@
     </ng-template>
   </mat-tab>
   <mat-tab label="Bulk Import Asynch">
-    <app-fhir-bulk [asynchronous]="true"></app-fhir-bulk>
+    <app-fhir-bulk [asynchronous]="true" [groupId]="groupId"></app-fhir-bulk>
   </mat-tab>
   <mat-tab label="Bulk Import Synch">
     <app-fhir-bulk [asynchronous]="false"></app-fhir-bulk>

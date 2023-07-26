@@ -15,6 +15,7 @@ export class FhirBulkComponent implements OnInit {
   constructor() { }
 
   @Input() asynchronous: boolean = true;
+  @Input() groupId: string = "";
 
   resultList?: [key:{type: string,url:string}];
 

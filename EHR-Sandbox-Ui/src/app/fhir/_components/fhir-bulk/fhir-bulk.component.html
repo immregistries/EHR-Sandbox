@@ -3,6 +3,7 @@
     <mat-grid-tile>
       <div class="tile-content">
         <app-fhir-bulk-operation [asynchronous]="asynchronous" [resourceType]="'Group'"
+        [resourceId]="groupId"
         (contentUrl)="contentUrl = $event"
         (ndUrl)="ndUrl = $event"
         (resultListEmmitter)="resultList = $event">

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { EhrPatient } from '../../_model/rest';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +13,8 @@ import { filter } from 'rxjs';
 @Component({
   selector: 'app-group-dashboard',
   templateUrl: './group-dashboard.component.html',
-  styleUrls: ['./group-dashboard.component.css']
+  styleUrls: ['./group-dashboard.component.css'],
+  // encapsulation: ViewEncapsulation.None,
 })
 export class GroupDashboardComponent implements AfterViewInit {
   public patientDatasource = new MatTableDataSource<EhrPatient>([]);

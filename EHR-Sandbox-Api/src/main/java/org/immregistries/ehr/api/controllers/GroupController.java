@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,8 @@ public class GroupController {
     private GroupProviderR5 groupProviderR5;
     @Autowired
     private PatientMapperR5 patientMapperR5;
+    @Autowired
+    private FhirClientController fhirClientController;
 
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable Integer registryId) {
@@ -87,17 +90,26 @@ public class GroupController {
     }
 
     @PostMapping("/{groupId}/$member-add")
-    public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId) {
+    public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        Parameters in = new Parameters();
         /**
          * First do match to get destination reference or identifier
          */
-//        IParser parser = fhirContext.newJsonParser();
-        Parameters in = new Parameters()
-                .addParameter("memberId", patient.getIdentifierFirstRep())
-                .addParameter("providerNpi", new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId)));
+        if (match.isPresent() && match.get()) {
+            Bundle bundle = fhirClientController.matchPatientOperation(facilityId,registryId,patientId,null);
+            if (!bundle.hasEntry()) {
+                throw new RuntimeException("Match failed");
+            }
+            String id = bundle.getEntryFirstRep().getResource().getId();
+
+            in.addParameter("patientReference", new Reference(id));
+        } else {
+            in.addParameter("memberId", patient.getIdentifierFirstRep());
+            in.addParameter("providerNpi", new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId)));;
+        }
 
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
         Group group = groupsStore.getOrDefault(facilityId, new HashMap<>(0))
@@ -112,15 +124,14 @@ public class GroupController {
         return ResponseEntity.ok("");
     }
 
-    @PostMapping("/$member-remove")
-    public ResponseEntity<String> remove_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable Integer groupId, @RequestParam String patientId) {
+    @PostMapping("/{groupId}/$member-remove")
+    public ResponseEntity<String> remove_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
         /**
          * First do match to get destination reference or identifier
          */
-//        IParser parser = fhirContext.newJsonParser();
         Parameters in = new Parameters()
                 .addParameter("memberId", patient.getIdentifierFirstRep());
 
