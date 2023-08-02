@@ -25,7 +25,10 @@ export class FhirClientService {
     private tenantService: TenantService,
     private immRegistries: ImmunizationRegistryService) { }
 
-  postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceLocalId: number, parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
+  postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match", resourceLocalId: number, parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
+    if (operation == "$match") {
+      return this.matchResource(type,resource,resourceLocalId,parentId);
+    }
     switch(type){
       case "Patient": {
         return this.quickPostPatient(resourceLocalId,resource,operation);

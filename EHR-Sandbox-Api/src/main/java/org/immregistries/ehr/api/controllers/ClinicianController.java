@@ -37,14 +37,13 @@ public class ClinicianController {
     }
 
     @GetMapping("/$random")
-    public Clinician random(@PathVariable Integer tenantId) {
-        return  randomGenerator.randomClinician(tenantRepository.findById(tenantId).get());
+    public Clinician random(@RequestAttribute Tenant tenant) {
+        return  randomGenerator.randomClinician(tenant);
     }
 
 
     @PostMapping()
-    public Clinician postClinicians(@PathVariable Integer tenantId, @RequestBody Clinician clinician) {
-        Tenant tenant = tenantRepository.findById(tenantId).get();
+    public Clinician postClinicians(@RequestAttribute Tenant tenant, @RequestBody Clinician clinician) {
         clinician.setTenant(tenant);
         return clinicianRepository.save(clinician);
     }

@@ -65,13 +65,10 @@ public class ImmunizationMapperR5 {
 
     if (!vaccinationEvent.getPatient().getMrn().isBlank()) {
       i.setPatient(new Reference()
-//              .setReference("Patient/" + dbVaccination.getPatient().getId())
               .setIdentifier(new Identifier()
                       .setValue(vaccinationEvent.getPatient().getMrn())
                       .setSystem(PatientMapperR5.MRN_SYSTEM)));
     }
-
-//    i.setRecorded(vaccine.getCreatedDate());
     i.setLotNumber(vaccine.getLotNumber());
     i.getOccurrenceDateTimeType().setValue(vaccine.getAdministeredDate());
     i.setDoseQuantity(new Quantity());

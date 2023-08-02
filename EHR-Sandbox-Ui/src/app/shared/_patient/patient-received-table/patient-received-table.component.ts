@@ -83,8 +83,15 @@ export class PatientReceivedTableComponent implements OnInit {
     } else {
       let ehrPatient: EhrPatient | undefined;
       if (member.entity.reference?.startsWith("Patient/")) {
-        let id = +member.entity.reference?.split("Patient/")[1]
-        ehrPatient = this.patientsForMatching.find((patient) => patient.id == id)
+        // let id = +member.entity.reference?.split("Patient/")[1]
+        // ehrPatient = this.patientsForMatching.find((patient) => patient.id == id)
+      }
+      if (member.entity.identifier?.value) { // TODO check for different systems ?
+        let mrn = member.entity.identifier.value
+
+        ehrPatient = this.patientsForMatching.find((patient) => patient.mrn == mrn)
+        member.entity.identifier.type = {text: "Patient"}
+        // member.entity.identifier.type = {text: "Patient"}
       }
       if (member.entity.identifier?.value) { // TODO check for different systems ?
         let mrn = member.entity.identifier.value
@@ -121,6 +128,10 @@ export class PatientReceivedTableComponent implements OnInit {
   public remove(element: GroupMember){
     if (element.id && this.group?.id) {
       this.groupService.removeMember(this.group.id, element.id).subscribe(() => {
+        this.groupService.doRefresh()
+      })
+    } else if (this.group?.id) {
+      this.groupService.removeMember(this.group.id, undefined, element.entity.reference, element.entity.identifier).subscribe(() => {
         this.groupService.doRefresh()
       })
     }

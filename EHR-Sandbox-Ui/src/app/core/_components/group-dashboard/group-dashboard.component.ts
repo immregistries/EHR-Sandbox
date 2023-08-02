@@ -24,13 +24,13 @@ export class GroupDashboardComponent implements AfterViewInit {
 
     return this._group;
   }
-  public set group(value: Group  | undefined) {
+  public set group(value: Group | undefined) {
     this.patientService.quickReadPatients()
       .pipe(filter((patient) => {
-      return true;
-    })).subscribe((res) => this.patientDatasource.data = res)
+        return true;
+      })).subscribe((res) => this.patientDatasource.data = res)
     this._group = value;
-    this.groupService.setCurrent(this.group ?? {resourceType: "Group",type:"person",membership:"definitional"})
+    this.groupService.setCurrent(this.group ?? { resourceType: "Group", type: "person", membership: "definitional" })
   }
 
   constructor(private tenantService: TenantService,
@@ -39,22 +39,29 @@ export class GroupDashboardComponent implements AfterViewInit {
     public groupService: GroupService,
     private dialog: MatDialog) { }
 
-    @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
+  @ViewChild('tabs', { static: false }) tabGroup!: MatTabGroup;
 
-    ngAfterViewInit(): void {
-      this.tabGroup.selectedIndex = 1
-      this.groupService.triggerFetch()
-    }
 
-    rowHeight(): string {
-      return (window.innerHeight/2 - 60) + 'px'
-    }
+  sample!: string
 
-    triggerRefresh() {
-      this.groupService.triggerFetch().subscribe(() => {
-        this.facilityService.doRefresh()
-      })
-    }
+  ngAfterViewInit(): void {
+    this.tabGroup.selectedIndex = 1
+    this.groupService.triggerFetch()
+    this.groupService.readSample().subscribe(res => {
+      this.sample= JSON.stringify(res, undefined, 4)
+    })
+  }
+
+  rowHeight(): string {
+    return (window.innerHeight / 2 - 60) + 'px'
+  }
+
+  triggerRefresh() {
+    this.groupService.triggerFetch().subscribe(() => {
+      this.facilityService.doRefresh()
+    })
+  }
+
 
 
 }

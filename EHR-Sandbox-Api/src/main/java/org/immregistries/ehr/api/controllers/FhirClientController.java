@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -97,14 +98,16 @@ public class FhirClientController {
     }
     
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$match")
-    public ResponseEntity<String> matchPatient(
+    public ResponseEntity<List<String>> matchPatient(
             @PathVariable() Integer facilityId,
             @PathVariable() Integer registryId,
             @PathVariable() String patientId,
             @RequestBody String message) {
         Bundle bundle = matchPatientOperation(facilityId,registryId,patientId,message);
+
         return ResponseEntity.ok(
-                bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.joining(","))
+                bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.toList()
+                )
         );
     }
 

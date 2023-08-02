@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +56,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
-                authorized = isAuthorizedURI(request.getServletPath());
+                authorized = filterUrl(request);
 
-            } else { // for registration no authorization needed
+            } else if (request.getServletPath().startsWith("/auth")) { // for registration no authorization needed
                 authorized = true;
             }
         } catch (Exception e) {
@@ -80,14 +82,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     /**
      * TODO improve by reversing the logic
-     * @param url
+     * @param request
      * @return
-     * @throws IOException
+     * @throws InvalidRequestException
      */
-    private boolean isAuthorizedURI(String url) throws IOException {
+    private boolean filterUrl(HttpServletRequest request) throws InvalidRequestException {
+        String url = request.getServletPath();
 //        logger.info("{}", url);
         int tenantId = -1;
         int facilityId = -1;
+        int clinicianId = -1;
+        int registryId = -1;
         String patientId = null;
         String vaccinationId = null;
         // Parsing the URI
@@ -97,13 +102,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String item = "";
         if(scanner.hasNext()) {
             item = scanner.next();
-//            if (item.equals("ehr-sandbox") ) {
-//                if (scanner.hasNext()) {
-//                    item = scanner.next();
-//                } else {
-//                    return true;
-//                }
-//            }
             /**
              * Fhir Server
              */
@@ -115,26 +113,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
              */
             if (item.equals("imm-registry")) {
                 if (scanner.hasNextInt()) {
-                    tenantId = scanner.nextInt();
-                    if (!immunizationRegistryRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
-                        return  false;
-                    }
+                    registryId = scanner.nextInt();
+                    ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId,userDetailsService.currentUserId())
+                            .orElseThrow(() -> new InvalidRequestException("invalid registry id"));
                 }
             }
             if (item.equals("tenants") ) {
                 if (scanner.hasNextInt()) {
                     tenantId = scanner.nextInt();
-                    if (!tenantRepository.existsByIdAndUserId(tenantId, userDetailsService.currentUserId())){
-                        return  false;
-                    }
+                    Tenant tenant = tenantRepository.findByIdAndUserId(tenantId, userDetailsService.currentUserId())
+                            .orElseThrow(() -> new InvalidRequestException("invalid tenant id"));
+                    request.setAttribute("tenant", tenant);
                 }
             }
             if (item.equals("facilities") ) {
                 if (scanner.hasNextInt()) {
                     facilityId = scanner.nextInt();
-                    if (!facilityRepository.existsByUserAndId(userDetailsService.currentUser(), facilityId)){
-                        return  false;
-                    }
+                    Facility facility = facilityRepository.findByUserAndId(userDetailsService.currentUser(), facilityId)
+                            .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
+                    request.setAttribute("facility", facility);
                 }
             }
         }
@@ -145,16 +142,16 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (item.equals("facilities") ) {
                 if (scanner.hasNextInt()) {
                     facilityId = scanner.nextInt();
-                    if (!facilityRepository.existsByTenantIdAndId(tenantId,facilityId)){
-                        return  false;
-                    }
+                    Facility facility = facilityRepository.findByIdAndTenantId(facilityId, tenantId)
+                            .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
+                    request.setAttribute("facility", facility);
                 }
             }else if (item.equals("clinicians") ) {
                 if (scanner.hasNextInt()) {
-                    facilityId = scanner.nextInt();
-                    if (!clinicianRepository.existsByTenantIdAndId(tenantId,facilityId)){
-                        return false;
-                    }
+                    clinicianId = scanner.nextInt();
+                    Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId,clinicianId)
+                            .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));
+                    request.setAttribute("clinician", clinician);
                 }
             }
         }
@@ -165,17 +162,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (item.equals("patients") ) {
                 if (scanner.hasNextInt()) {
                     patientId = scanner.next();
-                    if (!patientId.contains("$") && !patientRepository.existsByFacilityIdAndId(facilityId,patientId)){
-                        return  false;
-                    }
+                    EhrPatient ehrPatient = patientRepository.findByFacilityIdAndId(facilityId,patientId)
+                            .orElseThrow(() -> new InvalidRequestException("invalid patient id"));
+                    request.setAttribute("patient", ehrPatient);
                 }
             }
             if (item.equals("vaccinations") ) {
                 if (scanner.hasNextInt()) {
                     vaccinationId = scanner.next();
-                    if (!vaccinationId.contains("$") && !vaccinationEventRepository.existsByAdministeringFacilityIdAndId(facilityId,vaccinationId)){
-                        return  false;
-                    }
+                    VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId,vaccinationId)
+                            .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
+                    request.setAttribute("vaccinationEvent", vaccinationEvent);
                 }
             }
         }
@@ -186,9 +183,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (item.equals("vaccinations") ) {
                 if (scanner.hasNextInt()) {
                     vaccinationId = scanner.next();
-                    if (!vaccinationId.contains("$") && !vaccinationEventRepository.existsByPatientIdAndId(patientId,vaccinationId)){
-                        return  false;
-                    }
+                    VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientIdAndId(patientId,vaccinationId)
+                            .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
+                    request.setAttribute("vaccinationEvent", vaccinationEvent);
                 }
             }
         }

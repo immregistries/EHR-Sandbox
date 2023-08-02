@@ -20,6 +20,7 @@ import org.immregistries.ehr.fhir.Client.IResourceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.http.HttpRequest;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -67,13 +69,19 @@ public class SubscriptionController {
         return ehrSubscription;
     }
 
+    @GetMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/sample")
+    public ResponseEntity<String> getSample(@RequestAttribute() Facility facility, @PathVariable() int facilityId, @PathVariable() Integer registryId) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
+        return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
+    }
+
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
-    public Boolean subscribeToIIS(@PathVariable() Integer registryId, @PathVariable() int facilityId , @RequestBody String body) {
+    public Boolean subscribeToIIS(@PathVariable() Integer registryId, @PathVariable() int facilityId, @RequestParam Optional<String> groupId) {
         ImmunizationRegistry ir = immRegistryController.settings(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = customClientFactory.newGenericClient(ir);
-
 //        MethodOutcome outcome = client.create().resource(sub).execute();
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
         Subscription outcomeSub = (Subscription) outcome.getResource();
@@ -116,7 +124,7 @@ public class SubscriptionController {
         /**
          * Giving a name for display with facility number and name
          */
-        sub.setName("EHR sandbox n" + facility.getId() + " " + facility.getNameDisplay());
+        sub.setName("EHR n" + facility.getId() + " " + facility.getNameDisplay());
 
         sub.setHeartbeatPeriod(5);
         sub.setTimeout(30);
@@ -147,7 +155,6 @@ public class SubscriptionController {
          */
         SubscriptionTopic topic;
         URL url;
-        IParser parser = fhirContext.newJsonParser();
         HttpURLConnection con;
         try {
             url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");
@@ -155,11 +162,9 @@ public class SubscriptionController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Content-Type", "application/json");
             con.setConnectTimeout(5000);
-
             int status = con.getResponseCode();
             if (status == 200) {
-                topic = parser.parseResource(SubscriptionTopic.class, con.getInputStream());
-//                logger.info("status {} topic {}",status, parser.encodeResourceToString(topic));
+                topic = fhirContext.newJsonParser().parseResource(SubscriptionTopic.class, con.getInputStream());
                 sub.addContained(topic);
                 sub.setTopicElement(new CanonicalType(topic.getId().split("/")[1]));
             } else {
@@ -167,9 +172,7 @@ public class SubscriptionController {
             }
             con.disconnect();
 
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (ProtocolException e) {
+        } catch (MalformedURLException | ProtocolException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -59,7 +59,7 @@ public class FhirConversionController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
 
         Patient fhirPatient = patientMapper.toFhirPatient(patient,
                 resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
@@ -70,14 +70,9 @@ public class FhirConversionController {
 
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/resource")
     public ResponseEntity<String> immunizationResource(
-            HttpServletRequest request,
-            @PathVariable() String vaccinationId,
-            @PathVariable() Integer facilityId) {
-        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
+            @RequestAttribute() VaccinationEvent vaccinationEvent,
+            @RequestAttribute Facility facility) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
         Immunization immunization =
                 immunizationMapper.toFhirImmunization(vaccinationEvent,
                         resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility),
@@ -100,21 +95,18 @@ public class FhirConversionController {
 
 
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
-    public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @PathVariable Integer facilityId) {
+    public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @RequestAttribute Facility facility) {
         ImmunizationRegistry ir = immunizationRegistryController.settings(registryId);
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
-        return loadNdJson(ir, facility,ndjson);
+        return loadNdJson(ir, facility, ndjson);
     }
 
     private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, String ndJson) {
         IParser parser = fhirContext.newNDJsonParser();
         Bundle bundle = (Bundle) parser.parseResource(ndJson);
-        return bundleImportService.importBundle(immunizationRegistry,facility, bundle);
+        return bundleImportService.importBundle(immunizationRegistry, facility, bundle);
     }
 
-    private String validateNdJsonBundle(Bundle bundle ) {
+    private String validateNdJsonBundle(Bundle bundle) {
 //        IValidator validator = new
         FhirValidator validator = fhirContext.newValidator();
 

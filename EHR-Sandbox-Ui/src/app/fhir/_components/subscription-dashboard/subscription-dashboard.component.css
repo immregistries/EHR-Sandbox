@@ -1,3 +1,7 @@
+.mat-mdc-tab-disabled:first-child {
+  opacity: 1;
+}
+
 .grid-container {
   margin: 5px;
 }

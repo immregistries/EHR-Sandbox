@@ -16,6 +16,7 @@
           <mat-select [(ngModel)]="operation" name="operation">
             <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
             <mat-option [value]="'Create'">Create</mat-option>
+            <mat-option [value]="'$match'">$match</mat-option>
             <!-- <mat-option [value]="'Update'">Update</mat-option> -->
           </mat-select>
         </mat-form-field>
@@ -26,7 +27,6 @@
       </div>
 
       <div class="footer-end">
-        <button mat-raised-button class="w3-right" (click)="match()" cdkFocusInitial>$match</button>
         <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
       </div>
 

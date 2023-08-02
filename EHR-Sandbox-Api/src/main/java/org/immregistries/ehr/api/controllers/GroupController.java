@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -51,6 +52,18 @@ public class GroupController {
     private PatientMapperR5 patientMapperR5;
     @Autowired
     private FhirClientController fhirClientController;
+
+    @GetMapping("/sample")
+    public ResponseEntity<String> getSample(@PathVariable() int facilityId) {
+        Group group = new Group();
+        group.setType(Group.GroupType.PERSON);
+        long randn = Math.round(Math.random());
+        group.setName("Generated " + randn);
+        group.addIdentifier().setSystem("ehr-sandbox/group").setValue(String.valueOf(randn));
+        group.setManagingEntity(new Reference().setIdentifier(new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId))));
+        group.setDescription("Generated sample Group in EHR sandbox for testing");
+        return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(group));
+    }
 
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable Integer registryId) {
@@ -105,7 +118,7 @@ public class GroupController {
             }
             String id = bundle.getEntryFirstRep().getResource().getId();
 
-            in.addParameter("patientReference", new Reference(id));
+            in.addParameter("patientReference", new Reference(id).setIdentifier(patient.getIdentifierFirstRep()));
         } else {
             in.addParameter("memberId", patient.getIdentifierFirstRep());
             in.addParameter("providerNpi", new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId)));;
@@ -119,22 +132,34 @@ public class GroupController {
         /**
          * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
          */
-//        groupsStore.get(facilityId).put(immunizationRegistry.getId(), group);
         fetchFromIis(facilityId,registryId);
         return ResponseEntity.ok("");
     }
 
     @PostMapping("/{groupId}/$member-remove")
-    public ResponseEntity<String> remove_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId) {
-        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
-        Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
+    public ResponseEntity<String> remove_member(@PathVariable Integer facilityId,
+                                                @PathVariable Integer registryId,
+                                                @PathVariable String groupId,
+                                                @RequestParam() Optional<String> patientId,
+                                                @RequestParam() Optional<Identifier> identifier,
+                                                @RequestParam() Optional<String> reference
+    ) {
+        Parameters in = new Parameters();
+        if (patientId.isPresent()){
+            EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId.get()).orElseThrow();
+            Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
+            in.addParameter("memberId", patient.getIdentifierFirstRep());
+        }
+        identifier.ifPresent(value -> in.addParameter("memberId", value));
+        reference.ifPresent(value -> in.addParameter("patientReference", new Reference(value)));
+
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
         /**
          * First do match to get destination reference or identifier
          */
-        Parameters in = new Parameters()
-                .addParameter("memberId", patient.getIdentifierFirstRep());
 
+
+        logger.info("{}",in);
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
         Group group = groupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))

@@ -1,32 +1,43 @@
-<div class="grid-container">
-  <mat-grid-list cols="6" rowHeight="370px">
+<mat-tab-group #tabs>
+  <mat-tab disabled>
+    <ng-template mat-tab-label>
+      <app-immunization-registry-menu></app-immunization-registry-menu>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Manage Subscriptions" >
+    <div class="grid-container">
+      <mat-grid-list cols="6" rowHeight="370px">
 
-    <mat-grid-tile [colspan]="2" >
-      <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content">
-          <mat-card-title>Actions</mat-card-title>
-          <div>
-            <app-select-immregistry></app-select-immregistry>
-          </div>
-          <div>
-            <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getCurrentId() < 0}}">Subscribe to IIS</button>
-            <p class="w3-red" *ngIf="facilityService.getCurrentId() < 0">No facility selected</p>
-            <p class="w3-red" *ngIf="error">{{error}}</p>
-            <mat-progress-bar *ngIf="loading" mode="query" ></mat-progress-bar>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile [colspan]="4" [rowspan]="1">
-      <mat-card class="dashboard-card">
-        <mat-card-content class="dashboard-card-content">
-        <app-subscription-table></app-subscription-table>
+        <mat-grid-tile [colspan]="2" >
+          <mat-card class="dashboard-card">
+            <mat-card-content class="dashboard-card-content">
+              <mat-card-title>Actions</mat-card-title>
+              <div>
+                <button mat-raised-button (click)="subscribeToIIS()" disabled="{{facilityService.getCurrentId() < 0}}">Subscribe to IIS</button>
+                <p class="w3-red" *ngIf="facilityService.getCurrentId() < 0">No facility selected</p>
+                <p class="w3-red" *ngIf="error">{{error}}</p>
+                <mat-progress-bar *ngIf="loading" mode="query" ></mat-progress-bar>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="4" [rowspan]="1">
+          <mat-card class="dashboard-card">
+            <mat-card-content class="dashboard-card-content">
+            <app-subscription-table></app-subscription-table>
 
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
 
-  </mat-grid-list>
-</div>
+      </mat-grid-list>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Manually Create Subscription" >
+    <app-fhir-post [resourceType]="'Subscription'" [resource]="sample"></app-fhir-post>
+  </mat-tab>
+</mat-tab-group>
+
 
 <!-- TODO Add IIS selector -->

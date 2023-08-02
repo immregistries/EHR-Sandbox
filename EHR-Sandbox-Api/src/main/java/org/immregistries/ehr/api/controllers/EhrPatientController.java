@@ -86,34 +86,25 @@ public class EhrPatientController {
     }
 
     @GetMapping("/{patientId}")
-    public Optional<EhrPatient> patient(
-            @PathVariable() int facilityId,
-            @PathVariable() String patientId) {
+    public Optional<EhrPatient> patient(@PathVariable() String patientId) {
         return ehrPatientRepository.findById(patientId);
     }
 
     @GetMapping("/{patientId}/$history")
-    public List<Revision<Integer, EhrPatient>> patientHistory(
-            @PathVariable() int facilityId,
-            @PathVariable() String patientId) {
-
+    public List<Revision<Integer, EhrPatient>> patientHistory(@PathVariable() String patientId) {
         Revisions<Integer, EhrPatient> revisions = ehrPatientRepository.findRevisions(patientId);
-//        logger.info("{}", revisions.getLatestRevision() );
         return revisions.getContent();
     }
 
 
     @PostMapping()
     public ResponseEntity<String> postPatient(
-            @PathVariable() int facilityId,
+            @RequestAttribute Facility facility,
             @RequestBody EhrPatient patient,
             @RequestParam(COPIED_ENTITY_ID) Optional<String> copiedEntityId,
             @RequestParam(COPIED_FACILITY_ID) Optional<Integer> copiedFacilityId) {
 
         // patient data check + flavours
-        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id or facilityId")
-        );
         /**
          * If request was issued from the copy functionality, revision table is used to find out if a copy already exists to avoid duplicates
          */
@@ -123,21 +114,22 @@ public class EhrPatientController {
             /**
              * We check if the patient himself is a copy from a patient in the destination facility
              */
-            if (copiedFacilityId.isPresent()){
+            if (copiedFacilityId.isPresent()) {
                 previousCopyRevision = ehrPatientRepository.findRevisions(copiedEntityId.get()).stream().filter(revision -> {
                     AuditRevisionEntity audit = revision.getMetadata().getDelegate();
                     if (audit.getCopiedFacilityId() != null) {
-                        return audit.getCopiedFacilityId().equals(facilityId);
+                        return audit.getCopiedFacilityId().equals(facility.getId());
                     } else {
                         return false;
-                    }}).findFirst();
+                    }
+                }).findFirst();
             }
 
             /**
              * We check if a copy already exists in the destination facility
              */
             if (previousCopyRevision.isEmpty()) {
-                Stream<String> potentialIds = facilityRepository.findById(facilityId).get().getPatients().stream().map(EhrPatient::getId);
+                Stream<String> potentialIds = facility.getPatients().stream().map(EhrPatient::getId);
                 previousCopyRevision = potentialIds
                         .map(((id) -> ehrPatientRepository.findRevisions(id).stream()
                                 .filter(revision -> revision.getMetadata().getRevisionType().equals(RevisionMetadata.RevisionType.INSERT))
@@ -161,15 +153,7 @@ public class EhrPatientController {
                  */
                 return ResponseEntity.accepted().body(previousCopyRevision.get().getEntity().getId());
             }
-
-
-
-
-
         }
-
-
-
         patient.setFacility(facility);
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
@@ -183,34 +167,23 @@ public class EhrPatientController {
     }
 
     @PutMapping("")
-    public EhrPatient putPatient(@PathVariable() int tenantId,
-                                 @PathVariable() int facilityId,
-                                 @RequestBody EhrPatient patient) {
+    public EhrPatient putPatient(@RequestAttribute Tenant tenant,
+                                 @RequestAttribute Facility facility,
+//                                 @RequestAttribute EhrPatient patient,
+                                 @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
-        Optional<Tenant> tenant = tenantRepository.findById(tenantId);
-        Optional<Facility> facility = facilityRepository.findById(facilityId);
-        Optional<EhrPatient> oldPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patient.getId());
-        if (!tenant.isPresent() || !facility.isPresent() || !oldPatient.isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
-        }
-        // patient.setTenant(tenant.get());
-        patient.setFacility(facility.get());
-        patient.setUpdatedDate(new Date());
-        EhrPatient newEntity = ehrPatientRepository.save(patient);
-        return newEntity;
-//        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
+        EhrPatient oldPatient = ehrPatientRepository.findByFacilityIdAndId(facility.getId(), newPatient.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
+        newPatient.setFacility(facility);
+        newPatient.setUpdatedDate(new Date());
+        return ehrPatientRepository.save(newPatient);
     }
 
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
-    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() int facilityId,
-                                                                                  @PathVariable() String patientId,
+    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@RequestAttribute Facility facility,
+                                                                                  @RequestAttribute EhrPatient patient,
                                                                                   @PathVariable() Integer registryId,
                                                                                   @RequestParam Optional<Long> _since) {
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-
-        EhrPatient patient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow();
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
         IGenericClient client = customClientFactory.newGenericClient(registryId);
 
@@ -243,12 +216,12 @@ public class EhrPatientController {
             Set<VaccinationEvent> set = new HashSet<>(outBundle.getEntry().size());
 
             RequestDetails requestDetails = new ServletRequestDetails();
-            requestDetails.setTenantId(String.valueOf(facilityId));
+            requestDetails.setTenantId(String.valueOf(facility.getId()));
 
             for (Bundle.BundleEntryComponent entry : outBundle.getEntry()) {
                 try {
                     Immunization immunization = (Immunization) entry.getResource();
-                    immunization.setPatient(new Reference().setReference(patientId));
+                    immunization.setPatient(new Reference().setReference(patient.getId()));
                     VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
                     vaccinationEvent.setPatient(patient);
                     vaccinationEvent.setAdministeringFacility(facility);

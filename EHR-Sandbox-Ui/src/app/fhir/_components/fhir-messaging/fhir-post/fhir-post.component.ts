@@ -16,34 +16,25 @@ export class FhirPostComponent implements OnInit {
   requestLoading: Boolean = false
 
   @Input()
-  resourceType: string = "Group";
+  resourceType: string = "Patient";
   private randn = Math.trunc(Math.random() * Math.random() * 10000)
+
+  private _resource: string = "";
+  public get resource(): string {
+    return this._resource;
+  }
   @Input()
-  resource: string =
-`{
-  "resourceType": "Group",
-  "type": "person",
-  "name": "group ` + this.randn + `",
-  "identifier": {
-    "system": "ehr-sandbox/group",
-    "value": "` + this.randn + `"
-  },
-  "actual": true,
-  "managingEntity": {
-    "identifier": {
-      "system": "ehr-sandbox/facility",
-      "value": "`+ this.facilityService.getCurrentId() +`"
-    }
-  },
-  "description": "Generated sample Group in EHR sandbox for testing"
-}`;
+  public set resource(value:string | null) {
+    this._resource = value ?? "";
+  }
+
   answer: string = "";
   error: boolean = false;
 
   style: string = 'width: 100%'
 
   @Input()
-  operation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
+  operation:  "UpdateOrCreate" | "Create" | "Update" | "$match" = "UpdateOrCreate";
   @Input()
   resourceLocalId: number = -1;
   @Input()
@@ -97,27 +88,4 @@ export class FhirPostComponent implements OnInit {
       }
     })
   }
-
-  match() {
-    this.answer = ""
-    this.requestLoading = true
-    this.fhirClient.matchResource(this.resourceType,this.resource, this.resourceLocalId, this.parentId)
-    .subscribe({
-      next: (res) => {
-        this.requestLoading = false
-        this.feedbackService.doRefresh()
-        this.error = false
-        this.answer = JSON.stringify(res)
-      },
-      error: (err) => {
-        this.requestLoading = false
-        this.feedbackService.doRefresh()
-        this.error = true
-        this.answer = err.error
-        console.error(err)
-      }
-    })
-  }
-
-
 }

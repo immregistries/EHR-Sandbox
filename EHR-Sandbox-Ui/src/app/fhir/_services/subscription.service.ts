@@ -53,4 +53,16 @@ export class SubscriptionService {
       httpOptions);
   }
 
+  readSample(): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId = this.facilityService.getCurrentId()
+    const registryId: number | undefined = this.immRegistriesService.getCurrentId()
+    if (facilityId < 0) {
+      return of()
+    }
+    return this.http.get<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/subscription/sample`,
+      httpOptions);
+  }
+
 }
