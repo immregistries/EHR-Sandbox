@@ -10,9 +10,11 @@ import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.Feedback;
+import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.PatientIdentifier;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
 import org.slf4j.Logger;
@@ -31,10 +33,10 @@ import java.util.stream.Collectors;
 
 @RestController
 public class FhirClientController {
-    private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     public static final String PATIENT_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/patients";
     public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";
     public static final String IMM_REGISTRY_SUFFIX = "/imm-registry/{registryId}";
+    private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
     private FhirContext fhirContext;
     @Autowired
@@ -90,20 +92,20 @@ public class FhirClientController {
         /**
          * Registering received id as external id
          */
-        patientIdentifierRepository.save(new PatientIdentifier(patientId,registryId,outcome.getId().getIdPart()));
+        patientIdentifierRepository.save(new PatientIdentifier(patientId, registryId, outcome.getId().getIdPart()));
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
-    
+
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$match")
     public ResponseEntity<List<String>> matchPatient(
             @PathVariable() Integer facilityId,
             @PathVariable() Integer registryId,
             @PathVariable() String patientId,
             @RequestBody String message) {
-        Bundle bundle = matchPatientOperation(facilityId,registryId,patientId,message);
+        Bundle bundle = matchPatientOperation(facilityId, registryId, patientId, message);
 
         return ResponseEntity.ok(
                 bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.toList()
@@ -116,15 +118,14 @@ public class FhirClientController {
             Integer registryId,
             String patientId,
             String message) {
-        if(message == null) {
-            message = fhirConversionController.getPatientAsResource(patientId,facilityId).getBody();
+        if (message == null) {
+            message = fhirConversionController.getPatientAsResource(patientId, facilityId).getBody();
         }
         IParser parser = parser(message);
         Patient patient = parser.parseResource(Patient.class, message);
         Parameters parameters = new Parameters();
-        return customClientFactory.newGenericClient(registryId).operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource",patient).returnResourceType(Bundle.class).execute();
+        return customClientFactory.newGenericClient(registryId).operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource", patient).returnResourceType(Bundle.class).execute();
     }
-
 
 
     @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
@@ -142,7 +143,7 @@ public class FhirClientController {
         /**
          * Registering received id as external id
          */
-        patientIdentifierRepository.save(new PatientIdentifier(patientId,registryId,outcome.getId().getIdPart()));
+        patientIdentifierRepository.save(new PatientIdentifier(patientId, registryId, outcome.getId().getIdPart()));
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
@@ -175,7 +176,7 @@ public class FhirClientController {
          * Registering received id as external id
          */
         immunizationIdentifierRepository.save(new ImmunizationIdentifier(
-                vaccinationId, immunizationRegistry.getId(),outcome.getId().getIdPart()));
+                vaccinationId, immunizationRegistry.getId(), outcome.getId().getIdPart()));
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
@@ -203,7 +204,7 @@ public class FhirClientController {
              * Registering received id as external id
              */
             immunizationIdentifierRepository.save(new ImmunizationIdentifier(
-                    vaccinationId, immunizationRegistry.getId(),outcome.getId().getIdPart()));
+                    vaccinationId, immunizationRegistry.getId(), outcome.getId().getIdPart()));
 
             /**
              * If no fatal exception caught : stored fatal feedbacks are erased for the vaccination
@@ -215,14 +216,14 @@ public class FhirClientController {
                     "fatal");
             return ResponseEntity.ok(outcome.getId().getIdPart());
 
-        } catch ( FhirClientConnectionException f) {
+        } catch (FhirClientConnectionException f) {
             f.printStackTrace();
             return ResponseEntity.badRequest().body(f.getMessage());
         } catch (BaseServerResponseException baseServerResponseException) {
             Feedback feedback = new Feedback();
             feedback.setFacility(facilityRepository.findById(facilityId).orElseThrow());
-            feedback.setPatient(ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow());
-            feedback.setVaccinationEvent(vaccinationEventRepository.findByPatientIdAndId(patientId,vaccinationId).orElseThrow());
+            feedback.setPatient(ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow());
+            feedback.setVaccinationEvent(vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId).orElseThrow());
             feedback.setCode("invalid");
             feedback.setSeverity("fatal");
             feedback.setIis(String.valueOf(immunizationRegistry.getId()));
@@ -287,12 +288,12 @@ public class FhirClientController {
             @PathVariable() Integer registryId,
             @PathVariable() String target,
             @PathVariable() Optional<String> targetId,
-            @RequestParam Map<String,String> allParams) {
+            @RequestParam Map<String, String> allParams) {
         Parameters parameters = new Parameters();
-        for (Map.Entry<String,String> entry: allParams.entrySet()) {
-            parameters.addParameter(entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : allParams.entrySet()) {
+            parameters.addParameter(entry.getKey(), entry.getValue());
         }
-        operationType = operationType.replaceFirst("\\$","");
+        operationType = operationType.replaceFirst("\\$", "");
 
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistryController.settings(registryId));
 
@@ -312,9 +313,9 @@ public class FhirClientController {
     }
 
 
-
     /**
      * Provides the accurate parser for said message
+     *
      * @param message
      * @return
      */

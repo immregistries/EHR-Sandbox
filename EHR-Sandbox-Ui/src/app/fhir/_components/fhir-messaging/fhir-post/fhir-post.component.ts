@@ -1,7 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { map, merge, Observable, tap } from 'rxjs';
-import { FacilityService } from 'src/app/core/_services/facility.service';
-
+import { Component, Input} from '@angular/core';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
@@ -11,13 +8,23 @@ import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
   templateUrl: './fhir-post.component.html',
   styleUrls: ['./fhir-post.component.css']
 })
-export class FhirPostComponent implements OnInit {
+export class FhirPostComponent  {
   resourceLoading: Boolean = false
   requestLoading: Boolean = false
+  answer: string = "";
+  error: boolean = false;
+  style: string = 'width: 100%'
 
   @Input()
   resourceType: string = "Patient";
-  private randn = Math.trunc(Math.random() * Math.random() * 10000)
+  @Input()
+  operation:  "UpdateOrCreate" | "Create" | "Update" | "$match" = "UpdateOrCreate";
+  @Input()
+  resourceLocalId: number = -1;
+  @Input()
+  parentId: number = -1;
+  @Input()
+  overridingReferences: {[reference: string]: string} = {};
 
   private _resource: string = "";
   public get resource(): string {
@@ -28,28 +35,9 @@ export class FhirPostComponent implements OnInit {
     this._resource = value ?? "";
   }
 
-  answer: string = "";
-  error: boolean = false;
-
-  style: string = 'width: 100%'
-
-  @Input()
-  operation:  "UpdateOrCreate" | "Create" | "Update" | "$match" = "UpdateOrCreate";
-  @Input()
-  resourceLocalId: number = -1;
-  @Input()
-  parentId: number = -1;
-  @Input()
-  overridingReferences: {[reference: string]: string} = {};
-
-
   constructor(private fhirClient: FhirClientService,
-    private facilityService: FacilityService,
     private snackBarService: SnackBarService,
     private feedbackService: FeedbackService) { }
-
-  ngOnInit(): void {
-  }
 
   send() {
     this.answer = ""

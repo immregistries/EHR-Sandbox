@@ -163,7 +163,6 @@ public class EhrPatientController {
                 .buildAndExpand(newEntity.getId())
                 .toUri();
         return ResponseEntity.created(location).body(newEntity.getId());
-//        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
     }
 
     @PutMapping("")

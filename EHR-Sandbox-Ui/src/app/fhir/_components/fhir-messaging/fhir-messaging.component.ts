@@ -1,9 +1,6 @@
 import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { FhirResourceService } from '../../_services/fhir-resource.service';
 
 @Component({
@@ -37,9 +34,6 @@ export class FhirMessagingComponent implements AfterViewInit {
   public patientFhirId = "";
 
   constructor(private fhirResourceService: FhirResourceService,
-    private snackBarService: SnackBarService,
-    private feedbackService: FeedbackService,
-    private immRegistriesService: ImmunizationRegistryService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId?: number}) {
       if (data) {

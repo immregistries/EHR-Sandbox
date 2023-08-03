@@ -71,8 +71,14 @@ public class FhirConversionController {
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/resource")
     public ResponseEntity<String> immunizationResource(
             @RequestAttribute() VaccinationEvent vaccinationEvent,
+            @RequestAttribute() EhrPatient patient,
             @RequestAttribute Facility facility) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+//        System.out.println(vaccinationEvent.getVaccine());
+        /**
+         * not sure why this is a necessary step, but not problematic as links were checked in authorization filter
+         */
+        vaccinationEvent.setPatient(patient);
         Immunization immunization =
                 immunizationMapper.toFhirImmunization(vaccinationEvent,
                         resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility),
