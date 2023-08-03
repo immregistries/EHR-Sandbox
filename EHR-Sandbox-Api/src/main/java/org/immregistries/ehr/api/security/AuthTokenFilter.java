@@ -3,10 +3,12 @@ import java.io.IOException;
 import java.util.Scanner;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import org.apache.commons.codec.binary.Base64;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.slf4j.Logger;
@@ -37,7 +39,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private ClinicianRepository clinicianRepository;
-
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
 
@@ -58,7 +59,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
                 authorized = filterUrl(request);
 
-            } else if (request.getServletPath().startsWith("/auth")) { // for registration no authorization needed
+            } else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") ) { // for registration no authorization needed
                 authorized = true;
             }
         } catch (Exception e) {
@@ -76,6 +77,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
+        }
+        return null;
+    }
+
+    /**
+     * Currently not used, for future functionality
+     * @param request
+     * @return
+     */
+    private User parseBasic(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Basic ")) {
+            String base64 = headerAuth.substring("Basic ".length());
+            String base64decoded = new String(Base64.decodeBase64(base64));
+            String[] parts = base64decoded.split(":");
+            User user = new User();
+            user.setUsername(parts[0]);
+            user.setPassword(parts[1]);
+            return user;
         }
         return null;
     }

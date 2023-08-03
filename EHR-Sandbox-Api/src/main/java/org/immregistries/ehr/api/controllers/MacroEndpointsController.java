@@ -1,11 +1,15 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
+import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
+import org.immregistries.ehr.api.repositories.VaccineRepository;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
@@ -17,14 +21,19 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController()
 public class MacroEndpointsController {
 
     @Autowired
     private FhirContext fhirContext;
+    @Autowired
+    private AuthController authController;
     @Autowired
     private TenantController tenantController;
     @Autowired
@@ -48,14 +57,43 @@ public class MacroEndpointsController {
     @Autowired
     private VaccineRepository vaccineRepository;
 
-    @PostMapping(value="tenants/$create",consumes={"application/json"})
+    @PostMapping(value = "/$create", consumes = {"application/json"})
+    @Transactional()
+    public ResponseEntity createAll(HttpServletRequest httpRequest, @RequestBody String bundleString) {
+        Bundle globalBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        User user = new User();
+        String authHeader = httpRequest.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Basic ")) {
+            String base64 = authHeader.substring("Basic ".length());
+            String base64decoded = new String(Base64.decodeBase64(base64));
+            String[] parts = base64decoded.split(":");
+            user.setUsername(parts[0]);
+            user.setPassword(parts[1]);
+            authController.registerUser(user);
+        } else {
+            throw new AuthenticationException("no basic auth header found");
+        }
+
+        for (Bundle.BundleEntryComponent entry : globalBundle.getEntry()) {
+            if (entry.getResource() instanceof Bundle) {
+                createTenant((Bundle) entry.getResource());
+            } else {
+                throw new InvalidRequestException("Bundle for user creation should only contain bundles");
+            }
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "tenants/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createTenant(@RequestBody String bundleString) {
+        Bundle tenantBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        return createTenant(tenantBundle);
+    }
 
-        Bundle tenantBundle = fhirContext.newJsonParser().parseResource(Bundle.class,bundleString);
+    public ResponseEntity createTenant(Bundle tenantBundle) {
         Tenant tenant = null;
-
-        for (Bundle.BundleEntryComponent entry: tenantBundle.getEntry()) {
+        for (Bundle.BundleEntryComponent entry : tenantBundle.getEntry()) {
             if (entry.getResource() instanceof Organization) {
                 if (tenant != null) {
                     throw new InvalidRequestException("More than one organisation present in tenant creation bundle");
@@ -68,28 +106,26 @@ public class MacroEndpointsController {
         }
         tenant = tenantController.postTenant(tenant).getBody();
 
-        for (Bundle.BundleEntryComponent entry: tenantBundle.getEntry()) {
+        for (Bundle.BundleEntryComponent entry : tenantBundle.getEntry()) {
             if (entry.getResource() instanceof Bundle) {
                 createFacility(tenant, (Bundle) entry.getResource());
-            } else if (!(entry.getResource() instanceof  Organization)) {
+            } else if (!(entry.getResource() instanceof Organization)) {
                 throw new InvalidRequestException("Bundle for creating tenant should only contain bundles");
             }
         }
         return ResponseEntity.ok(tenant.getId());
     }
 
-
-    @PostMapping(value="/tenants/{tenantId}/facilities/$create",consumes={"application/json"})
+    @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createFacility(@RequestAttribute Tenant tenant, @RequestBody String bundleString) {
-        Bundle facilityBundle = fhirContext.newJsonParser().parseResource(Bundle.class,bundleString);
-        return  createFacility(tenant, facilityBundle);
+        Bundle facilityBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        return createFacility(tenant, facilityBundle);
     }
 
-
-    public ResponseEntity createFacility(Tenant tenant,  Bundle facilityBundle) {
+    public ResponseEntity createFacility(Tenant tenant, Bundle facilityBundle) {
         Facility facility = null;
-        for (Bundle.BundleEntryComponent entry: facilityBundle.getEntry()) {
+        for (Bundle.BundleEntryComponent entry : facilityBundle.getEntry()) {
             if (entry.getResource() instanceof Organization) {
                 if (facility != null) {
                     throw new InvalidRequestException("More than one organisation present");
@@ -103,29 +139,42 @@ public class MacroEndpointsController {
         }
         facility = facilityController.postFacility(tenant, facility).getBody();
 
-        /**
-         * Map<remoteId,newLocalId>
-         */
-        Map<String,String> ehrPatients = new HashMap<>(facilityBundle.getEntry().size() - 1);
-        for (Bundle.BundleEntryComponent entry: facilityBundle.getEntry()) {
-            if (entry.getResource() instanceof Patient) {
-                Patient patient = (Patient) entry.getResource();
-                EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
-                String localId = ehrPatientController.postPatient(facility,ehrPatient, Optional.empty(),Optional.empty()).getBody();
-                ehrPatients.put(patient.getIdElement().getIdPart(), localId);
-            }
-        }
+        fillFacility(tenant,facility,facilityBundle);
 
-        for (Bundle.BundleEntryComponent entry: facilityBundle.getEntry()) {
+        return ResponseEntity.ok(facility.getId());
+    }
+
+    @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
+    @Transactional()
+    public ResponseEntity fillFacility(@RequestAttribute Tenant tenant, @RequestAttribute Facility facility, @RequestBody String bundleString) {
+        Bundle bundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        return fillFacility(tenant, facility, bundle);
+    }
+
+    public ResponseEntity fillFacility(Tenant tenant, Facility facility, Bundle bundle) {
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Practitioner) {
                 Practitioner practitioner = (Practitioner) entry.getResource();
                 Clinician clinician = practitionnerMapper.fromFhir(practitioner);
                 clinician.setTenant(tenant);
-                clinician = clinicianController.postClinicians(tenant,clinician);
+                clinician = clinicianController.postClinicians(tenant, clinician);
             }
         }
 
-        for (Bundle.BundleEntryComponent entry: facilityBundle.getEntry()) {
+        /**
+         * Map<remoteId,newLocalId>
+         */
+        Map<String, String> ehrPatients = new HashMap<>(bundle.getEntry().size() - 1);
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (entry.getResource() instanceof Patient) {
+                Patient patient = (Patient) entry.getResource();
+                EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
+                String localId = ehrPatientController.postPatient(facility, ehrPatient, Optional.empty(), Optional.empty()).getBody();
+                ehrPatients.put(patient.getIdElement().getIdPart(), localId);
+            }
+        }
+
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Immunization) {
                 Immunization immunization = (Immunization) entry.getResource();
                 VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
@@ -142,12 +191,8 @@ public class MacroEndpointsController {
                 vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
             }
         }
-        return ResponseEntity.ok(facility.getId());
-
+        return ResponseEntity.ok().build();
     }
-
-
-
 
 
 }
