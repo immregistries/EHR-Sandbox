@@ -62,11 +62,11 @@ public class FacilityController {
      * Used by frontend to check if a refresh is needed on the current facility it is displaying
      * @return
      */
-    @GetMapping("/$notification/{timestamp}")
-    public Boolean notificationCheck(@PathVariable Optional<Long> timestamp,
+    @GetMapping("/$notification")
+    public Boolean notificationCheck(@RequestParam Optional<Long> timestamp,
                                      @PathVariable() int facilityId) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
                 userDetailsService.currentUserId(),
-                timestamp.orElse(new Long(0))); // TODO add facility to audit revision
+                timestamp.orElse(0L)); // TODO add facility to audit revision
     }
 }

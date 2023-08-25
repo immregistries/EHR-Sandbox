@@ -24,7 +24,7 @@ export class NotificationCheckService {
     const facilityId = this.facilityService.getCurrentId()
     if (tenantId > 0 && facilityId > 0) {
       return this.http.get<boolean>(
-        `${this.settings.getApiUrl()}/$notification/${lastRefreshTime}`, httpOptions);
+        `${this.settings.getApiUrl()}/$notification?timestamp=${lastRefreshTime}`, httpOptions);
         // `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/notification/${timestamp}`, httpOptions);
     } else {
       return of(false)

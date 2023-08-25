@@ -13,7 +13,15 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
 import { JsonDialogComponent } from '../json-dialog/json-dialog.component';
 import { FhirBulkDashboardComponent } from 'src/app/fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
+import { error } from 'console';
 
+const DEFAULT_SETTINGS = {
+  maxWidth: '95vw',
+  maxHeight: '95vh',
+  height: 'fit-content',
+  width: '100%',
+  panelClass: 'full-screen-modal',
+}
 @Component({
   selector: 'app-group-table',
   templateUrl: './group-table.component.html',
@@ -93,22 +101,19 @@ export class GroupTableComponent {
   }
 
   addMember(group: Group) {
-
-    const dialogRef = this.dialog.open(PatientListComponent, {
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      height: 'fit-content',
-      width: '100%',
-      panelClass: 'full-screen-modal',
-    });
-    dialogRef.afterClosed().subscribe(selectedPatientId => {
-      console.log(selectedPatientId)
+    const dialogRef = this.dialog.open(PatientListComponent, DEFAULT_SETTINGS);
+    dialogRef.afterClosed().subscribe(
+      selectedPatientId => {
       if (group.id) {
-        this.groupService.addMember(group.id,selectedPatientId).subscribe((res) => {
+        this.groupService.addMember(group.id,selectedPatientId).subscribe({
+          next:(res) => {
           console.log(res)
           this.groupService.triggerFetch().subscribe(() => {
             this.groupService.doRefresh()
-          })
+          })},
+          error: error => {
+            this.snackBarService.errorMessage(error.error)
+          }
         });
       } else {
         this.snackBarService.errorMessage("Group.id undefined")
@@ -119,14 +124,14 @@ export class GroupTableComponent {
 
   json(content: Group){
     this.jsonDialogService.open(content)
-    // this.dialog.open(JsonDialogComponent,{
-    //   maxWidth: '95vw',
-    //   maxHeight: '98vh',
-    //   height: '5vh',
-    //   width: '100%',
-    //   panelClass: 'dialog-without-bar',
-    //   data : content,
-    // })
+    this.dialog.open(JsonDialogComponent,{
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-without-bar',
+      data : content,
+    })
   }
 
   openBulk(group: Group){

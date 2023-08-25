@@ -61,8 +61,7 @@ public class FhirConversionController {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
 
-        Patient fhirPatient = patientMapper.toFhirPatient(patient,
-                resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
+        Patient fhirPatient = patientMapper.toFhirPatient(patient);
         fhirPatient.setText(null);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);
@@ -81,8 +80,7 @@ public class FhirConversionController {
         vaccinationEvent.setPatient(patient);
         Immunization immunization =
                 immunizationMapper.toFhirImmunization(vaccinationEvent,
-                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility),
-                        resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
+                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
     }

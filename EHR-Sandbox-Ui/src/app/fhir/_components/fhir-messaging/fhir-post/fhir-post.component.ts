@@ -46,13 +46,12 @@ export class FhirPostComponent  {
     .subscribe({
       next: (res) => {
         this.requestLoading = false
-        this.feedbackService.doRefresh()
         this.error = false
         this.answer = res
+        this.feedbackService.doRefresh()
       },
       error: (err) => {
         this.requestLoading = false
-        this.feedbackService.doRefresh()
         this.error = true
         this.answer = err.error
         console.error(err)
@@ -72,6 +71,7 @@ export class FhirPostComponent  {
         } else {
           this.answer = JSON.stringify(err.error)
         }
+        this.feedbackService.doRefresh()
 
       }
     })

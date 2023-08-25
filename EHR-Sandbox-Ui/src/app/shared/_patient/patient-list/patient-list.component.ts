@@ -8,6 +8,14 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { GroupService } from 'src/app/core/_services/group.service';
 
+
+const DEFAULT_SETTINGS = {
+  maxWidth: '95vw',
+  maxHeight: '95vh',
+  height: 'fit-content',
+  width: '100%',
+  panelClass: 'full-screen-modal',
+}
 @Component({
   selector: 'app-patient-list',
   templateUrl: './patient-list.component.html',

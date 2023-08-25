@@ -5,11 +5,13 @@ import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.api.repositories.VaccineRepository;
+import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
@@ -56,6 +58,8 @@ public class MacroEndpointsController {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private VaccineRepository vaccineRepository;
+    @Autowired
+    private EhrFhirProvider<ImmunizationRecommendation> immunizationRecommendationProvider;
 
     @PostMapping(value = "/$create", consumes = {"application/json"})
     @Transactional()
@@ -189,6 +193,25 @@ public class MacroEndpointsController {
                 }
                 vaccinationEvent.setVaccine(vaccineRepository.save(vaccinationEvent.getVaccine()));
                 vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
+            }
+        }
+
+        /**
+         * TODO determine if it makes sense to initialise with it
+         */
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (entry.getResource() instanceof ImmunizationRecommendation) {
+//                ImmunizationRecommendation immunizationRecommendation = (ImmunizationRecommendation) entry.getResource();
+//                if (StringUtils.isNotBlank(immunizationRecommendation.getPatient().getReference())) {
+////                    vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), immunization.getPatient().getReference())
+////                            .orElseThrow(() -> new InvalidRequestException("Invalid id")));
+//
+////                    vaccinationEvent.setPatient(ehrPatients.get(immunization.getPatient().getReference()));
+//                } else if (immunizationRecommendation.getPatient().getIdentifier() != null) {
+//                    immunizationRecommendationProvider.update(re)
+//                }
+//                vaccinationEvent.setVaccine(vaccineRepository.save(vaccinationEvent.getVaccine()));
+//                vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
             }
         }
         return ResponseEntity.ok().build();

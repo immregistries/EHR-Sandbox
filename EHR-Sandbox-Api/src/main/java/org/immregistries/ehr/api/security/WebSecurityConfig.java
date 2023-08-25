@@ -29,41 +29,46 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     UserRepository userRepository;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
+
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
                 .and()
-                    .csrf()
+                .csrf()
                 .disable()
-                    .exceptionHandling()
-                    .authenticationEntryPoint(unauthorizedHandler)
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                    .authorizeRequests()
-                    .antMatchers("/$create","/auth/**", "/" ,"/*.css", "/*.js","/fhir/**","/ehr/fhir/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
-                ;
+                .authorizeRequests()
+                .antMatchers("/$create", "/auth/**", "/", "/*.css", "/*.js", "/fhir/**", "/ehr/fhir/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+        ;
 //                .and()
 //                    .oauth2ResourceServer()
 //                    .jwt();

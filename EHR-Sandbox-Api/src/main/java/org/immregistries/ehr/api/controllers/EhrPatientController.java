@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;
@@ -98,6 +99,7 @@ public class EhrPatientController {
 
 
     @PostMapping()
+    @Transactional()
     public ResponseEntity<String> postPatient(
             @RequestAttribute Facility facility,
             @RequestBody EhrPatient patient,
@@ -131,6 +133,9 @@ public class EhrPatientController {
             if (previousCopyRevision.isEmpty()) {
                 Stream<String> potentialIds = facility.getPatients().stream().map(EhrPatient::getId);
                 previousCopyRevision = potentialIds
+                        /**
+                         *  finding the creation Resvison Entity ie first insert found
+                         */
                         .map(((id) -> ehrPatientRepository.findRevisions(id).stream()
                                 .filter(revision -> revision.getMetadata().getRevisionType().equals(RevisionMetadata.RevisionType.INSERT))
                                 .findFirst().get()))
@@ -154,6 +159,7 @@ public class EhrPatientController {
                 return ResponseEntity.accepted().body(previousCopyRevision.get().getEntity().getId());
             }
         }
+        patient.setId(null);
         patient.setFacility(facility);
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
@@ -236,7 +242,7 @@ public class EhrPatientController {
     }
 
     @GetMapping("/{patientId}/qbp")
-    public ResponseEntity<String> vxu(@PathVariable() String patientId) {
+    public ResponseEntity<String> qbp(@PathVariable() String patientId) {
         QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
@@ -248,7 +254,7 @@ public class EhrPatientController {
     }
 
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String> vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
+    public ResponseEntity<String> qbpSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
         try {

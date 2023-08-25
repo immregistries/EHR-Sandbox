@@ -114,7 +114,7 @@ public class GroupController {
         if (match.isPresent() && match.get()) {
             Bundle bundle = fhirClientController.matchPatientOperation(facilityId,registryId,patientId,null);
             if (!bundle.hasEntry()) {
-                throw new RuntimeException("Match failed");
+                return ResponseEntity.internalServerError().body("Patient match failed");
             }
             String id = bundle.getEntryFirstRep().getResource().getId();
 
@@ -133,7 +133,7 @@ public class GroupController {
          * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
          */
         fetchFromIis(facilityId,registryId);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/{groupId}/$member-remove")

@@ -44,6 +44,9 @@ public class EhrPatient {
     @Column(name = "mrn", length = 125)
     private String mrn = "";
 
+    @Column(name = "mrn_system", length = 125)
+    private String mrnSystem = "";
+
     @Column(name = "name_last", length = 250)
     private String nameLast = "";
 
@@ -459,6 +462,14 @@ public class EhrPatient {
 
     public void setMrn(String mrn) {
         this.mrn = mrn;
+    }
+
+    public String getMrnSystem() {
+        return mrnSystem;
+    }
+
+    public void setMrnSystem(String mrnSystem) {
+        this.mrnSystem = mrnSystem;
     }
 
 

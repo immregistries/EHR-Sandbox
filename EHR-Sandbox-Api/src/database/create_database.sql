@@ -60,6 +60,7 @@ CREATE TABLE `facility` (
 CREATE TABLE `patient` (
   `patient_id` int(11) NOT NULL AUTO_INCREMENT,
   `mrn` varchar(125) NOT NULL,
+  `mrn_system` varchar(125) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `created_date` datetime NULL,
   `updated_date` datetime NOT NULL,
@@ -285,6 +286,7 @@ CREATE TABLE `patient_aud` (
   `revtype` TINYINT NOT NULL,
   `patient_id` int(11) NOT NULL,
   `mrn` varchar(125) NOT NULL,
+  `mrn_system` varchar(125) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `created_date` datetime NULL,
   `updated_date` datetime NOT NULL,

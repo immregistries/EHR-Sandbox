@@ -2,6 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
 
+
+const DEFAULT_SETTINGS = {}
 @Component({
   selector: 'app-json-dialog',
   templateUrl: './json-dialog.component.html',

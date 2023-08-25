@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import { Code, CodeBaseMap, CodeMap, ComparisonResult, BaseForm, FormCard, formType, CodeReference} from 'src/app/core/_model/structure';
+import { Code, ComparisonResult, FormCard, formType, CodeReference} from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
