@@ -110,7 +110,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
             ehrPatient = patientRepository.save(ehrPatient);
             return new MethodOutcome()
                     .setId(new IdType().setValue(ehrPatient.getId()))
-                    .setResource(patientMapper.toFhirPatient(ehrPatient));
+                    .setResource(patientMapper.toFhirPatient(ehrPatient,facility));
         } else {
             return create(patient, facility);
         }

@@ -13,8 +13,8 @@ import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @Service
 public class ResourceIdentificationService {
-
-    private static final String IDENTIFIER_SYSTEM_PREFIX = "ehr-sandbox/facility/";
+    public static final String FACILITY_SYSTEM = "ehr-sandbox/facility";
+    private static final String IDENTIFIER_SYSTEM_PREFIX = FACILITY_SYSTEM + "/";
     private static final String PATIENT_IDENTIFIER_SYSTEM_SUFFIX = "/patient-system";
     private static final String IMMUNIZATION_IDENTIFIER_SYSTEM_SUFFIX = "/immunization-system";
 

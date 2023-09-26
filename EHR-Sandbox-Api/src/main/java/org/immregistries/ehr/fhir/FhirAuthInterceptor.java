@@ -1,23 +1,14 @@
 package org.immregistries.ehr.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.i18n.Msg;
-import ca.uhn.fhir.interceptor.api.Hook;
 import ca.uhn.fhir.interceptor.api.Interceptor;
-import ca.uhn.fhir.interceptor.api.Pointcut;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.auth.IAuthRule;
 import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
-import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.http.auth.AuthenticationException;
-import org.hibernate.Session;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.UrlType;
 import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.User;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.repositories.UserRepository;
@@ -31,7 +22,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -40,20 +30,21 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 /**
- * Incomplet, currently used for tracking of modifying users in envers
+ * Incomplete, currently used for tracking of modifying users in envers framework for history
  */
 @Interceptor
 @Component
 public class FhirAuthInterceptor extends AuthorizationInterceptor {
 
     Logger logger = LoggerFactory.getLogger(FhirAuthInterceptor.class);
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    PasswordEncoder encoder;
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
@@ -67,14 +58,9 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    PasswordEncoder encoder;
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        HttpSession session = request.getSession(false);
         String authHeader = theRequestDetails.getHeader("Authorization");
 
         try {
@@ -100,7 +86,7 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
                     String base64 = authHeader.substring("Basic ".length());
                     String base64decoded = new String(Base64.decodeBase64(base64));
                     String[] parts = base64decoded.split(":");
-                    username =  parts[0];
+                    username = parts[0];
                     Authentication authentication = authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(username, parts[1]));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -113,7 +99,7 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
                      */
                     String[] facilityIds = StreamSupport
                             .stream(facilityRepository
-                                    .findByUser(userRepository.findById(userDetails.getId()).get()).spliterator(),false)
+                                    .findByUser(userRepository.findById(userDetails.getId()).get()).spliterator(), false)
                             .map(Facility::getId).map(Object::toString).toArray(String[]::new);
 //                    for (String id: facilityIds
 //                    ) {

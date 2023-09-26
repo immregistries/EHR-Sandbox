@@ -59,7 +59,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
                 authorized = filterUrl(request);
 
-            } else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") ) { // for registration no authorization needed
+            } else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") ) { // for registration no authorization needed
                 authorized = true;
             }
         } catch (Exception e) {

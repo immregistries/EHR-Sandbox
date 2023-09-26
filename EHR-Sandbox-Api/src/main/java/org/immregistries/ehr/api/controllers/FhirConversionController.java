@@ -61,7 +61,7 @@ public class FhirConversionController {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
 
-        Patient fhirPatient = patientMapper.toFhirPatient(patient);
+        Patient fhirPatient = patientMapper.toFhirPatient(patient,facility);
         fhirPatient.setText(null);
         String resource = parser.encodeResourceToString(fhirPatient);
         return ResponseEntity.ok(resource);

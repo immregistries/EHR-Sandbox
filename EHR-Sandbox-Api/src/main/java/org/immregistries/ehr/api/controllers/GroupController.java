@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
+import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
 @RestController()
 @Conditional(OnR5Condition.class)
@@ -60,7 +61,7 @@ public class GroupController {
         long randn = Math.round(Math.random());
         group.setName("Generated " + randn);
         group.addIdentifier().setSystem("ehr-sandbox/group").setValue(String.valueOf(randn));
-        group.setManagingEntity(new Reference().setIdentifier(new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId))));
+        group.setManagingEntity(new Reference().setIdentifier(new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facilityId))));
         group.setDescription("Generated sample Group in EHR sandbox for testing");
         return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(group));
     }
@@ -114,14 +115,14 @@ public class GroupController {
         if (match.isPresent() && match.get()) {
             Bundle bundle = fhirClientController.matchPatientOperation(facilityId,registryId,patientId,null);
             if (!bundle.hasEntry()) {
-                return ResponseEntity.internalServerError().body("Patient match failed");
+                return ResponseEntity.internalServerError().body("Patient $match failed : IIS does not know about this patient");
             }
             String id = bundle.getEntryFirstRep().getResource().getId();
 
             in.addParameter("patientReference", new Reference(id).setIdentifier(patient.getIdentifierFirstRep()));
         } else {
             in.addParameter("memberId", patient.getIdentifierFirstRep());
-            in.addParameter("providerNpi", new Identifier().setSystem("ehr-sandbox/facility").setValue(String.valueOf(facilityId)));;
+            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facilityId)));;
         }
 
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);

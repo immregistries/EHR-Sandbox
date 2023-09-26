@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.JoinFormula;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -14,6 +15,12 @@ import java.util.Set;
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
         property="id",
         scope = Facility.class)
+///**
+// * Solves a "No Session exception" when using facility.getPatients(), issue about lazy loading apparently
+// */
+//@NamedEntityGraph(name = "Facility.patients",
+//        attributeNodes = @NamedAttributeNode("patients")
+//)
 public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

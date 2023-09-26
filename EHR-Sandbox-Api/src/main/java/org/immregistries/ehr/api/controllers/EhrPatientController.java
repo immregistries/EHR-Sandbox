@@ -7,11 +7,11 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
@@ -25,6 +25,7 @@ import org.springframework.data.history.RevisionMetadata;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -33,6 +34,7 @@ import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_ENTITY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_FACILITY_ID;
@@ -43,8 +45,19 @@ import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
 public class EhrPatientController {
 
+    private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
     FhirContext fhirContext;
+    @Autowired
+    RandomGenerator randomGenerator;
+    @Autowired
+    FhirClientController fhirClientController;
+    @Autowired
+    HL7printer hl7printer;
+    @Autowired
+    ImmunizationRegistryController immRegistryController;
+    @Autowired
+    ImmunizationMapperR5 immunizationMapper;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -53,12 +66,6 @@ public class EhrPatientController {
     private TenantRepository tenantRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    RandomGenerator randomGenerator;
-    @Autowired
-    FhirClientController fhirClientController;
-
-    private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
     private CustomClientFactory customClientFactory;
     @Autowired
@@ -69,14 +76,6 @@ public class EhrPatientController {
     private ClinicianRepository clinicianRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
-
-    @Autowired
-    HL7printer hl7printer;
-    @Autowired
-    ImmunizationRegistryController immRegistryController;
-
-    @Autowired
-    ImmunizationMapperR5 immunizationMapper;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
 
@@ -99,7 +98,7 @@ public class EhrPatientController {
 
 
     @PostMapping()
-    @Transactional()
+//    @Transactional()
     public ResponseEntity<String> postPatient(
             @RequestAttribute Facility facility,
             @RequestBody EhrPatient patient,
@@ -131,10 +130,13 @@ public class EhrPatientController {
              * We check if a copy already exists in the destination facility
              */
             if (previousCopyRevision.isEmpty()) {
-                Stream<String> potentialIds = facility.getPatients().stream().map(EhrPatient::getId);
+                Stream<String> potentialIds =
+                        StreamSupport.stream(ehrPatientRepository.findByFacilityId(facility.getId()).spliterator(),false)
+//                        facility.getPatients().stream()
+                        .map(EhrPatient::getId);
                 previousCopyRevision = potentialIds
                         /**
-                         *  finding the creation Resvison Entity ie first insert found
+                         *  finding the creation Revision Entity ie first insert found
                          */
                         .map(((id) -> ehrPatientRepository.findRevisions(id).stream()
                                 .filter(revision -> revision.getMetadata().getRevisionType().equals(RevisionMetadata.RevisionType.INSERT))

@@ -112,7 +112,7 @@ export class GroupTableComponent {
             this.groupService.doRefresh()
           })},
           error: error => {
-            this.snackBarService.errorMessage(error.error)
+            this.snackBarService.errorMessage(JSON.stringify(error.error))
           }
         });
       } else {

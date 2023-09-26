@@ -8,6 +8,7 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class PatientMapperR5 {
 
   @Autowired
   CodeMapManager codeMapManager;
+  @Autowired
+  OrganizationMapperR5 organizationMapperR5;
   private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
   public static final String MRN_SYSTEM = "mrn";
   public static final String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
@@ -44,6 +47,11 @@ public class PatientMapperR5 {
   public static final String FEMALE_SEX = "F";
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
+  public Patient toFhirPatient(EhrPatient ehrPatient, Facility facility) {
+    Patient p = toFhirPatient(ehrPatient);
+    p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhirOrganization(facility).getIdentifierFirstRep()));
+    return p;
+  }
 
   public Patient toFhirPatient(EhrPatient ehrPatient) {
     Patient p = new Patient();
@@ -145,7 +153,7 @@ public class PatientMapperR5 {
     ehrPatient.setUpdatedDate(p.getMeta().getLastUpdated());
 
     ehrPatient.setBirthDate(p.getBirthDate());
-//    patient.setManagingOrganizationId(p.getManagingOrganization().getId());
+//    ehrPatient.setManagingOrganizationId(p.getManagingOrganization().getId());
     // Name
     HumanName name = p.getNameFirstRep();
     ehrPatient.setNameLast(name.getFamily());
