@@ -98,7 +98,7 @@ public class EhrPatientController {
 
 
     @PostMapping()
-//    @Transactional()
+    @Transactional()
     public ResponseEntity<String> postPatient(
             @RequestAttribute Facility facility,
             @RequestBody EhrPatient patient,

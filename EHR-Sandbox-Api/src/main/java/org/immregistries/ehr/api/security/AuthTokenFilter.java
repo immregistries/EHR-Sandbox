@@ -59,14 +59,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
                 authorized = filterUrl(request);
 
-            } else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") ) { // for registration no authorization needed
+            } // TODO figure why http security configuration does not skip filter
+            else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") || request.getServletPath().startsWith("/") ) { // for registration no authorization needed
                 authorized = true;
+            } else if ( request.getServletPath().split("/").length == 1 &&
+                    (request.getServletPath().endsWith(".js") || request.getServletPath().endsWith(".ico") || request.getServletPath().endsWith(".css") ) ) {
+
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
         }
         if (authorized) {
-//            logger.error("Authorized request");
             filterChain.doFilter(request, response);
         } else {
             logger.error("Unauthorized request {}", request.getServletPath());

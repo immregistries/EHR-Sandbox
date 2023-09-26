@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -51,6 +52,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * The purpose of this method is to exclude the URL's specific to Login, Swagger UI and static files.
+     * Any URL that should be excluded from the Spring security chain should be added to the ignore list in this
+     * method only
+     */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/$create", "/auth/**", "/", "/*.css", "/*.js", "/*.ico", "/fhir/**");
+    }
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors()
@@ -64,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/$create", "/auth/**", "/", "/*.css", "/*.js", "/fhir/**", "/ehr/fhir/**")
+                .antMatchers("/$create", "/auth/**", "/", "/*.css", "/*.js", "/fhir/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
