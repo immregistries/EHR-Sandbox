@@ -28,5 +28,4 @@ services:
       - "9091:8080"
 
 volumes:
-  hapi-fhir-postgres:
   sandbox-mysql:
