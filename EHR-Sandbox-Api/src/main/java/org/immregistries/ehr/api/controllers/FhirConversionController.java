@@ -19,6 +19,8 @@ import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,8 @@ import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
 @RestController
 public class FhirConversionController {
+    Logger logger = LoggerFactory.getLogger(FhirConversionController.class);
+
     @Autowired
     private PatientMapperR5 patientMapper;
     @Autowired
@@ -55,15 +59,17 @@ public class FhirConversionController {
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
     public ResponseEntity<String> getPatientAsResource(
             @PathVariable() String patientId, @PathVariable() Integer facilityId) {
-        EhrPatient patient = patientRepository.findById(patientId)
+        EhrPatient ehrPatient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
 
-        Patient fhirPatient = patientMapper.toFhirPatient(patient,facility);
-        fhirPatient.setText(null);
-        String resource = parser.encodeResourceToString(fhirPatient);
+        Patient patient = patientMapper.toFhirPatient(ehrPatient,facility);
+//        patient.setText(null);
+        logger.info("{}", patient);
+        logger.info("{}", patient);
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
+        String resource = parser.encodeResourceToString(patient);
         return ResponseEntity.ok(resource);
     }
 

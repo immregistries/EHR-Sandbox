@@ -90,6 +90,10 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
     public MethodOutcome update(@ResourceParam Patient patient, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
+        return update(patient,facility,immunizationRegistry);
+    }
+
+    public MethodOutcome update(@ResourceParam Patient patient, Facility facility, ImmunizationRegistry immunizationRegistry) {
         /**
          * Fixing references with ids and stored ids
          *

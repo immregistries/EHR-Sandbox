@@ -74,15 +74,15 @@ public class AuthController {
             /**
              * Defining default IIS's automatically on first login
              */
-            ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
-            immunizationRegistryOnline.setName("Online");
-            immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
-            immunizationRegistryOnline.setIisUsername(newUser.getUsername());
-            immunizationRegistryOnline.setIisPassword(newUser.getUsername());
-            immunizationRegistryOnline.setIisHl7Url("https://sabbia.immregistries.org/iis/soap");
-            immunizationRegistryOnline.setIisFhirUrl("https://sabbia.immregistries.org/iis/fhir");
-            immunizationRegistryOnline.setUser(newUser);
-            immunizationRegistryRepository.save(immunizationRegistryOnline);
+//            ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
+//            immunizationRegistryOnline.setName("Online");
+//            immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
+//            immunizationRegistryOnline.setIisUsername(newUser.getUsername());
+//            immunizationRegistryOnline.setIisPassword(newUser.getUsername());
+//            immunizationRegistryOnline.setIisHl7Url("https://sabbia.immregistries.org/iis/soap");
+//            immunizationRegistryOnline.setIisFhirUrl("https://sabbia.immregistries.org/iis/fhir");
+//            immunizationRegistryOnline.setUser(newUser);
+//            immunizationRegistryRepository.save(immunizationRegistryOnline);
 
             ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
             immunizationRegistry.setName("Localhost");

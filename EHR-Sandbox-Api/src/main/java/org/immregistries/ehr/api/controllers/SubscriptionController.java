@@ -42,7 +42,7 @@ public class SubscriptionController {
 
     public static final String RESTHOOK = "rest-hook";
     public static final String EMAIL = "mailto:Clement.Hennequin@telecomnancy.net";
-    private static final String LOCAL_TOPIC = "http://localhost:8080/SubscriptionTopic";
+    private static final String LOCAL_TOPIC = "http://localhost:8080/SubscriptionTopic/feedback";
 
     public static final String SECRET_HEADER_NAME = "Authorization-Subscription";
     public static final String SECRET_PREFIX = " ";
@@ -70,20 +70,45 @@ public class SubscriptionController {
     }
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/sample")
-    public ResponseEntity<String> getSample(@RequestAttribute() Facility facility, @PathVariable() int facilityId, @PathVariable() Integer registryId) {
+    public ResponseEntity<String> getSample(@RequestAttribute() Facility facility, @PathVariable() Integer registryId) {
         ImmunizationRegistry ir = immRegistryController.settings(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
-    public Boolean subscribeToIIS(@PathVariable() Integer registryId, @PathVariable() int facilityId, @RequestParam Optional<String> groupId) {
+    public Boolean subscribeToIISManualCreate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class,stringBody);
+        IGenericClient client = customClientFactory.newGenericClient(ir);
+        MethodOutcome outcome = resourceClient.create(sub, client);
+        processSubscriptionOutcome(ir,outcome);
+        return outcome.getCreated();
+    }
+
+    @PutMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
+    public Boolean subscribeToIISManualUpdate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class,stringBody);
+        IGenericClient client = customClientFactory.newGenericClient(ir);
+        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
+        processSubscriptionOutcome(ir,outcome);
+        return outcome.getCreated();
+    }
+
+    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/data-quality-issues")
+    public Boolean subscribeToIISFeedback(@PathVariable() Integer registryId, @PathVariable() int facilityId, @RequestParam Optional<String> groupId) {
         ImmunizationRegistry ir = immRegistryController.settings(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = customClientFactory.newGenericClient(ir);
-//        MethodOutcome outcome = client.create().resource(sub).execute();
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
+        processSubscriptionOutcome(ir,outcome);
+        return outcome.getCreated();
+    }
+
+
+    private EhrSubscription processSubscriptionOutcome(ImmunizationRegistry ir, MethodOutcome outcome) {
         Subscription outcomeSub = (Subscription) outcome.getResource();
         if ((outcome.getCreated() != null && outcome.getCreated()) || (outcome.getResource()!=null)){
             outcomeSub.setStatus(Enumerations.SubscriptionStatusCodes.ACTIVE);
@@ -110,15 +135,17 @@ public class SubscriptionController {
 //            case ENTEREDINERROR: {
 //            }
 //        }
-        return outcome.getCreated();
+        return ehrSubscription;
     }
 
     public Subscription generateRestHookSubscription(Facility facility, String iis_uri) {
         Subscription sub = new Subscription();
         sub.addIdentifier().setValue(facility.getId() + "").setSystem("EHR_Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
-//        sub.setTopic("florence.immregistries.com/IIS-Sandbox/SubscriptionTopic");
-        sub.setTopic(LOCAL_TOPIC);
+//        sub.setTopic(iis_uri + "/SubscriptionTopic/sandbox");
+//        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/Group");
+        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/data-quality-issues");
+
 
         sub.setReason("testing purposes");
         /**
@@ -147,36 +174,36 @@ public class SubscriptionController {
                         .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
                         .build();
         String generatedString = randomStringGenerator.generate(64);
-        sub.addHeader(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + generatedString);
+        sub.addParameter().setName(SECRET_HEADER_NAME).setValue(SECRET_PREFIX + generatedString);
 
         /**
-         * Fetching the topic as it is currently defined in the IIS Sandbox in order to fit
+         * Fetching the topic as it is currently defined in the IIS Sandbox
          * TODO define canonical ?
          */
-        SubscriptionTopic topic;
-        URL url;
-        HttpURLConnection con;
-        try {
-            url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setConnectTimeout(5000);
-            int status = con.getResponseCode();
-            if (status == 200) {
-                topic = fhirContext.newJsonParser().parseResource(SubscriptionTopic.class, con.getInputStream());
-                sub.addContained(topic);
-                sub.setTopicElement(new CanonicalType(topic.getId().split("/")[1]));
-            } else {
-                logger.info("{}",status);
-            }
-            con.disconnect();
-
-        } catch (MalformedURLException | ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        SubscriptionTopic topic;
+//        URL url;
+//        HttpURLConnection con;
+//        try {
+//            url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");
+//            con = (HttpURLConnection) url.openConnection();
+//            con.setRequestMethod("GET");
+//            con.setRequestProperty("Content-Type", "application/json");
+//            con.setConnectTimeout(5000);
+//            int status = con.getResponseCode();
+//            if (status == 200) {
+//                topic = fhirContext.newJsonParser().parseResource(SubscriptionTopic.class, con.getInputStream());
+//                sub.addContained(topic);
+//                sub.setTopicElement(new CanonicalType(url.toExternalForm()));
+//            } else {
+//                logger.info("ERROR getting Topic {}",status);
+//            }
+//            con.disconnect();
+//
+//        } catch (MalformedURLException | ProtocolException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         return sub;
     }
 

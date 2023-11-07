@@ -7,6 +7,7 @@ import { TenantService } from '../../core/_services/tenant.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { Identifier } from 'fhir/r5';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
+import { SubscriptionService } from './subscription.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -23,7 +24,8 @@ export class FhirClientService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private immRegistries: ImmunizationRegistryService) { }
+    private immRegistries: ImmunizationRegistryService,
+    private subscriptionService: SubscriptionService) { }
 
   postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match", resourceLocalId: number, parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
     if (operation == "$match") {
@@ -45,6 +47,10 @@ export class FhirClientService {
       }
       case "Group": {
         return this.postGroup(resource,operation,resourceLocalId);
+        break;
+      }
+      case "Subscription": {
+        return this.subscriptionService.postSubscription(resource);
         break;
       }
     }

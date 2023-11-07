@@ -29,8 +29,8 @@ public class EhrSubscription {
         end = subscription.getEnd();
         reason = subscription.getReason();
         channelType = subscription.hasChannelType() ? subscription.getChannelType().getCode() : null;
-        header = subscription.hasHeader() ? subscription.getHeader().get(0).getValue() : null;
-        heartbeatPeriod = subscription.getHeartbeatPeriod();
+        header = subscription.hasParameter() ? subscription.getParameter().get(0).getName() + ":" + subscription.getParameter().get(0).getValue() : null;
+        heartbeatPeriod = subscription.getHeartbeatPeriod() ;
         timeout = subscription.getTimeout();
         contentType = subscription.getContentType();
         content = subscription.hasContent() ? subscription.getContent().toCode() : null;
@@ -48,7 +48,7 @@ public class EhrSubscription {
         subscription.setEnd(end);
         subscription.setReason(reason);
         subscription.setChannelType(new Coding().setCode(channelType));
-        subscription.addHeader(header);
+        subscription.addParameter().setName(header.split(":")[0]).setValue(header.split(":")[1]);
         subscription.setHeartbeatPeriod(heartbeatPeriod);
         subscription.setTimeout(timeout);
         subscription.setContent(Subscription.SubscriptionPayloadContent.valueOf(content));
