@@ -203,6 +203,7 @@ public class RandomGenerator {
 
         Vaccine vaccine = randomVaccine();
         vaccinationEvent.setVaccine(vaccine);
+        vaccinationEvent.setPrimarySource(true);
 
         vaccinationEvent.setEnteringClinician(randomClinician(tenant));
         vaccinationEvent.setOrderingClinician(randomClinician(tenant));

@@ -20,7 +20,7 @@ export class FetchAndLoadComponent implements OnInit {
 
   selectedVaccination: VaccinationEvent | null = null;
 
-  vaccinationEvents: VaccinationEvent[] = [];
+  remoteVaccinations: VaccinationEvent[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -39,7 +39,7 @@ export class FetchAndLoadComponent implements OnInit {
     this.loading = true
     this.fhirClient.loadEverythingFromPatient(this.patientId ?? -1).subscribe((res) => {
       this.loading = false
-      this.vaccinationEvents = res
+      this.remoteVaccinations = res
     })
   }
 

@@ -22,27 +22,60 @@ import { MatTableDataSource } from '@angular/material/table';
     ]),
   ],
 })
-export class VaccinationReceivedTableComponent implements AfterViewInit {
+export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit {
   private codeBaseMap!: CodeBaseMap;
 
-  columns: (keyof VaccinationEvent | keyof Vaccine  | "alerts")[] = [
+  columns: (keyof VaccinationEvent | keyof Vaccine  | "alerts" | "index")[] = [
     "vaccineCvxCode",
     "administeredDate",
     "lotNumber",
     "primarySource",
+    // "index"
   ]
 
   @Input() title: string = 'Vaccinations received'
-  differences: any = ''
+  differencesWithSelected: any = ''
   loading = false;
 
   expandedElement: VaccinationEvent | null = null;
   dataSource = new MatTableDataSource<VaccinationEvent>([]);
+  // matchingMatrix: {[index: string]: string[]} = {}
+  matchingMatrix: {}[][] = []
+
+
+  private _localVaccinations!: VaccinationEvent[];
   @Input()
-  set vaccinations(values: VaccinationEvent[]) {
+  set localVaccinations(values: VaccinationEvent[] | undefined) {
+    this._localVaccinations = values ?? [];
+    this.updateMatchingMatrix()
+  }
+  get localVaccinations() {return this._localVaccinations}
+
+
+  @Input()
+  set remoteVaccinations(values: VaccinationEvent[]) {
     this.loading = false
     this.dataSource.data = values;
     this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
+    this.updateMatchingMatrix()
+  }
+  get remoteVaccinations(): VaccinationEvent[] {
+    return this.dataSource.data
+  }
+
+  updateMatchingMatrix() {
+    this.matchingMatrix = []
+    this.remoteVaccinations?.forEach(element => {
+      let length = this.matchingMatrix.push([]); // Adds new line and returns length
+      this.localVaccinations?.forEach(local => {
+        this.matchingMatrix[length -1].push(this.vaccinationComparePipe.transform(element,local))
+      })
+    });
+    // this.dataSource.order
+
+    console.log(this.remoteVaccinations)
+    console.log(this.localVaccinations)
+    console.log(this.matchingMatrix)
   }
 
   private _vaccinationToCompare!: VaccinationEvent | null;
@@ -59,7 +92,7 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
   @Input()
   public set patientId(value: number | undefined) {
     this._patientId = value ?? -1;
-    this.vaccinations = []
+    this.remoteVaccinations = []
   }
   public get patientId(): number {
     return this._patientId;
@@ -70,6 +103,13 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
     public vaccinationComparePipe: VaccinationComparePipe) { }
+  ngOnInit(): void {
+    this.patientService.getCurrentObservable().subscribe(patient => {
+      this.vaccinationService.quickReadVaccinations(patient?.id ?? -1).subscribe(res => {
+        this.localVaccinations = res
+      })
+    })
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -99,17 +139,19 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
   }
 
   merge(element: VaccinationEvent) {
-    element.id = this.vaccinationToCompare?.id
+    element.id = this.vaccinationToCompare ? this.vaccinationToCompare.id : undefined
+    // element.primarySource = falset TODO talk about it in a meeting
     const dialogRef = this.dialog.open(VaccinationFormComponent, {
       maxWidth: '98vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patientId: this.patientId, vaccination: element, comparedVaccination: this.vaccinationToCompare},
+      data: {patientId: this.patientId, vaccination: element, comparedVaccination: this.vaccinationToCompare, changePrimarySourceToFalse: true},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.patientService.doRefresh()
+      // this.patientService.doRefresh()
+      this.vaccinationService.doRefresh()
     });
   }
 
@@ -119,14 +161,14 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
   }
 
   isMatch(element: VaccinationEvent | null): boolean {
-     return (this.expandedElement && this.differences == 'MATCH') ? true : false;
+     return (this.expandedElement && this.differencesWithSelected == 'MATCH') ? true : false;
   }
 
   private updateDifferences() {
     if (this._vaccinationToCompare && this.expandedElement) {
-      this.differences = this.vaccinationComparePipe.transform(this.expandedElement, this._vaccinationToCompare)
+      this.differencesWithSelected = this.vaccinationComparePipe.transform(this.expandedElement, this._vaccinationToCompare)
     } else {
-      this.differences = null
+      this.differencesWithSelected = null
     }
   }
 

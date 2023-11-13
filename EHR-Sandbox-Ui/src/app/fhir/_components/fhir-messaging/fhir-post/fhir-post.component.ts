@@ -1,4 +1,6 @@
 import { Component, Input} from '@angular/core';
+import { Facility } from 'src/app/core/_model/rest';
+import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';

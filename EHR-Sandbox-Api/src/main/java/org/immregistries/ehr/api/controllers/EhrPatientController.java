@@ -44,6 +44,8 @@ import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
 public class EhrPatientController {
+    public static final String GOLDEN_SYSTEM_TAG = "http://hapifhir.io/fhir/NamingSystem/mdm-record-status";
+    public static final String GOLDEN_RECORD = "GOLDEN_RECORD";
 
     private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
@@ -228,11 +230,14 @@ public class EhrPatientController {
             for (Bundle.BundleEntryComponent entry : outBundle.getEntry()) {
                 try {
                     Immunization immunization = (Immunization) entry.getResource();
-                    immunization.setPatient(new Reference().setReference(patient.getId()));
-                    VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
-                    vaccinationEvent.setPatient(patient);
-                    vaccinationEvent.setAdministeringFacility(facility);
-                    set.add(immunizationMapper.toVaccinationEvent(immunization));
+                    if (immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG,GOLDEN_RECORD) != null ) {
+                        immunization.setPatient(new Reference().setReference(patient.getId()));
+                        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
+                        vaccinationEvent.setPatient(patient);
+                        vaccinationEvent.setAdministeringFacility(facility);
+                        set.add(immunizationMapper.toVaccinationEvent(immunization));
+                    }
+
                 } catch (ClassCastException classCastException) {
                     //Ignoring other resources
                 }

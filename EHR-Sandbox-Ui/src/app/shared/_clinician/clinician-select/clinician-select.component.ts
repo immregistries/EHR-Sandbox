@@ -6,6 +6,8 @@ import { Clinician } from 'src/app/core/_model/rest';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { ClinicianFormComponent } from '../clinician-form/clinician-form.component';
+import { CardFormComponent } from '../../_components/card-form/card-form.component';
+import { BaseForm } from 'src/app/core/_model/structure';
 
 @Component({
   selector: 'app-clinician-select',
@@ -27,6 +29,8 @@ export class ClinicianSelectComponent {
 
   private _clinician?: Clinician;
   firstInit: boolean = true;
+  @Input()
+  form!: BaseForm;
   @Input()
   set model(clinician: Clinician | number | undefined) {
     if (!clinician) {

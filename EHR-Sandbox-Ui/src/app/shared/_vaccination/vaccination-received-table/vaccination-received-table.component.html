@@ -1,4 +1,3 @@
-
 <div class="sticky-header">
   <div class="sticky-header-prefix">
     <span class="custom-title">{{title}}</span>
@@ -30,6 +29,10 @@
       {{element.primarySource}}
     </td>
   </ng-container>
+  <!-- <ng-container matColumnDef="index">
+    <th mat-header-cell *matHeaderCellDef> Index </th>
+    <td mat-cell *matCellDef="let element; let i = dataIndex;">{{i}}</td>
+  </ng-container> -->
 
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
   <ng-container matColumnDef="expandedDetail">
@@ -39,15 +42,19 @@
            <div>
             <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="!vaccinationToCompare || isMatch(element)">Merge</button>
            </div>
-           <pre *ngIf="vaccinationToCompare && !isMatch(element)"><p>Differences : {{differences | json}}</p></pre>
+           <div>
+            <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="vaccinationToCompare">Save Locally</button>
+           </div>
+           <pre *ngIf="vaccinationToCompare && !isMatch(element)"><p>Differences : {{differencesWithSelected | json}}</p></pre>
       </div>
     </td>
   </ng-container>
 
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let element; columns: columns;"
+  <tr mat-row *matRowDef="let element; columns: columns; let i = dataIndex"
       class="element-row"
+      [class.has-a-match-row]="matchingMatrix[i]?.includes('MATCH')"
       [class.match-row]="(element | vaccinationCompare: vaccinationToCompare) == 'MATCH'"
       [class.no-match-row]="false"
       [class.potential-match-row]="false"
@@ -57,7 +64,8 @@
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
 <span>
-  <span class="legend-match">Match </span>
-  <span class="legend-potential-match">Potential Match </span>
+  <span class="legend-match">Match with selected record</span>
+  <span class="legend-has-a-match">Match with one local record </span>
+  <!-- <span class="legend-potential-match">Potential Match </span> -->
   <span class="legend-no-match">Not match </span>
 </span>

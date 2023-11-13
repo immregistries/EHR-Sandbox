@@ -80,6 +80,17 @@ public class VaccinationController {
     public ResponseEntity<String> postVaccinationEvents(@RequestAttribute() Tenant tenant,
                                                         @RequestAttribute Optional<EhrPatient> patient,
                                                         @RequestBody VaccinationEvent vaccination) {
+        VaccinationEvent newEntity = createVaccinationEvent(tenant,patient,vaccination);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newEntity.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(newEntity.getId());
+    }
+
+    private VaccinationEvent createVaccinationEvent(Tenant tenant,
+                                                    Optional<EhrPatient> patient,
+                                                    VaccinationEvent vaccination) {
         patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
         if (vaccination.getAdministeringClinician().getId() == null) {
             vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
@@ -93,12 +104,7 @@ public class VaccinationController {
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
         vaccination.setPatient(patient.get());
         vaccination.setAdministeringFacility(patient.get().getFacility());
-        VaccinationEvent newEntity = vaccinationEventRepository.save(vaccination);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newEntity.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(newEntity.getId());
+        return vaccinationEventRepository.save(vaccination);
     }
 
     @PutMapping()
@@ -107,22 +113,28 @@ public class VaccinationController {
                                                  @RequestAttribute Optional<EhrPatient> patient,
                                                  @RequestBody VaccinationEvent vaccination) {
         patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
-        VaccinationEvent oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patient.get().getId(), vaccination.getId())
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
-        if (vaccination.getAdministeringClinician().getId() == null) {
-            vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
+        Optional<VaccinationEvent> old = vaccinationEventRepository.findByPatientIdAndId(patient.get().getId(), vaccination.getId());
+        VaccinationEvent oldVaccination;
+        if (old.isEmpty()) {
+            return createVaccinationEvent(tenant, patient,vaccination);
+        } else {
+            oldVaccination = old.get();
+            vaccination.getVaccine().setCreatedDate(oldVaccination.getVaccine().getCreatedDate());
+
+            if (vaccination.getAdministeringClinician().getId() == null) {
+                vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
+            }
+            if (vaccination.getEnteringClinician().getId() == null) {
+                vaccination.setEnteringClinician(clinicianController.postClinicians(tenant,vaccination.getEnteringClinician()));
+            }
+            if (vaccination.getOrderingClinician().getId() == null) {
+                vaccination.setOrderingClinician(clinicianController.postClinicians(tenant,vaccination.getOrderingClinician()));
+            }
+            vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
+            vaccination.setPatient(patient.get());
+            vaccination.setAdministeringFacility(facility);
+            return vaccinationEventRepository.save(vaccination);
         }
-        if (vaccination.getEnteringClinician().getId() == null) {
-            vaccination.setEnteringClinician(clinicianController.postClinicians(tenant,vaccination.getEnteringClinician()));
-        }
-        if (vaccination.getOrderingClinician().getId() == null) {
-            vaccination.setOrderingClinician(clinicianController.postClinicians(tenant,vaccination.getOrderingClinician()));
-        }
-        vaccination.getVaccine().setCreatedDate(oldVaccination.getVaccine().getCreatedDate());
-        vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
-        vaccination.setPatient(patient.get());
-        vaccination.setAdministeringFacility(facility);
-        return vaccinationEventRepository.save(vaccination);
     }
 
     @GetMapping("/{vaccinationId}/vxu")
