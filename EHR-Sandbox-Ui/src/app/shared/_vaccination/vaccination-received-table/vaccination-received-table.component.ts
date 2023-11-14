@@ -71,11 +71,6 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
         this.matchingMatrix[length -1].push(this.vaccinationComparePipe.transform(element,local))
       })
     });
-    // this.dataSource.order
-
-    console.log(this.remoteVaccinations)
-    console.log(this.localVaccinations)
-    console.log(this.matchingMatrix)
   }
 
   private _vaccinationToCompare!: VaccinationEvent | null;

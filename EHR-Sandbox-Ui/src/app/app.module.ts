@@ -11,6 +11,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { FhirModule } from './fhir/fhir.module';
 import { CoreModule } from './core/core.module';
+import { SettingsService } from './core/_services/settings.service';
 
 @NgModule({
   declarations: [

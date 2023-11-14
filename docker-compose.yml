@@ -19,7 +19,8 @@ services:
     container_name: ehr-sandbox
     environment:
 #      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
-      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      - API_URL=http://localhost:9091/ehr
 #      DEPLOYMENT_URL: localhost:9091/ehr
 #      DEPLOYMENT_URL: https://sabbia.immregistries.org/ehr TODO
     #      TODO
