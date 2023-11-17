@@ -299,6 +299,7 @@
 			<properties>
 				<activatedProperties>prod</activatedProperties>
 				<maven.test.skip>true</maven.test.skip>
+				<spring.datasource.url>jdbc:mysql://localhost:3306/ehr</spring.datasource.url>
 				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>
 			</properties>
 			<activation>

@@ -13,6 +13,10 @@ import { FhirModule } from './fhir/fhir.module';
 import { CoreModule } from './core/core.module';
 import { SettingsService } from './core/_services/settings.service';
 
+const initAppFn = (settingsService: SettingsService) => {
+  return () => settingsService.loadEnvConfig('/ehr/assets/config/runtime-config.json');
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +34,13 @@ import { SettingsService } from './core/_services/settings.service';
     FhirModule,
   ],
   providers: [
+    SettingsService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initAppFn,
+      multi: true,
+      deps: [SettingsService],
+    },
     // { provide: APP_INITIALIZER, useFactory: CodeMapsServiceFactory, deps: [CodeMapsService], multi: true },
   ],
   bootstrap: [AppComponent]
