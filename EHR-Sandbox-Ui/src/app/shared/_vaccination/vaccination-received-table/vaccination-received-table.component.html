@@ -54,9 +54,9 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let element; columns: columns; let i = dataIndex"
       class="element-row"
-      [class.has-a-match-row]="matchingMatrix[i]?.includes('MATCH')"
-      [class.match-row]="(element | vaccinationCompare: vaccinationToCompare) == 'MATCH'"
+      [class.is-new-row]="!matchingMatrix[i]?.includes('MATCH')"
       [class.no-match-row]="false"
+      [class.match-row]="(element | vaccinationCompare: vaccinationToCompare) == 'MATCH'"
       [class.potential-match-row]="false"
       [class.expanded-row]="expandedElement === element"
       (click)="selectElement(element)">
@@ -64,8 +64,8 @@
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
 <span>
+  <span class="legend-is-new">Record with no Match </span>
   <span class="legend-match">Match with selected record</span>
-  <span class="legend-has-a-match">Match with one local record </span>
   <!-- <span class="legend-potential-match">Potential Match </span> -->
   <span class="legend-no-match">Not match </span>
 </span>
