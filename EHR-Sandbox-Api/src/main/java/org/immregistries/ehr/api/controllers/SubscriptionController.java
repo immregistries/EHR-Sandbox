@@ -174,7 +174,7 @@ public class SubscriptionController {
                         .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
                         .build();
         String generatedString = randomStringGenerator.generate(64);
-//        sub.addParameter().setName(SECRET_HEADER_NAME).setValue(SECRET_PREFIX + generatedString);
+        sub.addParameter().setName(SECRET_HEADER_NAME).setValue(SECRET_PREFIX + generatedString);
 
         /**
          * Fetching the topic as it is currently defined in the IIS Sandbox

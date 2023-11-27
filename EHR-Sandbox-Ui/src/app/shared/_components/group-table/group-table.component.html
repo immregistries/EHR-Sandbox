@@ -36,7 +36,8 @@
 
             <!-- Group details, buttons to add member, list of members -->
             <button mat-raised-button (click)="addMember(element)">Add a member</button>
-            <button mat-raised-button (click)="json(element)">FHIR Resource</button>
+            <app-json-dialog-button [content]="element" [label]="'FHIR Resource'"></app-json-dialog-button>
+            <!-- <button mat-raised-button (click)="json(element)"></button> -->
             <button mat-raised-button (click)="openBulk(element)">Bulk operations</button>
           </div>
         </td>

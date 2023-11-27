@@ -33,7 +33,10 @@
     <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
       <div class="element-detail"
       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-        <app-recommendation-component-table [components]="element.recommendation"></app-recommendation-component-table>
+        <div style="display: flex; flex-direction: column;">
+          <app-recommendation-component-table [components]="element.recommendation"></app-recommendation-component-table>
+          <app-json-dialog-button [content]="element"></app-json-dialog-button>
+        </div>
       </div>
 
     </td>

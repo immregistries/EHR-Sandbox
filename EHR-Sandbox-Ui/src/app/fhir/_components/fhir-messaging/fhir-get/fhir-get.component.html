@@ -1,8 +1,15 @@
-<mat-form-field appearance="outline">
-  <mat-label>{{resourceType + ' '}} identifier</mat-label>
+<form>
+  <mat-form-field appearance="outline">
+    <mat-label>{{resourceType + ' '}} Id</mat-label>
+    <input type="text" matInput [(ngModel)]="identifierString" [ngModelOptions]="{standalone: true}">
+  </mat-form-field>
+  <button mat-raised-button (click)="get()">GET</button>
+</form>
+<!-- <mat-form-field appearance="outline">
+  <mat-label>{{resourceType + ' '}} Id</mat-label>
   <input type="text" matInput [(ngModel)]="identifierString">
 </mat-form-field>
-<button mat-raised-button  (click)="get()">GET</button>
+<button mat-raised-button (click)="get()">GET</button> -->
 <div>
   <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
   <textarea [style]="{height: '50vh', width: '95%',color: error? 'red':'black'}" class="w3-margin-bottom" readonly>{{result}}</textarea>

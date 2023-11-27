@@ -159,6 +159,10 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
      return (this.expandedElement && this.differencesWithSelected == 'MATCH') ? true : false;
   }
 
+  hasNoMatch(index: number): boolean {
+     return !this.matchingMatrix[index]?.includes('MATCH');
+  }
+
   private updateDifferences() {
     if (this._vaccinationToCompare && this.expandedElement) {
       this.differencesWithSelected = this.vaccinationComparePipe.transform(this.expandedElement, this._vaccinationToCompare)

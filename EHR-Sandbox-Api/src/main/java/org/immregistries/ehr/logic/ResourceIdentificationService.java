@@ -1,5 +1,6 @@
 package org.immregistries.ehr.logic;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
@@ -74,10 +75,13 @@ public class ResourceIdentificationService {
     public String getPatientLocalId(Identifier identifier, Facility facility) {
         if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
             return identifier.getValue();
+        } else if (StringUtils.isBlank(identifier.getSystem())){
+            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
+                    .map(EhrPatient::getId).orElse(null);
         } else if (identifier.getSystem().equals(MRN_SYSTEM)) {
             return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
                     .map(EhrPatient::getId).orElse(null);
-        }else {
+        }  else {
             return null;
         }
     }

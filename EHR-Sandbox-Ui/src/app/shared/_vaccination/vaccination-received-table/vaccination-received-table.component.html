@@ -45,7 +45,8 @@
            <div>
             <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="vaccinationToCompare">Save Locally</button>
            </div>
-           <pre *ngIf="vaccinationToCompare && !isMatch(element)"><p>Differences : {{differencesWithSelected | json}}</p></pre>
+           <app-json-dialog-button [disabled]="!vaccinationToCompare || isMatch(element)" [content]="differencesWithSelected" [label]="'Difference'"></app-json-dialog-button>
+           <p *ngIf="vaccinationToCompare && isMatch(element)">Matches with currently selected local record</p>
       </div>
     </td>
   </ng-container>
@@ -54,7 +55,7 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let element; columns: columns; let i = dataIndex"
       class="element-row"
-      [class.is-new-row]="!matchingMatrix[i]?.includes('MATCH')"
+      [class.is-new-row]="hasNoMatch(i)"
       [class.no-match-row]="false"
       [class.match-row]="(element | vaccinationCompare: vaccinationToCompare) == 'MATCH'"
       [class.potential-match-row]="false"
@@ -64,8 +65,8 @@
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
 <span>
-  <span class="legend-is-new">Record with no Match </span>
+  <span class="legend-is-new">Record with no Match</span>
   <span class="legend-match">Match with selected record</span>
   <!-- <span class="legend-potential-match">Potential Match </span> -->
-  <span class="legend-no-match">Not match </span>
+  <!-- <span class="legend-no-match">Not match </span> -->
 </span>
