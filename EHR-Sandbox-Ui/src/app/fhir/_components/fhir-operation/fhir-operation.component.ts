@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, Pipe, PipeTransform, TrackByFunction } from '@angular/core';
-import { FhirService } from '../../_services/fhir.service';
+import { FhirClientService } from '../../_services/fhir-client.service';
+
 
 
 
@@ -10,7 +11,7 @@ import { FhirService } from '../../_services/fhir.service';
 })
 export class FhirOperationComponent implements OnInit {
 
-  constructor(public fhir: FhirService) { }
+  constructor(public fhirClient: FhirClientService) { }
 
   ngOnInit(): void {
   }
@@ -70,7 +71,7 @@ export class FhirOperationComponent implements OnInit {
 
 
   send() {
-    this.fhir.operation(this.operation, this.resourceType + this.as_path_variable(this.resourceId), this.parameter_string()).subscribe((res) => {
+    this.fhirClient.operation(this.operation, this.resourceType + this.as_path_variable(this.resourceId), this.parameter_string()).subscribe((res) => {
       this.result = res
     })
   }

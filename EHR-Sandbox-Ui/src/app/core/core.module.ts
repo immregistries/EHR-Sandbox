@@ -36,7 +36,7 @@ import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pip
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -47,6 +47,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { GroupDashboardComponent } from './_components/group-dashboard/group-dashboard.component';
+import { JsonDialogService } from './_services/json-dialog.service';
 
 @NgModule({
   declarations: [
@@ -112,6 +113,15 @@ import { GroupDashboardComponent } from './_components/group-dashboard/group-das
     FacilityService,
     CodeMapsService,
     ClinicianService,
+    JsonDialogService,
+    {
+      provide: MatDialogRef,
+      useValue: {}
+    },
+    {
+      provide: MAT_DIALOG_DATA,
+      useValue: {}
+    },
   ]
 })
 export class CoreModule { }

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Identifier } from 'fhir/r5';
 import { map, Observable, of, switchMap, tap, throwError } from 'rxjs';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
 
 @Component({
   selector: 'app-fhir-get',
@@ -17,7 +17,7 @@ export class FhirGetComponent {
   error: boolean = false
   // identifier: Identifier = {};
 
-  constructor(public fhir: FhirService) {}
+  constructor(public fhir: FhirClientService) {}
 
   // search() {
   //   if (this.identifier.value) {

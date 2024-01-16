@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ImmunizationRegistry } from '../_model/rest';
+import { lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import packageJson from '../../../../package.json';
 
@@ -18,7 +17,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class SettingsService {
-  private apiUrl: string = environment.apiUrl;
+  private envConfig!: EnvConfig;
   private version: string = packageJson.version;
 
   constructor(private http: HttpClient,) {
@@ -29,17 +28,30 @@ export class SettingsService {
   }
 
   public getApiUrl(): string {
-    return this.apiUrl
+    return this.envConfig.apiUrl
   }
 
-  // public getSettings(id: string): Observable<ImmunizationRegistry>{
-  //   return this.http.get<ImmunizationRegistry>(
-  //     this.getApiUrl() + '/settings', httpOptions);
-  // }
+  /** runtime configuration inspired by https://levelup.gitconnected.com/angular-environment-configuration-at-runtime-b44e230da585 */
 
-  // public putSettings(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
-  //   return this.http.put<ImmunizationRegistry>(
-  //     this.getApiUrl() + '/settings', i, httpOptions);
-  // }
+  async loadEnvConfig(configPath: string): Promise<void> {
+    try {
+      this.envConfig = await lastValueFrom(this.http.get<EnvConfig>(configPath));
+      if (this.envConfig.apiUrl.startsWith("$")) {
+        console.log('Static environment config loaded!');
+        this.envConfig = environment
+      }
+    } catch (error) {
+      console.log('Static environment config loaded!');
+      this.envConfig = environment
+    }
+  }
 
+  getEnvConfig(): EnvConfig {
+    return this.envConfig;
+  }
 }
+
+export interface EnvConfig {
+  apiUrl: string;
+}
+

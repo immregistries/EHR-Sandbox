@@ -25,7 +25,14 @@ import { PatientFormComponent } from '../patient-form/patient-form.component';
 })
 export class PatientTableComponent implements AfterViewInit {
 
-  dataSource = new MatTableDataSource<EhrPatient>([]);
+  private _dataSource = new MatTableDataSource<EhrPatient>();
+  public get dataSource() {
+    return this._dataSource;
+  }
+  @Input()
+  public set dataSource(value) {
+    this._dataSource = value;
+  }
   // expandedElement: Patient | null = null;
 
   @Input() facility: Facility = {id: -1};

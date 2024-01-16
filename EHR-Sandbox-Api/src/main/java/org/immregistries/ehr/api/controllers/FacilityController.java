@@ -43,17 +43,15 @@ public class FacilityController {
 
 
     @PostMapping()
-    public ResponseEntity<Facility> postFacility(@PathVariable() int tenantId,
+    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant,
                                                @RequestBody Facility facility) {
         if (facility.getNameDisplay().length() < 1){
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
         }else {
-            if (facilityRepository.existsByTenantIdAndNameDisplay(tenantId, facility.getNameDisplay())){
+            if (facilityRepository.existsByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay())){
                 throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already exists");
             }
-            Tenant tenant = tenantRepository.findById(tenantId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id"));
             facility.setTenant(tenant);
             Facility newEntity = facilityRepository.save(facility);
             return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
@@ -64,11 +62,11 @@ public class FacilityController {
      * Used by frontend to check if a refresh is needed on the current facility it is displaying
      * @return
      */
-    @GetMapping("/$notification/{timestamp}")
-    public Boolean notificationCheck(@PathVariable Optional<Long> timestamp,
+    @GetMapping("/$notification")
+    public Boolean notificationCheck(@RequestParam Optional<Long> timestamp,
                                      @PathVariable() int facilityId) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
                 userDetailsService.currentUserId(),
-                timestamp.orElse(new Long(0))); // TODO add facility to audit revision
+                timestamp.orElse(0L)); // TODO add facility to audit revision
     }
 }

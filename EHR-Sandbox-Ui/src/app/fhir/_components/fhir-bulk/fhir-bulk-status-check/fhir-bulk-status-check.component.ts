@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirBulkService } from 'src/app/fhir/_services/fhir-bulk.service';
 
 @Component({
   selector: 'app-fhir-bulk-status-check',
@@ -8,7 +8,7 @@ import { FhirService } from 'src/app/fhir/_services/fhir.service';
 })
 export class FhirBulkStatusCheckComponent implements OnInit {
 
-  constructor(public fhir: FhirService) { }
+  constructor(public fhirBulkService: FhirBulkService) { }
 
   ngOnInit(): void {
   }
@@ -33,7 +33,7 @@ export class FhirBulkStatusCheckComponent implements OnInit {
   status() {
     if (this.contentUrl) {
       this.loading = true
-      this.fhir.groupExportStatus(this.contentUrl).subscribe((res) => {
+      this.fhirBulkService.groupExportStatus(this.contentUrl).subscribe((res) => {
         this.result = res.trim()
         this.loading = false
         this.error = false
@@ -61,7 +61,7 @@ export class FhirBulkStatusCheckComponent implements OnInit {
   cancel() {
     if (this.contentUrl) {
       this.loading = true
-      this.fhir.groupExportDelete(this.contentUrl).subscribe((res) => {
+      this.fhirBulkService.groupExportDelete(this.contentUrl).subscribe((res) => {
         this.result = res
         this.loading = false
         this.error = false

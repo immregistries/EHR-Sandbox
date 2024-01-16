@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Tenant } from '../_model/rest';
-import { BehaviorSubject, EMPTY, from, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { observeNotification } from 'rxjs/internal/Notification';
 import { FacilityService } from './facility.service';
-import { RefreshService } from './refresh.service';
-import { CurrentSelectedService } from './current-selected.service';
+import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,7 +16,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class TenantService extends CurrentSelectedService<Tenant> {
+export class TenantService extends CurrentSelectedWithIdService<Tenant> {
 
   constructor(private http: HttpClient, private settings: SettingsService, private facilityService: FacilityService ) {
     super(new BehaviorSubject<Tenant>({id:-1}))

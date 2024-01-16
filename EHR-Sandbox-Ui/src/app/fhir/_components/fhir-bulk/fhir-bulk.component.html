@@ -3,6 +3,7 @@
     <mat-grid-tile>
       <div class="tile-content">
         <app-fhir-bulk-operation [asynchronous]="asynchronous" [resourceType]="'Group'"
+        [resourceId]="groupId"
         (contentUrl)="contentUrl = $event"
         (ndUrl)="ndUrl = $event"
         (resultListEmmitter)="resultList = $event">
@@ -25,6 +26,6 @@
     </mat-grid-tile>
   </mat-grid-list>
   <mat-toolbar style="height: 40px; font-size: medium;" class="w3-bottom" color="primary">
-    <a href="http://build.fhir.org/ig/HL7/bulk-data/export.html">Test client for Bulk Data Export implementation </a>
+    <a href="http://build.fhir.org/ig/HL7/bulk-data/export.html">Experimental client for FHIR Bulk Data Export workflows (after group creation) </a>
   </mat-toolbar>
 </div>

@@ -20,6 +20,7 @@ public class Clinician {
 
     @ManyToOne
     @JoinColumn(name = "tenant_id")
+    @JsonIgnore
 //    @JsonBackReference("clinician_tenant")
     private Tenant tenant;
 

@@ -1,18 +1,17 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
@@ -22,25 +21,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.history.Revision;
+import org.springframework.data.history.RevisionMetadata;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_ENTITY_ID;
+import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_FACILITY_ID;
 import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
 import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
 public class EhrPatientController {
+    public static final String GOLDEN_SYSTEM_TAG = "http://hapifhir.io/fhir/NamingSystem/mdm-record-status";
+    public static final String GOLDEN_RECORD = "GOLDEN_RECORD";
 
+    private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
     FhirContext fhirContext;
+    @Autowired
+    RandomGenerator randomGenerator;
+    @Autowired
+    FhirClientController fhirClientController;
+    @Autowired
+    HL7printer hl7printer;
+    @Autowired
+    ImmunizationRegistryController immRegistryController;
+    @Autowired
+    ImmunizationMapperR5 immunizationMapper;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -50,13 +69,7 @@ public class EhrPatientController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    RandomGenerator randomGenerator;
-    @Autowired
-    FhirClientController fhirClientController;
-
-    private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
-    @Autowired
-    private CustomClientBuilder customClientBuilder;
+    private CustomClientFactory customClientFactory;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
@@ -65,55 +78,93 @@ public class EhrPatientController {
     private ClinicianRepository clinicianRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
-
     @Autowired
-    HL7printer hl7printer;
-    @Autowired
-    ImmunizationRegistryController immRegistryController;
-
-    @Autowired
-    ImmunizationMapperR5 immunizationMapper;
+    private AuditRevisionEntityRepository auditRevisionEntityRepository;
 
 
     @GetMapping()
     public Iterable<EhrPatient> patients(@PathVariable() int facilityId) {
-        return  ehrPatientRepository.findByFacilityId(facilityId);
+        return ehrPatientRepository.findByFacilityId(facilityId);
     }
 
     @GetMapping("/{patientId}")
-    public Optional<EhrPatient> patient(
-                                        @PathVariable() int facilityId,
-                                        @PathVariable() String patientId) {
-        return  ehrPatientRepository.findById(patientId);
+    public Optional<EhrPatient> patient(@PathVariable() String patientId) {
+        return ehrPatientRepository.findById(patientId);
     }
-    @GetMapping("/{patientId}/$history")
-    public List<Revision<Integer, EhrPatient>> patientHistory(
-                                        @PathVariable() int facilityId,
-                                        @PathVariable() String patientId) {
 
+    @GetMapping("/{patientId}/$history")
+    public List<Revision<Integer, EhrPatient>> patientHistory(@PathVariable() String patientId) {
         Revisions<Integer, EhrPatient> revisions = ehrPatientRepository.findRevisions(patientId);
-//        logger.info("{}", revisions.getLatestRevision() );
         return revisions.getContent();
     }
 
 
-
     @PostMapping()
+    @Transactional()
     public ResponseEntity<String> postPatient(
-//            @PathVariable() int tenantId,
-                                               @PathVariable() int facilityId,
-                                               @RequestBody EhrPatient patient) {
+            @RequestAttribute Facility facility,
+            @RequestBody EhrPatient patient,
+            @RequestParam(COPIED_ENTITY_ID) Optional<String> copiedEntityId,
+            @RequestParam(COPIED_FACILITY_ID) Optional<Integer> copiedFacilityId) {
+
         // patient data check + flavours
-//        Optional<Tenant> tenant = tenantRepository.findById(tenantId);
-        Optional<Facility> facility = facilityRepository.findById(facilityId);
-        if (
-//                !tenant.isPresent() ||
-                !facility.isPresent()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Invalid tenant id or facilityId");
+        /**
+         * If request was issued from the copy functionality, revision table is used to find out if a copy already exists to avoid duplicates
+         */
+        if (copiedEntityId.isPresent()) {
+            Optional<Revision<Integer, EhrPatient>> previousCopyRevision = Optional.empty();
+
+            /**
+             * We check if the patient himself is a copy from a patient in the destination facility
+             */
+            if (copiedFacilityId.isPresent()) {
+                previousCopyRevision = ehrPatientRepository.findRevisions(copiedEntityId.get()).stream().filter(revision -> {
+                    AuditRevisionEntity audit = revision.getMetadata().getDelegate();
+                    if (audit.getCopiedFacilityId() != null) {
+                        return audit.getCopiedFacilityId().equals(facility.getId());
+                    } else {
+                        return false;
+                    }
+                }).findFirst();
+            }
+
+            /**
+             * We check if a copy already exists in the destination facility
+             */
+            if (previousCopyRevision.isEmpty()) {
+                Stream<String> potentialIds =
+                        StreamSupport.stream(ehrPatientRepository.findByFacilityId(facility.getId()).spliterator(),false)
+//                        facility.getPatients().stream()
+                        .map(EhrPatient::getId);
+                previousCopyRevision = potentialIds
+                        /**
+                         *  finding the creation Revision Entity ie first insert found
+                         */
+                        .map(((id) -> ehrPatientRepository.findRevisions(id).stream()
+                                .filter(revision -> revision.getMetadata().getRevisionType().equals(RevisionMetadata.RevisionType.INSERT))
+                                .findFirst().get()))
+                        .filter(revision -> {
+                            AuditRevisionEntity audit = revision.getMetadata().getDelegate();
+                            if (audit.getCopiedEntityId() != null) {
+                                return audit.getCopiedEntityId().equals(copiedEntityId.get());
+                            } else {
+                                return false;
+                            }
+                        }).findFirst();
+
+            }
+
+            if (previousCopyRevision.isPresent()) {
+//                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already bearing a copy of this patient");
+                /**
+                 * returning the id of the older copy or original patient
+                 * TODO : Update the copy ? flavor ?
+                 */
+                return ResponseEntity.accepted().body(previousCopyRevision.get().getEntity().getId());
+            }
         }
-        // patient.setTenant(tenant.get());
-        patient.setFacility(facility.get());
+        patient.setId(null);
+        patient.setFacility(facility);
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
         EhrPatient newEntity = ehrPatientRepository.save(patient);
@@ -122,47 +173,36 @@ public class EhrPatientController {
                 .buildAndExpand(newEntity.getId())
                 .toUri();
         return ResponseEntity.created(location).body(newEntity.getId());
-//        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
     }
 
     @PutMapping("")
-    public EhrPatient putPatient(@PathVariable() int tenantId,
-                                 @PathVariable() int facilityId,
-                                 @RequestBody EhrPatient patient) {
+    public EhrPatient putPatient(@RequestAttribute Tenant tenant,
+                                 @RequestAttribute Facility facility,
+//                                 @RequestAttribute EhrPatient patient,
+                                 @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
-        Optional<Tenant> tenant = tenantRepository.findById(tenantId);
-        Optional<Facility> facility = facilityRepository.findById(facilityId);
-        Optional<EhrPatient> oldPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patient.getId());
-        if (!tenant.isPresent() || !facility.isPresent() || !oldPatient.isPresent()){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
-        }
-        // patient.setTenant(tenant.get());
-        patient.setFacility(facility.get());
-        patient.setUpdatedDate(new Date());
-        EhrPatient newEntity = ehrPatientRepository.save(patient);
-        return newEntity;
-//        return ResponseEntity.created(location).body("Patient " + newEntity.getId() + " saved");
+        EhrPatient oldPatient = ehrPatientRepository.findByFacilityIdAndId(facility.getId(), newPatient.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
+        newPatient.setFacility(facility);
+        newPatient.setUpdatedDate(new Date());
+        return ehrPatientRepository.save(newPatient);
     }
 
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
-    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() int facilityId,
-                                                      @PathVariable() String patientId,
-                                                      @PathVariable() Integer immRegistryId,
-                                                      @RequestParam Optional<Long> _since) {
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
+    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@RequestAttribute Facility facility,
+                                                                                  @RequestAttribute EhrPatient patient,
+                                                                                  @PathVariable() Integer registryId,
+                                                                                  @RequestParam Optional<Long> _since) {
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        IGenericClient client = customClientFactory.newGenericClient(registryId);
 
-        EhrPatient patient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immRegistryId);
-        IGenericClient client = customClientBuilder.newGenericClient(immRegistryId);
-
+        // TODO switch to $match ?
         Bundle searchBundle = client.search()
                 .forResource(Patient.class)
-                .where(Patient.IDENTIFIER.exactly().systemAndCode(MRN_SYSTEM,patient.getMrn()))
+                .where(Patient.IDENTIFIER.exactly().systemAndCode(MRN_SYSTEM, patient.getMrn()))
                 .returnBundle(Bundle.class).execute();
         String id = null;
-        for (Bundle.BundleEntryComponent entry: searchBundle.getEntry()) {
+        for (Bundle.BundleEntryComponent entry : searchBundle.getEntry()) {
             if (entry.getResource().getMeta().hasTag()) { // TODO better condition to check if golden record
                 id = new IdType(entry.getResource().getId()).getIdPart();
                 break;
@@ -185,17 +225,20 @@ public class EhrPatientController {
             Set<VaccinationEvent> set = new HashSet<>(outBundle.getEntry().size());
 
             RequestDetails requestDetails = new ServletRequestDetails();
-            requestDetails.setTenantId(String.valueOf(facilityId));
+            requestDetails.setTenantId(String.valueOf(facility.getId()));
 
-            for (Bundle.BundleEntryComponent entry: outBundle.getEntry()) {
+            for (Bundle.BundleEntryComponent entry : outBundle.getEntry()) {
                 try {
                     Immunization immunization = (Immunization) entry.getResource();
-                    immunization.setPatient(new Reference().setReference(patientId));
-                    VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
-                    vaccinationEvent.setPatient(patient);
-                    vaccinationEvent.setAdministeringFacility(facility);
-                    set.add(immunizationMapper.toVaccinationEvent(immunization));
-                } catch (ClassCastException classCastException ){
+                    if (immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG,GOLDEN_RECORD) != null ) {
+                        immunization.setPatient(new Reference().setReference(patient.getId()));
+                        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
+                        vaccinationEvent.setPatient(patient);
+                        vaccinationEvent.setAdministeringFacility(facility);
+                        set.add(immunizationMapper.toVaccinationEvent(immunization));
+                    }
+
+                } catch (ClassCastException classCastException) {
                     //Ignoring other resources
                 }
                 //TODO Recommendations
@@ -206,7 +249,7 @@ public class EhrPatientController {
     }
 
     @GetMapping("/{patientId}/qbp")
-    public ResponseEntity<String> vxu(@PathVariable() String patientId) {
+    public ResponseEntity<String> qbp(@PathVariable() String patientId) {
         QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
@@ -218,9 +261,9 @@ public class EhrPatientController {
     }
 
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String>  vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
+    public ResponseEntity<String> qbpSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
+        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

@@ -1,11 +1,17 @@
 package org.immregistries.ehr.logic.mapping;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -16,16 +22,20 @@ import java.text.SimpleDateFormat;
  */
 @Service
 public class PatientMapperR5 {
-  private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
-  public static final String MRN_SYSTEM = "urn:mrns";
 
+  @Autowired
+  CodeMapManager codeMapManager;
+  @Autowired
+  OrganizationMapperR5 organizationMapperR5;
+  private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
+  public static final String MRN_SYSTEM = "mrn";
   public static final String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
   public static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
   public static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
   public static final String ETHNICITY_EXTENSION = "ethnicity";
-  public static final String ETHNICITY_SYSTEM = "ethnicity";
+  public static final String ETHNICITY_SYSTEM = "http://terminology.hl7.org/CodeSystem/v3-Ethnicity";
   public static final String RACE = "race";
-  public static final String RACE_SYSTEM = "race";
+  public static final String RACE_SYSTEM = "https://terminology.hl7.org/2.0.0/CodeSystem-v3-Race.html";
   public static final String PUBLICITY_EXTENSION = "publicity";
   public static final String PUBLICITY_SYSTEM = "publicityIndicator";
   public static final String PROTECTION_EXTENSION = "protection";
@@ -37,13 +47,10 @@ public class PatientMapperR5 {
   public static final String FEMALE_SEX = "F";
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-
-  public Patient toFhirPatient(EhrPatient dbPatient, String identifier_system) {
-    Patient fhirPatient = toFhirPatient(dbPatient);
-    Identifier identifier = fhirPatient.addIdentifier();
-    identifier.setValue(""+dbPatient.getId());
-    identifier.setSystem(identifier_system);
-    return fhirPatient;
+  public Patient toFhirPatient(EhrPatient ehrPatient, Facility facility) {
+    Patient p = toFhirPatient(ehrPatient);
+    p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhirOrganization(facility).getIdentifierFirstRep()));
+    return p;
   }
 
   public Patient toFhirPatient(EhrPatient ehrPatient) {
@@ -87,17 +94,20 @@ public class PatientMapperR5 {
       p.setGender(AdministrativeGender.OTHER);
     }
 
-    //Race and ethnicity
+    /**
+     * Race
+     */
     Extension raceExtension = p.addExtension();
     raceExtension.setUrl(RACE);
-    CodeableConcept race = new CodeableConcept().setText(RACE_SYSTEM);
+    CodeableConcept race = new CodeableConcept();
     raceExtension.setValue(race);
-    if (ehrPatient.getRace() != null && !ehrPatient.getRace().isEmpty()) {
-      race.addCoding().setCode(ehrPatient.getRace());
-    }
-    p.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()));
+    race.addCoding(codingFromCodeset(ehrPatient.getRace(),RACE_SYSTEM,CodesetType.PATIENT_RACE));
 
-//    p.addExtension(ETHNICITY_EXTENSION,new CodeType().setSystem(ETHNICITY_SYSTEM).setValue(ehrPatient.getEthnicity()));
+
+    /**
+     * Ethnicity
+     */
+    p.addExtension(ETHNICITY_EXTENSION, codingFromCodeset(ehrPatient.getEthnicity(),ETHNICITY_SYSTEM,CodesetType.PATIENT_ETHNICITY));
 
     if (ehrPatient.getDeathDate() != null) {
       p.getDeceasedDateTimeType().setValue(ehrPatient.getDeathDate());
@@ -143,7 +153,7 @@ public class PatientMapperR5 {
     ehrPatient.setUpdatedDate(p.getMeta().getLastUpdated());
 
     ehrPatient.setBirthDate(p.getBirthDate());
-//    patient.setManagingOrganizationId(p.getManagingOrganization().getId());
+//    ehrPatient.setManagingOrganizationId(p.getManagingOrganization().getId());
     // Name
     HumanName name = p.getNameFirstRep();
     ehrPatient.setNameLast(name.getFamily());
@@ -154,11 +164,10 @@ public class PatientMapperR5 {
       ehrPatient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
     }
 
-    ehrPatient.setMrn(
-      p.getIdentifier().stream().filter(identifier -> identifier.getSystem().equals(MRN_SYSTEM)).findFirst()
-              .orElse(p.getIdentifierFirstRep())
-              .getValue()
-    );
+    Identifier chosenIdentifier = p.getIdentifier().stream().filter(identifier -> identifier.getSystem().equals(MRN_SYSTEM)).findFirst()
+            .orElse(p.getIdentifierFirstRep());
+    ehrPatient.setMrn(chosenIdentifier.getValue());
+    ehrPatient.setMrnSystem(chosenIdentifier.getSystem());
 
     Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME);
     if (motherMaiden != null) {
@@ -293,5 +302,17 @@ public class PatientMapperR5 {
       }
     }
     return ehrPatient;
+  }
+
+  private Coding codingFromCodeset(String value,String system,CodesetType codesetType) {
+    Coding coding = null;
+    if (StringUtils.isNotBlank(value)) {
+      coding = new Coding().setCode(value).setSystem(system);
+      Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType,value);
+      if (code != null) {
+        coding.setDisplay(code.getLabel());
+      }
+    }
+    return coding;
   }
 }

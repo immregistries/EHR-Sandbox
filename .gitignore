@@ -1,3 +1,6 @@
 /ehr-sandbox.war
-/ehr.war
 /EHR-Sandbox-Ui/.vscode/
+/target/
+/ehr-sandbox.iml
+/EHR-Sandbox-Api/target/
+/.idea/

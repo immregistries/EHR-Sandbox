@@ -65,9 +65,9 @@ export class Hl7Service {
   quickPostVXU(patientId: number, vaccinationId: number, vxu: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu/imm-registry/${registryId}`,
       vxu,
       httpOptions);
   }
@@ -82,9 +82,9 @@ export class Hl7Service {
   quickPostQBP(patientId: number, qbp: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    const immId = this.immRegistries.getCurrentId()
+    const registryId = this.immRegistries.getCurrentId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp/imm-registry/${immId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp/imm-registry/${registryId}`,
       qbp,
       httpOptions);
   }

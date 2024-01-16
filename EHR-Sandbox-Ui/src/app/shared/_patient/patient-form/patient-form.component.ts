@@ -83,18 +83,21 @@ export class PatientFormComponent implements OnInit {
       {type: formType.text, title: 'Middle name', attribute: 'nameMiddle'},
       {type: formType.text, title: 'Last name', attribute: 'nameLast'},
       {type: formType.text, title: 'Mother maiden name', attribute: 'motherMaiden'},
+
+    ]},
+    {title: 'Medical Record Number',  cols: 1, rows: 1, patientForms: [
       {type: formType.text, title: 'Mrn Identifier', attribute: 'mrn'},
+      {type: formType.text, title: 'Mrn System', attribute: 'mrnSystem'},
     ]},
     {title: 'Birth',  cols: 1, rows: 1, patientForms: [
       {type: formType.date, title: 'Birth date', attribute: 'birthDate'},
       {type: formType.yesNo, title: 'Multiple birth', attribute: 'birthFlag'},
       {type: formType.short, title: 'Order', attribute: 'birthOrder'},
-
     ]},
     {title: 'Identity',cols: 1, rows: 1, patientForms: [
-      {type: formType.select, title: 'Sex', attribute: 'sex', options: [{value: 'M'},{value: 'F'}]},
-      {type: formType.text, title: 'Ethnicity', attribute: 'ethnicity'},
-      {type: formType.text, title: 'Race', attribute: 'race'},
+      {type: formType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX", options: [{value: 'M'},{value: 'F'}]},
+      {type: formType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY"},
+      {type: formType.code, title: 'Race', attribute: 'race', codeMapLabel: "PATIENT_RACE"},
     ]},
     {title: 'Address', cols: 1, rows: 2, patientForms: [
       {type: formType.text, title: 'Line 1', attribute: 'addressLine1'},

@@ -1,10 +1,7 @@
 import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirResourceService } from '../../_services/fhir-resource.service';
 
 @Component({
   selector: 'app-fhir-messaging',
@@ -36,10 +33,7 @@ export class FhirMessagingComponent implements AfterViewInit {
   public autofillId: boolean = false;
   public patientFhirId = "";
 
-  constructor(private fhirService: FhirService,
-    private snackBarService: SnackBarService,
-    private feedbackService: FeedbackService,
-    private immRegistriesService: ImmunizationRegistryService,
+  constructor(private fhirResourceService: FhirResourceService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId?: number}) {
       if (data) {
@@ -56,13 +50,13 @@ export class FhirMessagingComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.tabGroup.selectedIndex = 1;
     this.patientLoading = true
-    this.fhirService.quickGetPatientResource(this.patientId).subscribe((resource) => {
+    this.fhirResourceService.quickGetPatientResource(this.patientId).subscribe((resource) => {
       this.patientResource = resource
       this.patientLoading = false
     })
     if (this.vaccinationId){
       this.vaccinationLoading = true
-      this.fhirService.quickGetImmunizationResource(this.patientId,this.vaccinationId).subscribe((resource) => {
+      this.fhirResourceService.quickGetImmunizationResource(this.patientId,this.vaccinationId).subscribe((resource) => {
         this.vaccinationResource = resource
         this.vaccinationLoading = false
       })

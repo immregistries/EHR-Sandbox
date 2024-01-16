@@ -43,6 +43,8 @@ public class VaccinationController {
     @Autowired
     private ClinicianRepository clinicianRepository;
     @Autowired
+    ClinicianController clinicianController;
+    @Autowired
     private VaccineRepository vaccineRepository;
     @Autowired
     private ImmunizationRegistryController immRegistryController;
@@ -68,29 +70,17 @@ public class VaccinationController {
     }
 
     @GetMapping("/$random")
-    public VaccinationEvent random( @PathVariable() int tenantId, @PathVariable() int facilityId,
-                                    @PathVariable() Optional<String> patientId) {
-        Tenant tenant = tenantRepository.findById(tenantId).get();
-        String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-        EhrPatient patient = patientRepository.findByFacilityIdAndId(facilityId,patientId1)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-        return randomGenerator.randomVaccinationEvent(patient, tenant, patient.getFacility());
+    public VaccinationEvent random( @RequestAttribute Tenant tenant,
+                                    @RequestAttribute Optional<EhrPatient> patient) {
+        patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+        return randomGenerator.randomVaccinationEvent(patient.get(), tenant, patient.get().getFacility());
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@PathVariable() Optional<String> patientId,
+    public ResponseEntity<String> postVaccinationEvents(@RequestAttribute() Tenant tenant,
+                                                        @RequestAttribute Optional<EhrPatient> patient,
                                                         @RequestBody VaccinationEvent vaccination) {
-        String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-
-        EhrPatient patient = patientRepository.findById(patientId1)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-        vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
-        vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
-        vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
-        vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
-        vaccination.setPatient(patient);
-        vaccination.setAdministeringFacility(patient.getFacility());
-        VaccinationEvent newEntity = vaccinationEventRepository.save(vaccination);
+        VaccinationEvent newEntity = createVaccinationEvent(tenant,patient,vaccination);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newEntity.getId())
@@ -98,25 +88,53 @@ public class VaccinationController {
         return ResponseEntity.created(location).body(newEntity.getId());
     }
 
-    @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@PathVariable() int facilityId,
-                                                 @PathVariable() Optional<String> patientId,
-                                                 @RequestBody VaccinationEvent vaccination) {
-        String patientId1 = patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
-        EhrPatient patient = patientRepository.findById(patientId1)
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-        VaccinationEvent oldVaccination = vaccinationEventRepository.findByPatientIdAndId(patientId1, vaccination.getId())
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
-        vaccination.setAdministeringClinician(clinicianRepository.save(vaccination.getAdministeringClinician()));
-        vaccination.setOrderingClinician(clinicianRepository.save(vaccination.getOrderingClinician()));
-        vaccination.setEnteringClinician(clinicianRepository.save(vaccination.getEnteringClinician()));
+    private VaccinationEvent createVaccinationEvent(Tenant tenant,
+                                                    Optional<EhrPatient> patient,
+                                                    VaccinationEvent vaccination) {
+        patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
+        if (vaccination.getAdministeringClinician().getId() == null) {
+            vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
+        }
+        if (vaccination.getEnteringClinician().getId() == null) {
+            vaccination.setEnteringClinician(clinicianController.postClinicians(tenant,vaccination.getEnteringClinician()));
+        }
+        if (vaccination.getOrderingClinician().getId() == null) {
+            vaccination.setOrderingClinician(clinicianController.postClinicians(tenant,vaccination.getOrderingClinician()));
+        }
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
-        vaccination.setPatient(patient);
-        vaccination.setAdministeringFacility(facility);
+        vaccination.setPatient(patient.get());
+        vaccination.setAdministeringFacility(patient.get().getFacility());
         return vaccinationEventRepository.save(vaccination);
+    }
+
+    @PutMapping()
+    public VaccinationEvent putVaccinationEvents(@RequestAttribute() Tenant tenant,
+                                                 @RequestAttribute() Facility facility,
+                                                 @RequestAttribute Optional<EhrPatient> patient,
+                                                 @RequestBody VaccinationEvent vaccination) {
+        patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
+        Optional<VaccinationEvent> old = vaccinationEventRepository.findByPatientIdAndId(patient.get().getId(), vaccination.getId());
+        VaccinationEvent oldVaccination;
+        if (old.isEmpty()) {
+            return createVaccinationEvent(tenant, patient,vaccination);
+        } else {
+            oldVaccination = old.get();
+            vaccination.getVaccine().setCreatedDate(oldVaccination.getVaccine().getCreatedDate());
+
+            if (vaccination.getAdministeringClinician().getId() == null) {
+                vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
+            }
+            if (vaccination.getEnteringClinician().getId() == null) {
+                vaccination.setEnteringClinician(clinicianController.postClinicians(tenant,vaccination.getEnteringClinician()));
+            }
+            if (vaccination.getOrderingClinician().getId() == null) {
+                vaccination.setOrderingClinician(clinicianController.postClinicians(tenant,vaccination.getOrderingClinician()));
+            }
+            vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
+            vaccination.setPatient(patient.get());
+            vaccination.setAdministeringFacility(facility);
+            return vaccinationEventRepository.save(vaccination);
+        }
     }
 
     @GetMapping("/{vaccinationId}/vxu")
@@ -132,9 +150,9 @@ public class VaccinationController {
     }
 
     @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String>  vxuSend(@PathVariable() Integer immRegistryId, @RequestBody String message) {
+    public ResponseEntity<String>  vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(immRegistryId);
+        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

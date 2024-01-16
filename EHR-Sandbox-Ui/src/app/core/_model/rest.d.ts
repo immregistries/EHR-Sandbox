@@ -91,6 +91,7 @@ export interface NextOfKin {
 export interface EhrPatient {
   id?: number;
   mrn?: string;
+  mrnSystem?: string;
   createdDate?: Date;
   updatedDate?: Date;
   birthDate?: Date;

@@ -25,6 +25,7 @@
     (referenceEmitter)="referencesChange($event)"></app-select-codebase>
 
   <app-clinician-select *ngSwitchCase="'clinician'"
+    [form]="form"
     [model]="model"
     (modelChange)="model = $event"
     class="select-field"></app-clinician-select>

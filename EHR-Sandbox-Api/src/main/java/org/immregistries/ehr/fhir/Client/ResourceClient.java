@@ -9,7 +9,6 @@ import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public abstract class ResourceClient<Identifier> implements IResourceClient<Identifier>{
@@ -21,24 +20,24 @@ public abstract class ResourceClient<Identifier> implements IResourceClient<Iden
     @Autowired
     FhirContext fhirContext;
     @Autowired
-    CustomClientBuilder customClientBuilder;
+    CustomClientFactory customClientFactory;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public String read(String resourceType, String resourceId, ImmunizationRegistry ir){
-        return read(resourceType, resourceId, customClientBuilder.newGenericClient(ir));
+        return read(resourceType, resourceId, customClientFactory.newGenericClient(ir));
     }
 
     public MethodOutcome create(IBaseResource resource, ImmunizationRegistry ir){
-        return create(resource, customClientBuilder.newGenericClient(ir));
+        return create(resource, customClientFactory.newGenericClient(ir));
     }
 
     public MethodOutcome delete(String resourceType, String resourceId, ImmunizationRegistry ir){
-        return delete(resourceType, resourceId, customClientBuilder.newGenericClient(ir));
+        return delete(resourceType, resourceId, customClientFactory.newGenericClient(ir));
     }
 
     public MethodOutcome update(IBaseResource resource, String resourceId, ImmunizationRegistry ir){
-        return update(resource, resourceId, customClientBuilder.newGenericClient(ir));
+        return update(resource, resourceId, customClientFactory.newGenericClient(ir));
     }
 
     public String read(String resourceType, String resourceId, IGenericClient client) {

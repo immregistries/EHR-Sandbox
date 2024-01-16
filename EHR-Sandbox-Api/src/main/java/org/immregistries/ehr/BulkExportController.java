@@ -5,9 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.IValidatorModule;
-import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Parameters;
@@ -17,7 +15,7 @@ import org.immregistries.ehr.api.controllers.ImmunizationRegistryController;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.Client.CustomClientBuilder;
+import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +26,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
 
 @RestController
 public class BulkExportController {
@@ -47,7 +42,7 @@ public class BulkExportController {
     @Autowired
     ImmunizationRegistryController immRegistryController;
     @Autowired
-    CustomClientBuilder customClientBuilder;
+    CustomClientFactory customClientFactory;
     @Autowired
     FacilityRepository facilityRepository;
 
@@ -55,8 +50,8 @@ public class BulkExportController {
     BundleImportService bundleImportService;
 
 
-    @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-synch")
-    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
+    @GetMapping("/registry/{registryId}/Group/{groupId}/$export-synch")
+    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer registryId, @PathVariable()  String groupId
             ,@RequestParam Optional<String> _outputFormat
             ,@RequestParam Optional<String> _type
             ,@RequestParam Optional<Date> _since
@@ -66,8 +61,8 @@ public class BulkExportController {
             ,@RequestParam Optional<String> patient
             ,@RequestParam Optional<Boolean> _mdm
     ) throws IOException {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
-        IGenericClient client = customClientBuilder.newGenericClient(ir);
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        IGenericClient client = customClientFactory.newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
@@ -97,16 +92,16 @@ public class BulkExportController {
         }
     }
 
-    @GetMapping("/iim-registry/{immRegistryId}/Group/{groupId}/$export-asynch")
-    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() Integer immRegistryId, @PathVariable()  String groupId
+    @GetMapping("/registry/{registryId}/Group/{groupId}/$export-asynch")
+    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() Integer registryId, @PathVariable()  String groupId
             ,@RequestParam Optional<String> _outputFormat
             ,@RequestParam Optional<String> _type
             ,@RequestParam Optional<Date> _since
             ,@RequestParam Optional<String> _typeFilter
             ,@RequestParam Optional<Boolean> _mdm
     ) {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
-        IGenericClient client = customClientBuilder.newGenericClient(ir);
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        IGenericClient client = customClientFactory.newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
@@ -134,9 +129,9 @@ public class BulkExportController {
         return ResponseEntity.internalServerError().body(response.getStatusInfo());
     }
 
-    @GetMapping("/iim-registry/{immRegistryId}/$export-status")
-    public ResponseEntity bulkCheckStatus(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+    @GetMapping("/registry/{registryId}/$export-status")
+    public ResponseEntity bulkCheckStatus(@PathVariable() Integer registryId, @RequestParam String contentUrl) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
         Map<String, List<String>> result;
         // URL used is the one gotten from the kickoff, while authentication remains the same
 //        IGenericClient client = customClientBuilder.newGenericClient(contentLocationUrl,ir.getIisPassword(),ir.getIisUsername());
@@ -151,9 +146,12 @@ public class BulkExportController {
             con.setRequestProperty("Accept", "application/json");
             String encoded = Base64.getEncoder()
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
-                            .getBytes(StandardCharsets.UTF_8));  //Java 8
-            if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+                            .getBytes(StandardCharsets.UTF_8));
+            if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
+                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+            } else {
+                con.setRequestProperty("Authorization", "Basic " + encoded);
+
             }
             con.setConnectTimeout(5000);
 
@@ -187,9 +185,9 @@ public class BulkExportController {
         }
     }
 
-    @DeleteMapping("/iim-registry/{immRegistryId}/$export-status")
-    public ResponseEntity bulkDelete(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+    @DeleteMapping("/registry/{registryId}/$export-status")
+    public ResponseEntity bulkDelete(@PathVariable() Integer registryId, @RequestParam String contentUrl) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
         HttpURLConnection con = null;
         URL url;
         try {
@@ -199,7 +197,7 @@ public class BulkExportController {
             con.setRequestProperty("Accept", "application/json");
 
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -222,9 +220,9 @@ public class BulkExportController {
         }
     }
 
-    @GetMapping("/iim-registry/{immRegistryId}/$export-result")
-    public ResponseEntity bulkResult(@PathVariable() Integer immRegistryId, @RequestParam String contentUrl, Optional<Integer> loadInFacility) {
-        ImmunizationRegistry ir = immRegistryController.settings(immRegistryId);
+    @GetMapping("/registry/{registryId}/$export-result")
+    public ResponseEntity bulkResult(@PathVariable() Integer registryId, @RequestParam String contentUrl, Optional<Integer> loadInFacility) {
+        ImmunizationRegistry ir = immRegistryController.settings(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
         HttpURLConnection con = null;
@@ -235,7 +233,7 @@ public class BulkExportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", customClientBuilder.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 

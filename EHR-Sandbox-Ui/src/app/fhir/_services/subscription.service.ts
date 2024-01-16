@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { EhrSubscription } from '../../core/_model/rest';
 import { FacilityService } from '../../core/_services/facility.service';
 import { SettingsService } from '../../core/_services/settings.service';
 import { TenantService } from '../../core/_services/tenant.service';
+import { Subscription } from 'fhir/r5';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -36,9 +37,28 @@ export class SubscriptionService {
   createSubscription(): Observable<boolean | null> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    const immRegistryId: number | undefined = this.immRegistriesService.getCurrentId()
+    const registryId: number | undefined = this.immRegistriesService.getCurrentId()
     return this.http.post<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${immRegistryId}/subscription`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/subscription/data-quality-issues`,
+      httpOptions);
+  }
+
+  postSubscription(subscription: string): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const registryId: number | undefined = this.immRegistriesService.getCurrentId()
+    return this.http.post<any>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/subscription`,
+      subscription,
+      httpOptions);
+  }
+  putSubscription(subscription: string): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    const registryId: number | undefined = this.immRegistriesService.getCurrentId()
+    return this.http.put<any>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/subscription`,
+      subscription,
       httpOptions);
   }
 
@@ -51,6 +71,18 @@ export class SubscriptionService {
     return this.http.get<EhrSubscription>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/subscription`,
       httpOptions);
+  }
+
+  readSample(): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId = this.facilityService.getCurrentId()
+    const registryId: number | undefined = this.immRegistriesService.getCurrentId()
+    if (facilityId < 0) {
+      return of()
+    }
+    return this.http.get<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/subscription/sample`,
+      httpOptions).pipe(share());
   }
 
 }

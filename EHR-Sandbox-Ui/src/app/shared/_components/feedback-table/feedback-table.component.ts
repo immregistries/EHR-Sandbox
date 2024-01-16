@@ -28,7 +28,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   dataSource = new MatTableDataSource<Feedback>([]);
   expandedElement: Feedback | null = null;
 
-  @Input() facility: Facility = {id: -1};
+  @Input() facility: Facility | null = null;
   @Input() patient?: EhrPatient;
   @Input() vaccination?: VaccinationEvent;
   @Input() title: string = 'Feedback from IIS'
@@ -74,22 +74,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   }
 
   ngOnInit(): void {
-    this.columns = [
-      "severity",
-      "code",
-      "patient",
-      "vaccinationEvent",
-      "timestamp",
-      "iis",
-      "content",
-      // "remove",
-    ]
-    if (this.patient) {
-      this.columns = this.columns.filter((attribute => attribute != "patient"))
-    }
-    if (this.vaccination) {
-      this.columns = this.columns.filter((attribute => attribute != "vaccinationEvent"))
-    }
+    this.refreshColumns()
 
     this.immunizationRegistryService.getRefresh().subscribe(() => {
       this.immunizationRegistryService.readImmRegistries().subscribe((res) => {
@@ -109,8 +94,27 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   }
 
   ngOnChanges(): void {
-    this.ngOnInit()
+    this.refreshColumns()
     this.refreshData()
+  }
+
+  refreshColumns(): void {
+    this.columns = [
+      "severity",
+      "code",
+      "patient",
+      "vaccinationEvent",
+      "timestamp",
+      "iis",
+      "content",
+      // "remove",
+    ]
+    if (this.patient) {
+      this.columns = this.columns.filter((attribute => attribute != "patient"))
+    }
+    if (this.vaccination) {
+      this.columns = this.columns.filter((attribute => attribute != "vaccinationEvent"))
+    }
   }
 
   refreshData(){

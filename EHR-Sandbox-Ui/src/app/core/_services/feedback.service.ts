@@ -53,4 +53,16 @@ export class FeedbackService extends RefreshService {
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/feedbacks`,
       httpOptions).pipe(share());
   }
+
+  readCurrentFacilityFeedback(): Observable<Feedback[]> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+
+    if (facilityId < 0) {
+      return of()
+    }
+    return this.http.get<Feedback[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/feedbacks`,
+      httpOptions).pipe(share());
+  }
 }

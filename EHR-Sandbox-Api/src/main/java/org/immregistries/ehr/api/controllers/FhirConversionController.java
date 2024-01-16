@@ -19,6 +19,8 @@ import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,8 @@ import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
 @RestController
 public class FhirConversionController {
+    Logger logger = LoggerFactory.getLogger(FhirConversionController.class);
+
     @Autowired
     private PatientMapperR5 patientMapper;
     @Autowired
@@ -54,35 +58,35 @@ public class FhirConversionController {
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
     public ResponseEntity<String> getPatientAsResource(
-            HttpServletRequest request,
             @PathVariable() String patientId, @PathVariable() Integer facilityId) {
-        EhrPatient patient = patientRepository.findById(patientId)
+        EhrPatient ehrPatient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
 
-        Patient fhirPatient = patientMapper.toFhirPatient(patient,
-                resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
-        fhirPatient.setText(null);
-        String resource = parser.encodeResourceToString(fhirPatient);
+        Patient patient = patientMapper.toFhirPatient(ehrPatient,facility);
+//        patient.setText(null);
+        logger.info("{}", patient);
+        logger.info("{}", patient);
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
+        String resource = parser.encodeResourceToString(patient);
         return ResponseEntity.ok(resource);
     }
 
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/resource")
     public ResponseEntity<String> immunizationResource(
-            HttpServletRequest request,
-            @PathVariable() String vaccinationId,
-            @PathVariable() Integer facilityId) {
-        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
+            @RequestAttribute() VaccinationEvent vaccinationEvent,
+            @RequestAttribute() EhrPatient patient,
+            @RequestAttribute Facility facility) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_ACCEPTABLE, "No facility found"));
+//        System.out.println(vaccinationEvent.getVaccine());
+        /**
+         * not sure why this is a necessary step, but not problematic as links were checked in authorization filter
+         */
+        vaccinationEvent.setPatient(patient);
         Immunization immunization =
                 immunizationMapper.toFhirImmunization(vaccinationEvent,
-                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility),
-                        resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
+                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
     }
@@ -90,10 +94,10 @@ public class FhirConversionController {
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")
     public ResponseEntity<String> loadNdJsonBundle(
             @PathVariable() Integer facilityId,
-            @PathVariable() Integer immRegistryId,
+            @PathVariable() Integer registryId,
             @RequestBody Bundle bundle) {
         return bundleImportService.importBundle(
-                immunizationRegistryController.settings(immRegistryId),
+                immunizationRegistryController.settings(registryId),
                 facilityRepository.findById(facilityId).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified")
                 ), bundle);
@@ -101,21 +105,18 @@ public class FhirConversionController {
 
 
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
-    public ResponseEntity bulkResultLoad(@PathVariable() Integer immRegistryId, @RequestBody String ndjson, @PathVariable Integer facilityId) {
-        ImmunizationRegistry ir = immunizationRegistryController.settings(immRegistryId);
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
-        return loadNdJson(ir, facility,ndjson);
+    public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @RequestAttribute Facility facility) {
+        ImmunizationRegistry ir = immunizationRegistryController.settings(registryId);
+        return loadNdJson(ir, facility, ndjson);
     }
 
     private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, String ndJson) {
         IParser parser = fhirContext.newNDJsonParser();
         Bundle bundle = (Bundle) parser.parseResource(ndJson);
-        return bundleImportService.importBundle(immunizationRegistry,facility, bundle);
+        return bundleImportService.importBundle(immunizationRegistry, facility, bundle);
     }
 
-    private String validateNdJsonBundle(Bundle bundle ) {
+    private String validateNdJsonBundle(Bundle bundle) {
 //        IValidator validator = new
         FhirValidator validator = fhirContext.newValidator();
 

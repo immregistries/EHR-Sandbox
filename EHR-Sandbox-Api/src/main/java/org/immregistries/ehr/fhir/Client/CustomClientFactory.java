@@ -51,14 +51,14 @@ import java.util.Map;
  * 
  */
 @Component
-public class CustomClientBuilder extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
+public class CustomClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
 
     // Needs to be static object and built only one time in whole project
     @Autowired
     FhirContext fhirContext;
 
     LoggingInterceptor loggingInterceptor;
-    private static final Logger logger = LoggerFactory.getLogger(CustomClientBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomClientFactory.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired

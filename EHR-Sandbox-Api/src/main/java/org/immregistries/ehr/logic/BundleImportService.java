@@ -1,11 +1,10 @@
 package org.immregistries.ehr.logic;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.PatientIdentifier;
+import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationIdentifierRepository;
 import org.immregistries.ehr.api.repositories.PatientIdentifierRepository;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
@@ -32,6 +31,8 @@ public class BundleImportService {
     private ImmunizationIdentifierRepository immunizationIdentifierRepository;
     @Autowired
     private PatientIdentifierRepository patientIdentifierRepository;
+    @Autowired
+    private EhrPatientRepository ehrPatientRepository;
 
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
@@ -44,9 +45,14 @@ public class BundleImportService {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     String receivedId = new IdType(patient.getId()).getIdPart();
-                    MethodOutcome methodOutcome = patientProvider.create(patient,facility);
+                    String localPatientId = resourceIdentificationService.getPatientLocalId(patient,immunizationRegistry,facility);
+
+                    MethodOutcome methodOutcome;
+                    methodOutcome = patientProvider.update(patient,facility,immunizationRegistry);
                     String dbId = methodOutcome.getId().getValue();
-                    patientIdentifierRepository.save(new PatientIdentifier(dbId,immunizationRegistry.getId(),receivedId));
+                    if (localPatientId == null) {
+                        patientIdentifierRepository.save(new PatientIdentifier(dbId,immunizationRegistry.getId(),receivedId));
+                    }
                     responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
                     logger.info("Patient  {}  loaded as patient  {}",receivedId,dbId);
                     count++;
@@ -55,10 +61,9 @@ public class BundleImportService {
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
                     String receivedId = new IdType(immunization.getId()).getIdPart();
-                    String receivedPatientId = new IdType(immunization.getPatient().getReference()).getIdPart();
-                    Optional<PatientIdentifier> patientIdentifier = patientIdentifierRepository.findByPatientIdAndImmunizationRegistryId(receivedPatientId,immunizationRegistry.getId());
-                    if (patientIdentifier.isPresent()) {
-                        immunization.setPatient(new Reference("Patient/" + patientIdentifier.get().getPatientId()));
+                    String localPatientId = resourceIdentificationService.getPatientLocalId(immunization.getPatient(),immunizationRegistry,facility);
+                    if (StringUtils.isNotBlank(localPatientId)) {
+                        immunization.setPatient(new Reference("Patient/" + localPatientId));
                         MethodOutcome methodOutcome = immunizationProvider.create(immunization,facility);
                         String dbId = methodOutcome.getId().getValue();
                         immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId,immunizationRegistry.getId(),receivedId));

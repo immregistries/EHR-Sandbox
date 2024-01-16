@@ -6,8 +6,8 @@ import { SettingsService } from './settings.service';
 import { RefreshService } from './refresh.service';
 import { ObjectWithID } from '../_model/rest';
 
-export class CurrentSelectedService<T extends ObjectWithID> extends RefreshService {
-  private current!: BehaviorSubject<T>;
+export class CurrentSelectedService<T> extends RefreshService {
+  protected current!: BehaviorSubject<T>;
   private lastRefreshTime: number;
 
   public getLastRefreshTime(): number {
@@ -28,13 +28,14 @@ export class CurrentSelectedService<T extends ObjectWithID> extends RefreshServi
     return this.current.value
   }
 
-  public getCurrentId(): number {
-    return this.current.value.id ?? -1
-  }
-
   public setCurrent(value: T) {
     this.current.next(value)
     this.updateLastRefreshtime()
+  }
+
+  public override doRefresh(): void{
+    super.doRefresh()
+    this.lastRefreshTime = new Date().getTime()
   }
 
   constructor(subject : BehaviorSubject<T>

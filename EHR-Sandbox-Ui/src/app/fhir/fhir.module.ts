@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FhirService } from './_services/fhir.service';
 import { Hl7Service } from './_services/hl7.service';
 import { FhirGetComponent } from './_components/fhir-messaging/fhir-get/fhir-get.component';
 import { FhirMessagingComponent } from './_components/fhir-messaging/fhir-messaging.component';
@@ -34,6 +33,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import {MatCardModule} from '@angular/material/card';
 import { FhirBulkNdjsonManualComponent } from './_components/fhir-bulk/fhir-bulk-ndjson-manual/fhir-bulk-ndjson-manual.component';
+import { FhirClientService } from './_services/fhir-client.service';
+import { FhirBulkService } from './_services/fhir-bulk.service';
+import { FhirResourceService } from './_services/fhir-resource.service';
 
 @NgModule({
   declarations: [
@@ -73,7 +75,9 @@ import { FhirBulkNdjsonManualComponent } from './_components/fhir-bulk/fhir-bulk
     SharedModule,
   ],
   providers: [
-    FhirService,
+    FhirClientService,
+    FhirResourceService,
+    FhirBulkService,
     Hl7Service,
     SubscriptionService,
   ],

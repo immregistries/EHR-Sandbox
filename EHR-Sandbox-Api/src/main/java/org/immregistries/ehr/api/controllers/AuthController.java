@@ -75,7 +75,7 @@ public class AuthController {
              * Defining default IIS's automatically on first login
              */
             ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
-            immunizationRegistryOnline.setName("Online");
+            immunizationRegistryOnline.setName("Online (sabbia)");
             immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
             immunizationRegistryOnline.setIisUsername(newUser.getUsername());
             immunizationRegistryOnline.setIisPassword(newUser.getUsername());

@@ -4,7 +4,6 @@ import { merge, startWith, tap } from 'rxjs';
 import { Facility, EhrSubscription } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SubscriptionService } from 'src/app/fhir/_services/subscription.service';
-import { FhirService } from '../../_services/fhir.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 

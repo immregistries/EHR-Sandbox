@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import { Code, CodeBaseMap, CodeMap, ComparisonResult, BaseForm, FormCard, formType, CodeReference} from 'src/app/core/_model/structure';
+import { Code, ComparisonResult, FormCard, formType, CodeReference} from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
@@ -53,7 +53,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     private vaccinationService: VaccinationService,
     private vaccineComparePipe: VaccinationComparePipe,
     @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent}) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent, changePrimarySourceToFalse?: Boolean}) {
       if (data) {
         this.patientId = data.patientId;
         if (data.vaccination){
@@ -61,6 +61,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
           this.isEditionMode = true
           if (data.comparedVaccination) {
             this.compareTo = vaccineComparePipe.transform(this.vaccination, data.comparedVaccination)
+          }
+          if (data.changePrimarySourceToFalse) {
+            this.vaccination.primarySource = false;
           }
         }
       }

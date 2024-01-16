@@ -15,8 +15,7 @@
 	<description>Api for EHR Sandbox</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<spring.version>2.6.3</spring.version>
-		<hapi.version>6.2.4-SUB</hapi.version>
+		<hapi.version>6.8.3-SUB</hapi.version>
 	</properties>
 
 
@@ -35,6 +34,27 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+<!--			<version>4.0.0.RELEASE</version>-->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
 <!--			<version>${spring.version}</version>-->
@@ -43,14 +63,14 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>${spring-boot-tomcat.scope}</scope>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
@@ -62,7 +82,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
@@ -88,7 +108,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<version>${spring.version}</version>
+<!--			<version>${spring.version}</version>-->
 		</dependency>
 
 		<dependency>
@@ -214,6 +234,11 @@
 			<artifactId>hapi-fhir-validation-resources-r4</artifactId>
 			<version>${hapi.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-validation-resources-r5</artifactId>
+			<version>${hapi.version}</version>
+		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>ca.uhn.hapi.fhir</groupId>-->
 <!--			<artifactId>hapi-fhir-jpaserver-subscription</artifactId>-->
@@ -240,10 +265,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.version}</version>
+<!--				<version>${spring.version}</version>-->
 				<configuration>
 					<mainClass>org.immregistries.ehr.EhrApiApplication</mainClass>
-					<outputDirectory>${project.build.directory}/../../</outputDirectory>
+					<outputDirectory>${project.build.directory}/../../target</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -277,6 +302,47 @@
 	<profiles>
 		<profile>
 			<id>prod</id>
+			<properties>
+				<activatedProperties>prod</activatedProperties>
+				<maven.test.skip>true</maven.test.skip>
+				<spring.datasource.url>jdbc:mysql://localhost:3306/ehr</spring.datasource.url>
+				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>3.1.2</version>
+						<executions>
+							<execution>
+								<id>merge</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.immregistries.ehr</groupId>
+											<artifactId>ehr-sandbox-ui</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>local</id>
 			<properties>
 				<activatedProperties>prod</activatedProperties>
 				<maven.test.skip>true</maven.test.skip>

@@ -19,14 +19,20 @@ services:
     container_name: ehr-sandbox
     environment:
 #      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
-      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+#      - spring.datasource.url=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+#      - API_URL=http://localhost:9099/ehr
 #      DEPLOYMENT_URL: localhost:9091/ehr
 #      DEPLOYMENT_URL: https://sabbia.immregistries.org/ehr TODO
     #      TODO
     restart: on-failure
     ports:
       - "9091:8080"
+#    volumes:
+#      - ./docker-runtime-config.json:/opt/bitnami/tomcat/webapps_default/ehr/WEB-INF/classes/static/assets/runtime-config.json
+#      - ./docker-runtime-config.json:/opt/bitnami/tomcat/webapps_default/runtime-config.json
+
+
 
 volumes:
-  hapi-fhir-postgres:
   sandbox-mysql:

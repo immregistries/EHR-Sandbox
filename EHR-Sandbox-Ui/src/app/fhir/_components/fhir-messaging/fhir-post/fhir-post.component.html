@@ -16,16 +16,20 @@
           <mat-select [(ngModel)]="operation" name="operation">
             <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
             <mat-option [value]="'Create'">Create</mat-option>
+            <mat-option [value]="'$match'">$match</mat-option>
             <!-- <mat-option [value]="'Update'">Update</mat-option> -->
           </mat-select>
         </mat-form-field>
-        <!-- <mat-checkbox appearance="fill" *ngIf="resourceInternId > -1"
+        <!-- <mat-checkbox appearance="fill" *ngIf="resourceLocalId > -1"
           [(ngModel)]="autofillId">
           Autofill server Id in immunization
         </mat-checkbox> -->
       </div>
 
-      <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
+      <div class="footer-end">
+        <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
+      </div>
+
     </div>
 
     <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>

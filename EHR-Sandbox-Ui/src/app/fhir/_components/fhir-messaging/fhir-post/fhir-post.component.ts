@@ -1,76 +1,59 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { map, merge, Observable, tap } from 'rxjs';
-
+import { Component, Input} from '@angular/core';
+import { Facility } from 'src/app/core/_model/rest';
+import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirService } from 'src/app/fhir/_services/fhir.service';
+import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
 
 @Component({
   selector: 'app-fhir-post',
   templateUrl: './fhir-post.component.html',
   styleUrls: ['./fhir-post.component.css']
 })
-export class FhirPostComponent implements OnInit {
+export class FhirPostComponent  {
   resourceLoading: Boolean = false
   requestLoading: Boolean = false
-
-  @Input()
-  resourceType: string = "Group";
-  @Input()
-  resource: string = `{
-    "resourceType": "Group",
-    "type": "person",
-    "actual": true,
-    "member": [
-      {
-        "entity": {
-          "reference": "Patient/"
-        },
-        "period": {
-          "start": "2014-10-08"
-        }
-      }
-    ]
-  }`;
   answer: string = "";
   error: boolean = false;
-
   style: string = 'width: 100%'
 
   @Input()
-  operation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
+  resourceType: string = "Patient";
   @Input()
-  resourceInternId: number = -1;
+  operation:  "UpdateOrCreate" | "Create" | "Update" | "$match" = "UpdateOrCreate";
+  @Input()
+  resourceLocalId: number = -1;
   @Input()
   parentId: number = -1;
   @Input()
   overridingReferences: {[reference: string]: string} = {};
 
+  private _resource: string = "";
+  public get resource(): string {
+    return this._resource;
+  }
+  @Input()
+  public set resource(value:string | null) {
+    this._resource = value ?? "";
+  }
 
-  constructor(private fhirService: FhirService,
+  constructor(private fhirClient: FhirClientService,
     private snackBarService: SnackBarService,
     private feedbackService: FeedbackService) { }
-
-  ngOnInit(): void {
-  }
 
   send() {
     this.answer = ""
     this.requestLoading = true
-    this.fhirService.postResource(this.resourceType,this.resource,this.operation,this.resourceInternId,this.parentId, this.overridingReferences)
+    this.fhirClient.postResource(this.resourceType,this.resource,this.operation,this.resourceLocalId,this.parentId, this.overridingReferences)
     .subscribe({
       next: (res) => {
         this.requestLoading = false
-        this.feedbackService.doRefresh()
         this.error = false
         this.answer = res
+        this.feedbackService.doRefresh()
       },
       error: (err) => {
         this.requestLoading = false
-        this.feedbackService.doRefresh()
         this.error = true
         this.answer = err.error
         console.error(err)
@@ -79,21 +62,20 @@ export class FhirPostComponent implements OnInit {
           console.error(err)
           switch(this.resourceType) {
             case "Patient" : {
-              this.snackBarService.fatalFhirMessage(this.answer, this.resourceInternId)
+              this.snackBarService.fatalFhirMessage(this.answer, this.resourceLocalId)
               break;
             }
             case "Immunization" : {
-              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceInternId)
+              this.snackBarService.fatalFhirMessage(this.answer, this.parentId, this.resourceLocalId)
               break;
             }
           }
         } else {
           this.answer = JSON.stringify(err.error)
         }
+        this.feedbackService.doRefresh()
 
       }
     })
   }
-
-
 }

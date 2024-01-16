@@ -1,12 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { switchMap } from 'rxjs';
 import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
+import { GroupService } from 'src/app/core/_services/group.service';
 
+
+const DEFAULT_SETTINGS = {
+  maxWidth: '95vw',
+  maxHeight: '95vh',
+  height: 'fit-content',
+  width: '100%',
+  panelClass: 'full-screen-modal',
+}
 @Component({
   selector: 'app-patient-list',
   templateUrl: './patient-list.component.html',
@@ -23,7 +32,10 @@ export class PatientListComponent implements OnInit {
   constructor(private tenantService: TenantService,
     private facilityService: FacilityService,
     private patientService: PatientService,
-    private dialog: MatDialog) { }
+    @Optional() public _dialogRef: MatDialogRef<PatientListComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {}) {
+
+    }
 
   ngOnInit(): void {
     this.facilityService.getCurrentObservable().pipe(switchMap(facility =>{
@@ -41,31 +53,32 @@ export class PatientListComponent implements OnInit {
     })
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(PatientFormComponent, {
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      height: 'fit-content',
-      width: '100%',
-      panelClass: 'full-screen-modal',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (this.facility){
-        this.patientService.readPatients(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
-          this.list = res
-        })
-      }
-    });
-  }
+  // openDialog() {
+  //   const dialogRef = this.dialog.open(PatientFormComponent, {
+  //     maxWidth: '95vw',
+  //     maxHeight: '95vh',
+  //     height: 'fit-content',
+  //     width: '100%',
+  //     panelClass: 'full-screen-modal',
+  //   });
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (this.facility){
+  //       this.patientService.readPatients(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
+  //         this.list = res
+  //       })
+  //     }
+  //   });
+  // }
 
   onSelection(event: EhrPatient) {
-    if (this.selectedOption && this.selectedOption.id == event.id){
-      this.selectedOption = undefined
-      this.patientService.setCurrent({})
-    } else {
-      this.selectedOption = event
-      this.patientService.setCurrent(event)
-    }
+    this._dialogRef?.close(event.id)
+    // if (this.selectedOption && this.selectedOption.id == event.id){
+    //   this.selectedOption = undefined
+    //   // this.patientService.setCurrent({})
+    // } else {
+    //   this.selectedOption = event
+    //   // this.patientService.setCurrent(event)
+    // }
   }
 
 }

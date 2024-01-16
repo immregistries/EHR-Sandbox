@@ -39,7 +39,22 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 
 $match-color: hsl(0, 0%, 40%);
 $potential-match-color: hsl(0, 0%, 100%);
-$no-match-color: hsl(0, 0%, 50%);
+$no-match-color: hsl(0, 0%, 20%);
+// $is-new-color: hsl(28, 100%, 65%);
+$is-new-color: hsl(28, 100%, 65%);
+
+.legend-is-new {
+  color: $is-new-color;
+}
+tr.element-row.is-new-row {
+  background: $is-new-color;
+}
+tr.element-row.is-new-row:hover {
+  background: adjust-color($color: $is-new-color, $lightness: -10%);
+}
+tr.element-row.is-new-row:active {
+  background: adjust-color($color: $is-new-color, $lightness: -12%);
+}
 
 .legend-match {
   color: $match-color;
@@ -79,3 +94,5 @@ tr.element-row.not-match-row:hover {
 tr.element-row.not-match-row:active {
   background: adjust-color($color: $no-match-color, $lightness: -12%);
 }
+
+

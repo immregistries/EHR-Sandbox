@@ -41,15 +41,15 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
-          <app-vaccination-received-table [vaccinations]="vaccinationEvents" [patientId]="patientId" [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
+          <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations" [patientId]="patientId" [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
   <div>
     <ul class="w3-ul">
-      <li>This prototype uses FHIR Operation $everything.</li>
       <li>Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.</li>
+      <li>This functionality uses a prototype workflow with  Patient/$match & Patient/$everything?type=Immunization FHIR Operations.</li>
     </ul>
   </div>
 </div>

@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 
 import javax.persistence.*;
@@ -29,8 +30,8 @@ public class EhrSubscription {
         end = subscription.getEnd();
         reason = subscription.getReason();
         channelType = subscription.hasChannelType() ? subscription.getChannelType().getCode() : null;
-        header = subscription.hasHeader() ? subscription.getHeader().get(0).getValue() : null;
-        heartbeatPeriod = subscription.getHeartbeatPeriod();
+        header = subscription.hasParameter() ? subscription.getParameter().get(0).getName() + ":" + subscription.getParameter().get(0).getValue() : "";
+        heartbeatPeriod = subscription.getHeartbeatPeriod() ;
         timeout = subscription.getTimeout();
         contentType = subscription.getContentType();
         content = subscription.hasContent() ? subscription.getContent().toCode() : null;
@@ -48,7 +49,9 @@ public class EhrSubscription {
         subscription.setEnd(end);
         subscription.setReason(reason);
         subscription.setChannelType(new Coding().setCode(channelType));
-        subscription.addHeader(header);
+        if (StringUtils.isNotBlank(header)) {
+            subscription.addParameter().setName(header.split(":")[0]).setValue(header.split(":")[1]);
+        }
         subscription.setHeartbeatPeriod(heartbeatPeriod);
         subscription.setTimeout(timeout);
         subscription.setContent(Subscription.SubscriptionPayloadContent.valueOf(content));

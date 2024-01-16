@@ -62,6 +62,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ClinicianSelectComponent } from './_clinician/clinician-select/clinician-select.component';
 import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-form.component';
 import { GroupTableComponent } from './_components/group-table/group-table.component';
+import { PatientMatchComponent } from './_patient/patient-match/patient-match.component';
+import { PatientReceivedTableComponent } from './_patient/patient-received-table/patient-received-table.component';
+import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
+import { JsonDialogButtonComponent } from './_components/json-dialog-button/json-dialog-button.component';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 
 @NgModule({
@@ -110,7 +115,11 @@ import { GroupTableComponent } from './_components/group-table/group-table.compo
     RegistryNamePipe,
     ClinicianSelectComponent,
     ClinicianFormComponent,
-    GroupTableComponent
+    GroupTableComponent,
+    PatientMatchComponent,
+    PatientReceivedTableComponent,
+    JsonDialogComponent,
+    JsonDialogButtonComponent
   ],
   imports: [
     CommonModule,
@@ -151,6 +160,7 @@ import { GroupTableComponent } from './_components/group-table/group-table.compo
     MatProgressBarModule,
     MatBadgeModule,
     MatToolbarModule,
+    ClipboardModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -192,6 +202,7 @@ import { GroupTableComponent } from './_components/group-table/group-table.compo
     PatientDashboardComponent,
     PatientMenuComponent,
     PatientHistoryComponent,
+    PatientReceivedTableComponent,
 
     CodeMapsPipe,
      TextShortenPipe,

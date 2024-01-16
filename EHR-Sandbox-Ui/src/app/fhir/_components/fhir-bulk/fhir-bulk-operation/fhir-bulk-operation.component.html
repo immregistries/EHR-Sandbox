@@ -12,7 +12,7 @@
   <p>{{"Request URI : /Group/" + (resourceId.length>0? resourceId : "{resourceId}") + "/$export"
     + (exportArguments.length>0? "?" + exportArguments : "")}}
   </p>
-  <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">{{asynchronous? "Autofill content URL" : "Autofill Patient Result URL"}}</mat-checkbox>
+  <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">{{asynchronous? "Autofill status check URL" : "Autofill Patient Result URL"}}</mat-checkbox>
   <button mat-raised-button class="w3-right" (click)="export()">Initial Operation</button>
 </div>
 <div>
