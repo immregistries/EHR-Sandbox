@@ -137,7 +137,7 @@ public class FhirClientController {
                 "f3k+Kg3ipXuvKQUERMNOFPA7IvF+2BVsX2MRgcNae7WPXt+zuVcDj2U4gK+KdGdY\n" +
                 "eqceZ+pNrtgucUV8PNrTgb4ZUBWISA==\n" +
                 "-----END PRIVATE KEY-----\n");
-        immunizationRegistry.setIisFacilityId("Connectathon");
+        immunizationRegistry.setIisFacilityId("");
         Bundle bundle = customClientFactory.smartAuthClient(immunizationRegistry).search()
                 .forResource("Patient")
                 .returnBundle(Bundle.class).execute();
