@@ -2,7 +2,7 @@ import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angul
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
-import { CodeReference, FormCard, formType } from 'src/app/core/_model/structure';
+import FormType, { CodeReference, FormCard } from 'src/app/core/_model/structure';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 
@@ -34,9 +34,9 @@ export class ClinicianFormComponent {
 
   formCards: FormCard[] = [
     {title: "Clinician Name",rows: 1, cols: 1, clinicianForms: [
-      {type: formType.text, title: "First name", attribute: "nameFirst"},
-      {type: formType.text, title: "Middle name", attribute: "nameMiddle"},
-      {type: formType.text, title: "Last name", attribute: "nameLast"}
+      {type: FormType.text, title: "First name", attribute: "nameFirst"},
+      {type: FormType.text, title: "Middle name", attribute: "nameMiddle"},
+      {type: FormType.text, title: "Last name", attribute: "nameLast"}
     ]}
   ]
 

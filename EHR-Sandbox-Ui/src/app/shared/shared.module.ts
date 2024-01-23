@@ -67,6 +67,8 @@ import { PatientReceivedTableComponent } from './_patient/patient-received-table
 import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
 import { JsonDialogButtonComponent } from './_components/json-dialog-button/json-dialog-button.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import { GroupFormComponent } from './_local-group/group-form/group-form.component';
+import { GroupDashboardComponent } from './_local-group/group-dashboard/group-dashboard.component';
 
 
 @NgModule({
@@ -119,7 +121,9 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
     PatientMatchComponent,
     PatientReceivedTableComponent,
     JsonDialogComponent,
-    JsonDialogButtonComponent
+    JsonDialogButtonComponent,
+    GroupFormComponent,
+    GroupDashboardComponent,
   ],
   imports: [
     CommonModule,

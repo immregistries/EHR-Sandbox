@@ -28,6 +28,20 @@ export interface CodeReferenceLink {
   value: string,
   codeset: string
 }
+export interface FormCardGeneric<X> {
+  title: string,
+  cols?: number, // dimensions of the card
+  rows?: number,
+  forms?: GenericForm<X>[],  // form fields for each specific objects
+}
+export interface GenericForm<X> {
+  type: FormType,
+  title: string,
+  attribute: keyof X,
+  codeMapLabel?: string,
+  options?: {value: string, label?: string}[],
+}
+
 export interface FormCard {
   title: string,
   cols?: number, // dimensions of the card
@@ -38,7 +52,7 @@ export interface FormCard {
   clinicianForms?: ClinicianForm[],
 }
 
-export enum formType {
+enum FormType {
   text = 'text',
   date = 'date',
   short = 'short',
@@ -49,14 +63,15 @@ export enum formType {
   textarea = 'textarea',
   clinician = 'clinician',
 }
+export default FormType;
 export interface BaseForm {
-  type: formType,
+  type: FormType,
   title: string,
   attribute: string,
   codeMapLabel?: string,
   options?: {value: string, label?: string}[],
 }
-export interface PatientForm extends BaseForm{
+export interface PatientForm extends BaseForm {
   attribute: keyof EhrPatient,
 }
 export interface VaccinationForm extends BaseForm{
