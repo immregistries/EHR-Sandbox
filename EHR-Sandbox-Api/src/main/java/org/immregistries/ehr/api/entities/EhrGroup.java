@@ -32,7 +32,7 @@ public class EhrGroup {
 
     @ManyToMany()
     @JoinTable(name = "group_members", joinColumns = @JoinColumn(name = "group_ id"), inverseJoinColumns = @JoinColumn(name = "patient_id"))
-    Set<EhrPatient> ehrPatientList;
+    Set<EhrPatient> patientList;
 
     public Integer getId() {
         return id;
@@ -82,11 +82,11 @@ public class EhrGroup {
         this.code = code;
     }
 
-    public Set<EhrPatient> getEhrPatientList() {
-        return ehrPatientList;
+    public Set<EhrPatient> getPatientList() {
+        return patientList;
     }
 
-    public void setEhrPatientList(Set<EhrPatient> ehrPatientList) {
-        this.ehrPatientList = ehrPatientList;
+    public void setPatientList(Set<EhrPatient> patientList) {
+        this.patientList = patientList;
     }
 }

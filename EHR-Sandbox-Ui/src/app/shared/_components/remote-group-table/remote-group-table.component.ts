@@ -23,9 +23,9 @@ const DEFAULT_SETTINGS = {
   panelClass: 'full-screen-modal',
 }
 @Component({
-  selector: 'app-group-table',
-  templateUrl: './group-table.component.html',
-  styleUrls: ['./group-table.component.css'],
+  selector: 'app-remote-group-table',
+  templateUrl: './remote-group-table.component.html',
+  styleUrls: ['./remote-group-table.component.css'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -34,7 +34,7 @@ const DEFAULT_SETTINGS = {
     ]),
   ],
 })
-export class GroupTableComponent {
+export class RemoteGroupTableComponent {
 
   columns: (string)[] = [
     "identifier",

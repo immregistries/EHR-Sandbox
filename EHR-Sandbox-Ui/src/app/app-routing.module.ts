@@ -12,7 +12,7 @@ import { SubscriptionDashboardComponent } from './fhir/_components/subscription-
 import { SettingsComponent } from './core/_components/settings/settings.component';
 import { FhirBulkDashboardComponent } from './fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 import { ClinicianFormComponent } from './shared/_clinician/clinician-form/clinician-form.component';
-import { GroupDashboardComponent } from './core/_components/group-dashboard/group-dashboard.component';
+import { RemoteGroupDashboardComponent } from './core/_components/remote-group-dashboard/remote-group-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'subscription', component: SubscriptionDashboardComponent },
   { path: 'bulk', component: FhirBulkDashboardComponent },
   // { path: 'clinicians', component: ClinicianFormComponent },
-  { path: 'groups', component: GroupDashboardComponent },
+  { path: 'remote groups', component: RemoteGroupDashboardComponent },
 ];
 
 @NgModule({

@@ -176,6 +176,16 @@ export interface Vaccine {
   vaccinationEvents?: VaccinationEvent[];
 }
 
+export interface EhrGroup {
+  id?: number;
+  facility?: Facility | number;
+  name?: string;
+  description?: string;
+  type?: string;
+  code?: string;
+  patientList?: (EhrPatient | string)[];
+}
+
 /**
  * Used for History of resources with default hibernate envers fields
  * TODO

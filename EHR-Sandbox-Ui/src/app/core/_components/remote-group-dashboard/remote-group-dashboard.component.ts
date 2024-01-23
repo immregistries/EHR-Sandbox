@@ -11,12 +11,12 @@ import { Group } from 'fhir/r5';
 import { filter } from 'rxjs';
 
 @Component({
-  selector: 'app-group-dashboard',
-  templateUrl: './group-dashboard.component.html',
-  styleUrls: ['./group-dashboard.component.css'],
+  selector: 'app-remote-group-dashboard',
+  templateUrl: './remote-group-dashboard.component.html',
+  styleUrls: ['./remote-group-dashboard.component.css'],
   // encapsulation: ViewEncapsulation.None,
 })
-export class GroupDashboardComponent implements AfterViewInit {
+export class RemoteGroupDashboardComponent implements AfterViewInit {
   public patientDatasource = new MatTableDataSource<EhrPatient>([]);
 
   private _group?: Group | undefined;

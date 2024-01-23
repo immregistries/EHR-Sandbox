@@ -46,7 +46,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { GroupDashboardComponent } from './_components/group-dashboard/group-dashboard.component';
+import { RemoteGroupDashboardComponent } from './_components/remote-group-dashboard/remote-group-dashboard.component';
 import { JsonDialogService } from './_services/json-dialog.service';
 
 @NgModule({
@@ -56,7 +56,7 @@ import { JsonDialogService } from './_services/json-dialog.service';
     DashboardComponent,
     SettingsComponent,
     RefreshNotificationComponent,
-    GroupDashboardComponent,
+    RemoteGroupDashboardComponent,
   ],
   imports: [
     CommonModule,

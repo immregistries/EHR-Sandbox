@@ -61,7 +61,7 @@ import { RegistryNamePipe } from './_pipes/registry-name.pipe';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ClinicianSelectComponent } from './_clinician/clinician-select/clinician-select.component';
 import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-form.component';
-import { GroupTableComponent } from './_components/group-table/group-table.component';
+import { RemoteGroupTableComponent } from './_components/remote-group-table/remote-group-table.component';
 import { PatientMatchComponent } from './_patient/patient-match/patient-match.component';
 import { PatientReceivedTableComponent } from './_patient/patient-received-table/patient-received-table.component';
 import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
@@ -115,7 +115,7 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
     RegistryNamePipe,
     ClinicianSelectComponent,
     ClinicianFormComponent,
-    GroupTableComponent,
+    RemoteGroupTableComponent,
     PatientMatchComponent,
     PatientReceivedTableComponent,
     JsonDialogComponent,
@@ -215,7 +215,7 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
      CardFormComponent,
      ClinicianSelectComponent,
      ClinicianFormComponent,
-     GroupTableComponent,
+     RemoteGroupTableComponent,
 
   ],
 })
