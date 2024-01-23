@@ -41,8 +41,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private ClinicianRepository clinicianRepository;
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
+    @Autowired
+    private EhrGroupRepository ehrGroupRepository;
+
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -118,6 +122,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         int registryId = -1;
         String patientId = null;
         String vaccinationId = null;
+        String groupId = null;
         // Parsing the URI
         String[] split = url.split("/");
         int len = split.length;
@@ -196,6 +201,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId,vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
                     request.setAttribute("vaccinationEvent", vaccinationEvent);
+                }
+            }
+            if (item.equals("groups") ) {
+                if (scanner.hasNextInt()) {
+                    groupId = scanner.next();
+                    EhrGroup ehrGroup = ehrGroupRepository.findByFacilityIdAndId(facilityId, Integer.valueOf(groupId))
+                            .orElseThrow(() -> new InvalidRequestException("invalid group id"));
+                    request.setAttribute("group", ehrGroup);
                 }
             }
         }

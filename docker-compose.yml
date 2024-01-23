@@ -1,4 +1,4 @@
-version: "4"
+version: "2"
 services:
   ehr-sandbox-mysql:
     image: mysql:latest
@@ -27,7 +27,10 @@ services:
     #      TODO
     restart: on-failure
     ports:
-      - "9091:8080"
+      - "9092:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 #    volumes:
 #      - ./docker-runtime-config.json:/opt/bitnami/tomcat/webapps_default/ehr/WEB-INF/classes/static/assets/runtime-config.json
 #      - ./docker-runtime-config.json:/opt/bitnami/tomcat/webapps_default/runtime-config.json

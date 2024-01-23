@@ -369,4 +369,25 @@ CREATE TABLE `vaccination_event_aud` (
     FOREIGN KEY (`rev`) REFERENCES `revinfo` (`rev`)
 );
 
+CREATE TABLE `group` (
+  `group_id` int NOT NULL AUTO_INCREMENT,
+  `facility_id` int DEFAULT NULL,
+  `name` varchar(225) DEFAULT NULL,
+  `description` varchar(225) DEFAULT NULL,
+  `type` varchar(45) DEFAULT NULL,
+  `code` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`group_id`),
+  KEY `facility_id_idx` (`facility_id`),
+  CONSTRAINT `facility_id` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`facility_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `group_members` (
+  `group_id` int NOT NULL,
+  `patient_id` int NOT NULL,
+  PRIMARY KEY (`group_id`,`patient_id`),
+  KEY `patient_id_idx` (`patient_id`),
+  CONSTRAINT `group_id` FOREIGN KEY (`group_id`) REFERENCES `group` (`group_id`),
+  CONSTRAINT `patient_id` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 insert into `user` (user_id, username, password) values (1, 'Connectathon', 'SundaysR0ck!');

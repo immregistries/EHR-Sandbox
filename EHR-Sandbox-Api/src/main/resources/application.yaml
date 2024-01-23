@@ -18,7 +18,7 @@ spring:
 ehr:
   api:
     app:
-      jwtSecret: EHRSandboxSecretKeythebigshort
+      jwtSecret: EHRSandboxSecretKeythebigshortwquefvkqiywubflqieflhi3iBINSDFqwflquwehbk327872ihgrsog8y742ui3o2fkmejnrgb2og3q92pefiovbuqilogr3huf2peonu2r6w7ueh3vhuwd68w7ygv4fbhgn[]f[wegrnewbrgyu';fjrbw1utfir16firtfuyuyqwyefyqey2276363g8fg8g2f
       jwtExpirationMs: 86400000
 #spring.output.ansi.enabled:always
 

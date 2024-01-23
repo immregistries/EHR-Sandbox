@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.logic.HL7printer;
@@ -22,6 +23,7 @@ import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 
 import java.net.URI;
+import java.security.KeyStore;
 import java.util.List;
 import java.util.Optional;
 
@@ -155,9 +157,16 @@ public class VaccinationController {
         ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
-            connector.setUserid(immunizationRegistry.getIisUsername());
-            connector.setPassword(immunizationRegistry.getIisPassword());
-            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
+            if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())){
+                connector.setUserid(immunizationRegistry.getIisUsername());
+                connector.setPassword(immunizationRegistry.getIisPassword());
+                connector.setFacilityid(immunizationRegistry.getIisFacilityId());
+            }
+//            else  {
+//                connector.setUserid("nist");
+//                connector.setKeyStore(new KeyStore());
+//            }
+
             return ResponseEntity.ok(connector.submitMessage(message, false));
         } catch (Exception e1) {
             e1.printStackTrace();

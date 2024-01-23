@@ -6,10 +6,10 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -33,16 +33,14 @@ import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY
 @RestController()
 @Conditional(OnR5Condition.class)
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups"})
-public class GroupController {
-    Logger logger = LoggerFactory.getLogger(GroupController.class);
+public class RemoteGroupController {
+    Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
     @Autowired
     FhirContext fhirContext;
     @Autowired
     CustomClientFactory customClientFactory;
     @Autowired
-    Map<Integer, Map<Integer, Map<String, Group>>> groupsStore;
-    @Autowired
-    private FacilityRepository facilityRepository;
+    Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
@@ -69,7 +67,7 @@ public class GroupController {
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable Integer registryId) {
         IParser parser = fhirContext.newJsonParser();
-        Set<String> set = groupsStore
+        Set<String> set = remoteGroupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(registryId,new HashMap<>(0))
                 .entrySet().stream().map(
@@ -126,7 +124,7 @@ public class GroupController {
         }
 
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
-        Group group = groupsStore.getOrDefault(facilityId, new HashMap<>(0))
+        Group group = remoteGroupsStore.getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(registryId, new HashMap<>(0)).get(groupId);
         Parameters out = client.operation().onInstance(group.getIdElement()).named("$member-add").withParameters(in).execute();
 
@@ -162,7 +160,7 @@ public class GroupController {
 
         logger.info("{}",in);
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
-        Group group = groupsStore
+        Group group = remoteGroupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(registryId, new HashMap<>(0))
                 .get(groupId);

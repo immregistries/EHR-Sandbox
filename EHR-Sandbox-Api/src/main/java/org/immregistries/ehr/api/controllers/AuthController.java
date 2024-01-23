@@ -71,29 +71,50 @@ public class AuthController {
             newUser.setPassword(encoder.encode(user.getPassword()));
             userRepository.save(newUser);
 
+//            /**
+//             * Defining default IIS's automatically on first login
+//             */
+//            {
+//                ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
+//                immunizationRegistryOnline.setName("Online (sabbia)");
+//                immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
+//                immunizationRegistryOnline.setIisUsername(newUser.getUsername());
+//                immunizationRegistryOnline.setIisPassword(newUser.getUsername());
+//                immunizationRegistryOnline.setIisHl7Url("https://sabbia.immregistries.org/iis/soap");
+//                immunizationRegistryOnline.setIisFhirUrl("https://sabbia.immregistries.org/iis/fhir");
+//                immunizationRegistryOnline.setUser(newUser);
+//                immunizationRegistryRepository.save(immunizationRegistryOnline);
+//            }
+
             /**
-             * Defining default IIS's automatically on first login
+             * Configuration to query localhost with dockercompose containing
+             *     extra_hosts:
+             *       - "host.docker.internal:host-gateway"
+             *
              */
-            ImmunizationRegistry immunizationRegistryOnline = new ImmunizationRegistry();
-            immunizationRegistryOnline.setName("Online (sabbia)");
-            immunizationRegistryOnline.setIisFacilityId(newUser.getUsername());
-            immunizationRegistryOnline.setIisUsername(newUser.getUsername());
-            immunizationRegistryOnline.setIisPassword(newUser.getUsername());
-            immunizationRegistryOnline.setIisHl7Url("https://sabbia.immregistries.org/iis/soap");
-            immunizationRegistryOnline.setIisFhirUrl("https://sabbia.immregistries.org/iis/fhir");
-            immunizationRegistryOnline.setUser(newUser);
-            immunizationRegistryRepository.save(immunizationRegistryOnline);
+            {
+                ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
+                immunizationRegistry.setName("Localhost from docker");
+                immunizationRegistry.setIisFacilityId(newUser.getUsername());
+                immunizationRegistry.setIisUsername(newUser.getUsername());
+                immunizationRegistry.setIisPassword(newUser.getUsername());
+                immunizationRegistry.setIisHl7Url("http://host.docker.internal:8080/iis/soap");
+                immunizationRegistry.setIisFhirUrl("http://host.docker.internal:8080/iis/fhir");
+                immunizationRegistry.setUser(newUser);
+                immunizationRegistryRepository.save(immunizationRegistry);
+            }
 
-            ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
-            immunizationRegistry.setName("Localhost");
-            immunizationRegistry.setIisFacilityId(newUser.getUsername());
-            immunizationRegistry.setIisUsername(newUser.getUsername());
-            immunizationRegistry.setIisPassword(newUser.getUsername());
-            immunizationRegistry.setIisHl7Url("http://localhost:8080/iis/soap");
-            immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
-            immunizationRegistry.setUser(newUser);
-            immunizationRegistryRepository.save(immunizationRegistry);
-
+            {
+                ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
+                immunizationRegistry.setName("Localhost");
+                immunizationRegistry.setIisFacilityId(newUser.getUsername());
+                immunizationRegistry.setIisUsername(newUser.getUsername());
+                immunizationRegistry.setIisPassword(newUser.getUsername());
+                immunizationRegistry.setIisHl7Url("http://localhost:8080/iis/soap");
+                immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
+                immunizationRegistry.setUser(newUser);
+                immunizationRegistryRepository.save(immunizationRegistry);
+            }
         }
     }
 }
