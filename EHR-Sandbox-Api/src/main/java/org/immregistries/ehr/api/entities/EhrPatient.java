@@ -5,8 +5,10 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
@@ -21,136 +23,131 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @Audited(targetAuditMode = NOT_AUDITED)
 public class EhrPatient {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id", nullable = false)
     private String id;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
     @JsonBackReference("facility-patient")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Facility facility;
-
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
-
     @Column(name = "updated_date", nullable = false)
     private Date updatedDate;
-
     @Column(name = "birth_date", nullable = false)
     private Date birthDate;
-
     @Column(name = "mrn", length = 125)
     private String mrn = "";
-
     @Column(name = "mrn_system", length = 125)
     private String mrnSystem = "";
-
     @Column(name = "name_last", length = 250)
     private String nameLast = "";
-
     @Column(name = "name_first", length = 250)
     private String nameFirst = "";
-
     @Column(name = "name_middle", length = 250)
     private String nameMiddle = "";
-
     @Column(name = "mother_maiden", length = 250)
     private String motherMaiden = "";
-
     @Column(name = "sex", length = 250)
     private String sex = "";
-
     @Column(name = "race", length = 250)
     private String race = "";
-
     @Column(name = "address_line1", length = 250)
     private String addressLine1 = "";
-
     @Column(name = "address_line2", length = 250)
     private String addressLine2 = "";
-
     @Column(name = "address_city", length = 250)
     private String addressCity = "";
-
     @Column(name = "address_state", length = 250)
     private String addressState = "";
-
     @Column(name = "address_zip", length = 250)
     private String addressZip = "";
-
     @Column(name = "address_country", length = 250)
     private String addressCountry = "";
-
     @Column(name = "address_county_parish", length = 250)
     private String addressCountyParish = "";
-
     @Column(name = "phone", length = 250)
     private String phone = "";
-
     @Column(name = "email", length = 250)
     private String email = "";
-
     @Column(name = "ethnicity", length = 250)
     private String ethnicity = "";
-
     @Column(name = "birth_flag", length = 1)
     private String birthFlag = "";
-
     @Column(name = "birth_order", length = 250)
     private String birthOrder = "";
-
     @Column(name = "death_flag", length = 1)
     private String deathFlag = "";
-
     @Column(name = "death_date")
     private Date deathDate;
-
     @Column(name = "publicity_indicator", length = 250)
     private String publicityIndicator = "";
-
     @Column(name = "publicity_indicator_date")
     private Date publicityIndicatorDate;
-
     @Column(name = "protection_indicator", length = 250)
     private String protectionIndicator = "";
-
     @Column(name = "protection_indicator_date")
     private Date protectionIndicatorDate;
-
     @Column(name = "registry_status_indicator", length = 250)
     private String registryStatusIndicator = "";
-
     @Column(name = "registry_status_indicator_date")
     private Date registryStatusIndicatorDate;
-
     @Column(name = "guardian_last", length = 250)
     private String guardianLast = "";
-
     @Column(name = "guardian_first", length = 250)
     private String guardianFirst = "";
-
     @Column(name = "guardian_middle", length = 250)
     private String guardianMiddle = "";
-
     @Column(name = "guardian_relationship", length = 250)
     private String guardianRelationship = "";
-
     @OneToMany(mappedBy = "patient")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
-
-
     @OneToMany(mappedBy = "patient")
     @JsonManagedReference("patient-nextOfKin")
     @NotAudited
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
-
     @OneToMany(mappedBy = "patient")
     @NotAudited
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    @NotAudited
+    @ManyToMany
+//            (mappedBy = "patientList")
+    @JoinTable(name = "group_members",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    @JsonIgnore
+    private Set<EhrGroup> ehrGroups = new LinkedHashSet<>();
+
+    @JsonInclude()
+    @Transient
+    public Set<String> getGroupNames() {
+//        if (ehrGroups.size() == 0) {}
+        Set<String> set = new HashSet<>(1);
+        set.add("Group 1");
+        set.add("8th grade");
+        set.add("class 3");
+        return set;
+//        if (ehrGroup.isEmpty()) {
+//            return  new HashSet<>(0);
+//        }
+//        else  {
+//            return this.ehrGroup.stream().map(EhrGroup::getName).collect(Collectors.toSet());
+//        }
+    }
+
+    public Set<EhrGroup> getEhrGroups() {
+        return ehrGroups;
+    }
+
+    public void setEhrGroups(Set<EhrGroup> ehrGroups) {
+        this.ehrGroups = ehrGroups;
+    }
 
     public Set<Feedback> getFeedbacks() {
         return feedbacks;

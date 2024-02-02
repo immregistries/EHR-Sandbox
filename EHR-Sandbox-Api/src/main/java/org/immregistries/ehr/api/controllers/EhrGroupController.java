@@ -1,9 +1,13 @@
 package org.immregistries.ehr.api.controllers;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hl7.fhir.r5.model.Group;
 import org.immregistries.ehr.api.entities.EhrGroup;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
 import org.slf4j.Logger;
@@ -14,8 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 
 @RestController
@@ -30,6 +36,8 @@ public class EhrGroupController {
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
     private EhrGroupRepository ehrGroupRepository;
+    @Autowired
+    private EhrPatientRepository ehrPatientRepository;
     @Autowired
     private GroupProviderR5 groupProviderR5;
     @Autowired
@@ -59,7 +67,7 @@ public class EhrGroupController {
     }
 
 
-    @PutMapping("{groupId}")
+    @PutMapping("/{groupId}")
     public ResponseEntity<EhrGroup> put(@RequestAttribute Facility facility, @RequestBody EhrGroup ehrGroup) {
         Optional<EhrGroup> oldEntity = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
         if (oldEntity.isEmpty()) {
@@ -74,8 +82,29 @@ public class EhrGroupController {
                 return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
             }
         }
+    }
 
+    @GetMapping("/random")
+    public EhrGroup random(@RequestAttribute Tenant tenant, @RequestAttribute Facility facility) {
+        EhrGroup ehrGroup = new EhrGroup();
+        ehrGroup.setFacility(facility);
+        ehrGroup.setName("G " +  RandomStringUtils.random(11, true, false ));
+        ehrGroup.setDescription("Randomly generated group in EHR Sandbox including two randomly selected patients");
+        ehrGroup.setType("Person");
+        Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
 
+        Random random = new Random();
+        EhrPatient patient = null;
+        while (facilityPatients.hasNext()) {
+            patient= facilityPatients.next();
+            if (random.nextFloat() > 0.7) {
+                ehrGroup.getPatientList().add(patient);
+            }
+        }
+        if (ehrGroup.getPatientList().isEmpty() && patient != null) {
+            ehrGroup.getPatientList().add(patient);
+        }
+        return ehrGroup;
     }
 
 

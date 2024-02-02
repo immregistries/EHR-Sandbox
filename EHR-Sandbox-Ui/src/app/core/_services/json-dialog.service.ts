@@ -7,20 +7,19 @@ import { JsonDialogComponent } from "src/app/shared/_components/json-dialog/json
 })
 export class JsonDialogService {
 
-  constructor(private dialog: Dialog) {}
+  constructor(private dialog: Dialog) { }
 
   open(content: any) {
-    console.log(content)
-    this.dialog.open(JsonDialogComponent,{
+    console.log("service", content)
+    this.dialog.open(JsonDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data : content,
+      data: content,
     })
   }
-
 
 
 }

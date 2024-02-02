@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FacilityService } from '../../_services/facility.service';
 import { PatientService } from '../../_services/patient.service';
 import { TenantService } from '../../_services/tenant.service';
-import { GroupService } from '../../_services/group.service';
+import { RemoteGroupService } from '../../_services/remote-group.service';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Group } from 'fhir/r5';
 import { filter } from 'rxjs';
@@ -36,7 +36,7 @@ export class RemoteGroupDashboardComponent implements AfterViewInit {
   constructor(private tenantService: TenantService,
     private facilityService: FacilityService,
     public patientService: PatientService,
-    public groupService: GroupService,
+    public groupService: RemoteGroupService,
     private dialog: MatDialog) { }
 
   @ViewChild('tabs', { static: false }) tabGroup!: MatTabGroup;
@@ -48,7 +48,7 @@ export class RemoteGroupDashboardComponent implements AfterViewInit {
     this.tabGroup.selectedIndex = 1
     this.groupService.triggerFetch()
     this.groupService.readSample().subscribe(res => {
-      this.sample= JSON.stringify(res, undefined, 4)
+      this.sample = JSON.stringify(res, undefined, 4)
     })
   }
 

@@ -47,6 +47,7 @@
         <button mat-icon-button color="primary" (click)="openPatient(element); $event.stopPropagation();" matTooltip="Open Dashboard">
           <mat-icon>open_in_new</mat-icon>
         </button>
+        <app-patient-group-list [patient]="element"></app-patient-group-list>
       </div>
     </td>
   </ng-container>

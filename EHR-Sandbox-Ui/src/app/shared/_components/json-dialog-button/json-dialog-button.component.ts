@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
+import { JsonDialogComponent } from '../json-dialog/json-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-json-dialog-button',
@@ -8,18 +9,33 @@ import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
 })
 export class JsonDialogButtonComponent {
   @Input()
-  label: String = 'Json'
+  label: String = 'JSON'
   @Input()
   disabled: boolean = false
   @Input()
-  content: any = {}
+  content!: {};
 
-  constructor ( public jsonDialog: JsonDialogService) {
+  @Input()
+  tooltip = 'Visualize or export in JSON';
 
+  @Input()
+  showIcon: boolean = true;
+  @Input()
+  color: "primary" | "accent" | "warn" | "" = "primary"
+
+  constructor(private dialog: MatDialog) { }
+
+  open(content: any) {
+    console.log("button", content)
+    this.dialog.open(JsonDialogComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      // panelClass: 'dialog-without-bar',
+      data: content,
+    })
   }
 
-  action() {
-    this.jsonDialog.open(this.content);
-  }
 
 }

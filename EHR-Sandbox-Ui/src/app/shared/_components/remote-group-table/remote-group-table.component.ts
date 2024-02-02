@@ -6,14 +6,13 @@ import { Group } from 'fhir/r5';
 import { merge } from 'rxjs';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import { GroupService } from 'src/app/core/_services/group.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { PatientListComponent } from '../../_patient/patient-list/patient-list.component';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
 import { JsonDialogComponent } from '../json-dialog/json-dialog.component';
 import { FhirBulkDashboardComponent } from 'src/app/fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
-import { error } from 'console';
+import { RemoteGroupService } from 'src/app/core/_services/remote-group.service';
 
 const DEFAULT_SETTINGS = {
   maxWidth: '95vw',
@@ -46,7 +45,7 @@ export class RemoteGroupTableComponent {
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
-    private groupService: GroupService,
+    private remoteGroupService: RemoteGroupService,
     private facilityService: FacilityService,
     private registryService: ImmunizationRegistryService,
     private snackBarService: SnackBarService,
@@ -79,10 +78,10 @@ export class RemoteGroupTableComponent {
       this.facilityService.getRefresh(),
       this.facilityService.getCurrentObservable(),
       this.registryService.getCurrentObservable(),
-      this.groupService.getRefresh(),
+      this.remoteGroupService.getRefresh(),
     ).subscribe(() => {
       this.loading = true
-      this.groupService.readGroups().subscribe((res) => {
+      this.remoteGroupService.readGroups().subscribe((res) => {
         this.loading = false
         this.dataSource.data = res
         this.onSelection(res.find((g: Group) => g?.id == this.expandedElement?.id))
@@ -105,11 +104,11 @@ export class RemoteGroupTableComponent {
     dialogRef.afterClosed().subscribe(
       selectedPatientId => {
       if (group.id) {
-        this.groupService.addMember(group.id,selectedPatientId).subscribe({
+        this.remoteGroupService.addMember(group.id,selectedPatientId).subscribe({
           next:(res) => {
           console.log(res)
-          this.groupService.triggerFetch().subscribe(() => {
-            this.groupService.doRefresh()
+          this.remoteGroupService.triggerFetch().subscribe(() => {
+            this.remoteGroupService.doRefresh()
           })},
           error: error => {
             this.snackBarService.errorMessage(JSON.stringify(error.error))
@@ -144,7 +143,7 @@ export class RemoteGroupTableComponent {
       data: {groupId: group.id},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.groupService.doRefresh()
+      this.remoteGroupService.doRefresh()
     });
   }
 

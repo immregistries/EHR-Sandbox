@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'subscription', component: SubscriptionDashboardComponent },
   { path: 'bulk', component: FhirBulkDashboardComponent },
   // { path: 'clinicians', component: ClinicianFormComponent },
-  { path: 'remote groups', component: RemoteGroupDashboardComponent },
+  { path: 'remote-groups', component: RemoteGroupDashboardComponent },
 ];
 
 @NgModule({

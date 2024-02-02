@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 
 const DEFAULT_SETTINGS = {}
@@ -13,10 +12,9 @@ export class JsonDialogComponent {
 
 
   constructor(
-    // public _dialogRef: MatDialogRef<JsonDialogComponent>,
-   @Inject(MAT_DIALOG_DATA) public data: any,
-   jsonDialogService: JsonDialogService) {
-    console.log(data)
+    public _dialogRef: MatDialogRef<JsonDialogComponent>,
+   @Inject(MAT_DIALOG_DATA) public data: any) {
+    console.log("dialog",data)
 
    }
 

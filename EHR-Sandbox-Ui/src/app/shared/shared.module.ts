@@ -69,6 +69,8 @@ import { JsonDialogButtonComponent } from './_components/json-dialog-button/json
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import { GroupFormComponent } from './_local-group/group-form/group-form.component';
 import { GroupDashboardComponent } from './_local-group/group-dashboard/group-dashboard.component';
+import {MatChipsModule} from '@angular/material/chips';
+import { PatientGroupListComponent } from './_patient/patient-group-list/patient-group-list.component';
 
 
 @NgModule({
@@ -124,6 +126,7 @@ import { GroupDashboardComponent } from './_local-group/group-dashboard/group-da
     JsonDialogButtonComponent,
     GroupFormComponent,
     GroupDashboardComponent,
+    PatientGroupListComponent,
   ],
   imports: [
     CommonModule,
@@ -164,6 +167,7 @@ import { GroupDashboardComponent } from './_local-group/group-dashboard/group-da
     MatProgressBarModule,
     MatBadgeModule,
     MatToolbarModule,
+    MatChipsModule,
     ClipboardModule,
   ],
   exports: [

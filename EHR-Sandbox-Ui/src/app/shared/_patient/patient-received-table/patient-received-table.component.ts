@@ -5,9 +5,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Group, GroupMember } from 'fhir/r5';
 import { EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import { GroupService } from 'src/app/core/_services/group.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
+import { RemoteGroupService } from 'src/app/core/_services/remote-group.service';
 
 @Component({
   selector: 'app-patient-received-table',
@@ -22,7 +22,7 @@ import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboar
   ],
 })
 export class PatientReceivedTableComponent implements OnInit {
-  constructor(private groupService: GroupService,
+  constructor(private remoteGroupService: RemoteGroupService,
     private patientService: PatientService,
     private facilityService: FacilityService,
     private dialog: MatDialog,
@@ -127,12 +127,12 @@ export class PatientReceivedTableComponent implements OnInit {
 
   public remove(element: GroupMember){
     if (element.id && this.group?.id) {
-      this.groupService.removeMember(this.group.id, element.id).subscribe(() => {
-        this.groupService.doRefresh()
+      this.remoteGroupService.removeMember(this.group.id, element.id).subscribe(() => {
+        this.remoteGroupService.doRefresh()
       })
     } else if (this.group?.id) {
-      this.groupService.removeMember(this.group.id, undefined, element.entity.reference, element.entity.identifier).subscribe(() => {
-        this.groupService.doRefresh()
+      this.remoteGroupService.removeMember(this.group.id, undefined, element.entity.reference, element.entity.identifier).subscribe(() => {
+        this.remoteGroupService.doRefresh()
       })
     }
   }

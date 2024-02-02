@@ -128,6 +128,7 @@ export interface EhrPatient {
   nextOfKins?: NextOfKin[];
   facility?: Facility | number;
   feedbacks?: (Feedback)[];
+  groupNames?: String[];
 }
 
 export interface Tenant {

@@ -1,1 +1,1 @@
-<button mat-button-raised (click)="action()" [disabled]="disabled" >{{label}}</button>
+<button mat-stroked-button (click)="open(content)" [disabled]="disabled" [color]="color" [matTooltip]="tooltip" ><mat-icon *ngIf="showIcon">description</mat-icon>{{label}}</button>

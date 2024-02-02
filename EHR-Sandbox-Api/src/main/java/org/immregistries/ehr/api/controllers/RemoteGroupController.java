@@ -21,10 +21,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
@@ -32,7 +29,7 @@ import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY
 
 @RestController()
 @Conditional(OnR5Condition.class)
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups"})
+@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups", IMM_REGISTRY_SUFFIX + "/groups"})
 public class RemoteGroupController {
     Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
     @Autowired
@@ -53,14 +50,31 @@ public class RemoteGroupController {
     private FhirClientController fhirClientController;
 
     @GetMapping("/sample")
-    public ResponseEntity<String> getSample(@PathVariable() int facilityId) {
+    public ResponseEntity<String> getSample(@PathVariable() Optional<Integer> facilityId) {
         Group group = new Group();
         group.setType(Group.GroupType.PERSON);
         long randn = Math.round(Math.random());
         group.setName("Generated " + randn);
         group.addIdentifier().setSystem("ehr-sandbox/group").setValue(String.valueOf(randn));
-        group.setManagingEntity(new Reference().setIdentifier(new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facilityId))));
-        group.setDescription("Generated sample Group in EHR sandbox for testing");
+//        group.setManagingEntity(new Reference().setIdentifier(new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facilityId))));
+        if (facilityId.isPresent()) {
+            group.setManagingEntity(new Reference().setIdentifier(new Identifier().setSystem("School-district-corporations").setValue(String.valueOf(facilityId.get()))));
+        }
+        Calendar periodStart = Calendar.getInstance();
+        periodStart.set(Calendar.YEAR, 2023);
+        periodStart.set(Calendar.MONTH, 8);
+        periodStart.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar periodEnd = Calendar.getInstance();
+        periodEnd.set(Calendar.YEAR, 2024);
+        periodEnd.set(Calendar.MONTH, 6);
+        periodEnd.set(Calendar.DAY_OF_MONTH, 31);
+//        Group.GroupCharacteristicComponent grade = group.addCharacteristic()
+//                .setCode(new CodeableConcept(new Coding("Group-Schooling-code-definition","Grade","Grade")))
+//                .setValue(new StringType("8"))
+//                .setPeriod(new Period().setStart(periodStart.getTime()).setEnd(periodEnd.getTime()));
+//        Group.GroupCharacteristicComponent school = group.addCharacteristic()
+//                .setCode(new CodeableConcept(new Coding("http/Massachusetts.com/terminology/school-code-system","1234","Stephane Hessel Highschool")));
+        group.setDescription("Group created for School example");
         return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(group));
     }
 
@@ -94,7 +108,9 @@ public class RemoteGroupController {
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
                 .execute();
         for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
-            if (entry.hasResource() && entry.getResource() instanceof Group && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))) {
+            if (entry.hasResource() && entry.getResource() instanceof Group
+//                    && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))
+            ) {
                 groupProviderR5.update((Group) entry.getResource(), servletRequestDetails, immunizationRegistry);
             }
         }
