@@ -71,6 +71,7 @@ import { GroupFormComponent } from './_local-group/group-form/group-form.compone
 import { GroupDashboardComponent } from './_local-group/group-dashboard/group-dashboard.component';
 import {MatChipsModule} from '@angular/material/chips';
 import { PatientGroupListComponent } from './_patient/patient-group-list/patient-group-list.component';
+import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.component';
 
 
 @NgModule({
@@ -127,6 +128,7 @@ import { PatientGroupListComponent } from './_patient/patient-group-list/patient
     GroupFormComponent,
     GroupDashboardComponent,
     PatientGroupListComponent,
+    TabWithMenuComponent,
   ],
   imports: [
     CommonModule,
@@ -224,6 +226,7 @@ import { PatientGroupListComponent } from './_patient/patient-group-list/patient
      ClinicianSelectComponent,
      ClinicianFormComponent,
      RemoteGroupTableComponent,
+     TabWithMenuComponent,
 
   ],
 })

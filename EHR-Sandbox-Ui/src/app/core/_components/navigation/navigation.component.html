@@ -6,28 +6,28 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       <!-- <a mat-list-item href="/home">Home</a> -->
-      <a mat-list-item (click)="router.navigate(['/home'])">Home</a>
+      <a mat-list-item [matTooltip]="'Home and login screen'" [matTooltipPosition]="'right'" (click)="router.navigate(['/home'])">Home</a>
       <mat-divider></mat-divider>
-      <a mat-list-item (click)="router.navigate(['/dashboard'])">Dashboard</a>
+      <a mat-list-item [matTooltip]="'Main dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/dashboard'])">Dashboard</a>
       <!-- <mat-divider></mat-divider>
       <a mat-list-item (click)="router.navigate(['/clinicians'])">Clinicians</a> -->
       <mat-divider></mat-divider>
-      <a mat-list-item (click)="router.navigate(['/settings'])">IIS Settings</a>
+      <a mat-list-item [matTooltip]="'IIS Connexion settings'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/settings'])">IIS Settings</a>
       <!-- <mat-divider></mat-divider>
       <a mat-list-item (click)="router.navigate(['/feedback'])">Feedback from IIS</a> -->
       <mat-divider></mat-divider>
-      <a mat-list-item (click)="router.navigate(['/subscription'])">Subscription</a>
+      <a mat-list-item [matTooltip]="'Subscription dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/subscription'])">Subscription</a>
       <!-- TODO Reactivate -->
       <!-- <mat-divider></mat-divider>
       <a mat-list-item href="patient_form">Enter Patient sample</a>
       <mat-divider></mat-divider>
       <a mat-list-item href="vaccination_form">Enter Vaccination sample</a> -->
       <mat-divider></mat-divider>
-      <a mat-list-item (click)="router.navigate(['/fhir'])">FHIR</a>
+      <a mat-list-item [matTooltip]="'Separate FHIR Client dashboard'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/fhir'])">FHIR</a>
       <mat-divider></mat-divider>
-      <a mat-list-item (click)="router.navigate(['/bulk'])">Bulk Data</a>
+      <a mat-list-item [matTooltip]="'Bulk testing dashboard'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/bulk'])">Bulk Data</a>
       <mat-divider></mat-divider>
-      <a mat-list-item (click)="router.navigate(['/remote-groups'])">Remote Groups</a>
+      <a mat-list-item [matTooltip]="'Remote Group management dashboard'" (click)="router.navigate(['/remote-groups'])">Remote Groups</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

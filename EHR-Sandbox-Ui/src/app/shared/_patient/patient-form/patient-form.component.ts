@@ -16,7 +16,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class PatientFormComponent implements OnInit {
 
   @Input()
-  patient: EhrPatient = {id: -1};
+  patient: EhrPatient = { id: -1 };
   @Output()
   patientChange = new EventEmitter<EhrPatient>();
 
@@ -25,23 +25,23 @@ export class PatientFormComponent implements OnInit {
   /**
    * Currently unusused, just initialised
    */
-  public references: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>({});
+  public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
 
 
   constructor(private patientService: PatientService,
     private breakpointObserver: BreakpointObserver,
     private snackBarService: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<PatientFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient}) {
-      if (data && data.patient) {
-        this.patient = data.patient;
-        this.isEditionMode = true
-      }
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient }) {
+    if (data && data.patient) {
+      this.patient = data.patient;
+      this.isEditionMode = true
     }
+  }
 
   // Allows Date type casting in HTML template
-  asDate(val: any) : Date { return val; }
-  asString(val: any) : string { return val; }
+  asDate(val: any): Date { return val; }
+  asString(val: any): string { return val; }
 
   ngOnInit(): void {
   }
@@ -63,7 +63,7 @@ export class PatientFormComponent implements OnInit {
         }
       });
     } else {
-      this.patientService.quickPostPatient( this.patient).subscribe({
+      this.patientService.quickPostPatient(this.patient).subscribe({
         next: (res: HttpResponse<string>) => {
           this.patientService.doRefresh()
           this._dialogRef?.close(true)
@@ -77,62 +77,84 @@ export class PatientFormComponent implements OnInit {
   }
 
 
-  formCards: FormCard[] =  [
-    {title: 'Name',  cols: 3, rows: 1, patientForms: [
-      {type: FormType.text, title: 'First name', attribute: 'nameFirst'},
-      {type: FormType.text, title: 'Middle name', attribute: 'nameMiddle'},
-      {type: FormType.text, title: 'Last name', attribute: 'nameLast'},
-      {type: FormType.text, title: 'Mother maiden name', attribute: 'motherMaiden'},
+  formCards: FormCard[] = [
+    {
+      title: 'Name', cols: 3, rows: 1, patientForms: [
+        { type: FormType.text, title: 'First name', attribute: 'nameFirst' },
+        { type: FormType.text, title: 'Middle name', attribute: 'nameMiddle' },
+        { type: FormType.text, title: 'Last name', attribute: 'nameLast' },
+        { type: FormType.text, title: 'Mother maiden name', attribute: 'motherMaiden' },
 
-    ]},
-    {title: 'Medical Record Number',  cols: 1, rows: 1, patientForms: [
-      {type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn'},
-      {type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem'},
-    ]},
-    {title: 'Birth',  cols: 1, rows: 1, patientForms: [
-      {type: FormType.date, title: 'Birth date', attribute: 'birthDate'},
-      {type: FormType.yesNo, title: 'Multiple birth', attribute: 'birthFlag'},
-      {type: FormType.short, title: 'Order', attribute: 'birthOrder'},
-    ]},
-    {title: 'Identity',cols: 1, rows: 1, patientForms: [
-      {type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX", options: [{value: 'M'},{value: 'F'}]},
-      {type: FormType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY"},
-      {type: FormType.code, title: 'Race', attribute: 'race', codeMapLabel: "PATIENT_RACE"},
-    ]},
-    {title: 'Address', cols: 1, rows: 2, patientForms: [
-      {type: FormType.text, title: 'Line 1', attribute: 'addressLine1'},
-      {type: FormType.text, title: 'Line 2', attribute: 'addressLine2'},
-      {type: FormType.text, title: 'Zip code', attribute: 'addressZip'},
-      {type: FormType.text, title: 'City', attribute: 'addressCity'},
-      {type: FormType.text, title: 'County', attribute: 'addressCountyParish'},
-      {type: FormType.text, title: 'State', attribute: 'addressState'},
-      {type: FormType.text, title: 'Country', attribute: 'addressCountry'},
-    ]},
-    {title: 'Contact', cols: 1, rows: 1, patientForms: [
-      {type: FormType.text, title: 'Phone', attribute: 'phone'},
-      {type: FormType.text, title: 'Email', attribute: 'email'},
-    ]},
-    {title: 'Death', cols: 1, rows: 1, patientForms: [
-      {type: FormType.yesNo, title: 'Death flag', attribute: 'deathFlag'},
-      {type: FormType.date, title: 'Death date', attribute: 'deathDate'},
-    ]},
-    {title: 'Protection', cols: 1, rows: 1, patientForms: [
-      {type: FormType.short, title: 'Indicator', attribute: 'protectionIndicator'},
-      {type: FormType.date, title: 'Date', attribute: 'protectionIndicatorDate'},
-    ]},
-    {title: 'Registry', cols: 1, rows: 1, patientForms: [
-      {type: FormType.short, title: 'Indicator', attribute: 'registryStatusIndicator'},
-      {type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate'},
-    ]},
-    {title: 'Publicity', cols: 1, rows: 1, patientForms: [
-      {type: FormType.short, title: 'Indicator', attribute: 'publicityIndicator'},
-      {type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate'},
-    ]},
-    {title: 'Guardian',cols: 3, rows: 1, patientForms: [
-      {type: FormType.text, title: 'First name', attribute: 'guardianFirst'},
-      {type: FormType.text, title: 'Middle name', attribute: 'guardianMiddle'},
-      {type: FormType.text, title: 'Last name', attribute: 'guardianLast'},
-      {type: FormType.code, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP"},
-    ]},
+      ]
+    },
+    {
+      title: 'Medical Record Number', cols: 1, rows: 1, patientForms: [
+        { type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn' },
+        { type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem' },
+      ]
+    },
+    {
+      title: 'Birth', cols: 1, rows: 1, patientForms: [
+        { type: FormType.date, title: 'Birth date', attribute: 'birthDate' },
+        { type: FormType.yesNo, title: 'Multiple birth', attribute: 'birthFlag' },
+        { type: FormType.short, title: 'Order', attribute: 'birthOrder' },
+      ]
+    },
+    {
+      title: 'Identity', cols: 1, rows: 1, patientForms: [
+        { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX", options: [{ value: 'M' }, { value: 'F' }] },
+        { type: FormType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
+        { type: FormType.code, title: 'Race', attribute: 'race', codeMapLabel: "PATIENT_RACE" },
+      ]
+    },
+    {
+      title: 'Address', cols: 1, rows: 2, patientForms: [
+        { type: FormType.text, title: 'Line 1', attribute: 'addressLine1' },
+        { type: FormType.text, title: 'Line 2', attribute: 'addressLine2' },
+        { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
+        { type: FormType.text, title: 'City', attribute: 'addressCity' },
+        { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
+        { type: FormType.text, title: 'State', attribute: 'addressState' },
+        { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
+      ]
+    },
+    {
+      title: 'Contact', cols: 1, rows: 1, patientForms: [
+        { type: FormType.text, title: 'Phone', attribute: 'phone' },
+        { type: FormType.text, title: 'Email', attribute: 'email' },
+      ]
+    },
+    {
+      title: 'Death', cols: 1, rows: 1, patientForms: [
+        { type: FormType.yesNo, title: 'Death flag', attribute: 'deathFlag' },
+        { type: FormType.date, title: 'Death date', attribute: 'deathDate' },
+      ]
+    },
+    {
+      title: 'Protection', cols: 1, rows: 1, patientForms: [
+        { type: FormType.short, title: 'Indicator', attribute: 'protectionIndicator' },
+        { type: FormType.date, title: 'Date', attribute: 'protectionIndicatorDate' },
+      ]
+    },
+    {
+      title: 'Registry', cols: 1, rows: 1, patientForms: [
+        { type: FormType.short, title: 'Indicator', attribute: 'registryStatusIndicator' },
+        { type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate' },
+      ]
+    },
+    {
+      title: 'Publicity', cols: 1, rows: 1, patientForms: [
+        { type: FormType.short, title: 'Indicator', attribute: 'publicityIndicator' },
+        { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
+      ]
+    },
+    {
+      title: 'Guardian', cols: 3, rows: 1, patientForms: [
+        { type: FormType.text, title: 'First name', attribute: 'guardianFirst' },
+        { type: FormType.text, title: 'Middle name', attribute: 'guardianMiddle' },
+        { type: FormType.text, title: 'Last name', attribute: 'guardianLast' },
+        { type: FormType.code, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP" },
+      ]
+    },
   ]
 }

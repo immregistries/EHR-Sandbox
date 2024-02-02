@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { ImmunizationRegistry } from '../../_model/rest';
 import { ImmunizationRegistryService } from '../../_services/immunization-registry.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-settings',
@@ -9,8 +10,12 @@ import { ImmunizationRegistryService } from '../../_services/immunization-regist
 })
 export class SettingsComponent implements OnInit {
   // imm!: ImmunizationRegistry
+  @Input()
+  editMode = false
 
-  constructor(private immRegistryService: ImmunizationRegistryService) { }
+  constructor(@Optional() public _dialogRef: MatDialogRef<SettingsComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {}
+  ) { }
 
   ngOnInit(): void {
   }

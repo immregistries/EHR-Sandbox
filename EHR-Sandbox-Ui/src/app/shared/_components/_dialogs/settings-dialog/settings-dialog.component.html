@@ -1,94 +1,90 @@
-<mat-grid-list cols="4" rowHeight="370px" *ngIf="immunizationRegistry">
-  <mat-grid-tile [colspan]="1">
-    <mat-card class="dashboard-card">
-      <mat-card-header class="card-title">
-        <mat-card-title class="card-title">
-          Change IIS Information
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="dashboard-card-content">
-        <div>
-          <app-select-immregistry></app-select-immregistry>
-        </div>
-        <button mat-raised-button (click)="new()">New</button>
-        <button mat-raised-button (click)="save()">Save</button>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile [colspan]="2">
-    <mat-card class="dashboard-card">
-      <mat-card-header class="card-title">
-        <mat-card-title class="card-title">
-          IIS Nickname and API URLs
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="dashboard-card-content">
-        <div>
-          <mat-form-field appearance="fill">
-            <mat-label>Name</mat-label>
-            <input matInput [(ngModel)]="immunizationRegistry.name">
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field appearance="fill" style="min-width: 30em;">
-            <mat-label>FHIR api url</mat-label>
-            <input matInput [(ngModel)]="immunizationRegistry.iisFhirUrl">
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field appearance="fill" style="min-width: 30em;">
-            <mat-label>HL7v2 api url</mat-label>
-            <input matInput [(ngModel)]="immunizationRegistry.iisHl7Url">
-          </mat-form-field>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
+<mat-grid-list cols="2" *ngIf="immunizationRegistry">
   <mat-grid-tile>
-    <mat-card class="dashboard-card">
-      <mat-card-header class="card-title">
-        <mat-card-title class="card-title">
-          Remote login Information
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="dashboard-card-content">
-        <mat-form-field appearance="fill">
-          <mat-label >IIS facility Id</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisFacilityId">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label> IIS username</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisUsername">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>IIS password</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisPassword">
-        </mat-form-field>
-      </mat-card-content>
-      <mat-card-footer>
-        <mat-card-subtitle>
-          <div *ngIf="(!immunizationRegistry.iisUsername || immunizationRegistry.iisUsername.length < 0)
+    <div class="grid-tile-content">
+      <mat-card class="dashboard-card">
+        <mat-card-header class="card-title">
+          <mat-card-title class="card-title">
+            IIS Nickname and API URLs
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <div>
+            <mat-form-field appearance="fill">
+              <mat-label>Name</mat-label>
+              <input matInput [(ngModel)]="immunizationRegistry.name">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" style="min-width: 40em;">
+              <mat-label>FHIR api url</mat-label>
+              <input matInput [(ngModel)]="immunizationRegistry.iisFhirUrl">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" style="min-width: 40em;">
+              <mat-label>HL7v2 api url</mat-label>
+              <input matInput [(ngModel)]="immunizationRegistry.iisHl7Url">
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="dashboard-card">
+        <mat-card-header class="card-title">
+          <mat-card-title class="card-title">
+            Remote login Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <mat-form-field appearance="fill">
+            <mat-label>IIS facility Id</mat-label>
+            <input matInput [(ngModel)]="immunizationRegistry.iisFacilityId">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label> IIS username</mat-label>
+            <input matInput [(ngModel)]="immunizationRegistry.iisUsername">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>IIS password</mat-label>
+            <input matInput [(ngModel)]="immunizationRegistry.iisPassword">
+          </mat-form-field>
+          <mat-form-field appearance="fill" style="min-width: 40em;">
+            <mat-label>Extra headers</mat-label>
+            <input matInput [(ngModel)]="immunizationRegistry.headers">
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-footer>
+          <mat-card-subtitle>
+            <div *ngIf="(!immunizationRegistry.iisUsername || immunizationRegistry.iisUsername.length < 0)
             && immunizationRegistry.iisPassword && immunizationRegistry.iisPassword.length > 0
             ;then bearer else basic">here is ignored</div>
-          <ng-template #bearer>Option activated : Token Bearer Authentication</ng-template>
-          <ng-template #basic>Default option : Basic Authentication</ng-template>
-        </mat-card-subtitle>
-      </mat-card-footer>
-    </mat-card>
+            <ng-template #bearer>Option activated : Token Bearer Authentication</ng-template>
+            <ng-template #basic>Default option : Basic Authentication</ng-template>
+          </mat-card-subtitle>
+        </mat-card-footer>
+      </mat-card>
+      <mat-card class="dashboard-card">
+        <mat-card-content style="text-align: center;" >
+          <button mat-raised-button color="primary" (click)="save()" >
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </mat-grid-tile>
-  <mat-grid-tile [colspan]="2">
-    <mat-card>
-      <mat-card-content class="dashboard-card-content">
-        <mat-form-field appearance="fill">
-          <mat-label >Extra headers</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.headers">
-        </mat-form-field>
-      </mat-card-content>
+  <mat-grid-tile>
+    <mat-card class="text-dashboard-card" >
+      <mat-card-header class="card-title">
+        <mat-card-title class="card-title">
+          Authentication modes
+        </mat-card-title>
+      </mat-card-header>
+      <!-- <h3 style="text-align: left;"></h3> -->
+      <ul class="w3-ul">
+        <li>Default authentication mode is <b>Basic</b> </li>
+        <li>Leaving <b>Username empty</b> activates option for <b>Token bearer</b> Authentication with set password
+        </li>
+      </ul>
     </mat-card>
   </mat-grid-tile>
 </mat-grid-list>
-<h3 style="text-align: left;">Authentication options:</h3>
-<ul class="w3-ul">
-  <li>Default authentication mode is <b>Basic</b> </li>
-  <li>Leaving <b>Username empty</b> activates option for <b>Token bearer</b> Authentication with set password</li>
-</ul>

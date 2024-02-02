@@ -1,5 +1,13 @@
 .dashboard-card {
-  width: 95%
+  width: 98%
+}
+
+.text-dashboard-card {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
 }
 
 
@@ -9,5 +17,21 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: baseline;
+  flex-direction: column;
   gap: 5px 5px;
+}
+
+.grid-tile-content{
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  margin: 0;
 }

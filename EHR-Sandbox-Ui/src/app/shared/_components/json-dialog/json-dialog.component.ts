@@ -13,9 +13,7 @@ export class JsonDialogComponent {
 
   constructor(
     public _dialogRef: MatDialogRef<JsonDialogComponent>,
-   @Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log("dialog",data)
-
-   }
+    @Inject(MAT_DIALOG_DATA) public data: any) {
+  }
 
 }

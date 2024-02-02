@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { SettingsService } from 'src/app/core/_services/settings.service';
@@ -11,8 +12,17 @@ import { SettingsService } from 'src/app/core/_services/settings.service';
 export class SettingsDialogComponent implements OnInit {
   @Input()
   immunizationRegistry!: ImmunizationRegistry
+  @Input()
+  editMode: boolean = false
 
-  constructor(private immRegistryService: ImmunizationRegistryService) { }
+  constructor(private immRegistryService: ImmunizationRegistryService,
+    @Optional() public _dialogRef: MatDialogRef<SettingsDialogComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {}) {
+      if (data) {
+        this.editMode = true;
+        this.immunizationRegistry = {}
+      }
+     }
 
   ngOnInit(): void {
     this.immRegistryService.getCurrentObservable().subscribe(res => {

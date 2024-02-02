@@ -5,6 +5,6 @@
     </button>
     <div content>
       <button mat-menu-item *ngFor="let item of list" (click)="service.setCurrent(item)"> {{item.name}}</button>
-      <!-- <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button> -->
+      <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
     </div>
   </app-hover-menu>
