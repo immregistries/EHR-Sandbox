@@ -25,7 +25,6 @@ import org.springframework.data.history.RevisionMetadata;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -193,7 +192,7 @@ public class EhrPatientController {
                                                                                   @RequestAttribute EhrPatient patient,
                                                                                   @PathVariable() Integer registryId,
                                                                                   @RequestParam Optional<Long> _since) {
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         IGenericClient client = customClientFactory.newGenericClient(registryId);
 
         // TODO switch to $match ?
@@ -263,7 +262,7 @@ public class EhrPatientController {
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> qbpSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, share } from 'rxjs';
 import { ImmunizationRegistry } from '../_model/rest';
@@ -19,17 +19,22 @@ export class ImmunizationRegistryService extends CurrentSelectedWithIdService<Im
 
   public readImmRegistries(): Observable<ImmunizationRegistry[]>{
     return this.http.get<ImmunizationRegistry[]>(
-      this.settings.getApiUrl() + `/imm-registry`, httpOptions).pipe(share());
+      this.settings.getApiUrl() + `/registry`, httpOptions).pipe(share());
   }
 
-  public putImmRegistry(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
+  public deleteImmRegistry(id: number): Observable<HttpResponse<string>>{
+    return this.http.delete<HttpResponse<string>>(
+      this.settings.getApiUrl() + `/registry/${id}`, httpOptions);
+  }
+
+  public putImmRegistry(registry: ImmunizationRegistry): Observable<ImmunizationRegistry>{
     return this.http.put<ImmunizationRegistry>(
-      this.settings.getApiUrl() + `/imm-registry`, i, httpOptions);
+      this.settings.getApiUrl() + `/registry`, registry, httpOptions);
   }
 
-  public postImmRegistry(i: ImmunizationRegistry): Observable<ImmunizationRegistry>{
+  public postImmRegistry(registry: ImmunizationRegistry): Observable<ImmunizationRegistry>{
     return this.http.post<ImmunizationRegistry>(
-      this.settings.getApiUrl() + `/imm-registry`, i, httpOptions);
+      this.settings.getApiUrl() + `/registry`, registry, httpOptions);
   }
 
 }

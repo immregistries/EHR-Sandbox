@@ -30,7 +30,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { SettingsComponent } from './_components/settings/settings.component';
+import { ImmunizationRegistryDashboardComponent } from './_components/immunization-registry-dashboard/immunization-registry-dashboard.component';
 import { RefreshNotificationComponent } from './_components/refresh-notification/refresh-notification.component';
 import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pipe';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -54,7 +54,7 @@ import { JsonDialogService } from './_services/json-dialog.service';
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
-    SettingsComponent,
+    ImmunizationRegistryDashboardComponent,
     RefreshNotificationComponent,
     RemoteGroupDashboardComponent,
   ],
@@ -102,7 +102,7 @@ import { JsonDialogService } from './_services/json-dialog.service';
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
-    SettingsComponent,
+    ImmunizationRegistryDashboardComponent,
   ],
   providers: [
     VaccinationComparePipe,

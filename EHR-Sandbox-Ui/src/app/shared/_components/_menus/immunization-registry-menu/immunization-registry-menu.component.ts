@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { SettingsDialogComponent } from '../../_dialogs/settings-dialog/settings-dialog.component';
+import { ImmunizationRegistryFormComponent } from '../../_dialogs/immunization-registry-form/immunization-registry-form.component';
 
 @Component({
   selector: 'app-immunization-registry-menu',
@@ -22,18 +22,16 @@ export class ImmunizationRegistryMenuComponent implements OnInit {
           this.service.setCurrent(this.list[0]);
         }
       })
-      // this.service.getObservableImmRegistry().subscribe(immRegistry => {
-
-      // })
     })
   }
 
-  openDialog() {
-    this.dialog.open(SettingsDialogComponent, {
+  openDialog(data: undefined |ImmunizationRegistry ) {
+    this.dialog.open(ImmunizationRegistryFormComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
       height: 'fit-content',
       width: '100%',
+      data: data
       // panelClass: 'dialog-without-bar',
     })
   }

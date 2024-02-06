@@ -4,16 +4,16 @@ import { ImmunizationRegistryService } from '../../_services/immunization-regist
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  selector: 'app-immunization-registry-dashboard',
+  templateUrl: './immunization-registry-dashboard.component.html',
+  styleUrls: ['./immunization-registry-dashboard.component.css']
 })
-export class SettingsComponent implements OnInit {
+export class ImmunizationRegistryDashboardComponent implements OnInit {
   // imm!: ImmunizationRegistry
   @Input()
   editMode = false
 
-  constructor(@Optional() public _dialogRef: MatDialogRef<SettingsComponent>,
+  constructor(@Optional() public _dialogRef: MatDialogRef<ImmunizationRegistryDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {}
   ) { }
 

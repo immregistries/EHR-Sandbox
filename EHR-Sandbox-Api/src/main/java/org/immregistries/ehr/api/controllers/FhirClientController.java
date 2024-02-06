@@ -65,7 +65,7 @@ public class FhirClientController {
             @PathVariable() Integer registryId,
             @PathVariable() String resourceType,
             @PathVariable() String id) {
-        return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryController.settings(registryId)));
+        return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryController.getImmunizationRegistry(registryId)));
     }
 
     @PostMapping(IMM_REGISTRY_SUFFIX + "/{resourceType}/search")
@@ -151,7 +151,7 @@ public class FhirClientController {
             @RequestBody String message) {
         IParser parser = parser(message);
         Patient patient = parser.parseResource(Patient.class, message);
-        ImmunizationRegistry ir = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.create(patient, ir);
         /**
          * Registering received id as external id
@@ -199,7 +199,7 @@ public class FhirClientController {
             @RequestBody String message) {
         IParser parser = parser(message);
         Patient patient = parser.parseResource(Patient.class, message);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(patient,
                 "Patient",
                 patient.getIdentifierFirstRep(),
@@ -220,7 +220,7 @@ public class FhirClientController {
             @PathVariable() Integer registryId,
             @PathVariable() String patientId) {
         return ResponseEntity.ok(resourceClient.read("patient", String.valueOf(patientId),
-                immunizationRegistryController.settings(registryId)));
+                immunizationRegistryController.getImmunizationRegistry(registryId)));
     }
 
     @PostMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
@@ -231,7 +231,7 @@ public class FhirClientController {
             @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class, message);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(immunizationRegistryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(immunizationRegistryId);
         if (patientFhirId != null && !patientFhirId.isEmpty()) {
             immunization.setPatient(new Reference().setReference("Patient/" + new IdType(patientFhirId).getIdPart()));
         }
@@ -255,7 +255,7 @@ public class FhirClientController {
             @RequestParam(required = false) String patientFhirId) {
         IParser parser = parser(message);
         Immunization immunization = parser.parseResource(Immunization.class, message);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         if (patientFhirId != null && !patientFhirId.isEmpty()) {
             immunization.setPatient(new Reference().setReference("Patient/" + new IdType(patientFhirId).getIdPart()));
         }
@@ -303,7 +303,7 @@ public class FhirClientController {
     public ResponseEntity<String> getImmunization(
             @PathVariable() Integer registryId,
             @PathVariable() int vaccinationId) {
-        ImmunizationRegistry registry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry registry = immunizationRegistryController.getImmunizationRegistry(registryId);
         return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), registry));
     }
 
@@ -314,7 +314,7 @@ public class FhirClientController {
             @RequestBody String message) {
         IParser parser = parser(message);
         IBaseResource resource = parser.parseResource(message);
-        ImmunizationRegistry registry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry registry = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.create(resource, registry);
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
@@ -330,7 +330,7 @@ public class FhirClientController {
             @RequestBody String message) {
         IParser parser = parser(message);
         IBaseResource resource = parser.parseResource(message);
-        ImmunizationRegistry ir = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(resource, type, null, ir);
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
@@ -359,7 +359,7 @@ public class FhirClientController {
         }
         operationType = operationType.replaceFirst("\\$", "");
 
-        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistryController.settings(registryId));
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId));
 
         IOperation iOperation = client.operation();
         IOperationUnnamed iOperationUnnamed;

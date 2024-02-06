@@ -27,8 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
 @RestController
@@ -97,7 +95,7 @@ public class FhirConversionController {
             @PathVariable() Integer registryId,
             @RequestBody Bundle bundle) {
         return bundleImportService.importBundle(
-                immunizationRegistryController.settings(registryId),
+                immunizationRegistryController.getImmunizationRegistry(registryId),
                 facilityRepository.findById(facilityId).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified")
                 ), bundle);
@@ -106,7 +104,7 @@ public class FhirConversionController {
 
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
     public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @RequestAttribute Facility facility) {
-        ImmunizationRegistry ir = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         return loadNdJson(ir, facility, ndjson);
     }
 

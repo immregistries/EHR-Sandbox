@@ -24,7 +24,7 @@ export class FhirClientService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private immRegistries: ImmunizationRegistryService,
+    private registryService: ImmunizationRegistryService,
     private subscriptionService: SubscriptionService) { }
 
   postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match", resourceLocalId: number, parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
@@ -58,19 +58,19 @@ export class FhirClientService {
   }
 
   matchResource(type: string,resource: string, resourceId: number,parentId: number): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     switch(type){
       case "Patient": {
         return this.http.post<string>(
-          `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${resourceId}/fhir-client/imm-registry/${registryId}/$match`,
+          `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${resourceId}/fhir-client/registry/${registryId}/$match`,
           resource,
           httpOptions);
       }
       case "Immunization": {
         return this.http.post<string>(
-          `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${parentId}/vaccinations/${resourceId}/fhir-client/imm-registry/${registryId}/$match`,
+          `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${parentId}/vaccinations/${resourceId}/fhir-client/registry/${registryId}/$match`,
           resource,
           httpOptions);
       }
@@ -79,13 +79,13 @@ export class FhirClientService {
   }
 
   postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     const options = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       params: new HttpParams().append("type", "Group")
     };
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/imm-registry/${registryId}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}`,
       resource,
       options);
   }
@@ -105,17 +105,17 @@ export class FhirClientService {
   }
 
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/registry/${registryId}`,
       resource,
       this.immunizationOptions(patientFhirId));
   }
 
   putImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/imm-registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/registry/${registryId}`,
       resource,
       this.immunizationOptions(patientFhirId),
       );
@@ -136,57 +136,57 @@ export class FhirClientService {
   }
 
   putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.put<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/registry/${registryId}`,
       resource,
       httpOptions);
   }
 
   postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/registry/${registryId}`,
       resource,
       httpOptions);
   }
 
   loadEverythingFromPatient(patientId: number): Observable<VaccinationEvent[]> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<VaccinationEvent[]>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/imm-registry/${registryId}/$fetchAndLoad`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/registry/${registryId}/$fetchAndLoad`,
       httpOptions);
   }
 
   getFromIIS(resourceType: string, identifier: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/imm-registry/${registryId}/${resourceType}/${identifier}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/${resourceType}/${identifier}`,
       { responseType: 'text' });
   }
 
   // get(urlEnd: string): Observable<string> {
   //   const registryId = this.immRegistries.getregistryId()
   //   return this.http.get(
-  //     `${this.settings.getApiUrl()}/imm-registry/${registryId}${urlEnd}`,
+  //     `${this.settings.getApiUrl()}/registry/${registryId}${urlEnd}`,
   //     { responseType: 'text' });
   // }
 
   search(resourceType: string, identifier: Identifier): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/imm-registry/${registryId}/${resourceType}/search`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/${resourceType}/search`,
       identifier,
       { responseType: 'text' });
   }
 
 
   operation(operationType: string, target: string ,parameters: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/imm-registry/${registryId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
       parameters,
       {
         responseType: 'text',

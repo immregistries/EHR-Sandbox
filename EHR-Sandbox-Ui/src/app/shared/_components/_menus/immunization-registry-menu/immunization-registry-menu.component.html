@@ -1,10 +1,12 @@
 <app-hover-menu>
-    <button trigger mat-raised-button
-     [color]="'primary'">IIS: {{service.getCurrent().name}}
-     <mat-icon>arrow_drop_down</mat-icon>
+  <button trigger mat-raised-button [color]="'primary'">IIS: {{service.getCurrent().name}}
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  <div content>
+    <button mat-menu-item *ngFor="let item of list" (click)="service.setCurrent(item)">
+      <!-- <mat-icon class="w3-right" (click)="$event.stopPropagation(); openDialog(item);">edit</mat-icon> -->
+      {{item.name}}
     </button>
-    <div content>
-      <button mat-menu-item *ngFor="let item of list" (click)="service.setCurrent(item)"> {{item.name}}</button>
-      <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
-    </div>
-  </app-hover-menu>
+    <button mat-menu-item (click)="openDialog(undefined)"><mat-icon>add</mat-icon></button>
+  </div>
+</app-hover-menu>

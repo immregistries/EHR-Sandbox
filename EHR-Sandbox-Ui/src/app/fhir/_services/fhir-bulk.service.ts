@@ -23,20 +23,20 @@ export class FhirBulkService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private immRegistries: ImmunizationRegistryService) { }
+    private registryService: ImmunizationRegistryService) { }
 
 
   groupExportSynch(groupId: string, paramsString: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/imm-registry/${registryId}/Group/${groupId}/$export-synch?${paramsString}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/Group/${groupId}/$export-synch?${paramsString}`,
       {
         responseType: 'text',
       });
   }
 
   groupExportAsynch(groupId: string, paramsString: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/registry/${registryId}/Group/${groupId}/$export-asynch?${paramsString}`,
       {
@@ -45,7 +45,7 @@ export class FhirBulkService {
   }
 
   groupExportStatus(contentUrl: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.get(
       `${this.settings.getApiUrl()}/registry/${registryId}/$export-status`,
       {
@@ -57,7 +57,7 @@ export class FhirBulkService {
   }
 
   groupExportDelete(contentUrl: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     return this.http.delete(
       `${this.settings.getApiUrl()}/registry/${registryId}/$export-status`,
       {
@@ -69,7 +69,7 @@ export class FhirBulkService {
   }
 
   groupNdJson(contentUrl: string, loadInFacility: boolean): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     if (loadInFacility) {
       const facilityId = this.facilityService.getCurrentId()
       if ( facilityId > -1) {
@@ -99,7 +99,7 @@ export class FhirBulkService {
   }
 
   loadNdJson(body: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
 
@@ -108,7 +108,7 @@ export class FhirBulkService {
   }
 
   loadJson(body: string): Observable<string> {
-    const registryId = this.immRegistries.getCurrentId()
+    const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
 

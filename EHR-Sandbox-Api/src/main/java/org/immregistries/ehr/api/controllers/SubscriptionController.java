@@ -1,7 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.apache.commons.text.CharacterPredicates;
@@ -24,12 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.http.HttpRequest;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -49,7 +42,7 @@ public class SubscriptionController {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private ImmunizationRegistryController immRegistryController;
+    private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
@@ -71,14 +64,14 @@ public class SubscriptionController {
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/sample")
     public ResponseEntity<String> getSample(@RequestAttribute() Facility facility, @PathVariable() Integer registryId) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualCreate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class,stringBody);
         IGenericClient client = customClientFactory.newGenericClient(ir);
         MethodOutcome outcome = resourceClient.create(sub, client);
@@ -88,7 +81,7 @@ public class SubscriptionController {
 
     @PutMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualUpdate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class,stringBody);
         IGenericClient client = customClientFactory.newGenericClient(ir);
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
@@ -98,7 +91,7 @@ public class SubscriptionController {
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/data-quality-issues")
     public Boolean subscribeToIISFeedback(@PathVariable() Integer registryId, @PathVariable() int facilityId, @RequestParam Optional<String> groupId) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = customClientFactory.newGenericClient(ir);

@@ -10,13 +10,13 @@ import { TenantCreationComponent } from './_components/_dialogs/tenant-creation/
 import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
 import { TenantMenuComponent } from './_components/_menus/tenant-menu/tenant-menu.component';
 import { FacilityMenuComponent } from './_components/_menus/facility-menu/facility-menu.component';
-import { SettingsDialogComponent } from './_components/_dialogs/settings-dialog/settings-dialog.component';
+import { ImmunizationRegistryFormComponent } from './_components/_dialogs/immunization-registry-form/immunization-registry-form.component';
 import { FeedbackTableComponent } from './_components/feedback-table/feedback-table.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { HoverMenuComponent } from './_components/_menus/hover-menu/hover-menu.component';
 import { EmptyListMessageComponent } from './_components/empty-list-message/empty-list-message.component';
-import { SelectImmregistryComponent } from './_components/select-immregistry/select-immregistry.component';
+import { SelectImmunizationRegistryComponent } from './_components/select-immunization-registry/select-immunization-registry.component';
 import { CodeMapsPipe } from './_pipes/code-maps.pipe';
 import { TextShortenPipe } from './_pipes/text-shorten.pipe';
 import { ImmunizationRegistryMenuComponent } from './_components/_menus/immunization-registry-menu/immunization-registry-menu.component';
@@ -83,11 +83,11 @@ import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.
     FacilityCreationComponent,
     TenantMenuComponent,
     FacilityMenuComponent,
-    SettingsDialogComponent,
+    ImmunizationRegistryFormComponent,
     FeedbackTableComponent,
     HoverMenuComponent,
     EmptyListMessageComponent,
-    SelectImmregistryComponent,
+    SelectImmunizationRegistryComponent,
     CodeMapsPipe,
     TextShortenPipe,
 
@@ -188,11 +188,11 @@ import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.
     FacilityCreationComponent,
     TenantMenuComponent,
     FacilityMenuComponent,
-    SettingsDialogComponent,
+    ImmunizationRegistryFormComponent,
     FeedbackTableComponent,
     HoverMenuComponent,
     EmptyListMessageComponent,
-    SelectImmregistryComponent,
+    SelectImmunizationRegistryComponent,
 
     VaccinationFormComponent,
     VaccinationTableComponent,

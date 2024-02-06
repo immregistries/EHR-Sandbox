@@ -5,19 +5,12 @@
       <mat-option *ngFor="let clinician of options" [value]="clinician" >{{clinician.nameLast + " " + clinician.nameFirst}}</mat-option>
     </mat-select> -->
 
-    <input matInput
-    [(ngModel)]="model"
-    [matAutocomplete]="auto"
-    class="select-field"
-    (ngModelChange)="filterChange($event)"
-    name="clinician">
+    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"
+      (ngModelChange)="filterChange($event)" name="clinician">
 
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="valueChanged()" (optionActivated)="valueChanged()">
-      <mat-option
-        *ngFor="let clinician of filteredOptions"
-        [value]="clinician.id"
-        (onSelectionChange)="valueChanged()">
-
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="valueChanged()"
+      (optionActivated)="valueChanged()">
+      <mat-option *ngFor="let clinician of filteredOptions" [value]="clinician.id" (onSelectionChange)="valueChanged()">
         {{clinician.nameFirst + " " + clinician.nameLast}}
         <mat-icon class="w3-right" (click)="$event.stopPropagation(); edit(clinician);">edit</mat-icon>
       </mat-option>

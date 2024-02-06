@@ -11,4 +11,5 @@ public interface ImmunizationRegistryRepository extends CrudRepository<Immunizat
     Boolean existsByIdAndUserId(Integer id, Integer userId);
     Optional<ImmunizationRegistry> findByIdAndUserId(Integer id, Integer userId);
     Boolean existsByNameAndUserId(String name, Integer userId);
+    void deleteByIdAndUserId(Integer id, Integer userId);
 }

@@ -40,7 +40,7 @@ public class BulkExportController {
     @Autowired
     FhirContext fhirContext;
     @Autowired
-    ImmunizationRegistryController immRegistryController;
+    ImmunizationRegistryController immunizationRegistryController;
     @Autowired
     CustomClientFactory customClientFactory;
     @Autowired
@@ -61,7 +61,7 @@ public class BulkExportController {
             ,@RequestParam Optional<String> patient
             ,@RequestParam Optional<Boolean> _mdm
     ) throws IOException {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         IGenericClient client = customClientFactory.newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
@@ -100,7 +100,7 @@ public class BulkExportController {
             ,@RequestParam Optional<String> _typeFilter
             ,@RequestParam Optional<Boolean> _mdm
     ) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         IGenericClient client = customClientFactory.newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
@@ -131,7 +131,7 @@ public class BulkExportController {
 
     @GetMapping("/registry/{registryId}/$export-status")
     public ResponseEntity bulkCheckStatus(@PathVariable() Integer registryId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used is the one gotten from the kickoff, while authentication remains the same
 //        IGenericClient client = customClientBuilder.newGenericClient(contentLocationUrl,ir.getIisPassword(),ir.getIisUsername());
@@ -187,7 +187,7 @@ public class BulkExportController {
 
     @DeleteMapping("/registry/{registryId}/$export-status")
     public ResponseEntity bulkDelete(@PathVariable() Integer registryId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         HttpURLConnection con = null;
         URL url;
         try {
@@ -222,7 +222,7 @@ public class BulkExportController {
 
     @GetMapping("/registry/{registryId}/$export-result")
     public ResponseEntity bulkResult(@PathVariable() Integer registryId, @RequestParam String contentUrl, Optional<Integer> loadInFacility) {
-        ImmunizationRegistry ir = immRegistryController.settings(registryId);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
         HttpURLConnection con = null;

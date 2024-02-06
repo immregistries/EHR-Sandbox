@@ -5,6 +5,7 @@ import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,10 +18,10 @@ public class ImmunizationRegistryController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping({"/settings/{id}","/imm-registry/{id}"})
-    public ImmunizationRegistry settings(@PathVariable Integer id) {
-        Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(id,userDetailsService.currentUserId());
-        if (immunizationRegistry.isPresent()){
+    @GetMapping({"/registry/{id}"})
+    public ImmunizationRegistry getImmunizationRegistry(@PathVariable Integer id) {
+        Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(id, userDetailsService.currentUserId());
+        if (immunizationRegistry.isPresent()) {
             return immunizationRegistry.get();
         } else {
             throw new ResponseStatusException(
@@ -28,33 +29,39 @@ public class ImmunizationRegistryController {
         }
     }
 
-    @GetMapping({"/settings","/imm-registry"})
+    @GetMapping({"/registry"})
     public Iterable<ImmunizationRegistry> getImmRegistries() {
         return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
     }
 
-    @PutMapping({"/settings","/imm-registry"})
-    public ImmunizationRegistry putSettings(@RequestBody ImmunizationRegistry settings) {
-        Optional<ImmunizationRegistry> oldSettings = immunizationRegistryRepository.findByIdAndUserId(settings.getId(),userDetailsService.currentUserId());
-        if (oldSettings.isPresent()){
-            settings.setUser(userDetailsService.currentUser());
-            return immunizationRegistryRepository.save(settings);
+    @PutMapping({"/registry"})
+    public ImmunizationRegistry putImmunizationRegistry(@RequestBody ImmunizationRegistry immunizationRegistry) {
+        Optional<ImmunizationRegistry> old = immunizationRegistryRepository.findByIdAndUserId(immunizationRegistry.getId(), userDetailsService.currentUserId());
+        if (old.isPresent()) {
+            immunizationRegistry.setUser(userDetailsService.currentUser());
+            return immunizationRegistryRepository.save(immunizationRegistry);
         } else {
-            return postSettings(settings);
+            return postImmunizationRegistry(immunizationRegistry);
 //            throw new ResponseStatusException(
 //                    HttpStatus.NOT_ACCEPTABLE, "Invalid id");
         }
     }
 
-    @PostMapping({"/settings","/imm-registry"})
-    public ImmunizationRegistry postSettings(@RequestBody ImmunizationRegistry settings) {
-        settings.setUser(userDetailsService.currentUser());
-        settings.setId(null);
-        if(immunizationRegistryRepository.existsByNameAndUserId(settings.getName(),userDetailsService.currentUserId())) {
+    @PostMapping({"/registry"})
+    public ImmunizationRegistry postImmunizationRegistry(@RequestBody ImmunizationRegistry immunizationRegistry) {
+        immunizationRegistry.setUser(userDetailsService.currentUser());
+        immunizationRegistry.setId(null);
+        if (immunizationRegistryRepository.existsByNameAndUserId(immunizationRegistry.getName(), userDetailsService.currentUserId())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used");
         }
-        return immunizationRegistryRepository.save(settings);
+        return immunizationRegistryRepository.save(immunizationRegistry);
+    }
+
+    @DeleteMapping({"/registry/{id}"})
+    public ResponseEntity removeImmunizationRegistry(@PathVariable Integer id) {
+        immunizationRegistryRepository.deleteByIdAndUserId(id, userDetailsService.currentUserId());
+        return ResponseEntity.ok().build();
     }
 
 

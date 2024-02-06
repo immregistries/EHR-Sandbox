@@ -8,8 +8,6 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -102,7 +100,7 @@ public class RemoteGroupController {
         IParser parser = fhirContext.newJsonParser();
         ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
         servletRequestDetails.setTenantId(String.valueOf(facilityId));
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         Bundle bundle = customClientFactory.newGenericClient(immunizationRegistry).search().forResource(Group.class).returnBundle(Bundle.class)
 //                .where(Group.MANAGING_ENTITY.hasId(String.valueOf(facilityId)))
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
@@ -121,7 +119,7 @@ public class RemoteGroupController {
     public ResponseEntity<String> add_member(@PathVariable Integer facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         Parameters in = new Parameters();
         /**
          * First do match to get destination reference or identifier
@@ -168,7 +166,7 @@ public class RemoteGroupController {
         identifier.ifPresent(value -> in.addParameter("memberId", value));
         reference.ifPresent(value -> in.addParameter("patientReference", new Reference(value)));
 
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         /**
          * First do match to get destination reference or identifier
          */

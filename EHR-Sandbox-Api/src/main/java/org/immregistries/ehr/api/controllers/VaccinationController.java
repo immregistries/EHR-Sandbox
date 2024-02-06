@@ -23,7 +23,6 @@ import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 
 import java.net.URI;
-import java.security.KeyStore;
 import java.util.List;
 import java.util.Optional;
 
@@ -154,7 +153,7 @@ public class VaccinationController {
     @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String>  vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.settings(registryId);
+        ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())){
