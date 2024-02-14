@@ -26,21 +26,22 @@ export class RefreshNotificationComponent implements OnInit {
     private notificationCheckService: NotificationCheckService,) { }
 
   ngOnInit(): void {
-
-    interval(40000).pipe().subscribe(() => {
-      if (!this.pathname.startsWith('/home')) {
-        // this.notification = !this.notification
-        /**
-         * checking if current facility was modified since last load ?
-         */
-        this.notificationCheckService.readNotification(this.facilityService.getLastRefreshTime()).pipe(filter((needToRefresh) => {
-          //return needToRefresh TODO uncomment
-          return false
-        })).subscribe((notification) => {
-          this.snackBarService.notification()
-        })
-      }
-    })
+    this.notificationCheckService.setNotificationJsSubscription(
+      interval(40000).pipe().subscribe(() => {
+        if (!this.pathname.startsWith('/home')) {
+          // this.notification = !this.notification
+          /**
+           * checking if current facility was modified since last load ?
+           */
+          this.notificationCheckService.readNotification(this.facilityService.getLastRefreshTime()).pipe(filter((needToRefresh) => {
+            //return needToRefresh TODO uncomment
+            return false
+          })).subscribe((notification) => {
+            this.snackBarService.notification()
+          })
+        }
+      })
+    )
   }
 
 

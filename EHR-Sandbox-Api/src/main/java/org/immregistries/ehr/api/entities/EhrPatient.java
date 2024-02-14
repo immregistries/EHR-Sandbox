@@ -3,12 +3,15 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hl7.fhir.r5.model.Group;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.util.MultiValueMap;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
@@ -21,8 +24,25 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
         property = "id",
         scope = EhrPatient.class)
 @Audited(targetAuditMode = NOT_AUDITED)
+//@Configurable(preConstruction = true)
 public class EhrPatient {
 
+//    @Resource
+//    @Transient
+//    private Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
+//    @Autowired
+//    @Transient
+//    private MultiValueMap<String,String> groupMemberPatientIndex;
+//
+//    @Transient
+//    @JsonInclude
+//    public Set<String> getGroupIds() {
+//        return groupMemberPatientIndex.entrySet()
+//                .stream().filter(g -> g.getValue()
+//                        .stream().filter(patientId -> this.getId().equals(patientId)).findFirst().isPresent())
+//                .map(entry -> entry.getKey())
+//                .collect(Collectors.toSet());
+//    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -117,7 +137,6 @@ public class EhrPatient {
 
     @NotAudited
     @ManyToMany
-//            (mappedBy = "patientList")
     @JoinTable(name = "group_members",
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
@@ -127,18 +146,12 @@ public class EhrPatient {
     @JsonInclude()
     @Transient
     public Set<String> getGroupNames() {
-//        if (ehrGroups.size() == 0) {}
-        Set<String> set = new HashSet<>(1);
-        set.add("Group 1");
-        set.add("8th grade");
-        set.add("class 3");
-        return set;
-//        if (ehrGroup.isEmpty()) {
-//            return  new HashSet<>(0);
-//        }
-//        else  {
-//            return this.ehrGroup.stream().map(EhrGroup::getName).collect(Collectors.toSet());
-//        }
+        if (ehrGroups.isEmpty()) {
+            return  new HashSet<>(0);
+        }
+        else  {
+            return this.ehrGroups.stream().map(EhrGroup::getName).collect(Collectors.toSet());
+        }
     }
 
     public Set<EhrGroup> getEhrGroups() {

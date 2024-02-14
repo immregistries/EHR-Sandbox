@@ -88,7 +88,7 @@ export interface NextOfKin {
   ethnicity?: string;
 }
 
-export interface EhrPatient {
+export interface EhrPatient extends ObjectWithID {
   id?: number;
   mrn?: string;
   mrnSystem?: string;

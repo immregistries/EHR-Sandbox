@@ -72,6 +72,7 @@ import { GroupDashboardComponent } from './_local-group/group-dashboard/group-da
 import {MatChipsModule} from '@angular/material/chips';
 import { PatientGroupListComponent } from './_patient/patient-group-list/patient-group-list.component';
 import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.component';
+import { AbstractDataTableComponent } from './_components/abstract-data-table/abstract-data-table.component';
 
 
 @NgModule({
@@ -129,6 +130,7 @@ import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.
     GroupDashboardComponent,
     PatientGroupListComponent,
     TabWithMenuComponent,
+    AbstractDataTableComponent,
   ],
   imports: [
     CommonModule,

@@ -113,7 +113,7 @@ export class GroupService extends CurrentSelectedService<Group> {
   //   const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
   //   if (tenantId > 0 && facilityId > 0  && registryId > 0){
   //     return this.http.get<string[]>(
-  //       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/$fetch`,
+  //       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/$fetch`,
   //       httpOptions)
   //         .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
   //   } else {

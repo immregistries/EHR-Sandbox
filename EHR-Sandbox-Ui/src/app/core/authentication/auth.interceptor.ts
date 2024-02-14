@@ -5,6 +5,7 @@ import { TokenStorageService } from './_services/token-storage.service';
 import { catchError, Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { NotificationCheckService } from '../_services/notification-check.service';
 const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
 @Injectable()
 /**
@@ -14,7 +15,8 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private token: TokenStorageService,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private notificationCheckService: NotificationCheckService) { }
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let authReq = req;
     const token = this.token.getToken();
@@ -28,7 +30,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private handleError(error: HttpErrorResponse): Observable<any> {
     if (error.status === 401) {
-      // Do your thing here
       const pathname = JSON.parse(JSON.stringify(document.location.pathname))
       if( pathname === '/home') {
         this.router.navigate(['/home'], {queryParams: {
@@ -41,7 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
           // redirectTo: pathname
         }});
       }
-
+      this.notificationCheckService.unsubscribe()
       // this.token.signOut()
     }
     throw error

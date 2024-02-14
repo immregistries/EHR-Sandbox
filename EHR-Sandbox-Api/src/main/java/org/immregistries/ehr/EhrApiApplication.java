@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Import;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.MultiValueMapAdapter;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -121,6 +123,15 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	 */
 	public Map<Integer, Map<Integer, Map<String, Group>>> groups() {
 		Map<Integer, Map<Integer, Map<String, Group>>> map = new HashMap<>(20);
+		return map;
+	}
+
+	@Bean
+	/**
+	 * MultiMapValue<GroupId, PatientId>
+	 */
+	public MultiValueMap<String,String> groupMemberPatientIndex() {
+		MultiValueMap<String,String> map = new MultiValueMapAdapter<>(new HashMap<>(40));
 		return map;
 	}
 

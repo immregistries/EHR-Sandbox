@@ -1,6 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Group } from 'fhir/r5';
 import { EhrGroup } from 'src/app/core/_model/rest';
 import FormType, { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
 import { GroupService } from 'src/app/core/_services/group.service';
@@ -21,9 +22,24 @@ export class GroupFormComponent {
 
 
   formCards: FormCardGeneric<EhrGroup>[] =  [
-    {title: 'Name',  cols: 3, rows: 1, forms: [
+    {title: 'Name',  cols: 1, rows: 1, forms: [
       {type: FormType.text, title: 'name', attribute: 'name'},
       {type: FormType.text, title: 'description', attribute: 'description'},
+      {type: FormType.text, title: 'type', attribute: 'type'},
+      {type: FormType.text, title: 'code', attribute: 'code'},
+      // {type: FormType.text, title: 'authority', attribute: ''},
+    ]}
+  ]
+
+
+  formCards2: FormCardGeneric<Group>[] =  [
+    {title: 'Name',  cols: 1, rows: 1, forms: [
+      {type: FormType.text, title: 'name', attribute: 'name'},
+      {type: FormType.text, title: 'description', attribute: 'description'},
+      {type: FormType.text, title: 'type', attribute: 'type'},
+      {type: FormType.text, title: 'code', attribute: 'code'},
+      {type: FormType.text, title: 'managingEntity', attribute: 'managingEntity'},
+      // {type: FormType.text, title: 'authority', attribute: ''},
     ]}
   ]
 

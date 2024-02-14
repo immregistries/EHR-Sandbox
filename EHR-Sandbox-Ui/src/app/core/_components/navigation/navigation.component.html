@@ -27,7 +27,9 @@
       <mat-divider></mat-divider>
       <a mat-list-item [matTooltip]="'Bulk testing dashboard'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/bulk'])">Bulk Data</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Remote Group management dashboard'" (click)="router.navigate(['/remote-groups'])">Remote Groups</a>
+      <a mat-list-item [matTooltip]="'Remote Group management dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/remote-groups'])">Remote Groups</a>
+      <mat-divider></mat-divider>
+      <a mat-list-item [matTooltip]="'Remote Group management dashboard'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/local-groups'])">Local Groups</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

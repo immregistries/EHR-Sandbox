@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class FhirClientController {
     public static final String PATIENT_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/patients";
     public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";
-    public static final String IMM_REGISTRY_SUFFIX = "/imm-registry/{registryId}";
+    public static final String IMM_REGISTRY_SUFFIX = "/registry/{registryId}";
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
     private FhirContext fhirContext;

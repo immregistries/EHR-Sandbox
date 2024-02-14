@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { merge, switchMap, tap } from 'rxjs';
+import { Observable, merge, switchMap, tap } from 'rxjs';
 import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
@@ -10,6 +10,7 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
+import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 
 @Component({
   selector: 'app-patient-table',
@@ -17,29 +18,14 @@ import { PatientFormComponent } from '../patient-form/patient-form.component';
   styleUrls: ['./patient-table.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
-export class PatientTableComponent implements AfterViewInit {
-
-  private _dataSource = new MatTableDataSource<EhrPatient>();
-  public get dataSource() {
-    return this._dataSource;
-  }
-  @Input()
-  public set dataSource(value) {
-    this._dataSource = value;
-  }
-  // expandedElement: Patient | null = null;
-
-  @Input() facility: Facility = {id: -1};
-  @Input() title: string = 'Patients'
-  loading: boolean= false
-  lastIdSelectedBeforeRefresh: number = -1;
-
+export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient> implements AfterViewInit {
+  @Input() facility!: Facility | null;
   columns: (keyof EhrPatient | 'alerts')[] = [
     "mrn",
     "nameLast",
@@ -49,45 +35,18 @@ export class PatientTableComponent implements AfterViewInit {
     'alerts'
   ]
 
-  // Allows Date type casting in HTML template
-  asDate(val: any) : Date { return val; }
-
-  onSelection(event: EhrPatient) {
-    if (this.patientService.getCurrentId() == event.id){
-      this.patientService.setCurrent({})
-    } else {
-      this.patientService.setCurrent(event)
-    }
-  }
-
-  constructor(private tenantService: TenantService,
-    private facilityService: FacilityService,
-    public patientService: PatientService,
-    private dialog: MatDialog) { }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  ngAfterViewInit(): void {
-    // Set filter rules for research
-    this.dataSource.filterPredicate = (data: EhrPatient, filter: string) =>{
-      return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
-    };
-
-    merge(
-      this.facilityService.getCurrentObservable()
-        .pipe(tap(facility => {this.facility = facility})),
-      this.patientService.getRefresh(),
-      this.facilityService.getRefresh(),
-    ).subscribe(() =>  {
-      this.loading = true
-      this.patientService.readPatients(this.tenantService.getCurrentId(), this.facility.id).subscribe((list) => {
-        this.loading = false
-        this.dataSource.data = list
-        this.patientService.setCurrent(list.find((patient: EhrPatient) => {return patient.id === this.patientService.getCurrentId()}) ?? {})
-    })})
+  constructor(public tenantService: TenantService,
+    public override facilityService: FacilityService,
+    public override patientService: PatientService,
+    private dialog: MatDialog) {
+    super(patientService, facilityService)
+    // this.observableRefresh = merge(
+    //   this.facilityService.getCurrentObservable()
+    //     .pipe(tap(facility => { this.facility = facility })),
+    //   this.patientService.getRefresh(),
+    //   this.facilityService.getRefresh(),
+    // );
+    // this.observableSource = this.patientService.quickReadPatients();
   }
 
   openCreation() {
@@ -105,14 +64,14 @@ export class PatientTableComponent implements AfterViewInit {
   }
 
 
-  openPatient(patient: EhrPatient){
+  openPatient(patient: EhrPatient) {
     const dialogRef = this.dialog.open(PatientDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patient: patient.id},
+      data: { patient: patient.id },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()

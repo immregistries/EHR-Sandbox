@@ -1,6 +1,6 @@
-<span  [style]="'display: flex; align-items: center; flex-wrap: wrap;'">
+<span [style]="'display: flex; align-items: center; flex-wrap: wrap;'">
   <mat-chip-listbox *ngFor="let item of patient.groupNames">
-    <mat-chip>
+    <mat-chip (click)="open(item)">
       {{item}}
     </mat-chip>
   </mat-chip-listbox>

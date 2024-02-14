@@ -6,15 +6,16 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.Group;
-import org.hl7.fhir.r5.model.Reference;
 import org.hl7.fhir.r5.model.ResourceType;
+import org.immregistries.ehr.api.entities.EhrGroup;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
-import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.GroupMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.*;
 
@@ -44,10 +45,14 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     }
     @Resource
     Map<Integer, Map<Integer, Map<String, Group>>> groupsStore;
-    @Autowired
-    private ResourceIdentificationService resourceIdentificationService;
+
     @Autowired
     private FacilityRepository facilityRepository;
+    @Autowired
+    EhrGroupRepository ehrGroupRepository;
+    @Autowired
+    GroupMapperR5 groupMapperR5;
+
 
     /**
      * Currently unusable as is, as request
@@ -73,7 +78,15 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
         groupsStore.get(facility.getId())
                 .get(immunizationRegistry.getId())
                 .put(group.getIdElement().getIdPart(), group);
-        return new MethodOutcome().setResource(group);
+        Optional<EhrGroup> old = ehrGroupRepository.findByFacilityIdAndImmunizationRegistryIdAndName(facility.getId(),immunizationRegistry.getId(), group.getName());
+        if (old.isEmpty()) {
+            return create(group,requestDetails,immunizationRegistry);
+        } else {
+            EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
+            ehrGroup.setId(old.get().getId());
+            ehrGroupRepository.save(ehrGroup);
+            return new MethodOutcome().setResource(group);
+        }
     }
 
     /**
@@ -100,6 +113,8 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
         groupsStore.get(facility.getId())
                 .get(immunizationRegistry.getId())
                 .put(group.getIdElement().getIdPart(),group);
+        EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
+        ehrGroupRepository.save(ehrGroup);
         return new MethodOutcome().setResource(group);
     }
 

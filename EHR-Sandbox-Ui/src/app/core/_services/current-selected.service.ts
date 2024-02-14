@@ -1,10 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-
 import { BehaviorSubject, Observable, of, share } from 'rxjs';
-import { SettingsService } from './settings.service';
 import { RefreshService } from './refresh.service';
-import { ObjectWithID } from '../_model/rest';
 
 export class CurrentSelectedService<T> extends RefreshService {
   protected current!: BehaviorSubject<T>;

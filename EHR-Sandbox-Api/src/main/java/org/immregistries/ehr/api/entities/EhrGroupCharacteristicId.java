@@ -1,0 +1,44 @@
+package org.immregistries.ehr.api.entities;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+
+@Embeddable
+public class EhrGroupCharacteristicId implements Serializable {
+    private String groupId;
+
+    private String codeValue;
+
+    private String codeSystem;
+
+    public EhrGroupCharacteristicId(String groupId, String codeValue, String codeSystem) {
+        this.groupId = groupId;
+        this.codeValue = codeValue;
+        this.codeSystem = codeSystem;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getCodeValue() {
+        return codeValue;
+    }
+
+    public void setCodeValue(String codeValue) {
+        this.codeValue = codeValue;
+    }
+
+    public String getCodeSystem() {
+        return codeSystem;
+    }
+
+    public void setCodeSystem(String codeSystem) {
+        this.codeSystem = codeSystem;
+    }
+}

@@ -33,7 +33,7 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
       return of()
     }
     return this.http.get<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/sample`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/sample`,
       httpOptions);
   }
 
@@ -43,7 +43,7 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
     if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
       return this.http.get<string[]>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups`,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups`,
         httpOptions)
           .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
     } else {
@@ -60,7 +60,7 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
       .append("match",true)
     if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
       return this.http.post<string>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/${groupId}/$member-add`, null,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/${groupId}/$member-add`, null,
         {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
           params: params
@@ -87,7 +87,7 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
     }
     if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
       return this.http.post<string>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/${groupId}/$member-remove`,null,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/${groupId}/$member-remove`,null,
         {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
           params: params
@@ -104,7 +104,7 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
     if (tenantId > 0 && facilityId > 0  && registryId > 0){
       return this.http.get<string[]>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/imm-registry/${registryId}/groups/$fetch`,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/$fetch`,
         httpOptions)
           .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
     } else {

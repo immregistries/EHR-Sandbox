@@ -42,7 +42,7 @@
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
       <div class="element-detail"
-           [@detailExpand]="element.id == patientService.getCurrentId() ? 'expanded' : 'collapsed'">
+           [@detailExpand]="selectedElement && element.id === selectedElement.id ? 'expanded' : 'collapsed'">
         <app-patient-details [patient]="element"></app-patient-details>
         <button mat-icon-button color="primary" (click)="openPatient(element); $event.stopPropagation();" matTooltip="Open Dashboard">
           <mat-icon>open_in_new</mat-icon>

@@ -4,11 +4,12 @@ import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "group")
+@Table(name = "ehr_group")
 public class EhrGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,17 +21,32 @@ public class EhrGroup {
     private Facility facility;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     private String type;
-    @Column(name = "code", nullable = false)
+    @Column(name = "code")
     private String code;
+    @ManyToOne
+    @JoinColumn(name = "immunization_registry_id")
+    private ImmunizationRegistry immunizationRegistry;
     @ManyToMany
     @JoinTable(name = "group_members",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPatient> patientList;
+
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name = "group_id")
+    private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
+
+    public Set<EhrGroupCharacteristic> getEhrGroupCharacteristics() {
+        return ehrGroupCharacteristics;
+    }
+
+    public void setEhrGroupCharacteristics(Set<EhrGroupCharacteristic> ehrGroupCharacteristics) {
+        this.ehrGroupCharacteristics = ehrGroupCharacteristics;
+    }
 
     public Integer getId() {
         return id;
@@ -102,5 +118,13 @@ public class EhrGroup {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+
+    public ImmunizationRegistry getImmunizationRegistry() {
+        return immunizationRegistry;
+    }
+
+    public void setImmunizationRegistry(ImmunizationRegistry immunizationRegistry) {
+        this.immunizationRegistry = immunizationRegistry;
     }
 }

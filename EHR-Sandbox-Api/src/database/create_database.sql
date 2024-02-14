@@ -369,16 +369,18 @@ CREATE TABLE `vaccination_event_aud` (
     FOREIGN KEY (`rev`) REFERENCES `revinfo` (`rev`)
 );
 
-CREATE TABLE `group` (
+CREATE TABLE `ehr_group` (
   `group_id` int NOT NULL AUTO_INCREMENT,
   `facility_id` int DEFAULT NULL,
   `name` varchar(225) DEFAULT NULL,
   `description` varchar(225) DEFAULT NULL,
   `type` varchar(45) DEFAULT NULL,
   `code` varchar(45) DEFAULT NULL,
+  `immunization_registry_id` int DEFAULT NULL,
   PRIMARY KEY (`group_id`),
   KEY `facility_id_idx` (`facility_id`),
-  CONSTRAINT `facility_id` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`facility_id`)
+  CONSTRAINT `fk_facility_group` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`facility_id`),
+  CONSTRAINT `fk_immunization_registry_group` FOREIGN KEY (`immunization_registry_id`) REFERENCES `ehr`.`immunization_registry` (`immunization_registry_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `group_members` (
@@ -386,8 +388,20 @@ CREATE TABLE `group_members` (
   `patient_id` int NOT NULL,
   PRIMARY KEY (`group_id`,`patient_id`),
   KEY `patient_id_idx` (`patient_id`),
-  CONSTRAINT `group_id` FOREIGN KEY (`group_id`) REFERENCES `group` (`group_id`),
-  CONSTRAINT `patient_id` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
+  CONSTRAINT `fk_group_members` FOREIGN KEY (`group_id`) REFERENCES `ehr_group` (`group_id`),
+  CONSTRAINT `fk_patient_members` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `group_characteristic` (
+  `group_id` int NOT NULL,
+  `code_value` varchar(45) DEFAULT '',
+  `code_system` varchar(45) DEFAULT '',
+  `value` varchar(45) DEFAULT NULL,
+  `exclude` varchar(45) DEFAULT NULL,
+  `period_start` DATE DEFAULT NULL,
+  `period_end` DATE DEFAULT NULL,
+  PRIMARY KEY (`group_id`,`code_value`,`code_system`),
+  CONSTRAINT `fk_group_characteristics` FOREIGN KEY (`group_id`) REFERENCES `ehr_group` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 insert into `user` (user_id, username, password) values (1, 'Connectathon', 'SundaysR0ck!');

@@ -1,6 +1,6 @@
 <div class="grid-container">
-  <mat-grid-list cols="7"  [rowHeight]="rowHeight()">
-  <!-- <mat-grid-list cols="7"  rowHeight="{{rowHeight}}"> -->
+  <mat-grid-list cols="7" [rowHeight]="rowHeight()">
+    <!-- <mat-grid-list cols="7"  rowHeight="{{rowHeight}}"> -->
     <!-- <mat-grid-tile>
       <mat-card class="dashboard-card">
         <mat-card-header class="card-title">
@@ -25,14 +25,14 @@
         </mat-card-content>
       </mat-card>
     </mat-grid-tile> -->
-    <mat-grid-tile [colspan]="4" >
+    <mat-grid-tile [colspan]="4">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
-          <app-patient-table></app-patient-table>
+          <app-patient-table (eventEmitter)="this.patientService.setCurrent($event ?? {})" [observableRefresh]="patientListRefreshObservable()" [observableSource]="patientListObservable(tenantService.getCurrentId(), facilityService.getCurrentId())" [facility]="facilityService.getCurrentObservable() | async"></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="3" >
+    <mat-grid-tile [colspan]="3">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #feedback>
           <app-feedback-table [facility]="facilityService.getCurrentObservable() | async"></app-feedback-table>

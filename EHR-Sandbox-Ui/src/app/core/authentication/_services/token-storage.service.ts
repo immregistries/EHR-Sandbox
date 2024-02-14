@@ -9,13 +9,13 @@ const USER_KEY = 'auth-user';
   providedIn: 'root'
 })
 export class TokenStorageService {
-  constructor( private facilityService : FacilityService,
+  constructor(private facilityService: FacilityService,
     private tenantService: TenantService,
     private immService: ImmunizationRegistryService) { }
   signOut(): void {
     window.sessionStorage.clear();
-    this.facilityService.setCurrent({id:-1})
-    this.tenantService.setCurrent({id:-1})
+    this.facilityService.setCurrent({ id: -1 })
+    this.tenantService.setCurrent({ id: -1 })
     this.immService.setCurrent({})
   }
   public saveToken(token: string): void {

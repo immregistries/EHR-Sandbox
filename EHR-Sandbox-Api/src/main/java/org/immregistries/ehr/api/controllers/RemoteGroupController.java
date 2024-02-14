@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
@@ -46,6 +47,8 @@ public class RemoteGroupController {
     private PatientMapperR5 patientMapperR5;
     @Autowired
     private FhirClientController fhirClientController;
+    @Autowired
+    EhrGroupRepository ehrGroupRepository;
 
     @GetMapping("/sample")
     public ResponseEntity<String> getSample(@PathVariable() Optional<Integer> facilityId) {
@@ -73,12 +76,15 @@ public class RemoteGroupController {
 //        Group.GroupCharacteristicComponent school = group.addCharacteristic()
 //                .setCode(new CodeableConcept(new Coding("http/Massachusetts.com/terminology/school-code-system","1234","Stephane Hessel Highschool")));
         group.setDescription("Group created for School example");
+        group.setMembership(Group.GroupMembershipBasis.ENUMERATED);
         return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(group));
     }
 
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable Integer registryId) {
         IParser parser = fhirContext.newJsonParser();
+//        ehrGroupRepository.findByFacilityIdAndImmunizationRegistryId(facilityId, registryId);
+
         Set<String> set = remoteGroupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(registryId,new HashMap<>(0))

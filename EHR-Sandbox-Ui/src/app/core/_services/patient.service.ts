@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, share, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, concat, concatMap, defer, filter, iif, merge, of, share, switchMap, take, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { EhrPatient, Revision} from '../_model/rest';
+import { EhrPatient, Revision } from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
@@ -17,17 +17,22 @@ const httpOptions = {
 /**
  * Patient Service interacting with the API, and providing the global selected patient as an observable
  */
-export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
+export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
+
+  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) {
-      super(new BehaviorSubject<EhrPatient>({id:-1}))
-      this.facilityService.getCurrentObservable().subscribe((facility) => {
-        this.setCurrent({})
-      })
-    }
+    private tenantService: TenantService) {
+    super(new BehaviorSubject<EhrPatient>({ id: -1 }))
+    /**
+     * Making it so that changing selected globally facility unselects patient
+     */
+    this.facilityService.getCurrentObservable().subscribe((facility) => {
+      this.setCurrent({})
+    })
+  }
 
 
   /**
@@ -43,10 +48,16 @@ export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
    *
    * @returns list of patients associated to the tenant and facility selected in their respected services
    */
-   quickReadPatients(): Observable<EhrPatient[]> {
-    const tenantId = this.tenantService.getCurrentId()
-    const facilityId = this.facilityService.getCurrentId()
-    return this.readPatients(tenantId, facilityId)
+  quickReadPatients(): Observable<EhrPatient[]> {
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      if (value) {
+        return this.http.get<EhrPatient[]>(
+          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients`,
+          httpOptions)
+      } else {
+        return of([])
+      }
+    }))
   }
 
 
@@ -57,7 +68,7 @@ export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
    * @returns list of patients associated to the tenant and facility
    */
   readPatients(tenantId: number, facilityId: number): Observable<EhrPatient[]> {
-    if (tenantId > 0 && facilityId > 0){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.get<EhrPatient[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         httpOptions);
@@ -71,7 +82,7 @@ export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
    * @returns list of patients associated to the tenant
    */
   readAllPatients(tenantId: number): Observable<EhrPatient[]> {
-    if (tenantId > 0){
+    if (tenantId > 0) {
       return this.http.get<EhrPatient[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/patients`,
         httpOptions);
@@ -79,10 +90,10 @@ export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
     return of([])
   }
 
-  quickReadPatient(patientId: number):  Observable<EhrPatient> {
+  quickReadPatient(patientId: number): Observable<EhrPatient> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.readPatient(tenantId,facilityId,patientId)
+    return this.readPatient(tenantId, facilityId, patientId)
   }
 
   /**
@@ -111,42 +122,42 @@ export class PatientService extends  CurrentSelectedWithIdService<EhrPatient> {
    * @param patient
    * @returns Post patient Response
    */
-  quickPostPatient(patient: EhrPatient): Observable<HttpResponse<string>>  {
+  quickPostPatient(patient: EhrPatient): Observable<HttpResponse<string>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.postPatient(tenantId,facilityId,patient)
+    return this.postPatient(tenantId, facilityId, patient)
   }
 
   postPatient(tenantId: number, facilityId: number, patient: EhrPatient, params?: HttpParams): Observable<HttpResponse<string>> {
-    if (tenantId > 0 && facilityId > 0){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         patient,
-        {observe: 'response', params: params});
+        { observe: 'response', params: params });
     } else {
       throw throwError(() => new Error("No facility selected"))
     }
   }
 
   postPatientOnFacilityOnly(facilityId: number, patient: EhrPatient): Observable<HttpResponse<string>> {
-    if (facilityId > 0){
+    if (facilityId > 0) {
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/facilities/${facilityId}/patients`,
         patient,
-        {observe: 'response'});
+        { observe: 'response' });
     } else {
       throw throwError(() => new Error("No facility selected"))
     }
   }
 
-  quickPutPatient(patient: EhrPatient): Observable<EhrPatient>  {
+  quickPutPatient(patient: EhrPatient): Observable<EhrPatient> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.putPatient(tenantId,facilityId,patient)
+    return this.putPatient(tenantId, facilityId, patient)
   }
 
   putPatient(tenantId: number, facilityId: number, patient: EhrPatient,): Observable<EhrPatient> {
-    if (tenantId > 0 && facilityId > 0 ){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.put<EhrPatient>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         patient, httpOptions);

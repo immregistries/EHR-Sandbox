@@ -13,6 +13,7 @@ import { ImmunizationRegistryDashboardComponent } from './core/_components/immun
 import { FhirBulkDashboardComponent } from './fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 import { ClinicianFormComponent } from './shared/_clinician/clinician-form/clinician-form.component';
 import { RemoteGroupDashboardComponent } from './core/_components/remote-group-dashboard/remote-group-dashboard.component';
+import { GroupDashboardComponent } from './shared/_local-group/group-dashboard/group-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -29,6 +30,7 @@ const routes: Routes = [
   { path: 'bulk', component: FhirBulkDashboardComponent },
   // { path: 'clinicians', component: ClinicianFormComponent },
   { path: 'remote-groups', component: RemoteGroupDashboardComponent },
+  { path: 'local-groups', component: GroupDashboardComponent },
 ];
 
 @NgModule({
