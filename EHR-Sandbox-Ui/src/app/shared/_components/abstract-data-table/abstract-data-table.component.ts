@@ -10,49 +10,50 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 })
 export class AbstractDataTableComponent<T extends ObjectWithID> implements AfterViewInit {
 
-  constructor(public patientService: PatientService, public facilityService: FacilityService) { }
+  constructor() {}
 
-  private _dataSource = new MatTableDataSource<T>();
-  public get dataSource() {
-    return this._dataSource;
-  }
+  public dataSource = new MatTableDataSource<T>();
+
   @Input()
-  public set dataSource(value) {
-    this._dataSource = value;
-  }
-  // @Input()
-  // public set data(value: T[]) {
-  //   this._dataSource.data = value;
-  // }
-  @Input() title: string = 'Patients'
+  public allow_create: boolean = true
+
   loading: boolean = false
   lastIdSelectedBeforeRefresh: number = -1;
 
   @Input()
   selectedElement: T | undefined;
-  @Output() eventEmitter: EventEmitter<T | undefined> = new EventEmitter<T | undefined>();
+  @Output() selectEmitter: EventEmitter<T | undefined> = new EventEmitter<T | undefined>();
 
 
   @Input()
   observableRefresh!: Observable<any>;
   @Input()
   observableSource!: Observable<T[]>;
+
+  private _data_set_input: boolean = false
   @Input()
-  selectingElementObser!: Observable<T[]>;
+  public set data(value: T[] | undefined) {
+    this._data_set_input = true
+    if (value) {
+      this.dataSource.data = value;
+    }
+  }
 
   ngAfterViewInit(): void {
     // Set filter rules for research
     this.dataSource.filterPredicate = (data: T, filter: string) => {
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
-    this.observableRefresh.subscribe(() => {
-      this.loading = true
-      this.observableSource.subscribe((list) => {
-        this.loading = false
-        this.dataSource.data = list
-        this.onSelection(this.selectedElement ? list.find((item: T) => { return item.id === this.selectedElement?.id }): undefined);
+    if (!this._data_set_input) {
+      this.observableRefresh.subscribe(() => {
+        this.loading = true
+        this.observableSource.subscribe((list) => {
+          this.loading = false
+          this.dataSource.data = list
+          this.onSelection(this.selectedElement ? list.find((item: T) => { return item.id === this.selectedElement?.id }) : undefined);
+        })
       })
-    })
+    }
   }
 
 
@@ -63,12 +64,12 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
   }
 
   onSelection(event: T | undefined) {
-    if (event && this.selectedElement?.id == event.id ) {
+    if (event && this.selectedElement?.id == event.id) {
       this.selectedElement = undefined
     } else {
       this.selectedElement = event
     }
-    this.eventEmitter.emit(this.selectedElement);
+    this.selectEmitter.emit(this.selectedElement);
   }
 
 

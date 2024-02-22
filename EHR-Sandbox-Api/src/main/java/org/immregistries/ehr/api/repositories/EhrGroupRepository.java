@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface EhrGroupRepository extends CrudRepository<EhrGroup, Integer> {
     Iterable<EhrGroup> findByFacilityIdAndImmunizationRegistryId(Integer facilityId, Integer immunizationRegistryId);
+    Iterable<EhrGroup> findByFacilityId(Integer facilityId);
     Optional<EhrGroup> findByFacilityIdAndImmunizationRegistryIdAndName(Integer facilityId, Integer immunizationRegistryId, String name);
     Optional<EhrGroup> findByFacilityIdAndId(Integer facilityId, Integer id);
     Optional<EhrGroup> findByFacilityIdAndName(Integer facilityId, String name);

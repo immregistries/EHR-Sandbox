@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Group, GroupMember, Identifier } from 'fhir/r5';
-import { BehaviorSubject, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
 import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
@@ -16,14 +16,36 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class GroupService extends CurrentSelectedService<Group> {
+export class GroupService extends CurrentSelectedService<EhrGroup> {
+
+  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
+
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private immunizationRegistryService: ImmunizationRegistryService) {
-      super(new BehaviorSubject<Group>({resourceType: "Group", type: "person", membership: "definitional"}))
+    super(new BehaviorSubject<EhrGroup>({}))
+  }
+
+  /**
+   *
+   * @returns list of patients associated to the tenant and facility selected in their respected services
+   */
+  quickReadGroups(): Observable<EhrGroup[]> {
+    console.log("jwehbfi2")
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      console.log("jwehbfi2", value)
+
+      if (value) {
+        return this.http.get<EhrGroup[]>(
+          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/groups`,
+          httpOptions)
+      } else {
+        return of([])
+      }
+    }))
   }
 
   readRandom(): Observable<EhrGroup> {
@@ -38,37 +60,37 @@ export class GroupService extends CurrentSelectedService<Group> {
       httpOptions);
   }
 
-  postGroup(group: EhrGroup): Observable<HttpResponse<string>>{
+  postGroup(group: EhrGroup): Observable<HttpResponse<string>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.post<HttpResponse<string>>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`,group,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`, group,
         httpOptions);
     } else {
       return of()
     }
   }
 
-  putGroup(group: EhrGroup): Observable<EhrGroup>{
+  putGroup(group: EhrGroup): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.put<EhrGroup>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`,group,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`, group,
         httpOptions);
     } else {
       return of()
     }
   }
 
-  getAllGroups(): Observable<EhrGroup[]>{
+  getAllGroups(): Observable<EhrGroup[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.get<EhrGroup[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`,
         httpOptions);
@@ -77,11 +99,11 @@ export class GroupService extends CurrentSelectedService<Group> {
     }
   }
 
-  getGroup(groupId: number): Observable<EhrGroup>{
+  getGroup(groupId: number): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0){
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.get<EhrGroup>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}`,
         httpOptions);
@@ -90,18 +112,67 @@ export class GroupService extends CurrentSelectedService<Group> {
     }
   }
 
-  getGroupFromName(groupName: String): Observable<EhrGroup>{
+  getGroupFromName(name: String): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    let options = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-      param: {'name': groupName}
-    };
-    if (tenantId > 0 && facilityId > 0){
+    // let options = {
+    //   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    //   param: {'name': groupName}
+    // };
+    if (tenantId > 0 && facilityId > 0) {
       return this.http.get<EhrGroup>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`,
-        options);
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups?name=${name}`,
+        httpOptions);
+    } else {
+      return of()
+    }
+  }
+
+  getRandom(): Observable<EhrGroup> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0) {
+      return this.http.get<EhrGroup>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/random`,
+        httpOptions);
+    } else {
+      return of()
+    }
+  }
+
+  addMember(groupId: number, patientId: String): Observable<EhrGroup> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0) {
+      return this.http.post<EhrGroup>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$add?patientId=${patientId}`,
+        httpOptions);
+    } else {
+      return of()
+    }
+  }
+
+  removeMember(groupId: number, patientId: number): Observable<EhrGroup> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0) {
+      return this.http.post<EhrGroup>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$remove?patientId=${patientId}`,
+        httpOptions);
+    } else {
+      return of()
+    }
+  }
+
+  refreshGroup(groupId: number | undefined): Observable<EhrGroup> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0) {
+      return this.http.get<EhrGroup>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$refresh`,
+        httpOptions);
     } else {
       return of()
     }

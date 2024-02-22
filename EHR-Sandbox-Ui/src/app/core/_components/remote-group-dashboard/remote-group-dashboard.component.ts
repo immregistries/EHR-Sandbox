@@ -30,13 +30,13 @@ export class RemoteGroupDashboardComponent implements AfterViewInit {
         return true;
       })).subscribe((res) => this.patientDatasource.data = res)
     this._group = value;
-    this.groupService.setCurrent(this.group ?? { resourceType: "Group", type: "person", membership: "definitional" })
+    this.remoteGroupService.setCurrent(this.group ?? { resourceType: "Group", type: "person", membership: "definitional" })
   }
 
   constructor(private tenantService: TenantService,
     private facilityService: FacilityService,
     public patientService: PatientService,
-    public groupService: RemoteGroupService,
+    public remoteGroupService: RemoteGroupService,
     private dialog: MatDialog) { }
 
   @ViewChild('tabs', { static: false }) tabGroup!: MatTabGroup;
@@ -46,8 +46,8 @@ export class RemoteGroupDashboardComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.tabGroup.selectedIndex = 1
-    this.groupService.triggerFetch()
-    this.groupService.readSample().subscribe(res => {
+    this.remoteGroupService.triggerFetch()
+    this.remoteGroupService.readSample().subscribe(res => {
       this.sample = JSON.stringify(res, undefined, 4)
     })
   }
@@ -57,7 +57,7 @@ export class RemoteGroupDashboardComponent implements AfterViewInit {
   }
 
   triggerRefresh() {
-    this.groupService.triggerFetch().subscribe(() => {
+    this.remoteGroupService.triggerFetch().subscribe(() => {
       this.facilityService.doRefresh()
     })
   }

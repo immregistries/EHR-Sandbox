@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, merge, switchMap, tap } from 'rxjs';
@@ -11,6 +11,7 @@ import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-tabl
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
+import { GroupService } from 'src/app/core/_services/group.service';
 
 @Component({
   selector: 'app-patient-table',
@@ -25,21 +26,27 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
   ],
 })
 export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient> implements AfterViewInit {
-  @Input() facility!: Facility | null;
-  columns: (keyof EhrPatient | 'alerts')[] = [
+
+  @Input()
+  title: string = 'Patients'
+  @Input()
+  facility!: Facility | null;
+  @Input()
+  columns: (keyof EhrPatient | "alerts" | "remove")[] = [
     "mrn",
     "nameLast",
     "nameFirst",
-    // "nameMiddle",
     "birthDate",
-    'alerts'
+    "alerts"
   ]
+  @Output()
+  removeEmitter: EventEmitter<EhrPatient> = new EventEmitter<EhrPatient>()
 
   constructor(public tenantService: TenantService,
-    public override facilityService: FacilityService,
-    public override patientService: PatientService,
+    public facilityService: FacilityService,
+    public patientService: PatientService,
     private dialog: MatDialog) {
-    super(patientService, facilityService)
+    super()
     // this.observableRefresh = merge(
     //   this.facilityService.getCurrentObservable()
     //     .pipe(tap(facility => { this.facility = facility })),
@@ -47,6 +54,11 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
     //   this.facilityService.getRefresh(),
     // );
     // this.observableSource = this.patientService.quickReadPatients();
+  }
+
+  remove(patient: EhrPatient) {
+    console.log('removeeee')
+    this.removeEmitter.emit(patient)
   }
 
   openCreation() {
@@ -62,7 +74,6 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
       this.ngAfterViewInit()
     });
   }
-
 
   openPatient(patient: EhrPatient) {
     const dialogRef = this.dialog.open(PatientDashboardComponent, {

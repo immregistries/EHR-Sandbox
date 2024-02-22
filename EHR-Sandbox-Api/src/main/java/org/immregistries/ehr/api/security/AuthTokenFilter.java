@@ -208,7 +208,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     groupId = scanner.next();
                     EhrGroup ehrGroup = ehrGroupRepository.findByFacilityIdAndId(facilityId, Integer.valueOf(groupId))
                             .orElseThrow(() -> new InvalidRequestException("invalid group id"));
-                    request.setAttribute("group", ehrGroup);
+                    request.setAttribute("ehrGroup", ehrGroup);
                 }
             }
         }

@@ -1,10 +1,8 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
+import { Component } from '@angular/core';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import { Observable, firstValueFrom, merge } from 'rxjs';
+import { Observable, merge } from 'rxjs';
 import { EhrPatient } from '../../_model/rest';
 
 @Component({
@@ -16,10 +14,10 @@ export class DashboardComponent {
 
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
-    public patientService: PatientService) {}
+    public patientService: PatientService) { }
 
   rowHeight(): string {
-    return (window.innerHeight/2 - 35) + 'px'
+    return (window.innerHeight / 2 - 35) + 'px'
   }
 
   patientLoading: boolean = false
@@ -32,7 +30,7 @@ export class DashboardComponent {
     )
   }
 
-  patientListObservable(tenantId: number, facilityId: number): Observable<EhrPatient[]> {
+  patientListObservable(): Observable<EhrPatient[]> {
     return this.patientService.quickReadPatients()
   }
 }

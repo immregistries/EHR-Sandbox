@@ -1,11 +1,13 @@
 package org.immregistries.ehr.api.controllers;
 
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.Group;
-import org.immregistries.ehr.api.entities.EhrGroup;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Tenant;
+import org.hl7.fhir.r5.model.Identifier;
+import org.hl7.fhir.r5.model.Parameters;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
@@ -18,10 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+
+import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
 
 @RestController
@@ -46,6 +47,7 @@ public class EhrGroupController {
     /**
      * hollow method for url mapping
      * query is actually executed in authorization filter
+     *
      * @param ehrGroup
      * @return
      */
@@ -88,15 +90,16 @@ public class EhrGroupController {
     public EhrGroup random(@RequestAttribute Tenant tenant, @RequestAttribute Facility facility) {
         EhrGroup ehrGroup = new EhrGroup();
         ehrGroup.setFacility(facility);
-        ehrGroup.setName("G " +  RandomStringUtils.random(11, true, false ));
-        ehrGroup.setDescription("Randomly generated group in EHR Sandbox including two randomly selected patients");
+        ehrGroup.setName("G " + RandomStringUtils.random(11, true, false));
+        ehrGroup.setDescription("Randomly generated group in EHR Sandbox including randomly selected patients in facility");
         ehrGroup.setType("Person");
         Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
 
+        ehrGroup.setPatientList(new HashSet<>(4));
         Random random = new Random();
         EhrPatient patient = null;
         while (facilityPatients.hasNext()) {
-            patient= facilityPatients.next();
+            patient = facilityPatients.next();
             if (random.nextFloat() > 0.7) {
                 ehrGroup.getPatientList().add(patient);
             }
@@ -105,6 +108,107 @@ public class EhrGroupController {
             ehrGroup.getPatientList().add(patient);
         }
         return ehrGroup;
+    }
+
+
+    @GetMapping()
+    public ResponseEntity<?> getAll(@RequestAttribute Facility facility, @RequestParam Optional<String> name) {
+        if (name.isPresent()) {
+            return ResponseEntity.ok(ehrGroupRepository.findByFacilityIdAndName(facility.getId(), name.get())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")));
+        } else {
+            return ResponseEntity.ok(ehrGroupRepository.findByFacilityId(facility.getId()));
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not supported yet");
+        }
+    }
+
+    @PostMapping("/{groupId}/$add")
+    public EhrGroup add(@RequestAttribute EhrGroup ehrGroup, @RequestParam String patientId) {
+        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
+        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
+        if (immunizationRegistry == null) {
+            ehrGroup.getPatientList().add(ehrPatient);
+            ehrGroupRepository.save(ehrGroup);
+            return ehrGroup;
+//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
+        } else {
+            Parameters in = new Parameters();
+            /**
+             * First do match to get destination reference or identifier
+             */
+            in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
+            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(ehrGroup.getFacility().getId()))); //TODO update with managingEntity
+            IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
+            groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
+            IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+            Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
+            /**
+             * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
+             */
+            return refreshOne(ehrGroup);
+        }
+    }
+
+    @PostMapping("/{groupId}/$remove")
+    public EhrGroup remove_member(@RequestAttribute EhrGroup ehrGroup, @RequestParam String patientId) {
+        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
+        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
+        if (immunizationRegistry == null) {
+            ehrGroup.getPatientList().remove(ehrPatient);
+            ehrGroupRepository.save(ehrGroup);
+            return ehrGroup;
+//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
+        } else {
+            Parameters in = new Parameters();
+            in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
+            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(ehrGroup.getFacility().getId()))); //TODO update with managingEntity
+            /**
+             * First do match to get destination reference or identifier
+             */
+            IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
+            IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+            Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-remove").withParameters(in).execute();
+            return refreshOne(ehrGroup);
+        }
+    }
+
+    @GetMapping("/{groupId}/$refresh")
+    public EhrGroup refreshOne(@RequestAttribute EhrGroup ehrGroup) {
+        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
+        IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
+        if (remoteGroup != null) {
+            groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
+        }
+        return ehrGroupRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), ehrGroup.getId()).get();
+    }
+
+
+    private IBaseResource getRemoteGroup(EhrGroup ehrGroup) {
+        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
+        if (immunizationRegistry == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
+        }
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+        return getRemoteGroup(client, ehrGroup);
+    }
+
+    private IBaseResource getRemoteGroup(IGenericClient client, EhrGroup ehrGroup) {
+        Bundle bundle = client.search().forResource(Group.class).returnBundle(Bundle.class)
+                .where(Group.NAME.matchesExactly().value(ehrGroup.getName()))
+//                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
+                .execute();
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            if (entry.hasResource() && entry.getResource() instanceof Group
+//                    && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))
+            ) {
+                return entry.getResource();
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
+
+
     }
 
 

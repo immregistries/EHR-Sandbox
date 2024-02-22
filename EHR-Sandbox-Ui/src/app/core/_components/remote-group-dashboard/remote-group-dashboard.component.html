@@ -24,7 +24,7 @@
           <mat-card class="dashboard-card">
             <!-- table containing the group's patient information, wether id's match or not, with a button allowing $member-remove -->
             <!-- <app-patient-table [dataSource]="patientDatasource"></app-patient-table> -->
-            <app-patient-received-table [group]="groupService.getCurrentObservable() | async"></app-patient-received-table>
+            <app-patient-received-table [group]="remoteGroupService.getCurrentObservable() | async"></app-patient-received-table>
           </mat-card>
         </mat-grid-tile>
       </mat-grid-list>

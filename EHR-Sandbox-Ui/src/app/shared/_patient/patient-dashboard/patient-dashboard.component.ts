@@ -15,7 +15,7 @@ export class PatientDashboardComponent {
 
   constructor(private breakpointObserver: BreakpointObserver,
     private patientService: PatientService,
-    public _dialogRef: MatDialogRef<PatientDashboardComponent>,
+    @Optional() public _dialogRef: MatDialogRef<PatientDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient?: EhrPatient | number}) {
       if(data?.patient) {
         if (typeof data.patient === "number" ||  "string") {

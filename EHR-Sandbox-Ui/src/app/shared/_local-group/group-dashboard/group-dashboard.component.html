@@ -1,1 +1,35 @@
-<app-group-form></app-group-form>
+<div class="grid-container">
+  <h1 class="mat-h1">
+    {{'Group: ' + ehrGroup.name }}
+  </h1>
+  <mat-grid-list cols="4">
+    <mat-grid-tile [colspan]="1">
+      <mat-card>
+        <mat-card-content class="dashboard-card-content" #menu>
+          <app-group-details [flex]="true" [ehrGroup]="ehrGroup"></app-group-details>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1">
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content" #display>
+          TODO Better Group display
+          <div>Name: {{ehrGroup.name}} </div>
+          <div>Description: {{ehrGroup.description}} </div>
+          <div>Remote: {{ehrGroup.immunizationRegistry?.name ?? 'Local' }} </div>
+          <div>...</div>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="2">
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content" #patients>
+          <app-patient-table [data]="ehrGroup.patientList" [title]="'Group members'" [allow_create]="false"
+            [columns]='["mrn","nameLast","nameFirst","birthDate","remove"]'
+            [facility]="facilityService.getCurrentObservable() | async"
+            (removeEmitter)="removePatient($event)"></app-patient-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

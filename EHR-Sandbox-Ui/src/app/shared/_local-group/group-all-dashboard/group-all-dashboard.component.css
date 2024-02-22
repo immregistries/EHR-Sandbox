@@ -1,6 +1,5 @@
 .grid-container {
   margin: 5px;
-  /* height: 700px; */
 }
 
 .dashboard-card {
@@ -19,5 +18,6 @@
 
 .dashboard-card-content {
   text-align: center;
-  overflow: scroll;
+  /* height: inherit; */
+  /* overflow: auto; */
 }

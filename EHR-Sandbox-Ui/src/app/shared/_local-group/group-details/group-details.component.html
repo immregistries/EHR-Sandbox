@@ -1,0 +1,19 @@
+<span [style]="flex? '' : 'display: flex; align-items: center;'">
+
+  <button mat-icon-button matTooltip="Edit" color="primary" (click)="openEdition()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
+    <mat-icon>send</mat-icon>
+    FHIR
+  </button>
+  <app-json-dialog-button mat-raised-button [content]="ehrGroup"></app-json-dialog-button>
+  <button mat-stroked-button color="primary" (click)="triggerRefresh()">
+    <mat-icon>refresh</mat-icon>
+    IIS
+  </button>
+  <button mat-stroked-button color="primary" (click)="addMember()">Add Patient</button>
+
+</span>
+
+

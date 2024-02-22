@@ -32,16 +32,16 @@ export class GroupFormComponent {
   ]
 
 
-  formCards2: FormCardGeneric<Group>[] =  [
-    {title: 'Name',  cols: 1, rows: 1, forms: [
-      {type: FormType.text, title: 'name', attribute: 'name'},
-      {type: FormType.text, title: 'description', attribute: 'description'},
-      {type: FormType.text, title: 'type', attribute: 'type'},
-      {type: FormType.text, title: 'code', attribute: 'code'},
-      {type: FormType.text, title: 'managingEntity', attribute: 'managingEntity'},
-      // {type: FormType.text, title: 'authority', attribute: ''},
-    ]}
-  ]
+  // formCards2: FormCardGeneric<Group>[] =  [
+  //   {title: 'Name',  cols: 1, rows: 1, forms: [
+  //     {type: FormType.text, title: 'name', attribute: 'name'},
+  //     {type: FormType.text, title: 'description', attribute: 'description'},
+  //     {type: FormType.text, title: 'type', attribute: 'type'},
+  //     {type: FormType.text, title: 'code', attribute: 'code'},
+  //     {type: FormType.text, title: 'managingEntity', attribute: 'managingEntity'}, // TODO
+  //     // {type: FormType.text, title: 'authority', attribute: ''},
+  //   ]}
+  // ]
 
   isEditionMode: boolean = false;
 
@@ -57,6 +57,7 @@ export class GroupFormComponent {
     }
 
     fillRandom(): void {
+      this.groupService.getRandom().subscribe(res => this.ehrGroup = res)
       // this.patientService.readRandom().subscribe((res) => this.patient = res)
     }
 

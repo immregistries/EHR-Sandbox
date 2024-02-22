@@ -177,6 +177,7 @@ export interface Vaccine {
   vaccinationEvents?: VaccinationEvent[];
 }
 
+
 export interface EhrGroup {
   id?: number;
   facility?: Facility | number;
@@ -184,8 +185,25 @@ export interface EhrGroup {
   description?: string;
   type?: string;
   code?: string;
-  patientList?: (EhrPatient | string)[];
+  immunizationRegistry?: ImmunizationRegistry;
+  patientList?: (EhrPatient)[];
+  ehrGroupCharacteristics?: EhrGroupCharacteristic[];
 }
+
+
+export interface EhrGroupCharacteristic extends Serializable {
+  groupId?: string;
+  codeValue?: string;
+  codeSystem?: string;
+  value?: string;
+  exclude?: boolean;
+  periodStart?: Date;
+  periodEnd?: Date;
+}
+
+export interface Serializable {
+}
+
 
 /**
  * Used for History of resources with default hibernate envers fields

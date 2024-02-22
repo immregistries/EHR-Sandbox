@@ -72,6 +72,11 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
+        return update(group,facility,immunizationRegistry);
+    }
+
+    public MethodOutcome update(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
+
         groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
         groupsStore.get(facility.getId())
                 .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
@@ -80,7 +85,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
                 .put(group.getIdElement().getIdPart(), group);
         Optional<EhrGroup> old = ehrGroupRepository.findByFacilityIdAndImmunizationRegistryIdAndName(facility.getId(),immunizationRegistry.getId(), group.getName());
         if (old.isEmpty()) {
-            return create(group,requestDetails,immunizationRegistry);
+            return create(group,facility,immunizationRegistry);
         } else {
             EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
             ehrGroup.setId(old.get().getId());
@@ -107,6 +112,10 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
+        return create(group,facility,immunizationRegistry);
+    }
+
+    public MethodOutcome create(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
         groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
         groupsStore.get(facility.getId())
                 .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));

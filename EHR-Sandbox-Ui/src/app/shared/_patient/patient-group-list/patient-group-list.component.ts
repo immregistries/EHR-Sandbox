@@ -13,18 +13,18 @@ export class PatientGroupListComponent {
   @Input()
   patient!: EhrPatient;
 
-  constructor(localGroupService: GroupService, private dialog: MatDialog) {
+  constructor(groupService: GroupService, private dialog: MatDialog,) {
 
   }
 
   open(groupName: String) {
     this.dialog.open(GroupDashboardComponent,{
-      maxWidth: '90vw',
-      maxHeight: '90vh',
+      maxWidth: '95vw',
+      maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {name: groupName}
+      data: {groupName: groupName}
     })
 
   }
