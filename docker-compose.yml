@@ -12,8 +12,8 @@ services:
       MYSQL_ROOT_PASSWORD: 'DearPrudenceWontYouComeOutAndPlay'
 #      TODO generate better password
     volumes:
-      - ./EHR-Sandbox-Api/src/database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
-      - ./EHR-Sandbox-Api/src/database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
+      - ./database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
   ehr-sandbox:
     build: .
     container_name: ehr-sandbox
