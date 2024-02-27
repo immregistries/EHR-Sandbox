@@ -18,7 +18,6 @@ services:
     build: .
     container_name: ehr-sandbox
     environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://ehr-sandbox-mysql:3306/ehr
       - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
 #      - spring.datasource.url=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
 #      - API_URL=http://localhost:9099/ehr
@@ -30,12 +29,10 @@ services:
       - "9092:8080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
+    depends_on:
+     - ehr-sandbox-mysql
 #    volumes:
 #      - ./docker-runtime-config.json:/opt/bitnami/tomcat/webapps_default/ehr/WEB-INF/classes/static/assets/runtime-config.json
 #      - ./docker-runtime-config.json:/opt/bitnami/tomcat/webapps_default/runtime-config.json
-
-
-
 volumes:
   sandbox-mysql:
