@@ -116,8 +116,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private boolean filterUrl(HttpServletRequest request) throws InvalidRequestException {
         String url = request.getServletPath();
 //        logger.info("{}", url);
-        int tenantId = -1;
-        int facilityId = -1;
+        String tenantId = null;
+        String facilityId = null;
         int clinicianId = -1;
         int registryId = -1;
         String patientId = null;
@@ -148,15 +148,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
             if (item.equals("tenants") ) {
                 if (scanner.hasNextInt()) {
-                    tenantId = scanner.nextInt();
-                    Tenant tenant = tenantRepository.findByIdAndUserId(tenantId, userDetailsService.currentUserId())
+                    tenantId = scanner.next();
+                    Tenant tenant = tenantRepository.findByIdAndUserId(String.valueOf(tenantId), userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid tenant id"));
                     request.setAttribute("tenant", tenant);
                 }
             }
             if (item.equals("facilities") ) {
                 if (scanner.hasNextInt()) {
-                    facilityId = scanner.nextInt();
+                    facilityId = scanner.next();
                     Facility facility = facilityRepository.findByUserAndId(userDetailsService.currentUser(), facilityId)
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
                     request.setAttribute("facility", facility);
@@ -169,7 +169,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             item = scanner.next();
             if (item.equals("facilities") ) {
                 if (scanner.hasNextInt()) {
-                    facilityId = scanner.nextInt();
+                    facilityId = scanner.next();
                     Facility facility = facilityRepository.findByIdAndTenantId(facilityId, tenantId)
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
                     request.setAttribute("facility", facility);

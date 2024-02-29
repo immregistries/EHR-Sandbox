@@ -45,16 +45,16 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     }))
   }
 
-  readRandom(): Observable<EhrGroup> {
+  getRandom(): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId = this.facilityService.getCurrentId()
-    const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (facilityId < 0) {
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0) {
+      return this.http.get<EhrGroup>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/$random`,
+        httpOptions);
+    } else {
       return of()
     }
-    return this.http.get<EhrGroup>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/random`,
-      httpOptions);
   }
 
   postGroup(group: EhrGroup): Observable<HttpResponse<string>> {
@@ -126,17 +126,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     }
   }
 
-  getRandom(): Observable<EhrGroup> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0) {
-      return this.http.get<EhrGroup>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/random`,
-        httpOptions);
-    } else {
-      return of()
-    }
-  }
+
 
   addMember(groupId: number, patientId: String): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()

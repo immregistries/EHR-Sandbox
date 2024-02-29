@@ -14,18 +14,18 @@ import java.util.Set;
 
 public interface EhrPatientRepository extends CrudRepository<EhrPatient, String>, RevisionRepository<EhrPatient, String ,Integer> {
 
-    Optional<EhrPatient> findByFacilityIdAndMrn(Integer facilityId, String mrn);
+    Optional<EhrPatient> findByFacilityIdAndMrn(String facilityId, String mrn);
 
     @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f  WHERE f.tenant = :tenant")
     Iterable<EhrPatient> findByTenantId(@Param("tenant") Tenant tenant);
 
-//    Iterable<EhrPatient> findByTenantIdAndFacilityId(Integer tenantId, Integer facilityId);
-//    Optional<EhrPatient> findByTenantIdAndFacilityIdAndId(Integer tenantId, Integer facilityId, String id);
+//    Iterable<EhrPatient> findByTenantIdAndFacilityId(String tenantId, String facilityId);
+//    Optional<EhrPatient> findByTenantIdAndFacilityIdAndId(String tenantId, String facilityId, String id);
 
-    Iterable<EhrPatient> findByFacilityId(Integer facilityId);
-//    Set<EhrPatient> findAllByFacilityIdAndId(Integer facilityId, Iterable<String> id);
-    Optional<EhrPatient> findByFacilityIdAndId(Integer facilityId, String id);
-    Boolean existsByFacilityIdAndId(Integer facilityId, String id);
+    Iterable<EhrPatient> findByFacilityId(String facilityId);
+//    Set<EhrPatient> findAllByFacilityIdAndId(String facilityId, Iterable<String> id);
+    Optional<EhrPatient> findByFacilityIdAndId(String facilityId, String id);
+    Boolean existsByFacilityIdAndId(String facilityId, String id);
 
 
 

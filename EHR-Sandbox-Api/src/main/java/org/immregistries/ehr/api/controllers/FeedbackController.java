@@ -39,8 +39,8 @@ public class FeedbackController {
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/feedbacks")
-    public Iterable<Feedback> getPatientFeedback(@PathVariable() int tenantId,
-                                                 @PathVariable() int facilityId) {
+    public Iterable<Feedback> getPatientFeedback(@PathVariable() String tenantId,
+                                                 @PathVariable() String facilityId) {
         return facilityController.getFacility(tenantId,facilityId).get().getFeedbacks();
     }
 
@@ -51,7 +51,7 @@ public class FeedbackController {
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/feedbacks")
-    public Feedback postPatientFeedback(@PathVariable() int facilityId,
+    public Feedback postPatientFeedback(@PathVariable() String facilityId,
                                         @PathVariable() String patientId,
                                         @RequestBody Feedback feedback) {
         Optional<EhrPatient> patient = patientRepository.findById(patientId);
@@ -65,7 +65,7 @@ public class FeedbackController {
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations/{vaccinationId}/feedbacks")
-    public Feedback postVaccinationFeedback(@PathVariable() int facilityId,
+    public Feedback postVaccinationFeedback(@PathVariable() String facilityId,
                                         @PathVariable() String patientId,
                                         @PathVariable() String vaccinationId,
                                         @RequestBody Feedback feedback) {

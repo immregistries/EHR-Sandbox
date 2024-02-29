@@ -15,7 +15,7 @@ public class Tenant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tenant_id", nullable = false)
-    private Integer id;
+    private String id;
 
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -39,7 +39,7 @@ public class Tenant {
     public Tenant() {
     }
 
-    public Tenant(Integer id, User user, String nameDisplay, Set<Facility> facilities, Set<Clinician> clinicians) {
+    public Tenant(String id, User user, String nameDisplay, Set<Facility> facilities, Set<Clinician> clinicians) {
         this.id = id;
         this.user = user;
         this.nameDisplay = nameDisplay;
@@ -72,11 +72,11 @@ public class Tenant {
         this.user = user;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

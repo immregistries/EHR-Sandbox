@@ -57,7 +57,7 @@ public class VaccinationController {
     private TenantRepository tenantRepository;
 
     @GetMapping()
-    public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() int facilityId, @PathVariable() Optional<String> patientId) {
+    public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() String facilityId, @PathVariable() Optional<String> patientId) {
         if(patientId.isPresent()) {
             return vaccinationEventRepository.findByPatientId(patientId.get());
         } else {

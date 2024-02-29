@@ -90,7 +90,7 @@ public class SubscriptionController {
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/data-quality-issues")
-    public Boolean subscribeToIISFeedback(@PathVariable() Integer registryId, @PathVariable() int facilityId, @RequestParam Optional<String> groupId) {
+    public Boolean subscribeToIISFeedback(@PathVariable() Integer registryId, @PathVariable() String facilityId, @RequestParam Optional<String> groupId) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());

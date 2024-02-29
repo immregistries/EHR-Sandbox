@@ -65,7 +65,7 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
             RequestDetails theRequestDetails,
             @IdParam IdType id) {
         OperationOutcome operationOutcome = new OperationOutcome();
-        Integer facilityId = Integer.parseInt(theRequestDetails.getTenantId());
+        String facilityId = theRequestDetails.getTenantId();
         operationOutcome.setId(id);
         operationOutcome.addIssue().setCode(OperationOutcome.IssueType.VALUE);
         return operationOutcome;
@@ -99,7 +99,7 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
             @ResourceParam OperationOutcome operationOutcome,
             ServletRequestDetails requestDetails,
             ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;

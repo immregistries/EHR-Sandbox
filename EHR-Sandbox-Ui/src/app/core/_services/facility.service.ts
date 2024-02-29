@@ -42,7 +42,7 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
   getRandom(tenantId: number): Observable<Facility> {
     return this.http.get<Facility>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/random`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/$random`,
       httpOptions);
   }
 

@@ -88,7 +88,7 @@ public class EhrGroupController {
         }
     }
 
-    @GetMapping("/random")
+    @GetMapping("/$random")
     public EhrGroup random(@RequestAttribute Facility facility) {
         EhrGroup ehrGroup = new EhrGroup();
 //        ehrGroup.setFacility(facility);

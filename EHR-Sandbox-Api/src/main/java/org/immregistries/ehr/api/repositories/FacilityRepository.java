@@ -10,16 +10,16 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface FacilityRepository extends CrudRepository<Facility, Integer>, JpaSpecificationExecutor<Facility> {
+public interface FacilityRepository extends CrudRepository<Facility, String>, JpaSpecificationExecutor<Facility> {
 
     @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user")
 //    @EntityGraph(value = "Facility.patients")
     Iterable<Facility> findByUser(@Param("user") User user);
     @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user AND f.id = :id")
 //    @EntityGraph(value = "Facility.patients")
-    Optional<Facility> findByUserAndId(@Param("user") User user, @Param("id") Integer id);
-    Iterable<Facility> findByTenantId(Integer tenantId);
-    Optional<Facility> findByIdAndTenantId(Integer id,Integer tenantId);
-    Boolean existsByTenantIdAndNameDisplay(Integer tenantId, String nameDisplay);
-    Boolean existsByTenantIdAndId(Integer tenantId, Integer id);
+    Optional<Facility> findByUserAndId(@Param("user") User user, @Param("id") String id);
+    Iterable<Facility> findByTenantId(String tenantId);
+    Optional<Facility> findByIdAndTenantId(String id, String tenantId);
+    Boolean existsByTenantIdAndNameDisplay(String tenantId, String nameDisplay);
+    Boolean existsByTenantIdAndId(String tenantId, String id);
 }

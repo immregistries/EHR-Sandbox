@@ -61,7 +61,7 @@ public class FhirConversionController {
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
     public ResponseEntity<String> getPatientAsResource(
-            @PathVariable() String patientId, @PathVariable() Integer facilityId) {
+            @PathVariable() String patientId, @PathVariable() String facilityId) {
         EhrPatient ehrPatient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = facilityRepository.findById(facilityId)
@@ -104,7 +104,7 @@ public class FhirConversionController {
 
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")
     public ResponseEntity<String> loadNdJsonBundle(
-            @PathVariable() Integer facilityId,
+            @PathVariable() String facilityId,
             @PathVariable() Integer registryId,
             @RequestBody Bundle bundle) {
         return bundleImportService.importBundle(

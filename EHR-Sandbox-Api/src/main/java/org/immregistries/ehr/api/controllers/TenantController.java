@@ -27,7 +27,7 @@ public class TenantController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping("/random")
+    @GetMapping("/$random")
     public Tenant getRandom() {
         Faker faker = new Faker();
         Tenant tenant = new Tenant();
@@ -42,12 +42,12 @@ public class TenantController {
     }
 
     @GetMapping("/{tenantId}")
-    public Optional<Tenant> getTenant(@PathVariable() int tenantId) {
+    public Optional<Tenant> getTenant(@PathVariable() String tenantId) {
         return tenantRepository.findById(tenantId);
     }
 
     @GetMapping("/{tenantId}/patients")
-    public Iterable<EhrPatient> patients(@PathVariable() int tenantId) {
+    public Iterable<EhrPatient> patients(@PathVariable() String tenantId) {
         return patientRepository.findByTenantId(tenantRepository.findById(tenantId).orElseThrow());
     }
 

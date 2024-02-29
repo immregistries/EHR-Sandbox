@@ -29,7 +29,7 @@ export class TenantService extends CurrentSelectedWithIdService<Tenant> {
 
   getRandom(): Observable<Tenant> {
     return this.http.get<Tenant>(
-      `${this.settings.getApiUrl()}/tenants/random`, httpOptions);
+      `${this.settings.getApiUrl()}/tenants/$random`, httpOptions);
   }
 
   readTenant(tenantId: number): Observable<Tenant> {

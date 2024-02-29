@@ -64,7 +64,7 @@ public class EhrPatientController {
 
 
     @GetMapping()
-    public Iterable<EhrPatient> patients(@PathVariable() int facilityId) {
+    public Iterable<EhrPatient> patients(@PathVariable() String facilityId) {
         return ehrPatientRepository.findByFacilityId(facilityId);
     }
 

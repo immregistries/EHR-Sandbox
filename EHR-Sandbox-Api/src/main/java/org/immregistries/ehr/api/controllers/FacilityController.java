@@ -32,11 +32,11 @@ public class FacilityController {
     private UserDetailsServiceImpl userDetailsService;
 
     @GetMapping()
-    public Iterable<Facility> getFacilities(@PathVariable() int tenantId) {
+    public Iterable<Facility> getFacilities(@PathVariable() String tenantId) {
         return facilityRepository.findByTenantId(tenantId);
     }
 
-    @GetMapping("/random")
+    @GetMapping("/$random")
     public Facility getRandom(@RequestAttribute() Tenant tenant) {
         Faker faker = new Faker();
 
@@ -47,8 +47,8 @@ public class FacilityController {
     }
 
     @GetMapping("/{facilityId}")
-    public Optional<Facility> getFacility(@PathVariable() int tenantId,
-                                          @PathVariable() int facilityId) {
+    public Optional<Facility> getFacility(@PathVariable() String tenantId,
+                                          @PathVariable() String facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId,tenantId);
     }
 
@@ -74,7 +74,7 @@ public class FacilityController {
      */
     @GetMapping("/$notification")
     public Boolean notificationCheck(@RequestParam Optional<Long> timestamp,
-                                     @PathVariable() int facilityId) {
+                                     @PathVariable() String facilityId) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
                 userDetailsService.currentUserId(),
                 timestamp.orElse(0L)); // TODO add facility to audit revision

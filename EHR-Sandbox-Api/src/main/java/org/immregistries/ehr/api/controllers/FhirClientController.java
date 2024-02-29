@@ -166,7 +166,7 @@ public class FhirClientController {
 
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$match")
     public ResponseEntity<List<String>> matchPatient(
-            @PathVariable() Integer facilityId,
+            @PathVariable() String facilityId,
             @PathVariable() Integer registryId,
             @PathVariable() String patientId,
             @RequestBody String message) {
@@ -179,7 +179,7 @@ public class FhirClientController {
     }
 
     public Bundle matchPatientOperation(
-            Integer facilityId,
+            String facilityId,
             Integer registryId,
             String patientId,
             String message) {
@@ -248,7 +248,7 @@ public class FhirClientController {
     @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
     @Transactional
     public ResponseEntity<String> updateImmunization(
-            @PathVariable() Integer facilityId,
+            @PathVariable() String facilityId,
             @PathVariable() String patientId,
             @PathVariable() Integer registryId,
             @PathVariable() String vaccinationId,

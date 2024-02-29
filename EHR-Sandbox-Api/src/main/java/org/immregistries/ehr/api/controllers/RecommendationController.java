@@ -32,7 +32,7 @@ public class RecommendationController {
     private FacilityRepository facilityRepository;
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId,@PathVariable String patientId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable String facilityId,@PathVariable String patientId) {
         IParser parser = fhirContext.newJsonParser();
         Set<String> set = immunizationRecommendationsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
