@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import com.github.javafaker.Faker;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
@@ -35,12 +36,21 @@ public class FacilityController {
         return facilityRepository.findByTenantId(tenantId);
     }
 
+    @GetMapping("/random")
+    public Facility getRandom(@RequestAttribute() Tenant tenant) {
+        Faker faker = new Faker();
+
+        Facility facility = new Facility();
+        facility.setTenant(tenant);
+        facility.setNameDisplay(faker.company().name());
+        return facility;
+    }
+
     @GetMapping("/{facilityId}")
     public Optional<Facility> getFacility(@PathVariable() int tenantId,
                                           @PathVariable() int facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId,tenantId);
     }
-
 
     @PostMapping()
     public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant,

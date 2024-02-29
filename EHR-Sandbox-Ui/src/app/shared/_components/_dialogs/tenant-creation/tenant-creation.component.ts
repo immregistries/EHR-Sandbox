@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Tenant } from 'src/app/core/_model/rest';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -13,36 +13,43 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 })
 export class TenantCreationComponent implements OnInit {
 
+  public tenant: Tenant = {id: -1}
+  editionMode: boolean = false;
+
   constructor(private tenantService: TenantService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<TenantCreationComponent>) { }
+    @Optional() public _dialogRef: MatDialogRef<TenantCreationComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { tenant?: Tenant }) {
+      if (data && data.tenant) {
+        this.tenant = data.tenant
+        this.editionMode = true
+      } else {
+        this.tenant = { id: -1 }
+      }
+    }
 
   ngOnInit(): void {
   }
 
-  newTenantForm: UntypedFormControl = new UntypedFormControl("")
-  newTenant?: Tenant;
-  create() {
-    this.newTenant = {id: -1, nameDisplay: this.newTenantForm.value}
-    // this.tenantService.getCurrent(1).subscribe((res) => {this._snackBar.open(`${res}`)})
-    this.tenantService.postTenant(this.newTenant).subscribe({
+  save() {
+    this.tenantService.postTenant( this.tenant).subscribe({
       next: (res: HttpResponse<Tenant>) => {
-        if (res.body) {
-          // this._snackBar.open("Ok", 'close')
-          this.tenantService.setCurrent(res.body)
+        if (this._dialogRef && res.body) {
+          this._dialogRef.close(res.body)
         }
-        this.tenantService.doRefresh()
-        this._dialogRef?.close(true)
       },
       error: (err) => {
-        console.log(err)
-        if (err.error.error) {
-          this.snackBarService.errorMessage(err.error.error)
-        } else {
-          this.snackBarService.errorMessage(err.message)
-        }
+        console.log(err.error)
+        this.snackBarService.errorMessage(err.error.error)
       }
     });
   }
 
+  random() {
+    this.tenantService.getRandom().subscribe((res) => {
+      this.tenant = res
+    })
+  }
 }
+
+

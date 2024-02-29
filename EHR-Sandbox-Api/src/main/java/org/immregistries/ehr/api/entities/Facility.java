@@ -33,7 +33,6 @@ public class Facility {
 //    @JsonIdentityReference()
     private Tenant tenant;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_facility_id")
     @JsonBackReference("parent")

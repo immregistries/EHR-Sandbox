@@ -27,6 +27,11 @@ export class TenantService extends CurrentSelectedWithIdService<Tenant> {
       this.settings.getApiUrl() + '/tenants', httpOptions);
   }
 
+  getRandom(): Observable<Tenant> {
+    return this.http.get<Tenant>(
+      `${this.settings.getApiUrl()}/tenants/random`, httpOptions);
+  }
+
   readTenant(tenantId: number): Observable<Tenant> {
     return this.http.get<Tenant>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}`, httpOptions);

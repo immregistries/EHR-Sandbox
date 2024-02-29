@@ -1,8 +1,8 @@
-<div class="app-nav-item" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
+<div class="app-nav-item" [matMenuTriggerFor]="disabled ? null : menu " #menuTrigger="matMenuTrigger"
                   (mouseenter)="mouseEnter(menuTrigger)" (mouseleave)="mouseLeave(menuTrigger)">
       <ng-content select="[trigger]"></ng-content>
   </div>
-  <mat-menu #menu="matMenu" [overlapTrigger]="false" [hasBackdrop]="false">
+  <mat-menu #menu="matMenu" [overlapTrigger]="false" [hasBackdrop]="false" [hidden]="disabled">
       <div (mouseenter)="mouseEnter(menuTrigger)" (mouseleave)="mouseLeave(menuTrigger)">
           <ng-content select="[content]"></ng-content>
       </div>

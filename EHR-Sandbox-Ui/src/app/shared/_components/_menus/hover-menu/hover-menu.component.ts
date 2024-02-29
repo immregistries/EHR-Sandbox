@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-hover-menu',
@@ -12,15 +12,20 @@ import { Component, OnInit } from '@angular/core';
  */
 export class HoverMenuComponent {
 
+  @Input()
+  disabled: boolean = false
+
   timedOutCloser: any;
 
   constructor() { }
 
   mouseEnter(trigger: any) {
-    if (this.timedOutCloser) {
-      clearTimeout(this.timedOutCloser);
+    if(!this.disabled) {
+      if (this.timedOutCloser) {
+        clearTimeout(this.timedOutCloser);
+      }
+      trigger.openMenu();
     }
-    trigger.openMenu();
   }
 
   mouseLeave(trigger: any) {

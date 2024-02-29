@@ -29,7 +29,10 @@ export class TenantMenuComponent implements AfterViewInit {
   openDialog() {
     const dialogRef = this.dialog.open(TenantCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
-      // this.ngOnInit();
+      if(result) {
+        this.tenantService.setCurrent(result)
+        this.tenantService.doRefresh()
+      }
     });
   }
 

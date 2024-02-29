@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
-import org.hl7.fhir.r5.model.Group;
+import org.hibernate.Hibernate;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
@@ -20,15 +21,15 @@ public class GroupMapperR5 {
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
 
-    public EhrGroup toEhrGroup(Group group){
+    public EhrGroup toEhrGroup(Group group) {
         EhrGroup ehrGroup = new EhrGroup();
         ehrGroup.setName(group.getName());
         ehrGroup.setCode(group.getCode().getText());
         ehrGroup.setDescription(group.getDescription());
         Set<EhrGroupCharacteristic> ehrGroupCharacteristicSet = new HashSet<>(group.getCharacteristic().size());
         ehrGroup.setEhrGroupCharacteristics(ehrGroupCharacteristicSet);
-        for (Group.GroupCharacteristicComponent characteristicComponent: group.getCharacteristic()) {
-            EhrGroupCharacteristic ehrGroupCharacteristic  = new EhrGroupCharacteristic();
+        for (Group.GroupCharacteristicComponent characteristicComponent : group.getCharacteristic()) {
+            EhrGroupCharacteristic ehrGroupCharacteristic = new EhrGroupCharacteristic();
             ehrGroupCharacteristic.setValue(characteristicComponent.getValue().toString());
             if (characteristicComponent.getCode().hasCoding()) {
                 ehrGroupCharacteristic.setCodeSystem(characteristicComponent.getCode().getCodingFirstRep().getSystem());
@@ -50,14 +51,41 @@ public class GroupMapperR5 {
         ehrGroup.setFacility(facility);
         ehrGroup.setImmunizationRegistry(immunizationRegistry);
         Set<String> patientIds = new HashSet<>(group.getMember().size());
-        for (Group.GroupMemberComponent g: group.getMember()) {
-            String id = resourceIdentificationService.getPatientLocalId(g.getEntity(),immunizationRegistry,facility);
+        for (Group.GroupMemberComponent g : group.getMember()) {
+            String id = resourceIdentificationService.getPatientLocalId(g.getEntity(), immunizationRegistry, facility);
             patientIds.add(id);
         }
         if (!patientIds.isEmpty()) {
             ehrGroup.setPatientList(new HashSet<EhrPatient>((Collection<EhrPatient>) ehrPatientRepository.findAllById(patientIds)));
         }
-        return  ehrGroup;
+        return ehrGroup;
+    }
+
+    public Group toFhirGroup(EhrGroup ehrGroup) {
+        Group group = new Group();
+        group.setType(Group.GroupType.PERSON);
+        group.setActive(true);
+
+        group.setName(ehrGroup.getName());
+        group.setCode(new CodeableConcept().setText(ehrGroup.getCode()));
+
+        group.setDescription(ehrGroup.getDescription());
+        group.setManagingEntity(new Reference("Organization/"));
+        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
+        for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
+            group.addCharacteristic()
+                    .setValue(new StringType(ehrGroupCharacteristic.getValue()))
+                    .setCode(new CodeableConcept(new Coding(ehrGroupCharacteristic.getCodeSystem(), ehrGroupCharacteristic.getCodeValue(), "")))
+                    .setExclude(ehrGroupCharacteristic.getExclude())
+                    .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));
+        }
+        for (EhrPatient patient : ehrGroup.getPatientList()) {
+            group.addMember().setEntity(new Reference()
+                    .setIdentifier(new Identifier()
+                            .setSystem(patient.getMrnSystem())
+                            .setValue(patient.getMrn())));
+        }
+        return group;
     }
 
 }

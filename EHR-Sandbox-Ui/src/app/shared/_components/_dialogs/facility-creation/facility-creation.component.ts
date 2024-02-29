@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -14,33 +14,49 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 })
 export class FacilityCreationComponent implements OnInit {
 
+  facility: Facility = { id: -1 };
+  add_patients: boolean = false;
+  facilityList!: Facility[];
+  editionMode: boolean = false;
+
   constructor(
-    private facilityService: FacilityService,
+    public facilityService: FacilityService,
     private tenantService: TenantService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<FacilityCreationComponent>) { }
-
-  ngOnInit(): void {
+    @Optional() public _dialogRef: MatDialogRef<FacilityCreationComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility }) {
+    if (data && data.facility) {
+      this.facility = data.facility
+      this.editionMode = true
+    } else {
+      this.facility = { id: -1 }
+    }
   }
 
-  newFacilityForm: UntypedFormControl = new UntypedFormControl("")
-  newFacility?: Facility;
-  create() {
-    this.newFacility = {id: -1, nameDisplay: this.newFacilityForm.value}
-    this.facilityService.postFacility(this.tenantService.getCurrentId(), this.newFacility).subscribe({
+  ngOnInit(): void {
+    this.facilityService.readFacilities(this.tenantService.getCurrentId()).subscribe(res => {
+      this.facilityList = res
+    })
+  }
+
+  save() {
+    this.facilityService.postFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
       next: (res: HttpResponse<Facility>) => {
-        if (res.body) {
-          // this._snackBar.open("OK", 'close')
-          this.facilityService.setCurrent(res.body);
+        if (this._dialogRef && res.body) {
+          this._dialogRef.close(res.body)
         }
-        this.facilityService.doRefresh()
-        this._dialogRef?.close(true)
       },
       error: (err) => {
         console.log(err.error)
         this.snackBarService.errorMessage(err.error.error)
       }
     });
+  }
+
+  random() {
+    this.facilityService.getRandom(this.tenantService.getCurrentId()).subscribe((res) => {
+      this.facility = res
+    })
   }
 
 }

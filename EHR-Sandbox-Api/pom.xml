@@ -412,7 +412,7 @@
 									<!--								<pattern>org.immregistries.ehr.entities.*</pattern>-->
 									<!--							</classPatterns>-->
 									<classes>
-										<class>org.immregistries.ehr.api.entities.EhrGroup</class>
+										<class>org.immregistries.ehr.api.entities.Facility</class>
 									</classes>
 									<optionalProperties>all</optionalProperties>
 									<outputFile>target/rest.d.ts</outputFile>

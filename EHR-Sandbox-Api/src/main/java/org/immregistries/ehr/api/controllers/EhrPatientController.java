@@ -48,12 +48,6 @@ public class EhrPatientController {
 
     private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
-    FhirContext fhirContext;
-    @Autowired
-    RandomGenerator randomGenerator;
-    @Autowired
-    FhirClientController fhirClientController;
-    @Autowired
     HL7printer hl7printer;
     @Autowired
     ImmunizationRegistryController immRegistryController;
@@ -62,21 +56,9 @@ public class EhrPatientController {
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
-    private FacilityRepository facilityRepository;
-    @Autowired
-    private TenantRepository tenantRepository;
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-    @Autowired
     private CustomClientFactory customClientFactory;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
-    @Autowired
-    private ImmunizationProviderR5 immunizationProviderR5;
-    @Autowired
-    private ClinicianRepository clinicianRepository;
-    @Autowired
-    private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
 
@@ -132,9 +114,9 @@ public class EhrPatientController {
              */
             if (previousCopyRevision.isEmpty()) {
                 Stream<String> potentialIds =
-                        StreamSupport.stream(ehrPatientRepository.findByFacilityId(facility.getId()).spliterator(),false)
+                        StreamSupport.stream(ehrPatientRepository.findByFacilityId(facility.getId()).spliterator(), false)
 //                        facility.getPatients().stream()
-                        .map(EhrPatient::getId);
+                                .map(EhrPatient::getId);
                 previousCopyRevision = potentialIds
                         /**
                          *  finding the creation Revision Entity ie first insert found
@@ -229,7 +211,7 @@ public class EhrPatientController {
             for (Bundle.BundleEntryComponent entry : outBundle.getEntry()) {
                 try {
                     Immunization immunization = (Immunization) entry.getResource();
-                    if (immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG,GOLDEN_RECORD) != null ) {
+                    if (immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) != null) {
                         immunization.setPatient(new Reference().setReference(patient.getId()));
                         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
                         vaccinationEvent.setPatient(patient);

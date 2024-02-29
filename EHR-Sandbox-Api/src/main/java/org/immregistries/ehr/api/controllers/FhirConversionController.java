@@ -6,17 +6,17 @@ import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.r5.model.Bundle;
+import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.Immunization;
 import org.hl7.fhir.r5.model.Patient;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.GroupMapperR5;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,6 +38,8 @@ public class FhirConversionController {
     private PatientMapperR5 patientMapper;
     @Autowired
     private ImmunizationMapperR5 immunizationMapper;
+    @Autowired
+    private GroupMapperR5 groupMapperR5;
 
     @Autowired
     private BundleImportService bundleImportService;
@@ -53,6 +56,8 @@ public class FhirConversionController {
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
     private FhirContext fhirContext;
+    @Autowired
+    private EhrGroupRepository ehrGroupRepository;
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
     public ResponseEntity<String> getPatientAsResource(
@@ -61,11 +66,7 @@ public class FhirConversionController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
-
-        Patient patient = patientMapper.toFhirPatient(ehrPatient,facility);
-//        patient.setText(null);
-        logger.info("{}", patient);
-        logger.info("{}", patient);
+        Patient patient = patientMapper.toFhirPatient(ehrPatient, facility);
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
         String resource = parser.encodeResourceToString(patient);
         return ResponseEntity.ok(resource);
@@ -86,6 +87,18 @@ public class FhirConversionController {
                 immunizationMapper.toFhirImmunization(vaccinationEvent,
                         resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
         String resource = parser.encodeResourceToString(immunization);
+        return ResponseEntity.ok(resource);
+    }
+
+    @GetMapping(GROUPS_PREFIX + "/{groupId}/resource")
+    @Transactional(readOnly=true, noRollbackFor=Exception.class)
+    public ResponseEntity<String> groupResource(
+            @PathVariable() Integer groupId,
+            @RequestAttribute() Facility facility) {
+        EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        Group group = groupMapperR5.toFhirGroup(ehrGroup);
+        String resource = parser.encodeResourceToString(group);
         return ResponseEntity.ok(resource);
     }
 
@@ -115,13 +128,9 @@ public class FhirConversionController {
     }
 
     private String validateNdJsonBundle(Bundle bundle) {
-//        IValidator validator = new
         FhirValidator validator = fhirContext.newValidator();
-
-//        IValidatorModule coreModule = new
         IValidatorModule module = new FhirInstanceValidator(fhirContext);
         validator.registerValidatorModule(module);
-
         return "";
     }
 }

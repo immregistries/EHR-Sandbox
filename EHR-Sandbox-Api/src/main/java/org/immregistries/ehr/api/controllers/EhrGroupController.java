@@ -57,14 +57,15 @@ public class EhrGroupController {
     }
 
     @PostMapping()
-    public ResponseEntity<EhrGroup> post(@RequestAttribute Facility facility,
+    public ResponseEntity<Integer> post(@RequestAttribute Facility facility,
                                          @RequestBody EhrGroup ehrGroup) {
         if (ehrGroupRepository.existsByFacilityIdAndName(facility.getId(), ehrGroup.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used for this facility");
         } else {
+            ehrGroup.setFacility(facility);
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
-            return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
+            return new ResponseEntity<>(newEntity.getId(), HttpStatus.CREATED);
         }
     }
 
@@ -73,7 +74,8 @@ public class EhrGroupController {
     public ResponseEntity<EhrGroup> put(@RequestAttribute Facility facility, @RequestBody EhrGroup ehrGroup) {
         Optional<EhrGroup> oldEntity = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
         if (oldEntity.isEmpty()) {
-            return post(facility, ehrGroup);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
+//            return post(facility, ehrGroup);
         } else {
             Optional<EhrGroup> groupUsingNewName = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
             if (groupUsingNewName.isPresent() && !groupUsingNewName.get().getId().equals(oldEntity.get().getId())) {
@@ -87,26 +89,26 @@ public class EhrGroupController {
     }
 
     @GetMapping("/random")
-    public EhrGroup random(@RequestAttribute Tenant tenant, @RequestAttribute Facility facility) {
+    public EhrGroup random(@RequestAttribute Facility facility) {
         EhrGroup ehrGroup = new EhrGroup();
-        ehrGroup.setFacility(facility);
+//        ehrGroup.setFacility(facility);
         ehrGroup.setName("G " + RandomStringUtils.random(11, true, false));
         ehrGroup.setDescription("Randomly generated group in EHR Sandbox including randomly selected patients in facility");
         ehrGroup.setType("Person");
-        Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
-
-        ehrGroup.setPatientList(new HashSet<>(4));
-        Random random = new Random();
-        EhrPatient patient = null;
-        while (facilityPatients.hasNext()) {
-            patient = facilityPatients.next();
-            if (random.nextFloat() > 0.7) {
-                ehrGroup.getPatientList().add(patient);
-            }
-        }
-        if (ehrGroup.getPatientList().isEmpty() && patient != null) {
-            ehrGroup.getPatientList().add(patient);
-        }
+//        Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
+//
+//        ehrGroup.setPatientList(new HashSet<>(4));
+//        Random random = new Random();
+//        EhrPatient patient = null;
+//        while (facilityPatients.hasNext()) {
+//            patient = facilityPatients.next();
+//            if (random.nextFloat() > 0.7) {
+//                ehrGroup.getPatientList().add(patient);
+//            }
+//        }
+//        if (ehrGroup.getPatientList().isEmpty() && patient != null) {
+//            ehrGroup.getPatientList().add(patient);
+//        }
         return ehrGroup;
     }
 
@@ -128,9 +130,10 @@ public class EhrGroupController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
         if (immunizationRegistry == null) {
-            ehrGroup.getPatientList().add(ehrPatient);
-            ehrGroupRepository.save(ehrGroup);
-            return ehrGroup;
+            Set<EhrPatient> set = ehrGroup.getPatientList();
+            set.add(ehrPatient);
+            EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
+            return newEntity;
 //            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
         } else {
             Parameters in = new Parameters();

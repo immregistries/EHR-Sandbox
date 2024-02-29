@@ -48,11 +48,10 @@ export interface Clinician {
 
 export interface Facility {
   id: number;
+  tenant?: Tenant | number;
   nameDisplay?: string;
   facilities?: (Facility | number)[];
-  patients?: (EhrPatient | number)[];
-  feedbacks?: (Feedback | number)[];
-  tenant?: number | Tenant;
+  parentFacility?: Facility | number;
 }
 
 export interface ImmunizationRegistry {

@@ -35,11 +35,15 @@ export class FhirMessagingComponent implements AfterViewInit {
 
   constructor(private fhirResourceService: FhirResourceService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId?: number}) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId?: number, resource?: string}) {
       if (data) {
-        this.patientId = data.patientId
-        if (data.vaccinationId) {
-          this.vaccinationId = data.vaccinationId
+        if (data.resource) {
+          this.patientResource = data.resource
+        } else {
+          this.patientId = data.patientId
+          if (data.vaccinationId) {
+            this.vaccinationId = data.vaccinationId
+          }
         }
       }
      }

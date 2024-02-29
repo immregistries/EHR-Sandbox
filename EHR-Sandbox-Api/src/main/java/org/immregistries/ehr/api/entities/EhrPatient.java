@@ -27,23 +27,6 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 //@Configurable(preConstruction = true)
 public class EhrPatient {
 
-//    @Resource
-//    @Transient
-//    private Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
-//    @Autowired
-//    @Transient
-//    private MultiValueMap<String,String> groupMemberPatientIndex;
-//
-//    @Transient
-//    @JsonInclude
-//    public Set<String> getGroupIds() {
-//        return groupMemberPatientIndex.entrySet()
-//                .stream().filter(g -> g.getValue()
-//                        .stream().filter(patientId -> this.getId().equals(patientId)).findFirst().isPresent())
-//                .map(entry -> entry.getKey())
-//                .collect(Collectors.toSet());
-//    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id", nullable = false)

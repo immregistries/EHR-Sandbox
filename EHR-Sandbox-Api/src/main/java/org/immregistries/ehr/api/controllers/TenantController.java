@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import com.github.javafaker.Faker;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
@@ -25,6 +26,15 @@ public class TenantController {
     private EhrPatientRepository patientRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @GetMapping("/random")
+    public Tenant getRandom() {
+        Faker faker = new Faker();
+        Tenant tenant = new Tenant();
+        tenant.setUser(userDetailsService.currentUser());
+        tenant.setNameDisplay(faker.animal().name());
+        return tenant;
+    }
 
     @GetMapping()
     public Iterable<Tenant> tenants() {

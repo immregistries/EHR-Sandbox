@@ -2,14 +2,26 @@
   Create Facility
   <!-- <button mat-dialog-close class="close-button">X</button> -->
 </h3>
-<form>
+<form (submit)="save()">
   <mat-form-field appearance="fill">
     <mat-label>Facility name</mat-label>
-    <input matInput [formControl]=newFacilityForm>
+    <input matInput [(ngModel)]="facility.nameDisplay" name="nameDisplay">
   </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Mother Facility</mat-label>
+    <mat-select [(ngModel)]="facility.parentFacility" name="parentFacility">
+      <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}" >{{item.nameDisplay}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <!-- <mat-checkbox [(ngModel)]="add_patients" name="add_patients">Add 5 random Patients</mat-checkbox> -->
   <mat-dialog-actions align="end">
-    <button mat-mini-fab (click)="create()" color="primary">
-      <mat-icon>add</mat-icon>
+    <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
+      <mat-icon>casino</mat-icon>
+      Random
+    </button>
+    <button mat-raised-button type="submit" color="primary">
+      <mat-icon>save</mat-icon>
+      Save
     </button>
   </mat-dialog-actions>
 </form>

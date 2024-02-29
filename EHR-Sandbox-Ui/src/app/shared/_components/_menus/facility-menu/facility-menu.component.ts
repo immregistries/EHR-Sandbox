@@ -14,6 +14,10 @@ export class FacilityMenuComponent implements OnInit {
 
   list?: Facility[];
 
+  disabled() {
+    return this.tenantService.getCurrentId() <= 0;
+  }
+
   constructor(public facilityService: FacilityService,
     public tenantService: TenantService,
     public dialog: MatDialog) {}
@@ -31,7 +35,8 @@ export class FacilityMenuComponent implements OnInit {
   openDialog() {
     const dialogRef = this.dialog.open(FacilityCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
-      // this.ngOnInit();
+      this.facilityService.setCurrent(result)
+      this.facilityService.doRefresh()
     });
   }
 
@@ -44,7 +49,7 @@ export class FacilityMenuComponent implements OnInit {
   }
 
   selectFirstOrCreate() {
-    if (this.facilityService.getCurrentId() < 0) {
+    if (!this.disabled() && this.facilityService.getCurrentId() < 0) {
       if (this.list && this.list[0] ) {
         this.onSelection(this.list[0])
       } else {

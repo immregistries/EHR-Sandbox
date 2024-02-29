@@ -1,22 +1,26 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.minidev.json.annotate.JsonIgnore;
-import org.hibernate.proxy.HibernateProxy;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "ehr_group")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = EhrGroup.class)
 public class EhrGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "group_id", nullable = false)
     private Integer id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "facility_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "facility_id", nullable = false)
     @JsonIgnore
     private Facility facility;
     @Column(name = "name", nullable = false)
@@ -30,7 +34,7 @@ public class EhrGroup {
     @ManyToOne
     @JoinColumn(name = "immunization_registry_id")
     private ImmunizationRegistry immunizationRegistry;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "group_members",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
@@ -102,22 +106,6 @@ public class EhrGroup {
 
     public void setPatientList(Set<EhrPatient> patientList) {
         this.patientList = patientList;
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        EhrGroup ehrGroup = (EhrGroup) o;
-        return getId() != null && Objects.equals(getId(), ehrGroup.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 
     public ImmunizationRegistry getImmunizationRegistry() {

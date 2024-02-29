@@ -34,10 +34,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
    * @returns list of patients associated to the tenant and facility selected in their respected services
    */
   quickReadGroups(): Observable<EhrGroup[]> {
-    console.log("jwehbfi2")
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      console.log("jwehbfi2", value)
-
       if (value) {
         return this.http.get<EhrGroup[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/groups`,
