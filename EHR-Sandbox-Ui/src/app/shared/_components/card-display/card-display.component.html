@@ -1,0 +1,42 @@
+<ng-container [ngSwitch]="form.type">
+  <div *ngSwitchCase="'code'">
+    <div>
+      <b>{{form.title + " : "}}</b>
+      {{isEmpty() ? "N/A" : (model | codeMaps:(form.codeMapLabel ?? '')).label}}
+    </div>
+  </div>
+  <div *ngSwitchCase="'clinician'">
+    <div>
+      <b>{{form.title + " : "}}</b>
+      {{isEmpty() ? "N/A" : model.nameFirst + " " + model.nameLast}}
+    </div>
+  </div>
+  <div *ngSwitchCase="'date'">
+    <span>
+      <b>{{form.title + " : "}}</b>
+      {{isEmpty() ? "N/A" : (model | date: 'MM/dd/yyyy')}}
+    </span>
+  </div>
+  <div *ngSwitchCase="'select'">
+    <div *ngIf="form.options && model.value; else short">
+      <div>
+        <b>{{form.title + " : "}}</b>
+        <span *ngFor="let option of form.options" ngIf="option.value === model.value">
+          {{isEmpty() ? "N/A" : option.label ?? option.value}}
+        </span>
+      </div>
+    </div>
+    <ng-template #short>
+      <div>
+        <b>{{form.title + " : "}}</b>
+        {{isEmpty() ? "N/A" : model}}
+      </div>
+    </ng-template>
+  </div>
+  <div *ngSwitchDefault>
+    <div>
+      <b>{{form.title + " : "}}</b>
+      {{isEmpty() ? "N/A" : model}}
+    </div>
+  </div>
+</ng-container>

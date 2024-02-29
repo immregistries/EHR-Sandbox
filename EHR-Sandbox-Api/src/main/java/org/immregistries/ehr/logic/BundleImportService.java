@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service()
 public class BundleImportService {
     private static final Logger logger = LoggerFactory.getLogger(BundleImportService.class);
@@ -51,7 +49,7 @@ public class BundleImportService {
                     methodOutcome = patientProvider.update(patient,facility,immunizationRegistry);
                     String dbId = methodOutcome.getId().getValue();
                     if (localPatientId == null) {
-                        patientIdentifierRepository.save(new PatientIdentifier(dbId,immunizationRegistry.getId(),receivedId));
+                        patientIdentifierRepository.save(new PatientExternalIdentifier(dbId,immunizationRegistry.getId(),receivedId));
                     }
                     responseBuilder.append("\nPatient ").append(receivedId).append(" loaded as patient ").append(dbId);
                     logger.info("Patient  {}  loaded as patient  {}",receivedId,dbId);

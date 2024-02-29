@@ -11,10 +11,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-patient-form',
   templateUrl: './patient-form.component.html',
-  styleUrls: ['./patient-form.component.css']
-})
-export class PatientFormComponent implements OnInit {
+  styleUrls: ['./patient-form.component.css'],
 
+})
+export class PatientFormComponent {
   @Input()
   patient: EhrPatient = { id: -1 };
   @Output()
@@ -27,7 +27,6 @@ export class PatientFormComponent implements OnInit {
    */
   public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
 
-
   constructor(private patientService: PatientService,
     private breakpointObserver: BreakpointObserver,
     private snackBarService: SnackBarService,
@@ -37,13 +36,6 @@ export class PatientFormComponent implements OnInit {
       this.patient = data.patient;
       this.isEditionMode = true
     }
-  }
-
-  // Allows Date type casting in HTML template
-  asDate(val: any): Date { return val; }
-  asString(val: any): string { return val; }
-
-  ngOnInit(): void {
   }
 
   fillRandom(): void {

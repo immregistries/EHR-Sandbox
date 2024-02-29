@@ -1,70 +1,46 @@
-<form (submit)="save()">
-  <mat-tab-group>
-    <mat-tab label="New entry">
-      <form #vaccinationForm="ngForm" class="grid-container special-icon-badge">
-        <mat-grid-list cols="5" rowHeight="199px">
-          <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
-            <mat-card class="dashboard-card">
-              <mat-card-header *ngIf="card.title">
-                <mat-card-title>
-                  {{card.title}}
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content class="dashboard-card-content">
-
-                <!-- Vaccine forms -->
-                <ng-container *ngFor="let form of card.vaccineForms">
-                  <app-card-form class="card-form high-density" [form]="form"
-                    [model]="vaccination.vaccine[form.attribute]"
-                    (modelChange)="vaccination.vaccine[form.attribute] = $event" [referenceFilter]="references"
-                    (referenceEmitter)="referencesChange($event, form.codeMapLabel)" [lotNumberValid]="lotNumberValid"
-                    [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"></app-card-form>
-                </ng-container>
-                <ng-container *ngFor="let form of card.vaccinationForms">
-                  <app-card-form class="card-form high-density" [form]="form" [model]="vaccination[form.attribute]"
-                    (modelChange)="vaccination[form.attribute] = $event" [referenceFilter]="references"
-                    (referenceEmitter)="referencesChange($event, form.codeMapLabel)" [lotNumberValid]="lotNumberValid"
-                    [compareTo]="compareTo? compareTo[form.attribute] : null"></app-card-form>
-                </ng-container>
-              </mat-card-content>
-            </mat-card>
-          </mat-grid-tile>
-
-          <!-- Metadata dates -->
-          <mat-grid-tile>
-            <mat-card class="dashboard-card">
-              <mat-card-header>
-                <mat-card-title>
-                  Update dates
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content class="dashboard-card-content">
-                <mat-form-field appearance="outline" class="date-field">
-                  <mat-label>Creation date</mat-label>
-                  <input matInput [matDatepicker]="created" name="createdDate"
-                    [ngModel]="asDate(vaccination.vaccine.createdDate)" disabled>
-                  <mat-datepicker #created></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="date-field">
-                  <mat-label>Update date</mat-label>
-                  <input matInput [matDatepicker]="updated" name="updatedDate"
-                    [ngModel]="asDate(vaccination.vaccine.updatedDate)" disabled>
-                  <mat-datepicker #updated></mat-datepicker>
-                </mat-form-field>
-              </mat-card-content>
-            </mat-card>
-          </mat-grid-tile>
-        </mat-grid-list>
-      </form>
-    </mat-tab>
-    <mat-tab label="Free form">
-      <app-vaccination-free-form [formCards]="formCards" [(vaccination)]="vaccination"></app-vaccination-free-form>
-    </mat-tab>
-    <button matButton></button>
-  </mat-tab-group>
-
+<form (submit)="save()" #vaccinationForm="ngForm" >
+  <mat-dialog-content class="form-dialog-content">
+    <mat-tab-group>
+      <mat-tab label="Vaccination form">
+        <div class="grid-container special-icon-badge">
+            <div *ngFor="let card of formCards">
+              <mat-card class="form-card">
+                <mat-card-header *ngIf="card.title">
+                  <mat-card-title>
+                    {{card.title}}
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="form-card-content">
+                  <!-- Vaccine forms -->
+                  <ng-container *ngFor="let form of card.vaccineForms">
+                    <app-card-form class="card-form high-density" [form]="form"
+                      [model]="vaccination.vaccine[form.attribute]"
+                      (modelChange)="vaccination.vaccine[form.attribute] = $event" [referenceFilter]="references"
+                      (referenceEmitter)="referencesChange($event, form.codeMapLabel)" [lotNumberValid]="lotNumberValid"
+                      [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"></app-card-form>
+                  </ng-container>
+                  <ng-container *ngFor="let form of card.vaccinationForms">
+                    <app-card-form class="card-form high-density" [form]="form" [model]="vaccination[form.attribute]"
+                      (modelChange)="vaccination[form.attribute] = $event" [referenceFilter]="references"
+                      (referenceEmitter)="referencesChange($event, form.codeMapLabel)" [lotNumberValid]="lotNumberValid"
+                      [compareTo]="compareTo? compareTo[form.attribute] : null"></app-card-form>
+                  </ng-container>
+                </mat-card-content>
+              </mat-card>
+            </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Free form">
+        <app-vaccination-free-form [formCards]="formCards" [(vaccination)]="vaccination"></app-vaccination-free-form>
+      </mat-tab>
+      <mat-tab label="Display">
+        <app-vaccination-display [formCards]="formCards" [vaccinationEvent]="vaccination"></app-vaccination-display>
+      </mat-tab>
+      <button matButton></button>
+    </mat-tab-group>
+  </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-raised-button type="button" mat-dialog-close color="primary">Cancel</button>
+    <button mat-stroked-button type="button" mat-dialog-close color="primary">Cancel</button>
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

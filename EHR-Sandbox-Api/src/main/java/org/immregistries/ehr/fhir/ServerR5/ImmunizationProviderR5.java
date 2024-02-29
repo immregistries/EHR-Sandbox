@@ -56,7 +56,7 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
     @Create
     public MethodOutcome create(@ResourceParam Immunization immunization, RequestDetails requestDetails) {
         return create(immunization,
-                facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+                facilityRepository.findById(requestDetails.getTenantId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id")));
     }
 
@@ -76,7 +76,7 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
     }
 
     public MethodOutcome update(@ResourceParam Immunization immunization, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         /**
          * Fixing references with ids and stored ids

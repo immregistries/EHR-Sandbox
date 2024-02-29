@@ -221,7 +221,7 @@ public class BulkExportController {
     }
 
     @GetMapping("/registry/{registryId}/$export-result")
-    public ResponseEntity bulkResult(@PathVariable() Integer registryId, @RequestParam String contentUrl, Optional<Integer> loadInFacility) {
+    public ResponseEntity bulkResult(@PathVariable() Integer registryId, @RequestParam String contentUrl, Optional<String> loadInFacility) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check

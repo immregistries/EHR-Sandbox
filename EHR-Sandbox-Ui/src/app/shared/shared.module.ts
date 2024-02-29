@@ -37,7 +37,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PatientDashboardComponent } from './_patient/patient-dashboard/patient-dashboard.component';
 import { PatientDetailsComponent } from './_patient/patient-details/patient-details.component';
 import { PatientFormComponent } from './_patient/patient-form/patient-form.component';
-import { PatientFreeFormComponent } from './_patient/patient-free-form/patient-free-form.component';
+import { PatientFreeFormComponent } from './_patient/patient-form/patient-free-form/patient-free-form.component';
 import { PatientHistoryComponent } from './_patient/patient-history/patient-history.component';
 import { PatientListComponent } from './_patient/patient-list/patient-list.component';
 import { PatientMenuComponent } from './_patient/patient-menu/patient-menu.component';
@@ -76,6 +76,9 @@ import { AbstractDataTableComponent } from './_components/abstract-data-table/ab
 import { GroupTableComponent } from './_local-group/group-table/group-table.component';
 import { GroupAllDashboardComponent } from './_local-group/group-all-dashboard/group-all-dashboard.component';
 import { GroupDetailsComponent } from './_local-group/group-details/group-details.component';
+import { CardDisplayComponent } from './_components/card-display/card-display.component';
+import { PatientDisplayComponent } from './_patient/patient-display/patient-display.component';
+import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/vaccination-display.component';
 
 
 @NgModule({
@@ -137,6 +140,9 @@ import { GroupDetailsComponent } from './_local-group/group-details/group-detail
     GroupTableComponent,
     GroupAllDashboardComponent,
     GroupDetailsComponent,
+    CardDisplayComponent,
+    PatientDisplayComponent,
+    VaccinationDisplayComponent,
   ],
   imports: [
     CommonModule,

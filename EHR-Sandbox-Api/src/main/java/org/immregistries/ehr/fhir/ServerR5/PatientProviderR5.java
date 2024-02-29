@@ -59,7 +59,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
     @Create
     public MethodOutcome create(@ResourceParam Patient fhirPatient, RequestDetails requestDetails) {
         return create(fhirPatient,
-                facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+                facilityRepository.findById(requestDetails.getTenantId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id")));
     }
 
@@ -88,7 +88,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
     }
 
     public MethodOutcome update(@ResourceParam Patient patient, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return update(patient,facility,immunizationRegistry);
     }

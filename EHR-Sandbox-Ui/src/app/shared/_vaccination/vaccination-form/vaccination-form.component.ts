@@ -218,21 +218,16 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       {type: FormType.code, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL"},
     ]},
 
-    {title: "Clinicians",rows: 1, cols: 3, vaccinationForms: [
+    {title: "Clinicians",rows: 1, cols: 1, vaccinationForms: [
       {type: FormType.clinician, title: "Entering", attribute: "enteringClinician"},
       {type: FormType.clinician, title: "Ordering", attribute: "orderingClinician"},
       {type: FormType.clinician, title: "Administering", attribute: "administeringClinician"}
     ]},
-    // {title: "Ordering clinician",rows: 1, cols: 1, clinicianForms: [
-    //   {type: formType.text, title: "First name", attribute: "nameFirst", role: "orderingClinician"},
-    //   {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "orderingClinician"},
-    //   {type: formType.text, title: "Last name", attribute: "nameLast", role: "orderingClinician"}
-    // ]},
-    // {title: "Administering clin.",rows: 1, cols: 1, clinicianForms: [
-    //   {type: formType.text, title: "First name", attribute: "nameFirst", role: "administeringClinician"},
-    //   {type: formType.text, title: "Middle name", attribute: "nameMiddle", role: "administeringClinician"},
-    //   {type: formType.text, title: "Last name", attribute: "nameLast", role: "administeringClinician"}
-    // ]},
+
+    {title: "Update dates",rows: 1, cols: 1, vaccineForms: [
+      {type: FormType.date, title: "Creation date", attribute: "createdDate", disabled: true},
+      {type: FormType.date, title: "Updated date", attribute: "updatedDate", disabled: true},
+    ]},
   ]
 
 }

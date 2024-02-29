@@ -1,12 +1,12 @@
 package org.immregistries.ehr.api.repositories;
 
-import org.immregistries.ehr.api.entities.PatientIdentifier;
-import org.immregistries.ehr.api.entities.PatientIdentifierKey;
+import org.immregistries.ehr.api.entities.PatientExternalIdentifier;
+import org.immregistries.ehr.api.entities.PatientExternalIdentifierKey;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface PatientIdentifierRepository extends CrudRepository<PatientIdentifier, PatientIdentifierKey> {
-    Optional<PatientIdentifier> findByPatientIdAndImmunizationRegistryId(String patientId, Integer immunizationRegistryId);
-    Optional<PatientIdentifier> findByIdentifierAndImmunizationRegistryId(String identifier, Integer immunizationRegistryId);
+public interface PatientIdentifierRepository extends CrudRepository<PatientExternalIdentifier, PatientExternalIdentifierKey> {
+    Optional<PatientExternalIdentifier> findByPatientIdAndImmunizationRegistryId(String patientId, Integer immunizationRegistryId);
+    Optional<PatientExternalIdentifier> findByIdentifierAndImmunizationRegistryId(String identifier, Integer immunizationRegistryId);
 }

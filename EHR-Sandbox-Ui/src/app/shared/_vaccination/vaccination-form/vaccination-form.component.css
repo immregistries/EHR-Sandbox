@@ -1,30 +1,4 @@
-.grid-container {
-  margin: 5x;
-}
-
-.dashboard-card {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
-  overflow: auto;
-}
-
-.dashboard-card-content {
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 5px 5px;
-}
-
-.card-form {
-  width: 100%;
-}
-
-.mat-button-toggle-group {
-  height: 22px;
-  align-items: center;
+.mat-mdc-dialog-content {
+  padding: 0;
+  max-height: 70vh;
 }

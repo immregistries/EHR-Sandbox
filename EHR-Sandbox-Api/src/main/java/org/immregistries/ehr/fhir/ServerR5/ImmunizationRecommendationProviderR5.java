@@ -69,7 +69,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
     }
 
     public MethodOutcome update(@ResourceParam ImmunizationRecommendation immunizationRecommendation, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
 
         logger.info("{}", immunizationRecommendation.getPatient());
@@ -77,7 +77,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
         String dbPatientID = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
         immunizationRecommendation.setPatient(new Reference(dbPatientID));
 
-        immunizationRecommendationsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
+        immunizationRecommendationsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
         immunizationRecommendationsStore.get(facility.getId()).putIfAbsent(dbPatientID, new HashMap<>(1));
         immunizationRecommendationsStore.get(facility.getId()).get(dbPatientID).put(immunizationRegistry.getId(), immunizationRecommendation); // TODO add
         logger.info("{}", immunizationRecommendationsStore);

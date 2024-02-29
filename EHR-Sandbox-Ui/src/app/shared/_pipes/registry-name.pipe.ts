@@ -19,9 +19,9 @@ export class RegistryNamePipe implements PipeTransform {
   }
 
   transform(id: number): Observable<string>{
-    console.log("call")
+    // console.log("call")
     if (!this.registriesCached$) {
-      console.log("http")
+      // console.log("http")
 
       this.registriesCached$ = this.immunizationRegistryService.readImmRegistries()
         .pipe(

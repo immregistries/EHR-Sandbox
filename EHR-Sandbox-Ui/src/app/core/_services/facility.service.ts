@@ -21,9 +21,9 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
-    ) {
-      super(new BehaviorSubject<Facility>({id:-1}))
-   }
+  ) {
+    super(new BehaviorSubject<Facility>({ id: -1 }))
+  }
 
   readAllFacilities(): Observable<Facility[]> {
     return this.http.get<Facility[]>(
@@ -32,7 +32,7 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   }
 
   readFacilities(tenantId: number): Observable<Facility[]> {
-    if (tenantId > 0){
+    if (tenantId > 0) {
       return this.http.get<Facility[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
         httpOptions).pipe(share());
@@ -52,9 +52,9 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
       httpOptions);
   }
 
-  postFacility(tenantId: number, facility: Facility): Observable<HttpResponse<Facility>> {
+  postFacility(tenantId: number, facility: Facility, parentId?: number): Observable<HttpResponse<Facility>> {
     return this.http.post<Facility>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
-      facility, {observe: 'response'})
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities${parentId ? `?parentId=${parentId}` : ''}`,
+      facility, { observe: 'response' })
   }
 }

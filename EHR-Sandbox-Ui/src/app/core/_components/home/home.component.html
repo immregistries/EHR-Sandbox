@@ -1,13 +1,13 @@
 <div class="grid-container">
   <mat-grid-list cols="3" rowHeight="300px">
     <mat-grid-tile [colspan]="2" [rowspan]="2">
-      <mat-card class="dashboard-card">
+      <mat-card class="home-card">
         <mat-card-header class="card-title">
           <mat-card-title class="card-title">
             EHR Sandbox
           </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="dashboard-card-content" style="text-align: left;">
+        <mat-card-content class="home-card-content" style="text-align: left;">
           The EHR Sandbox is a testing tool developed by AIRA and NIST along with the IIS Sandbox tool.
           It's purpose is to simulate the behaviour of a Electronic health record (EHR).
 
@@ -53,7 +53,7 @@
             Authentication
           </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
+        <mat-card-content class="home-card-content">
           <p class="w3-red" *ngIf="loginError === '1'"> Username and password did not match</p>
           <p class="w3-red" *ngIf="loginError === '2'"> Authorization error, please login again</p>
           <div *ngIf="!token.getUser().username ; else logout">

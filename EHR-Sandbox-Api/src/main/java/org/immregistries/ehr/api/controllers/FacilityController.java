@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -21,13 +22,7 @@ public class FacilityController {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private TenantRepository tenantRepository;
-    @Autowired
-    private FeedbackRepository feedbackRepository;
-    @Autowired
-    private VaccinationEventRepository vaccinationEventRepository;
-    @Autowired
-    AuditRevisionEntityRepository auditRevisionEntityRepository;
+    private AuditRevisionEntityRepository auditRevisionEntityRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -53,14 +48,18 @@ public class FacilityController {
     }
 
     @PostMapping()
-    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant,
-                                               @RequestBody Facility facility) {
+    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility, @RequestParam Optional<String> parentId) {
         if (facility.getNameDisplay().length() < 1){
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
         }else {
             if (facilityRepository.existsByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay())){
                 throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already exists");
+            }
+            if (parentId.isPresent()) {
+                Facility parentFacility = facilityRepository.findByIdAndTenantId(parentId.get(), tenant.getId())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid parent facility, must have same tenant"));
+                facility.setParentFacility(parentFacility);
             }
             facility.setTenant(tenant);
             Facility newEntity = facilityRepository.save(facility);

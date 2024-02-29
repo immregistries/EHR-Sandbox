@@ -69,7 +69,7 @@ public class ResourceIdentificationService {
 
     public String getPatientLocalId(IdType idType, ImmunizationRegistry immunizationRegistry) {
         return patientIdentifierRepository.findByIdentifierAndImmunizationRegistryId(idType.getIdPart(),immunizationRegistry.getId())
-                .orElse(new PatientIdentifier()).getPatientId();
+                .orElse(new PatientExternalIdentifier()).getPatientId();
     }
 
     public String getPatientLocalId(Identifier identifier, Facility facility) {

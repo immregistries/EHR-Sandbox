@@ -7,8 +7,8 @@ import javax.persistence.*;
         @Index(name = "patient_id", columnList = "patient_id"),
         @Index(name = "immunization_registry_id", columnList = "immunization_registry_id")
 })
-@IdClass(PatientIdentifierKey.class)
-public class PatientIdentifier {
+@IdClass(PatientExternalIdentifierKey.class)
+public class PatientExternalIdentifier {
     @Id
     @Column(name = "patient_id", nullable = false)
     private String patientId;
@@ -21,10 +21,10 @@ public class PatientIdentifier {
     @Column(name = "identifier", nullable = true)
     private String identifier;
 
-    public PatientIdentifier() {
+    public PatientExternalIdentifier() {
     }
 
-    public PatientIdentifier(String patientId, Integer immunizationRegistryId, String identifier) {
+    public PatientExternalIdentifier(String patientId, Integer immunizationRegistryId, String identifier) {
         this.patientId = patientId;
         this.immunizationRegistryId = immunizationRegistryId;
         this.identifier = identifier;

@@ -13,7 +13,7 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.Feedback;
 import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.PatientIdentifier;
+import org.immregistries.ehr.api.entities.PatientExternalIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
@@ -157,7 +157,7 @@ public class FhirClientController {
         /**
          * Registering received id as external id
          */
-        patientIdentifierRepository.save(new PatientIdentifier(patientId, registryId, outcome.getId().getIdPart()));
+        patientIdentifierRepository.save(new PatientExternalIdentifier(patientId, registryId, outcome.getId().getIdPart()));
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
@@ -208,7 +208,7 @@ public class FhirClientController {
         /**
          * Registering received id as external id
          */
-        patientIdentifierRepository.save(new PatientIdentifier(patientId, registryId, outcome.getId().getIdPart()));
+        patientIdentifierRepository.save(new PatientExternalIdentifier(patientId, registryId, outcome.getId().getIdPart()));
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }

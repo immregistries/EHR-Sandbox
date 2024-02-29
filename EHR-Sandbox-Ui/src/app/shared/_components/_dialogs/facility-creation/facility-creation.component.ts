@@ -19,6 +19,8 @@ export class FacilityCreationComponent implements OnInit {
   facilityList!: Facility[];
   editionMode: boolean = false;
 
+  parentId?: number
+
   constructor(
     public facilityService: FacilityService,
     private tenantService: TenantService,

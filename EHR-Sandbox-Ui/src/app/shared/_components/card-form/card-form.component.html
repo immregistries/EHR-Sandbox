@@ -35,7 +35,7 @@
     [matTooltipDisabled]="!compareTo"
     [matTooltip]="compareTo? 'Previously : ' + (compareTo | date: 'MM/dd/yyyy') : ''">
     <mat-label>{{form.title}}</mat-label>
-    <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="model" (ngModelChange)="model = $event" >
+    <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="model" (ngModelChange)="model = $event" [disabled]="form.disabled ? true : false">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <span matBadge="history"

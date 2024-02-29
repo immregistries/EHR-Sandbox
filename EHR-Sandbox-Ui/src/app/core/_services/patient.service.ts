@@ -166,5 +166,4 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
     }
   }
 
-
 }

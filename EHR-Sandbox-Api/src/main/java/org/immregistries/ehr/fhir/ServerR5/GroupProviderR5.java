@@ -70,14 +70,14 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     }
 
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return update(group,facility,immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
 
-        groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
+        groupsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
         groupsStore.get(facility.getId())
                 .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
         groupsStore.get(facility.getId())
@@ -110,13 +110,13 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     }
 
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(Integer.parseInt(requestDetails.getTenantId()))
+        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return create(group,facility,immunizationRegistry);
     }
 
     public MethodOutcome create(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
-        groupsStore.putIfAbsent(facility.getId(), new HashMap<>(5));
+        groupsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
         groupsStore.get(facility.getId())
                 .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
         groupsStore.get(facility.getId())

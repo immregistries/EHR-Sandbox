@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input, Optional } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 
@@ -10,10 +10,15 @@ const DEFAULT_SETTINGS = {}
 })
 export class JsonDialogComponent {
 
+  @Input()
+  value: any
 
   constructor(
     public _dialogRef: MatDialogRef<JsonDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
+    if (data) {
+      this.value = data
+    }
   }
 
 }

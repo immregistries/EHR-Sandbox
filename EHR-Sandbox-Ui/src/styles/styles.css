@@ -39,7 +39,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .dialog-with-bar .mat-dialog-container {
   margin: 0px;
-  /* padding: 2px; */
+  padding: 0px;
+  max-height: 85vh;
   /* padding-top: 10px; */
   /* padding-bottom: 25px; */
 }
@@ -107,3 +108,43 @@ tr.element-row:not(.expanded-row):active {
 /* .mat-badge-content {
   font-family: 'Material Icons';
 } */
+
+
+.grid-container {
+  margin: 5x;
+}
+
+.mat-mdc-card.display-card {
+  margin: 1px;
+}
+
+.mat-mdc-card.dashboard-card {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  overflow: auto;
+}
+
+.mat-mdc-card-content.display-card-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  flex-direction: column;
+  gap: 5px 5px;
+}
+
+.mat-mdc-card.form-card {
+  margin: 1px;
+}
+
+.mat-mdc-card-content.form-card-content {
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: center; */
+  align-items: baseline;
+  gap: 5px 5px;
+}
