@@ -6,6 +6,13 @@ services:
     command:
       --lower_case_table_names=1
     restart: always
+    # Healthcheck allows for Ehr-sandbox to wait for the database
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3306/ehr" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     environment:
 #      this password is not used in app, just changing default password
       MYSQL_ROOT_PASSWORD: 'DearPrudenceWontYouComeOutAndPlay'
@@ -21,6 +28,9 @@ services:
     ports:
 #     Default port is 9091, can be changed here
       - "9091:8080"
+    depends_on:
+      ehr-sandbox-mysql:
+        condition: service_healthy
 
 volumes:
   sandbox-mysql:
