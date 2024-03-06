@@ -1,7 +1,6 @@
 
 <form (submit)="save()">
-  <mat-grid-list cols="1" rowHeight="230px">
-    <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
+    <div *ngFor="let card of formCards" >
       <mat-card class="form-card">
         <mat-card-header *ngIf="card.title">
           <mat-card-title>
@@ -18,9 +17,7 @@
           </ng-container>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
-
+    </div>
   <mat-dialog-actions align="end">
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!model.id || model.id < 0" color="primary">
       <mat-icon>casino</mat-icon>

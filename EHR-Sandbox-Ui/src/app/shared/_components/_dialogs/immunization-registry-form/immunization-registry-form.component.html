@@ -1,13 +1,13 @@
 <mat-grid-list cols="2" *ngIf="immunizationRegistry">
   <mat-grid-tile>
-    <div class="grid-tile-content">
-      <mat-card class="dashboard-card">
+    <div class="">
+      <mat-card class="form-card">
         <mat-card-header class="card-title">
           <mat-card-title class="card-title">
             IIS Nickname and API URLs
           </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
+        <mat-card-content class="form-card-content">
           <div>
             <mat-form-field appearance="fill">
               <mat-label>Name</mat-label>
@@ -28,13 +28,13 @@
           </div>
         </mat-card-content>
       </mat-card>
-      <mat-card class="dashboard-card">
+      <mat-card class="form-card">
         <mat-card-header class="card-title">
           <mat-card-title class="card-title">
             Remote login Information
           </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
+        <mat-card-content class="form-card-content">
           <mat-form-field appearance="fill">
             <mat-label>IIS facility Id</mat-label>
             <input matInput [(ngModel)]="immunizationRegistry.iisFacilityId">
@@ -55,16 +55,16 @@
         <mat-card-footer>
           <mat-card-subtitle>
             <div *ngIf="(!immunizationRegistry.iisUsername || immunizationRegistry.iisUsername.length < 0)
-            && immunizationRegistry.iisPassword && immunizationRegistry.iisPassword.length > 0
-            ;then bearer else basic">here is ignored</div>
+              && immunizationRegistry.iisPassword && immunizationRegistry.iisPassword.length > 0
+              ;then bearer else basic">here is ignored</div>
             <ng-template #bearer>Option activated : Token Bearer Authentication</ng-template>
             <ng-template #basic>Default option : Basic Authentication</ng-template>
           </mat-card-subtitle>
         </mat-card-footer>
       </mat-card>
-      <mat-card class="dashboard-card">
-        <mat-card-content style="text-align: center;" >
-          <button mat-raised-button color="primary" (click)="save()" >
+      <mat-card class="form-card">
+        <mat-card-content style="text-align: right;">
+          <button mat-raised-button color="primary" (click)="save()">
             <mat-icon>save</mat-icon>
             Save
           </button>
@@ -73,7 +73,7 @@
     </div>
   </mat-grid-tile>
   <mat-grid-tile>
-    <mat-card class="text-dashboard-card" >
+    <mat-card class="text-dashboard-card">
       <mat-card-header class="card-title">
         <mat-card-title class="card-title">
           Authentication modes

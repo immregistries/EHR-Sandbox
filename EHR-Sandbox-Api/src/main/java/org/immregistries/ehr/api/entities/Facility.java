@@ -1,8 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
-import org.hibernate.annotations.JoinFormula;
-import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -12,8 +10,8 @@ import java.util.Set;
 @Table(name = "facility"
 //        ,indexes = {@Index(name = "tenant_id", columnList = "tenant_id")}
 )
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
-        property="id",
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
         scope = Facility.class)
 ///**
 // * Solves a "No Session exception" when using facility.getPatients(), issue about lazy loading apparently
@@ -58,6 +56,18 @@ public class Facility {
 //    @JsonManagedReference( value = "facility-feedback")
     @JsonIgnore
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "facility")
+//    @JsonManagedReference( value = "facility-feedback")
+    @JsonIgnore
+    private Set<EhrGroup> groups = new LinkedHashSet<>();
+
+    public Set<EhrGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<EhrGroup> groups) {
+        this.groups = groups;
+    }
 
     public Set<Feedback> getFeedbacks() {
         return feedbacks;

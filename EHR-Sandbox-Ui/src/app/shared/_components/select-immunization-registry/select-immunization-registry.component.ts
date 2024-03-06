@@ -8,6 +8,26 @@ import { ImmunizationRegistryService } from 'src/app/core/_services/immunization
   styleUrls: ['./select-immunization-registry.component.css']
 })
 export class SelectImmunizationRegistryComponent implements OnInit {
+  private _selectedElement: ImmunizationRegistry | undefined;
+  public get selectedElement(): ImmunizationRegistry | undefined {
+    return this._selectedElement;
+  }
+  @Input()
+  public set selectedElement(value: ImmunizationRegistry | number | undefined) {
+    if (typeof(value) == 'number') {
+      for (const registry of this.immunizationRegistries) {
+        if (registry.id && registry.id === value) {
+          this._selectedElement = registry
+          break;
+        }
+      }
+    } else {
+      this._selectedElement = value;
+    }
+  }
+  @Output()
+  select: EventEmitter<ImmunizationRegistry | undefined> = new EventEmitter()
+
   immunizationRegistries: ImmunizationRegistry[] = []
 
   constructor(public registryService: ImmunizationRegistryService) {}
@@ -26,9 +46,11 @@ export class SelectImmunizationRegistryComponent implements OnInit {
   onSelect(newId: number): void {
     for (const registry of this.immunizationRegistries) {
       if (registry.id && registry.id === newId) {
-        this.registryService.setCurrent(registry);
+        this.selectedElement = registry
         break;
       }
     }
+    this.select.emit(this.selectedElement)
+
   }
 }

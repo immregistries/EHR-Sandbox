@@ -57,7 +57,6 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   }
 
   remove(patient: EhrPatient) {
-    console.log('removeeee')
     this.removeEmitter.emit(patient)
   }
 

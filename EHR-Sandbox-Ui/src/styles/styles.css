@@ -137,7 +137,7 @@ tr.element-row:not(.expanded-row):active {
 }
 
 .mat-mdc-card.form-card {
-  margin: 1px;
+  margin: 0px;
 }
 
 .mat-mdc-card-content.form-card-content {

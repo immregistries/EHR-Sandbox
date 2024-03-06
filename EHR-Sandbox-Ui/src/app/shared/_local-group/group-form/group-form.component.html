@@ -1,25 +1,70 @@
-<div class="grid-container">
-  <mat-grid-list cols="4" rowHeight="90vh">
-    <mat-grid-tile *ngFor="let card of formCards" [colspan]="card.cols" [rowspan]="card.rows">
-      <mat-card class="dashboard-card">
-        <mat-card-header *ngIf="card.title">
-          <mat-card-title>
-            {{card.title}}
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <ng-container *ngFor="let form of card.forms">
-            <app-card-form class="card-form high-density" [form]="form" [model]="ehrGroup[form.attribute]"
-              (modelChange)="ehrGroup[form.attribute] = $event"></app-card-form>
-          </ng-container>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
+<form (submit)="save()">
+  <mat-dialog-content class="form-dialog-content">
+    <div class="grid-container">
+      <div *ngFor="let card of formCards">
+        <mat-card class="form-card">
+          <mat-card-header *ngIf="card.title">
+            <mat-card-title>
+              {{card.title}}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="form-card-content">
+            <ng-container class="form-card-content" *ngFor="let form of card.forms">
+              <app-card-form class="card-form high-density" [form]="form" [model]="ehrGroup[form.attribute]"
+                (modelChange)="ehrGroup[form.attribute] = $event"></app-card-form>
+            </ng-container>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div>
+        <mat-card class="form-card">
+          <mat-card-header>
+            <mat-card-title>
+              Registry
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="form-card-content" style="flex-direction: column;">
+              <app-select-immunization-registry [selectedElement]="ehrGroup.immunizationRegistry" ></app-select-immunization-registry>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div>
+        <mat-card class="form-card">
+          <mat-card-header>
+            <mat-card-title>
+              Characteristics
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="form-card-content" style="flex-direction: column;">
+            <!-- <div> -->
+              <div class="characteristic-form-content" *ngFor="let characteristic of ehrGroup.ehrGroupCharacteristics">
+                <div *ngFor="let form of characteristicForms">
+                  <app-card-form class="card-form high-density" [form]="form" [model]="characteristic[form.attribute]"
+                    (modelChange)="characteristic[form.attribute] = $event"></app-card-form>
+                </div>
+              </div>
+            <!-- </div> -->
+            <div>
+              <button mat-stroked-button type="button" (click)="addChar()" color="primary">
+                <mat-icon>add</mat-icon>
+                Add Characteristic
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-raised-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button (click)="fillRandom()" *ngIf="!isEditionMode">Fill with random Information</button>
-  <button mat-raised-button type="submit" (click)="save()" cdkFocusInitial>Save</button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" mat-dialog-close color="primary">Cancel</button>
+    <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
+      <mat-icon>casino</mat-icon>
+      Random
+    </button>
+    <button mat-raised-button type="submit" color="primary">
+      <mat-icon>save</mat-icon>
+      Save
+    </button>
+  </mat-dialog-actions>
+</form>

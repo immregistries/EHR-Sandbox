@@ -1,15 +1,18 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "ehr_group")
+@Table(name = "ehr_group", indexes = {
+        @Index(name = "facility_id", columnList = "facility_id")
+})
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
@@ -18,10 +21,11 @@ public class EhrGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "group_id", nullable = false)
-    private Integer id;
+    private String id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference("facility-groups")
+//    @JsonIgnore
     private Facility facility;
     @Column(name = "name", nullable = false)
     private String name;
@@ -40,8 +44,9 @@ public class EhrGroup {
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPatient> patientList;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL})
     @JoinColumn(name = "group_id")
+//    @JsonManagedReference("group-characteristic")
     private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
 
     public Set<EhrGroupCharacteristic> getEhrGroupCharacteristics() {
@@ -52,11 +57,11 @@ public class EhrGroup {
         this.ehrGroupCharacteristics = ehrGroupCharacteristics;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

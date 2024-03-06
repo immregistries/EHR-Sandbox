@@ -8,7 +8,7 @@
     <input matInput [(ngModel)]="facility.nameDisplay" name="nameDisplay">
   </mat-form-field>
   <mat-form-field appearance="fill">
-    <mat-label>Mother Facility</mat-label>
+    <mat-label>Parent Facility</mat-label>
     <mat-select [(ngModel)]="parentId" name="parentFacility">
       <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}" >{{item.nameDisplay}}</mat-option>
     </mat-select>

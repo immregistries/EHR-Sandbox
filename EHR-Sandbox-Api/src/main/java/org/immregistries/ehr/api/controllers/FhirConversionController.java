@@ -93,7 +93,7 @@ public class FhirConversionController {
     @GetMapping(GROUPS_PREFIX + "/{groupId}/resource")
     @Transactional(readOnly=true, noRollbackFor=Exception.class)
     public ResponseEntity<String> groupResource(
-            @PathVariable() Integer groupId,
+            @PathVariable() String groupId,
             @RequestAttribute() Facility facility) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);

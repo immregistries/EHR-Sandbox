@@ -13,7 +13,7 @@ export class JsonDialogButtonComponent {
   @Input()
   disabled: boolean = false
   @Input()
-  content!: {};
+  content: {} | null | undefined;
 
   @Input()
   tooltip = 'Visualize or export in JSON';

@@ -20,7 +20,7 @@
   </ng-container>
   <ng-container matColumnDef="facility">
     <th mat-header-cell *matHeaderCellDef>Managing Facility </th>
-    <td mat-cell *matCellDef="let element">{{element.facility.nameDisplay ?? 'TODO Id: ' + element.facility}}</td>
+    <td mat-cell *matCellDef="let element">{{element.facility?.nameDisplay ?? 'TODO Id: ' + element?.facility}}</td>
   </ng-container>
   <ng-container matColumnDef="date">
     <th mat-header-cell *matHeaderCellDef>Creation Date</th>

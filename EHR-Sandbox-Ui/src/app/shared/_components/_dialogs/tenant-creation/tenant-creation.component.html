@@ -2,6 +2,7 @@
   Create Tenant
 </h3>
 <form (submit)="save()">
+  <!-- Tenants are independant testing environments and include multiple facilities. -->
   <mat-form-field appearance="fill" >
     <mat-label>Tenant name</mat-label>
     <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay">

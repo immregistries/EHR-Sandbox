@@ -12,6 +12,17 @@ public class EhrGroupCharacteristicId implements Serializable {
 
     private String codeSystem;
 
+    public EhrGroupCharacteristicId() {
+    }
+
+    public EhrGroupCharacteristicId(EhrGroup ehrGroup) {
+        this.groupId = String.valueOf(ehrGroup.getId());
+    }
+
+    public EhrGroupCharacteristicId(String groupId) {
+        this.groupId = groupId;
+    }
+
     public EhrGroupCharacteristicId(String groupId, String codeValue, String codeSystem) {
         this.groupId = groupId;
         this.codeValue = codeValue;

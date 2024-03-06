@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Bundle;
@@ -12,11 +13,13 @@ import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
+import org.immregistries.ehr.logic.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -57,44 +60,68 @@ public class EhrGroupController {
     }
 
     @PostMapping()
-    public ResponseEntity<Integer> post(@RequestAttribute Facility facility,
+    @Transactional()
+    public ResponseEntity<String> post(@RequestAttribute Facility facility,
                                          @RequestBody EhrGroup ehrGroup) {
         if (ehrGroupRepository.existsByFacilityIdAndName(facility.getId(), ehrGroup.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used for this facility");
         } else {
             ehrGroup.setFacility(facility);
+            Set<EhrGroupCharacteristic> characteristics = ehrGroup.getEhrGroupCharacteristics();
+            ehrGroup.setEhrGroupCharacteristics(null);
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
+            /**
+             * Relation with complex embeddedId is not supported in spring so references have to be solved manually
+             */
+            for (EhrGroupCharacteristic characteristic: characteristics) {
+                characteristic.setGroupId(newEntity.getId());
+            }
+            ehrGroup.setEhrGroupCharacteristics(characteristics);
+            newEntity = ehrGroupRepository.save(ehrGroup);
             return new ResponseEntity<>(newEntity.getId(), HttpStatus.CREATED);
         }
     }
 
 
-    @PutMapping("/{groupId}")
+    @PutMapping({"", "/{groupId}"})
+    @Transactional
     public ResponseEntity<EhrGroup> put(@RequestAttribute Facility facility, @RequestBody EhrGroup ehrGroup) {
-        Optional<EhrGroup> oldEntity = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
-        if (oldEntity.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids");
-//            return post(facility, ehrGroup);
+        EhrGroup oldEntity = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
+        Optional<EhrGroup> groupUsingNewName = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
+        if (groupUsingNewName.isPresent() && !groupUsingNewName.get().getId().equals(oldEntity.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "Name already used by another group");
         } else {
-            Optional<EhrGroup> groupUsingNewName = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
-            if (groupUsingNewName.isPresent() && !groupUsingNewName.get().getId().equals(oldEntity.get().getId())) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_ACCEPTABLE, "Name already used by another group");
-            } else {
-                EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
-                return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
+            ehrGroup.setFacility(facility);
+            /**
+             * Relation with complex embeddedId is not supported in spring so references have to be solved manually
+             */
+            for (EhrGroupCharacteristic characteristic: ehrGroup.getEhrGroupCharacteristics()) {
+                characteristic.setGroupId(ehrGroup.getId());
             }
+            EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
+            return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
         }
     }
 
     @GetMapping("/$random")
     public EhrGroup random(@RequestAttribute Facility facility) {
+        Faker faker = new Faker();
         EhrGroup ehrGroup = new EhrGroup();
 //        ehrGroup.setFacility(facility);
-        ehrGroup.setName("G " + RandomStringUtils.random(11, true, false));
+        ehrGroup.setName(faker.educator().campus());
         ehrGroup.setDescription("Randomly generated group in EHR Sandbox including randomly selected patients in facility");
         ehrGroup.setType("Person");
+
+        EhrGroupCharacteristic ehrGroupCharacteristic = new EhrGroupCharacteristic();
+        ehrGroupCharacteristic.setCodeSystem("Random-Denomination-System/" + RandomStringUtils.random(3, false, true));
+        ehrGroupCharacteristic.setCodeValue("Grade");
+        ehrGroupCharacteristic.setValue(RandomStringUtils.random(1, false, true));
+        ehrGroup.setEhrGroupCharacteristics(new HashSet<>(1));
+        ehrGroup.getEhrGroupCharacteristics().add(ehrGroupCharacteristic);
+
 //        Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
 //
 //        ehrGroup.setPatientList(new HashSet<>(4));
@@ -141,7 +168,7 @@ public class EhrGroupController {
              * First do match to get destination reference or identifier
              */
             in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
-            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(ehrGroup.getFacility().getId()))); //TODO update with managingEntity
+            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
             IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
             groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
             IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
@@ -166,7 +193,7 @@ public class EhrGroupController {
         } else {
             Parameters in = new Parameters();
             in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
-            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(ehrGroup.getFacility().getId()))); //TODO update with managingEntity
+            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
             /**
              * First do match to get destination reference or identifier
              */

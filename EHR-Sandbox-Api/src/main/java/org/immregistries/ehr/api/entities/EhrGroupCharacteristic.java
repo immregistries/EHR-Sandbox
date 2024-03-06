@@ -1,16 +1,21 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "group_characteristic")
+@Table(name = "group_characteristic", indexes = {
+        @Index(name = "group_id", columnList = "group_id")
+})
 @IdClass(EhrGroupCharacteristicId.class)
 public class EhrGroupCharacteristic implements Serializable {
 
     @Id
     @Column(name = "group_id")
+//    @JsonBackReference("group-characteristic")
     private String groupId;
 
     @Id

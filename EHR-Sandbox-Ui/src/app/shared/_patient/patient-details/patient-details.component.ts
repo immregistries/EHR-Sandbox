@@ -7,6 +7,8 @@ import { PatientService } from '../../../core/_services/patient.service';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { FetchAndLoadComponent } from '../../_vaccination/fetch-and-load/fetch-and-load.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FhirResource } from 'fhir/r5';
+import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
 
 @Component({
   selector: 'app-patient-details',
@@ -18,7 +20,8 @@ export class PatientDetailsComponent implements OnInit {
   @Input() flex?: boolean = false;
 
   constructor(private dialog: MatDialog,
-    private patientService: PatientService,) { }
+    public patientService: PatientService,
+    public fhirResourceService: FhirResourceService) { }
 
   ngOnInit(): void {
   }

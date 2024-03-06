@@ -21,6 +21,7 @@
     Remote history
   </button>
   <app-json-dialog-button mat-raised-button [content]="patient"></app-json-dialog-button>
+  <app-json-dialog-button mat-raised-button [content]="fhirResourceService.quickGetPatientResource(patient.id ?? -1) |async" [label]="'Resource'"></app-json-dialog-button>
 
 </span>
 

@@ -1,17 +1,13 @@
 package org.immregistries.ehr.api.controllers;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
-import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.logic.HL7printer;
-import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
@@ -162,6 +158,7 @@ public class EhrPatientController {
 //                                 @RequestAttribute EhrPatient patient,
                                  @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
+//        logger.info("facility {}", newPatient.getFacility().getNameDisplay());
         EhrPatient oldPatient = ehrPatientRepository.findByFacilityIdAndId(facility.getId(), newPatient.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
         newPatient.setFacility(facility);

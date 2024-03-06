@@ -97,17 +97,21 @@ public class PatientMapperR5 {
     /**
      * Race
      */
-    Extension raceExtension = p.addExtension();
-    raceExtension.setUrl(RACE);
-    CodeableConcept race = new CodeableConcept();
-    raceExtension.setValue(race);
-    race.addCoding(codingFromCodeset(ehrPatient.getRace(),RACE_SYSTEM,CodesetType.PATIENT_RACE));
+    if (StringUtils.isNotBlank(ehrPatient.getRace())) {
+      Extension raceExtension = p.addExtension();
+      raceExtension.setUrl(RACE);
+      CodeableConcept race = new CodeableConcept();
+      raceExtension.setValue(race);
+      race.addCoding(codingFromCodeset(ehrPatient.getRace(),RACE_SYSTEM,CodesetType.PATIENT_RACE));
+    }
 
 
     /**
      * Ethnicity
      */
-    p.addExtension(ETHNICITY_EXTENSION, codingFromCodeset(ehrPatient.getEthnicity(),ETHNICITY_SYSTEM,CodesetType.PATIENT_ETHNICITY));
+    if (StringUtils.isNotBlank(ehrPatient.getEthnicity())) {
+      p.addExtension(ETHNICITY_EXTENSION, codingFromCodeset(ehrPatient.getEthnicity(), ETHNICITY_SYSTEM, CodesetType.PATIENT_ETHNICITY));
+    }
 
     if (ehrPatient.getDeathDate() != null) {
       p.getDeceasedDateTimeType().setValue(ehrPatient.getDeathDate());
@@ -117,31 +121,37 @@ public class PatientMapperR5 {
       p.setDeceased(new BooleanType(false));
     }
 
-
-    Extension publicity =  p.addExtension();
-    publicity.setUrl(PUBLICITY_EXTENSION);
-    publicity.setValue(
-            new Coding().setSystem(PUBLICITY_SYSTEM)
-                    .setCode(ehrPatient.getPublicityIndicator()));
-    if (ehrPatient.getPublicityIndicatorDate() != null) {
-      publicity.getValueCoding().setVersion(ehrPatient.getPublicityIndicatorDate().toString());
-    }
-    Extension protection =  p.addExtension();
-    protection.setUrl(PROTECTION_EXTENSION);
-    protection.setValue(
-            new Coding().setSystem(PROTECTION_SYSTEM)
-                    .setCode(ehrPatient.getProtectionIndicator()));
-    if (ehrPatient.getProtectionIndicatorDate() != null) {
-      protection.getValueCoding().setVersion(ehrPatient.getProtectionIndicatorDate().toString());
+    if (StringUtils.isNotBlank(ehrPatient.getPublicityIndicator())) {
+      Extension publicity = p.addExtension();
+      publicity.setUrl(PUBLICITY_EXTENSION);
+      publicity.setValue(
+              new Coding().setSystem(PUBLICITY_SYSTEM)
+                      .setCode(ehrPatient.getPublicityIndicator()));
+      if (ehrPatient.getPublicityIndicatorDate() != null) {
+        publicity.getValueCoding().setVersion(ehrPatient.getPublicityIndicatorDate().toString());
+      }
     }
 
-    Extension registryStatus =  p.addExtension();
-    registryStatus.setUrl(REGISTRY_STATUS_EXTENSION);
-    registryStatus.setValue(
-            new Coding().setSystem(REGISTRY_STATUS_INDICATOR)
-                    .setCode(ehrPatient.getRegistryStatusIndicator()));
-    if (ehrPatient.getRegistryStatusIndicatorDate() != null) {
-      registryStatus.getValueCoding().setVersion(ehrPatient.getRegistryStatusIndicatorDate().toString());
+    if (StringUtils.isNotBlank(ehrPatient.getProtectionIndicator())) {
+      Extension protection = p.addExtension();
+      protection.setUrl(PROTECTION_EXTENSION);
+      protection.setValue(
+              new Coding().setSystem(PROTECTION_SYSTEM)
+                      .setCode(ehrPatient.getProtectionIndicator()));
+      if (ehrPatient.getProtectionIndicatorDate() != null) {
+        protection.getValueCoding().setVersion(ehrPatient.getProtectionIndicatorDate().toString());
+      }
+    }
+
+    if (StringUtils.isNotBlank(ehrPatient.getRegistryStatusIndicator())) {
+      Extension registryStatus = p.addExtension();
+      registryStatus.setUrl(REGISTRY_STATUS_EXTENSION);
+      registryStatus.setValue(
+              new Coding().setSystem(REGISTRY_STATUS_INDICATOR)
+                      .setCode(ehrPatient.getRegistryStatusIndicator()));
+      if (ehrPatient.getRegistryStatusIndicatorDate() != null) {
+        registryStatus.getValueCoding().setVersion(ehrPatient.getRegistryStatusIndicatorDate().toString());
+      }
     }
     return p;
   }
