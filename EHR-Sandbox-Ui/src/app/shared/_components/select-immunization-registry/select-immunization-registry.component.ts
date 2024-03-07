@@ -26,7 +26,7 @@ export class SelectImmunizationRegistryComponent implements OnInit {
     }
   }
   @Output()
-  select: EventEmitter<ImmunizationRegistry | undefined> = new EventEmitter()
+  selectedElementChange: EventEmitter<ImmunizationRegistry | undefined> = new EventEmitter()
 
   immunizationRegistries: ImmunizationRegistry[] = []
 
@@ -50,7 +50,7 @@ export class SelectImmunizationRegistryComponent implements OnInit {
         break;
       }
     }
-    this.select.emit(this.selectedElement)
+    this.selectedElementChange.emit(this.selectedElement)
 
   }
 }

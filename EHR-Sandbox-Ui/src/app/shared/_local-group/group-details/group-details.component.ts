@@ -49,19 +49,14 @@ export class GroupDetailsComponent {
         height: 'fit-content',
         width: '100%',
         panelClass: 'dialog-without-bar',
-        data: {resource: res},
+        data: {resource: res, resourceType: 'Group', resourceLocalId: this.ehrGroup.id},
       });
+      dialogRef.afterClosed().subscribe((result) => {
+        this.groupService.refreshGroup(this.ehrGroup.id).subscribe((res) => {
+          this.ehrGroup = res
+        })
+      })
     })
-    // const dialogRef = this.dialog.open(FhirMessagingComponent, {
-    //   maxWidth: '95vw',
-    //   maxHeight: '98vh',
-    //   height: 'fit-content',
-    //   width: '100%',
-    //   panelClass: 'dialog-without-bar',
-    //   data: {},
-    // });
-    // dialogRef.afterClosed().subscribe(result => {
-    // });
   }
 
   triggerRefresh() {

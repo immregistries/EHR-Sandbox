@@ -1,30 +1,21 @@
 <form #selectForm="ngForm">
-  <mat-form-field  appearance="outline"  class="select-field">
+  <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{form.title}}</mat-label>
-    <input matInput [(ngModel)]="model"
-      [matAutocomplete]="auto" class="select-field"
-      matBadge="priority_high"
-      [matBadgeHidden]="warning == false"
-      matBadgeColor="accent"
-      (ngModelChange)="filterChange($event)" name="{{form.attribute}}"
+    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field" matBadge="priority_high"
+      [matBadgeHidden]="warning == false" matBadgeColor="accent" (ngModelChange)="filterChange($event)"
+      name="{{form.attribute}}"
       [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
-    <button matSuffix mat-icon-button *ngIf="model" (click)="clear()"
-      matBadge="priority_high"
-      [matBadgeHidden]="warning == false"
-      matBadgeColor="warn"
+    <button matSuffix mat-icon-button *ngIf="model" (click)="clear()" matBadge="priority_high"
+      [matBadgeHidden]="warning == false" matBadgeColor="warn"
       [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
       <mat-icon>cancel</mat-icon>
     </button>
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"  (optionActivated)="valueChanged()">
-      <mat-option
-      *ngFor="let option of filteredOptions"
-      [value]="option.value"
-      (onSelectionChange)="valueChanged()"
-      [matTooltip]="option.description ?? ''"
-      [matTooltipDisabled]="toolTipDisabled">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"
+      (optionActivated)="valueChanged()">
+      <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()"
+        [matTooltip]="option.description ?? ''" [matTooltipDisabled]="toolTipDisabled" [matTooltipPosition]="'right'">
         {{option.label + ' (' + option.value + ')'}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 </form>
-

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -73,11 +74,13 @@ public class GroupMapperR5 {
         group.setManagingEntity(new Reference("Organization/"));
         Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
         for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
-            group.addCharacteristic()
-                    .setValue(new StringType(ehrGroupCharacteristic.getValue()))
+            Group.GroupCharacteristicComponent groupCharacteristicComponent =  group.addCharacteristic();
+            groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))
                     .setCode(new CodeableConcept(new Coding(ehrGroupCharacteristic.getCodeSystem(), ehrGroupCharacteristic.getCodeValue(), "")))
-                    .setExclude(ehrGroupCharacteristic.getExclude())
                     .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));
+            if (Objects.nonNull(ehrGroupCharacteristic.getExclude())) {
+                groupCharacteristicComponent.setExclude(ehrGroupCharacteristic.getExclude());
+            }
         }
         for (EhrPatient patient : ehrGroup.getPatientList()) {
             group.addMember().setEntity(new Reference()

@@ -110,14 +110,13 @@ public class EhrGroupController {
     public EhrGroup random(@RequestAttribute Facility facility) {
         Faker faker = new Faker();
         EhrGroup ehrGroup = new EhrGroup();
-//        ehrGroup.setFacility(facility);
         ehrGroup.setName(faker.educator().campus());
         ehrGroup.setDescription("Randomly generated group in EHR Sandbox including randomly selected patients in facility");
         ehrGroup.setType("Person");
 
         EhrGroupCharacteristic ehrGroupCharacteristic = new EhrGroupCharacteristic();
-        ehrGroupCharacteristic.setCodeSystem("Random-Denomination-System/" + RandomStringUtils.random(3, false, true));
-        ehrGroupCharacteristic.setCodeValue("Grade");
+        ehrGroupCharacteristic.setCodeSystem("Some-State-Denomination-System/" + RandomStringUtils.random(3, false, true));
+        ehrGroupCharacteristic.setCodeValue("Grade"); // Date, tranfered students, majors, special program
         ehrGroupCharacteristic.setValue(RandomStringUtils.random(1, false, true));
         ehrGroup.setEhrGroupCharacteristics(new HashSet<>(1));
         ehrGroup.getEhrGroupCharacteristics().add(ehrGroupCharacteristic);

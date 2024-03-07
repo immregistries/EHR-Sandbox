@@ -46,8 +46,8 @@ $ehr-theme: mat.define-light-theme((
 // @include mat.icon-density(-5);
 
 .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
-  line-height: var(--mdc-typography-caption-line-height, 10px);
-  height: 0;
+  // line-height: var(--mdc-typography-caption-line-height, 10px);
+  // height: 0;
 }
 
 .special-icon-badge {

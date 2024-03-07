@@ -4,13 +4,20 @@
       <app-immunization-registry-menu></app-immunization-registry-menu>
     </ng-template>
   </mat-tab>
-  <mat-tab label="Send resources to IIS">
+  <mat-tab label="Send patient and vaccinations to IIS" *ngIf="vaccinationId > -1">
     <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
-      <div [style]="(vaccinationId > -1)? 'width: 50%': 'width: 100%'">
+      <div style="width: 50%;">
         <app-fhir-post [resourceType]="'Patient'" [resource]="patientResource" [resourceLocalId]="patientId"></app-fhir-post>
       </div>
-      <div style="width: 50%;" *ngIf="vaccinationId > -1">
+      <div style="width: 50%;" >
         <app-fhir-post [resourceType]="'Immunization'" [resource]="vaccinationResource" [parentId]="patientId" [resourceLocalId]="vaccinationId" [overridingReferences]="{'patient': patientFhirId}"></app-fhir-post>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Send resources to IIS">
+    <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
+      <div [style]="'width: 100%'">
+        <app-fhir-post [resourceType]="genericResourceType" [resource]="genericResource" [resourceLocalId]="genericLocalId"></app-fhir-post>
       </div>
     </div>
   </mat-tab>

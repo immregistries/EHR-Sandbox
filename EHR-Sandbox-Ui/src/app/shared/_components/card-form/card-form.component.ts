@@ -12,8 +12,8 @@ export class CardFormComponent implements OnInit {
   /**
    * solely for select-codebase components
    */
-  @Input() referenceFilter!: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>;
-  @Output() referenceEmitter = new EventEmitter<{reference: CodeReference, value: string}>();
+  @Input() referenceFilter!: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>;
+  @Output() referenceEmitter = new EventEmitter<{ reference: CodeReference, value: string }>();
   @Input() toolTipDisabled: boolean = false;
 
   @Input() lotNumberValid: boolean = true;
@@ -26,14 +26,14 @@ export class CardFormComponent implements OnInit {
     this._model = value
     this.modelChange.emit(this._model)
   }
-  get model(): any{
+  get model(): any {
     return this._model
   }
   @Output() modelChange = new EventEmitter<any>();
 
   @Input() compareTo?: string;
 
-  referencesChange(emitted: {reference: CodeReference, value: string}): void {
+  referencesChange(emitted: { reference: CodeReference, value: string }): void {
     this.referenceEmitter.emit(emitted)
   }
 
@@ -42,7 +42,7 @@ export class CardFormComponent implements OnInit {
    * @param val
    * @returns String type value
    */
-  asString(val: any) : string { return val; }
+  asString(val: any): string { return val; }
 
   constructor() { }
 

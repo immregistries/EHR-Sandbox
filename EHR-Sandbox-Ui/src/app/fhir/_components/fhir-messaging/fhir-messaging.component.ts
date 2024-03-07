@@ -10,61 +10,75 @@ import { FhirResourceService } from '../../_services/fhir-resource.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class FhirMessagingComponent implements AfterViewInit {
-  @ViewChild('tabs', {static: false}) tabGroup!: MatTabGroup;
+  @ViewChild('tabs', { static: false }) tabGroup!: MatTabGroup;
 
   patientLoading: Boolean = false
   vaccinationLoading: Boolean = false
-  patientRequestLoading: Boolean = false
-  vaccinationRequestLoading: Boolean = false
 
   @Input() vaccinationId!: number;
   @Input() patientId: number = -1;
-
   public patientResource: string = "";
-  public patientAnswer: string = "";
-  public patientError: boolean = false;
-
   public vaccinationResource: string = "";
-  public vaccinationAnswer: string = "";
-  public vaccinationError: boolean = false;
 
+  @Input()
+  public genericLocalId: number = -1;
+  @Input()
+  public genericResource: string = "";
+  @Input()
+  public genericResourceType: string = "Patient";
   public style: string = 'width: 50%'
 
-  public autofillId: boolean = false;
   public patientFhirId = "";
 
   constructor(private fhirResourceService: FhirResourceService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccinationId?: number, resource?: string}) {
-      if (data) {
-        if (data.resource) {
-          this.patientResource = data.resource
-        } else {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccinationId?: number, resource?: string, resourceType?: string, resourceLocalId?: number }) {
+    if (data) {
+      if (data.resource) {
+        this.genericResource = data.resource
+        this.genericResourceType = data.resourceType ?? "Patient"
+        this.genericLocalId = data.resourceLocalId ?? -1
+      } else {
+        if (data.patientId) {
           this.patientId = data.patientId
+          this.patientLoading = true
+          this.fhirResourceService.quickGetPatientResource(this.patientId).subscribe((resource) => {
+            this.genericResource = resource
+            this.genericResourceType = "Patient"
+            this.genericLocalId = data.patientId
+
+            this.patientResource = resource
+            this.patientLoading = false
+          })
           if (data.vaccinationId) {
             this.vaccinationId = data.vaccinationId
+            this.vaccinationLoading = true
+            this.fhirResourceService.quickGetImmunizationResource(this.patientId, this.vaccinationId).subscribe((resource) => {
+              this.vaccinationResource = resource
+              this.vaccinationLoading = false
+            })
           }
         }
       }
-     }
-
-  public patientOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
-  public immunizationOperation:  "UpdateOrCreate" | "Create" | "Update" = "UpdateOrCreate";
+    }
+  }
 
   ngAfterViewInit(): void {
     this.tabGroup.selectedIndex = 1;
-    this.patientLoading = true
-    this.fhirResourceService.quickGetPatientResource(this.patientId).subscribe((resource) => {
-      this.patientResource = resource
-      this.patientLoading = false
-    })
-    if (this.vaccinationId){
-      this.vaccinationLoading = true
-      this.fhirResourceService.quickGetImmunizationResource(this.patientId,this.vaccinationId).subscribe((resource) => {
-        this.vaccinationResource = resource
-        this.vaccinationLoading = false
-      })
-    }
+    // if (this.patientId) {
+    //   this.patientLoading = true
+    //   this.fhirResourceService.quickGetPatientResource(this.patientId).subscribe((resource) => {
+    //     this.patientResource = resource
+    //     this.patientLoading = false
+    //   })
+    //   if (this.vaccinationId) {
+    //     this.vaccinationLoading = true
+    //     this.fhirResourceService.quickGetImmunizationResource(this.patientId, this.vaccinationId).subscribe((resource) => {
+    //       this.vaccinationResource = resource
+    //       this.vaccinationLoading = false
+    //     })
+    //   }
+    // }
   }
 
 
