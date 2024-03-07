@@ -10,7 +10,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 })
 export class AbstractDataTableComponent<T extends ObjectWithID> implements AfterViewInit {
 
-  constructor() {}
+  constructor() { }
 
   public dataSource = new MatTableDataSource<T>();
 
@@ -50,7 +50,9 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
         this.observableSource.subscribe((list) => {
           this.loading = false
           this.dataSource.data = list
-          this.onSelection(this.selectedElement ? list.find((item: T) => { return item.id === this.selectedElement?.id }) : undefined);
+          if (this.selectedElement) {
+            this.onSelection(list.find((item: T) => { return item.id === this.selectedElement?.id }));
+          }
         })
       })
     }

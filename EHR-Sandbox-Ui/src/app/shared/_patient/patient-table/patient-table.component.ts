@@ -70,7 +70,10 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
       data: {},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.ngAfterViewInit()
+      if (result) {
+        this.ngAfterViewInit()
+        this.onSelection(result)
+      }
     });
   }
 

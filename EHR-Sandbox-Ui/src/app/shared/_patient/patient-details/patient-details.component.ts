@@ -36,7 +36,9 @@ export class PatientDetailsComponent implements OnInit {
       data: {patient: this.patient},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.patientService.doRefresh()
+      if (result) {
+        this.patientService.setCurrent(result)
+      }
     });
   }
 

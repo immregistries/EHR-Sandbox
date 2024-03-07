@@ -1,11 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { merge, tap } from 'rxjs';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
 import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
@@ -18,25 +16,22 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./vaccination-table.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
-export class VaccinationTableComponent implements AfterViewInit  {
+export class VaccinationTableComponent implements AfterViewInit {
   private codeBaseMap!: CodeBaseMap;
 
-  columns: (keyof VaccinationEvent | keyof Vaccine  | "alerts")[] = [
+  columns: (keyof VaccinationEvent | keyof Vaccine | "alerts")[] = [
     "vaccineCvxCode",
     "administeredDate",
     "lotNumber",
     "primarySource",
     "alerts",
   ]
-
-  // Allows Date type casting in HTML template
-  asDate(val: any) : Date { return val; }
 
   @Input() title: string = 'Vaccination history'
   @Input() allowCreation: boolean = true
@@ -56,7 +51,7 @@ export class VaccinationTableComponent implements AfterViewInit  {
   private setVaccinations(values: VaccinationEvent[]) {
     this.loading = false
     this.dataSource.data = values;
-    this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => {return vaccinationEvent.id == this.expandedElement?.id}) ?? null
+    this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => { return vaccinationEvent.id == this.expandedElement?.id }) ?? null
   }
 
   selectElement(element: VaccinationEvent) {
@@ -120,10 +115,13 @@ export class VaccinationTableComponent implements AfterViewInit  {
       minHeight: 'fit-content',
       width: '90%',
       panelClass: 'dialog-with-bar',
-      data: {patientId: this.patientId},
+      data: { patientId: this.patientId },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.ngAfterViewInit()
+      if (result) {
+        this.ngAfterViewInit()
+        this.selectElement(result)
+      }
     });
   }
 
@@ -135,18 +133,18 @@ export class VaccinationTableComponent implements AfterViewInit  {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {vaccination: element},
+      data: { vaccination: element },
     });
   }
 
-  openVaccination(vaccination: VaccinationEvent | number){
+  openVaccination(vaccination: VaccinationEvent | number) {
     const dialogRef = this.dialog.open(VaccinationDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {vaccination: vaccination},
+      data: { vaccination: vaccination },
     });
   }
 

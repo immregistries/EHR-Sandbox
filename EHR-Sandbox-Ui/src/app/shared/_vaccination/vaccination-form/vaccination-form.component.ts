@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import FormType, { Code, ComparisonResult, FormCard, CodeReference} from 'src/app/core/_model/structure';
+import FormType, { Code, ComparisonResult, FormCard, CodeReference } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
@@ -17,9 +17,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   templateUrl: './vaccination-form.component.html',
   styleUrls: ['./vaccination-form.component.css']
 })
-export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestroy{
+export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private _vaccination: VaccinationEvent = {id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {}};
+  private _vaccination: VaccinationEvent = { id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {} };
   @Input()
   public set vaccination(v: VaccinationEvent) {
     this._vaccination = v;
@@ -53,34 +53,34 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     private vaccinationService: VaccinationService,
     private vaccineComparePipe: VaccinationComparePipe,
     @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent, changePrimarySourceToFalse?: Boolean}) {
-      if (data) {
-        this.patientId = data.patientId;
-        if (data.vaccination){
-          this.vaccination = data.vaccination
-          this.isEditionMode = true
-          if (data.comparedVaccination) {
-            this.compareTo = vaccineComparePipe.transform(this.vaccination, data.comparedVaccination)
-          }
-          if (data.changePrimarySourceToFalse) {
-            this.vaccination.primarySource = false;
-          }
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent, changePrimarySourceToFalse?: Boolean }) {
+    if (data) {
+      this.patientId = data.patientId;
+      if (data.vaccination) {
+        this.vaccination = data.vaccination
+        this.isEditionMode = true
+        if (data.comparedVaccination) {
+          this.compareTo = vaccineComparePipe.transform(this.vaccination, data.comparedVaccination)
+        }
+        if (data.changePrimarySourceToFalse) {
+          this.vaccination.primarySource = false;
         }
       }
+    }
   }
 
   fillRandom(): void {
     this.vaccinationService.readRandom(this.patientId).subscribe((res) => {
-      this.vaccination=res
+      this.vaccination = res
     })
   }
 
   save(): void {
-    if (this.isEditionMode == true){
+    if (this.isEditionMode == true) {
       // TODO PUT implementation
-      this.vaccinationService.quickPutVaccination( this.patientId, this.vaccination).subscribe({
+      this.vaccinationService.quickPutVaccination(this.patientId, this.vaccination).subscribe({
         next: (res: VaccinationEvent) => {
-          this._dialogRef?.close(true)
+          this._dialogRef?.close(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -88,9 +88,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         }
       });
     } else {
-      this.vaccinationService.quickPostVaccination( this.patientId, this.vaccination).subscribe({
+      this.vaccinationService.quickPostVaccination(this.patientId, this.vaccination).subscribe({
         next: (res: HttpResponse<string>) => {
-          this._dialogRef?.close(true)
+          this._dialogRef?.close(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -101,10 +101,10 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   }
 
-  public references: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>({});
+  public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
   @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
-  public filteredOptions: {[key:string]: KeyValue<string, Code>[]} = {};
+  public filteredOptions: { [key: string]: KeyValue<string, Code>[] } = {};
   private formChangesSubscription!: Subscription;
 
   ngOnInit() {
@@ -135,9 +135,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     this.formChangesSubscription.unsubscribe();
   }
 
-  referencesChange(emitted: {reference: CodeReference, value: string}, codeMapKey?: string): void {
-    if (codeMapKey ){
-      let newRefList: {[key:string]: {reference: CodeReference, value: string}} = JSON.parse(JSON.stringify(this.references.value))
+  referencesChange(emitted: { reference: CodeReference, value: string }, codeMapKey?: string): void {
+    if (codeMapKey) {
+      let newRefList: { [key: string]: { reference: CodeReference, value: string } } = JSON.parse(JSON.stringify(this.references.value))
       if (emitted) {
         newRefList[codeMapKey] = emitted
         this.checkLotNumberValidity(emitted.reference)
@@ -153,9 +153,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     let scanned = false
     let regexFit = false
     for (const ref of reference.linkTo) {
-      if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN"){
+      if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN") {
         scanned = true
-        if (!this.vaccination.vaccine.lotNumber || this.vaccination.vaccine.lotNumber.length == 0 ) {
+        if (!this.vaccination.vaccine.lotNumber || this.vaccination.vaccine.lotNumber.length == 0) {
           this.vaccination.vaccine.lotNumber = randexp(ref.value)
           regexFit = true
           break;
@@ -165,69 +165,71 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         }
       }
     }
-    if (scanned && !regexFit){
+    if (scanned && !regexFit) {
       this.lotNumberValid = false
     }
     return this.lotNumberValid
   }
 
-  /**
-   * Allows Date type casting in HTML template
-   * @param val
-   * @returns date type value
-   */
-  asDate(val: any) : Date { return val; }
-  /**
-   * Allows String type casting in HTML template
-   * @param val
-   * @returns String type value
-   */
-  asString(val: any) : string { return val; }
-
-
   formCards: FormCard[] = [
-    {title: "Vaccine",rows: 1, cols: 1, vaccineForms: [
-      {type: FormType.date, title: "Administered", attribute: "administeredDate"},
-      {type: FormType.short, title: "Admininistered amount", attribute: "administeredAmount" },
-    ], vaccinationForms: [
-      {type: FormType.boolean, title: "Primary Source", attribute: "primarySource"},
-    ]},
-    {title: "Codes",rows: 1, cols: 2, vaccineForms: [
-      {type: FormType.code, title: "Vaccine type (Cvx)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE"},
-      {type: FormType.code, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE"},
-    ]},
-    {title: "Request",rows: 1, cols: 2, vaccineForms: [
-      {type: FormType.code, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE"},
-      {type: FormType.code, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE"},
-    ]},
-    {title: "Lot",rows: 1, cols: 2, vaccineForms: [
-      {type: FormType.code, title: "Manifacturer (Mvx)", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE"},
-      {type: FormType.text, title: "Lot number", attribute: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN"},
-      {type: FormType.date, title: "Expiration date", attribute: "expirationDate"},
-    ]},
-    {title: "Funding",rows: 1, cols: 1, vaccineForms: [
-      {type: FormType.code, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE"},
-      {type: FormType.select, title: "Eligibility", attribute: "fundingEligibility", options: [{value: 'Y', label: 'Y'},{value: 'N', label: 'N'}]},
-    ]},
-    {title: "Injection route",rows: 1, cols: 1, vaccineForms: [
-      {type: FormType.code, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE"},
-      {type: FormType.code, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE"},
-    ]},
-    {title: "Injection status",rows: 1, cols: 1, vaccineForms: [
-      {type: FormType.code, title: "Completion status", attribute: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION"},
-      {type: FormType.code, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL"},
-    ]},
-
-    {title: "Clinicians",rows: 1, cols: 1, vaccinationForms: [
-      {type: FormType.clinician, title: "Entering", attribute: "enteringClinician"},
-      {type: FormType.clinician, title: "Ordering", attribute: "orderingClinician"},
-      {type: FormType.clinician, title: "Administering", attribute: "administeringClinician"}
-    ]},
-
-    {title: "Update dates",rows: 1, cols: 1, vaccineForms: [
-      {type: FormType.date, title: "Creation date", attribute: "createdDate", disabled: true},
-      {type: FormType.date, title: "Updated date", attribute: "updatedDate", disabled: true},
-    ]},
+    {
+      title: "Vaccine", rows: 1, cols: 1, vaccineForms: [
+        { type: FormType.date, title: "Administered", attribute: "administeredDate" },
+        { type: FormType.short, title: "Admininistered amount", attribute: "administeredAmount" },
+      ], vaccinationForms: [
+        { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
+      ]
+    },
+    {
+      title: "Codes", rows: 1, cols: 2, vaccineForms: [
+        { type: FormType.code, title: "Vaccine type (Cvx)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE" },
+        { type: FormType.code, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
+      ]
+    },
+    {
+      title: "Request", rows: 1, cols: 2, vaccineForms: [
+        { type: FormType.code, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE" },
+        { type: FormType.code, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE" },
+      ]
+    },
+    {
+      title: "Lot", rows: 1, cols: 2, vaccineForms: [
+        { type: FormType.code, title: "Manifacturer (Mvx)", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
+        { type: FormType.text, title: "Lot number", attribute: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN" },
+        { type: FormType.date, title: "Expiration date", attribute: "expirationDate" },
+      ]
+    },
+    {
+      title: "Funding", rows: 1, cols: 1, vaccineForms: [
+        { type: FormType.code, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE" },
+        { type: FormType.select, title: "Eligibility", attribute: "fundingEligibility", options: [{ value: 'Y', label: 'Y' }, { value: 'N', label: 'N' }] },
+      ]
+    },
+    {
+      title: "Injection route", rows: 1, cols: 1, vaccineForms: [
+        { type: FormType.code, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE" },
+        { type: FormType.code, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE" },
+      ]
+    },
+    {
+      title: "Injection status", rows: 1, cols: 1, vaccineForms: [
+        { type: FormType.code, title: "Completion status", attribute: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION" },
+        { type: FormType.code, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL" },
+      ]
+    },
+    {
+      title: "Clinicians", rows: 1, cols: 1, vaccinationForms: [
+        { type: FormType.clinician, title: "Entering", attribute: "enteringClinician" },
+        { type: FormType.clinician, title: "Ordering", attribute: "orderingClinician" },
+        { type: FormType.clinician, title: "Administering", attribute: "administeringClinician" }
+      ]
+    },
+    {
+      title: "Update dates", rows: 1, cols: 1, vaccineForms: [
+        { type: FormType.date, title: "Creation date", attribute: "createdDate", disabled: true },
+        { type: FormType.date, title: "Updated date", attribute: "updatedDate", disabled: true },
+      ]
+    },
   ]
 
 }

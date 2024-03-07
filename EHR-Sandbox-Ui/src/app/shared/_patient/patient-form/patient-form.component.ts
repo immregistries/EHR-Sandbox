@@ -46,8 +46,7 @@ export class PatientFormComponent {
     if (this.isEditionMode) {
       this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: EhrPatient) => {
-          this.patientService.doRefresh()
-          this._dialogRef?.close(true)
+          this._dialogRef?.close(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -57,8 +56,7 @@ export class PatientFormComponent {
     } else {
       this.patientService.quickPostPatient(this.patient).subscribe({
         next: (res: HttpResponse<string>) => {
-          this.patientService.doRefresh()
-          this._dialogRef?.close(true)
+          this._dialogRef?.close(res)
         },
         error: (err) => {
           console.log(err.error)

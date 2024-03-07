@@ -21,6 +21,7 @@ export class VaccinationDetailsComponent implements OnInit {
 
   constructor(private dialog: MatDialog,
     private patientService: PatientService,
+    private vaccinationService: VaccinationService,
     ) { }
 
   ngOnInit(): void {
@@ -36,7 +37,10 @@ export class VaccinationDetailsComponent implements OnInit {
       data: {patientId: this.patientId, vaccination: this.vaccination},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.patientService.doRefresh()
+      if (result) {
+        this.vaccination = result
+        // this.vaccinationService.doRefresh()
+      }
     });
   }
 

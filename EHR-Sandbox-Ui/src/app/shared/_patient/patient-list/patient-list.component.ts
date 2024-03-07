@@ -5,8 +5,6 @@ import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { PatientFormComponent } from '../patient-form/patient-form.component';
-import { GroupService } from 'src/app/core/_services/group.service';
 
 
 const DEFAULT_SETTINGS = {

@@ -145,8 +145,10 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
       data: {patientId: this.patientId, vaccination: element, comparedVaccination: this.vaccinationToCompare, changePrimarySourceToFalse: true},
     });
     dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.vaccinationService.doRefresh()
+      }
       // this.patientService.doRefresh()
-      this.vaccinationService.doRefresh()
     });
   }
 

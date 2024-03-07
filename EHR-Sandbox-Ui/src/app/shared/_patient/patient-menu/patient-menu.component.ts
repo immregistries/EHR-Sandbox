@@ -18,7 +18,6 @@ export class PatientMenuComponent implements OnInit {
   list?: EhrPatient[];
 
   ngOnInit(): void {
-
     this.facilityService.getCurrentObservable().subscribe(facility => {
       this.patientService.quickReadPatients().subscribe((res) => {
         this.list = res
@@ -44,6 +43,9 @@ export class PatientMenuComponent implements OnInit {
       data: {},
     });
     dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.patientService.doRefresh()
+      }
     });
   }
 
