@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EhrPatient } from 'src/app/core/_model/rest';
 import { GroupService } from 'src/app/core/_services/group.service';
-import { GroupDashboardComponent } from '../../_local-group/group-dashboard/group-dashboard.component';
+import { GroupDashboardComponent } from '../../_group/group-dashboard/group-dashboard.component';
 
 @Component({
   selector: 'app-patient-group-list',

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { ImmunizationRegistryFormComponent } from '../../_dialogs/immunization-registry-form/immunization-registry-form.component';
+import { ImmunizationRegistryFormComponent } from '../immunization-registry-form/immunization-registry-form.component';
 
 @Component({
   selector: 'app-immunization-registry-menu',

@@ -6,7 +6,7 @@ import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
-import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
+import { FeedbackTableComponent } from 'src/app/shared/_data-quality-issues/feedback-table/feedback-table.component';
 import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';

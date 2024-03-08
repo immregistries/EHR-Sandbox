@@ -1,9 +1,0 @@
-<mat-selection-list #tenants  [multiple]="false"  >
-  <mat-list-option *ngFor="let tenant of list" (click)="onSelection(tenant)" [selected]="tenantService.getCurrentId() == tenant.id">
-    {{tenant.nameDisplay}}
-    <mat-divider></mat-divider>
-  </mat-list-option>
-  <button mat-mini-fab (click)="openDialog()" color="primary" >
-    <mat-icon>add</mat-icon>
-  </button>
-</mat-selection-list>

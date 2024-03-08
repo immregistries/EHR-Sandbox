@@ -4,25 +4,23 @@ import { SelectCodebaseComponent } from './_components/select-codebase/select-co
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
-import { FacilityListComponent } from './_components/_lists/_card-lists/facility-list/facility-list.component';
-import { TenantListComponent } from './_components/_lists/_card-lists/tenant-list/tenant-list.component';
-import { TenantCreationComponent } from './_components/_dialogs/tenant-creation/tenant-creation.component';
-import { FacilityCreationComponent } from './_components/_dialogs/facility-creation/facility-creation.component';
-import { TenantMenuComponent } from './_components/_menus/tenant-menu/tenant-menu.component';
-import { FacilityMenuComponent } from './_components/_menus/facility-menu/facility-menu.component';
-import { ImmunizationRegistryFormComponent } from './_components/_dialogs/immunization-registry-form/immunization-registry-form.component';
-import { FeedbackTableComponent } from './_components/feedback-table/feedback-table.component';
+import { TenantCreationComponent } from './_tenant/tenant-creation/tenant-creation.component';
+import { FacilityCreationComponent } from './_facility/facility-creation/facility-creation.component';
+import { TenantMenuComponent } from './_tenant/tenant-menu/tenant-menu.component';
+import { FacilityMenuComponent } from './_facility/facility-menu/facility-menu.component';
+import { ImmunizationRegistryFormComponent } from './_immunization-registry/immunization-registry-form/immunization-registry-form.component';
+import { FeedbackTableComponent } from './_data-quality-issues/feedback-table/feedback-table.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { HoverMenuComponent } from './_components/_menus/hover-menu/hover-menu.component';
+import { HoverMenuComponent } from './_components/hover-menu/hover-menu.component';
 import { EmptyListMessageComponent } from './_components/empty-list-message/empty-list-message.component';
 import { SelectImmunizationRegistryComponent } from './_components/select-immunization-registry/select-immunization-registry.component';
 import { CodeMapsPipe } from './_pipes/code-maps.pipe';
 import { TextShortenPipe } from './_pipes/text-shorten.pipe';
-import { ImmunizationRegistryMenuComponent } from './_components/_menus/immunization-registry-menu/immunization-registry-menu.component';
-import { LocalCopyDialogComponent } from './_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
+import { ImmunizationRegistryMenuComponent } from './_immunization-registry/immunization-registry-menu/immunization-registry-menu.component';
+import { LocalCopyDialogComponent } from './_components/local-copy-dialog/local-copy-dialog.component';
 import { KeysPipe } from './_pipes/keys.pipe';
-import { FeedbackIconComponent } from './_components/feedback-icon/feedback-icon.component';
+import { FeedbackIconComponent } from './_data-quality-issues/feedback-icon/feedback-icon.component';
 import { VaccinationComparePipe } from './_pipes/vaccination-compare.pipe';
 import { VaccinationFormComponent } from './_vaccination/vaccination-form/vaccination-form.component';
 import { FetchAndLoadComponent } from './_vaccination/fetch-and-load/fetch-and-load.component';
@@ -67,15 +65,15 @@ import { PatientReceivedTableComponent } from './_patient/patient-received-table
 import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
 import { JsonDialogButtonComponent } from './_components/json-dialog-button/json-dialog-button.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-import { GroupFormComponent } from './_local-group/group-form/group-form.component';
-import { GroupDashboardComponent } from './_local-group/group-dashboard/group-dashboard.component';
+import { GroupFormComponent } from './_group/group-form/group-form.component';
+import { GroupDashboardComponent } from './_group/group-dashboard/group-dashboard.component';
 import {MatChipsModule} from '@angular/material/chips';
 import { PatientGroupListComponent } from './_patient/patient-group-list/patient-group-list.component';
 import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.component';
 import { AbstractDataTableComponent } from './_components/abstract-data-table/abstract-data-table.component';
-import { GroupTableComponent } from './_local-group/group-table/group-table.component';
-import { GroupAllDashboardComponent } from './_local-group/group-all-dashboard/group-all-dashboard.component';
-import { GroupDetailsComponent } from './_local-group/group-details/group-details.component';
+import { GroupTableComponent } from './_group/group-table/group-table.component';
+import { GroupAllDashboardComponent } from './_group/group-all-dashboard/group-all-dashboard.component';
+import { GroupDetailsComponent } from './_group/group-details/group-details.component';
 import { CardDisplayComponent } from './_components/card-display/card-display.component';
 import { PatientDisplayComponent } from './_patient/patient-display/patient-display.component';
 import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/vaccination-display.component';
@@ -84,8 +82,6 @@ import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/
 @NgModule({
   declarations: [
     SelectCodebaseComponent,
-    TenantListComponent,
-    FacilityListComponent,
     TenantCreationComponent,
     FacilityCreationComponent,
     TenantMenuComponent,
@@ -196,8 +192,6 @@ import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/
     MatIconModule,
 
     SelectCodebaseComponent,
-    TenantListComponent,
-    FacilityListComponent,
     TenantCreationComponent,
     FacilityCreationComponent,
     TenantMenuComponent,

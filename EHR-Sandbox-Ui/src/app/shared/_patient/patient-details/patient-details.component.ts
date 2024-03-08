@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { Hl7MessagingComponent } from 'src/app/fhir/_components/hl7-messaging/hl7-messaging.component';
-import { LocalCopyDialogComponent } from 'src/app/shared/_components/_dialogs/local-copy-dialog/local-copy-dialog.component';
+import { LocalCopyDialogComponent } from 'src/app/shared/_components/local-copy-dialog/local-copy-dialog.component';
 import { EhrPatient } from '../../../core/_model/rest';
 import { PatientService } from '../../../core/_services/patient.service';
 import { PatientFormComponent } from '../patient-form/patient-form.component';

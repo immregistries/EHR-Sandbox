@@ -4,13 +4,13 @@ import { DashboardComponent } from './core/_components/dashboard/dashboard.compo
 import { HomeComponent } from './core/_components/home/home.component';
 import { AuthenticationDialogComponent } from './core/authentication/_components/authentication-form/authentication-dialog/authentication-dialog.component';
 import { FhirMessagingComponent } from './fhir/_components/fhir-messaging/fhir-messaging.component';
-import { FeedbackTableComponent } from './shared/_components/feedback-table/feedback-table.component';
+import { FeedbackTableComponent } from './shared/_data-quality-issues/feedback-table/feedback-table.component';
 import { SubscriptionDashboardComponent } from './fhir/_components/subscription-dashboard/subscription-dashboard.component';
 import { ImmunizationRegistryDashboardComponent } from './core/_components/immunization-registry-dashboard/immunization-registry-dashboard.component';
 import { FhirBulkDashboardComponent } from './fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 import { RemoteGroupDashboardComponent } from './core/_components/remote-group-dashboard/remote-group-dashboard.component';
-import { GroupDashboardComponent } from './shared/_local-group/group-dashboard/group-dashboard.component';
-import { GroupAllDashboardComponent } from './shared/_local-group/group-all-dashboard/group-all-dashboard.component';
+import { GroupDashboardComponent } from './shared/_group/group-dashboard/group-dashboard.component';
+import { GroupAllDashboardComponent } from './shared/_group/group-all-dashboard/group-all-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
