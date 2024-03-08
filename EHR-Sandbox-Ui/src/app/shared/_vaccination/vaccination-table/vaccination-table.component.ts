@@ -9,6 +9,7 @@ import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.c
 import { FeedbackTableComponent } from 'src/app/shared/_components/feedback-table/feedback-table.component';
 import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
 import { MatTableDataSource } from '@angular/material/table';
+import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -22,7 +23,7 @@ import { MatTableDataSource } from '@angular/material/table';
     ]),
   ],
 })
-export class VaccinationTableComponent implements AfterViewInit {
+export class VaccinationTableComponent extends AbstractDataTableComponent<VaccinationEvent> implements AfterViewInit {
   private codeBaseMap!: CodeBaseMap;
 
   columns: (keyof VaccinationEvent | keyof Vaccine | "alerts")[] = [
@@ -35,8 +36,6 @@ export class VaccinationTableComponent implements AfterViewInit {
 
   @Input() title: string = 'Vaccination history'
   @Input() allowCreation: boolean = true
-  dataSource = new MatTableDataSource<VaccinationEvent>([]);
-  loading = false;
 
   expandedElement: VaccinationEvent | null = null;
   @Output()
@@ -59,29 +58,28 @@ export class VaccinationTableComponent implements AfterViewInit {
     this.selectedEmitter.emit(this.expandedElement);
   }
 
-  private _patientId: number = -1;
   @Input()
-  public set patientId(value: number | undefined) {
-    this._patientId = value ?? -1;
-    if (this.listManuallySet == false) {
-      this.loading = true
-      this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
-        this.setVaccinations(res)
-      })
-    }
-  }
-  public get patientId(): number {
-    return this._patientId;
-  }
+  patientId!: number;
+  // private _patientId: number = -1;
+  // @Input()
+  // public set patientId(value: number | undefined) {
+  //   this._patientId = value ?? -1;
+  //   if (this.listManuallySet == false) {
+  //     this.loading = true
+  //     this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
+  //       this.setVaccinations(res)
+  //     })
+  //   }
+  // }
+  // public get patientId(): number {
+  //   return this._patientId;
+  // }
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
-    private vaccinationService: VaccinationService) { }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
+    private vaccinationService: VaccinationService) {
+      super()
+    }
 
   vaccinationFilterPredicate() {
     return (data: VaccinationEvent, filter: string): boolean => {
@@ -97,14 +95,15 @@ export class VaccinationTableComponent implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       this.codeBaseMap = codeBaseMap
     });
+    super.ngAfterViewInit()
+
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
     this.vaccinationService.getRefresh().subscribe(() => {
-      this.patientId = this.patientId // trigger refresh through setter
     })
   }
 
@@ -124,7 +123,6 @@ export class VaccinationTableComponent implements AfterViewInit {
       }
     });
   }
-
 
   openFeedback(element: VaccinationEvent) {
     const dialogRef = this.dialog.open(FeedbackTableComponent, {

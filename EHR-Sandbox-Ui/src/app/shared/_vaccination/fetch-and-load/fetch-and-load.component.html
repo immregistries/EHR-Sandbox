@@ -32,7 +32,7 @@
     <mat-grid-tile [colspan]="2" >
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-vaccination-table [patientId]="patientId" [allowCreation]="false" (selectedEmitter)="selectedVaccination = $event"></app-vaccination-table>
+          <app-vaccination-table [patientId]="patientId ?? -1" [allowCreation]="false" (selectedEmitter)="selectedVaccination = $event"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

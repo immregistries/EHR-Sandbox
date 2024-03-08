@@ -3,7 +3,8 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { Observable, merge } from 'rxjs';
-import { EhrPatient } from '../../_model/rest';
+import { EhrPatient, VaccinationEvent } from '../../_model/rest';
+import { VaccinationService } from '../../_services/vaccination.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +15,9 @@ export class DashboardComponent {
 
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
-    public patientService: PatientService) { }
+    public patientService: PatientService,
+    public vaccinationService: VaccinationService,
+    ) { }
 
   rowHeight(): string {
     return (window.innerHeight / 2 - 35) + 'px'
@@ -32,5 +35,14 @@ export class DashboardComponent {
 
   patientListObservable(): Observable<EhrPatient[]> {
     return this.patientService.quickReadPatients()
+  }
+
+
+  vaccinationListRefreshObservable(): Observable<any> {
+    return this.patientService.getCurrentObservable()
+  }
+
+  vaccinationListObservable(): Observable<VaccinationEvent[]> {
+    return this.vaccinationService.quickReadVaccinations()
   }
 }

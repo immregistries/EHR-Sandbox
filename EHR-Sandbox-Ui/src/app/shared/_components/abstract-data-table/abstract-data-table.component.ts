@@ -1,9 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
-import { EhrPatient, Facility, ObjectWithID } from 'src/app/core/_model/rest';
-import { FacilityService } from 'src/app/core/_services/facility.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
+import { ObjectWithID } from 'src/app/core/_model/rest';
 
 @Component({
   template: ''
@@ -30,7 +28,7 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
   @Input()
   observableSource!: Observable<T[]>;
 
-  private _data_set_input: boolean = false
+  public _data_set_input: boolean = false
   @Input()
   public set data(value: T[] | undefined) {
     this._data_set_input = true
@@ -57,8 +55,6 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
       })
     }
   }
-
-
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

@@ -100,7 +100,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
     public vaccinationComparePipe: VaccinationComparePipe) { }
   ngOnInit(): void {
     this.patientService.getCurrentObservable().subscribe(patient => {
-      this.vaccinationService.quickReadVaccinations(patient?.id ?? -1).subscribe(res => {
+      this.vaccinationService.readVaccinations(patient?.id ?? -1).subscribe(res => {
         this.localVaccinations = res
       })
     })

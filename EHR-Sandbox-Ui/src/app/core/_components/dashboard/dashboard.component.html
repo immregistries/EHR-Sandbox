@@ -42,7 +42,7 @@
     <mat-grid-tile [colspan]="4" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #vaccinations>
-          <app-vaccination-table [patientId]="patientService.getCurrentId()"></app-vaccination-table>
+          <app-vaccination-table [patientId]="patientService.getCurrentId()" [observableSource]="vaccinationListObservable()" [observableRefresh]="vaccinationListRefreshObservable()"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
