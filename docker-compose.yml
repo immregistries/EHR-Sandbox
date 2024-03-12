@@ -6,7 +6,7 @@ services:
     command:
       --lower_case_table_names=1
     restart: always
-    # Healthcheck allows for Ehr-sandbox to wait for the database
+    # Healthcheck allows for Ehr-sandbox to wait for the database to be up and running before deploying,  as a connection is necessary for the hibernate configuration to be a success
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3306/ehr" ]
       interval: 5s
@@ -20,7 +20,7 @@ services:
       - ./database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
       - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
   ehr-sandbox:
-    image: ehr-sandbox-ehr-sandbox:latest
+    image: ehr-sandbox:latest
     container_name: ehr-sandbox
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr

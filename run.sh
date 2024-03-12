@@ -1,3 +1,3 @@
 #! /bin/bash
-docker load -i ehr-image.tar;
+docker load -i ehr-sandbox-image.tar;
 docker compose up;
