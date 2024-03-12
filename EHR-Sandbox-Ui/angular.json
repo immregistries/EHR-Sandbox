@@ -28,7 +28,8 @@
               "src/styles"
             ],
             "styles": [
-              "src/theme.scss"
+              "src/theme.scss",
+              "src/styles/styles.css"
             ],
             "allowedCommonJsDependencies": [
               "randexp"

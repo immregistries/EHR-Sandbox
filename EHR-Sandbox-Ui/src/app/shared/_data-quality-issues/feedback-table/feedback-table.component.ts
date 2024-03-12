@@ -31,7 +31,7 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
   @Input() facility: Facility | null = null;
   @Input() patient?: EhrPatient;
   @Input() vaccination?: VaccinationEvent;
-  @Input() title: string = 'Feedback from IIS'
+  @Input() title: string = 'Issues'
   loading: boolean = false
 
   columns!: (keyof Feedback | 'remove')[]

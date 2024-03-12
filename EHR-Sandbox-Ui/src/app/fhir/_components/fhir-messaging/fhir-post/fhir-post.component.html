@@ -1,8 +1,8 @@
-<div [style]="style">
+<form [style]="style" (submit)="send()">
   <mat-progress-bar mode="query" *ngIf="resourceLoading"></mat-progress-bar>
   <mat-form-field style="width: 100%;" appearance="fill">
     <mat-label>Fhir Resource</mat-label>
-    <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="resource"></textarea>
+    <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="resource" name="resource"></textarea>
     <!-- <mat-error *ngIf="isJson()">Invalid Json</mat-error> -->
     <mat-error>Invalid Json</mat-error>
   </mat-form-field>
@@ -11,14 +11,14 @@
     <div>
       <mat-form-field appearance="fill">
         <mat-label>Resource Type</mat-label>
-        <input matInput [(ngModel)]="resourceType">
+        <input matInput [(ngModel)]="resourceType" name="resourceType">
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Operation</mat-label>
         <mat-select [(ngModel)]="operation" name="operation">
-          <mat-option [value]="'UpdateOrCreate'">Update Or Create</mat-option>
-          <mat-option [value]="'Create'">Create</mat-option>
-          <mat-option [value]="'$match'">$match</mat-option>
+          <mat-option [value]="'UpdateOrCreate'" name="UpdateOrCreate">Update Or Create</mat-option>
+          <mat-option [value]="'Create'" name="Create">Create</mat-option>
+          <mat-option [value]="'$match'" name="$match">$match</mat-option>
           <!-- <mat-option [value]="'Update'">Update</mat-option> -->
         </mat-select>
       </mat-form-field>
@@ -29,11 +29,15 @@
     </div>
 
     <div class="footer-end">
-      <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button>
+      <button mat-raised-button class="w3-right" type="submit" color="primary">
+        <mat-icon>send</mat-icon>
+        Send to IIS
+      </button>
+      <!-- <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button> -->
     </div>
 
   </div>
 
   <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>
   <p [ngClass]="error ? 'w3-red w3-center' : 'w3-green w3-center'">{{answer}}</p>
-</div>
+</form>

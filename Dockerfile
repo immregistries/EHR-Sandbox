@@ -3,6 +3,11 @@ FROM bitnami/tomcat:9.0 as tomcat
 RUN rm -rf /opt/bitnami/tomcat/webapps/ROOT && \
     rm -rf /opt/bitnami/tomcat/webapps_default/ROOT
 
+#RUN mkdir /opt/bitnami/tomcat/webapps/ROOT && \
+#    echo '<% response.sendRedirect("/ehr/#/home"); %>' > /opt/bitnami/tomcat/webapps/ROOT/index.jsp
+RUN mkdir /opt/bitnami/tomcat/webapps_default/ROOT
+RUN echo '<% response.sendRedirect("/ehr/#/home"); %>' > /opt/bitnami/tomcat/webapps_default/ROOT/index.jsp
+
 USER root
 RUN mkdir -p /target && chown -R 1001:1001 target
 USER 1001

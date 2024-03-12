@@ -314,6 +314,7 @@
 			<build>
 				<plugins>
 					<plugin>
+<!--						Packaging the UI Files in War-->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<version>3.1.2</version>
@@ -341,46 +342,46 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>local</id>
-			<properties>
-				<activatedProperties>prod</activatedProperties>
-				<maven.test.skip>true</maven.test.skip>
-				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>
-			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.1.2</version>
-						<executions>
-							<execution>
-								<id>merge</id>
-								<phase>initialize</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.immregistries.ehr</groupId>
-											<artifactId>ehr-sandbox-ui</artifactId>
-											<type>jar</type>
-											<overWrite>true</overWrite>
-											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>
-										</artifactItem>
-									</artifactItems>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+<!--		<profile>-->
+<!--			<id>local</id>-->
+<!--			<properties>-->
+<!--				<activatedProperties>prod</activatedProperties>-->
+<!--				<maven.test.skip>true</maven.test.skip>-->
+<!--				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>-->
+<!--			</properties>-->
+<!--			<activation>-->
+<!--				<activeByDefault>true</activeByDefault>-->
+<!--			</activation>-->
+<!--			<build>-->
+<!--				<plugins>-->
+<!--					<plugin>-->
+<!--						<groupId>org.apache.maven.plugins</groupId>-->
+<!--						<artifactId>maven-dependency-plugin</artifactId>-->
+<!--						<version>3.1.2</version>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<id>merge</id>-->
+<!--								<phase>initialize</phase>-->
+<!--								<goals>-->
+<!--									<goal>unpack</goal>-->
+<!--								</goals>-->
+<!--								<configuration>-->
+<!--									<artifactItems>-->
+<!--										<artifactItem>-->
+<!--											<groupId>org.immregistries.ehr</groupId>-->
+<!--											<artifactId>ehr-sandbox-ui</artifactId>-->
+<!--											<type>jar</type>-->
+<!--											<overWrite>true</overWrite>-->
+<!--											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>-->
+<!--										</artifactItem>-->
+<!--									</artifactItems>-->
+<!--								</configuration>-->
+<!--							</execution>-->
+<!--						</executions>-->
+<!--					</plugin>-->
+<!--				</plugins>-->
+<!--			</build>-->
+<!--		</profile>-->
 		<profile>
 			<id>dev</id>
 			<properties>

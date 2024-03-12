@@ -1,17 +1,13 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
-import { Observable, merge, switchMap, tap } from 'rxjs';
 import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { FeedbackTableComponent } from 'src/app/shared/_data-quality-issues/feedback-table/feedback-table.component';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
-import { GroupService } from 'src/app/core/_services/group.service';
 
 @Component({
   selector: 'app-patient-table',
