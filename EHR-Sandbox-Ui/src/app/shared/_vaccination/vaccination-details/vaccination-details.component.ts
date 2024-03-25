@@ -17,8 +17,6 @@ export class VaccinationDetailsComponent implements OnInit {
   @Input() patientId!: number;
   @Input() vaccination!: VaccinationEvent;
 
-  @Input() flex?: boolean = false;
-
   constructor(private dialog: MatDialog,
     private patientService: PatientService,
     private vaccinationService: VaccinationService,

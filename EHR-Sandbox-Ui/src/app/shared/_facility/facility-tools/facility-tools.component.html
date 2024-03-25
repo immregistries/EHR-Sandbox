@@ -1,0 +1,15 @@
+<span class="tool-buttons-wrap-flex">
+
+  <button mat-icon-button matTooltip="Edit" color="primary" (click)="openEdition()">
+    <mat-icon>edit</mat-icon>
+  </button>
+
+<button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
+  <mat-icon>send</mat-icon>
+  FHIR
+</button>
+<app-json-dialog-button mat-raised-button [content]="facility"></app-json-dialog-button>
+<!-- <app-json-dialog-button mat-raised-button [content]="fhirResourceService.quickGetPatientResource(patient.id ?? -1) |async" [label]="'Resource'"></app-json-dialog-button> -->
+
+</span>
+

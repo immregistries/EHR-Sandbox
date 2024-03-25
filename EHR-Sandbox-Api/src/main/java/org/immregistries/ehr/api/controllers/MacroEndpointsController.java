@@ -141,7 +141,7 @@ public class MacroEndpointsController {
         if (facility == null) {
             throw new InvalidRequestException("No organisation found for facility definition");
         }
-        facility = facilityController.postFacility(tenant, facility, Optional.empty()).getBody();
+        facility = facilityController.postFacility(tenant, facility).getBody();
 
         fillFacility(tenant,facility,facilityBundle);
 

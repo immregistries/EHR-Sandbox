@@ -5,6 +5,7 @@ import { FacilityService } from 'src/app/core/_services/facility.service';
 import { Observable, merge } from 'rxjs';
 import { EhrPatient, VaccinationEvent } from '../../_model/rest';
 import { VaccinationService } from '../../_services/vaccination.service';
+import { FeedbackService } from '../../_services/feedback.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,6 +18,7 @@ export class DashboardComponent {
     public facilityService: FacilityService,
     public patientService: PatientService,
     public vaccinationService: VaccinationService,
+    public feedbackService: FeedbackService,
     ) { }
 
   rowHeight(): string {
@@ -35,6 +37,10 @@ export class DashboardComponent {
 
   patientListObservable(): Observable<EhrPatient[]> {
     return this.patientService.quickReadPatients()
+  }
+
+  feedbackListObservable(): Observable<EhrPatient[]> {
+    return this.feedbackService.readCurrentFacilityFeedback()
   }
 
 

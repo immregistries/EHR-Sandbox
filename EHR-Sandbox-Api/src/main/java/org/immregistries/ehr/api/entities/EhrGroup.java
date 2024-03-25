@@ -24,7 +24,7 @@ public class EhrGroup {
     private String id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
-    @JsonBackReference("facility-groups")
+//    @JsonBackReference("facility-groups")
 //    @JsonIgnore
     private Facility facility;
     @Column(name = "name", nullable = false)

@@ -17,7 +17,6 @@ import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.servic
 })
 export class PatientDetailsComponent implements OnInit {
   @Input() patient!: EhrPatient
-  @Input() flex?: boolean = false;
 
   constructor(private dialog: MatDialog,
     public patientService: PatientService,

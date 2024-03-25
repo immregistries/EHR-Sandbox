@@ -1,8 +1,9 @@
 <form [style]="style" (submit)="send()">
   <mat-progress-bar mode="query" *ngIf="resourceLoading"></mat-progress-bar>
   <mat-form-field style="width: 100%;" appearance="fill">
-    <mat-label>Fhir Resource</mat-label>
-    <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="resource" name="resource"></textarea>
+    <mat-label>Fhir Resource <mat-icon>copy-content</mat-icon></mat-label>
+    <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="resource" name="resource">
+    </textarea>
     <!-- <mat-error *ngIf="isJson()">Invalid Json</mat-error> -->
     <mat-error>Invalid Json</mat-error>
   </mat-form-field>

@@ -62,4 +62,15 @@ export class FhirResourceService {
     }
   }
 
+  quickGetOrganizationResource(facilityId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    if (tenantId < 0 || facilityId < 0 ){
+      return of('')
+    } else {
+      return this.http.get(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/resource`,
+        { responseType: 'text' });
+    }
+  }
+
 }

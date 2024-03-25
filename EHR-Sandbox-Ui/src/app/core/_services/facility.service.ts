@@ -52,9 +52,26 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
       httpOptions);
   }
 
-  postFacility(tenantId: number, facility: Facility, parentId?: number): Observable<HttpResponse<Facility>> {
+  readFacilityChildren(tenantId: number, facilityId: number): Observable<Facility[]> {
+    if (facilityId == -1) {
+      return of([])
+    } else {
+      return this.http.get<Facility[]>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/$children`,
+        httpOptions);
+    }
+
+  }
+
+  postFacility(tenantId: number, facility: Facility): Observable<HttpResponse<Facility>> {
     return this.http.post<Facility>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities${parentId ? `?parentId=${parentId}` : ''}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
+      facility, { observe: 'response' })
+  }
+
+  putFacility(tenantId: number, facility: Facility): Observable<HttpResponse<Facility>> {
+    return this.http.put<Facility>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
       facility, { observe: 'response' })
   }
 }

@@ -30,17 +30,22 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private handleError(error: HttpErrorResponse): Observable<any> {
     if (error.status === 401) {
-      const pathname = JSON.parse(JSON.stringify(document.location.pathname))
-      if( pathname === '/home') {
-        this.router.navigate(['/home'], {queryParams: {
-          loginError: 2,
-          // redirectTo: pathname
-        }});
+      const pathname = JSON.parse(JSON.stringify(document.location.hash)).split('#')[1]
+      if (pathname === '/home') {
+        this.router.navigate(['/home'], {
+          queryParams: {
+            loginError: 2,
+            redirectTo: pathname
+          }
+        });
       } else {
-        this.router.navigate(['/home'], {queryParams: {
-          loginError: 2,
-          // redirectTo: pathname
-        }});
+        this.router.navigate(['/home'], {
+          queryParams: {
+            loginError: 2,
+            redirectTo: pathname
+          }
+        });
+        this.dialog.closeAll()
       }
       this.notificationCheckService.unsubscribe()
       // this.token.signOut()

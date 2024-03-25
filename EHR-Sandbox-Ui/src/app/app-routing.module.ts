@@ -11,6 +11,7 @@ import { FhirBulkDashboardComponent } from './fhir/_components/fhir-bulk-dashboa
 import { RemoteGroupDashboardComponent } from './core/_components/remote-group-dashboard/remote-group-dashboard.component';
 import { GroupDashboardComponent } from './shared/_group/group-dashboard/group-dashboard.component';
 import { GroupAllDashboardComponent } from './shared/_group/group-all-dashboard/group-all-dashboard.component';
+import { FacilityDashboardComponent } from './shared/_facility/facility-dashboard/facility-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'remote-groups', component: RemoteGroupDashboardComponent },
   { path: 'group', component: GroupDashboardComponent },
   { path: 'groups', component: GroupAllDashboardComponent },
+  { path: 'facilities', component: FacilityDashboardComponent },
 ];
 
 @NgModule({

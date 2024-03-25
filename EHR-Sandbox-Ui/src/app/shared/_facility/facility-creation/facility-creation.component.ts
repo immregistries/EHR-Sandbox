@@ -14,12 +14,42 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 })
 export class FacilityCreationComponent implements OnInit {
 
-  facility: Facility = { id: -1 };
+  private _facility: Facility = { id: -1 };
+  public get facility(): Facility {
+    return this._facility;
+  }
+  public set facility(value: Facility) {
+    this._facility = value;
+    if (this._facility.parentFacility) {
+      if (typeof this._facility.parentFacility === "number" || "string") {
+        this.parentId = +this._facility.parentFacility
+      } else {
+        this.parentId = this._facility.parentFacility.id
+      }
+    } else {
+      this.parentId = undefined
+    }
+  }
+
   add_patients: boolean = false;
   facilityList!: Facility[];
   editionMode: boolean = false;
 
-  parentId?: number
+  private _parentId?: number | undefined;
+  public get parentId(): number | undefined {
+    return this._parentId;
+  }
+  public set parentId(value: number | undefined) {
+    this._parentId = value;
+    this._facility.parentFacility = value? {id: value} : undefined
+    // if (this._parentId) { // TODO change the whole mechanism
+    //    this.facilityService.readFacility(this.tenantService.getCurrentId(), this._parentId).subscribe((res) => {
+    //     this._facility.parentFacility = res
+    //   })
+    // } else {
+    //   this._facility.parentFacility = undefined
+    // }
+  }
 
   constructor(
     public facilityService: FacilityService,
@@ -42,17 +72,35 @@ export class FacilityCreationComponent implements OnInit {
   }
 
   save() {
-    this.facilityService.postFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
-      next: (res: HttpResponse<Facility>) => {
-        if (this._dialogRef && res.body) {
-          this._dialogRef.close(res.body)
+    if (this.editionMode) {
+      this.facilityService.putFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
+        next: (res: HttpResponse<Facility>) => {
+          if (this._dialogRef && res.body) {
+            this._dialogRef.close(res.body)
+          }
+        },
+        error: (err) => {
+          console.log(err.error)
+          this.snackBarService.errorMessage(err.error.error)
         }
-      },
-      error: (err) => {
-        console.log(err.error)
-        this.snackBarService.errorMessage(err.error.error)
-      }
-    });
+      });
+
+    } else {
+      this.facilityService.postFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
+        next: (res: HttpResponse<Facility>) => {
+          if (this._dialogRef && res.body) {
+            this._dialogRef.close(res.body)
+          }
+        },
+        error: (err) => {
+          console.log(err.error)
+          this.snackBarService.errorMessage(err.error.error)
+        }
+      });
+
+    }
+
+
   }
 
   random() {

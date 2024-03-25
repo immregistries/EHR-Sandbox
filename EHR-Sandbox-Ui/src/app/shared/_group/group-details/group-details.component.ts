@@ -6,7 +6,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientListComponent } from '../../_patient/patient-list/patient-list.component';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
@@ -18,7 +17,6 @@ import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.servic
 })
 export class GroupDetailsComponent {
   @Input() ehrGroup!: EhrGroup
-  @Input() flex?: boolean = false;
 
   constructor(public dialog: MatDialog,
     public facilityService: FacilityService,

@@ -164,6 +164,14 @@ public class ResourceIdentificationService {
         return null;
     }
 
+    public Reference facilityReference(Facility facility) {
+        return new Reference().setType("Organization").setIdentifier( new Identifier().setSystem(FACILITY_SYSTEM).setValue(facility.getId()));
+    }
+
+    public Identifier facilityIdentifier(Facility facility) {
+        return new Identifier().setSystem(FACILITY_SYSTEM).setValue(facility.getId());
+    }
+
 
 
 //    public void saveNewPatientIdentifier(Reference reference, ImmunizationRegistry immunizationRegistry) {

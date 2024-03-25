@@ -5,10 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
-import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.Group;
-import org.hl7.fhir.r5.model.Immunization;
-import org.hl7.fhir.r5.model.Patient;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
@@ -18,6 +15,7 @@ import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.GroupMapperR5;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
+import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +38,8 @@ public class FhirConversionController {
     private ImmunizationMapperR5 immunizationMapper;
     @Autowired
     private GroupMapperR5 groupMapperR5;
+    @Autowired
+    private OrganizationMapperR5 organizationMapperR5;
 
     @Autowired
     private BundleImportService bundleImportService;
@@ -99,6 +99,16 @@ public class FhirConversionController {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         Group group = groupMapperR5.toFhirGroup(ehrGroup);
         String resource = parser.encodeResourceToString(group);
+        return ResponseEntity.ok(resource);
+    }
+
+    @GetMapping(FACILITY_PREFIX + "/{facilityId}/resource")
+    @Transactional(readOnly=true, noRollbackFor=Exception.class)
+    public ResponseEntity<String> facilityResource(
+            @RequestAttribute() Facility facility) {
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        Organization organization = organizationMapperR5.toFhirOrganization(facility);
+        String resource = parser.encodeResourceToString(organization);
         return ResponseEntity.ok(resource);
     }
 

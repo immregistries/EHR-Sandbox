@@ -148,3 +148,10 @@ tr.element-row:not(.expanded-row):active {
   align-items: baseline;
   gap: 5px 5px;
 }
+
+
+.tool-buttons-wrap-flex {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}

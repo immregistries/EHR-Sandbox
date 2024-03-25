@@ -11,7 +11,7 @@ export class CurrentSelectedWithIdService<T extends ObjectWithID> extends Curren
 
 
   public getCurrentId(): number {
-    return this.current.value.id ?? -1
+    return this.current.value?.id ?? -1
   }
 
   constructor(subject : BehaviorSubject<T>

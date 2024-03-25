@@ -11,6 +11,7 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
 import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
+import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 
 @Component({
   selector: 'app-feedback-table',
@@ -24,15 +25,37 @@ import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vacci
     ]),
   ],
 })
-export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
-  dataSource = new MatTableDataSource<Feedback>([]);
+export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements  OnInit,AfterViewInit {
+  // dataSource = new MatTableDataSource<Feedback>([]);
   expandedElement: Feedback | null = null;
 
   @Input() facility: Facility | null = null;
-  @Input() patient?: EhrPatient;
-  @Input() vaccination?: VaccinationEvent;
+  private _patient?: EhrPatient | undefined;
+  public get patient(): EhrPatient | undefined {
+    return this._patient;
+  }
+  @Input()
+  public set patient(value: EhrPatient | undefined) {
+    this._patient = value;
+    this.refreshColumns()
+    if (value) {
+      this.dataSource.data = value.feedbacks ?? []
+    }
+  }
+  private _vaccination?: VaccinationEvent | undefined;
+  public get vaccination(): VaccinationEvent | undefined {
+    return this._vaccination;
+  }
+  @Input()
+  public set vaccination(value: VaccinationEvent | undefined) {
+    this._vaccination = value;
+    this.refreshColumns()
+    if (value) {
+      this.dataSource.data = value.feedbacks ?? []
+    }
+  }
   @Input() title: string = 'Issues'
-  loading: boolean = false
+  // loading: boolean = false
 
   columns!: (keyof Feedback | 'remove')[]
 
@@ -41,61 +64,35 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     return this.registries?.find((reg) => id == reg.id)?.name ?? '' + id
   }
 
-  onSelection(event: Feedback) {
-    if (this.expandedElement && this.expandedElement.id == event.id){
-      this.expandedElement = null
-    } else {
-      this.expandedElement = event
-    }
-  }
-
   constructor(
     private dialog: MatDialog,
-    private tenantService: TenantService,
-    private facilityService: FacilityService,
-    private feedbackService: FeedbackService,
-    private patientService: PatientService,
-    private snackBarService: SnackBarService,
+    // private tenantService: TenantService,
+    // private facilityService: FacilityService,
+    // private feedbackService: FeedbackService,
+    // private patientService: PatientService,
+    // private snackBarService: SnackBarService,
     private immunizationRegistryService: ImmunizationRegistryService,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient, vaccination: VaccinationEvent}) {
+
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient, vaccination: VaccinationEvent}
+    ) {
+      super()
+      this.allow_create = false
       if (data?.patient){
         this.patient = data.patient;
       }
-      if (data?.vaccination){
+      if (data.vaccination){
         this.vaccination = data.vaccination;
       }
     }
 
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
   ngOnInit(): void {
     this.refreshColumns()
-
     this.immunizationRegistryService.getRefresh().subscribe(() => {
       this.immunizationRegistryService.readImmRegistries().subscribe((res) => {
         this.registries = res
       })
     })
-  }
-
-  ngAfterViewInit(): void {
-    // Set filter rules for research
-    this.dataSource.filterPredicate = (data: Feedback, filter: string) => {
-      return (JSON.stringify(data) + this.registryName(data.iis)).trim().toLowerCase().indexOf(filter) !== -1
-    };
-    this.feedbackService.getRefresh().subscribe(bool => {
-      this.refreshData()
-    })
-  }
-
-  ngOnChanges(): void {
-    this.refreshColumns()
-    this.refreshData()
   }
 
   refreshColumns(): void {
@@ -117,21 +114,21 @@ export class FeedbackTableComponent implements  OnInit,AfterViewInit,OnChanges {
     }
   }
 
-  refreshData(){
-    if (this.vaccination && this.vaccination.id && this.vaccination.id > 0){
-      this.dataSource.data = this.vaccination.feedbacks ?? []
-    } else if (this.patient && this.patient.id && this.patient.id > 0) {
-      this.dataSource.data = this.patient.feedbacks ?? []
-    } else if (this.facility && this.facility.id > -1) {
-      this.feedbackService.readFacilityFeedback(this.facility.id).subscribe((res) => {
-        this.dataSource.data = res
-        this.loading = false
-      })
-    } else {
-      this.dataSource.data = []
-      this.loading = false
-    }
-  }
+  // refreshData(){
+  //   if (this.vaccination && this.vaccination.id && this.vaccination.id > 0){
+  //     this.dataSource.data = this.vaccination.feedbacks ?? []
+  //   } else if (this.patient && this.patient.id && this.patient.id > 0) {
+  //     this.dataSource.data = this.patient.feedbacks ?? []
+  //   } else if (this.facility && this.facility.id > -1) {
+  //     this.feedbackService.readFacilityFeedback(this.facility.id).subscribe((res) => {
+  //       this.dataSource.data = res
+  //       this.loading = false
+  //     })
+  //   } else {
+  //     this.dataSource.data = []
+  //     this.loading = false
+  //   }
+  // }
 
 
 

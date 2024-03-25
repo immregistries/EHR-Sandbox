@@ -72,7 +72,7 @@ public class GroupMapperR5 {
 
         group.setDescription(ehrGroup.getDescription());
         group.setManagingEntity(new Reference("Organization/"));
-        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
+//        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
         for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
             Group.GroupCharacteristicComponent groupCharacteristicComponent =  group.addCharacteristic();
             groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))

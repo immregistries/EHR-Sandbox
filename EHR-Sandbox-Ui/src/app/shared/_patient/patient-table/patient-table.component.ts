@@ -13,13 +13,6 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
   selector: 'app-patient-table',
   templateUrl: './patient-table.component.html',
   styleUrls: ['./patient-table.component.css'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
 })
 export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient> implements AfterViewInit {
 

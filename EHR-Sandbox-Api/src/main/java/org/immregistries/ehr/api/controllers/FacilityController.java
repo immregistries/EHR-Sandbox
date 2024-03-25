@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities"})
@@ -47,8 +48,16 @@ public class FacilityController {
         return facilityRepository.findByIdAndTenantId(facilityId,tenantId);
     }
 
-    @PostMapping()
-    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility, @RequestParam Optional<String> parentId) {
+    @GetMapping("/{facilityId}/$children")
+    public Set<Facility> getFacilityChildren(@PathVariable() String tenantId,
+                                             @PathVariable() String facilityId) {
+        return facilityRepository.findByIdAndTenantId(facilityId,tenantId).orElseThrow().getFacilities();
+    }
+
+    @PostMapping({"","/{parentId}/facilities"})
+    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility
+//            , @RequestParam Optional<String> parentId
+    ) {
         if (facility.getNameDisplay().length() < 1){
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
@@ -56,8 +65,8 @@ public class FacilityController {
             if (facilityRepository.existsByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay())){
                 throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already exists");
             }
-            if (parentId.isPresent()) {
-                Facility parentFacility = facilityRepository.findByIdAndTenantId(parentId.get(), tenant.getId())
+            if (facility.getParentFacility() != null) {
+                Facility parentFacility = facilityRepository.findByIdAndTenantId(facility.getParentFacility().getId(), tenant.getId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid parent facility, must have same tenant"));
                 facility.setParentFacility(parentFacility);
             }

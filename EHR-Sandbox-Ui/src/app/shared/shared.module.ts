@@ -77,6 +77,9 @@ import { GroupDetailsComponent } from './_group/group-details/group-details.comp
 import { CardDisplayComponent } from './_components/card-display/card-display.component';
 import { PatientDisplayComponent } from './_patient/patient-display/patient-display.component';
 import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/vaccination-display.component';
+import { FacilityDashboardComponent } from './_facility/facility-dashboard/facility-dashboard.component';
+import { FacilityToolsComponent } from './_facility/facility-tools/facility-tools.component';
+import { FacilityTableComponent } from './_facility/facility-table/facility-table.component';
 
 
 @NgModule({
@@ -139,6 +142,9 @@ import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/
     CardDisplayComponent,
     PatientDisplayComponent,
     VaccinationDisplayComponent,
+    FacilityDashboardComponent,
+    FacilityToolsComponent,
+    FacilityTableComponent,
   ],
   imports: [
     CommonModule,

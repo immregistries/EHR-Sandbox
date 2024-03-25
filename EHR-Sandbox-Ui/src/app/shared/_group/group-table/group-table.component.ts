@@ -14,14 +14,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 @Component({
   selector: 'app-group-table',
   templateUrl: './group-table.component.html',
-  styleUrls: ['./group-table.component.css'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  styleUrls: ['./group-table.component.css']
 })
 export class GroupTableComponent extends AbstractDataTableComponent<EhrGroup> {
   @Input() title: string = 'Groups'

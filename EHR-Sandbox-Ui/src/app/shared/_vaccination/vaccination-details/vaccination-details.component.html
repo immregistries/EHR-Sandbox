@@ -1,4 +1,4 @@
-<span [style]="flex? '' : 'display: flex; align-items: center;'">
+<span class="tool-buttons-wrap-flex">
   <button mat-icon-button  matTooltip="Edit" color="primary" (click)="openEdition()">
     <mat-icon>edit</mat-icon>
   </button>
@@ -15,6 +15,7 @@
     Local facility
   </button>
   <app-json-dialog-button mat-raised-button [content]="vaccination"></app-json-dialog-button>
+  <ng-content></ng-content>
 </span>
 
 <!-- <p>

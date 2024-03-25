@@ -1,6 +1,4 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { EhrPatient } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -13,8 +11,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class PatientDashboardComponent {
   @Input() patient!: EhrPatient
 
-  constructor(private breakpointObserver: BreakpointObserver,
-    private patientService: PatientService,
+  constructor(private patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<PatientDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient?: EhrPatient | number}) {
       if(data?.patient) {

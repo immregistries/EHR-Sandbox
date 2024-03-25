@@ -51,7 +51,7 @@ export interface Facility {
   tenant?: Tenant | number;
   nameDisplay?: string;
   facilities?: (Facility | number)[];
-  parentFacility?: Facility | number;
+  parentFacility?: Facility;
 }
 
 export interface ImmunizationRegistry {

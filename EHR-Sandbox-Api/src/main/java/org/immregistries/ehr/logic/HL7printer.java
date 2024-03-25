@@ -3,8 +3,10 @@ package org.immregistries.ehr.logic;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 
+import org.hl7.fhir.r5.model.Identifier;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -16,8 +18,12 @@ import org.immregistries.ehr.api.entities.Vaccine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
+
 @Service
 public class HL7printer {
+    @Autowired
+    ResourceIdentificationService resourceIdentificationService;
     @Autowired
     CodeMapManager codeMapManager;
 
@@ -37,7 +43,7 @@ public class HL7printer {
         StringBuilder sb = new StringBuilder();
         CodeMap codeMap = codeMapManager.getCodeMap();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        createMSH("VXU^V04^VXU_V04", "Z22", sb);
+        createMSH("VXU^V04^VXU_V04", "Z22", sb, facility);
         printQueryPID(patient, sb, sdf, 1);
         printPD1(patient,sb, sdf);
         printQueryNK1(patient, sb, codeMap);
@@ -327,14 +333,19 @@ public class HL7printer {
         return sb.toString();
     }
 
-    public void createMSH(String messageType, String profileId, StringBuilder sb) {
-        String sendingApp = "";
-        String sendingFac = "";
+    public void createMSH(String messageType, String profileId, StringBuilder sb, Facility facility) {
+        // TODO Check that this is accurate as previous implementation did not fit the MSH doc
+        String sendingApp = "EHR Sandbox" + " v" + EhrApiApplication.VERSION;
+        String sendingFac;
+        if (Objects.nonNull(facility)) {
+            Identifier identifier = resourceIdentificationService.facilityIdentifier(facility);
+            sendingFac = identifier.getValue();
+//        "^" + identifier.getValue() + "^L,M,N";
+        } else {
+            sendingFac = "";
+        }
         String receivingApp = "";
-        String receivingFac = "EHR Sandbox";
-
-        receivingFac += " v" + EhrApiApplication.VERSION;
-
+        String receivingFac = "";
 
         String sendingDateString;
         {
@@ -346,14 +357,22 @@ public class HL7printer {
             uniqueId = "" + System.currentTimeMillis() + nextIncrement();
         }
         String production = "P";
-        // build MSH
+        // build MSH TODO verify order
+//      MSH.1 | MSH.2
         sb.append("MSH|^~\\&|");
-        sb.append(receivingApp + "|");
-        sb.append(receivingFac + "|");
+//      MSH.3
         sb.append(sendingApp + "|");
+//      MSH.4
         sb.append(sendingFac + "|");
+//      MSH.5
+        sb.append(receivingApp + "|");
+//      MSH.6
+        sb.append(receivingFac + "|");
+//      MSH.7
         sb.append(sendingDateString + "|");
+//      MSH.8
         sb.append("|");
+//      MSH.9
         sb.append(messageType + "|");
         sb.append(uniqueId + "|");
         sb.append(production + "|");

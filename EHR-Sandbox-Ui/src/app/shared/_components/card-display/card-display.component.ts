@@ -11,6 +11,6 @@ export class CardDisplayComponent {
   @Input() model!: any
 
   isEmpty() {
-    return JSON.stringify(this.model).length == 2
+    return !this.model || JSON.stringify(this.model).length == 2
   }
 }

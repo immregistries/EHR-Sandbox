@@ -14,7 +14,6 @@ import { TenantService } from '../../_services/tenant.service';
 })
 export class RefreshNotificationComponent implements OnInit {
 
-  public pathname = window.location.href.split('#')[1];
   notification: boolean = false
 
 
@@ -28,7 +27,7 @@ export class RefreshNotificationComponent implements OnInit {
   ngOnInit(): void {
     this.notificationCheckService.setNotificationJsSubscription(
       interval(40000).pipe().subscribe(() => {
-        if (!this.pathname.startsWith('/home')) {
+        if (!document.location.hash.startsWith('#/home')) {
           // this.notification = !this.notification
           /**
            * checking if current facility was modified since last load ?

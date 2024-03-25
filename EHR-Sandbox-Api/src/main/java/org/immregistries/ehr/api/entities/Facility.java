@@ -7,12 +7,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "facility"
-//        ,indexes = {@Index(name = "tenant_id", columnList = "tenant_id")}
-)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id",
-        scope = Facility.class)
+@Table(name = "facility", indexes = {
+        @Index(name = "idx_facility_id", columnList = "facility_id"),
+        @Index(name = "idx_facility", columnList = "parent_facility_id")
+})
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "id",
+//        scope = Facility.class)
 ///**
 // * Solves a "No Session exception" when using facility.getPatients(), issue about lazy loading apparently
 // */
@@ -27,24 +28,24 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-//    @JsonBackReference("tenant-facility")
-//    @JsonIdentityReference()
+    @JsonIgnore()
     private Tenant tenant;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_facility_id")
-    @JsonBackReference("parent")
-    private Facility parentFacility;
 
     @Column(name = "name_display", nullable = false, length = 250)
     private String nameDisplay = "";
 
     @OneToMany(mappedBy = "administeringFacility")
-    @JsonIgnore
+    @JsonIgnore()
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "parentFacility")
-    @JsonManagedReference("parent")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_facility_id")
+//    @JsonBackReference("parent")
+    private Facility parentFacility;
+
+    @OneToMany(mappedBy = "parentFacility", cascade = CascadeType.DETACH)
+//    @JsonManagedReference("parent")
+    @JsonIgnore()
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
@@ -56,6 +57,7 @@ public class Facility {
 //    @JsonManagedReference( value = "facility-feedback")
     @JsonIgnore
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "facility")
 //    @JsonManagedReference( value = "facility-feedback")
     @JsonIgnore

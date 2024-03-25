@@ -1,0 +1,14 @@
+.grid-container {
+  margin: 5px;
+}
+
+.card-title {
+  padding: 0px;
+  margin: 0px;
+}
+
+.dashboard-card-content {
+  text-align: center;
+  /* height: inherit; */
+  /* overflow: auto; */
+}

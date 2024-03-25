@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Feedback } from '../_model/rest';
-import { BehaviorSubject, Observable, of, share } from 'rxjs';
+import { BehaviorSubject, Observable, of, share, switchMap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
@@ -16,6 +16,8 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class FeedbackService extends RefreshService {
+
+  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
@@ -55,14 +57,15 @@ export class FeedbackService extends RefreshService {
   }
 
   readCurrentFacilityFeedback(): Observable<Feedback[]> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-
-    if (facilityId < 0) {
-      return of()
-    }
-    return this.http.get<Feedback[]>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/feedbacks`,
-      httpOptions).pipe(share());
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      if (value) {
+        return this.http.get<Feedback[]>(
+          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/feedbacks`,
+          httpOptions)
+      } else {
+        return of([])
+      }
+    }))
   }
+
 }

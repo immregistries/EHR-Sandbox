@@ -13,14 +13,7 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
 @Component({
   selector: 'app-vaccination-table',
   templateUrl: './vaccination-table.component.html',
-  styleUrls: ['./vaccination-table.component.css'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  styleUrls: ['./vaccination-table.component.css']
 })
 export class VaccinationTableComponent extends AbstractDataTableComponent<VaccinationEvent> implements AfterViewInit {
   private codeBaseMap!: CodeBaseMap;

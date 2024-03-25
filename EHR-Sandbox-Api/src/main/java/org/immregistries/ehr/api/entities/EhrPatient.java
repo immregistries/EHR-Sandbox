@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
-@Table(name = "patient", indexes = {
-        @Index(name = "facility_id", columnList = "facility_id")
-})
+@Table(name = "patient"
+//        , indexes = {
+//        @Index(name = "facility_id", columnList = "facility_id")
+//}
+)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",

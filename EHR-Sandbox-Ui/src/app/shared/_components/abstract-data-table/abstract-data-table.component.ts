@@ -1,10 +1,19 @@
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 import { ObjectWithID } from 'src/app/core/_model/rest';
 
 @Component({
-  template: ''
+  template: '',
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
+
 })
 export class AbstractDataTableComponent<T extends ObjectWithID> implements AfterViewInit {
 
@@ -24,13 +33,13 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
 
 
   @Input()
-  observableRefresh!: Observable<any>;
+  observableRefresh?: Observable<any>;
   @Input()
   observableSource!: Observable<T[]>;
 
   public _data_set_input: boolean = false
   @Input()
-  public set data(value: T[] | undefined) {
+  public set dataArray(value: T[] | undefined) {
     this._data_set_input = true
     if (value) {
       this.dataSource.data = value;
@@ -43,7 +52,7 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
     if (!this._data_set_input) {
-      this.observableRefresh.subscribe(() => {
+      this.observableRefresh?.subscribe(() => {
         this.loading = true
         this.observableSource.subscribe((list) => {
           this.loading = false
