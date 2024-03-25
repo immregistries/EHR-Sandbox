@@ -11,11 +11,11 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
 
 @Component({
-  selector: 'app-group-details',
-  templateUrl: './group-details.component.html',
-  styleUrls: ['./group-details.component.css']
+  selector: 'app-group-tools',
+  templateUrl: './group-tools.component.html',
+  styleUrls: ['./group-tools.component.css']
 })
-export class GroupDetailsComponent {
+export class GroupToolsComponent {
   @Input() ehrGroup!: EhrGroup
 
   constructor(public dialog: MatDialog,

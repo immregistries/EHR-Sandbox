@@ -11,11 +11,11 @@ import { FhirResource } from 'fhir/r5';
 import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
 
 @Component({
-  selector: 'app-patient-details',
-  templateUrl: './patient-details.component.html',
-  styleUrls: ['./patient-details.component.css']
+  selector: 'app-patient-tools',
+  templateUrl: './patient-tools.component.html',
+  styleUrls: ['./patient-tools.component.css']
 })
-export class PatientDetailsComponent implements OnInit {
+export class PatientToolsComponent implements OnInit {
   @Input() patient!: EhrPatient
 
   constructor(private dialog: MatDialog,

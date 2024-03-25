@@ -27,13 +27,13 @@ import { FetchAndLoadComponent } from './_vaccination/fetch-and-load/fetch-and-l
 import { RecommendationComponentTableComponent } from './_vaccination/recommendation-table/recommendation-component-table/recommendation-component-table.component';
 import { RecommendationTableComponent } from './_vaccination/recommendation-table/recommendation-table.component';
 import { VaccinationDashboardComponent } from './_vaccination/vaccination-dashboard/vaccination-dashboard.component';
-import { VaccinationDetailsComponent } from './_vaccination/vaccination-details/vaccination-details.component';
+import { VaccinationToolsComponent } from './_vaccination/vaccination-tools/vaccination-tools.component';
 import { VaccinationFreeFormComponent } from './_vaccination/vaccination-form/vaccination-free-form/vaccination-free-form.component';
 import { VaccinationHistoryComponent } from './_vaccination/vaccination-history/vaccination-history.component';
 import { VaccinationTableComponent } from './_vaccination/vaccination-table/vaccination-table.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PatientDashboardComponent } from './_patient/patient-dashboard/patient-dashboard.component';
-import { PatientDetailsComponent } from './_patient/patient-details/patient-details.component';
+import { PatientToolsComponent } from './_patient/patient-tools/patient-tools.component';
 import { PatientFormComponent } from './_patient/patient-form/patient-form.component';
 import { PatientFreeFormComponent } from './_patient/patient-form/patient-free-form/patient-free-form.component';
 import { PatientHistoryComponent } from './_patient/patient-history/patient-history.component';
@@ -73,7 +73,7 @@ import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.
 import { AbstractDataTableComponent } from './_components/abstract-data-table/abstract-data-table.component';
 import { GroupTableComponent } from './_group/group-table/group-table.component';
 import { GroupAllDashboardComponent } from './_group/group-all-dashboard/group-all-dashboard.component';
-import { GroupDetailsComponent } from './_group/group-details/group-details.component';
+import { GroupToolsComponent } from './_group/group-tools/group-tools.component';
 import { CardDisplayComponent } from './_components/card-display/card-display.component';
 import { PatientDisplayComponent } from './_patient/patient-display/patient-display.component';
 import { VaccinationDisplayComponent } from './_vaccination/vaccination-display/vaccination-display.component';
@@ -107,7 +107,7 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
     VaccinationDashboardComponent,
-    VaccinationDetailsComponent,
+    VaccinationToolsComponent,
     VaccinationHistoryComponent,
     RecommendationTableComponent,
     RecommendationComponentTableComponent,
@@ -117,7 +117,7 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
     PatientListComponent,
     PatientFreeFormComponent,
     PatientTableComponent,
-    PatientDetailsComponent,
+    PatientToolsComponent,
     PatientDashboardComponent,
     PatientMenuComponent,
     PatientHistoryComponent,
@@ -138,7 +138,7 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
     AbstractDataTableComponent,
     GroupTableComponent,
     GroupAllDashboardComponent,
-    GroupDetailsComponent,
+    GroupToolsComponent,
     CardDisplayComponent,
     PatientDisplayComponent,
     VaccinationDisplayComponent,
@@ -212,7 +212,7 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
     VaccinationTableComponent,
     VaccinationFreeFormComponent,
     VaccinationDashboardComponent,
-    VaccinationDetailsComponent,
+    VaccinationToolsComponent,
     VaccinationHistoryComponent,
     RecommendationTableComponent,
     RecommendationComponentTableComponent,
@@ -222,7 +222,7 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
     PatientListComponent,
     PatientFreeFormComponent,
     PatientTableComponent,
-    PatientDetailsComponent,
+    PatientToolsComponent,
     PatientDashboardComponent,
     PatientMenuComponent,
     PatientHistoryComponent,

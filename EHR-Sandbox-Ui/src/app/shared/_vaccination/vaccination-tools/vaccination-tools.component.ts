@@ -9,11 +9,11 @@ import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.c
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 
 @Component({
-  selector: 'app-vaccination-details',
-  templateUrl: './vaccination-details.component.html',
-  styleUrls: ['./vaccination-details.component.css']
+  selector: 'app-vaccination-tools',
+  templateUrl: './vaccination-tools.component.html',
+  styleUrls: ['./vaccination-tools.component.css']
 })
-export class VaccinationDetailsComponent implements OnInit {
+export class VaccinationToolsComponent implements OnInit {
   @Input() patientId!: number;
   @Input() vaccination!: VaccinationEvent;
 
