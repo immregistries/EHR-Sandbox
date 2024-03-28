@@ -126,13 +126,13 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 		return map;
 	}
 
-	@Bean
-	/**
-	 * MultiMapValue<GroupId, PatientId>
-	 */
-	public MultiValueMap<String,String> groupMemberPatientIndex() {
-		MultiValueMap<String,String> map = new MultiValueMapAdapter<>(new HashMap<>(40));
-		return map;
-	}
+//	@Bean
+//	/**
+//	 * MultiMapValue<GroupId, PatientId>
+//	 */
+//	public MultiValueMap<String,String> groupMemberPatientIndex() {
+//		MultiValueMap<String,String> map = new MultiValueMapAdapter<>(new HashMap<>(40));
+//		return map;
+//	}
 
 }

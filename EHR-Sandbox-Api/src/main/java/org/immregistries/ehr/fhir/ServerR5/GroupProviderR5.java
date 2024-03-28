@@ -43,8 +43,6 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     public ResourceType getResourceName() {
         return ResourceType.Group;
     }
-    @Resource
-    Map<Integer, Map<Integer, Map<String, Group>>> groupsStore;
 
     @Autowired
     private FacilityRepository facilityRepository;
@@ -76,13 +74,6 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     }
 
     public MethodOutcome update(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
-
-        groupsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
-        groupsStore.get(facility.getId())
-                .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
-        groupsStore.get(facility.getId())
-                .get(immunizationRegistry.getId())
-                .put(group.getIdElement().getIdPart(), group);
         Optional<EhrGroup> old = ehrGroupRepository.findByFacilityIdAndImmunizationRegistryIdAndName(facility.getId(),immunizationRegistry.getId(), group.getName());
         if (old.isEmpty()) {
             return create(group,facility,immunizationRegistry);
@@ -116,12 +107,6 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     }
 
     public MethodOutcome create(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
-        groupsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
-        groupsStore.get(facility.getId())
-                .putIfAbsent(immunizationRegistry.getId(), new HashMap<>(5));
-        groupsStore.get(facility.getId())
-                .get(immunizationRegistry.getId())
-                .put(group.getIdElement().getIdPart(),group);
         EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
         ehrGroupRepository.save(ehrGroup);
         return new MethodOutcome().setResource(group);

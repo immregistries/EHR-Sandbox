@@ -30,7 +30,7 @@
   </mat-dialog-content>
 
 
-  <mat-dialog-actions align="end">
+  <div mat-dialog-actions align="end">
     <button mat-stroked-button type="button" mat-dialog-close color="primary">Cancel</button>
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
       <mat-icon>casino</mat-icon>
@@ -40,5 +40,5 @@
       <mat-icon>save</mat-icon>
       Save
     </button>
-  </mat-dialog-actions>
+  </div>
 </form>

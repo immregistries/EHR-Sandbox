@@ -37,6 +37,12 @@ public class ImmunizationRegistry {
     @Column(name = "iis_password", nullable = false, length = 600)
     private String iisPassword = "";
 
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault = false;
+
+    @Column(name = "description", nullable = false, length = 600)
+    private String description = "";
+
     public String getHeaders() {
         return headers;
     }
@@ -110,5 +116,21 @@ public class ImmunizationRegistry {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(Boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

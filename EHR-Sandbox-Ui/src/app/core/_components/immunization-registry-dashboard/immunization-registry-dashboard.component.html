@@ -1,5 +1,4 @@
 <app-tab-with-menu [label]="'IIS Settings'" >
-  <!-- sdkfjgbirjg -->
   <!-- <ng-container label>
     <span mat-tab-label>test</span>
   </ng-container> -->
@@ -7,8 +6,15 @@
     <p>Is content projection cool?</p>
   </ng-container> -->
     <!-- <span mat-tab-label label>test</span> -->
-    <app-immunization-registry-form content></app-immunization-registry-form>
+    <!-- <app-immunization-registry-form content></app-immunization-registry-form> -->
+    <!-- TODO correct the design that prevent it from working in stepper -->
+
 </app-tab-with-menu>
+<!-- TODO change this horrible fix -->
+<div style="overflow: scroll; height: 100%">
+  <app-immunization-registry-form content></app-immunization-registry-form>
+</div>
+
 
 
 

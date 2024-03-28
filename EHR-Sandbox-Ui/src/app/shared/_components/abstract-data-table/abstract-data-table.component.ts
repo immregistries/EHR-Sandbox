@@ -15,7 +15,7 @@ import { ObjectWithID } from 'src/app/core/_model/rest';
   ],
 
 })
-export class AbstractDataTableComponent<T extends ObjectWithID> implements AfterViewInit {
+export class AbstractDataTableComponent<T> implements AfterViewInit {
 
   constructor() { }
 
@@ -57,7 +57,8 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
         this.observableSource.subscribe((list) => {
           this.loading = false
           this.dataSource.data = list
-          if (this.selectedElement) {
+          if (this.hasIdElement(this.selectedElement)) {
+            // @ts-ignore
             this.onSelection(list.find((item: T) => { return item.id === this.selectedElement?.id }));
           }
         })
@@ -70,13 +71,27 @@ export class AbstractDataTableComponent<T extends ObjectWithID> implements After
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  onSelection(event: T | undefined) {
-    if (event && this.selectedElement?.id == event.id) {
-      this.selectedElement = undefined
+  onSelection(event: T | undefined, index?: number) {
+    if (event && this.selectedElement && this.hasIdElement(this.selectedElement) && this.hasIdElement(event)) {
+      // @ts-ignore
+      if (event && this.selectedElement?.id == event.id) {
+        this.selectedElement = undefined
+      } else {
+        this.selectedElement = event
+      }
     } else {
       this.selectedElement = event
     }
     this.selectEmitter.emit(this.selectedElement);
+  }
+
+
+  private hasIdElement(t: T | undefined) {
+    if (this.selectedElement && Object.keys(this.selectedElement).includes('id')) {
+      return true
+    } else {
+      return false
+    }
   }
 
 

@@ -20,7 +20,7 @@ export class VaccinationDashboardComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {vaccination: number | VaccinationEvent}) {
       if(data?.vaccination ) {
         this.patientService.getRefresh().subscribe((res) => {
-          if (typeof data.vaccination === "number" ||  "string") {
+          if ((typeof data.vaccination === "number" ||   typeof data.vaccination === "string")) {
             this.vaccinationService.quickReadVaccinationFromFacility(+data.vaccination).subscribe((res) => {
               this.vaccination = res
             })

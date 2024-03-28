@@ -196,6 +196,8 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
     MatBadgeModule,
     MatTooltipModule,
     MatIconModule,
+    ClipboardModule,
+
 
     SelectCodebaseComponent,
     TenantCreationComponent,

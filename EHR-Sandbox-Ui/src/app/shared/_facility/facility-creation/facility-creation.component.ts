@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
@@ -14,6 +14,9 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 })
 export class FacilityCreationComponent implements OnInit {
 
+  @Output()
+  success: EventEmitter<Facility> = new EventEmitter<Facility>()
+
   private _facility: Facility = { id: -1 };
   public get facility(): Facility {
     return this._facility;
@@ -21,7 +24,7 @@ export class FacilityCreationComponent implements OnInit {
   public set facility(value: Facility) {
     this._facility = value;
     if (this._facility.parentFacility) {
-      if (typeof this._facility.parentFacility === "number" || "string") {
+      if (typeof this._facility.parentFacility === "number" || typeof this._facility.parentFacility === "string") {
         this.parentId = +this._facility.parentFacility
       } else {
         this.parentId = this._facility.parentFacility.id
@@ -72,12 +75,12 @@ export class FacilityCreationComponent implements OnInit {
   }
 
   save() {
+    console.log("dialog",this._dialogRef)
+    // console.log("dialog", JSON.stringify(this._dialogRef))
     if (this.editionMode) {
       this.facilityService.putFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
         next: (res: HttpResponse<Facility>) => {
-          if (this._dialogRef && res.body) {
-            this._dialogRef.close(res.body)
-          }
+          this.onSuccess(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -86,11 +89,9 @@ export class FacilityCreationComponent implements OnInit {
       });
 
     } else {
-      this.facilityService.postFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
+      this.facilityService.postFacility(this.tenantService.getCurrentId(), this.facility, this.add_patients).subscribe({
         next: (res: HttpResponse<Facility>) => {
-          if (this._dialogRef && res.body) {
-            this._dialogRef.close(res.body)
-          }
+          this.onSuccess(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -107,6 +108,17 @@ export class FacilityCreationComponent implements OnInit {
     this.facilityService.getRandom(this.tenantService.getCurrentId()).subscribe((res) => {
       this.facility = res
     })
+  }
+
+  onSuccess(res: HttpResponse<Facility>) {
+    if (res.body) {
+      if (this._dialogRef &&  this._dialogRef.id
+        ) {
+        this._dialogRef.close(res.body)
+      } else {
+        this.success.emit(res.body)
+      }
+    }
   }
 
 }

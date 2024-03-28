@@ -1,8 +1,8 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { SettingsService } from 'src/app/core/_services/settings.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 
 @Component({
   selector: 'app-immunization-registry-form',
@@ -15,7 +15,11 @@ export class ImmunizationRegistryFormComponent implements OnInit {
   @Input()
   editMode: boolean = true
 
+  @Output()
+  success: EventEmitter<ImmunizationRegistry> = new EventEmitter<ImmunizationRegistry>()
+
   constructor(private registryService: ImmunizationRegistryService,
+    private snack: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<ImmunizationRegistryFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {}) {
       if (data) {
@@ -41,6 +45,8 @@ export class ImmunizationRegistryFormComponent implements OnInit {
     this.registryService.putImmRegistry(this.immunizationRegistry).subscribe(res => {
       this.registryService.doRefresh();
       this.registryService.setCurrent(res);
+      this.snack.successMessage('Saved')
+      this.success.emit(res)
     })
   }
 
@@ -54,6 +60,10 @@ export class ImmunizationRegistryFormComponent implements OnInit {
 
   new() {
     this.registryService.setCurrent({});
+  }
+
+  height(): number {
+    return window.innerHeight -200
   }
 
 }

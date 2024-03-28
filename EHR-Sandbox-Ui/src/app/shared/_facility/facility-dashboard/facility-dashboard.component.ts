@@ -32,15 +32,15 @@ export class FacilityDashboardComponent {
     public facilityService: FacilityService,
     public dialog: MatDialog,
     @Optional() public _dialogRef: MatDialogRef<FacilityDashboardComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility}) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility | number}) {
     if (data?.facility) {
-      // if (typeof data.facility === "number" || "string") {
-      //   this.facilityService.readFacility(tenantService.getCurrentId(), +data.facility).subscribe((res) => {
-      //     this.facility = res
-      //   });
-      // } else {
+      if (typeof data.facility === "number" || typeof data.facility === "string") {
+        this.facilityService.readFacility(tenantService.getCurrentId(), +data.facility).subscribe((res) => {
+          this.facility = res
+        });
+      } else {
         this.facility = data.facility
-      // }
+      }
     } else {
       this.facilityService.getCurrentObservable().subscribe((res) => {
         this.facility = res

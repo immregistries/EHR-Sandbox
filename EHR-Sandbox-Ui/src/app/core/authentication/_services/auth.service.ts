@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SettingsService } from '../../_services/settings.service';
 import { User } from '../../_model/rest';
@@ -13,7 +13,7 @@ const httpOptions = {
 })
 export class AuthService {
   constructor(private http: HttpClient, private settings: SettingsService ) { }
-  login(user: User): Observable<JwtResponse> {
-    return this.http.post<JwtResponse>(this.settings.getApiUrl() + '/auth', user, httpOptions);
+  login(user: User): Observable<HttpResponse<JwtResponse>> {
+    return this.http.post<JwtResponse>(this.settings.getApiUrl() + '/auth', user, {observe: 'response'});
   }
 }

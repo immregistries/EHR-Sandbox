@@ -63,9 +63,10 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
   }
 
-  postFacility(tenantId: number, facility: Facility): Observable<HttpResponse<Facility>> {
+  postFacility(tenantId: number, facility: Facility, populate?: boolean): Observable<HttpResponse<Facility>> {
     return this.http.post<Facility>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities${populate ? `?populate=${populate}` : ''
+      }`,
       facility, { observe: 'response' })
   }
 

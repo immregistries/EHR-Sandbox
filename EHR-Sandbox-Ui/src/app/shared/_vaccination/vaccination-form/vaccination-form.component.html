@@ -1,5 +1,5 @@
 <form (submit)="save()" #vaccinationForm="ngForm" >
-  <mat-dialog-content class="form-dialog-content">
+  <div mat-dialog-content class="form-dialog-content">
     <mat-tab-group>
       <mat-tab label="Vaccination form">
         <div class="grid-container special-icon-badge">
@@ -38,8 +38,8 @@
       </mat-tab>
       <button matButton></button>
     </mat-tab-group>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
+  </div>
+  <div mat-dialog-actions align="end">
     <button mat-stroked-button type="button" mat-dialog-close color="primary">Cancel</button>
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
       <mat-icon>casino</mat-icon>
@@ -49,5 +49,5 @@
       <mat-icon>save</mat-icon>
       Save
     </button>
-  </mat-dialog-actions>
+  </div>
 </form>

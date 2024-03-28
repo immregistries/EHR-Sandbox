@@ -1,6 +1,6 @@
-<mat-grid-list cols="2" *ngIf="immunizationRegistry">
-  <mat-grid-tile>
-    <div class="">
+<mat-grid-list cols="2" *ngIf="immunizationRegistry" class="grid-list-padded" rowHeight="">
+  <mat-grid-tile class="form-tile">
+    <div class="form-container">
       <mat-card class="form-card">
         <mat-card-header class="card-title">
           <mat-card-title class="card-title">
@@ -14,6 +14,21 @@
               <input matInput [(ngModel)]="immunizationRegistry.name">
             </mat-form-field>
           </div>
+          <div>
+            <mat-form-field appearance="fill" style="min-width: 40em;">
+              <mat-label>Description</mat-label>
+              <textarea matInput [(ngModel)]="immunizationRegistry.description"></textarea>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="form-card">
+        <mat-card-header class="card-title">
+          <mat-card-title class="card-title">
+            API URLs
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="form-card-content">
           <div>
             <mat-form-field appearance="fill" style="min-width: 40em;">
               <mat-label>FHIR api url</mat-label>
@@ -51,6 +66,7 @@
             <mat-label>Extra headers</mat-label>
             <input matInput [(ngModel)]="immunizationRegistry.headers">
           </mat-form-field>
+          <mat-checkbox [(ngModel)]="immunizationRegistry.default">Selected by default</mat-checkbox>
         </mat-card-content>
         <mat-card-footer>
           <mat-card-subtitle>

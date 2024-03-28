@@ -1,11 +1,12 @@
 package org.immregistries.ehr.api.controllers;
 
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.logic.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,10 @@ public class FacilityController {
 
     @Autowired
     private FacilityRepository facilityRepository;
+    @Autowired
+    private EhrPatientController ehrPatientController;
+    @Autowired
+    private RandomGenerator randomGenerator;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
     @Autowired
@@ -45,39 +50,62 @@ public class FacilityController {
     @GetMapping("/{facilityId}")
     public Optional<Facility> getFacility(@PathVariable() String tenantId,
                                           @PathVariable() String facilityId) {
-        return facilityRepository.findByIdAndTenantId(facilityId,tenantId);
+        return facilityRepository.findByIdAndTenantId(facilityId, tenantId);
     }
 
     @GetMapping("/{facilityId}/$children")
     public Set<Facility> getFacilityChildren(@PathVariable() String tenantId,
                                              @PathVariable() String facilityId) {
-        return facilityRepository.findByIdAndTenantId(facilityId,tenantId).orElseThrow().getFacilities();
+        return facilityRepository.findByIdAndTenantId(facilityId, tenantId).orElseThrow().getFacilities();
     }
 
-    @PostMapping({"","/{parentId}/facilities"})
-    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility
-//            , @RequestParam Optional<String> parentId
+    @PostMapping()
+    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility, @RequestParam Optional<Boolean> populate
     ) {
-        if (facility.getNameDisplay().length() < 1){
+        if (facility.getNameDisplay().length() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
-        }else {
-            if (facilityRepository.existsByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay())){
-                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Facility already exists");
-            }
-            if (facility.getParentFacility() != null) {
-                Facility parentFacility = facilityRepository.findByIdAndTenantId(facility.getParentFacility().getId(), tenant.getId())
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid parent facility, must have same tenant"));
-                facility.setParentFacility(parentFacility);
-            }
-            facility.setTenant(tenant);
-            Facility newEntity = facilityRepository.save(facility);
-            return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
         }
+        if (facilityRepository.existsByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay())) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Name is already used");
+        }
+        if (facility.getParentFacility() != null) {
+            Facility parentFacility = facilityRepository.findByIdAndTenantId(facility.getParentFacility().getId(), tenant.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid parent facility, must have same tenant"));
+            facility.setParentFacility(parentFacility);
+        }
+        facility.setTenant(tenant);
+        Facility newEntity = facilityRepository.save(facility);
+        if (populate.isPresent()) {
+            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
+            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
+            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
+            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
+        }
+        return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
+
+    }
+
+    @PutMapping()
+    public ResponseEntity<Facility> putFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility) {
+        if (facility.getNameDisplay().length() < 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
+        }
+        Optional<Facility> oldWithSameName = facilityRepository.findByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay());
+        if (oldWithSameName.isPresent() && !Objects.equals(oldWithSameName.get().getId(), facility.getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Name is already used");
+        }
+        Facility oldFacility = facilityRepository.findByIdAndTenantId(facility.getId(), tenant.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid put facility, must have same tenant"));
+        facility.setTenant(tenant);
+        Facility newEntity = facilityRepository.save(facility);
+        return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
     }
 
     /**
      * Used by frontend to check if a refresh is needed on the current facility it is displaying
+     *
      * @return
      */
     @GetMapping("/$notification")

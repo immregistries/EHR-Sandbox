@@ -38,20 +38,32 @@ export class AuthenticationFormComponent implements OnInit {
     this.user.password = this.authFormGroup.value['password']
     this.authService.login(this.user).subscribe({
       next: (data) => {
-        this.tokenStorage.saveToken(data.accessToken);
-        this.tokenStorage.saveUser(data);
-        this.isLoginFailed = false;
-        this.isLoggedIn = true;
-        this.success.emit("success");
+        console.log("data", data.ok, data.status)
+        console.log("data", data)
+        if (data.ok) {
+          if (data.body) {
+            this.tokenStorage.saveToken(data.body.accessToken);
+            this.tokenStorage.saveUser(data.body);
+            this.isLoginFailed = false;
+            this.isLoggedIn = true;
+            this.success.emit(data.status);
+          }
+        }
         // this.reloadPage();
       },
       error: (err) => {
-        this.tokenStorage.signOut()
-        this.errorMessage = err.error.message;
+        console.log(err)
+        console.log(err)
+        console.log(err)
+        this.errorMessage = err.message;
         console.warn(this.errorMessage)
         this.isLoginFailed = true;
+        this.tokenStorage.signOut()
+
       }
     })
   }
+
+
 
 }

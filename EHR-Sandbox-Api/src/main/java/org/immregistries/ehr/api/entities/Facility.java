@@ -1,10 +1,13 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "facility", indexes = {
@@ -62,6 +65,12 @@ public class Facility {
 //    @JsonManagedReference( value = "facility-feedback")
     @JsonIgnore
     private Set<EhrGroup> groups = new LinkedHashSet<>();
+
+    @JsonInclude()
+    @Transient
+    public Integer getChildrenCount() {
+        return facilities.size();
+    }
 
     public Set<EhrGroup> getGroups() {
         return groups;

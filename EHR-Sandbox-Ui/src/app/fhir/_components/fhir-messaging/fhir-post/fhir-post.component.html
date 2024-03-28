@@ -27,9 +27,16 @@
           [(ngModel)]="autofillId">
           Autofill server Id in immunization
         </mat-checkbox> -->
+        <mat-checkbox appearance="fill">
+          Send as facility with header (experimental)
+        </mat-checkbox>
     </div>
 
     <div class="footer-end">
+      <button mat-stroked-button  type="button" color="primary" class="w3-right" [cdkCopyToClipboard]="resource" (click)="snackBarService.successMessage('Copied to clipBoard')">
+        <mat-icon>content_copy</mat-icon>
+        Copy to clipboard
+      </button>
       <button mat-raised-button class="w3-right" type="submit" color="primary">
         <mat-icon>send</mat-icon>
         Send to IIS

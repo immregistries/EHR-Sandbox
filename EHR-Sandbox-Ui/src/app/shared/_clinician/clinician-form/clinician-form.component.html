@@ -18,7 +18,7 @@
         </mat-card-content>
       </mat-card>
     </div>
-  <mat-dialog-actions align="end">
+  <div mat-dialog-actions align="end">
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!model.id || model.id < 0" color="primary">
       <mat-icon>casino</mat-icon>
       Random
@@ -27,7 +27,7 @@
       <mat-icon>save</mat-icon>
       Save
     </button>
-  </mat-dialog-actions>
+  </div>
 </form>
 
 

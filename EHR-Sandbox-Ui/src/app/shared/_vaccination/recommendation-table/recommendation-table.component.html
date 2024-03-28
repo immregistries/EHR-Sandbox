@@ -34,7 +34,7 @@
       <div class="element-detail"
       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
         <div style="display: flex; flex-direction: column;">
-          <app-recommendation-component-table [components]="element.recommendation"></app-recommendation-component-table>
+          <app-recommendation-component-table [dataArray]="element.recommendation"></app-recommendation-component-table>
           <app-json-dialog-button [content]="element"></app-json-dialog-button>
         </div>
       </div>

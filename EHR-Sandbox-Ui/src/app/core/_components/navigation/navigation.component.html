@@ -27,7 +27,8 @@
       <mat-divider></mat-divider>
       <a mat-list-item [matTooltip]="'Group management dashboard (in progress)'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/groups'])">Groups</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Facilities management dashboard (in progress)'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/facilities'])">Facilities</a>
+      <a mat-list-item [matTooltip]="'Facilities management dashboard (in progress)'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/facilities'])">Facilities</a>      <mat-divider></mat-divider>
+      <a mat-list-item [matTooltip]="'Tutorial / introduction prototype'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/steps'])">Steps</a>
       <!-- <mat-divider></mat-divider>
       <a mat-list-item [matTooltip]="'Remote Group management dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/remote-groups'])">Groups Deprecated</a> -->
     </mat-nav-list>
@@ -44,7 +45,7 @@
       <span>EHR Sandbox</span>
       <span style="width: 2em;"></span>
 
-      <span *ngIf="!pathname.startsWith('/home')" style="display: flex;">
+      <span *ngIf="showTopMenus()" style="display: flex;">
         <app-tenant-menu ></app-tenant-menu>
         <span></span>
         <app-facility-menu ></app-facility-menu>

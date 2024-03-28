@@ -25,8 +25,15 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  authenticationSuccess(event: string) {
-    this.router.navigate(['dashboard'])
+  authenticationSuccess(status: number) {
+    console.log(status)
+    if (status == 201) {
+      this.router.navigate(['steps'])
+
+    } else {
+      this.router.navigate(['dashboard'])
+
+    }
   }
 
 }

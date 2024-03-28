@@ -1,6 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Tenant } from 'src/app/core/_model/rest';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -16,10 +15,13 @@ export class TenantCreationComponent implements OnInit {
   public tenant: Tenant = {id: -1}
   editionMode: boolean = false;
 
+  @Output()
+  success: EventEmitter<Tenant> = new EventEmitter<Tenant>()
+
   constructor(private tenantService: TenantService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<TenantCreationComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { tenant?: Tenant }) {
+    @Optional() public _dialogRef?: MatDialogRef<TenantCreationComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { tenant?: Tenant }) {
       if (data && data.tenant) {
         this.tenant = data.tenant
         this.editionMode = true
@@ -34,8 +36,12 @@ export class TenantCreationComponent implements OnInit {
   save() {
     this.tenantService.postTenant( this.tenant).subscribe({
       next: (res: HttpResponse<Tenant>) => {
-        if (this._dialogRef && res.body) {
-          this._dialogRef.close(res.body)
+        if (res.body) {
+          if (this._dialogRef && this._dialogRef.id) {
+            this._dialogRef.close(res.body)
+          } else {
+            this.success.emit(res.body)
+          }
         }
       },
       error: (err) => {

@@ -60,6 +60,11 @@ export class NavigationComponent {
   //   this.dialog.open(AuthenticationDialogComponent)
   // }
 
+  dontShowTopBar: string[] = ['/home','/steps']
+  showTopMenus(): boolean {
+    return !this.dontShowTopBar.includes(this.pathname)
+  }
+
 
 
 

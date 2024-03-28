@@ -10,6 +10,31 @@
   bottom: 5px;
 }
 
+.card-title {
+  /* padding-top: 1px;
+  margin: 0px; */
+}
+
+.form-container {
+  /* overflow: scroll; */
+}
+.grid-list-padded {
+  padding-top: 20px;
+  /* display: flex; */
+}
+.form-tile {
+  overflow: visible;
+  /* display: flex; */
+}
+
+.mat-mdc-card-content:last-child {
+  padding: 8px 8px 0;
+}
+
+.mat-mdc-card-header {
+  display: flex;
+  padding: 4px 4px 0;
+}
 /*
 .dashboard-card-content {
   /* text-align: center; */

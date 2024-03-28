@@ -48,6 +48,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RemoteGroupDashboardComponent } from './_components/remote-group-dashboard/remote-group-dashboard.component';
 import { JsonDialogService } from './_services/json-dialog.service';
+import { StepsComponent } from './_components/steps/steps.component';
+import { MatStepperModule } from '@angular/material/stepper';
 
 @NgModule({
   declarations: [
@@ -57,6 +59,7 @@ import { JsonDialogService } from './_services/json-dialog.service';
     ImmunizationRegistryDashboardComponent,
     RefreshNotificationComponent,
     RemoteGroupDashboardComponent,
+    StepsComponent,
   ],
   imports: [
     CommonModule,
@@ -92,6 +95,7 @@ import { JsonDialogService } from './_services/json-dialog.service';
     MatProgressBarModule,
     MatBadgeModule,
     MatButtonToggleModule,
+    MatStepperModule,
   ],
   exports: [
     AuthenticationModule,

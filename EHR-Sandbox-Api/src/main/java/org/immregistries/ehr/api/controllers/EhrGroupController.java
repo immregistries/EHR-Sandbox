@@ -34,8 +34,8 @@ public class EhrGroupController {
     Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
     @Autowired
     CustomClientFactory customClientFactory;
-    @Autowired
-    Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
+//    @Autowired
+//    Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired

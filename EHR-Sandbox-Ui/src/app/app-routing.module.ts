@@ -12,6 +12,7 @@ import { RemoteGroupDashboardComponent } from './core/_components/remote-group-d
 import { GroupDashboardComponent } from './shared/_group/group-dashboard/group-dashboard.component';
 import { GroupAllDashboardComponent } from './shared/_group/group-all-dashboard/group-all-dashboard.component';
 import { FacilityDashboardComponent } from './shared/_facility/facility-dashboard/facility-dashboard.component';
+import { StepsComponent } from './core/_components/steps/steps.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -29,6 +30,7 @@ const routes: Routes = [
   { path: 'group', component: GroupDashboardComponent },
   { path: 'groups', component: GroupAllDashboardComponent },
   { path: 'facilities', component: FacilityDashboardComponent },
+  { path: 'steps', component: StepsComponent },
 ];
 
 @NgModule({

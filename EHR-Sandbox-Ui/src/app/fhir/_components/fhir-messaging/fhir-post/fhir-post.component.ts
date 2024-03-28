@@ -38,7 +38,7 @@ export class FhirPostComponent {
   }
 
   constructor(private fhirClient: FhirClientService,
-    private snackBarService: SnackBarService,
+    public snackBarService: SnackBarService,
     private feedbackService: FeedbackService) { }
 
   isJson() {

@@ -9,20 +9,14 @@ import { CodeBaseMap } from 'src/app/core/_model/structure';
 import { merge, tap } from 'rxjs';
 import { RecommendationService } from 'src/app/core/_services/recommendation.service';
 import { ImmunizationRecommendation } from 'fhir/r5';
+import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 
 @Component({
   selector: 'app-recommendation-table',
   templateUrl: './recommendation-table.component.html',
   styleUrls: ['./recommendation-table.component.css'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
 })
-export class RecommendationTableComponent implements OnInit {
+export class RecommendationTableComponent extends AbstractDataTableComponent<ImmunizationRecommendation> implements OnInit {
 
   columns: (keyof ImmunizationRecommendation)[] = [
     "identifier",
@@ -36,38 +30,33 @@ export class RecommendationTableComponent implements OnInit {
     public codeMapsService: CodeMapsService,
     private recommendationService: RecommendationService,
     private vaccinationService: VaccinationService,
-    private patientService: PatientService) { }
+    private patientService: PatientService) {
+      super()
+    }
 
   ngOnInit(): void {
 
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  dataSource = new MatTableDataSource<ImmunizationRecommendation>([]);
   expandedElement: ImmunizationRecommendation | null = null;
-  loading = false;
 
   @Input() patientId: number = -1
 
-  ngAfterViewInit(): void {
-    // Set filter rules for research
-    // this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
+  // ngAfterViewInit(): void {
+  //   // Set filter rules for research
+  //   // this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
 
-    merge(
-      // this.vaccinationService.getRefresh(),
-      this.patientService.getCurrentObservable().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
-    ).subscribe(() => {
-      this.loading = true
-      this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
-        this.loading = false
-        this.dataSource.data = res
-        this.expandedElement = res.find((reco: ImmunizationRecommendation) => {return reco.id == this.expandedElement?.id}) ?? null
-      })
-    })
-  }
+  //   merge(
+  //     // this.vaccinationService.getRefresh(),
+  //     this.patientService.getCurrentObservable().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
+  //   ).subscribe(() => {
+  //     this.loading = true
+  //     this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
+  //       this.loading = false
+  //       this.dataSource.data = res
+  //       this.expandedElement = res.find((reco: ImmunizationRecommendation) => {return reco.id == this.expandedElement?.id}) ?? null
+  //     })
+  //   })
+  // }
 
 }

@@ -21,5 +21,6 @@ public interface FacilityRepository extends CrudRepository<Facility, String>, Jp
     Iterable<Facility> findByTenantId(String tenantId);
     Optional<Facility> findByIdAndTenantId(String id, String tenantId);
     Boolean existsByTenantIdAndNameDisplay(String tenantId, String nameDisplay);
+    Optional<Facility> findByTenantIdAndNameDisplay(String tenantId, String nameDisplay);
     Boolean existsByTenantIdAndId(String tenantId, String id);
 }

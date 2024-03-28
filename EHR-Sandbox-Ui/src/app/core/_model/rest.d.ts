@@ -52,6 +52,7 @@ export interface Facility {
   nameDisplay?: string;
   facilities?: (Facility | number)[];
   parentFacility?: Facility;
+  childrenCount?: number,
 }
 
 export interface ImmunizationRegistry {
@@ -64,6 +65,8 @@ export interface ImmunizationRegistry {
   iisFacilityId?: string;
   iisPassword?: string;
   headers?: string;
+  default?: boolean;
+  description?: string;
 }
 
 export interface NextOfKin {
