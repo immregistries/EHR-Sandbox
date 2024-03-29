@@ -20,6 +20,10 @@
     <mat-icon>cloud_download</mat-icon>
     Remote history
   </button>
+  <!-- <button mat-stroked-button matTooltip="Populate with random vaccinations" color="primary" (click)="populate()">
+    <mat-icon>download</mat-icon>
+    Populate
+  </button> -->
   <app-json-dialog-button mat-raised-button [content]="patient"></app-json-dialog-button>
   <ng-content></ng-content>
   <!-- <app-json-dialog-button mat-raised-button [content]="fhirResourceService.quickGetPatientResource(patient.id ?? -1) |async" [label]="'Resource'"></app-json-dialog-button> -->

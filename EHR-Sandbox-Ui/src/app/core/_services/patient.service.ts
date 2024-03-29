@@ -96,6 +96,14 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
     return this.readPatient(tenantId, facilityId, patientId)
   }
 
+  populatePatient(patientId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    return this.http.get<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/$populate`,
+      httpOptions);
+  }
+
   /**
    *
    * @param tenantId

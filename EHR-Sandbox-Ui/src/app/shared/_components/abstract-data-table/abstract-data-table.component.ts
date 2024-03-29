@@ -59,7 +59,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
           this.dataSource.data = list
           if (this.hasIdElement(this.selectedElement)) {
             // @ts-ignore
-            this.onSelection(list.find((item: T) => { return item.id === this.selectedElement?.id }));
+            this.selectedElement = list.find((item: T) => { return item.id === this.selectedElement?.id });
           }
         })
       })

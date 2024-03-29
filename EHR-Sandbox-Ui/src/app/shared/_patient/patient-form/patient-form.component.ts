@@ -2,7 +2,6 @@ import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from
 import { EhrPatient } from 'src/app/core/_model/rest';
 import FormType, { FormCard, CodeReference } from 'src/app/core/_model/structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { BehaviorSubject } from 'rxjs';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
@@ -21,6 +20,7 @@ export class PatientFormComponent {
   patientChange = new EventEmitter<EhrPatient>();
 
   isEditionMode: boolean = false;
+  populate = false
 
   /**
    * Currently unusused, just initialised
@@ -28,7 +28,6 @@ export class PatientFormComponent {
   public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
 
   constructor(private patientService: PatientService,
-    private breakpointObserver: BreakpointObserver,
     private snackBarService: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<PatientFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient }) {
@@ -56,7 +55,13 @@ export class PatientFormComponent {
     } else {
       this.patientService.quickPostPatient(this.patient).subscribe({
         next: (res: HttpResponse<string>) => {
-          this._dialogRef?.close(res)
+          if (res.body && this.populate) {
+            this.patientService.populatePatient(+res.body).subscribe((res2) => {
+              this._dialogRef?.close(res)
+            })
+          } else {
+            this._dialogRef?.close(res)
+          }
         },
         error: (err) => {
           console.log(err.error)

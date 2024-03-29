@@ -45,7 +45,7 @@ export class DashboardComponent {
 
 
   vaccinationListRefreshObservable(): Observable<any> {
-    return this.patientService.getCurrentObservable()
+    return merge(this.patientService.getRefresh(), this.patientService.getCurrentObservable())
   }
 
   vaccinationListObservable(): Observable<VaccinationEvent[]> {

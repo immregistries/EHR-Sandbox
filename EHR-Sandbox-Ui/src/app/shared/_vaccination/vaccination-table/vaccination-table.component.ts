@@ -9,6 +9,7 @@ import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.c
 import { FeedbackTableComponent } from 'src/app/shared/_data-quality-issues/feedback-table/feedback-table.component';
 import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
+import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -69,7 +70,8 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
-    private vaccinationService: VaccinationService) {
+    private vaccinationService: VaccinationService,
+    private patientService: PatientService) {
       super()
     }
 
@@ -136,6 +138,14 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
       panelClass: 'dialog-with-bar',
       data: { vaccination: vaccination },
     });
+  }
+
+  populate() {
+    if (this.patientId) {
+      this.patientService.populatePatient(this.patientId).subscribe((res) => {
+        this.patientService.doRefresh()
+      })
+    }
   }
 
 }

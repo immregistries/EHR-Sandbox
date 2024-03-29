@@ -5,6 +5,10 @@
     <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(patientId && patientId > 0)"  *ngIf="allowCreation"  matTooltip="New Record">
       <mat-icon>add</mat-icon>
     </button>
+    <button *ngIf="dataSource.data.length <= 0" [disabled]="!(patientId && patientId > 0)" mat-stroked-button matTooltip="Populate with random vaccinations" color="primary" (click)="populate()">
+      <mat-icon>casino</mat-icon>
+      Populate
+    </button>
   </div>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>
@@ -67,3 +71,4 @@
 <button mat-mini-fab [disabled]="!(patientId && patientId > 0)" *ngIf="allowCreation"  (click)="openCreation()" color="primary" >
   <mat-icon>add</mat-icon>
 </button>
+

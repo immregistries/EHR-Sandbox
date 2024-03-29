@@ -41,6 +41,15 @@ export class PatientToolsComponent implements OnInit {
     });
   }
 
+
+  populate() {
+    if (this.patient?.id) {
+      this.patientService.populatePatient(this.patient?.id).subscribe((res) => {
+        this.patientService.doRefresh()
+      })
+    }
+  }
+
   openFhir() {
     const dialogRef = this.dialog.open(FhirMessagingComponent, {
       maxWidth: '95vw',

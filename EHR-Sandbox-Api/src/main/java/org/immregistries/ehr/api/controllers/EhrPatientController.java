@@ -8,6 +8,7 @@ import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.logic.HL7printer;
+import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
@@ -57,6 +58,11 @@ public class EhrPatientController {
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
+    @Autowired
+    private VaccinationController vaccinationController;
+
+    @Autowired
+    private RandomGenerator randomGenerator;
 
 
     @GetMapping()
@@ -73,6 +79,25 @@ public class EhrPatientController {
     public List<Revision<Integer, EhrPatient>> patientHistory(@PathVariable() String patientId) {
         Revisions<Integer, EhrPatient> revisions = ehrPatientRepository.findRevisions(patientId);
         return revisions.getContent();
+    }
+
+    @GetMapping("/{patientId}/$populate")
+    @Transactional()
+    public ResponseEntity<String> populatePatient(
+            @RequestAttribute Tenant tenant,
+            @RequestAttribute Facility facility,
+            @RequestAttribute EhrPatient patient,
+            @RequestParam Optional<Integer> vaccinationNumber) {
+        if (vaccinationNumber.isEmpty()) {
+            vaccinationNumber = Optional.of(3);
+        }
+        if (vaccinationNumber.get() > 30) {
+            vaccinationNumber = Optional.of(3);
+        }
+        for (int i = 0; i < vaccinationNumber.get(); i++) {
+            vaccinationController.postVaccinationEvents(tenant, Optional.of(patient), randomGenerator.randomVaccinationEvent(patient, tenant, facility));
+        }
+        return ResponseEntity.ok("{}");
     }
 
 
