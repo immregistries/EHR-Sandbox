@@ -29,23 +29,23 @@ export class FhirBulkOperationComponent implements OnInit {
 
   @Input()
   resourceId: string = ''
-  exportArguments: string = '_type=Patient,Immunization'
+  importArguments: string = '_type=Patient,Immunization'
   autofillContentUrl: boolean = true;
   result: string = ''
   loading = false
   error = false
-  export() {
+  import() {
     if (this.asynchronous) {
-      this.exportAsynch()
+      this.importAsynch()
     } else {
-      this.exportSynch()
+      this.importSynch()
     }
   }
 
-  exportAsynch() {
+  importAsynch() {
     if (this.resourceId) {
       this.loading = true
-      this.fhirBulkService.groupExportAsynch(this.resourceId, this.exportArguments).subscribe((res) => {
+      this.fhirBulkService.groupExportAsynch(this.resourceId, this.importArguments).subscribe((res) => {
         this.result = res.trim()
         this.loading = false
         this.error = false
@@ -61,10 +61,10 @@ export class FhirBulkOperationComponent implements OnInit {
     }
   }
 
-  exportSynch() {
+  importSynch() {
     if (this.resourceId) {
       this.loading = true
-      this.fhirBulkService.groupExportSynch(this.resourceId, this.exportArguments).subscribe((res) => {
+      this.fhirBulkService.groupExportSynch(this.resourceId, this.importArguments).subscribe((res) => {
         this.result = res.trim()
         this.loading = false
         this.error = false

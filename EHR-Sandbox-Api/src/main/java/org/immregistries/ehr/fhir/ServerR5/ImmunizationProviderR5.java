@@ -106,7 +106,7 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
             vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
             MethodOutcome methodOutcome = new MethodOutcome();
             methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId()));
-            methodOutcome.setResource(immunizationMapper.toFhirImmunization(vaccinationEvent,
+            methodOutcome.setResource(immunizationMapper.toFhir(vaccinationEvent,
                     resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility)));
             return methodOutcome;
         }

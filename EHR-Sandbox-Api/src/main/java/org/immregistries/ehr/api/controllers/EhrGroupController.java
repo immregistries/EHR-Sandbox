@@ -1,19 +1,21 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Parameters;
+import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
-import org.immregistries.ehr.logic.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
@@ -31,10 +34,13 @@ import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/groups"})
 public class EhrGroupController {
+    @Autowired
+    Map<String, BulkImportStatus> resultCacheStore;
+
     Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
     @Autowired
     CustomClientFactory customClientFactory;
-//    @Autowired
+    //    @Autowired
 //    Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
@@ -46,6 +52,8 @@ public class EhrGroupController {
     private GroupProviderR5 groupProviderR5;
     @Autowired
     private FhirClientController fhirClientController;
+    @Autowired
+    private BulkImportController bulkImportController;
 
     /**
      * hollow method for url mapping
@@ -62,7 +70,7 @@ public class EhrGroupController {
     @PostMapping()
     @Transactional()
     public ResponseEntity<String> post(@RequestAttribute Facility facility,
-                                         @RequestBody EhrGroup ehrGroup) {
+                                       @RequestBody EhrGroup ehrGroup) {
         if (ehrGroupRepository.existsByFacilityIdAndName(facility.getId(), ehrGroup.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used for this facility");
@@ -74,7 +82,7 @@ public class EhrGroupController {
             /**
              * Relation with complex embeddedId is not supported in spring so references have to be solved manually
              */
-            for (EhrGroupCharacteristic characteristic: characteristics) {
+            for (EhrGroupCharacteristic characteristic : characteristics) {
                 characteristic.setGroupId(newEntity.getId());
             }
             ehrGroup.setEhrGroupCharacteristics(characteristics);
@@ -98,7 +106,7 @@ public class EhrGroupController {
             /**
              * Relation with complex embeddedId is not supported in spring so references have to be solved manually
              */
-            for (EhrGroupCharacteristic characteristic: ehrGroup.getEhrGroupCharacteristics()) {
+            for (EhrGroupCharacteristic characteristic : ehrGroup.getEhrGroupCharacteristics()) {
                 characteristic.setGroupId(ehrGroup.getId());
             }
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
@@ -150,7 +158,88 @@ public class EhrGroupController {
         }
     }
 
+    @GetMapping("/{groupId}/$import-status")
+    public ResponseEntity<BulkImportStatus> getImportStatus(@PathVariable String groupId) {
+        return ResponseEntity.ok(resultCacheStore.get(groupId));
+    }
+
+    @GetMapping("/{groupId}/$import")
+    @PostMapping("/{groupId}/$import")
+    public ResponseEntity<?> bulkImport(@RequestAttribute EhrGroup ehrGroup) throws IOException {
+        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
+        if (immunizationRegistry == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
+        }
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+        String id = getRemoteGroup(client, ehrGroup).getIdElement().getIdPart();
+        IHttpResponse kickoff = bulkImportController.bulkKickOffHttpResponse(immunizationRegistry.getId(),
+                id,
+                Optional.empty(),
+                Optional.of("Patient,Immunization"),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty());
+        logger.info("Kickoff status {}", kickoff.getStatus());
+        if (kickoff.getStatus() == 500) {
+            throw new RuntimeException(kickoff.getResponse().toString());
+        } else if (kickoff.getStatus() == 200 | kickoff.getStatus() == 202) {
+            String contentLocationUrl = kickoff.getHeaders("Content-Location").get(0);
+            BulkImportStatus bulkImportStatusStarted = new BulkImportStatus("Started", 0,new Date().getTime());
+            resultCacheStore.put(ehrGroup.getId(), bulkImportStatusStarted);
+            /**
+             * Check thread async
+             */
+            Thread checkStatusThread = new Thread(() -> {
+                logger.info("Thread started");
+                int count = 0;
+                try {
+                    Thread.sleep(5 * 1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                while (count++ < 30) {
+                    logger.info("Thread checking bulk status for the {} time", count);
+                    ResponseEntity responseEntity = bulkImportController.bulkCheckStatusHttpResponse(immunizationRegistry, contentLocationUrl);
+                    if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+                        BulkImportStatus bulkImportSuccess = new BulkImportStatus(responseEntity.getBody().toString());
+                        resultCacheStore.put(ehrGroup.getId(), bulkImportSuccess);
+                        /**
+                         * end
+                         */
+                        break;
+                    } else if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)) {
+                        BulkImportStatus bulkImportStatus = new BulkImportStatus("In Progress", count, new Date().getTime());
+                        resultCacheStore.put(ehrGroup.getId(), bulkImportStatus);
+                        /**
+                         * Keep trying, wait the expected delay
+                         */
+                        //unchecked
+                        Map<String, java.util.List<String>> headers = (Map<String, java.util.List<String>>) responseEntity.getBody();
+                        {
+                            assert headers != null;
+                            final long delay;
+                            if (headers.get("Retry-After").size() > 0 && StringUtils.isNotBlank(headers.get("Retry-After").get(0))) {
+                                delay = Integer.parseInt(headers.get("Retry-After").get(0));
+                            } else  {
+                                delay = 120;
+                            }
+                            try {
+                                Thread.sleep(delay * 1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                }
+                logger.info("Thread Stopped");
+            });
+            checkStatusThread.start();
+        }
+        return ResponseEntity.ok(kickoff.getStatus());
+    }
+
     @PostMapping("/{groupId}/$add")
+    @Transactional()
     public EhrGroup add(@RequestAttribute EhrGroup ehrGroup, @RequestParam String patientId) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
@@ -168,10 +257,10 @@ public class EhrGroupController {
              */
             in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
             in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
-            IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
-            groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
             IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+            IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
             Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
+//            groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
             /**
              * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
              */

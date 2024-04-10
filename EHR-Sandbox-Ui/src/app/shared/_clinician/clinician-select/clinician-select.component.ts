@@ -118,8 +118,10 @@ export class ClinicianSelectComponent {
       panelClass: 'dialog-with-bar',
     });
     dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.model = result
+      }
       this.clinicianService.doRefresh()
-      this.model = result
     });
 
   }

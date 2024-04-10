@@ -17,7 +17,7 @@ import java.util.Set;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = EhrGroup.class)
-public class EhrGroup {
+public class EhrGroup extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "group_id", nullable = false)

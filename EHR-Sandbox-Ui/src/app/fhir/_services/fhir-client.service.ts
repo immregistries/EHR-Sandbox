@@ -27,41 +27,45 @@ export class FhirClientService {
     private registryService: ImmunizationRegistryService,
     private subscriptionService: SubscriptionService) { }
 
-  postResource(type: string,resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match", resourceLocalId: number, parentId: number, overridingReferences?: {[reference: string]: string}): Observable<string> {
+  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<string> {
     if (operation == "$match") {
-      return this.matchResource(type,resource,resourceLocalId,parentId);
+      return this.matchResource(type, resource, resourceLocalId, parentId);
     }
-    switch(type){
+    switch (type) {
       case "Patient": {
-        return this.quickPostPatient(resourceLocalId,resource,operation);
+        return this.quickPostPatient(resourceLocalId, resource, operation);
         break;
       }
       case "Immunization": {
         return this.quickPostImmunization(
           parentId, resourceLocalId, resource, operation,
-          overridingReferences? overridingReferences['patient'] : '');
+          overridingReferences ? overridingReferences['patient'] : '');
         break;
       }
       case "Practitionner": {
         break;
       }
       case "Group": {
-        return this.postGroup(resource,operation,resourceLocalId);
+        return this.postGroup(resource, operation, resourceLocalId);
         break;
       }
       case "Subscription": {
         return this.subscriptionService.postSubscription(resource);
         break;
       }
+      case "Organization": {
+        return this.sendOrganization(resource, operation);
+        break;
+      }
     }
     return of("");
   }
 
-  matchResource(type: string,resource: string, resourceId: number,parentId: number): Observable<string> {
+  matchResource(type: string, resource: string, resourceId: number, parentId: number): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    switch(type){
+    switch (type) {
       case "Patient": {
         return this.http.post<string>(
           `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${resourceId}/fhir-client/registry/${registryId}/$match`,
@@ -76,6 +80,27 @@ export class FhirClientService {
       }
     }
     return of("");
+  }
+
+  sendOrganization(resource: string, operation: "Create" | "Update" | "UpdateOrCreate"): Observable<string> {
+    const registryId = this.registryService.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    switch (operation) {
+      case "Create": {
+        return this.http.post<string>(
+          `${this.settings.getApiUrl()}/registry/${registryId}?type=Organization`,
+          resource,
+          httpOptions);
+      }
+      case "UpdateOrCreate":
+      case "Update":
+      default:
+        return this.http.put<string>(
+          `${this.settings.getApiUrl()}/registry/${registryId}?type=Organization`,
+          resource,
+          httpOptions);
+    }
   }
 
   postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
@@ -93,14 +118,14 @@ export class FhirClientService {
   quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", patientFhirId?: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    switch(operation) {
-      case "Create" : {
-        return this.postImmunization(tenantId,facilityId,patientId,vaccinationId,resource,patientFhirId)
+    switch (operation) {
+      case "Create": {
+        return this.postImmunization(tenantId, facilityId, patientId, vaccinationId, resource, patientFhirId)
       }
-      case "UpdateOrCreate" :
-      case "Update" :
-      default :
-        return this.putImmunization(tenantId,facilityId,patientId,vaccinationId,resource,patientFhirId)
+      case "UpdateOrCreate":
+      case "Update":
+      default:
+        return this.putImmunization(tenantId, facilityId, patientId, vaccinationId, resource, patientFhirId)
     }
   }
 
@@ -118,24 +143,24 @@ export class FhirClientService {
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/fhir-client/registry/${registryId}`,
       resource,
       this.immunizationOptions(patientFhirId),
-      );
+    );
   }
 
-  quickPostPatient(patientId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" ): Observable<string> {
+  quickPostPatient(patientId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate"): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    switch(operation) {
-      case "Create" : {
-        return this.postPatient(tenantId,facilityId,patientId,resource)
+    switch (operation) {
+      case "Create": {
+        return this.postPatient(tenantId, facilityId, patientId, resource)
       }
-      case "UpdateOrCreate" :
-      case "Update" :
-      default :
-        return this.putPatient(tenantId,facilityId,patientId,resource)
+      case "UpdateOrCreate":
+      case "Update":
+      default:
+        return this.putPatient(tenantId, facilityId, patientId, resource)
     }
   }
 
-  putPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
+  putPatient(tenantId: number, facilityId: number, patientId: number, resource: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     return this.http.put<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/registry/${registryId}`,
@@ -143,7 +168,7 @@ export class FhirClientService {
       httpOptions);
   }
 
-  postPatient(tenantId: number, facilityId: number, patientId: number,resource: string): Observable<string> {
+  postPatient(tenantId: number, facilityId: number, patientId: number, resource: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/registry/${registryId}`,
@@ -183,10 +208,10 @@ export class FhirClientService {
   }
 
 
-  operation(operationType: string, target: string ,parameters: string): Observable<string> {
+  operation(operationType: string, target: string, parameters: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/registry/${registryId}/operation/${target}/${operationType}${parameters.length > 0? parameters: ''}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/operation/${target}/${operationType}${parameters.length > 0 ? parameters : ''}`,
       parameters,
       {
         responseType: 'text',
@@ -201,7 +226,7 @@ export class FhirClientService {
       headers: httpOptions.headers,
       params: {}
     }
-    if (patientFhirId && patientFhirId.length > 0){
+    if (patientFhirId && patientFhirId.length > 0) {
       options.params = {
         patientFhirId: patientFhirId
       }

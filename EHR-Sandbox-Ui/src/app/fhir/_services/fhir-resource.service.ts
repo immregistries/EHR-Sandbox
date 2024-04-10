@@ -73,4 +73,15 @@ export class FhirResourceService {
     }
   }
 
+  getClinicianResource(clinicianId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    if (tenantId < 0 || clinicianId < 0 ){
+      return of('')
+    } else {
+      return this.http.get(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians/${clinicianId}/resource`,
+        { responseType: 'text' });
+    }
+  }
+
 }

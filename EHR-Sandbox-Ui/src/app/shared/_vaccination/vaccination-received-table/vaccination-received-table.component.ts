@@ -133,7 +133,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
   }
 
-  merge(element: VaccinationEvent) {
+  openMerge(element: VaccinationEvent) {
     element.id = this.vaccinationToCompare ? this.vaccinationToCompare.id : undefined
     // element.primarySource = falset TODO talk about it in a meeting
     const dialogRef = this.dialog.open(VaccinationFormComponent, {

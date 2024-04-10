@@ -94,3 +94,10 @@ export interface NotificationPrototype {
 
 
 export interface ComparisonResult {[index:string]: ComparisonResult | any | null}
+export interface BulkImportStatus {
+  status?: String,
+  lastAttemptCount?: number,
+  lastAttemptTime?: number,
+  result?: String,
+
+}

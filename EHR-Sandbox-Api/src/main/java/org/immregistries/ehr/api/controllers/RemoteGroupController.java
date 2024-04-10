@@ -124,7 +124,7 @@ public class RemoteGroupController {
     @PostMapping("/{groupId}/$member-add")
     public ResponseEntity<String> add_member(@PathVariable String facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
-        Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
+        Patient patient = patientMapperR5.toFhir(ehrPatient);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         Parameters in = new Parameters();
         /**
@@ -166,7 +166,7 @@ public class RemoteGroupController {
         Parameters in = new Parameters();
         if (patientId.isPresent()){
             EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId.get()).orElseThrow();
-            Patient patient = patientMapperR5.toFhirPatient(ehrPatient);
+            Patient patient = patientMapperR5.toFhir(ehrPatient);
             in.addParameter("memberId", patient.getIdentifierFirstRep());
         }
         identifier.ifPresent(value -> in.addParameter("memberId", value));

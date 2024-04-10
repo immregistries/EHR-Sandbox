@@ -28,45 +28,9 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
   ]
 
   @Input() title: string = 'Vaccination history'
-  @Input() allowCreation: boolean = true
-
-  expandedElement: VaccinationEvent | null = null;
-  @Output()
-  selectedEmitter = new EventEmitter<VaccinationEvent | null>();
-
-  private listManuallySet = false
-  @Input()
-  set vaccinations(values: VaccinationEvent[]) {
-    this.listManuallySet = true
-    this.setVaccinations(values)
-  }
-  private setVaccinations(values: VaccinationEvent[]) {
-    this.loading = false
-    this.dataSource.data = values;
-    this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => { return vaccinationEvent.id == this.expandedElement?.id }) ?? null
-  }
-
-  selectElement(element: VaccinationEvent) {
-    this.expandedElement = this.expandedElement === element ? null : element
-    this.selectedEmitter.emit(this.expandedElement);
-  }
 
   @Input()
   patientId!: number;
-  // private _patientId: number = -1;
-  // @Input()
-  // public set patientId(value: number | undefined) {
-  //   this._patientId = value ?? -1;
-  //   if (this.listManuallySet == false) {
-  //     this.loading = true
-  //     this.vaccinationService.quickReadVaccinations(this.patientId).subscribe((res) => {
-  //       this.setVaccinations(res)
-  //     })
-  //   }
-  // }
-  // public get patientId(): number {
-  //   return this._patientId;
-  // }
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
@@ -113,7 +77,7 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.ngAfterViewInit()
-        this.selectElement(result)
+        this.onSelection(result)
       }
     });
   }

@@ -8,6 +8,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrGroup;
+import org.immregistries.ehr.api.entities.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
@@ -79,6 +80,12 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
             return create(group,facility,immunizationRegistry);
         } else {
             EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
+            /**
+             * May need cascade rule change
+             */
+            for (EhrGroupCharacteristic ehrGroupCharacteristic: ehrGroup.getEhrGroupCharacteristics()) {
+                ehrGroupCharacteristic.setGroupId(old.get().getId());
+            }
             ehrGroup.setId(old.get().getId());
             ehrGroupRepository.save(ehrGroup);
             return new MethodOutcome().setResource(group);

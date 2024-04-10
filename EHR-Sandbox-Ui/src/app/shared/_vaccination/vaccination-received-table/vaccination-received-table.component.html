@@ -40,10 +40,10 @@
       <div class="element-detail"
            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
            <div>
-            <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="!vaccinationToCompare || isMatch(element)">Merge</button>
+            <button mat-stroked-button color="primary" (click)="openMerge(element)" [disabled]="!vaccinationToCompare || isMatch(element)">Merge</button>
            </div>
            <div>
-            <button mat-stroked-button color="primary" (click)="merge(element)" [disabled]="vaccinationToCompare">Save Locally</button>
+            <button mat-stroked-button color="primary" (click)="openMerge(element)" [disabled]="vaccinationToCompare">Save Locally</button>
            </div>
            <app-json-dialog-button [disabled]="!vaccinationToCompare || isMatch(element)" [content]="differencesWithSelected" [label]="'Difference'"></app-json-dialog-button>
            <p *ngIf="vaccinationToCompare && isMatch(element)">Matches with currently selected local record</p>

@@ -2,9 +2,11 @@ package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.util.BundleBuilder;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
@@ -13,10 +15,7 @@ import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
-import org.immregistries.ehr.logic.mapping.GroupMapperR5;
-import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
-import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
-import org.immregistries.ehr.logic.mapping.PatientMapperR5;
+import org.immregistries.ehr.logic.mapping.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +32,15 @@ public class FhirConversionController {
     Logger logger = LoggerFactory.getLogger(FhirConversionController.class);
 
     @Autowired
-    private PatientMapperR5 patientMapper;
+    private IPatientMapper patientMapper;
     @Autowired
-    private ImmunizationMapperR5 immunizationMapper;
+    private IImmunizationMapper immunizationMapper;
     @Autowired
-    private GroupMapperR5 groupMapperR5;
+    private IGroupMapper groupMapper;
     @Autowired
-    private OrganizationMapperR5 organizationMapperR5;
+    private IOrganizationMapper organizationMapper;
+    @Autowired
+    private IPractitionerMapper practitionerMapper;
 
     @Autowired
     private BundleImportService bundleImportService;
@@ -66,7 +67,7 @@ public class FhirConversionController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
-        Patient patient = patientMapper.toFhirPatient(ehrPatient, facility);
+        IBaseResource patient = patientMapper.toFhir(ehrPatient, facility);
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
         String resource = parser.encodeResourceToString(patient);
         return ResponseEntity.ok(resource);
@@ -78,13 +79,11 @@ public class FhirConversionController {
             @RequestAttribute() EhrPatient patient,
             @RequestAttribute Facility facility) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-//        System.out.println(vaccinationEvent.getVaccine());
         /**
          * not sure why this is a necessary step, but not problematic as links were checked in authorization filter
          */
         vaccinationEvent.setPatient(patient);
-        Immunization immunization =
-                immunizationMapper.toFhirImmunization(vaccinationEvent,
+        IBaseResource immunization = immunizationMapper.toFhir(vaccinationEvent,
                         resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
@@ -97,7 +96,7 @@ public class FhirConversionController {
             @RequestAttribute() Facility facility) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        Group group = groupMapperR5.toFhirGroup(ehrGroup);
+        IBaseResource group = groupMapper.toFhir(ehrGroup);
         String resource = parser.encodeResourceToString(group);
         return ResponseEntity.ok(resource);
     }
@@ -107,7 +106,38 @@ public class FhirConversionController {
     public ResponseEntity<String> facilityResource(
             @RequestAttribute() Facility facility) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        Organization organization = organizationMapperR5.toFhirOrganization(facility);
+        IBaseResource organization = organizationMapper.toFhir(facility);
+        String resource = parser.encodeResourceToString(organization);
+        return ResponseEntity.ok(resource);
+    }
+
+
+    @GetMapping(FACILITY_PREFIX + "/{facilityId}/bundle")
+    @Transactional(readOnly=true, noRollbackFor=Exception.class)
+    public ResponseEntity<String> facilityAllResourcesTransaction(
+            @RequestAttribute() Facility facility) {
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        BundleBuilder bundleBuilder = new BundleBuilder(fhirContext);
+        bundleBuilder.addTransactionCreateEntry(organizationMapper.toFhir(facility));
+        for (EhrPatient ehrPatient: facility.getPatients()) {
+            Patient patient = (Patient) patientMapper.toFhir(ehrPatient);
+            bundleBuilder.addTransactionCreateEntry(patient);
+            for (VaccinationEvent vaccinationEvent: ehrPatient.getVaccinationEvents()) {
+                Immunization immunization = (Immunization) immunizationMapper.toFhir(vaccinationEvent,
+                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
+                bundleBuilder.addTransactionCreateEntry(immunization);
+            }
+
+        }
+        for (Clinician clinician: facility.getTenant().getClinicians()) {
+//            Practitioner practitioner = practitionnerMapper
+//            bundleBuilder.addTransactionCreateEntry()
+        }
+        for (EhrGroup ehrGroup: facility.getGroups()) {
+//            Group group = groupMapper.toFhir(E)
+
+        }
+        Organization organization = (Organization) organizationMapper.toFhir(facility);
         String resource = parser.encodeResourceToString(organization);
         return ResponseEntity.ok(resource);
     }

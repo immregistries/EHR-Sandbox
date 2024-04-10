@@ -3,12 +3,15 @@ package org.immregistries.ehr.logic.mapping;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.immregistries.ehr.api.entities.Clinician;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PractitionnerMapperR4 {
+@Conditional(OnR4Condition.class)
+public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
 
-    public Clinician fromFhir(Practitioner practitioner) {
+    public Clinician toClinician(Practitioner practitioner) {
         Clinician clinician = new Clinician();
         HumanName name = practitioner.getNameFirstRep();
         clinician.setNameLast(name.getFamily());
@@ -21,7 +24,7 @@ public class PractitionnerMapperR4 {
         return clinician;
     }
 
-    public Practitioner fromModel(Clinician clinician) {
+    public Practitioner toFhir(Clinician clinician) {
         Practitioner practitioner = new Practitioner();
         practitioner.addName()
                 .addGiven(clinician.getNameFirst())

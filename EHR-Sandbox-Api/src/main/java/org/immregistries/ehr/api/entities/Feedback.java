@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
         property="id",
         scope = Feedback.class)
-public class Feedback {
+public class Feedback extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_id", nullable = false)

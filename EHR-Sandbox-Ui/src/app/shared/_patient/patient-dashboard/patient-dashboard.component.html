@@ -30,7 +30,7 @@
     <mat-grid-tile *ngIf="patient && patient.id" [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-vaccination-table [patientId]="patient.id"></app-vaccination-table>
+          <app-vaccination-table [patientId]="patient.id" ></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

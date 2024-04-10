@@ -34,9 +34,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RestController
-public class BulkExportController {
+public class BulkImportController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BulkExportController.class);
+    private Map<String, String> resultCacheStore;
+
+    private static final Logger logger = LoggerFactory.getLogger(BulkImportController.class);
     @Autowired
     FhirContext fhirContext;
     @Autowired
@@ -100,6 +102,20 @@ public class BulkExportController {
             ,@RequestParam Optional<String> _typeFilter
             ,@RequestParam Optional<Boolean> _mdm
     ) {
+        IHttpResponse response = bulkKickOffHttpResponse(registryId,groupId,_outputFormat,_type,_since,_typeFilter,_mdm);
+        if (response.getStatus() == 202) {
+            String contentLocationUrl = response.getHeaders("Content-Location").get(0);
+            return ResponseEntity.ok(contentLocationUrl);
+        }
+        return ResponseEntity.internalServerError().body(response.getStatusInfo());
+    }
+
+    public IHttpResponse bulkKickOffHttpResponse(@PathVariable() Integer registryId, @PathVariable()  String groupId
+            , @RequestParam Optional<String> _outputFormat
+            , @RequestParam Optional<String> _type
+            , @RequestParam Optional<Date> _since
+            , @RequestParam Optional<String> _typeFilter
+            , @RequestParam Optional<Boolean> _mdm) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         IGenericClient client = customClientFactory.newGenericClient(ir);
         // In order to get the response headers
@@ -113,20 +129,15 @@ public class BulkExportController {
         _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
         _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
-        Parameters outParams =
-                client.operation()
-                .onInstance(new IdType("Group", groupId))
-                .named("$export")
-                .withParameters(inParams)
-                .useHttpGet()
-                .withAdditionalHeader("Prefer", "respond-async")
-                .execute();
-        IHttpResponse response = capturingInterceptor.getLastResponse();
-        if (response.getStatus() == 202) {
-            String contentLocationUrl = response.getHeaders("Content-Location").get(0);
-            return ResponseEntity.ok(contentLocationUrl);
-        }
-        return ResponseEntity.internalServerError().body(response.getStatusInfo());
+        Parameters outParams = client.operation()
+                        .onInstance(new IdType("Group", groupId))
+                        .named("$export")
+                        .withParameters(inParams)
+                        .useHttpGet()
+                        .withAdditionalHeader("Prefer", "respond-async")
+                        .execute();
+        return capturingInterceptor.getLastResponse();
+
     }
 
     @GetMapping("/registry/{registryId}/$export-status")
@@ -167,7 +178,7 @@ public class BulkExportController {
                     }
                     builder.append("\n");
                 }
-                return ResponseEntity.ok(builder.toString());
+                return ResponseEntity.accepted().body(builder.toString());
             } else {
                 return ResponseEntity.internalServerError().body(con.getResponseMessage());
             }
@@ -184,6 +195,61 @@ public class BulkExportController {
             }
         }
     }
+
+    public ResponseEntity<?> bulkCheckStatusHttpResponse(ImmunizationRegistry ir, String contentUrl) {
+        Map<String, List<String>> result;
+        // URL used is the one gotten from the kickoff, while authentication remains the same
+//        IGenericClient client = customClientBuilder.newGenericClient(contentLocationUrl,ir.getIisPassword(),ir.getIisUsername());
+//        client.operation().onInstance(new IdType("Group",));
+        HttpURLConnection con = null;
+        URL url;
+        try {
+            url = new URL(contentUrl);
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            String encoded = Base64.getEncoder()
+                    .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
+                            .getBytes(StandardCharsets.UTF_8));
+            if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
+                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+            } else {
+                con.setRequestProperty("Authorization", "Basic " + encoded);
+
+            }
+            con.setConnectTimeout(5000);
+
+            int status = con.getResponseCode();
+            if (status == 200) {
+                return ResponseEntity.ok(con.getInputStream().readAllBytes());
+            } else if (status == 202) {
+                StringBuilder builder = new StringBuilder();
+                for (Map.Entry<String,List<String>> entry: con.getHeaderFields().entrySet()) {
+                    builder.append(entry.getKey()).append("=");
+                    for (String header: entry.getValue()) {
+                        builder.append(header).append(",\t");
+                    }
+                    builder.append("\n");
+                }
+                return ResponseEntity.accepted().body(con.getHeaderFields());
+            } else {
+                return ResponseEntity.internalServerError().body(con.getResponseMessage());
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (ProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
+        }
+    }
+
 
     @DeleteMapping("/registry/{registryId}/$export-status")
     public ResponseEntity bulkDelete(@PathVariable() Integer registryId, @RequestParam String contentUrl) {

@@ -1,10 +1,10 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
     <span class="custom-title">{{title}}</span>
-    <button mat-icon-button *ngIf="allow_create" style="margin-top: -7px; margin-bottom: -6px;" color="primary"
+    <!-- <button mat-icon-button *ngIf="allow_create" style="margin-top: -7px; margin-bottom: -6px;" color="primary"
       matTooltip="New Sub Facility">
       <mat-icon>add</mat-icon>
-    </button>
+    </button> -->
   </div>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>
@@ -43,7 +43,7 @@
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
-<button *ngIf="allow_create" mat-mini-fab style="float: center;" color="primary">
+<!-- <button *ngIf="allow_create" mat-mini-fab style="float: center;" color="primary">
   <mat-icon>add</mat-icon>
-</button>
+</button> -->
 <app-empty-list-message></app-empty-list-message>

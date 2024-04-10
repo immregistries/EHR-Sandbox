@@ -12,7 +12,7 @@ import java.util.Set;
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = Clinician.class)
-public class Clinician {
+public class Clinician extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "clinician_id", nullable = false)

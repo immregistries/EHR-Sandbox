@@ -9,7 +9,9 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.Vaccine;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,31 +22,19 @@ import java.util.Date;
  * Maps the Database with FHIR for the immunization resources
  */
 @Service
-public class ImmunizationMapperR5 {
+@Conditional(OnR5Condition.class)
+public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 
   @Autowired
   CodeMapManager codeMapManager;
   @Autowired
   ClinicianRepository clinicianRepository;
 
-  // Constants need to be harmonized with IIS Sandbox
-  public static final String CVX = "http://hl7.org/fhir/sid/cvx";
-  public static final String MVX = "http://terminology.hl7.org/CodeSystem/MVX";
-  public static final String NDC = "NDC";
-  public static final String INFORMATION_SOURCE = "informationSource";
-  public static final String FUNCTION = "iis-sandbox-function";
-  public static final String ORDERING = "ordering";
-  public static final String ENTERING = "entering";
-  public static final String ADMINISTERING = "administering";
-  public static final String REFUSAL_REASON_CODE = "refusalReasonCode";
-  public static final String BODY_PART = "bodyPart";
-  public static final String BODY_ROUTE = "bodyRoute";
-  public static final String FUNDING_SOURCE = "fundingSource";
-  public static final String FUNDING_ELIGIBILITY = "fundingEligibility";
 
 
-  public Immunization toFhirImmunization(VaccinationEvent vaccinationEvent, String identifier_system) {
-    Immunization i = toFhirImmunization(vaccinationEvent);
+
+  public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
+    Immunization i = toFhir(vaccinationEvent);
     Identifier identifier = i.addIdentifier();
     identifier.setValue(""+vaccinationEvent.getId());
     identifier.setSystem(identifier_system);
@@ -56,7 +46,7 @@ public class ImmunizationMapperR5 {
     return  i;
   }
   
-  private Immunization toFhirImmunization(VaccinationEvent vaccinationEvent) {
+  private Immunization toFhir(VaccinationEvent vaccinationEvent) {
 
     Vaccine vaccine = vaccinationEvent.getVaccine();
     Facility facility = vaccinationEvent.getAdministeringFacility();
@@ -127,7 +117,7 @@ public class ImmunizationMapperR5 {
 
   public VaccinationEvent toVaccinationEvent(Immunization i) {
     VaccinationEvent ve = new VaccinationEvent();
-    ve.setVaccine(vaccineFromFhir(i));
+    ve.setVaccine(toVaccine(i));
     ve.setPrimarySource(i.getPrimarySource());
 //    ve.setExternalLink(i.getIdentifierFirstRep().getValue());
     if (i.getPatient() != null && i.getPatient().getReference() != null && !i.getPatient().getReference().isBlank()) {
@@ -157,7 +147,7 @@ public class ImmunizationMapperR5 {
     return  ve;
   }
 
-  public Vaccine vaccineFromFhir(Immunization i) {
+  public Vaccine toVaccine(Immunization i) {
     Vaccine v = new Vaccine();
     v.setUpdatedDate(i.getMeta().getLastUpdated());
 

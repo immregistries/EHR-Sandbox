@@ -90,9 +90,11 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
     public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password){
         IGenericClient client = newGenericClient(serverURL);
         // Register a tenancy interceptor to add /$tenantid to the url
-        UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
+        if (StringUtils.isNotBlank(tenantId)) {
+            UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
+            client.registerInterceptor(tenantSelection);
+        }
 
-        client.registerInterceptor(tenantSelection);
         IClientInterceptor authInterceptor;
         if (username == null || username.isBlank()) {
             /**
@@ -133,6 +135,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
             loggingInterceptor.setLogger(logger);
             loggingInterceptor.setLogRequestSummary(true);
             loggingInterceptor.setLogRequestBody(true);
+            fhirContext.setNarrativeGenerator(new CustomNarrativeGenerator());
         }
     }
 

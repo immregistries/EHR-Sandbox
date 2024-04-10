@@ -5,14 +5,17 @@ import org.hl7.fhir.r5.model.Organization;
 import org.hl7.fhir.r5.model.Reference;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
 @Service
-public class OrganizationMapperR5 {
+@Conditional(OnR5Condition.class)
+public class OrganizationMapperR5 implements IOrganizationMapper<Organization> {
 
-    public Organization toFhirOrganization(Facility facility) {
+    public Organization toFhir(Facility facility) {
         Organization organization = new Organization();
         organization.addIdentifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facility.getId()));
         organization.setName(facility.getNameDisplay());

@@ -2,8 +2,13 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.context.ParserOptions;
+import ca.uhn.fhir.context.PerformanceOptionsEnum;
+import ca.uhn.fhir.narrative2.NullNarrativeGenerator;
 import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.ImmunizationRecommendation;
+import org.immregistries.ehr.api.entities.BulkImportStatus;
+import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -26,6 +31,7 @@ import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,21 +43,28 @@ import java.util.Set;
 	FhirConfig.class
 })
 public class EhrApiApplication extends SpringBootServletInitializer {
+	private final CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
 	@Autowired
 	AutowireCapableBeanFactory beanFactory;
 	@Autowired
 	private ApplicationContext context;
 
 	public static String VERSION = "1.2.3-SNAPSHOT";
+
 	@Bean
 	@Conditional(OnR4Condition.class)
 	public FhirContext fhirContextR4() {
-		return new FhirContext(FhirVersionEnum.R4);
+		FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
+		fhirContext.setNarrativeGenerator(customNarrativeGenerator);
+		return fhirContext;
 	}
 	@Bean
 	@Conditional(OnR5Condition.class)
 	public FhirContext fhirContextR5() {
-		return new FhirContext(FhirVersionEnum.R5);
+		FhirContext fhirContext = new FhirContext(FhirVersionEnum.R5);
+		fhirContext.setNarrativeGenerator(customNarrativeGenerator);
+//		fhirContext.setValidationSupport();
+		return fhirContext;
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(EhrApiApplication.class);
@@ -124,6 +137,11 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	public Map<Integer, Map<Integer, Map<String, Group>>> groups() {
 		Map<Integer, Map<Integer, Map<String, Group>>> map = new HashMap<>(20);
 		return map;
+	}
+
+	@Bean
+	public Map<String, BulkImportStatus> resultCacheStore()  {
+		return  new HashMap<>(30);
 	}
 
 //	@Bean

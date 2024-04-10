@@ -13,6 +13,7 @@ import { GroupDashboardComponent } from './shared/_group/group-dashboard/group-d
 import { GroupAllDashboardComponent } from './shared/_group/group-all-dashboard/group-all-dashboard.component';
 import { FacilityDashboardComponent } from './shared/_facility/facility-dashboard/facility-dashboard.component';
 import { StepsComponent } from './core/_components/steps/steps.component';
+import { ClinicianTableComponent } from './shared/_clinician/clinician-table/clinician-table.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'group', component: GroupDashboardComponent },
   { path: 'groups', component: GroupAllDashboardComponent },
   { path: 'facilities', component: FacilityDashboardComponent },
+  { path: 'clinicians', component: ClinicianTableComponent },
   { path: 'steps', component: StepsComponent },
 ];
 

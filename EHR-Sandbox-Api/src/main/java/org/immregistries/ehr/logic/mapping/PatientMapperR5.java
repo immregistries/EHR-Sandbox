@@ -9,55 +9,49 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 /**
  * Maps the Database with FHIR for patient resources
  */
 @Service
-public class PatientMapperR5 {
+@Conditional(OnR5Condition.class)
+public class PatientMapperR5 implements IPatientMapper<Patient> {
 
   @Autowired
   CodeMapManager codeMapManager;
   @Autowired
   OrganizationMapperR5 organizationMapperR5;
   private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
-  public static final String MRN_SYSTEM = "mrn";
-  public static final String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
-  public static final String REGISTRY_STATUS_EXTENSION = "registryStatus";
-  public static final String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
-  public static final String ETHNICITY_EXTENSION = "ethnicity";
-  public static final String ETHNICITY_SYSTEM = "http://terminology.hl7.org/CodeSystem/v3-Ethnicity";
-  public static final String RACE = "race";
-  public static final String RACE_SYSTEM = "https://terminology.hl7.org/2.0.0/CodeSystem-v3-Race.html";
-  public static final String PUBLICITY_EXTENSION = "publicity";
-  public static final String PUBLICITY_SYSTEM = "publicityIndicator";
-  public static final String PROTECTION_EXTENSION = "protection";
-  public static final String PROTECTION_SYSTEM = "protectionIndicator";
-  public static final String YES = "Y";
-  public static final String NO = "N";
 
   public static final String MALE_SEX = "M";
   public static final String FEMALE_SEX = "F";
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-  public Patient toFhirPatient(EhrPatient ehrPatient, Facility facility) {
-    Patient p = toFhirPatient(ehrPatient);
-    p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhirOrganization(facility).getIdentifierFirstRep()));
+  public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
+    Patient p = toFhir(ehrPatient);
+    p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhir(facility).getIdentifierFirstRep()));
     return p;
   }
 
-  public Patient toFhirPatient(EhrPatient ehrPatient) {
+  public Patient toFhir(EhrPatient ehrPatient) {
     Patient p = new Patient();
 //    p.setId("" + ehrPatient.getId());
     if (!ehrPatient.getMrn().isBlank()){
       p.addIdentifier().setSystem(MRN_SYSTEM).setValue(ehrPatient.getMrn());
+    }
+
+    if (Objects.nonNull(ehrPatient.getFacility())) {
+      p.setManagingOrganization(organizationMapperR5.facilityReference(ehrPatient.getFacility()));
     }
 
     p.addName()
@@ -163,7 +157,6 @@ public class PatientMapperR5 {
     ehrPatient.setUpdatedDate(p.getMeta().getLastUpdated());
 
     ehrPatient.setBirthDate(p.getBirthDate());
-//    ehrPatient.setManagingOrganizationId(p.getManagingOrganization().getId());
     // Name
     HumanName name = p.getNameFirstRep();
     ehrPatient.setNameLast(name.getFamily());

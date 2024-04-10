@@ -43,4 +43,8 @@ export class FetchAndLoadComponent implements OnInit {
     })
   }
 
+  selectVaccination(value: VaccinationEvent | null | undefined){
+    this.selectedVaccination = value ?? null
+  }
+
 }

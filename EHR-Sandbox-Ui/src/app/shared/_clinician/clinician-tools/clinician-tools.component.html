@@ -1,0 +1,19 @@
+<span class="tool-buttons-wrap-flex">
+
+  <button mat-icon-button matTooltip="Edit" color="primary" (click)="openEdition()">
+    <mat-icon>edit</mat-icon>
+  </button>
+
+  <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
+  <mat-icon>send</mat-icon>
+  FHIR
+</button>
+  <!-- <button mat-stroked-button matTooltip="Populate with random vaccinations" color="primary" (click)="populate()">
+  <mat-icon>download</mat-icon>
+  Populate
+</button> -->
+  <app-json-dialog-button mat-raised-button [content]="clinician"></app-json-dialog-button>
+  <ng-content></ng-content>
+  <!-- <app-json-dialog-button mat-raised-button [content]="fhirResourceService.quickGetPatientResource(patient.id ?? -1) |async" [label]="'Resource'"></app-json-dialog-button> -->
+
+</span>

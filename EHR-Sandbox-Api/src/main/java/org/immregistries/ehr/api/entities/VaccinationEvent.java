@@ -16,7 +16,7 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
         property="id",
         scope = VaccinationEvent.class)
 @Audited
-public class VaccinationEvent {
+public class VaccinationEvent extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vaccination_event_id", nullable = false)

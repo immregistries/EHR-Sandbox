@@ -1,11 +1,12 @@
 package org.immregistries.ehr.logic.mapping;
 
-import org.hibernate.Hibernate;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
+import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -14,7 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class GroupMapperR5 {
+@Conditional(OnR5Condition.class)
+public class GroupMapperR5 implements IGroupMapper<Group> {
 
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
@@ -62,7 +64,7 @@ public class GroupMapperR5 {
         return ehrGroup;
     }
 
-    public Group toFhirGroup(EhrGroup ehrGroup) {
+    public Group toFhir(EhrGroup ehrGroup) {
         Group group = new Group();
         group.setType(Group.GroupType.PERSON);
         group.setActive(true);

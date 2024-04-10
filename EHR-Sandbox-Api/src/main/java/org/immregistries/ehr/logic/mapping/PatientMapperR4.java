@@ -3,8 +3,12 @@ package org.immregistries.ehr.logic.mapping;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -16,19 +20,29 @@ import static org.immregistries.ehr.logic.mapping.PatientMapperR5.*;
  * Maps the Database with FHIR for patient resources
  */
 @Service
-public class PatientMapperR4 {
+@Conditional(OnR4Condition.class)
+public class PatientMapperR4 implements IPatientMapper<Patient> {
+
+  @Autowired()
+  IOrganizationMapper organizationMapper;
   private  static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
 
   public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-  public Patient dbPatientToFhirPatient(EhrPatient dbPatient, String identifier_system) {
-    Patient fhirPatient = dbPatientToFhirPatient(dbPatient);
+  public Patient toFhir(EhrPatient dbPatient, String identifier_system) {
+    Patient fhirPatient = toFhir(dbPatient);
     Identifier identifier = fhirPatient.addIdentifier();
     identifier.setValue(""+dbPatient.getId());
     identifier.setSystem(identifier_system);
     return fhirPatient;
   }
 
-  public Patient dbPatientToFhirPatient(EhrPatient dbPatient) {
+  public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
+    Patient p = toFhir(ehrPatient);
+    p.setManagingOrganization(new Reference().setIdentifier(((Organization) organizationMapper.toFhir(facility)).getIdentifierFirstRep()));
+    return p;
+  }
+
+  public Patient toFhir(EhrPatient dbPatient) {
     Patient p = new Patient();
     
     p.setBirthDate(dbPatient.getBirthDate());
@@ -153,7 +167,7 @@ public class PatientMapperR4 {
     return p;
   }
 
-  public EhrPatient fromFhir(Patient p) {
+  public EhrPatient toEhrPatient(Patient p) {
     EhrPatient patient = new EhrPatient();
 //    patient.setId(Integer.valueOf(new IdType(p.getId()).getIdPart()));
     patient.setUpdatedDate(p.getMeta().getLastUpdated());

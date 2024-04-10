@@ -17,7 +17,7 @@ import java.util.Date;
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
         property="identifier",
         scope = EhrSubscription.class)
-public class EhrSubscription {
+public class EhrSubscription extends EhrEntity {
     public EhrSubscription() {
     }
 

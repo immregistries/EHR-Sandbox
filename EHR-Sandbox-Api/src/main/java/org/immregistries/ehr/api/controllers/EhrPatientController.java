@@ -9,7 +9,7 @@ import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
+import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.immregistries.smm.tester.manager.query.QueryConverter;
@@ -49,7 +49,7 @@ public class EhrPatientController {
     @Autowired
     ImmunizationRegistryController immRegistryController;
     @Autowired
-    ImmunizationMapperR5 immunizationMapper;
+    IImmunizationMapper immunizationMapper;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired

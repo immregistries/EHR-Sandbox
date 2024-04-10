@@ -27,7 +27,7 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
         scope = EhrPatient.class)
 @Audited(targetAuditMode = NOT_AUDITED)
 //@Configurable(preConstruction = true)
-public class EhrPatient {
+public class EhrPatient extends EhrEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

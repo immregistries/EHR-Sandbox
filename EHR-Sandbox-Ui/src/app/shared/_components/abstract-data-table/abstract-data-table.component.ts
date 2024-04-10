@@ -82,6 +82,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
     } else {
       this.selectedElement = event
     }
+    console.log(this.selectedElement)
     this.selectEmitter.emit(this.selectedElement);
   }
 

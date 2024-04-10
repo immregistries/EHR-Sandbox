@@ -11,7 +11,7 @@ import java.util.Set;
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = Tenant.class)
-public class Tenant {
+public class Tenant extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tenant_id", nullable = false)

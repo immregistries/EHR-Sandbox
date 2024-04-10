@@ -5,7 +5,6 @@ import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
@@ -15,7 +14,7 @@ import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
-import org.immregistries.ehr.logic.mapping.PractitionnerMapperR5;
+import org.immregistries.ehr.logic.mapping.PractitionerMapperR5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +48,7 @@ public class MacroEndpointsController {
     @Autowired
     private ImmunizationMapperR5 immunizationMapper;
     @Autowired
-    private PractitionnerMapperR5 practitionnerMapper;
+    private PractitionerMapperR5 practitionnerMapper;
     @Autowired
     private OrganizationMapperR5 organizationMapper;
     @Autowired
@@ -159,7 +158,7 @@ public class MacroEndpointsController {
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Practitioner) {
                 Practitioner practitioner = (Practitioner) entry.getResource();
-                Clinician clinician = practitionnerMapper.fromFhir(practitioner);
+                Clinician clinician = practitionnerMapper.toClinician(practitioner);
                 clinician.setTenant(tenant);
                 clinician = clinicianController.postClinicians(tenant, clinician);
             }

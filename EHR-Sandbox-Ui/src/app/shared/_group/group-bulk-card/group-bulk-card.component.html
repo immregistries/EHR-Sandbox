@@ -1,0 +1,28 @@
+<button mat-stroked-button color="primary" [disabled]="!group" (click)="kickoff()">
+  <mat-icon>start</mat-icon>
+  Initiate import
+</button>
+<button mat-stroked-button color="primary" [disabled]="!importStatus?.status">
+  <mat-icon>refresh</mat-icon>
+  Check Import status
+</button>
+<button mat-stroked-button color="primary" [disabled]="!importStatus?.status">
+  <mat-icon>refresh</mat-icon>
+  Force refresh from IIS
+</button>
+<button mat-stroked-button color="primary" [disabled]="!importStatus?.status">
+  <mat-icon>sync</mat-icon>
+  Load result in database
+</button>
+
+<mat-list>
+  <mat-list-item>Status: {{importStatus?.status ?? 'N/A'}}</mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item>Number of attempts: {{importStatus?.lastAttemptCount ?? 'N/A'}}</mat-list-item>
+  <mat-divider></mat-divider>
+  <mat-list-item>Last attempt time: {{importStatus?.lastAttemptTime ?? 'N/A'}}</mat-list-item>
+  <mat-divider></mat-divider>
+  <!-- <mat-list-item *ngIf="importStatus?.result"> Result: <mat-icon>open</mat-icon></mat-list-item> -->
+  <mat-list-item > Result: <mat-icon (click)="openResult()">open_in_new</mat-icon></mat-list-item>
+  <mat-divider></mat-divider>
+</mat-list>

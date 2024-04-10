@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 //@NamedEntityGraph(name = "Facility.patients",
 //        attributeNodes = @NamedAttributeNode("patients")
 //)
-public class Facility {
+public class Facility extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facility_id", nullable = false)

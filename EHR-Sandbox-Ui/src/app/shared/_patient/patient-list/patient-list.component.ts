@@ -5,6 +5,7 @@ import { Facility, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
+import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 
 
 const DEFAULT_SETTINGS = {
@@ -27,7 +28,9 @@ export class PatientListComponent implements OnInit {
   selectedOption?: EhrPatient;
 
 
-  constructor(private tenantService: TenantService,
+  constructor(
+    private dialog: MatDialog,
+    private tenantService: TenantService,
     private facilityService: FacilityService,
     private patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<PatientListComponent>,
@@ -51,22 +54,18 @@ export class PatientListComponent implements OnInit {
     })
   }
 
-  // openDialog() {
-  //   const dialogRef = this.dialog.open(PatientFormComponent, {
-  //     maxWidth: '95vw',
-  //     maxHeight: '95vh',
-  //     height: 'fit-content',
-  //     width: '100%',
-  //     panelClass: 'full-screen-modal',
-  //   });
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (this.facility){
-  //       this.patientService.readPatients(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
-  //         this.list = res
-  //       })
-  //     }
-  //   });
-  // }
+  openPatient(patient: EhrPatient) {
+    const dialogRef = this.dialog.open(PatientDashboardComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {patient: patient}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+    });
+  }
 
   onSelection(event: EhrPatient) {
     this._dialogRef?.close(event.id)
