@@ -29,8 +29,9 @@ export class TenantMenuComponent implements AfterViewInit {
   openDialog() {
     const dialogRef = this.dialog.open(TenantCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
-      if(result) {
+      if (result) {
         this.tenantService.setCurrent(result)
+        this.facilityService.setCurrent({ id: -1 })
         this.tenantService.doRefresh()
       }
     });
@@ -38,11 +39,11 @@ export class TenantMenuComponent implements AfterViewInit {
 
   onSelection(event: Tenant) {
     if (this.tenantService.getCurrentId() == event.id) { // unselect
-      this.tenantService.setCurrent({id: -1})
+      this.tenantService.setCurrent({ id: -1 })
     } else {
       this.tenantService.setCurrent(event)
     }
-    this.facilityService.setCurrent({id: -1})
+    this.facilityService.setCurrent({ id: -1 })
   }
 
   selectFirstOrCreate() {

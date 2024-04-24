@@ -13,8 +13,9 @@
       <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}" >{{item.nameDisplay}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-checkbox *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate with random patients</mat-checkbox>
+
   <div mat-dialog-actions align="end">
+    <mat-checkbox *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate with random patients</mat-checkbox>
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

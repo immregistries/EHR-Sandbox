@@ -5,23 +5,23 @@
         <mat-card-content class="dashboard-card-content" #groups>
           <app-group-table [allow_create]="true" [facility]="facilityService.getCurrentObservable() |  async"
             (selectEmitter)="groupService.setCurrent($event ?? {})"
-
             [observableSource]="groupService.quickReadGroups()"></app-group-table>
         </mat-card-content>
       </mat-card>
 
     </mat-grid-tile>
-     <mat-grid-tile [colspan]="1">
+    <mat-grid-tile [colspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
-          <app-patient-table [dataArray]="(groupService.getCurrentObservable() | async)?.patientList ?? []" [title]="'Group members'" [allow_create]="false"
+          <app-patient-table [dataArray]="(groupService.getCurrentObservable() | async)?.patientList ?? []"
+            [title]="'Group members'" [allow_create]="false"
             [columns]='["mrn","nameLast","nameFirst","birthDate","remove"]'
             [facility]="facilityService.getCurrentObservable() | async"
             (removeEmitter)="removePatient($event)"></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-     <mat-grid-tile [colspan]="1">
+    <mat-grid-tile [colspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-title>Bulk import</mat-card-title>
         <mat-card-content class="dashboard-card-content" #patients>

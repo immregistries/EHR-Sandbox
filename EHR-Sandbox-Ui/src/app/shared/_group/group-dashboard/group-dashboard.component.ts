@@ -4,12 +4,8 @@ import { EhrGroup, EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { TenantService } from 'src/app/core/_services/tenant.service';
-import { GroupFormComponent } from '../group-form/group-form.component';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
-import { merge } from 'rxjs';
-import { PatientListComponent } from '../../_patient/patient-list/patient-list.component';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+import { ImmunizationRegistryFormComponent } from '../../_immunization-registry/immunization-registry-form/immunization-registry-form.component';
 
 @Component({
   selector: 'app-group-dashboard',
@@ -42,6 +38,20 @@ export class GroupDashboardComponent {
         this.facilityService.doRefresh()
       })
     }
+  }
+
+  openImmunizationRegistry() {
+    // console.log(this.ehrGroup.immunizationRegistry)
+    const dialogRef = this.dialog.open(ImmunizationRegistryFormComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: this.ehrGroup.immunizationRegistry,
+    });
+    dialogRef.afterClosed().subscribe(result => {
+    });
   }
 
 

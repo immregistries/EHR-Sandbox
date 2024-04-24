@@ -43,7 +43,7 @@ public abstract class ResourceClient<Identifier> implements IResourceClient<Iden
     public String read(String resourceType, String resourceId, IGenericClient client) {
         IBaseResource resource;
         resource = client.read().resource(resourceType).withId(resourceId).execute();
-        return fhirContext.newXmlParser().setPrettyPrint(true).encodeResourceToString(resource);
+        return fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(resource);
     }
 
     public MethodOutcome create(IBaseResource resource, IGenericClient client) {

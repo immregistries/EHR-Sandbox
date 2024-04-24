@@ -66,6 +66,7 @@ export class GroupTableComponent extends AbstractDataTableComponent<EhrGroup> {
       data: { groupName: ehrGroup.name },
     });
     dialogRef.afterClosed().subscribe(result => {
+      this.groupService
       this.groupService.doRefresh()
     });
   }

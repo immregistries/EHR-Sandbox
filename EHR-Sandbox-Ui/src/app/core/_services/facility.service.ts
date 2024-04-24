@@ -70,6 +70,13 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
       facility, { observe: 'response' })
   }
 
+
+  populate(tenantId: number, facilityId: number): Observable<string> {
+    return this.http.get<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/$populate`,
+      httpOptions)
+  }
+
   putFacility(tenantId: number, facility: Facility): Observable<HttpResponse<Facility>> {
     return this.http.put<Facility>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,

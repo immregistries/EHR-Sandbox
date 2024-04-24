@@ -5,6 +5,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-fetch-and-load',
@@ -45,6 +46,10 @@ export class FetchAndLoadComponent implements OnInit {
 
   selectVaccination(value: VaccinationEvent | null | undefined){
     this.selectedVaccination = value ?? null
+  }
+
+  refreshLocalHistoryObservable(): Observable<boolean> {
+    return of(true)
   }
 
 }

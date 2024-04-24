@@ -5,6 +5,10 @@
       color="primary" [disabled]="!(facility && facility.id > 0)" matTooltip="New Patient">
       <mat-icon>add</mat-icon>
     </button>
+    <button *ngIf="dataSource.data.length <= 0" [disabled]="!(facility && facility.id > 0)" mat-stroked-button matTooltip="Populate with random patients" color="primary" (click)="populate()">
+      <mat-icon>casino</mat-icon>
+      Populate
+    </button>
   </div>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>

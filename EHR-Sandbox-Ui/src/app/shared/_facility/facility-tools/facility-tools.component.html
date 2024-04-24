@@ -1,14 +1,18 @@
 <span class="tool-buttons-wrap-flex">
 
-  <button mat-icon-button matTooltip="Edit" color="primary" (click)="openEdition()">
+  <button mat-icon-button matTooltip="Edit" color="primary" [disabled]="!facility" (click)="openEdition()">
     <mat-icon>edit</mat-icon>
   </button>
 
-  <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
+  <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" [disabled]="!facility" (click)="openFhir()">
     <mat-icon>send</mat-icon>
     FHIR
   </button>
-  <app-json-dialog-button mat-raised-button [content]="facility"></app-json-dialog-button>
+  <button mat-stroked-button matTooltip="Export all patients and Immunization in Transaction Bundle" color="primary" [disabled]="!facility" (click)="openFhirBundle()">
+    <mat-icon>send</mat-icon>
+    FHIR Bundle
+  </button>
+  <app-json-dialog-button mat-raised-button [disabled]="!facility" [content]="facility"></app-json-dialog-button>
   <!-- <app-json-dialog-button mat-raised-button [content]="fhirResourceService.quickGetPatientResource(patient.id ?? -1) |async" [label]="'Resource'"></app-json-dialog-button> -->
   <ng-content></ng-content>
 

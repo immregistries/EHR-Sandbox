@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @Service
 public class ResourceIdentificationService {
+    Logger logger = LoggerFactory.getLogger(ResourceIdentificationService.class);
     public static final String FACILITY_SYSTEM = "ehr-sandbox/facility";
     private static final String IDENTIFIER_SYSTEM_PREFIX = FACILITY_SYSTEM + "/";
     private static final String PATIENT_IDENTIFIER_SYSTEM_SUFFIX = "/patient-system";
@@ -58,13 +61,13 @@ public class ResourceIdentificationService {
     }
 
     public String getPatientLocalId(Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        if (reference.getReference() != null && !reference.getReference().isBlank()) {
-            return getPatientLocalId(new IdType(reference.getReference()), immunizationRegistry);
-        } else if (reference.getIdentifier() != null){
-            return getPatientLocalId(reference.getIdentifier(), facility);
-        } else {
-            return null;
+        String localId = null;
+        if (reference.getIdentifier() != null){
+            localId = getPatientLocalId(reference.getIdentifier(), facility);
+        } else if (reference.getReference() != null && !reference.getReference().isBlank()) {
+            localId = getPatientLocalId(new IdType(reference.getReference()), immunizationRegistry);
         }
+        return  localId;
     }
 
     public String getPatientLocalId(IdType idType, ImmunizationRegistry immunizationRegistry) {
@@ -73,8 +76,11 @@ public class ResourceIdentificationService {
     }
 
     public String getPatientLocalId(Identifier identifier, Facility facility) {
+        logger.info("Reference identifier {} {}", identifier.getSystem(), identifier.getValue());
+        logger.info("Facility identifier  system {} {}", getFacilityPatientIdentifierSystem(facility), identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility)));
         if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
-            return identifier.getValue();
+            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
+                    .map(EhrPatient::getId).orElse(identifier.getValue()); // TODO Decide on what to do with this kind of identifier
         } else if (StringUtils.isBlank(identifier.getSystem())){
             return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
                     .map(EhrPatient::getId).orElse(null);

@@ -11,6 +11,7 @@ import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
   styleUrls: ['./fhir-post.component.css']
 })
 export class FhirPostComponent {
+  @Input()
   resourceLoading: Boolean = false
   requestLoading: Boolean = false
   answer: string = "";
@@ -20,7 +21,7 @@ export class FhirPostComponent {
   @Input()
   resourceType: string = "Patient";
   @Input()
-  operation: "UpdateOrCreate" | "Create" | "Update" | "$match" = "UpdateOrCreate";
+  operation: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "" = "UpdateOrCreate";
   @Input()
   resourceLocalId: number = -1;
   @Input()
@@ -42,12 +43,12 @@ export class FhirPostComponent {
     private feedbackService: FeedbackService) { }
 
   isJson() {
-      try {
-          JSON.parse(this._resource);
-      } catch (e) {
-          return false;
-      }
-      return true;
+    try {
+      JSON.parse(this._resource);
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 
   send() {
@@ -80,10 +81,17 @@ export class FhirPostComponent {
               }
             }
           } else {
-            this.answer = JSON.stringify(err.error)
+            this.answer = err.error
           }
           this.feedbackService.doRefresh()
         }
       })
+  }
+
+  resultClass(): string {
+    if (this.answer === "") {
+      return "w3-left w3-padding"
+    }
+    return this.error ? 'w3-red w3-left w3-padding' : 'w3-green w3-left w3-padding'
   }
 }

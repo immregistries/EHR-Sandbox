@@ -1,10 +1,17 @@
-<mat-selection-list #patients  [multiple]="false" [ngModel]="[selectedOption?.id]">
-  <mat-list-option *ngFor="let patient of list" (click)="onSelection(patient)" [value]="patient.id">
+<mat-action-list #patients>
+  <mat-list-item *ngFor="let patient of list" (click)="onSelection(patient)" >
     {{patient.nameFirst + " " + patient.nameLast + " | " + (patient.birthDate | date)}}
     <button mat-icon-button color="primary" (click)="openPatient(patient); $event.stopPropagation();"
-            matTooltip="Open Dashboard">
-            <mat-icon>open_in_new</mat-icon>
-          </button>
+      matTooltip="Open Dashboard">
+      <mat-icon>open_in_new</mat-icon>
+    </button>
     <mat-divider></mat-divider>
-  </mat-list-option>
-</mat-selection-list>
+  </mat-list-item>
+  <mat-list-item matTooltip="Add new Patient" (click)="openCreate();$event.stopPropagation();">
+    <button mat-icon-button color="primary"
+      matTooltip="Add Patient">
+      <mat-icon>add</mat-icon>
+    </button>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-action-list>

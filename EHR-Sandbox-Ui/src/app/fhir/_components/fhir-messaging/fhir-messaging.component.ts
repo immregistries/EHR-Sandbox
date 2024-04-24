@@ -2,6 +2,7 @@ import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, Opti
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { FhirResourceService } from '../../_services/fhir-resource.service';
+import { Observable, ObservableLike } from 'rxjs';
 
 @Component({
   selector: 'app-fhir-messaging',
@@ -26,19 +27,43 @@ export class FhirMessagingComponent implements AfterViewInit {
   public genericResource: string = "";
   @Input()
   public genericResourceType: string = "Patient";
+  @Input()
+  public genericOperation: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "" = "UpdateOrCreate";
+  genericLoading: Boolean = false
   public style: string = 'width: 50%'
 
   public patientFhirId = "";
 
   constructor(private fhirResourceService: FhirResourceService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccinationId?: number, resource?: string, resourceType?: string, resourceLocalId?: number }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+      patientId: number,
+      vaccinationId?: number,
+      resource?: string,
+      resourceObservable: Observable<string>,
+      resourceType?: string,
+      resourceLocalId?: number,
+      operation?: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "" }) {
     if (data) {
-      if (data.resource) {
+      console.log(data)
+      if (data.resourceObservable) {
+        this.genericResourceType = data.resourceType ?? "Patient"
+        this.genericLocalId = data.resourceLocalId ?? -1
+        this.genericOperation = data.operation ?? "UpdateOrCreate"
+        this.genericLoading = true
+        data.resourceObservable.subscribe((res) => {
+          this.genericLoading = false
+          this.genericResource = res
+        })
+      } else if (data.resource) {
         this.genericResource = data.resource
         this.genericResourceType = data.resourceType ?? "Patient"
         this.genericLocalId = data.resourceLocalId ?? -1
+        this.genericOperation = data.operation ?? "UpdateOrCreate"
       } else {
+        /**
+         * Special cases with extra tab
+         */
         if (data.patientId) {
           this.patientId = data.patientId
           this.patientLoading = true

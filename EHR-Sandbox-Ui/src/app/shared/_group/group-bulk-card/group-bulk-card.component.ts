@@ -19,15 +19,12 @@ export class GroupBulkCardComponent {
   @Input()
   public set group(value: EhrGroup | undefined | null) {
     this._group = value;
-    console.log("bulk",value)
     this.refreshStatus()
   }
 
   importStatus?: BulkImportStatus = {};
 
-  constructor(private groupService: GroupService, private snackBarService: SnackBarService, private dialog: MatDialog) {
-
-  }
+  constructor(private groupService: GroupService, private snackBarService: SnackBarService, private dialog: MatDialog) {}
 
   kickoff() {
     if (this.group?.id && this.group.immunizationRegistry) {
@@ -41,11 +38,14 @@ export class GroupBulkCardComponent {
     }
   }
 
-  refreshStatus() {
+  refreshStatus(openSnackbar?: boolean) {
     if (this.group?.id && this.group.immunizationRegistry) {
       this.groupService.getGroupBulkImportStatus(this.group?.id ?? -1).subscribe((res) => {
         if (res) {
           this.importStatus = res
+          if (openSnackbar) {
+            this.snackBarService.open("Status updated")
+          }
         } else {
           this.importStatus = {}
         }
@@ -55,13 +55,14 @@ export class GroupBulkCardComponent {
     }
   }
 
-  openResult(){
-    this.dialog.open(JsonDialogComponent, {maxWidth: '95vw',
-    maxHeight: '98vh',
-    height: 'fit-content',
-    width: '100%',
-    // panelClass: 'dialog-without-bar',
-    data: this.importStatus?.result
-  })
- }
+  openResult() {
+    this.dialog.open(JsonDialogComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      // panelClass: 'dialog-without-bar',
+      data: JSON.parse(this.importStatus?.result ?? "{}")
+    })
+  }
 }

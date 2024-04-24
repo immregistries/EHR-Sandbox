@@ -75,21 +75,26 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         group.setDescription(ehrGroup.getDescription());
         group.setManagingEntity(resourceIdentificationService.facilityReference(ehrGroup.getFacility()));
 //        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
-        for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
-            Group.GroupCharacteristicComponent groupCharacteristicComponent =  group.addCharacteristic();
-            groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))
-                    .setCode(new CodeableConcept(new Coding(ehrGroupCharacteristic.getCodeSystem(), ehrGroupCharacteristic.getCodeValue(), "")))
-                    .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));
-            if (Objects.nonNull(ehrGroupCharacteristic.getExclude())) {
-                groupCharacteristicComponent.setExclude(ehrGroupCharacteristic.getExclude());
+        if (ehrGroup.getEhrGroupCharacteristics() != null) {
+            for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
+                Group.GroupCharacteristicComponent groupCharacteristicComponent =  group.addCharacteristic();
+                groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))
+                        .setCode(new CodeableConcept(new Coding(ehrGroupCharacteristic.getCodeSystem(), ehrGroupCharacteristic.getCodeValue(), "")))
+                        .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));
+                if (Objects.nonNull(ehrGroupCharacteristic.getExclude())) {
+                    groupCharacteristicComponent.setExclude(ehrGroupCharacteristic.getExclude());
+                }
             }
         }
-        for (EhrPatient patient : ehrGroup.getPatientList()) {
-            group.addMember().setEntity(new Reference()
-                    .setIdentifier(new Identifier()
-                            .setSystem(patient.getMrnSystem())
-                            .setValue(patient.getMrn())));
+        if (ehrGroup.getPatientList() != null) {
+            for (EhrPatient patient : ehrGroup.getPatientList()) {
+                group.addMember().setEntity(new Reference()
+                        .setIdentifier(new Identifier()
+                                .setSystem(patient.getMrnSystem())
+                                .setValue(patient.getMrn())));
+            }
         }
+
         return group;
     }
 

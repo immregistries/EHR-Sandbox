@@ -18,9 +18,9 @@ const httpOptions = {
 })
 export class TenantService extends CurrentSelectedWithIdService<Tenant> {
 
-  constructor(private http: HttpClient, private settings: SettingsService, private facilityService: FacilityService ) {
-    super(new BehaviorSubject<Tenant>({id:-1}))
-   }
+  constructor(private http: HttpClient, private settings: SettingsService) {
+    super(new BehaviorSubject<Tenant>({ id: -1 }))
+  }
 
   readTenants(): Observable<Tenant[]> {
     return this.http.get<Tenant[]>(
@@ -41,6 +41,6 @@ export class TenantService extends CurrentSelectedWithIdService<Tenant> {
     return this.http.post<Tenant>(
       this.settings.getApiUrl()
       + '/tenants',
-      tenant, {observe: 'response'});
+      tenant, { observe: 'response' });
   }
 }

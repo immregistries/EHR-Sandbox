@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
@@ -52,6 +53,8 @@ public class EhrGroupController {
     private GroupProviderR5 groupProviderR5;
     @Autowired
     private FhirClientController fhirClientController;
+    @Autowired
+    private FhirConversionController fhirConversionController;
     @Autowired
     private BulkImportController bulkImportController;
 
@@ -87,6 +90,9 @@ public class EhrGroupController {
             }
             ehrGroup.setEhrGroupCharacteristics(characteristics);
             newEntity = ehrGroupRepository.save(ehrGroup);
+            if (ehrGroup.getImmunizationRegistry() != null) {
+                fhirClientController.postResource(ehrGroup.getImmunizationRegistry().getId(), "Group", fhirConversionController.groupResource(newEntity.getId(), facility).getBody());
+            }
             return new ResponseEntity<>(newEntity.getId(), HttpStatus.CREATED);
         }
     }
@@ -154,7 +160,6 @@ public class EhrGroupController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")));
         } else {
             return ResponseEntity.ok(ehrGroupRepository.findByFacilityId(facility.getId()));
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not supported yet");
         }
     }
 
@@ -184,7 +189,7 @@ public class EhrGroupController {
             throw new RuntimeException(kickoff.getResponse().toString());
         } else if (kickoff.getStatus() == 200 | kickoff.getStatus() == 202) {
             String contentLocationUrl = kickoff.getHeaders("Content-Location").get(0);
-            BulkImportStatus bulkImportStatusStarted = new BulkImportStatus("Started", 0,new Date().getTime());
+            BulkImportStatus bulkImportStatusStarted = new BulkImportStatus("Started", 0, new Date().getTime());
             resultCacheStore.put(ehrGroup.getId(), bulkImportStatusStarted);
             /**
              * Check thread async
@@ -201,7 +206,7 @@ public class EhrGroupController {
                     logger.info("Thread checking bulk status for the {} time", count);
                     ResponseEntity responseEntity = bulkImportController.bulkCheckStatusHttpResponse(immunizationRegistry, contentLocationUrl);
                     if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                        BulkImportStatus bulkImportSuccess = new BulkImportStatus(responseEntity.getBody().toString());
+                        BulkImportStatus bulkImportSuccess = new BulkImportStatus(new String((byte[]) Objects.requireNonNull(responseEntity.getBody()), StandardCharsets.UTF_8));
                         resultCacheStore.put(ehrGroup.getId(), bulkImportSuccess);
                         /**
                          * end
@@ -220,7 +225,7 @@ public class EhrGroupController {
                             final long delay;
                             if (headers.get("Retry-After").size() > 0 && StringUtils.isNotBlank(headers.get("Retry-After").get(0))) {
                                 delay = Integer.parseInt(headers.get("Retry-After").get(0));
-                            } else  {
+                            } else {
                                 delay = 120;
                             }
                             try {
@@ -249,7 +254,6 @@ public class EhrGroupController {
             set.add(ehrPatient);
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
             return newEntity;
-//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
         } else {
             Parameters in = new Parameters();
             /**
@@ -277,7 +281,6 @@ public class EhrGroupController {
             ehrGroup.getPatientList().remove(ehrPatient);
             ehrGroupRepository.save(ehrGroup);
             return ehrGroup;
-//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
         } else {
             Parameters in = new Parameters();
             in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
@@ -293,15 +296,24 @@ public class EhrGroupController {
     }
 
     @GetMapping("/{groupId}/$refresh")
-    public EhrGroup refreshOne(@RequestAttribute EhrGroup ehrGroup) {
-        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
-        IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
-        if (remoteGroup != null) {
-            groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
-        }
-        return ehrGroupRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), ehrGroup.getId()).get();
+    public EhrGroup refreshOne(@PathVariable String facilityId, @PathVariable String groupId) {
+        EhrGroup ehrGroup = ehrGroupRepository.findByFacilityIdAndId(facilityId, groupId).orElseThrow(() -> new RuntimeException("group not found"));
+        return refreshOne(ehrGroup);
     }
 
+    public EhrGroup refreshOne(@RequestAttribute EhrGroup ehrGroup) {
+        ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
+        if (immunizationRegistry == null) {
+            ehrGroup.setFacility(null);
+            return ehrGroup;
+        } else {
+            IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
+            if (remoteGroup != null) {
+                groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
+            }
+            return ehrGroupRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), ehrGroup.getId()).get();
+        }
+    }
 
     private IBaseResource getRemoteGroup(EhrGroup ehrGroup) {
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();

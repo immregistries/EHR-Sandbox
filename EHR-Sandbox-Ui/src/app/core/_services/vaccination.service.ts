@@ -20,7 +20,8 @@ const httpOptions = {
 })
 export class VaccinationService extends RefreshService {
 
-  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0&& this.patientService.getCurrentId() > 0))
+  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0 && this.patientService.getCurrentId() > 0))
+  if_valid_tenant_facility_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
 
 
@@ -29,8 +30,8 @@ export class VaccinationService extends RefreshService {
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private patientService: PatientService) {
-      super()
-     }
+    super()
+  }
 
   readRandom(patientId: number): Observable<VaccinationEvent> {
     const tenantId: number = this.tenantService.getCurrentId()
@@ -44,21 +45,30 @@ export class VaccinationService extends RefreshService {
    * @returns list of patients associated to the tenant, facility and patient selected in their respected services
    */
   quickReadVaccinations(): Observable<VaccinationEvent[]> {
-      return this.if_valid_parent_ids.pipe(switchMap((value) => {
-        if (value) {
-          return this.http.get<VaccinationEvent[]>(
-            `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${this.patientService.getCurrentId()}/vaccinations`,
-            httpOptions)
-        } else {
-          return of([])
-        }
-      }))
-    }
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      if (value) {
+        return this.http.get<VaccinationEvent[]>(
+          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${this.patientService.getCurrentId()}/vaccinations`,
+          httpOptions)
+      } else {
+        return of([])
+      }
+    }))
+  }
 
-  readVaccinations(patientId: number): Observable<VaccinationEvent[]>{
+  readVaccinations(patientId: number): Observable<VaccinationEvent[]> {
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      if (value) {
+        return this.http.get<VaccinationEvent[]>(
+          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/vaccinations`,
+          httpOptions)
+      } else {
+        return of([])
+      }
+    }))
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0 && patientId > 0){
+    if (tenantId > 0 && facilityId > 0 && patientId > 0) {
       return this.http.get<VaccinationEvent[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
         httpOptions);
@@ -67,8 +77,8 @@ export class VaccinationService extends RefreshService {
     }
   }
 
-  readVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<VaccinationEvent>{
-    if (tenantId > 0 && facilityId > 0 && patientId > 0 && vaccinationId > 0){
+  readVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<VaccinationEvent> {
+    if (tenantId > 0 && facilityId > 0 && patientId > 0 && vaccinationId > 0) {
       return this.http.get<VaccinationEvent>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}`,
         httpOptions);
@@ -77,14 +87,14 @@ export class VaccinationService extends RefreshService {
     }
   }
 
-  quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent>{
+  quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.readVaccinationFromFacility(tenantId,facilityId,vaccinationId)
+    return this.readVaccinationFromFacility(tenantId, facilityId, vaccinationId)
   }
 
-  readVaccinationFromFacility(tenantId: number, facilityId: number, vaccinationId: number): Observable<VaccinationEvent>{
-    if (tenantId > 0 && facilityId > 0 && vaccinationId > 0){
+  readVaccinationFromFacility(tenantId: number, facilityId: number, vaccinationId: number): Observable<VaccinationEvent> {
+    if (tenantId > 0 && facilityId > 0 && vaccinationId > 0) {
       return this.http.get<VaccinationEvent>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}`,
         httpOptions).pipe(share());
@@ -93,31 +103,31 @@ export class VaccinationService extends RefreshService {
     }
   }
 
-  quickPostVaccination(patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>>  {
+  quickPostVaccination(patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.postVaccination(tenantId,facilityId,patientId,vaccination, params)
+    return this.postVaccination(tenantId, facilityId, patientId, vaccination, params)
   }
 
-  postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>>  {
-    if (tenantId > 0 && facilityId > 0 && patientId > 0){
+  postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
+    if (tenantId > 0 && facilityId > 0 && patientId > 0) {
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
         vaccination,
-        {observe: 'response', params: params});
+        { observe: 'response', params: params });
     } else {
       throw throwError(() => new Error("No patient selected"))
     }
   }
 
-  quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent>  {
+  quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
-    return this.putVaccination(tenantId,facilityId,patientId,vaccination)
+    return this.putVaccination(tenantId, facilityId, patientId, vaccination)
   }
 
-  putVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent>   {
-    if (tenantId > 0 && facilityId > 0 && patientId > 0){
+  putVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
+    if (tenantId > 0 && facilityId > 0 && patientId > 0) {
       return this.http.put<VaccinationEvent>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
         vaccination, httpOptions);

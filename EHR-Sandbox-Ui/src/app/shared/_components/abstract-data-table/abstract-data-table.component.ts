@@ -39,7 +39,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
 
   public _data_set_input: boolean = false
   @Input()
-  public set dataArray(value: T[] | undefined) {
+  public set dataArray(value: T[] | undefined | null) {
     this._data_set_input = true
     if (value) {
       this.dataSource.data = value;

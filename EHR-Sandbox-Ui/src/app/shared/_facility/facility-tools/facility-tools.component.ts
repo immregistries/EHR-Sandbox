@@ -15,10 +15,8 @@ import { error } from 'console';
 export class FacilityToolsComponent {
   @Input()
   facility!: Facility
-  constructor(public dialog: MatDialog, public facilityService: FacilityService, public fhirResourceService: FhirResourceService) {
 
-  }
-
+  constructor(public dialog: MatDialog, public facilityService: FacilityService, public fhirResourceService: FhirResourceService) {}
 
   openEdition() {
     const dialogRef = this.dialog.open(FacilityCreationComponent, { data: { facility: this.facility } });
@@ -45,6 +43,20 @@ export class FacilityToolsComponent {
       }
     })
 
+  }
+
+  openFhirBundle() {
+    const dialogRef = this.dialog.open(FhirMessagingComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-without-bar',
+      data: { resourceObservable: this.fhirResourceService.getFacilityExportBundle(this.facility.id), resourceType: "" , resourceLocalId: this.facility.id, operation: "$transaction"},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.facilityService.doRefresh()
+    });
   }
 
 }

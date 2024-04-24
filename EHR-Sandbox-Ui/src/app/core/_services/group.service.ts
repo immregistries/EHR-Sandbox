@@ -112,7 +112,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0) {
+    if (tenantId > 0 && facilityId > 0 && groupId > 0) {
       return this.http.get<{}>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$import-status`,
         httpOptions);
@@ -181,7 +181,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0) {
+    if (tenantId > 0 && facilityId > 0 && groupId && groupId > -1) {
       return this.http.get<EhrGroup>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$refresh`,
         httpOptions);

@@ -1,7 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.RuntimeResourceDefinition;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -9,7 +8,7 @@ import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
-import ca.uhn.fhir.util.ClasspathUtil;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.Feedback;
@@ -343,6 +342,19 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
+//    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
+    @PostMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
+    public ResponseEntity<String> transaction(
+            @PathVariable() Integer registryId,
+            @RequestBody String message) {
+        IParser parser = parser(message);
+        IBaseBundle bundle = (IBaseBundle) parser.parseResource(message);
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        customClientFactory.newGenericClient(registryId).transaction().withBundle(message).execute();
+        IBaseBundle result = customClientFactory.newGenericClient(registryId).transaction().withBundle(bundle).execute();
+        return ResponseEntity.ok(parser.encodeResourceToString(result));
+    }
+
     @PostMapping({
             IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
             IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
@@ -381,9 +393,9 @@ public class FhirClientController {
     }
 
 
-
     /**
      * Provides the accurate parser for said message
+     *
      * @param message
      * @return
      */

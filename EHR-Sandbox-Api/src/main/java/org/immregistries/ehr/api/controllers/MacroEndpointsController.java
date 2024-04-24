@@ -172,7 +172,7 @@ public class MacroEndpointsController {
             if (entry.getResource() instanceof Patient) {
                 Patient patient = (Patient) entry.getResource();
                 EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
-                String localId = ehrPatientController.postPatient(facility, ehrPatient, Optional.empty(), Optional.empty()).getBody();
+                String localId = ehrPatientController.postPatient(tenant, facility, ehrPatient, Optional.empty(), Optional.empty(), Optional.empty()).getBody();
                 ehrPatients.put(patient.getIdElement().getIdPart(), localId);
             }
         }

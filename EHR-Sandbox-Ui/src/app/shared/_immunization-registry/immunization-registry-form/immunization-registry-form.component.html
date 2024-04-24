@@ -35,6 +35,7 @@
               <input matInput [(ngModel)]="immunizationRegistry.iisFhirUrl">
             </mat-form-field>
           </div>
+
           <div>
             <mat-form-field appearance="fill" style="min-width: 40em;">
               <mat-label>HL7v2 api url</mat-label>
@@ -80,7 +81,11 @@
       </mat-card>
       <mat-card class="form-card">
         <mat-card-content style="text-align: right;">
-          <button mat-raised-button color="primary" (click)="save()">
+          <button mat-stroked-button [matTooltip]="(!immunizationRegistry.id || immunizationRegistry.id < 1)? 'Save to check metadata' : 'Check Metadata'" color="primary" type="button" [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1" (click)="checkMetadata()">
+            <mat-icon>send</mat-icon>
+            Save & Check Metadata
+          </button>
+          <button mat-raised-button type="submit" color="primary" (click)="save()">
             <mat-icon>save</mat-icon>
             Save
           </button>

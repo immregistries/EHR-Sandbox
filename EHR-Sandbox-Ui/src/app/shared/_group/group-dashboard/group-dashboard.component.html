@@ -13,11 +13,13 @@
     <mat-grid-tile [colspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #display>
-          TODO Better Group display
-          <div>Name: {{ehrGroup.name}} </div>
-          <div>Description: {{ehrGroup.description}} </div>
-          <div>Remote: {{ehrGroup.immunizationRegistry?.name ?? 'Local' }} </div>
-          <div>...</div>
+          <mat-list>
+            <mat-list-item>Remote IIS: {{ehrGroup.immunizationRegistry?.name ?? 'N/A' }}
+              <button type="button" mat-icon-button color="primary" (click)="openImmunizationRegistry()" *ngIf="ehrGroup.immunizationRegistry"><mat-icon>open_in_new</mat-icon></button>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <p>Description: {{ehrGroup.description}} </p>
+          </mat-list>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
@@ -28,6 +30,14 @@
             [columns]='["mrn","nameLast","nameFirst","birthDate","remove"]'
             [facility]="facilityService.getCurrentObservable() | async"
             (removeEmitter)="removePatient($event)"></app-patient-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1">
+      <mat-card class="dashboard-card">
+        <mat-card-title>Bulk import</mat-card-title>
+        <mat-card-content class="dashboard-card-content" #patients>
+          <app-group-bulk-card [group]="ehrGroup"></app-group-bulk-card>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

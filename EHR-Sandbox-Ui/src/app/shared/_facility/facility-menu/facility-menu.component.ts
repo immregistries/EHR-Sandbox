@@ -4,6 +4,7 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FacilityCreationComponent } from '../facility-creation/facility-creation.component';
 import { Facility } from 'src/app/core/_model/rest';
 import { MatDialog } from '@angular/material/dialog';
+import { FacilityDashboardComponent } from '../facility-dashboard/facility-dashboard.component';
 
 @Component({
   selector: 'app-facility-menu',
@@ -20,7 +21,7 @@ export class FacilityMenuComponent implements OnInit {
 
   constructor(public facilityService: FacilityService,
     public tenantService: TenantService,
-    public dialog: MatDialog) {}
+    public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.facilityService.getRefresh().subscribe((bool) => {
@@ -35,14 +36,16 @@ export class FacilityMenuComponent implements OnInit {
   openDialog() {
     const dialogRef = this.dialog.open(FacilityCreationComponent);
     dialogRef.afterClosed().subscribe(result => {
-      this.facilityService.setCurrent(result)
-      this.facilityService.doRefresh()
+      if (result) {
+        this.facilityService.setCurrent(result)
+        this.facilityService.doRefresh()
+      }
     });
   }
 
   onSelection(event: Facility) {
     if (this.facilityService.getCurrentId() == event.id) { // unselect
-      this.facilityService.setCurrent({id: -1})
+      this.facilityService.setCurrent({ id: -1 })
     } else {
       this.facilityService.setCurrent(event)
     }
@@ -50,13 +53,25 @@ export class FacilityMenuComponent implements OnInit {
 
   selectFirstOrCreate() {
     if (!this.disabled() && this.facilityService.getCurrentId() < 0) {
-      if (this.list && this.list[0] ) {
+      if (this.list && this.list[0]) {
         this.onSelection(this.list[0])
       } else {
         this.openDialog()
       }
     }
     event?.stopPropagation()
+  }
+
+  openFacility() {
+    this.dialog.open(FacilityDashboardComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: { facility: this.facilityService.getCurrent() }
+    })
+
   }
 
 }

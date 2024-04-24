@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import com.github.javafaker.Faker;
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -77,13 +79,9 @@ public class FacilityController {
         facility.setTenant(tenant);
         Facility newEntity = facilityRepository.save(facility);
         if (populate.isPresent()) {
-            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
-            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
-            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
-            ehrPatientController.postPatient(newEntity, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty());
+            populateFacility(tenant,facility,Optional.of(3));
         }
         return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
-
     }
 
     @PutMapping()
@@ -101,6 +99,23 @@ public class FacilityController {
         facility.setTenant(tenant);
         Facility newEntity = facilityRepository.save(facility);
         return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{facilityId}/$populate")
+    @Transactional()
+    public ResponseEntity<String> populateFacility(
+            @RequestAttribute Tenant tenant,
+            @RequestAttribute Facility facility,
+            @RequestParam Optional<Integer> patientNumber) {
+        if (patientNumber.isEmpty()) {
+            patientNumber = Optional.of(3);
+        } else if (patientNumber.get() > 30) {
+            patientNumber = Optional.of(3);
+        }
+        for (int i = 0; i < patientNumber.get(); i++) {
+            ehrPatientController.postPatient(tenant, facility, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty(), Optional.of(true));
+        }
+        return ResponseEntity.ok("{}");
     }
 
     /**

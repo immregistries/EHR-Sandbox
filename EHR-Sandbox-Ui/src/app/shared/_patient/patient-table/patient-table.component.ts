@@ -16,6 +16,7 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
 })
 export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient> implements AfterViewInit {
 
+
   @Input()
   title: string = 'Patients'
   @Input()
@@ -30,6 +31,9 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   ]
   @Output()
   removeEmitter: EventEmitter<EhrPatient> = new EventEmitter<EhrPatient>()
+
+  @Input()
+  allow_populate: boolean = false;
 
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
@@ -78,6 +82,14 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
     });
+  }
+
+  populate() {
+    if (this.facility?.id) {
+      this.facilityService.populate(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
+        this.facilityService.doRefresh()
+      })
+    }
   }
 
 }

@@ -24,7 +24,7 @@ export class GroupToolsComponent {
     public groupService: GroupService,
     private fhirResourceService: FhirResourceService,
     private snackBarService: SnackBarService,
-    ) {}
+  ) { }
 
   openEdition() {
     const dialogRef = this.dialog.open(GroupFormComponent, {
@@ -47,7 +47,7 @@ export class GroupToolsComponent {
         height: 'fit-content',
         width: '100%',
         panelClass: 'dialog-without-bar',
-        data: {resource: res, resourceType: 'Group', resourceLocalId: this.ehrGroup.id},
+        data: { resource: res, resourceType: 'Group', resourceLocalId: this.ehrGroup.id },
       });
       dialogRef.afterClosed().subscribe((result) => {
         this.groupService.refreshGroup(this.ehrGroup.id).subscribe((res) => {
@@ -84,10 +84,12 @@ export class GroupToolsComponent {
               },
               error: error => {
                 this.snackBarService.errorMessage(JSON.stringify(error.error))
+                this.groupService.doRefresh()
               }
             });
           } else {
             this.snackBarService.errorMessage("Group.id undefined")
+            this.groupService.doRefresh()
           }
         }
       });

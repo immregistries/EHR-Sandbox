@@ -48,19 +48,18 @@ export class FacilityDashboardComponent {
     }
   }
 
-  openFacility(element: Facility) {
-    this.dialog.open(FacilityDashboardComponent, {
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      height: 'fit-content',
-      width: '100%',
-      panelClass: 'dialog-with-bar',
-      data: {facility: element}
-    })
-
+  openFacility(element?: Facility) {
+    if (this.facility) {
+      this.dialog.open(FacilityDashboardComponent, {
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        height: 'fit-content',
+        width: '100%',
+        panelClass: 'dialog-with-bar',
+        data: {facility: element}
+      })
+    }
   }
-
-
 
 
 }

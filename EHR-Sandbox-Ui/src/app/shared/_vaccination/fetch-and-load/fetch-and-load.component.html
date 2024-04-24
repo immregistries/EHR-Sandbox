@@ -32,7 +32,8 @@
     <mat-grid-tile [colspan]="2" >
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-vaccination-table [patientId]="patientId ?? -1" [allow_create]="false" (selectEmitter)="selectVaccination($event)"></app-vaccination-table>
+          <!-- TODO Change argument for observable Source -->
+          <app-vaccination-table [patientId]="patientId ?? -1" [allow_create]="false" (selectEmitter)="selectVaccination($event)" [observableSource]="vaccinationService.quickReadVaccinations()" [observableRefresh]="refreshLocalHistoryObservable()"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

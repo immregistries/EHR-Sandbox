@@ -104,10 +104,12 @@ public class EhrPatientController {
     @PostMapping()
     @Transactional()
     public ResponseEntity<String> postPatient(
+            @RequestAttribute Tenant tenant,
             @RequestAttribute Facility facility,
             @RequestBody EhrPatient patient,
             @RequestParam(COPIED_ENTITY_ID) Optional<String> copiedEntityId,
-            @RequestParam(COPIED_FACILITY_ID) Optional<Integer> copiedFacilityId) {
+            @RequestParam(COPIED_FACILITY_ID) Optional<Integer> copiedFacilityId,
+            @RequestParam Optional<Boolean> populate) {
 
         // patient data check + flavours
         /**
@@ -174,6 +176,9 @@ public class EhrPatientController {
                 .path("/{id}")
                 .buildAndExpand(newEntity.getId())
                 .toUri();
+        if (populate.isPresent() && populate.get()) {
+            populatePatient(tenant,facility,newEntity, Optional.empty());
+        }
         return ResponseEntity.created(location).body(newEntity.getId());
     }
 
@@ -197,7 +202,7 @@ public class EhrPatientController {
                                                                                   @PathVariable() Integer registryId,
                                                                                   @RequestParam Optional<Long> _since) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
-        IGenericClient client = customClientFactory.newGenericClient(registryId);
+        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
 
         // TODO switch to $match ?
         Bundle searchBundle = client.search()
@@ -231,7 +236,7 @@ public class EhrPatientController {
             requestDetails.setTenantId(String.valueOf(facility.getId()));
 
             for (Bundle.BundleEntryComponent entry : outBundle.getEntry()) {
-                try {
+                if (entry.getResource().getResourceType().name().equals("Immunization")) {
                     Immunization immunization = (Immunization) entry.getResource();
                     if (immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) != null) {
                         immunization.setPatient(new Reference().setReference(patient.getId()));
@@ -240,10 +245,8 @@ public class EhrPatientController {
                         vaccinationEvent.setAdministeringFacility(facility);
                         set.add(immunizationMapper.toVaccinationEvent(immunization));
                     }
-
-                } catch (ClassCastException classCastException) {
-                    //Ignoring other resources
                 }
+
                 //TODO Recommendations
             }
             return ResponseEntity.accepted().body(set);

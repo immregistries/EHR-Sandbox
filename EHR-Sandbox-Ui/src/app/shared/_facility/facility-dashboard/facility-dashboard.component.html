@@ -16,12 +16,12 @@
           <mat-card-title>Parent Facility</mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <p *ngIf="facility.parentFacility">{{facility.parentFacility.nameDisplay}}
-            <button mat-icon-button color="primary"
-              (click)="openFacility(facility.parentFacility); $event.stopPropagation();" matTooltip="Open Dashboard">
+          <p *ngIf="facility.parentFacility;else na">{{facility.parentFacility.nameDisplay}}</p>
+          <ng-template #na><p>N/A</p></ng-template>
+          <button mat-icon-button color="primary"
+              (click)="openFacility(facility.parentFacility); $event.stopPropagation();" matTooltip="Open Dashboard" [disabled]="!facility.parentFacility">
               <mat-icon>open_in_new</mat-icon>
             </button>
-          </p>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

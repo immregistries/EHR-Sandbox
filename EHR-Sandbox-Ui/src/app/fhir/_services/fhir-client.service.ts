@@ -27,9 +27,13 @@ export class FhirClientService {
     private registryService: ImmunizationRegistryService,
     private subscriptionService: SubscriptionService) { }
 
-  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<string> {
+  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match" | "$transaction" | "", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<string> {
     if (operation == "$match") {
       return this.matchResource(type, resource, resourceLocalId, parentId);
+    } else if (operation == "$transaction") {
+      return this.transaction(resource, resourceLocalId);
+    } else if (operation == "") {
+      return this.transaction(resource, resourceLocalId);
     }
     switch (type) {
       case "Patient": {
@@ -80,6 +84,15 @@ export class FhirClientService {
       }
     }
     return of("");
+  }
+
+  transaction(resource: string, facilityId: number): Observable<string> {
+    const registryId = this.registryService.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/registry/${registryId}/$transaction`,
+      resource,
+      httpOptions);
   }
 
   sendOrganization(resource: string, operation: "Create" | "Update" | "UpdateOrCreate"): Observable<string> {
@@ -188,7 +201,7 @@ export class FhirClientService {
   getFromIIS(resourceType: string, identifier: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     return this.http.get(
-      `${this.settings.getApiUrl()}/registry/${registryId}/${resourceType}/${identifier}`,
+      `${this.settings.getApiUrl()}/registry/${registryId}/${resourceType}${identifier ? '/' + identifier : ''}`,
       { responseType: 'text' });
   }
 

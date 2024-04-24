@@ -83,6 +83,8 @@ import { FacilityTableComponent } from './_facility/facility-table/facility-tabl
 import { ClinicianTableComponent } from './_clinician/clinician-table/clinician-table.component';
 import { ClinicianToolsComponent } from './_clinician/clinician-tools/clinician-tools.component';
 import { GroupBulkCardComponent } from './_group/group-bulk-card/group-bulk-card.component';
+import { GroupBulkCompareComponent } from './_group/group-bulk-compare/group-bulk-compare.component';
+import { VaccinationCompareComponent } from './_vaccination/vaccination-compare/vaccination-compare.component';
 
 
 @NgModule({
@@ -151,6 +153,8 @@ import { GroupBulkCardComponent } from './_group/group-bulk-card/group-bulk-card
     ClinicianTableComponent,
     ClinicianToolsComponent,
     GroupBulkCardComponent,
+    GroupBulkCompareComponent,
+    VaccinationCompareComponent,
   ],
   imports: [
     CommonModule,
