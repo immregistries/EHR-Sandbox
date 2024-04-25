@@ -3,6 +3,7 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import com.github.javafaker.Faker;
+import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -16,6 +17,7 @@ import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
+import org.immregistries.ehr.logic.BundleImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,8 @@ public class EhrGroupController {
     private FhirConversionController fhirConversionController;
     @Autowired
     private BulkImportController bulkImportController;
+    @Autowired
+    private BundleImportService bundleImportService;
 
     /**
      * hollow method for url mapping
@@ -166,6 +170,13 @@ public class EhrGroupController {
     @GetMapping("/{groupId}/$import-status")
     public ResponseEntity<BulkImportStatus> getImportStatus(@PathVariable String groupId) {
         return ResponseEntity.ok(resultCacheStore.get(groupId));
+    }
+
+    @PostMapping("/{groupId}/$import-view-result")
+    public ResponseEntity<Set<EhrEntity>> getImportStatusResult(@PathVariable String groupId, @RequestBody String url) {
+//        BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
+        EhrGroup group = ehrGroupRepository.findById(groupId).get();
+        return bulkImportController.viewBulkResult(group.getImmunizationRegistry().getId(), group.getFacility(), url);
     }
 
     @GetMapping("/{groupId}/$import")
@@ -337,8 +348,6 @@ public class EhrGroupController {
             }
         }
         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
-
-
     }
 
 

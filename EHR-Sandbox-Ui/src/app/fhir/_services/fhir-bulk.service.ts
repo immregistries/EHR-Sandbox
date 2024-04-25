@@ -107,6 +107,15 @@ export class FhirBulkService {
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, body);
   }
 
+  // viewResult(url: string): Observable<string> {
+  //   const registryId = this.registryService.getCurrentId()
+  //   const tenantId: number = this.tenantService.getCurrentId()
+  //   const facilityId: number = this.facilityService.getCurrentId()
+
+  //   return this.http.post<string>(
+  //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, url);
+  // }
+
   loadJson(body: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()

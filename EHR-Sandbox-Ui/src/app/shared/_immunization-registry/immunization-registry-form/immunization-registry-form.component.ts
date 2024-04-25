@@ -26,10 +26,8 @@ export class ImmunizationRegistryFormComponent implements OnInit {
     private snack: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<ImmunizationRegistryFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {}) {
-      console.log(data)
     if (data) {
       this.editMode = true;
-      console.log(data)
       this.immunizationRegistry = data
     }
     if (_dialogRef && !data) {
@@ -82,7 +80,7 @@ export class ImmunizationRegistryFormComponent implements OnInit {
         height: 'fit-content',
         width: '100%',
         panelClass: 'dialog-without-bar',
-        data: {resourceType: 'metadata'},
+        data: { resourceType: 'metadata' },
       });
       dialogRef.afterClosed().subscribe(result => {
 

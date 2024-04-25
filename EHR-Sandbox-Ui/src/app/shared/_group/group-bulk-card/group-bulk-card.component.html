@@ -6,11 +6,11 @@
   <mat-icon>refresh</mat-icon>
   Check Import status
 </button>
-<button mat-stroked-button color="primary" [disabled]="!importStatus?.status">
+<button mat-stroked-button color="primary" [matTooltip]="'Not Recommended, force refrsh from IIS'" [disabled]="!importStatus?.status">
   <mat-icon>refresh</mat-icon>
-  Force refresh from IIS
+  Refresh from IIS
 </button>
-<button mat-stroked-button color="primary" [disabled]="!importStatus?.status">
+<button mat-stroked-button color="primary" [disabled]="!importStatus?.result" (click)="openResult()">
   <mat-icon>sync</mat-icon>
   Load result in database
 </button>
@@ -26,7 +26,9 @@
   <mat-list-item>
     <span style="display: flex; align-items: center; justify-content: center;">
       Result:
-      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResult()"><mat-icon>open_in_new</mat-icon></button>
+      <!-- <button mat-icon-button type="button" (click)="openResult()"><mat-icon>open_in_new</mat-icon></button> -->
+      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResult()" color="primary"><mat-icon>open_in_new</mat-icon></button>
+      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResultJson()" color="primary"><mat-icon>description</mat-icon></button>
     </span>
   </mat-list-item>
   <mat-divider></mat-divider>

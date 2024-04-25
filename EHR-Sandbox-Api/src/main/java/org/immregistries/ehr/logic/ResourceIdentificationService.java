@@ -62,7 +62,7 @@ public class ResourceIdentificationService {
 
     public String getPatientLocalId(Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
         String localId = null;
-        if (reference.getIdentifier() != null){
+        if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())){
             localId = getPatientLocalId(reference.getIdentifier(), facility);
         } else if (reference.getReference() != null && !reference.getReference().isBlank()) {
             localId = getPatientLocalId(new IdType(reference.getReference()), immunizationRegistry);
@@ -76,14 +76,14 @@ public class ResourceIdentificationService {
     }
 
     public String getPatientLocalId(Identifier identifier, Facility facility) {
-        logger.info("Reference identifier {} {}", identifier.getSystem(), identifier.getValue());
-        logger.info("Facility identifier  system {} {}", getFacilityPatientIdentifierSystem(facility), identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility)));
-        if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
-            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
-                    .map(EhrPatient::getId).orElse(identifier.getValue()); // TODO Decide on what to do with this kind of identifier
-        } else if (StringUtils.isBlank(identifier.getSystem())){
+//        logger.info("Reference identifier {} {}", identifier.getSystem(), identifier.getValue());
+//        logger.info("Facility identifier  system {} {}", getFacilityPatientIdentifierSystem(facility), identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility)));
+        if (StringUtils.isBlank(identifier.getSystem())){
             return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
                     .map(EhrPatient::getId).orElse(null);
+        } else if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
+            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
+                    .map(EhrPatient::getId).orElse(identifier.getValue()); // TODO Decide on what to do with this kind of identifier
         } else if (identifier.getSystem().equals(MRN_SYSTEM)) {
             return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
                     .map(EhrPatient::getId).orElse(null);

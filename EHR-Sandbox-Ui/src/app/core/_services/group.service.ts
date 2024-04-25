@@ -120,6 +120,19 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
       return of()
     }
   }
+  getGroupBulkViewResult(groupId: number, body: string): Observable<[]> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0) {
+      return this.http.post<[]>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$import-view-result`, body,
+         httpOptions
+        );
+    } else {
+      return of()
+    }
+  }
+
 
 
   groupBulkImportKickoff(groupId: number): Observable<{}> {

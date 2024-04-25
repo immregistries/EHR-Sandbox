@@ -53,8 +53,6 @@ export class AuthenticationFormComponent implements OnInit {
       },
       error: (err) => {
         console.log(err)
-        console.log(err)
-        console.log(err)
         this.errorMessage = err.message;
         console.warn(this.errorMessage)
         this.isLoginFailed = true;

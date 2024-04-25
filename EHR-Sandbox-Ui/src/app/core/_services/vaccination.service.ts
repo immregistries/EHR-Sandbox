@@ -49,7 +49,7 @@ export class VaccinationService extends RefreshService {
       if (value) {
         return this.http.get<VaccinationEvent[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${this.patientService.getCurrentId()}/vaccinations`,
-          httpOptions)
+          httpOptions).pipe(share());
       } else {
         return of([])
       }

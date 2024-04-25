@@ -42,14 +42,11 @@ export class ClinicianFormComponent {
 
   save() {
     if (this.model.id && this.model.id > -1){
-
       this.clinicianService.putClinician(this.tenantService.getCurrentId(), this.model).subscribe((res) => {
-        // console.log(res)
         this._dialogRef?.close(res)
       })
     } else {
       this.clinicianService.postClinician(this.tenantService.getCurrentId(), this.model).subscribe((res) => {
-        // console.log(res)
         this._dialogRef?.close(res)
       })
     }

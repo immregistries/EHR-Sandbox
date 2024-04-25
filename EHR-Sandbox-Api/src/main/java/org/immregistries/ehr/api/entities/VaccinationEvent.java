@@ -117,6 +117,15 @@ public class VaccinationEvent extends EhrEntity {
         this.enteringClinician = enteringClinician;
     }
 
+//    @JsonProperty("patientId")
+//    @Transient()
+//    public String getPatientId() {
+//        if (patient == null) {
+//            return null;
+//        }
+//        return patient.getId();
+//    }
+
     public EhrPatient getPatient() {
         return patient;
     }

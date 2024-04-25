@@ -189,8 +189,10 @@ export class FhirClientService {
       httpOptions);
   }
 
-  loadEverythingFromPatient(patientId: number): Observable<VaccinationEvent[]> {
-    const registryId = this.registryService.getCurrentId()
+  loadEverythingFromPatient(patientId: number, registryId?: number): Observable<VaccinationEvent[]> {
+    if (!registryId) {
+      registryId = this.registryService.getCurrentId()
+    }
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<VaccinationEvent[]>(

@@ -54,7 +54,6 @@ export class SubscriptionDashboardComponent implements OnInit {
     this.loading = true
     this.subscriptionService.createSubscription().subscribe({
       next: (res) => {
-        console.log(res)
         this.loading = false
         this.ngOnInit()
       },

@@ -5,6 +5,7 @@ import { BulkImportStatus } from 'src/app/core/_model/structure';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogComponent } from '../../_components/json-dialog/json-dialog.component';
+import { GroupBulkCompareComponent } from '../group-bulk-compare/group-bulk-compare.component';
 
 @Component({
   selector: 'app-group-bulk-card',
@@ -55,7 +56,7 @@ export class GroupBulkCardComponent {
     }
   }
 
-  openResult() {
+  openResultJson() {
     this.dialog.open(JsonDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
@@ -63,6 +64,17 @@ export class GroupBulkCardComponent {
       width: '100%',
       // panelClass: 'dialog-without-bar',
       data: JSON.parse(this.importStatus?.result ?? "{}")
+    })
+  }
+
+  openResult() {
+    this.dialog.open(GroupBulkCompareComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      // panelClass: 'dialog-without-bar',
+      data: {ehrGroup: this.group, bulkImportStatus: this.importStatus}
     })
   }
 }

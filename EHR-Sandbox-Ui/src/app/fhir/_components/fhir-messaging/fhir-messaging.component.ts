@@ -45,7 +45,6 @@ export class FhirMessagingComponent implements AfterViewInit {
       resourceLocalId?: number,
       operation?: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "" }) {
     if (data) {
-      console.log(data)
       if (data.resourceObservable) {
         this.genericResourceType = data.resourceType ?? "Patient"
         this.genericLocalId = data.resourceLocalId ?? -1

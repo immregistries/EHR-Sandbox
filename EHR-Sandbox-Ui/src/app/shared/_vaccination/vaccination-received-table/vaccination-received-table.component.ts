@@ -46,7 +46,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
 
   private _localVaccinations!: VaccinationEvent[];
   @Input()
-  set localVaccinations(values: VaccinationEvent[] | undefined) {
+  set localVaccinations(values: VaccinationEvent[] | undefined | null) {
     this._localVaccinations = values ?? [];
     this.updateMatchingMatrix()
   }
@@ -59,13 +59,11 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
     this.dataSource.data = values;
     this.expandedElement = values.find((vaccinationEvent: VaccinationEvent) => { return vaccinationEvent.id == this.expandedElement?.id }) ?? null
     this.updateMatchingMatrix()
-    this.dataSource.sort?.sort({ id: "match", start: 'desc', disableClear: false })
+    // this.dataSource.sort?.sort({ id: "match", start: 'desc', disableClear: false })
   }
   get remoteVaccinations(): VaccinationEvent[] {
     return this.dataSource.data
   }
-
-
 
   private _vaccinationToCompare!: VaccinationEvent | null;
   @Input()
@@ -81,7 +79,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
   @Input()
   public set patientId(value: number | undefined) {
     this._patientId = value ?? -1;
-    this.remoteVaccinations = []
+    // this.remoteVaccinations = []
   }
   public get patientId(): number {
     return this._patientId;
@@ -94,11 +92,11 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
     public vaccinationComparePipe: VaccinationComparePipe) { }
 
   ngOnInit(): void {
-    this.patientService.getCurrentObservable().subscribe(patient => {
-      this.vaccinationService.readVaccinations(patient?.id ?? -1).subscribe(res => {
-        this.localVaccinations = res
-      })
-    })
+    // this.patientService.getCurrentObservable().subscribe(patient => {
+    //   this.vaccinationService.readVaccinations(patient?.id ?? -1).subscribe(res => {
+    //     this.localVaccinations = res
+    //   })
+    // })
   }
 
   ngAfterViewInit(): void {
@@ -108,9 +106,8 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate
     this.dataSource.sortingDataAccessor = this.sortingAccessor
-    this.dataSource.sort = new MatSort()
-    this.dataSource.sort?.register({ id: "match", start: 'desc', disableClear: false })
-    console.log("sortables", this.dataSource.sort?.sortables)
+    // this.dataSource.sort = new MatSort()
+    // this.dataSource.sort?.register({ id: "match", start: 'desc', disableClear: false })
   }
 
 
@@ -137,7 +134,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
       if (this.vaccinationToCompare) {
         return this.isMatch(data) ? 1 : -1
       } else {
-        if (this.dataSource.data) {
+        if (this.dataSource?.data) {
           return this.hasNoMatchObject(data) ? 1 : -1
         } else {
           return 1
@@ -158,6 +155,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
         this.matchingMatrix[length - 1].push(this.vaccinationComparePipe.transform(element, local))
       })
     });
+    console.log(this.matchingMatrix)
   }
 
 

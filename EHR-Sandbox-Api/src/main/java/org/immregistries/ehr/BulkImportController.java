@@ -12,6 +12,7 @@ import org.hl7.fhir.r5.model.Parameters;
 import org.hl7.fhir.r5.model.StringType;
 import org.hl7.fhir.r5.model.DateType;
 import org.immregistries.ehr.api.controllers.ImmunizationRegistryController;
+import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -317,6 +318,44 @@ public class BulkImportController {
             } else {
                 return ResponseEntity.internalServerError().body(con.getResponseMessage());
             }
+        } catch (MalformedURLException | ProtocolException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
+        }
+    }
+
+//    @GetMapping("/registry/{registryId}/$export-result-view")
+    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable() Integer registryId, @RequestAttribute Facility facility, @RequestParam String contentUrl) {
+        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        Map<String, List<String>> result;
+        // URL used obtain form the content check
+        HttpURLConnection con = null;
+        URL url;
+        try {
+            url = new URL(contentUrl);
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "*/*");
+            if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
+                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+            }
+            con.setConnectTimeout(5000);
+
+            int status = con.getResponseCode();
+            logger.info("RESPONSE {}", status);
+            if (status == 200 || status == 202) {
+                IParser parser = fhirContext.newNDJsonParser();
+                Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
+                return ResponseEntity.ok(bundleImportService.viewBundleAndMatchIdentifiers(ir,facility,bundle, false));
+            }
+            return ResponseEntity.internalServerError().build();
         } catch (MalformedURLException | ProtocolException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

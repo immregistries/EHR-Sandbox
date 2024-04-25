@@ -1,1 +1,40 @@
-<p>group-bulk-compare works!</p>
+<h2 mat-dialog-title>Bulk results comparison</h2>
+<div mat-dialog-content>
+  <mat-toolbar color="basic">
+    <!-- <button mat-raised-button  matTooltip="Fetch and merge remote vaccination history" color="basic" (click)="">
+      <mat-icon>cloud_download</mat-icon>
+      Fetch
+    </button> -->
+  </mat-toolbar>
+  <mat-grid-list cols="2" [rowHeight]="'40vh'">
+    <mat-grid-tile>
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <!-- TODO Change argument for observable Source -->
+          <app-patient-table (selectEmitter)="patientSelected($event)"
+            [dataArray]="ehrGroup.patientList ?? []" [allow_create]="false"></app-patient-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <!-- TODO Change argument for observable Source -->
+          <app-vaccination-table [patientId]="selectedPatient?.id ?? -1" [allow_create]="false"
+            (selectEmitter)="selectVaccination($event)" [dataArray]="localVaccinations"></app-vaccination-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
+          <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations" [patientId]="selectedPatient?.id"
+            [vaccinationToCompare]="selectedVaccination"
+            [localVaccinations]="localVaccinations"></app-vaccination-received-table>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

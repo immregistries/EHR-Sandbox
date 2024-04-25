@@ -26,6 +26,7 @@ export class PatientReceivedTableComponent implements OnInit {
     private patientService: PatientService,
     private facilityService: FacilityService,
     private dialog: MatDialog,
+
     ) {}
   private _group: Group | undefined | null;
   public get group(): Group | undefined | null{

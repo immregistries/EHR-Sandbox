@@ -61,8 +61,6 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
 
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
-    this.vaccinationService.getRefresh().subscribe(() => {
-    })
   }
 
   openCreation() {

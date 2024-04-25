@@ -27,8 +27,8 @@ const DEFAULT_SETTINGS = {
   styleUrls: ['./remote-group-table.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
@@ -50,7 +50,7 @@ export class RemoteGroupTableComponent {
     private registryService: ImmunizationRegistryService,
     private snackBarService: SnackBarService,
     public jsonDialogService: JsonDialogService,
-    ) { }
+  ) { }
 
   ngOnInit(): void {
 
@@ -90,7 +90,7 @@ export class RemoteGroupTableComponent {
   }
 
   onSelection(event: Group | undefined) {
-    if (this.expandedElement && this.expandedElement.id == event?.id){
+    if (this.expandedElement && this.expandedElement.id == event?.id) {
       this.expandedElement = undefined
     } else {
       this.expandedElement = event
@@ -103,44 +103,44 @@ export class RemoteGroupTableComponent {
     const dialogRef = this.dialog.open(PatientListComponent, DEFAULT_SETTINGS);
     dialogRef.afterClosed().subscribe(
       selectedPatientId => {
-      if (group.id) {
-        this.remoteGroupService.addMember(group.id,selectedPatientId).subscribe({
-          next:(res) => {
-          console.log(res)
-          this.remoteGroupService.triggerFetch().subscribe(() => {
-            this.remoteGroupService.doRefresh()
-          })},
-          error: error => {
-            this.snackBarService.errorMessage(JSON.stringify(error.error))
-          }
-        });
-      } else {
-        this.snackBarService.errorMessage("Group.id undefined")
-      }
-    });
+        if (group.id) {
+          this.remoteGroupService.addMember(group.id, selectedPatientId).subscribe({
+            next: (res) => {
+              this.remoteGroupService.triggerFetch().subscribe(() => {
+                this.remoteGroupService.doRefresh()
+              })
+            },
+            error: error => {
+              this.snackBarService.errorMessage(JSON.stringify(error.error))
+            }
+          });
+        } else {
+          this.snackBarService.errorMessage("Group.id undefined")
+        }
+      });
 
   }
 
-  json(content: Group){
+  json(content: Group) {
     this.jsonDialogService.open(content)
-    this.dialog.open(JsonDialogComponent,{
+    this.dialog.open(JsonDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data : content,
+      data: content,
     })
   }
 
-  openBulk(group: Group){
+  openBulk(group: Group) {
     const dialogRef = this.dialog.open(FhirBulkDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: {groupId: group.id},
+      data: { groupId: group.id },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.remoteGroupService.doRefresh()

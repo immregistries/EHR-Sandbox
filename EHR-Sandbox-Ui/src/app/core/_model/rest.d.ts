@@ -149,6 +149,7 @@ export interface User {
 
 export interface VaccinationEvent {
   id?: number;
+  patient?: number
   enteringClinician: Clinician;
   orderingClinician: Clinician;
   administeringClinician: Clinician;
