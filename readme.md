@@ -1,5 +1,7 @@
 ## EHR Sandbox deployment kit 
-Step 1 Install Docker Image
+
+Allows deployment of the EHR Sandbox with the right database setup in docker-compose
+Step 1 (Optional )Install Docker Image
 ```
  docker load -i ehr-sandbox-image.tar;
 ```
