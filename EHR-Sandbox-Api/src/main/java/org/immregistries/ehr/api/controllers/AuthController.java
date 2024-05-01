@@ -120,7 +120,7 @@ public class AuthController {
                 immunizationRegistry.setIisHl7Url("http://host.docker.internal:8080/iis/soap");
                 immunizationRegistry.setIisFhirUrl("http://host.docker.internal:8080/iis/fhir");
                 immunizationRegistry.setUser(newUser);
-                immunizationRegistry.setDescription("Automatically generated credentials for a case where this Ehr Sandbox is deployed in a docker container, as localhost must ne reached through host.docker.internal");
+                immunizationRegistry.setDescription("Automatically generated, as when deployed in a docker container, localhost is reached through host.docker.internal");
                 immunizationRegistryRepository.save(immunizationRegistry);
             }
 

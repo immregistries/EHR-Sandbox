@@ -12,7 +12,7 @@
 </app-tab-with-menu>
 <!-- TODO change this horrible fix -->
 <div style="overflow: scroll; height: 100%">
-  <app-immunization-registry-form content></app-immunization-registry-form>
+  <app-immunization-registry-form content [immunizationRegistry]="immunizationRegistryService.getCurrent()"></app-immunization-registry-form>
 </div>
 
 

@@ -9,9 +9,9 @@
         </mat-card-header>
         <mat-card-content class="form-card-content">
           <div>
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="fill" style="min-width: 40em;">
               <mat-label>Name</mat-label>
-              <input matInput [(ngModel)]="immunizationRegistry.name">
+              <input matInput [(ngModel)]="immunizationRegistry.name" style="min-width: 40em;">
             </mat-form-field>
           </div>
           <div>
@@ -81,7 +81,17 @@
       </mat-card>
       <mat-card class="form-card">
         <mat-card-content style="text-align: right;">
-          <button mat-stroked-button [matTooltip]="(!immunizationRegistry.id || immunizationRegistry.id < 1)? 'Save to check metadata' : 'Check Metadata'" color="primary" type="button" [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1" (click)="checkMetadata()">
+          <button mat-stroked-button
+            [matTooltip]="(!immunizationRegistry.id || immunizationRegistry.id < 1)? 'Save to check metadata' : 'Check Metadata'"
+            color="primary" type="button" [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1"
+            (click)="duplicate(immunizationRegistry)">
+            <mat-icon>file_copy</mat-icon>
+            Create copy
+          </button>
+          <button mat-stroked-button
+            [matTooltip]="(!immunizationRegistry.id || immunizationRegistry.id < 1)? 'Save to check metadata' : 'Check Metadata'"
+            color="primary" type="button" [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1"
+            (click)="checkMetadata()">
             <mat-icon>send</mat-icon>
             Save & Check Metadata
           </button>

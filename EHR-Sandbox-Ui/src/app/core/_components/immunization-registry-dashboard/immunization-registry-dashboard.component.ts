@@ -13,7 +13,8 @@ export class ImmunizationRegistryDashboardComponent implements OnInit {
   @Input()
   editMode = false
 
-  constructor(@Optional() public _dialogRef: MatDialogRef<ImmunizationRegistryDashboardComponent>,
+  constructor(public immunizationRegistryService: ImmunizationRegistryService,
+    @Optional() public _dialogRef: MatDialogRef<ImmunizationRegistryDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {}
   ) { }
 

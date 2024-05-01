@@ -85,6 +85,7 @@ import { ClinicianToolsComponent } from './_clinician/clinician-tools/clinician-
 import { GroupBulkCardComponent } from './_group/group-bulk-card/group-bulk-card.component';
 import { GroupBulkCompareComponent } from './_group/group-bulk-compare/group-bulk-compare.component';
 import { VaccinationCompareComponent } from './_vaccination/vaccination-compare/vaccination-compare.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 
 @NgModule({
@@ -197,6 +198,7 @@ import { VaccinationCompareComponent } from './_vaccination/vaccination-compare/
     MatToolbarModule,
     MatChipsModule,
     ClipboardModule,
+    MatSlideToggleModule,
   ],
   exports: [
     ReactiveFormsModule,

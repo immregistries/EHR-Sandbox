@@ -31,7 +31,7 @@ public class Facility extends EhrEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
-    @JsonIgnore()
+//    @JsonIgnore()
     private Tenant tenant;
 
     @Column(name = "name_display", nullable = false, length = 250)
@@ -120,10 +120,12 @@ public class Facility extends EhrEntity {
         this.nameDisplay = nameDisplay;
     }
 
+//    @JsonInclude()
     public Tenant getTenant() {
         return tenant;
     }
 
+//    @JsonIgnore
     public void setTenant(Tenant tenant) {
         this.tenant = tenant;
     }

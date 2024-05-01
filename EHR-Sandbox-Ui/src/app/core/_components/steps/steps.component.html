@@ -1,17 +1,19 @@
 <mat-stepper linear #stepper style="height: 100%;">
-  <mat-step label="Initial Configuration"  >
+  <mat-step label="Initial Configuration">
     <div class="menu-container">
-      <button mat-stroked-button color="primary" (click)="end()" type="button"> <mat-icon>skip_next</mat-icon> Skip configuration</button>
+      <button mat-stroked-button color="primary" (click)="end()" type="button"> <mat-icon>skip_next</mat-icon> Skip
+        configuration</button>
       <!-- <button mat-raised-button color="primary" (click)="end()" type="button"><mat-icon>skip_next</mat-icon>Skip and use default Settings</button> -->
       <div>
-        <button mat-raised-button color="primary" (click)="stepper.next()" type="button"><mat-icon>start</mat-icon>Optional step by step configuration</button>
+        <button mat-raised-button color="primary" (click)="stepper.next()"
+          type="button"><mat-icon>start</mat-icon>Optional step by step configuration</button>
 
       </div>
     </div>
 
 
   </mat-step>
-  <mat-step label="Create Environment" >
+  <mat-step label="Create Environment">
     <app-tenant-creation (success)="nextTenant($event)"></app-tenant-creation>
     <p>Choose name for testing environment</p>
   </mat-step>
@@ -22,11 +24,13 @@
   <mat-step label="Configure Remote IIS">
     <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
     <!-- <p></p> -->
-
+    <button mat-raised-button color="primary" (click)="end()" type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon> Skip step</button>
   </mat-step>
   <mat-step label="Ready">
     <div>
-      <button mat-raised-button color="primary" (click)="end()" type="button"> <mat-icon>navigate_next</mat-icon> USE EHR Sandbox</button>
+      <button mat-raised-button color="primary" (click)="end()" type="button"> <mat-icon>navigate_next</mat-icon> USE
+        EHR Sandbox</button>
     </div>
   </mat-step>
   <p>skiiipp</p>

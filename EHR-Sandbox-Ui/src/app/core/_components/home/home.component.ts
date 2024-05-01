@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
 
   authenticationSuccess(status: number) {
     if (status == 201) {
+      this.router.navigate(['steps'])
     } else {
       this.router.navigate(['dashboard'])
 

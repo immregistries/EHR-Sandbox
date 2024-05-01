@@ -57,11 +57,8 @@ export class AuthenticationFormComponent implements OnInit {
         console.warn(this.errorMessage)
         this.isLoginFailed = true;
         this.tokenStorage.signOut()
-
       }
     })
   }
-
-
 
 }

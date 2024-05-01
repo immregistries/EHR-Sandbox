@@ -89,4 +89,18 @@ export class ImmunizationRegistryFormComponent implements OnInit {
 
   }
 
+  duplicate(value: ImmunizationRegistry) {
+    let copy = JSON.parse(JSON.stringify(value))
+    copy.id = undefined
+    copy.name += " Copy " + new Date().valueOf()
+    this.dialog.open(ImmunizationRegistryFormComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      data: copy
+      // panelClass: 'dialog-without-bar',
+    })
+    // this.save()
+  }
 }

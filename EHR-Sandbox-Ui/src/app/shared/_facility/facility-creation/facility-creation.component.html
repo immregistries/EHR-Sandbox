@@ -15,7 +15,8 @@
   </mat-form-field>
 
   <div mat-dialog-actions align="end">
-    <mat-checkbox *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate with random patients</mat-checkbox>
+    <mat-checkbox *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate</mat-checkbox>
+    <!-- <mat-slide-toggle *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate</mat-slide-toggle> -->
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

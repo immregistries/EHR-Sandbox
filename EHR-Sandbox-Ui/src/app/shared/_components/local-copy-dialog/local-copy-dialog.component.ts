@@ -27,23 +27,23 @@ export class LocalCopyDialogComponent implements OnInit {
     private patientService: PatientService,
     private snackBarService: SnackBarService,
     public _dialogRef: MatDialogRef<LocalCopyDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {patient?: EhrPatient | number, vaccination?: VaccinationEvent}) {
-      if(data.patient) {
-        if (typeof data.patient === "number" || typeof data.patient ===  "string") {
-          this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
-            this.patient = res
-          });
-        } else {
-          this.patient = JSON.parse(JSON.stringify(data.patient));
-        }
+    @Inject(MAT_DIALOG_DATA) public data: { patient?: EhrPatient | number, vaccination?: VaccinationEvent }) {
+    if (data.patient) {
+      if (typeof data.patient === "number" || typeof data.patient === "string") {
+        this.patientService.quickReadPatient(+data.patient).subscribe((res) => {
+          this.patient = res
+        });
+      } else {
+        this.patient = JSON.parse(JSON.stringify(data.patient));
       }
-      if(data.vaccination){
-        this.vaccination =  JSON.parse(JSON.stringify(data.vaccination));
-      }
-      this.facilityService.readAllFacilities().subscribe((list) => {
-        this.facilityList = list.filter((facility) => {return facility.id != this.facilityService.getCurrentId()})
-      })
-     }
+    }
+    if (data.vaccination) {
+      this.vaccination = JSON.parse(JSON.stringify(data.vaccination));
+    }
+    this.facilityService.readAllFacilities().subscribe((list) => {
+      this.facilityList = list.filter((facility) => { return facility.id != this.facilityService.getCurrentId() })
+    })
+  }
 
   ngOnInit(): void {
     // this.facilityService.readFacilities(this.tenantService.getCurrentId()).subscribe((list) => {
@@ -52,23 +52,30 @@ export class LocalCopyDialogComponent implements OnInit {
     // })
   }
 
-  selectFacility(facility:Facility) {
+  selectFacility(facility: Facility) {
     // this.facility = facility
   }
 
   copy(facility: Facility) {
-    if (this.patient && facility.tenant) {
+    if (this.patient) {
       let params = new HttpParams()
         .append('copied_facility_id', this.facilityService.getCurrentId())
         .append('copied_entity_id', this.patient.id + '')
       let patientCopy: EhrPatient = JSON.parse(JSON.stringify(this.patient))
       patientCopy.id = undefined
       patientCopy.facility = undefined
-      let tenantId: number = (typeof facility.tenant === "object" )? facility.tenant.id : +facility.tenant
-      this.patientService.postPatient(tenantId, facility.id,patientCopy, params).subscribe((res) => {
-        if(this.vaccination && facility.tenant) {
+      let tenantId: number;
+      if (!facility.tenant) {
+        tenantId = this.tenantService.getCurrentId()
+      } else if (typeof facility.tenant === "object") {
+        tenantId = facility.tenant.id
+      } else {
+        tenantId = +facility.tenant
+      }
+      this.patientService.postPatient(tenantId, facility.id, patientCopy, params).subscribe((res) => {
+        if (this.vaccination && facility.tenant) {
           let vaccinationCopy: VaccinationEvent = JSON.parse(JSON.stringify(this.vaccination))
-          if (!res.body)  {
+          if (!res.body) {
             this.snackBarService.errorMessage("Vaccination not copied problem happened in referencing patient")
           } else {
             params.set('copied_entity_id', this.vaccination.id + '')
@@ -85,10 +92,10 @@ export class LocalCopyDialogComponent implements OnInit {
              * vaccination set as historical
              *
              */
-            if (this.setPrimarySourceToFalse){
+            if (this.setPrimarySourceToFalse) {
               vaccinationCopy.primarySource = false
             }
-            this.vaccinationService.postVaccination(tenantId,facility.id,+res.body,vaccinationCopy, params).subscribe((res) => {
+            this.vaccinationService.postVaccination(tenantId, facility.id, +res.body, vaccinationCopy, params).subscribe((res) => {
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()
             })
