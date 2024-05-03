@@ -20,7 +20,7 @@ services:
       - ./database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
       - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
   ehr-sandbox:
-    image: clemhen/ehr-sandbox:latest
+    image: clemhen/ehr-sandbox:deployable-v1
     container_name: ehr-sandbox
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
