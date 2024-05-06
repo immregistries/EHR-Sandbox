@@ -22,6 +22,18 @@
     </div>
   </mat-tab>
 
+  <mat-tab label="Compare to Hl7V2 Message" *ngIf="show_hl7_tab">
+    <div style="display: flex; justify-content: space-between; gap: 0px 5px"  >
+      <div style="width: 50%;">
+        <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId"></app-hl7-post>
+      </div>
+      <div style="width: 50%;" >
+        <!-- <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId"></app-hl7-post> -->
+        <app-fhir-post [resource]="''" [operation]="'$transaction'" [resource]="hl7FhirTransaction"> </app-fhir-post>
+      </div>
+    </div>
+  </mat-tab>
+
   <mat-tab label="Get resources from IIS">
     <div style="display: flex; justify-content: space-between; gap: 5px 5px; padding-top: 10px;"  >
       <div [style]="style">

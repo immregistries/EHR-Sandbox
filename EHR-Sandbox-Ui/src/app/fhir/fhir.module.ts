@@ -36,6 +36,7 @@ import { FhirBulkNdjsonManualComponent } from './_components/fhir-bulk/fhir-bulk
 import { FhirClientService } from './_services/fhir-client.service';
 import { FhirBulkService } from './_services/fhir-bulk.service';
 import { FhirResourceService } from './_services/fhir-resource.service';
+import { Hl7PostComponent } from './_components/hl7-post/hl7-post.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { FhirResourceService } from './_services/fhir-resource.service';
     FhirBulkNdjsonImportComponent,
     FhirOperationComponent,
     FhirBulkNdjsonManualComponent,
+    Hl7PostComponent,
   ],
   imports: [
     CommonModule,

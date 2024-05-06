@@ -14,10 +14,17 @@
         <app-immunization-registry-menu></app-immunization-registry-menu>
       </ng-template>
     </mat-tab>
+    <!-- <ng-content [select]="content"></ng-content> -->
+
     <mat-tab [label]="label">
+      <!-- test -->
+      <ng-content [select]="content"></ng-content>
+      <!-- <ng-content select="label"></ng-content> -->
+    </mat-tab>
+    <!-- <mat-tab *ngIf="label2"  [hidden]="!label2" [label]="label2"> -->
       <!-- <ng-template mat-tab-label>
         <ng-content select="label"></ng-content>
       </ng-template> -->
-      <ng-content [select]="content"></ng-content>
-    </mat-tab>
+      <!-- <ng-content  [select]="content2"></ng-content>
+    </mat-tab> -->
   </mat-tab-group>

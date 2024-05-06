@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.immregistries.ehr.api.controllers.FhirClientController.*;
@@ -118,32 +119,11 @@ public class FhirConversionController {
     public ResponseEntity<String> facilityAllResourcesTransaction(@RequestAttribute() Facility facility) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
-
-        Organization organization = (Organization) organizationMapper.toFhir(facility);
-        Bundle.BundleEntryComponent organizationEntry = bundle.addEntry().setResource(organization)
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                .setRequest(new Bundle.BundleEntryRequestComponent(
-                        Bundle.HTTPVerb.PUT,
-                        identifierUrl("Organization", organization.getIdentifierFirstRep())));;
+        Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facility);
         for (EhrPatient ehrPatient : patientRepository.findByFacilityId(facility.getId())) {
-            Patient patient = (Patient) patientMapper.toFhir(ehrPatient);
-            patient.setManagingOrganization(new Reference(organizationEntry.getFullUrl()));
-//            String patientRequestUrl = identifierUrl("Patient", patient.getIdentifierFirstRep());
-            String patientRequestUrl = "Patient";
-            Bundle.BundleEntryComponent patientEntry = bundle.addEntry()
-                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                    .setResource(patient)
-                    .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, patientRequestUrl));
+            Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), ehrPatient);
             for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
-                Immunization immunization = (Immunization) immunizationMapper.toFhir(vaccinationEvent,
-                        resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility));
-                immunization.setPatient(new Reference(patientEntry.getFullUrl()));
-                String immunizationRequestUrl = "Immunization";
-//                String immunizationRequestUrl = identifierUrl("Immunization", immunization.getIdentifierFirstRep());
-                Bundle.BundleEntryComponent immunizationEntry = bundle.addEntry()
-                        .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                        .setResource(immunization)
-                        .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, immunizationRequestUrl));
+                Bundle.BundleEntryComponent immunizationEntry = addVaccinationEntry(bundle, patientEntry.getFullUrl(), vaccinationEvent);
             }
         }
 //        for (Clinician clinician: clinicianRepository.findByTenantId(facility.getTenant().getId())) {
@@ -155,6 +135,82 @@ public class FhirConversionController {
 //        }
         String resource = parser.encodeResourceToString(bundle);
         return ResponseEntity.ok(resource);
+    }
+
+    @GetMapping(PATIENT_PREFIX + "/{patientId}/bundle")
+    @Transactional(readOnly = true, noRollbackFor = Exception.class)
+    public ResponseEntity<String> qpdEquivalentTransaction(@RequestAttribute() Facility facility, @RequestAttribute() EhrPatient patient) {
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
+        Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facility);
+        Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patient);
+        String resource = parser.encodeResourceToString(bundle);
+        return ResponseEntity.ok(resource);
+    }
+
+    @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/bundle")
+    @Transactional(readOnly = true, noRollbackFor = Exception.class)
+    public ResponseEntity<String> vxuEquivalentTransaction(@RequestAttribute() Facility facility, @RequestAttribute() EhrPatient patient, @PathVariable() String vaccinationId) {
+        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
+        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
+        Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facility);
+        Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patient);
+        Bundle.BundleEntryComponent vaccinationEntry = addVaccinationEntry(bundle, patientEntry.getFullUrl(), vaccinationEvent);
+        String resource = parser.encodeResourceToString(bundle);
+        return ResponseEntity.ok(resource);
+    }
+
+    private Bundle.BundleEntryComponent addOrganizationEntry(Bundle bundle, Facility facility) {
+        Organization organization = (Organization) organizationMapper.toFhir(facility);
+        return bundle.addEntry().setResource(organization)
+                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setRequest(new Bundle.BundleEntryRequestComponent(
+                        Bundle.HTTPVerb.PUT,
+                        identifierUrl("Organization", organization.getIdentifierFirstRep())));
+    }
+
+    private Bundle.BundleEntryComponent addPatientEntry(Bundle bundle, String organizationUrl, EhrPatient ehrPatient) {
+        Patient patient = (Patient) patientMapper.toFhir(ehrPatient);
+        patient.setManagingOrganization(new Reference(organizationUrl));
+//            String patientRequestUrl = identifierUrl("Patient", patient.getIdentifierFirstRep());
+        String patientRequestUrl = "Patient";
+        Bundle.BundleEntryComponent patientEntry = bundle.addEntry()
+                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setResource(patient)
+                .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, patientRequestUrl));
+        return  patientEntry;
+    }
+
+    private Bundle.BundleEntryComponent addVaccinationEntry(Bundle bundle, String patientUrl, VaccinationEvent vaccinationEvent) {
+        Immunization immunization = (Immunization) immunizationMapper.toFhir(vaccinationEvent,
+                resourceIdentificationService.getFacilityImmunizationIdentifierSystem(vaccinationEvent.getAdministeringFacility()));
+        immunization.setPatient(new Reference(patientUrl));
+        String immunizationRequestUrl = "Immunization";
+//        Bundle.BundleEntryComponent clinicianEntry = addClinicianEntry(bundle, vaccinationEvent.getAdministeringClinician());
+//        if (clinicianEntry != null) {
+//            immunization.addPerformer()
+//        }
+//        Bundle.BundleEntryComponent clinicianEntry2 = addClinicianEntry(bundle, vaccinationEvent.getEnteringClinician());
+//        Bundle.BundleEntryComponent clinicianEntry3 = addClinicianEntry(bundle, vaccinationEvent.getOrderingClinician());
+        return bundle.addEntry()
+                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setResource(immunization)
+                .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, immunizationRequestUrl));
+    }
+
+    private Bundle.BundleEntryComponent addClinicianEntry(Bundle bundle, Clinician clinician) {
+        if (Objects.nonNull(clinician)) {
+            String immunizationRequestUrl = "Practitioner";
+            Practitioner practitioner = (Practitioner) practitionerMapper.toFhir(clinician);
+
+            return bundle.addEntry()
+                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                    .setResource(practitioner)
+                    .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, immunizationRequestUrl));
+        } else {
+            return  null;
+        }
     }
 
     private String identifierUrl(String base, Identifier identifier) {

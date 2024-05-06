@@ -14,6 +14,7 @@ import { GroupAllDashboardComponent } from './shared/_group/group-all-dashboard/
 import { FacilityDashboardComponent } from './shared/_facility/facility-dashboard/facility-dashboard.component';
 import { StepsComponent } from './core/_components/steps/steps.component';
 import { ClinicianTableComponent } from './shared/_clinician/clinician-table/clinician-table.component';
+import { Hl7MessagingComponent } from './fhir/_components/hl7-messaging/hl7-messaging.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'settings', component: ImmunizationRegistryDashboardComponent },
   { path: 'login', component: AuthenticationDialogComponent },
   { path: 'fhir', component: FhirMessagingComponent },
+  { path: 'hl7', component: Hl7MessagingComponent },
   { path: 'feedback', component: FeedbackTableComponent },
   { path: 'subscription', component: SubscriptionDashboardComponent },
   { path: 'bulk', component: FhirBulkDashboardComponent },

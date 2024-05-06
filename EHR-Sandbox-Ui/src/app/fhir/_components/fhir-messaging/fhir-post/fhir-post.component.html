@@ -2,7 +2,7 @@
   <mat-progress-bar mode="query" *ngIf="resourceLoading"></mat-progress-bar>
   <div class="textarea-container">
     <mat-form-field style="width: 100%;" appearance="fill">
-      <mat-label>Fhir Resource <mat-icon>copy-content</mat-icon></mat-label>
+      <mat-label>Fhir Resource</mat-label>
       <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="resource" name="resource"></textarea>
       <!-- <mat-error *ngIf="isJson()">Invalid Json</mat-error> -->
       <mat-error>Invalid Json</mat-error>
@@ -39,7 +39,6 @@
       </button>
       <!-- <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button> -->
     </div>
-
   </div>
 
   <div [style]="{width: '90%'}" class="w3-right textarea-container">

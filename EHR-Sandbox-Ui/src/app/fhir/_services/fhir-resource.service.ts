@@ -81,6 +81,30 @@ export class FhirResourceService {
     }
   }
 
+  getVaccinationExportBundle(patientId: number, vaccinationId: number): Observable<string> {
+    return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
+      .pipe(switchMap((value) => {
+        if (value) {
+          return this.http.get(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/vaccinations/${vaccinationId}/bundle`,
+            { responseType: 'text' });
+        } else {
+          return of("")
+        }
+      }))
+  }
+
+  getPatientExportBundle(patientId: number): Observable<string> {
+    return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
+      .pipe(switchMap((value) => {
+        if (value) {
+          return this.http.get(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/bundle`,
+            { responseType: 'text' });
+        } else {
+          return of("")
+        }
+      }))
+  }
+
   getFacilityExportBundle(facilityId: number): Observable<string> {
     return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0))
       .pipe(switchMap((value) => {

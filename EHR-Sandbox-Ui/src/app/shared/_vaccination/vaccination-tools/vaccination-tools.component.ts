@@ -20,7 +20,7 @@ export class VaccinationToolsComponent implements OnInit {
   constructor(private dialog: MatDialog,
     private patientService: PatientService,
     private vaccinationService: VaccinationService,
-    ) { }
+  ) { }
 
   ngOnInit(): void {
   }
@@ -32,7 +32,7 @@ export class VaccinationToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patientId: this.patientId, vaccination: this.vaccination},
+      data: { patientId: this.patientId, vaccination: this.vaccination },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -49,7 +49,7 @@ export class VaccinationToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patientId: this.patientId, vaccinationId: this.vaccination.id},
+      data: { patientId: this.patientId, vaccinationId: this.vaccination.id },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
@@ -63,7 +63,7 @@ export class VaccinationToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: {patientId: this.patientId, vaccinationId: this.vaccination.id},
+      data: { patientId: this.patientId, vaccinationId: this.vaccination.id, show_hl7_tab: true },
     });
     dialogRef.afterClosed().subscribe(result => {
       /**
@@ -80,7 +80,7 @@ export class VaccinationToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: {patient: this.patientId, vaccination: this.vaccination},
+      data: { patient: this.patientId, vaccination: this.vaccination },
     });
   }
 

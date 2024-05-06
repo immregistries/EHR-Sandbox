@@ -57,7 +57,7 @@ export class PatientToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: {patientId: this.patient.id},
+      data: {patientId: this.patient.id, show_hl7_tab: true},
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()

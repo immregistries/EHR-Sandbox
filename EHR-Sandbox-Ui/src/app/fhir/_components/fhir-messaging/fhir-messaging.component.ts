@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { FhirResourceService } from '../../_services/fhir-resource.service';
 import { Observable, ObservableLike } from 'rxjs';
+import { Hl7Service } from '../../_services/hl7.service';
 
 @Component({
   selector: 'app-fhir-messaging',
@@ -34,7 +35,13 @@ export class FhirMessagingComponent implements AfterViewInit {
 
   public patientFhirId = "";
 
+  public show_hl7_tab: boolean = false
+  public hl7Message: string = ""
+  public hl7FhirTransaction: string = ""
+  public loading: boolean = false
+
   constructor(private fhirResourceService: FhirResourceService,
+    private hl7Service: Hl7Service,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {
       patientId: number,
@@ -43,8 +50,13 @@ export class FhirMessagingComponent implements AfterViewInit {
       resourceObservable: Observable<string>,
       resourceType?: string,
       resourceLocalId?: number,
-      operation?: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "" }) {
+      operation?: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "",
+      show_hl7_tab? : boolean
+    }) {
     if (data) {
+      if (data.show_hl7_tab) {
+        this.show_hl7_tab = data.show_hl7_tab
+      }
       if (data.resourceObservable) {
         this.genericResourceType = data.resourceType ?? "Patient"
         this.genericLocalId = data.resourceLocalId ?? -1
@@ -83,6 +95,35 @@ export class FhirMessagingComponent implements AfterViewInit {
             })
           }
         }
+      }
+    }
+    /**
+         * Special cases with extra tab for hl7
+         */
+    this.getHl7Message()
+  }
+
+  getHl7Message() {
+    if (this.show_hl7_tab) {
+      this.loading = true
+      if (this.vaccinationId > 0) {
+        this.hl7Service.getVXU(this.patientId, this.vaccinationId).subscribe((res) => {
+          this.hl7Message = res
+          this.loading = false
+        })
+        this.fhirResourceService.getVaccinationExportBundle(this.patientId, this.vaccinationId).subscribe((resource) => {
+          this.hl7FhirTransaction = resource
+        })
+      } else if (this.patientId > 0) {
+        this.hl7Service.getQBP(this.patientId).subscribe((res) => {
+          this.hl7Message = res
+          this.loading = false
+        })
+        this.fhirResourceService.getPatientExportBundle(this.patientId).subscribe((resource) => {
+          this.hl7FhirTransaction = resource
+        })
+      } else {
+        this.loading = false
       }
     }
   }

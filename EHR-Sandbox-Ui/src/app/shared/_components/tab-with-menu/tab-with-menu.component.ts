@@ -13,6 +13,8 @@ export class TabWithMenuComponent {
    */
   @Input()
   public label: string = ""
+  @Input()
+  public label2?: string;
 
   // constructor(elementRef: ElementRef, changeDetectorRef: ChangeDetectorRef, defaultConfig?: MatTabsConfig, animationMode?: string) {
   //   super(elementRef, changeDetectorRef, defaultConfig, animationMode)
