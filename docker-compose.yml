@@ -25,6 +25,9 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
     restart: on-failure
+#    volumes:
+#      - ./runtime-config.json:/opt/bitnami/tomcat/webapps_default/ehr/static/runtime-config.json
+#      - ./runtime-config.json:/opt/bitnami/tomcat/webapps_default/ROOT/runtime-config.json
     ports:
       #     Default port is 9091, can be changed here
       - "9091:8080"

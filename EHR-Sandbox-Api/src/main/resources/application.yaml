@@ -10,20 +10,23 @@ hapi:
 spring:
   profiles.active: '@activatedProperties@'
   datasource:
-    url : "jdbc:mysql://localhost:3306/ehr"
+#    url : "jdbc:mysql://localhost:3306/ehr"
     username : 'ehr_web'
     password : 'SharkBaitHooHaHa'
-  jackson:
-    serialization:
-      FAIL_ON_EMPTY_BEANS: false
+    url : jdbc:h2:mem:testdb
+    driverClassName : org.h2.Driver
   jpa:
+    database-platform : org.hibernate.dialect.H2Dialect
+    hibernate:
+      use-new-id-generator-mappings: false
 #    properties:
 #      hibernate:
 #        show_sql: true
 #        use_sql_comments: true
 #        format_sql: true
-    hibernate:
-      use-new-id-generator-mappings: false
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 # App Properties
 ehr:
   api:

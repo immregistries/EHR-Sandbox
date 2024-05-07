@@ -14,7 +14,7 @@ import { CoreModule } from './core/core.module';
 import { SettingsService } from './core/_services/settings.service';
 
 const initAppFn = (settingsService: SettingsService) => {
-  return () => settingsService.loadEnvConfig('/ehr/assets/config/runtime-config.json');
+  return () => settingsService.loadEnvConfig('/runtime-config.json');
 };
 
 @NgModule({
