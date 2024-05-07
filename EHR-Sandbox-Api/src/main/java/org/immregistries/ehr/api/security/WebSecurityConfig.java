@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/$create", "/auth/**", "/styles/**", "/", "/*.css", "/*.js", "/*.ico", "/fhir/**", "/smart-test/*");
+        web.ignoring().antMatchers("/$create", "/auth/**", "/styles/**", "/", "/*.css", "/*.js", "/*.ico", "/fhir/**", "/smart-test/*", "/h2-console/**");
     }
 
 

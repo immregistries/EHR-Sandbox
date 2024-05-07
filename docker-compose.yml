@@ -1,29 +1,30 @@
 version: "4"
 services:
-  ehr-sandbox-mysql:
-    image: mysql:latest
-    container_name: ehr-sandbox-mysql
-    command:
-      --lower_case_table_names=1
-    restart: always
-    # Healthcheck allows for Ehr-sandbox to wait for the database to be up and running before deploying,  as a connection is necessary for the hibernate configuration to be a success
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3306/ehr" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    environment:
-      #      this password is not used in app, just changing default password
-      MYSQL_ROOT_PASSWORD: 'DearPrudenceWontYouComeOutAndPlay'
-    volumes:
-      - ./database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
-      - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
+#  ehr-sandbox-mysql:
+#    image: mysql:latest
+#    container_name: ehr-sandbox-mysql
+#    command:
+#      --lower_case_table_names=1
+#    restart: always
+#    # Healthcheck allows for Ehr-sandbox to wait for the database to be up and running before deploying,  as a connection is necessary for the hibernate configuration to be a success
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:3306/ehr" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 5s
+#    environment:
+#      #      this password is not used in app, just changing default password
+#      MYSQL_ROOT_PASSWORD: 'DearPrudenceWontYouComeOutAndPlay'
+#    volumes:
+#      - ./database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
+#      - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
   ehr-sandbox:
     build: .
     container_name: ehr-sandbox
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:~/data-h2/ehr;
     restart: on-failure
 #    volumes:
 #      - ./runtime-config.json:/opt/bitnami/tomcat/webapps_default/ehr/static/runtime-config.json
@@ -31,8 +32,8 @@ services:
     ports:
       #     Default port is 9091, can be changed here
       - "9091:8080"
-    depends_on:
-      ehr-sandbox-mysql:
-        condition: service_healthy
+#    depends_on:
+#      ehr-sandbox-mysql:
+#        condition: service_healthy
 volumes:
   sandbox-mysql:

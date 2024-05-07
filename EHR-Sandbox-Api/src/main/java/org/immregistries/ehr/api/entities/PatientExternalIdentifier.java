@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "patient_identifier", indexes = {
         @Index(name = "patient_id", columnList = "patient_id"),
-        @Index(name = "immunization_registry_id", columnList = "immunization_registry_id")
+//        @Index(name = "immunization_registry_id", columnList = "immunization_registry_id")
 })
 @IdClass(PatientExternalIdentifierKey.class)
 public class PatientExternalIdentifier {

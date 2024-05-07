@@ -13,12 +13,16 @@ spring:
 #    url : "jdbc:mysql://localhost:3306/ehr"
     username : 'ehr_web'
     password : 'SharkBaitHooHaHa'
-    url : jdbc:h2:mem:testdb
+#    url : jdbc:h2:mem:ehr-test
+    url : jdbc:h2:file:./data-h2/ehr;
     driverClassName : org.h2.Driver
+#  h2:
+#    console.enabled: true
   jpa:
     database-platform : org.hibernate.dialect.H2Dialect
     hibernate:
       use-new-id-generator-mappings: false
+      ddl-auto : update
 #    properties:
 #      hibernate:
 #        show_sql: true
@@ -38,7 +42,7 @@ ehr:
 ---
 spring.config.activate.on-profile: dev
 server:
-  port: 9091
+#  port: 9091
   server.contextPath: /ehr
 
 
