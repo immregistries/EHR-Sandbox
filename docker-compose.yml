@@ -24,10 +24,10 @@ services:
     container_name: ehr-sandbox
     environment:
 #      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
-      - SPRING_DATASOURCE_URL=jdbc:h2:file:~/data-h2/ehr;
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/data-h2/ehr;
     restart: on-failure
-#    volumes:
-#      - ./runtime-config.json:/opt/bitnami/tomcat/webapps_default/ehr/static/runtime-config.json
+    volumes:
+      - ./data-h2:/usr/root/data-h2
 #      - ./runtime-config.json:/opt/bitnami/tomcat/webapps_default/ROOT/runtime-config.json
     ports:
       #     Default port is 9091, can be changed here
