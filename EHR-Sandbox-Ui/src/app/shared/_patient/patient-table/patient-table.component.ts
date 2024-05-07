@@ -32,8 +32,6 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   @Output()
   removeEmitter: EventEmitter<EhrPatient> = new EventEmitter<EhrPatient>()
 
-  @Input()
-  allow_populate: boolean = false;
 
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,

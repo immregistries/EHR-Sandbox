@@ -23,6 +23,8 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
 
   @Input()
   public allow_create: boolean = true
+  @Input()
+  public allow_populate: boolean = false;
 
   loading: boolean = false
   lastIdSelectedBeforeRefresh: number = -1;
