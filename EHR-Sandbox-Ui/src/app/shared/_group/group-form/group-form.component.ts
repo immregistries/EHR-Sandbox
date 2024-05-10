@@ -31,8 +31,8 @@ export class GroupFormComponent {
   ]
 
   characteristicForms: GenericForm<EhrGroupCharacteristic>[] = [
-    { type: FormType.text, title: 'Code System', attribute: 'codeSystem' },
-    { type: FormType.text, title: 'Code Value', attribute: 'codeValue' },
+    { type: FormType.text, title: 'Kind System', attribute: 'codeSystem' },
+    { type: FormType.text, title: 'Kind Code', attribute: 'codeValue' },
     { type: FormType.boolean, title: 'exclude', attribute: 'exclude' },
     { type: FormType.text, title: 'Value', attribute: 'value' },
     // {type: FormType.text, title: 'authority', attribute: ''},
@@ -52,7 +52,11 @@ export class GroupFormComponent {
   }
 
   fillRandom(): void {
-    this.groupService.getRandom().subscribe(res => this.ehrGroup = res)
+    let registry = this.ehrGroup.immunizationRegistry
+    this.groupService.getRandom().subscribe(res => {
+      this.ehrGroup = res
+      this.ehrGroup.immunizationRegistry = registry
+    })
     // this.patientService.readRandom().subscribe((res) => this.patient = res)
   }
 

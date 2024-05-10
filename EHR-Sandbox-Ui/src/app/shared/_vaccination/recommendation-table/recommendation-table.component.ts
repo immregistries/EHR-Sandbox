@@ -10,6 +10,7 @@ import { merge, tap } from 'rxjs';
 import { RecommendationService } from 'src/app/core/_services/recommendation.service';
 import { ImmunizationRecommendation } from 'fhir/r5';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
+import { RecommendationDownloadComponent } from '../recommendation-download/recommendation-download.component';
 
 @Component({
   selector: 'app-recommendation-table',
@@ -17,6 +18,21 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
   styleUrls: ['./recommendation-table.component.css'],
 })
 export class RecommendationTableComponent extends AbstractDataTableComponent<ImmunizationRecommendation> implements OnInit {
+
+  private _patientId: number = -1;
+  public get patientId(): number {
+    return this._patientId;
+  }
+  @Input()
+  public set patientId(value: number) {
+    this._patientId = value;
+    this.loading = true
+    this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
+      this.loading = false
+      this.dataSource.data = res
+      this.expandedElement = res.find((reco: ImmunizationRecommendation) => { return reco.id == this.expandedElement?.id }) ?? null
+    })
+  }
 
   columns: (keyof ImmunizationRecommendation)[] = [
     "identifier",
@@ -31,8 +47,8 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
     private recommendationService: RecommendationService,
     private vaccinationService: VaccinationService,
     private patientService: PatientService) {
-      super()
-    }
+    super()
+  }
 
   ngOnInit(): void {
 
@@ -40,23 +56,9 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
 
   expandedElement: ImmunizationRecommendation | null = null;
 
-  @Input() patientId: number = -1
 
-  // ngAfterViewInit(): void {
-  //   // Set filter rules for research
-  //   // this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
 
-  //   merge(
-  //     // this.vaccinationService.getRefresh(),
-  //     this.patientService.getCurrentObservable().pipe(tap((patient) => {this.patientId = patient.id? patient.id : -1}))
-  //   ).subscribe(() => {
-  //     this.loading = true
-  //     this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
-  //       this.loading = false
-  //       this.dataSource.data = res
-  //       this.expandedElement = res.find((reco: ImmunizationRecommendation) => {return reco.id == this.expandedElement?.id}) ?? null
-  //     })
-  //   })
-  // }
-
+  openFetch() {
+    this.dialog.open(RecommendationDownloadComponent, { data: { 'patientId': this.patientId } });
+  }
 }

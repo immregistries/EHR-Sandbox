@@ -86,6 +86,7 @@ import { GroupBulkCardComponent } from './_group/group-bulk-card/group-bulk-card
 import { GroupBulkCompareComponent } from './_group/group-bulk-compare/group-bulk-compare.component';
 import { VaccinationCompareComponent } from './_vaccination/vaccination-compare/vaccination-compare.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { RecommendationDownloadComponent } from './_vaccination/recommendation-download/recommendation-download.component';
 
 
 @NgModule({
@@ -156,6 +157,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     GroupBulkCardComponent,
     GroupBulkCompareComponent,
     VaccinationCompareComponent,
+    RecommendationDownloadComponent,
   ],
   imports: [
     CommonModule,

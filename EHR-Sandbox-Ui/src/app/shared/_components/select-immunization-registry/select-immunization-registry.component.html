@@ -1,5 +1,5 @@
 <mat-form-field appearance="outline">
-  <mat-label>Interacting IIS</mat-label>
+  <mat-label>{{label}}</mat-label>
   <mat-select [ngModel]="selectedElement?.id" (ngModelChange)="onSelect($event)" name="immunizationRegistry">
     <mat-option *ngFor="let registry of immunizationRegistries" [value]="registry.id" >{{registry.name + (registry.id? " (" + registry.id + ")" : "")}}</mat-option>
   </mat-select>

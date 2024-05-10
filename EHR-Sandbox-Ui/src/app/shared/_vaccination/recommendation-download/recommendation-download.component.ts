@@ -1,0 +1,26 @@
+import { Component, Inject, Input, Optional } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { EhrPatient } from 'src/app/core/_model/rest';
+import { PatientService } from 'src/app/core/_services/patient.service';
+import { RecommendationService } from 'src/app/core/_services/recommendation.service';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+
+@Component({
+  selector: 'app-recommendation-download',
+  templateUrl: './recommendation-download.component.html',
+  styleUrls: ['./recommendation-download.component.css']
+})
+export class RecommendationDownloadComponent {
+  @Input()
+  patientId = -1
+
+  constructor(private patientService: PatientService,
+    private snackBarService: SnackBarService,
+    private recommendationService: RecommendationService,
+    @Optional() public _dialogRef: MatDialogRef<RecommendationDownloadComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number }) {
+    if (data && data.patientId) {
+      this.patientId = data.patientId;
+    }
+  }
+}

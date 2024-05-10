@@ -8,6 +8,8 @@ import { ImmunizationRegistryService } from 'src/app/core/_services/immunization
   styleUrls: ['./select-immunization-registry.component.css']
 })
 export class SelectImmunizationRegistryComponent implements OnInit {
+  @Input()
+  label = 'Remote IIS'
   private _selectedElement: ImmunizationRegistry | undefined;
   public get selectedElement(): ImmunizationRegistry | undefined {
     return this._selectedElement;

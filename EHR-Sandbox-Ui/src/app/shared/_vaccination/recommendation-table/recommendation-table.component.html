@@ -2,6 +2,10 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
     <span class="custom-title">Vaccination Recommendations</span>
+    <button mat-icon-button *ngIf="allow_create" [disabled]="patientId < 0" style="margin-top: -7px; margin-bottom: -6px;" (click)="openFetch()"
+      color="primary"  matTooltip="Get recommendations from IIS forecaster (in progress)">
+      <mat-icon>download</mat-icon>
+    </button>
   </div>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>
