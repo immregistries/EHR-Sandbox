@@ -49,7 +49,7 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 	@Autowired
 	private ApplicationContext context;
 
-	public static String VERSION = "1.2.3-SNAPSHOT";
+	public static String VERSION = "1.2.3-SNAPSHOT-2";
 
 	@Bean
 	@Conditional(OnR4Condition.class)
