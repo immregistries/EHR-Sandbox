@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from '../../shared/shared.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { HealthCheckInterceptor, healthCheckInterceptorProviders } from './health-check.interceptor';
 
 
 
@@ -40,6 +41,7 @@ import { MatInputModule } from '@angular/material/input';
   providers: [
     AuthService,
     authInterceptorProviders,
+    healthCheckInterceptorProviders,
   ]
 })
 export class AuthenticationModule { }

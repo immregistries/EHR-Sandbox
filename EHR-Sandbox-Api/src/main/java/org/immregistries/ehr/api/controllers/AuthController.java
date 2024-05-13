@@ -13,6 +13,7 @@ import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.JwtResponse;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.api.security.UserDetailsImpl;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
@@ -48,6 +46,9 @@ public class AuthController {
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
     
     @PostMapping( consumes = {"application/xml","application/json"})
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
@@ -148,4 +149,20 @@ public class AuthController {
 //            }
         }
     }
+
+    /**
+     * Method to assert that User is still logged in
+     * @return
+     */
+    @GetMapping("/user")
+    public ResponseEntity<String> loggedIn() {
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            return ResponseEntity.ok(userDetailsService.currentUser().getUsername());
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+
+
+    }
+
 }

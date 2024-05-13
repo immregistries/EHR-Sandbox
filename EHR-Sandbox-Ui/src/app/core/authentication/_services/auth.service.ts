@@ -16,4 +16,12 @@ export class AuthService {
   login(user: User): Observable<HttpResponse<JwtResponse>> {
     return this.http.post<JwtResponse>(this.settings.getApiUrl() + '/auth', user, {observe: 'response'});
   }
+
+  checkLoggedUser(): Observable<String> {
+    return this.http.get<String>(this.settings.getApiUrl() + '/auth/user');
+  }
+
+  checkBackendHealthy(): Observable<Boolean> {
+    return this.http.get<Boolean>(this.settings.getApiUrl() + '/healthy');
+  }
 }

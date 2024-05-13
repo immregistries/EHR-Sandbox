@@ -16,34 +16,19 @@ export class RefreshNotificationComponent implements OnInit {
 
   notification: boolean = false
 
-
   constructor(public tenantService: TenantService,
     private facilityService: FacilityService,
     private patientService: PatientService,
     private tokenService: TokenStorageService,
-    private snackBarService: SnackBarService,
     private notificationCheckService: NotificationCheckService,) { }
 
   ngOnInit(): void {
-    this.notificationCheckService.setNotificationJsSubscription(
-      interval(40000).pipe().subscribe(() => {
-        if (!document.location.hash.startsWith('#/home')) {
-          // this.notification = !this.notification
-          /**
-           * checking if current facility was modified since last load ?
-           */
-          this.notificationCheckService.readNotification(this.facilityService.getLastRefreshTime()).pipe(filter((needToRefresh) => {
-            //return needToRefresh TODO uncomment
-            return false
-          })).subscribe((notification) => {
-            this.snackBarService.notification()
-          })
-        }
-      })
-    )
+    this.notificationCheckService.subcribe()
   }
 
-
+  ngOnDestroy(): void {
+    this.notificationCheckService.unsubscribe()
+  }
 
   triggerRefresh() {
     // this.facilityService.doRefresh()

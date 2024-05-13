@@ -73,4 +73,12 @@ public class MainController {
         return facilityRepository.findByUser(userDetailsService.currentUser());
     }
 
+    /**
+     * Method to assert that backend is not down
+     * @return
+     */
+    @GetMapping("/healthy")
+    public boolean healthy() {
+        return true;
+    }
 }

@@ -6,6 +6,7 @@ import { catchError, Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NotificationCheckService } from '../_services/notification-check.service';
+import { AuthService } from './_services/auth.service';
 const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
 @Injectable()
 /**
@@ -16,7 +17,9 @@ export class AuthInterceptor implements HttpInterceptor {
     private tokenService: TokenStorageService,
     private router: Router,
     private dialog: MatDialog,
-    private notificationCheckService: NotificationCheckService) { }
+    private notificationCheckService: NotificationCheckService,
+    private authService: AuthService) { }
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let authReq = req;
     const token = this.tokenService.getToken();
@@ -30,31 +33,44 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private handleError(error: HttpErrorResponse): Observable<any> {
     if (error.status === 401) {
-      const pathname = JSON.parse(JSON.stringify(document.location.hash)).split('#')[1].split('?')[0]
-      if (pathname === '/home') {
-        this.router.navigate(['/home'], {
-          queryParams: {
-            loginError: 2,
-            redirectTo: pathname
+      this.authService.checkLoggedUser().subscribe({
+        next: (res) => {
+          if (!res) {
+            this.redirectToLogin()
           }
-        });
-      } else {
-        this.router.navigate(['/home'], {
-          queryParams: {
-            loginError: 2,
-            redirectTo: pathname
-          }
-        });
-        this.dialog.closeAll()
-      }
-      this.notificationCheckService.unsubscribe()
-      // this.token.signOut()
+        },
+        error: (error2) => {
+          this.redirectToLogin()
+        }
+      })
     }
     throw error
-    // return of(error)
   }
 
+
+  private redirectToLogin() {
+    const pathname = JSON.parse(JSON.stringify(document.location.hash)).split('#')[1].split('?')[0]
+    if (pathname === '/home') {
+      this.router.navigate(['/home'], {
+        queryParams: {
+          loginError: 2,
+          redirectTo: pathname
+        }
+      });
+    } else {
+      this.router.navigate(['/home'], {
+        queryParams: {
+          loginError: 2,
+          redirectTo: pathname
+        }
+      });
+      this.dialog.closeAll()
+    }
+    this.notificationCheckService.unsubscribe()
+    this.tokenService.signOut()
+  }
 }
+
 export const authInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
 ];
