@@ -3,14 +3,12 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hl7.fhir.r5.model.Group;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.util.MultiValueMap;
 
-import javax.annotation.Resource;
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;

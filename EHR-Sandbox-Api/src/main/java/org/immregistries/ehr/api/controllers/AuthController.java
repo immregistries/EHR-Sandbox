@@ -1,15 +1,11 @@
 package org.immregistries.ehr.api.controllers;
 
-import javax.validation.Valid;
-
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Tenant;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.api.repositories.TenantRepository;
-import org.immregistries.ehr.api.repositories.UserRepository;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.User;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.api.repositories.TenantRepository;
+import org.immregistries.ehr.api.repositories.UserRepository;
 import org.immregistries.ehr.api.security.JwtResponse;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.api.security.UserDetailsImpl;
@@ -25,8 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

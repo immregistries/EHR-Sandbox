@@ -1,11 +1,4 @@
 package org.immregistries.ehr.api.security;
-import java.io.IOException;
-import java.util.Scanner;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.apache.commons.codec.binary.Base64;
@@ -20,6 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * Filter checking for user authorization on each request
