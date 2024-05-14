@@ -1,433 +1,433 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>ehr-sandbox-api</artifactId>
-	<packaging>war</packaging>
-	<parent>
-		<groupId>org.immregistries.ehr</groupId>
-		<artifactId>ehr-sandbox</artifactId>
-		<version>1.2.3-SNAPSHOT-2</version>
-	</parent>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>ehr-sandbox-api</artifactId>
+    <packaging>war</packaging>
+    <parent>
+        <groupId>org.immregistries.ehr</groupId>
+        <artifactId>ehr-sandbox</artifactId>
+        <version>1.2.3-SNAPSHOT-2</version>
+    </parent>
 
-	<name>EHR Sandbox API</name>
-	<description>Api for EHR Sandbox</description>
-	<properties>
-		<java.version>1.8</java.version>
-		<hapi.version>6.8.3-SUB</hapi.version>
-	</properties>
-
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.data</groupId>
-				<artifactId>spring-data-bom</artifactId>
-				<version>2021.2.7</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <name>EHR Sandbox API</name>
+    <description>Api for EHR Sandbox</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <hapi.version>6.8.3</hapi.version>
+    </properties>
 
 
-	<dependencies>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.15.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.15.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-<!--			<version>4.0.0.RELEASE</version>-->
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-envers</artifactId>
-<!--			<version>${spring.version}</version>-->
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-<!--			<version>${spring.version}</version>-->
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>${spring-boot-tomcat.scope}</scope>
-<!--			<version>${spring.version}</version>-->
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-<!--			<version>${spring.version}</version>-->
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-<!--			<version>${spring.version}</version>-->
-		</dependency>
-
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.12.3</version>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>0.12.3</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
-			<version>0.12.3</version>
-			<scope>runtime</scope>
-		</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-bom</artifactId>
+                <version>2021.2.7</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-<!--			<version>${spring.version}</version>-->
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.15.2</version>
+        </dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>mysql</groupId>-->
-<!--			<artifactId>mysql-connector-java</artifactId>-->
-<!--			<version>8.0.28</version>-->
-<!--			<scope>runtime</scope>-->
-<!--		</dependency>-->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <!--			<version>4.0.0.RELEASE</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.immregistries</groupId>
-			<artifactId>codebase-client</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.4.0-b180830.0359</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>3.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>3.0.2</version>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-envers</artifactId>
+            <!--			<version>${spring.version}</version>-->
+        </dependency>
 
-		<dependency>
-			<groupId>org.immregistries</groupId>
-			<artifactId>mqe-hl7-utility</artifactId>
-			<version>2021.7-BETA</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-lang3</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.immregistries</groupId>
-			<artifactId>smm-tester</artifactId>
-			<version>2.31.0</version>
-			<classifier>client</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.github.javafaker</groupId>
-			<artifactId>javafaker</artifactId>
-			<version>1.0.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.yaml</groupId>
-					<artifactId>snakeyaml</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!--			<version>${spring.version}</version>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>${spring-boot-tomcat.scope}</scope>
+            <!--			<version>${spring.version}</version>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <!--			<version>${spring.version}</version>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <!--			<version>${spring.version}</version>-->
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <!--			<version>${spring.version}</version>-->
+        </dependency>
+
+        <!--		<dependency>-->
+        <!--			<groupId>mysql</groupId>-->
+        <!--			<artifactId>mysql-connector-java</artifactId>-->
+        <!--			<version>8.0.28</version>-->
+        <!--			<scope>runtime</scope>-->
+        <!--		</dependency>-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.immregistries</groupId>
+            <artifactId>codebase-client</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.4.0-b180830.0359</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.immregistries</groupId>
+            <artifactId>mqe-hl7-utility</artifactId>
+            <version>2021.7-BETA</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.immregistries</groupId>
+            <artifactId>smm-tester</artifactId>
+            <version>2.31.0</version>
+            <classifier>client</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>1.1.0.Final</version>
         </dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.9.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.9.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-transport-local</artifactId>
-			<version>1.6.2</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>1.6.2</version>
+        </dependency>
 
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-base</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-client</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-r5</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-server</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-validation</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-validation-resources-r4</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-validation-resources-r5</artifactId>
-			<version>${hapi.version}</version>
-		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>ca.uhn.hapi.fhir</groupId>-->
-<!--			<artifactId>hapi-fhir-jpaserver-subscription</artifactId>-->
-<!--			<version>${hapi.version}</version>-->
-<!--		</dependency>-->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-base</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-client</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r5</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-server</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-validation</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-validation-resources-r4</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-validation-resources-r5</artifactId>
+            <version>${hapi.version}</version>
+        </dependency>
+        <!--		<dependency>-->
+        <!--			<groupId>ca.uhn.hapi.fhir</groupId>-->
+        <!--			<artifactId>hapi-fhir-jpaserver-subscription</artifactId>-->
+        <!--			<version>${hapi.version}</version>-->
+        <!--		</dependency>-->
 
-		<dependency>
-			<groupId>ca.uhn.hapi</groupId>
-			<artifactId>hapi-base</artifactId>
-			<version>2.3</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.immregistries.ehr</groupId>
-			<artifactId>ehr-sandbox-ui</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<finalName>ehr</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-<!--				<version>${spring.version}</version>-->
-				<configuration>
-					<mainClass>org.immregistries.ehr.EhrApiApplication</mainClass>
-					<outputDirectory>${project.build.directory}/../../target</outputDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-					<optimize>true</optimize>
-					<debug>true</debug>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3.1</version>
-			</plugin>
-		</plugins>
-	</build>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-base</artifactId>
+            <version>2.3</version>
+        </dependency>
 
 
-	<profiles>
-		<profile>
-			<id>prod</id>
-			<properties>
-				<activatedProperties>prod</activatedProperties>
-				<maven.test.skip>true</maven.test.skip>
-<!--				<spring.datasource.url>jdbc:mysql://localhost:3306/ehr</spring.datasource.url>-->
-				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>
-			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-<!--						Packaging the UI Files in War-->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.1.2</version>
-						<executions>
-							<execution>
-								<id>merge</id>
-								<phase>initialize</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.immregistries.ehr</groupId>
-											<artifactId>ehr-sandbox-ui</artifactId>
-											<type>jar</type>
-											<overWrite>true</overWrite>
-											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>
-										</artifactItem>
-									</artifactItems>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-<!--		<profile>-->
-<!--			<id>local</id>-->
-<!--			<properties>-->
-<!--				<activatedProperties>prod</activatedProperties>-->
-<!--				<maven.test.skip>true</maven.test.skip>-->
-<!--				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>-->
-<!--			</properties>-->
-<!--			<activation>-->
-<!--				<activeByDefault>true</activeByDefault>-->
-<!--			</activation>-->
-<!--			<build>-->
-<!--				<plugins>-->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-dependency-plugin</artifactId>-->
-<!--						<version>3.1.2</version>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<id>merge</id>-->
-<!--								<phase>initialize</phase>-->
-<!--								<goals>-->
-<!--									<goal>unpack</goal>-->
-<!--								</goals>-->
-<!--								<configuration>-->
-<!--									<artifactItems>-->
-<!--										<artifactItem>-->
-<!--											<groupId>org.immregistries.ehr</groupId>-->
-<!--											<artifactId>ehr-sandbox-ui</artifactId>-->
-<!--											<type>jar</type>-->
-<!--											<overWrite>true</overWrite>-->
-<!--											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>-->
-<!--										</artifactItem>-->
-<!--									</artifactItems>-->
-<!--								</configuration>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-<!--				</plugins>-->
-<!--			</build>-->
-<!--		</profile>-->
-		<profile>
-			<id>dev</id>
-			<properties>
-				<activatedProperties>dev</activatedProperties>
-				<maven.test.skip>true</maven.test.skip>
-				<spring-boot-tomcat.scope>compile</spring-boot-tomcat.scope>
-			</properties>
-		</profile>
-		<profile>
-			<id>class-gen</id>
-			<build>
-				<plugins>
-					<!-- allows the automatic generation of Typescript interfaces for Angular UI
-				using command : mvn -Pclass-gen process-classes-->
-					<plugin>
-						<groupId>cz.habarta.typescript-generator</groupId>
-						<artifactId>typescript-generator-maven-plugin</artifactId>
-						<version>2.35.1025</version>
-						<executions>
-							<execution>
-								<id>generate</id>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-								<phase>process-classes</phase>
-								<configuration>
-									<jsonLibrary>jackson2</jsonLibrary>
-									<!--							<classPatterns>-->
-									<!--								<pattern>org.immregistries.ehr.entities.*</pattern>-->
-									<!--							</classPatterns>-->
-									<classes>
-										<class>org.immregistries.ehr.api.entities.Facility</class>
-									</classes>
-									<optionalProperties>all</optionalProperties>
-									<outputFile>target/rest.d.ts</outputFile>
-									<outputKind>module</outputKind>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+        <dependency>
+            <groupId>org.immregistries.ehr</groupId>
+            <artifactId>ehr-sandbox-ui</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>ehr</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--				<version>${spring.version}</version>-->
+                <configuration>
+                    <mainClass>org.immregistries.ehr.EhrApiApplication</mainClass>
+                    <outputDirectory>${project.build.directory}/../../target</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <optimize>true</optimize>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+                <maven.test.skip>true</maven.test.skip>
+                <!--				<spring.datasource.url>jdbc:mysql://localhost:3306/ehr</spring.datasource.url>-->
+                <spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--						Packaging the UI Files in War-->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <executions>
+                            <execution>
+                                <id>merge</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.immregistries.ehr</groupId>
+                                            <artifactId>ehr-sandbox-ui</artifactId>
+                                            <type>jar</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--		<profile>-->
+        <!--			<id>local</id>-->
+        <!--			<properties>-->
+        <!--				<activatedProperties>prod</activatedProperties>-->
+        <!--				<maven.test.skip>true</maven.test.skip>-->
+        <!--				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>-->
+        <!--			</properties>-->
+        <!--			<activation>-->
+        <!--				<activeByDefault>true</activeByDefault>-->
+        <!--			</activation>-->
+        <!--			<build>-->
+        <!--				<plugins>-->
+        <!--					<plugin>-->
+        <!--						<groupId>org.apache.maven.plugins</groupId>-->
+        <!--						<artifactId>maven-dependency-plugin</artifactId>-->
+        <!--						<version>3.1.2</version>-->
+        <!--						<executions>-->
+        <!--							<execution>-->
+        <!--								<id>merge</id>-->
+        <!--								<phase>initialize</phase>-->
+        <!--								<goals>-->
+        <!--									<goal>unpack</goal>-->
+        <!--								</goals>-->
+        <!--								<configuration>-->
+        <!--									<artifactItems>-->
+        <!--										<artifactItem>-->
+        <!--											<groupId>org.immregistries.ehr</groupId>-->
+        <!--											<artifactId>ehr-sandbox-ui</artifactId>-->
+        <!--											<type>jar</type>-->
+        <!--											<overWrite>true</overWrite>-->
+        <!--											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>-->
+        <!--										</artifactItem>-->
+        <!--									</artifactItems>-->
+        <!--								</configuration>-->
+        <!--							</execution>-->
+        <!--						</executions>-->
+        <!--					</plugin>-->
+        <!--				</plugins>-->
+        <!--			</build>-->
+        <!--		</profile>-->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+                <maven.test.skip>true</maven.test.skip>
+                <spring-boot-tomcat.scope>compile</spring-boot-tomcat.scope>
+            </properties>
+        </profile>
+        <profile>
+            <id>class-gen</id>
+            <build>
+                <plugins>
+                    <!-- allows the automatic generation of Typescript interfaces for Angular UI
+                using command : mvn -Pclass-gen process-classes-->
+                    <plugin>
+                        <groupId>cz.habarta.typescript-generator</groupId>
+                        <artifactId>typescript-generator-maven-plugin</artifactId>
+                        <version>2.35.1025</version>
+                        <executions>
+                            <execution>
+                                <id>generate</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <jsonLibrary>jackson2</jsonLibrary>
+                                    <!--							<classPatterns>-->
+                                    <!--								<pattern>org.immregistries.ehr.entities.*</pattern>-->
+                                    <!--							</classPatterns>-->
+                                    <classes>
+                                        <class>org.immregistries.ehr.api.entities.Facility</class>
+                                    </classes>
+                                    <optionalProperties>all</optionalProperties>
+                                    <outputFile>target/rest.d.ts</outputFile>
+                                    <outputKind>module</outputKind>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
