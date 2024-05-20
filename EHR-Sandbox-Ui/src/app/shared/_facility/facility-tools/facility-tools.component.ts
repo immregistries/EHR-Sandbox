@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
-import { FacilityCreationComponent } from '../facility-creation/facility-creation.component';
+import { FacilityFormComponent } from '../facility-form/facility-form.component';
 import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
@@ -19,7 +19,7 @@ export class FacilityToolsComponent {
   constructor(public dialog: MatDialog, public facilityService: FacilityService, public fhirResourceService: FhirResourceService) {}
 
   openEdition() {
-    const dialogRef = this.dialog.open(FacilityCreationComponent, { data: { facility: this.facility } });
+    const dialogRef = this.dialog.open(FacilityFormComponent, { data: { facility: this.facility } });
     // dialogRef.afterClosed().subscribe(result => {
     // });
   }

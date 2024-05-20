@@ -6,11 +6,11 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Component({
-  selector: 'app-tenant-creation',
-  templateUrl: './tenant-creation.component.html',
-  styleUrls: ['./tenant-creation.component.css']
+  selector: 'app-tenant-form',
+  templateUrl: './tenant-form.component.html',
+  styleUrls: ['./tenant-form.component.css']
 })
-export class TenantCreationComponent implements OnInit {
+export class TenantFormComponent implements OnInit {
 
   public tenant: Tenant = {id: -1}
   editionMode: boolean = false;
@@ -20,7 +20,7 @@ export class TenantCreationComponent implements OnInit {
 
   constructor(private tenantService: TenantService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef?: MatDialogRef<TenantCreationComponent>,
+    @Optional() public _dialogRef?: MatDialogRef<TenantFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: { tenant?: Tenant }) {
       if (data && data.tenant) {
         this.tenant = data.tenant

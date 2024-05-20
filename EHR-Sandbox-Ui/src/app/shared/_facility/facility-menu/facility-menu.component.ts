@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { FacilityCreationComponent } from '../facility-creation/facility-creation.component';
+import { FacilityFormComponent } from '../facility-form/facility-form.component';
 import { Facility } from 'src/app/core/_model/rest';
 import { MatDialog } from '@angular/material/dialog';
 import { FacilityDashboardComponent } from '../facility-dashboard/facility-dashboard.component';
@@ -34,7 +34,7 @@ export class FacilityMenuComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(FacilityCreationComponent);
+    const dialogRef = this.dialog.open(FacilityFormComponent);
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.facilityService.setCurrent(result)

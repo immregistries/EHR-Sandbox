@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Scanner;
 
 /**
@@ -64,10 +65,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authorized = filterUrl(request);
 
             } // TODO figure why http security configuration does not skip filter
-            else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") || request.getServletPath().startsWith("/") ) { // for registration no authorization needed
+            else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") || request.getServletPath().startsWith("/healthy")) { // for registration no authorization needed
                 authorized = true;
-            } else if ( request.getServletPath().split("/").length == 1 &&
-                    (request.getServletPath().endsWith(".js") || request.getServletPath().endsWith(".ico") || request.getServletPath().endsWith(".css") ) ) {
+            } else if (request.getServletPath().split("/").length == 1 &&
+                    (request.getServletPath().endsWith(".js") || request.getServletPath().endsWith(".ico") || request.getServletPath().endsWith(".css"))) {
 
             }
         } catch (Exception e) {
@@ -80,6 +81,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
         }
     }
+
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
@@ -90,6 +92,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     /**
      * Currently not used, for future functionality
+     *
      * @param request
      * @return
      */
@@ -109,6 +112,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     /**
      * TODO improve by reversing the logic
+     *
      * @param request
      * @return
      * @throws InvalidRequestException
@@ -128,7 +132,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         int len = split.length;
         Scanner scanner = new Scanner(url).useDelimiter("/");
         String item = "";
-        if(scanner.hasNext()) {
+        if (scanner.hasNext()) {
             item = scanner.next();
             /**
              * Fhir Server
@@ -143,11 +147,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 if (scanner.hasNextInt()) {
                     registryId = scanner.nextInt();
 //                    checkIfPotentialValidId(vaccinationId);
-                    ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId,userDetailsService.currentUserId())
+                    ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid registry id"));
                 }
             }
-            if (item.equals("tenants") ) {
+            if (item.equals("tenants")) {
                 if (scanner.hasNextInt()) {
                     tenantId = scanner.next();
                     checkIfPotentialValidId(tenantId);
@@ -156,7 +160,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     request.setAttribute("tenant", tenant);
                 }
             }
-            if (item.equals("facilities") ) {
+            if (item.equals("facilities")) {
                 if (scanner.hasNextInt()) {
                     facilityId = scanner.next();
                     checkIfPotentialValidId(facilityId);
@@ -168,9 +172,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
 
 
-        if(scanner.hasNext()) {
+        if (scanner.hasNext()) {
             item = scanner.next();
-            if (item.equals("facilities") ) {
+            if (item.equals("facilities")) {
                 if (scanner.hasNextInt()) {
                     facilityId = scanner.next();
                     checkIfPotentialValidId(facilityId);
@@ -178,11 +182,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
                     request.setAttribute("facility", facility);
                 }
-            } else if (item.equals("clinicians") ) {
+            } else if (item.equals("clinicians")) {
                 if (scanner.hasNextInt()) {
                     clinicianId = scanner.nextInt();
 //                    checkIfPotentialValidId(clinicianId);
-                    Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId,clinicianId)
+                    Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId)
                             .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));
                     request.setAttribute("clinician", clinician);
                 }
@@ -190,44 +194,53 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
 
 
-        if(scanner.hasNext()) {
+        if (scanner.hasNext()) {
             item = scanner.next();
-            if (item.equals("patients") ) {
+            if (item.equals("patients")) {
                 if (scanner.hasNextInt()) {
                     patientId = scanner.next();
                     checkIfPotentialValidId(patientId);
-                    EhrPatient ehrPatient = patientRepository.findByFacilityIdAndId(facilityId,patientId)
+                    EhrPatient ehrPatient = patientRepository.findByFacilityIdAndId(facilityId, patientId)
                             .orElseThrow(() -> new InvalidRequestException("invalid patient id"));
                     request.setAttribute("patient", ehrPatient);
                 }
             }
-            if (item.equals("vaccinations") ) {
+            if (item.equals("vaccinations")) {
                 if (scanner.hasNextInt()) {
                     vaccinationId = scanner.next();
                     checkIfPotentialValidId(vaccinationId);
-                    VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId,vaccinationId)
+                    VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId, vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
                     request.setAttribute("vaccinationEvent", vaccinationEvent);
                 }
             }
-            if (item.equals("groups") ) {
+            if (item.equals("groups")) {
                 if (scanner.hasNextInt()) {
                     groupId = scanner.next();
                     checkIfPotentialValidId(groupId);
-                    EhrGroup ehrGroup = ehrGroupRepository.findByFacilityIdAndId(facilityId, groupId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid group id"));
+                    EhrGroup ehrGroup;
+                    Optional<EhrGroup> ehrGroupOptional = ehrGroupRepository.findByFacilityIdAndId(facilityId, groupId);
+                    if (ehrGroupOptional.isPresent()) {
+                        ehrGroup = ehrGroupOptional.get();
+                    } else {
+                        /**
+                         * Groups related to children facilities are accessible , TODO improve consistency
+                         */
+                        ehrGroup = ehrGroupRepository.findByTenantIdAndId(tenantId, groupId)
+                                .orElseThrow(() -> new InvalidRequestException("invalid group id"));
+                    }
                     request.setAttribute("ehrGroup", ehrGroup);
                 }
             }
         }
 
 
-        if(scanner.hasNext()) {
+        if (scanner.hasNext()) {
             item = scanner.next();
-            if (item.equals("vaccinations") ) {
+            if (item.equals("vaccinations")) {
                 if (scanner.hasNextInt()) {
                     vaccinationId = scanner.next();
-                    VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientIdAndId(patientId,vaccinationId)
+                    VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
                     request.setAttribute("vaccinationEvent", vaccinationEvent);
                 }
@@ -239,18 +252,18 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     /**
      * Used to avoid unauthorized exceptions when id are -1
+     *
      * @param id
      * @throws InvalidRequestException
      */
-    private void checkIfPotentialValidId(String id) throws  InvalidRequestException {
+    private void checkIfPotentialValidId(String id) throws InvalidRequestException {
         try {
             if (Integer.parseInt(id) == -1) {
-                throw  new InvalidRequestException("Invalid id in path : -1");
+                throw new InvalidRequestException("Invalid id in path : -1");
             }
         } catch (NumberFormatException numberFormatException) {
 
         }
-
 
 
     }

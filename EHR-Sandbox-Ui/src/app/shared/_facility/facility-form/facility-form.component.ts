@@ -8,11 +8,11 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Component({
-  selector: 'app-facility-creation',
-  templateUrl: './facility-creation.component.html',
-  styleUrls: ['./facility-creation.component.css']
+  selector: 'app-facility-form',
+  templateUrl: './facility-form.component.html',
+  styleUrls: ['./facility-form.component.css']
 })
-export class FacilityCreationComponent implements OnInit {
+export class FacilityFormComponent implements OnInit {
 
   @Output()
   success: EventEmitter<Facility> = new EventEmitter<Facility>()
@@ -58,7 +58,7 @@ export class FacilityCreationComponent implements OnInit {
     public facilityService: FacilityService,
     private tenantService: TenantService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<FacilityCreationComponent>,
+    @Optional() public _dialogRef: MatDialogRef<FacilityFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility }) {
     if (data && data.facility) {
       this.facility = data.facility

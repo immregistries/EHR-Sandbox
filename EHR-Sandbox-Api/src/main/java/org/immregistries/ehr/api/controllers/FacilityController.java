@@ -1,7 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
@@ -79,7 +78,7 @@ public class FacilityController {
         facility.setTenant(tenant);
         Facility newEntity = facilityRepository.save(facility);
         if (populate.isPresent()) {
-            populateFacility(tenant,facility,Optional.of(3));
+            populateFacility(tenant, facility, Optional.of(3));
         }
         return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
     }

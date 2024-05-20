@@ -3,7 +3,6 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import com.github.javafaker.Faker;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -15,6 +14,7 @@ import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.logic.BundleImportService;
@@ -30,6 +30,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
@@ -51,6 +54,8 @@ public class EhrGroupController {
     private EhrGroupRepository ehrGroupRepository;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
+    @Autowired
+    private FacilityRepository facilityRepository;
     @Autowired
     private GroupProviderR5 groupProviderR5;
     @Autowired
@@ -163,7 +168,13 @@ public class EhrGroupController {
             return ResponseEntity.ok(ehrGroupRepository.findByFacilityIdAndName(facility.getId(), name.get())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")));
         } else {
-            return ResponseEntity.ok(ehrGroupRepository.findByFacilityId(facility.getId()));
+            Iterable<EhrGroup> ehrGroups = ehrGroupRepository.findByFacilityId(facility.getId());
+            Stream<EhrGroup> stream = StreamSupport.stream(ehrGroups.spliterator(), false);
+            for (Facility childFacility : facilityRepository.findByParentFacilityId(facility.getId())) {
+                Iterable<EhrGroup> childEhrGroups = ehrGroupRepository.findByFacilityId(childFacility.getId());
+                stream = Stream.concat(stream, StreamSupport.stream(childEhrGroups.spliterator(), false));
+            }
+            return ResponseEntity.ok().body(stream.collect(Collectors.toSet()));
         }
     }
 
@@ -307,8 +318,8 @@ public class EhrGroupController {
     }
 
     @GetMapping("/{groupId}/$refresh")
-    public EhrGroup refreshOne(@PathVariable String facilityId, @PathVariable String groupId) {
-        EhrGroup ehrGroup = ehrGroupRepository.findByFacilityIdAndId(facilityId, groupId).orElseThrow(() -> new RuntimeException("group not found"));
+    public EhrGroup refreshOne(@PathVariable String groupId) {
+        EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("group not found"));
         return refreshOne(ehrGroup);
     }
 

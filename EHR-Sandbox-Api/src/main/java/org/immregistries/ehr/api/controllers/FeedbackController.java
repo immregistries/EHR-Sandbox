@@ -1,8 +1,8 @@
 package org.immregistries.ehr.api.controllers;
 
+import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Feedback;
-import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -17,6 +17,9 @@ import java.util.Optional;
 
 @RestController
 //@RequestMapping({""})
+/**
+ * Deprecated, formerly used to test
+ */
 public class FeedbackController {
 
     @Autowired
@@ -41,7 +44,7 @@ public class FeedbackController {
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/feedbacks")
     public Iterable<Feedback> getPatientFeedback(@PathVariable() String tenantId,
                                                  @PathVariable() String facilityId) {
-        return facilityController.getFacility(tenantId,facilityId).get().getFeedbacks();
+        return facilityController.getFacility(tenantId, facilityId).get().getFeedbacks();
     }
 
 
@@ -55,7 +58,7 @@ public class FeedbackController {
                                         @PathVariable() String patientId,
                                         @RequestBody Feedback feedback) {
         Optional<EhrPatient> patient = patientRepository.findById(patientId);
-        if(patient.isPresent()){
+        if (patient.isPresent()) {
             Facility facility = patient.get().getFacility();
             feedback.setPatient(patient.get());
             feedback.setFacility(facility);
@@ -66,11 +69,11 @@ public class FeedbackController {
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations/{vaccinationId}/feedbacks")
     public Feedback postVaccinationFeedback(@PathVariable() String facilityId,
-                                        @PathVariable() String patientId,
-                                        @PathVariable() String vaccinationId,
-                                        @RequestBody Feedback feedback) {
-        Optional<VaccinationEvent>  vaccination = vaccinationEventRepository.findById(vaccinationId);
-        if(vaccination.isPresent()){
+                                            @PathVariable() String patientId,
+                                            @PathVariable() String vaccinationId,
+                                            @RequestBody Feedback feedback) {
+        Optional<VaccinationEvent> vaccination = vaccinationEventRepository.findById(vaccinationId);
+        if (vaccination.isPresent()) {
             EhrPatient patient = vaccination.get().getPatient();
             Facility facility = patient.getFacility();
             feedback.setVaccinationEvent(vaccination.get());

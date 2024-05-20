@@ -4,8 +4,8 @@ import { SelectCodebaseComponent } from './_components/select-codebase/select-co
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
-import { TenantCreationComponent } from './_tenant/tenant-creation/tenant-creation.component';
-import { FacilityCreationComponent } from './_facility/facility-creation/facility-creation.component';
+import { TenantFormComponent } from './_tenant/tenant-form/tenant-form.component';
+import { FacilityFormComponent } from './_facility/facility-form/facility-form.component';
 import { TenantMenuComponent } from './_tenant/tenant-menu/tenant-menu.component';
 import { FacilityMenuComponent } from './_facility/facility-menu/facility-menu.component';
 import { ImmunizationRegistryFormComponent } from './_immunization-registry/immunization-registry-form/immunization-registry-form.component';
@@ -87,13 +87,15 @@ import { GroupBulkCompareComponent } from './_group/group-bulk-compare/group-bul
 import { VaccinationCompareComponent } from './_vaccination/vaccination-compare/vaccination-compare.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { RecommendationDownloadComponent } from './_vaccination/recommendation-download/recommendation-download.component';
+import { GroupStepsComponent } from './_components/group-steps/group-steps.component';
+import { MatStepperModule } from '@angular/material/stepper';
 
 
 @NgModule({
   declarations: [
     SelectCodebaseComponent,
-    TenantCreationComponent,
-    FacilityCreationComponent,
+    TenantFormComponent,
+    FacilityFormComponent,
     TenantMenuComponent,
     FacilityMenuComponent,
     ImmunizationRegistryFormComponent,
@@ -158,6 +160,7 @@ import { RecommendationDownloadComponent } from './_vaccination/recommendation-d
     GroupBulkCompareComponent,
     VaccinationCompareComponent,
     RecommendationDownloadComponent,
+    GroupStepsComponent,
   ],
   imports: [
     CommonModule,
@@ -201,6 +204,7 @@ import { RecommendationDownloadComponent } from './_vaccination/recommendation-d
     MatChipsModule,
     ClipboardModule,
     MatSlideToggleModule,
+    MatStepperModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -214,8 +218,8 @@ import { RecommendationDownloadComponent } from './_vaccination/recommendation-d
 
 
     SelectCodebaseComponent,
-    TenantCreationComponent,
-    FacilityCreationComponent,
+    TenantFormComponent,
+    FacilityFormComponent,
     TenantMenuComponent,
     FacilityMenuComponent,
     ImmunizationRegistryFormComponent,
@@ -257,6 +261,7 @@ import { RecommendationDownloadComponent } from './_vaccination/recommendation-d
      ClinicianFormComponent,
      RemoteGroupTableComponent,
      TabWithMenuComponent,
+     MatStepperModule,
 
   ],
 })

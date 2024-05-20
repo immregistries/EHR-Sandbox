@@ -10,7 +10,7 @@
   <mat-form-field appearance="fill">
     <mat-label>Parent Facility</mat-label>
     <mat-select [(ngModel)]="parentId" name="parentFacility">
-      <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}" >{{item.nameDisplay}}</mat-option>
+      <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}">{{item.nameDisplay}}</mat-option>
     </mat-select>
   </mat-form-field>
 

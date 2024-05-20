@@ -5,7 +5,7 @@
 }
 
 .footer-end {
-display: flex;
-align-items: baseline;
-justify-content: end;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
 }

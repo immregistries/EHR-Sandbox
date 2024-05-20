@@ -14,11 +14,11 @@
 
   </mat-step>
   <mat-step label="Create Environment">
-    <app-tenant-creation (success)="nextTenant($event)"></app-tenant-creation>
+    <app-tenant-form (success)="nextTenant($event)"></app-tenant-form>
     <p>Choose name for testing environment</p>
   </mat-step>
   <mat-step label="Create Facility">
-    <app-facility-creation (success)="nextFacility($event)"></app-facility-creation>
+    <app-facility-form (success)="nextFacility($event)"></app-facility-form>
     <p>Choose name for facility</p>
   </mat-step>
   <mat-step label="Configure Remote IIS">

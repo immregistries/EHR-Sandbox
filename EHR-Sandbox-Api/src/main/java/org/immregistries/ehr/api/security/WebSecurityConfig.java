@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/$create", "/auth/**", "/styles/**", "/", "/*.css", "/*.js", "/*.ico", "/fhir/**", "/smart-test/*", "/h2-console/**");
+        web.ignoring().antMatchers("/$create", "/healthy", "/auth/**", "/styles/**", "/", "/*.css", "/*.js", "/*.ico", "/fhir/**", "/smart-test/*", "/h2-console/**");
     }
 
 
@@ -76,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/$create", "/auth/**", "/", "/*.css", "/*.js", "/fhir/**","/assets/**", "/smart-test/*")
+                .antMatchers("/$create", "/auth/**", "/", "/*.css", "/*.js", "/fhir/**", "/assets/**", "/smart-test/*")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

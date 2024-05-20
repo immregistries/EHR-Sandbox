@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Tenant } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { TenantCreationComponent } from '../tenant-creation/tenant-creation.component';
+import { TenantFormComponent } from '../tenant-form/tenant-form.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -27,7 +27,7 @@ export class TenantMenuComponent implements AfterViewInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(TenantCreationComponent);
+    const dialogRef = this.dialog.open(TenantFormComponent);
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.tenantService.setCurrent(result)
