@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Tenant } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -12,6 +12,9 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class TenantMenuComponent implements AfterViewInit {
   list!: Tenant[];
+
+  @Output()
+  selectEmitter: EventEmitter<Tenant> = new EventEmitter<Tenant>()
 
   constructor(
     public tenantService: TenantService,
@@ -33,6 +36,7 @@ export class TenantMenuComponent implements AfterViewInit {
         this.tenantService.setCurrent(result)
         this.facilityService.setCurrent({ id: -1 })
         this.tenantService.doRefresh()
+        this.selectEmitter.emit(this.tenantService.getCurrent())
       }
     });
   }
@@ -42,6 +46,7 @@ export class TenantMenuComponent implements AfterViewInit {
       this.tenantService.setCurrent({ id: -1 })
     } else {
       this.tenantService.setCurrent(event)
+      this.selectEmitter.emit(this.tenantService.getCurrent())
     }
     this.facilityService.setCurrent({ id: -1 })
   }

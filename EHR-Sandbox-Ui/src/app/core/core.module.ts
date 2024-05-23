@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SharedModule } from '../shared/shared.module';
-import { FhirModule } from '../fhir/fhir.module';
 
 import { SettingsService } from './_services/settings.service';
 import { PatientService } from './_services/patient.service';
@@ -22,44 +21,28 @@ import { DashboardComponent } from './_components/dashboard/dashboard.component'
 import { HomeComponent } from './_components/home/home.component';
 import { AppRoutingModule } from '../app-routing.module';
 
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { ImmunizationRegistryDashboardComponent } from './_components/immunization-registry-dashboard/immunization-registry-dashboard.component';
 import { RefreshNotificationComponent } from './_components/refresh-notification/refresh-notification.component';
 import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pipe';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RemoteGroupDashboardComponent } from './_components/remote-group-dashboard/remote-group-dashboard.component';
 import { JsonDialogService } from './_services/json-dialog.service';
 import { StepsComponent } from './_components/steps/steps.component';
-import { MatStepperModule } from '@angular/material/stepper';
+import { FhirBulkService } from './_services/_fhir/fhir-bulk.service';
+import { FhirClientService } from './_services/_fhir/fhir-client.service';
+import { FhirResourceService } from './_services/_fhir/fhir-resource.service';
+import { Hl7Service } from './_services/_fhir/hl7.service';
+import { SubscriptionService } from './_services/_fhir/subscription.service';
+import { GroupStepsComponent } from './_components/group-steps/group-steps.component';
 
 @NgModule({
   declarations: [
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
-    ImmunizationRegistryDashboardComponent,
     RefreshNotificationComponent,
     RemoteGroupDashboardComponent,
     StepsComponent,
+    GroupStepsComponent,
   ],
   imports: [
     CommonModule,
@@ -71,31 +54,30 @@ import { MatStepperModule } from '@angular/material/stepper';
     FormsModule,
 
     AuthenticationModule,
-    FhirModule,
     SharedModule,
 
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatGridListModule,
-    MatCardModule,
-    MatMenuModule,
-    MatTabsModule,
-    MatSnackBarModule,
-    MatNativeDateModule,
-    MatDialogModule,
-    MatTableModule,
-    MatSelectModule,
-    MatAutocompleteModule,
-    MatTooltipModule,
-    MatProgressBarModule,
-    MatBadgeModule,
-    MatButtonToggleModule,
-    MatStepperModule,
+    // MatToolbarModule,
+    // MatButtonModule,
+    // MatSidenavModule,
+    // MatIconModule,
+    // MatListModule,
+    // MatInputModule,
+    // MatDatepickerModule,
+    // MatGridListModule,
+    // MatCardModule,
+    // MatMenuModule,
+    // MatTabsModule,
+    // MatSnackBarModule,
+    // MatNativeDateModule,
+    // MatDialogModule,
+    // MatTableModule,
+    // MatSelectModule,
+    // MatAutocompleteModule,
+    // MatTooltipModule,
+    // MatProgressBarModule,
+    // MatBadgeModule,
+    // MatButtonToggleModule,
+    // MatStepperModule,
   ],
   exports: [
     AuthenticationModule,
@@ -106,7 +88,6 @@ import { MatStepperModule } from '@angular/material/stepper';
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
-    ImmunizationRegistryDashboardComponent,
   ],
   providers: [
     VaccinationComparePipe,
@@ -118,6 +99,11 @@ import { MatStepperModule } from '@angular/material/stepper';
     CodeMapsService,
     ClinicianService,
     JsonDialogService,
+    FhirClientService,
+    FhirResourceService,
+    FhirBulkService,
+    Hl7Service,
+    SubscriptionService,
     {
       provide: MatDialogRef,
       useValue: {}

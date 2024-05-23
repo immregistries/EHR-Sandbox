@@ -3,18 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './core/_components/dashboard/dashboard.component';
 import { HomeComponent } from './core/_components/home/home.component';
 import { AuthenticationDialogComponent } from './core/authentication/_components/authentication-form/authentication-dialog/authentication-dialog.component';
-import { FhirMessagingComponent } from './fhir/_components/fhir-messaging/fhir-messaging.component';
+import { FhirMessagingComponent } from './shared/_fhir/fhir-messaging/fhir-messaging.component';
 import { FeedbackTableComponent } from './shared/_data-quality-issues/feedback-table/feedback-table.component';
-import { SubscriptionDashboardComponent } from './fhir/_components/subscription-dashboard/subscription-dashboard.component';
-import { ImmunizationRegistryDashboardComponent } from './core/_components/immunization-registry-dashboard/immunization-registry-dashboard.component';
-import { FhirBulkDashboardComponent } from './fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
+import { SubscriptionDashboardComponent } from './shared/_fhir/subscription-dashboard/subscription-dashboard.component';
+import { ImmunizationRegistryDashboardComponent } from './shared/_immunization-registry/immunization-registry-dashboard/immunization-registry-dashboard.component';
+import { FhirBulkDashboardComponent } from './shared/_fhir/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 import { RemoteGroupDashboardComponent } from './core/_components/remote-group-dashboard/remote-group-dashboard.component';
 import { GroupDashboardComponent } from './shared/_group/group-dashboard/group-dashboard.component';
 import { GroupAllDashboardComponent } from './shared/_group/group-all-dashboard/group-all-dashboard.component';
 import { FacilityDashboardComponent } from './shared/_facility/facility-dashboard/facility-dashboard.component';
 import { StepsComponent } from './core/_components/steps/steps.component';
 import { ClinicianTableComponent } from './shared/_clinician/clinician-table/clinician-table.component';
-import { Hl7MessagingComponent } from './fhir/_components/hl7-messaging/hl7-messaging.component';
+import { Hl7MessagingComponent } from './shared/_fhir/hl7-messaging/hl7-messaging.component';
+import { GroupStepsComponent } from './core/_components/group-steps/group-steps.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'facilities', component: FacilityDashboardComponent },
   { path: 'clinicians', component: ClinicianTableComponent },
   { path: 'steps', component: StepsComponent },
+  { path: 'group-steps', component: GroupStepsComponent },
 ];
 
 @NgModule({

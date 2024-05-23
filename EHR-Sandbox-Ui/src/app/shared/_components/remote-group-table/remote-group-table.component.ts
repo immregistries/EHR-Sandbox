@@ -11,7 +11,7 @@ import { PatientListComponent } from '../../_patient/patient-list/patient-list.c
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogService } from 'src/app/core/_services/json-dialog.service';
 import { JsonDialogComponent } from '../json-dialog/json-dialog.component';
-import { FhirBulkDashboardComponent } from 'src/app/fhir/_components/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
+import { FhirBulkDashboardComponent } from 'src/app/shared/_fhir/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
 import { RemoteGroupService } from 'src/app/core/_services/remote-group.service';
 
 const DEFAULT_SETTINGS = {

@@ -170,3 +170,10 @@ tr.element-row:not(.expanded-row):active {
   right: 0;
 }
 
+
+.form-action-bar {
+  display: flex;
+  align-items: last baseline;
+  justify-content: flex-end;
+}
+

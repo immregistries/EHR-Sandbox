@@ -11,7 +11,7 @@
           <mat-card-content class="form-card-content">
             <ng-container class="form-card-content" *ngFor="let form of card.forms">
               <app-card-form class="card-form high-density" [form]="form" [model]="ehrGroup[form.attribute]"
-                (modelChange)="ehrGroup[form.attribute] = $event"></app-card-form>
+                             (modelChange)="ehrGroup[form.attribute] = $event"></app-card-form>
             </ng-container>
           </mat-card-content>
         </mat-card>
@@ -37,12 +37,12 @@
           </mat-card-header>
           <mat-card-content class="form-card-content" style="flex-direction: column;">
             <!-- <div> -->
-              <div class="characteristic-form-content" *ngFor="let characteristic of ehrGroup.ehrGroupCharacteristics">
-                <div *ngFor="let form of characteristicForms">
-                  <app-card-form class="card-form high-density" [form]="form" [model]="characteristic[form.attribute]"
-                    (modelChange)="characteristic[form.attribute] = $event"></app-card-form>
-                </div>
+            <div class="characteristic-form-content" *ngFor="let characteristic of ehrGroup.ehrGroupCharacteristics">
+              <div *ngFor="let form of characteristicForms">
+                <app-card-form class="card-form high-density" [form]="form" [model]="characteristic[form.attribute]"
+                               (modelChange)="characteristic[form.attribute] = $event"></app-card-form>
               </div>
+            </div>
             <!-- </div> -->
             <div>
               <button mat-stroked-button type="button" (click)="addChar()" color="primary">
@@ -56,8 +56,9 @@
     </div>
   </mat-dialog-content>
 
-  <div mat-dialog-actions align="end" style="display: flex;">
-    <app-select-immunization-registry [(selectedElement)]="ehrGroup.immunizationRegistry" ></app-select-immunization-registry>
+  <div mat-dialog-actions align="end" class="form-action-bar">
+    <app-select-immunization-registry
+      [(selectedElement)]="ehrGroup.immunizationRegistry"></app-select-immunization-registry>
 
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
       <mat-icon>casino</mat-icon>

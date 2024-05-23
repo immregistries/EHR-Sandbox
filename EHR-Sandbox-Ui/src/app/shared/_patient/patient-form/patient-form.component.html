@@ -13,7 +13,8 @@
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.patientForms">
                   <app-card-form class="card-form high-density" [form]="form" [model]="patient[form.attribute]"
-                    (modelChange)="patient[form.attribute] = $event" [referenceFilter]="references"></app-card-form>
+                                 (modelChange)="patient[form.attribute] = $event"
+                                 [referenceFilter]="references"></app-card-form>
                 </ng-container>
               </mat-card-content>
             </mat-card>
@@ -30,8 +31,9 @@
   </mat-dialog-content>
 
 
-  <div mat-dialog-actions align="end">
-    <mat-checkbox *ngIf="!isEditionMode" [(ngModel)]="populate" name="add_patients">Populate Vaccination History</mat-checkbox>
+  <div mat-dialog-actions align="end" class="form-action-bar">
+    <mat-checkbox *ngIf="!isEditionMode" [(ngModel)]="populate" name="add_patients">Populate Vaccination History
+    </mat-checkbox>
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

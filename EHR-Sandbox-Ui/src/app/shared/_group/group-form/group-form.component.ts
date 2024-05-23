@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EhrGroup, EhrGroupCharacteristic } from 'src/app/core/_model/rest';
+import { EhrGroup, EhrGroupCharacteristic, ImmunizationRegistry } from 'src/app/core/_model/rest';
 import FormType, { FormCard, FormCardGeneric, GenericForm } from 'src/app/core/_model/structure';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -12,13 +12,7 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
   styleUrls: ['./group-form.component.css']
 })
 export class GroupFormComponent {
-
-  @Input()
-  ehrGroup: EhrGroup = { id: -1 };
-  @Output()
-  ehrGroupChange = new EventEmitter<EhrGroup>();
-
-  formCards: FormCardGeneric<EhrGroup>[] = [
+  readonly formCards: FormCardGeneric<EhrGroup>[] = [
     {
       title: 'Name', cols: 1, rows: 1, forms: [
         { type: FormType.text, title: 'name', attribute: 'name' },
@@ -30,7 +24,7 @@ export class GroupFormComponent {
     }
   ]
 
-  characteristicForms: GenericForm<EhrGroupCharacteristic>[] = [
+  readonly characteristicForms: GenericForm<EhrGroupCharacteristic>[] = [
     { type: FormType.text, title: 'Kind System', attribute: 'codeSystem' },
     { type: FormType.text, title: 'Kind Code', attribute: 'codeValue' },
     { type: FormType.boolean, title: 'exclude', attribute: 'exclude' },
@@ -38,13 +32,24 @@ export class GroupFormComponent {
     // {type: FormType.text, title: 'authority', attribute: ''},
   ]
 
+  @Input()
+  ehrGroup: EhrGroup = { id: -1 };
+  @Output()
+  ehrGroupChange = new EventEmitter<EhrGroup>();
+  @Output()
+  savedEmitter = new EventEmitter<EhrGroup | number | string>();
+
   isEditionMode: boolean = false;
+  @Input()
+  set defaultRegistry(value: ImmunizationRegistry) {
+    this.ehrGroup.immunizationRegistry = value
+  }
 
   constructor(
     private groupService: GroupService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<GroupFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { ehrGroup: EhrGroup }) {
+    @Optional() public _dialogRef?: MatDialogRef<GroupFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { ehrGroup: EhrGroup }) {
     if (data && data.ehrGroup) {
       this.ehrGroup = data.ehrGroup;
       this.isEditionMode = true
@@ -71,8 +76,7 @@ export class GroupFormComponent {
     if (this.isEditionMode) {
       this.groupService.putGroup(this.ehrGroup).subscribe({
         next: (res: EhrGroup) => {
-          this.groupService.doRefresh()
-          this._dialogRef?.close(true)
+          this.close(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -82,8 +86,7 @@ export class GroupFormComponent {
     } else {
       this.groupService.postGroup(this.ehrGroup).subscribe({
         next: (res: HttpResponse<string>) => {
-          this.groupService.doRefresh()
-          this._dialogRef?.close(true)
+          this.close(res.body ?? -1)
         },
         error: (err) => {
           console.log(err.error)
@@ -92,5 +95,14 @@ export class GroupFormComponent {
       });
     }
   }
+
+  close(res: EhrGroup | string | number) {
+    this.savedEmitter.emit(res)
+    this.groupService.doRefresh()
+    if (this._dialogRef?.close) {
+      this._dialogRef.close(res)
+    }
+  }
+
 
 }

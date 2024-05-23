@@ -3,8 +3,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { FhirGetComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-get/fhir-get.component';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
+import { FhirGetComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-get/fhir-get.component';
+import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
 
 @Component({
   selector: 'app-immunization-registry-form',

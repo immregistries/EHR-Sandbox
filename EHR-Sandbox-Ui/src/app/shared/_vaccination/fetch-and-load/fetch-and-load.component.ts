@@ -1,10 +1,10 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
+import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
+import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
 import { Observable, of } from 'rxjs';
 
 @Component({

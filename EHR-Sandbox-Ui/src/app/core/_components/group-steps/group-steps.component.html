@@ -1,0 +1,48 @@
+<mat-stepper linear #stepper style="height: 100%;" [contentEditable]="false" [linear]="true">
+  <mat-step label="Select environment" optional="false">
+    <app-tenant-menu (selectEmitter)="stepper.next()"></app-tenant-menu>
+  </mat-step>
+  <mat-step label="Select facility">
+    <app-facility-menu (selectEmitter)="stepper.next()"></app-facility-menu>
+  </mat-step>
+  <mat-step label="Configure Remote IIS">
+    <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
+    <!-- <p></p> -->
+    <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      Skip step
+    </button>
+  </mat-step>
+
+  <mat-step label="Create Patients">
+    <app-patient-form (savedEmitter)="stepper.next()"></app-patient-form>
+  </mat-step>
+  <mat-step label="Send Patients to IIS">
+    <app-patient-table (selectEmitter)="patientService.setCurrent($event ?? {})"
+                       [observableRefresh]="stepper.selectionChange"
+                       [observableSource]="patientService.quickReadPatients()"
+                       [facility]="facilityService.getCurrentObservable() | async"
+                       [allow_populate]="true"></app-patient-table>
+    <p>Sending all of the facility and the patients in the IIS Sandbox</p>
+    <p>Sending all of the facility and the patients in the IIS Sandbox</p>
+    <button mat-raised-button color="primary" (click)="openFhirAll()" type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      Send All Facilities
+    </button>
+    <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      Skip step
+    </button>
+  </mat-step>
+  <mat-step label="Create new Groups">
+    <app-group-form (selectEmitter)="stepper.next()" [defaultRegistry]="registryService.getCurrent()"></app-group-form>
+  </mat-step>
+  <mat-step label="Add and remove patients to group">
+    <app-group-all-dashboard></app-group-all-dashboard>
+  </mat-step>
+  <mat-step label="Remove patient">
+    <app-group-all-dashboard></app-group-all-dashboard>
+  </mat-step>
+  <mat-step label="Bulk Query">
+  </mat-step>
+</mat-stepper>

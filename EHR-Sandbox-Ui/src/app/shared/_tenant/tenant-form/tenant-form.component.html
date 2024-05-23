@@ -8,7 +8,7 @@
     <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay">
   </mat-form-field>
 
-  <div mat-dialog-actions align="end">
+  <div mat-dialog-actions align="end" class="form-action-bar">
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

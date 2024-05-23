@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Dialog } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-patient-form',
@@ -18,6 +19,8 @@ export class PatientFormComponent {
   patient: EhrPatient = { id: -1 };
   @Output()
   patientChange = new EventEmitter<EhrPatient>();
+  @Output()
+  savedEmitter = new EventEmitter<EhrPatient | number | string>();
 
   isEditionMode: boolean = false;
   populate = false
@@ -29,8 +32,8 @@ export class PatientFormComponent {
 
   constructor(private patientService: PatientService,
     private snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<PatientFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient }) {
+    @Optional() public _dialogRef?: MatDialogRef<PatientFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient }) {
     if (data && data.patient) {
       this.patient = data.patient;
       this.isEditionMode = true
@@ -42,10 +45,11 @@ export class PatientFormComponent {
   }
 
   save(): void {
+    console.log("DialogRef", this._dialogRef?.close)
     if (this.isEditionMode) {
       this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: EhrPatient) => {
-          this._dialogRef?.close(res)
+          this.closeDialog(res)
         },
         error: (err) => {
           console.log(err.error)
@@ -57,10 +61,10 @@ export class PatientFormComponent {
         next: (res: HttpResponse<string>) => {
           if (res.body && this.populate) {
             this.patientService.populatePatient(+res.body).subscribe((res2) => {
-              this._dialogRef?.close(res)
+              this.closeDialog(+(res.body ?? -1))
             })
           } else {
-            this._dialogRef?.close(res)
+            this.closeDialog(+(res.body ?? -1))
           }
         },
         error: (err) => {
@@ -71,15 +75,21 @@ export class PatientFormComponent {
     }
   }
 
+  closeDialog(res: EhrPatient | number | string) {
+    this.savedEmitter.emit(res)
+    if (this._dialogRef?.close) {
+      this._dialogRef.close(res);
+    }
+  }
 
-  formCards: FormCard[] = [
+
+  readonly formCards: FormCard[] = [
     {
       title: 'Name', cols: 3, rows: 1, patientForms: [
         { type: FormType.text, title: 'First name', attribute: 'nameFirst' },
         { type: FormType.text, title: 'Middle name', attribute: 'nameMiddle' },
         { type: FormType.text, title: 'Last name', attribute: 'nameLast' },
         { type: FormType.text, title: 'Mother maiden name', attribute: 'motherMaiden' },
-
       ]
     },
     {

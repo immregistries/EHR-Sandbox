@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Clinician } from 'src/app/core/_model/rest';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { ClinicianFormComponent } from '../clinician-form/clinician-form.component';
-import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
+import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
+import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
 
 @Component({
   selector: 'app-clinician-tools',

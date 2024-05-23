@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
-import { Hl7MessagingComponent } from 'src/app/fhir/_components/hl7-messaging/hl7-messaging.component';
+import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
+import { Hl7MessagingComponent } from 'src/app/shared/_fhir/hl7-messaging/hl7-messaging.component';
 import { LocalCopyDialogComponent } from 'src/app/shared/_components/local-copy-dialog/local-copy-dialog.component';
 import { EhrPatient } from '../../../core/_model/rest';
 import { PatientService } from '../../../core/_services/patient.service';
@@ -8,7 +8,7 @@ import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { FetchAndLoadComponent } from '../../_vaccination/fetch-and-load/fetch-and-load.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FhirResource } from 'fhir/r5';
-import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
+import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
 
 @Component({
   selector: 'app-patient-tools',

@@ -64,10 +64,10 @@ import { PatientMatchComponent } from './_patient/patient-match/patient-match.co
 import { PatientReceivedTableComponent } from './_patient/patient-received-table/patient-received-table.component';
 import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
 import { JsonDialogButtonComponent } from './_components/json-dialog-button/json-dialog-button.component';
-import {ClipboardModule} from '@angular/cdk/clipboard';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { GroupFormComponent } from './_group/group-form/group-form.component';
 import { GroupDashboardComponent } from './_group/group-dashboard/group-dashboard.component';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { PatientGroupListComponent } from './_patient/patient-group-list/patient-group-list.component';
 import { TabWithMenuComponent } from './_components/tab-with-menu/tab-with-menu.component';
 import { AbstractDataTableComponent } from './_components/abstract-data-table/abstract-data-table.component';
@@ -85,10 +85,28 @@ import { ClinicianToolsComponent } from './_clinician/clinician-tools/clinician-
 import { GroupBulkCardComponent } from './_group/group-bulk-card/group-bulk-card.component';
 import { GroupBulkCompareComponent } from './_group/group-bulk-compare/group-bulk-compare.component';
 import { VaccinationCompareComponent } from './_vaccination/vaccination-compare/vaccination-compare.component';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RecommendationDownloadComponent } from './_vaccination/recommendation-download/recommendation-download.component';
-import { GroupStepsComponent } from './_components/group-steps/group-steps.component';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ImmunizationRegistryDashboardComponent } from './_immunization-registry/immunization-registry-dashboard/immunization-registry-dashboard.component';
+import { FhirBulkDashboardComponent } from './_fhir/fhir-bulk-dashboard/fhir-bulk-dashboard.component';
+import { FhirBulkNdjsonImportComponent } from './_fhir/fhir-bulk/fhir-bulk-ndjson-import/fhir-bulk-ndjson-import.component';
+import { FhirBulkNdjsonManualComponent } from './_fhir/fhir-bulk/fhir-bulk-ndjson-manual/fhir-bulk-ndjson-manual.component';
+import { FhirBulkOperationComponent } from './_fhir/fhir-bulk/fhir-bulk-operation/fhir-bulk-operation.component';
+import { FhirBulkStatusCheckComponent } from './_fhir/fhir-bulk/fhir-bulk-status-check/fhir-bulk-status-check.component';
+import { FhirBulkComponent } from './_fhir/fhir-bulk/fhir-bulk.component';
+import { FhirGetComponent } from './_fhir/fhir-messaging/fhir-get/fhir-get.component';
+import { FhirMessagingComponent } from './_fhir/fhir-messaging/fhir-messaging.component';
+import { FhirPostComponent } from './_fhir/fhir-messaging/fhir-post/fhir-post.component';
+import { FhirOperationComponent } from './_fhir/fhir-operation/fhir-operation.component';
+import { Hl7MessagingComponent } from './_fhir/hl7-messaging/hl7-messaging.component';
+import { Hl7PostComponent } from './_fhir/hl7-post/hl7-post.component';
+import { SubscriptionDashboardComponent } from './_fhir/subscription-dashboard/subscription-dashboard.component';
+import { SubscriptionTableComponent } from './_fhir/subscription-table/subscription-table.component';
 
 
 @NgModule({
@@ -160,7 +178,21 @@ import { MatStepperModule } from '@angular/material/stepper';
     GroupBulkCompareComponent,
     VaccinationCompareComponent,
     RecommendationDownloadComponent,
-    GroupStepsComponent,
+    ImmunizationRegistryDashboardComponent,
+    Hl7MessagingComponent,
+    FhirMessagingComponent,
+    FhirGetComponent,
+    SubscriptionDashboardComponent,
+    SubscriptionTableComponent,
+    FhirPostComponent,
+    FhirBulkComponent,
+    FhirBulkDashboardComponent,
+    FhirBulkOperationComponent,
+    FhirBulkStatusCheckComponent,
+    FhirBulkNdjsonImportComponent,
+    FhirOperationComponent,
+    FhirBulkNdjsonManualComponent,
+    Hl7PostComponent,
   ],
   imports: [
     CommonModule,
@@ -215,6 +247,28 @@ import { MatStepperModule } from '@angular/material/stepper';
     MatTooltipModule,
     MatIconModule,
     ClipboardModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatGridListModule,
+    MatCardModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatSnackBarModule,
+    MatNativeDateModule,
+    MatDialogModule,
+    MatTableModule,
+    MatSelectModule,
+    MatAutocompleteModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatBadgeModule,
+    MatButtonToggleModule,
+    MatStepperModule,
 
 
     SelectCodebaseComponent,
@@ -249,19 +303,32 @@ import { MatStepperModule } from '@angular/material/stepper';
     PatientReceivedTableComponent,
 
     CodeMapsPipe,
-     TextShortenPipe,
+    TextShortenPipe,
     RegistryNamePipe,
 
-     ImmunizationRegistryMenuComponent,
-     LocalCopyDialogComponent,
-     KeysPipe,
-     FeedbackIconComponent,
-     CardFormComponent,
-     ClinicianSelectComponent,
-     ClinicianFormComponent,
-     RemoteGroupTableComponent,
-     TabWithMenuComponent,
-     MatStepperModule,
+    ImmunizationRegistryMenuComponent,
+    LocalCopyDialogComponent,
+    KeysPipe,
+    FeedbackIconComponent,
+    CardFormComponent,
+    ClinicianSelectComponent,
+    ClinicianFormComponent,
+    RemoteGroupTableComponent,
+    TabWithMenuComponent,
+    ImmunizationRegistryDashboardComponent,
+    Hl7MessagingComponent,
+    FhirMessagingComponent,
+    FhirGetComponent,
+    SubscriptionDashboardComponent,
+    FhirPostComponent,
+    FhirBulkComponent,
+    FhirBulkDashboardComponent,
+    FhirBulkOperationComponent,
+    FhirBulkStatusCheckComponent,
+    FhirBulkNdjsonImportComponent,
+    FhirOperationComponent,
+    GroupAllDashboardComponent,
+    GroupFormComponent,
 
   ],
 })

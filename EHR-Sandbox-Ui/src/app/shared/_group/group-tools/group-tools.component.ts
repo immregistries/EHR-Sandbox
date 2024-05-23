@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { EhrGroup } from 'src/app/core/_model/rest';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
+import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
@@ -8,7 +8,7 @@ import { GroupService } from 'src/app/core/_services/group.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { PatientListComponent } from '../../_patient/patient-list/patient-list.component';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
+import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
 
 @Component({
   selector: 'app-group-tools',

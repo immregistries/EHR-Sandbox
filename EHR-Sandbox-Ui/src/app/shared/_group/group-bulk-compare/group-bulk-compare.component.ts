@@ -6,8 +6,8 @@ import { BulkImportStatus } from 'src/app/core/_model/structure';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirBulkService } from 'src/app/fhir/_services/fhir-bulk.service';
-import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
+import { FhirBulkService } from 'src/app/core/_services/_fhir/fhir-bulk.service';
+import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
 
 @Component({
   selector: 'app-group-bulk-compare',

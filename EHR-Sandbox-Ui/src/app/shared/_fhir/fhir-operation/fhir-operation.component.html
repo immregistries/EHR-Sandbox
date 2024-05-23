@@ -1,0 +1,34 @@
+<div class="bulk-header">
+  <div>
+    <mat-form-field appearance="fill" style="width: 20%; padding-right: 5px" class="w3-padding-left">
+      <mat-label>{{resourceType + " ID"}}</mat-label>
+      <input matInput [(ngModel)]="resourceId" required>
+    </mat-form-field>
+    <span *ngFor="let parameterKey of parameters | keys" [ngSwitch]="parameters[parameterKey].type">
+      <mat-form-field appearance="fill" *ngSwitchCase="'string'">
+        <mat-label>Parameter {{parameterKey}}</mat-label>
+        <input matInput [(ngModel)]="parameters[parameterKey].value">
+      </mat-form-field>
+      <mat-form-field appearance="fill" *ngSwitchCase="'date'">
+        <mat-label>Parameter {{parameterKey}}</mat-label>
+        <input matInput [matDatepicker]="picker" [ngModel]="asDate(parameters[parameterKey].value)"
+               (ngModelChange)="parameters[parameterKey].value = formatDate($event)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-checkbox [(ngModel)]="parameters[parameterKey].value"
+                    *ngSwitchCase="'boolean'">Parameter {{parameterKey}}</mat-checkbox>
+    </span>
+  </div>
+  <p>{{requestUrl()}}</p>
+  <!-- <mat-form-field style="width: 100%;">
+    <mat-label>Operation body</mat-label>
+    <textarea class="body-space" matInput placeholder="" [(ngModel)]="body" ></textarea>
+  </mat-form-field> -->
+  <button mat-raised-button class="w3-right" (click)="send()">Send Operation</button>
+</div>
+
+<div>
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+  <textarea class="result-space" [style]="{color: error? 'red':'black'}" disabled>{{result}}</textarea>
+</div>

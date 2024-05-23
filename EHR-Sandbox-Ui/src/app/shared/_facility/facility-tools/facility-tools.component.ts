@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
 import { FacilityFormComponent } from '../facility-form/facility-form.component';
-import { FhirMessagingComponent } from 'src/app/fhir/_components/fhir-messaging/fhir-messaging.component';
+import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import { FhirResourceService } from 'src/app/fhir/_services/fhir-resource.service';
+import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
 import { error } from 'console';
 
 @Component({

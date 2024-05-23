@@ -1,0 +1,23 @@
+<div style="padding-top: 5px;">
+  <div>
+    <mat-form-field appearance="fill" style="width: 20%; padding-right: 5px" class="w3-padding-left">
+      <mat-label>{{resourceType + " ID"}}</mat-label>
+      <input matInput [(ngModel)]="resourceId" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 79%;">
+      <mat-label>Parameters</mat-label>
+      <input matInput [(ngModel)]="importArguments">
+    </mat-form-field>
+  </div>
+  <p>{{"Request URI : /Group/" + (resourceId.length>0? resourceId : "{resourceId}") + "/$export"
+    + (importArguments.length>0? "?" + importArguments : "")}}
+  </p>
+  <mat-checkbox class="" appearance="fill" [(ngModel)]="autofillContentUrl">{{asynchronous? "Autofill status check URL"
+    : "Autofill Patient Result URL"}}
+  </mat-checkbox>
+  <button mat-raised-button class="w3-right" (click)="import()">Initial Operation</button>
+</div>
+<div>
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+  <textarea class="result-space" [style]="{color: error? 'red':'black'}" readonly>{{result}}</textarea>
+</div>

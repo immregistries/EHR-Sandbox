@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { FhirClientService } from 'src/app/fhir/_services/fhir-client.service';
+import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
 
 @Component({
   selector: 'app-patient-match',

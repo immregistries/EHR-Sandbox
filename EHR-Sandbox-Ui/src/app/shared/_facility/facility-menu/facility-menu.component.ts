@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FacilityFormComponent } from '../facility-form/facility-form.component';
@@ -14,6 +14,9 @@ import { FacilityDashboardComponent } from '../facility-dashboard/facility-dashb
 export class FacilityMenuComponent implements OnInit {
 
   list?: Facility[];
+
+  @Output()
+  selectEmitter: EventEmitter<Facility> = new EventEmitter<Facility>()
 
   disabled() {
     return this.tenantService.getCurrentId() <= 0;
@@ -39,6 +42,7 @@ export class FacilityMenuComponent implements OnInit {
       if (result) {
         this.facilityService.setCurrent(result)
         this.facilityService.doRefresh()
+        this.selectEmitter.emit(this.facilityService.getCurrent())
       }
     });
   }
@@ -48,6 +52,7 @@ export class FacilityMenuComponent implements OnInit {
       this.facilityService.setCurrent({ id: -1 })
     } else {
       this.facilityService.setCurrent(event)
+      this.selectEmitter.emit(this.facilityService.getCurrent())
     }
   }
 
