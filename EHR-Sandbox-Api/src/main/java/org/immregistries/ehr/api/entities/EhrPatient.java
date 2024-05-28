@@ -3,6 +3,7 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -115,8 +116,11 @@ public class EhrPatient extends EhrEntity {
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
     @OneToMany(mappedBy = "patient")
     @NotAudited
-//    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "patient_identifiers", joinColumns = @JoinColumn(name = "patient_id"))
+    private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     @NotAudited
     @ManyToMany
@@ -130,9 +134,8 @@ public class EhrPatient extends EhrEntity {
     @Transient
     public Set<String> getGroupNames() {
         if (ehrGroups.isEmpty()) {
-            return  new HashSet<>(0);
-        }
-        else  {
+            return new HashSet<>(0);
+        } else {
             return this.ehrGroups.stream().map(EhrGroup::getName).collect(Collectors.toSet());
         }
     }
@@ -466,4 +469,11 @@ public class EhrPatient extends EhrEntity {
     }
 
 
+    public Set<EhrIdentifier> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(Set<EhrIdentifier> identifiers) {
+        this.identifiers = identifiers;
+    }
 }

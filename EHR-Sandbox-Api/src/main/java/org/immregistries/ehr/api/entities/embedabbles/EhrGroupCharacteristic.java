@@ -1,35 +1,21 @@
-package org.immregistries.ehr.api.entities;
+package org.immregistries.ehr.api.entities.embedabbles;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
-@Table(name = "group_characteristic", indexes = {
-        @Index(name = "group_id", columnList = "group_id")
-})
-@IdClass(EhrGroupCharacteristicId.class)
+@Embeddable
 public class EhrGroupCharacteristic implements Serializable {
 
-    @Id
-    @Column(name = "group_id")
-//    @JsonBackReference("group-characteristic")
-    private String groupId;
-
-    @Id
-    @Column(name = "code_value")
     private String codeValue;
 
-    @Id
-    @Column(name = "code_system")
     private String codeSystem;
 
-    @Column(name = "value")
     private String value;
 
-    @Column(name = "exclude")
     private Boolean exclude;
 
     @Temporal(TemporalType.DATE)
@@ -78,14 +64,6 @@ public class EhrGroupCharacteristic implements Serializable {
 
     public void setCodeValue(String codeValue) {
         this.codeValue = codeValue;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
     }
 
     public Date getPeriodEnd() {

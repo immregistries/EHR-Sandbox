@@ -106,7 +106,7 @@ export class FhirResourceService {
   }
 
   getFacilityExportBundle(facilityId: number): Observable<string> {
-    return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0))
+    return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && facilityId > 0))
       .pipe(switchMap((value) => {
         if (value) {
           return this.http.get(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${facilityId}/bundle`,

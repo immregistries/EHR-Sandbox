@@ -1,18 +1,43 @@
 <h3 mat-dialog-title>
-  Create Facility
-  <!-- <button mat-dialog-close class="close-button">X</button> -->
+  Facility Form
 </h3>
 <form (submit)="save()">
-  <mat-form-field appearance="fill">
-    <mat-label>Facility name</mat-label>
-    <input matInput [(ngModel)]="facility.nameDisplay" name="nameDisplay">
-  </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Parent Facility</mat-label>
-    <mat-select [(ngModel)]="parentId" name="parentFacility">
-      <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}">{{item.nameDisplay}}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <div>
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          Main characteristics
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="form-card-content">
+        <mat-form-field appearance="fill">
+          <mat-label>Facility name</mat-label>
+          <input matInput [(ngModel)]="facility.nameDisplay" name="nameDisplay">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Parent Facility</mat-label>
+          <mat-select [(ngModel)]="parentId" name="parentFacility">
+            <mat-option *ngFor="let item of facilityList"
+                        value="{{item.id | number }}">{{item.nameDisplay}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          Identifiers
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="form-card-content">
+        <app-identifier-list-form [identifierList]="facility.identifiers"
+                                  (identifierListChange)="facility.identifiers = $event"></app-identifier-list-form>
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+
 
   <div mat-dialog-actions align="end" class="form-action-bar">
     <mat-checkbox *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate</mat-checkbox>

@@ -44,6 +44,7 @@ export interface Clinician {
   nameLast?: string;
   nameMiddle?: string;
   nameFirst?: string;
+  identifiers?: EhrIdentifier[];
 }
 
 export interface Facility {
@@ -52,7 +53,8 @@ export interface Facility {
   nameDisplay?: string;
   facilities?: (Facility | number)[];
   parentFacility?: Facility;
-  childrenCount?: number,
+  childrenCount?: number;
+  identifiers?: EhrIdentifier[],
 }
 
 export interface ImmunizationRegistry {
@@ -202,6 +204,11 @@ export interface EhrGroupCharacteristic extends Serializable {
   exclude?: boolean;
   periodStart?: Date;
   periodEnd?: Date;
+}
+export interface EhrIdentifier extends Serializable {
+  system?: string,
+  value?: string,
+  type?: string,
 }
 
 export interface Serializable {

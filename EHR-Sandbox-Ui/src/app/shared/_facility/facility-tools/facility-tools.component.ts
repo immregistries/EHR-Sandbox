@@ -16,10 +16,20 @@ export class FacilityToolsComponent {
   @Input()
   facility!: Facility
 
-  constructor(public dialog: MatDialog, public facilityService: FacilityService, public fhirResourceService: FhirResourceService) {}
+  constructor(public dialog: MatDialog, public facilityService: FacilityService, public fhirResourceService: FhirResourceService) { }
 
   openEdition() {
-    const dialogRef = this.dialog.open(FacilityFormComponent, { data: { facility: this.facility } });
+    const dialogRef = this.dialog.open(FacilityFormComponent, {
+      maxWidth: '48vw',
+      maxHeight: '98vh',
+      minWidth: '33vw',
+      height: 'fit-content',
+      width: 'fit-content',
+      panelClass: 'dialog-without-bar',
+      data: {
+        facility: this.facility
+      }
+    });
     // dialogRef.afterClosed().subscribe(result => {
     // });
   }
@@ -52,7 +62,7 @@ export class FacilityToolsComponent {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: { resourceObservable: this.fhirResourceService.getFacilityExportBundle(this.facility.id), resourceType: "" , resourceLocalId: this.facility.id, operation: "$transaction"},
+      data: { resourceObservable: this.fhirResourceService.getFacilityExportBundle(this.facility.id), resourceType: "", resourceLocalId: this.facility.id, operation: "$transaction" },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.facilityService.doRefresh()

@@ -12,6 +12,7 @@ import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -88,17 +89,7 @@ public class EhrGroupController {
                     HttpStatus.NOT_ACCEPTABLE, "Name already used for this facility");
         } else {
             ehrGroup.setFacility(facility);
-            Set<EhrGroupCharacteristic> characteristics = ehrGroup.getEhrGroupCharacteristics();
-            ehrGroup.setEhrGroupCharacteristics(null);
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
-            /**
-             * Relation with complex embeddedId is not supported in spring so references have to be solved manually
-             */
-            for (EhrGroupCharacteristic characteristic : characteristics) {
-                characteristic.setGroupId(newEntity.getId());
-            }
-            ehrGroup.setEhrGroupCharacteristics(characteristics);
-            newEntity = ehrGroupRepository.save(ehrGroup);
             if (ehrGroup.getImmunizationRegistry() != null) {
                 fhirClientController.postResource(ehrGroup.getImmunizationRegistry().getId(), "Group", fhirConversionController.groupResource(newEntity.getId(), facility).getBody());
             }
@@ -118,12 +109,6 @@ public class EhrGroupController {
                     HttpStatus.NOT_ACCEPTABLE, "Name already used by another group");
         } else {
             ehrGroup.setFacility(facility);
-            /**
-             * Relation with complex embeddedId is not supported in spring so references have to be solved manually
-             */
-            for (EhrGroupCharacteristic characteristic : ehrGroup.getEhrGroupCharacteristics()) {
-                characteristic.setGroupId(ehrGroup.getId());
-            }
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
             return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
         }

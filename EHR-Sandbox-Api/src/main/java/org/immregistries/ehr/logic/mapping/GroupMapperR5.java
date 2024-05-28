@@ -1,7 +1,11 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.EhrGroup;
+import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
@@ -77,7 +81,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
 //        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
         if (ehrGroup.getEhrGroupCharacteristics() != null) {
             for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
-                Group.GroupCharacteristicComponent groupCharacteristicComponent =  group.addCharacteristic();
+                Group.GroupCharacteristicComponent groupCharacteristicComponent = group.addCharacteristic();
                 groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))
                         .setCode(new CodeableConcept(new Coding(ehrGroupCharacteristic.getCodeSystem(), ehrGroupCharacteristic.getCodeValue(), "")))
                         .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));

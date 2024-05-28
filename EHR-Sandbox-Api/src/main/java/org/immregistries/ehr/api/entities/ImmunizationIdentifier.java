@@ -1,5 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
+import org.immregistries.ehr.api.entities.embedabbles.ImmunizationIdentifierKey;
+
 import javax.persistence.*;
 
 @Entity
@@ -27,6 +29,7 @@ public class ImmunizationIdentifier {
 
     public ImmunizationIdentifier() {
     }
+
     public ImmunizationIdentifier(String vaccinationEventId, Integer immunizationRegistryId, String identifier) {
         this.vaccinationEventId = vaccinationEventId;
         this.immunizationRegistryId = immunizationRegistryId;

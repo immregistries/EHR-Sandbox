@@ -1,4 +1,4 @@
-package org.immregistries.ehr.api.entities;
+package org.immregistries.ehr.api.entities.embedabbles;
 
 import java.io.Serializable;
 

@@ -37,7 +37,14 @@ export class FacilityMenuComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(FacilityFormComponent);
+    const dialogRef = this.dialog.open(FacilityFormComponent, {
+      maxWidth: '48vw',
+      maxHeight: '98vh',
+      minWidth: '33vw',
+      height: 'fit-content',
+      width: 'fit-content',
+      panelClass: 'dialog-without-bar',
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.facilityService.setCurrent(result)

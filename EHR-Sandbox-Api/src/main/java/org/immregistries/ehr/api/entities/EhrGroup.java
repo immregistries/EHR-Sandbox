@@ -1,9 +1,8 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -43,10 +42,8 @@ public class EhrGroup extends EhrEntity {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPatient> patientList;
-
-    @OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "group_id")
-//    @JsonManagedReference("group-characteristic")
+    @ElementCollection
+    @CollectionTable(name = "group_characteristics", joinColumns = @JoinColumn(name = "group_id"))
     private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
 
     public Set<EhrGroupCharacteristic> getEhrGroupCharacteristics() {

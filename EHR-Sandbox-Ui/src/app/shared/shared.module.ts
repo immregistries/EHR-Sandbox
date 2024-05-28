@@ -107,6 +107,7 @@ import { Hl7MessagingComponent } from './_fhir/hl7-messaging/hl7-messaging.compo
 import { Hl7PostComponent } from './_fhir/hl7-post/hl7-post.component';
 import { SubscriptionDashboardComponent } from './_fhir/subscription-dashboard/subscription-dashboard.component';
 import { SubscriptionTableComponent } from './_fhir/subscription-table/subscription-table.component';
+import { IdentifierListFormComponent } from './_components/identifier-list-form/identifier-list-form.component';
 
 
 @NgModule({
@@ -193,6 +194,7 @@ import { SubscriptionTableComponent } from './_fhir/subscription-table/subscript
     FhirOperationComponent,
     FhirBulkNdjsonManualComponent,
     Hl7PostComponent,
+    IdentifierListFormComponent,
   ],
   imports: [
     CommonModule,

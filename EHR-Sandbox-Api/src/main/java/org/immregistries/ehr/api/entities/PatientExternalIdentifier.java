@@ -1,5 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
+import org.immregistries.ehr.api.entities.embedabbles.PatientExternalIdentifierKey;
+
 import javax.persistence.*;
 
 @Entity
@@ -29,7 +31,6 @@ public class PatientExternalIdentifier {
         this.immunizationRegistryId = immunizationRegistryId;
         this.identifier = identifier;
     }
-
 
 
     public String getPatientId() {

@@ -1,6 +1,9 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -9,7 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "clinician")
 //@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = Clinician.class)
 public class Clinician extends EhrEntity {
@@ -21,7 +24,6 @@ public class Clinician extends EhrEntity {
     @ManyToOne
     @JoinColumn(name = "tenant_id")
     @JsonIgnore
-//    @JsonBackReference("clinician_tenant")
     private Tenant tenant;
 
     @Column(name = "name_last", nullable = false, length = 250)
@@ -34,19 +36,20 @@ public class Clinician extends EhrEntity {
     private String nameFirst = "";
 
     @OneToMany(mappedBy = "enteringClinician")
-//    @JsonManagedReference("enteringClinician")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "orderingClinician")
-//    @JsonManagedReference("orderingClinician")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsOrdering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "administeringClinician")
-//    @JsonManagedReference("administeringClinician")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "clinician_identifiers", joinColumns = @JoinColumn(name = "clinician_id"))
+    private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     public Tenant getTenant() {
         return tenant;
@@ -110,6 +113,14 @@ public class Clinician extends EhrEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Set<EhrIdentifier> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(Set<EhrIdentifier> identifiers) {
+        this.identifiers = identifiers;
     }
 
 }

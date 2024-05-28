@@ -12,20 +12,20 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
   styleUrls: ['./clinician-form.component.css']
 })
 export class ClinicianFormComponent {
+
   constructor(private tenantService: TenantService,
     private clinicianService: ClinicianService,
     @Optional() public _dialogRef: MatDialogRef<ClinicianFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {clinician: Clinician}) {
-      if (data && data.clinician) {
-        this.model = data.clinician
-      }
-
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { clinician: Clinician }) {
+    if (data && data.clinician) {
+      this.model = data.clinician
+    }
   }
 
   /**
    * Currently unusused, just initialised
    */
-  public references: BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}> = new BehaviorSubject<{[key:string]: {reference: CodeReference, value: string}}>({});
+  public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
 
   @Input()
   model: Clinician = {}
@@ -33,15 +33,17 @@ export class ClinicianFormComponent {
   @Output() modelChange = new EventEmitter<Clinician>();
 
   formCards: FormCard[] = [
-    {title: "Clinician Name",rows: 1, cols: 1, clinicianForms: [
-      {type: FormType.text, title: "First name", attribute: "nameFirst"},
-      {type: FormType.text, title: "Middle name", attribute: "nameMiddle"},
-      {type: FormType.text, title: "Last name", attribute: "nameLast"}
-    ]}
+    {
+      title: "Clinician Name", rows: 1, cols: 1, clinicianForms: [
+        { type: FormType.text, title: "First name", attribute: "nameFirst" },
+        { type: FormType.text, title: "Middle name", attribute: "nameMiddle" },
+        { type: FormType.text, title: "Last name", attribute: "nameLast" }
+      ]
+    }
   ]
 
   save() {
-    if (this.model.id && this.model.id > -1){
+    if (this.model.id && this.model.id > -1) {
       this.clinicianService.putClinician(this.tenantService.getCurrentId(), this.model).subscribe((res) => {
         this._dialogRef?.close(res)
       })
@@ -57,7 +59,5 @@ export class ClinicianFormComponent {
       this.model = res
     })
   }
-
-
 
 }

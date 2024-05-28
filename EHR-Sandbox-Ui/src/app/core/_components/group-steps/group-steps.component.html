@@ -1,4 +1,5 @@
-<mat-stepper linear #stepper style="height: 100%;" [contentEditable]="false" [linear]="true">
+<mat-stepper linear #stepper style="height: 100%;" [contentEditable]="false" [linear]="true"
+             (selectionChange)="onStepChange($event)">
   <mat-step label="Select environment" optional="false">
     <app-tenant-menu (selectEmitter)="stepper.next()"></app-tenant-menu>
   </mat-step>
@@ -18,17 +19,14 @@
     <app-patient-form (savedEmitter)="stepper.next()"></app-patient-form>
   </mat-step>
   <mat-step label="Send Patients to IIS">
+    <app-fhir-post [resource]="bundleResource" [resourceLoading]="false" [resourceType]="''"
+                   [operation]="'$transaction'"></app-fhir-post>
     <app-patient-table (selectEmitter)="patientService.setCurrent($event ?? {})"
                        [observableRefresh]="stepper.selectionChange"
                        [observableSource]="patientService.quickReadPatients()"
                        [facility]="facilityService.getCurrentObservable() | async"
                        [allow_populate]="true"></app-patient-table>
     <p>Sending all of the facility and the patients in the IIS Sandbox</p>
-    <p>Sending all of the facility and the patients in the IIS Sandbox</p>
-    <button mat-raised-button color="primary" (click)="openFhirAll()" type="button" class="w3-right">
-      <mat-icon>skip_next</mat-icon>
-      Send All Facilities
-    </button>
     <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
       <mat-icon>skip_next</mat-icon>
       Skip step

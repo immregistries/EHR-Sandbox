@@ -1,13 +1,12 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.*;
-import org.hibernate.envers.NotAudited;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "facility", indexes = {
@@ -66,6 +65,10 @@ public class Facility extends EhrEntity {
     @JsonIgnore
     private Set<EhrGroup> groups = new LinkedHashSet<>();
 
+    @ElementCollection
+    @CollectionTable(name = "facility_identifiers", joinColumns = @JoinColumn(name = "facility_id"))
+    private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
+
     @JsonInclude()
     @Transient
     public Integer getChildrenCount() {
@@ -120,12 +123,12 @@ public class Facility extends EhrEntity {
         this.nameDisplay = nameDisplay;
     }
 
-//    @JsonInclude()
+    //    @JsonInclude()
     public Tenant getTenant() {
         return tenant;
     }
 
-//    @JsonIgnore
+    //    @JsonIgnore
     public void setTenant(Tenant tenant) {
         this.tenant = tenant;
     }

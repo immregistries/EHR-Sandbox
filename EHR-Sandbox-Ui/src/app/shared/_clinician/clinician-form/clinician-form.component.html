@@ -1,23 +1,33 @@
-
 <form (submit)="save()">
-    <div *ngFor="let card of formCards" >
-      <mat-card class="form-card">
-        <mat-card-header *ngIf="card.title">
-          <mat-card-title>
-            {{card.title}}
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="form-card-content">
-          <ng-container *ngFor="let form of card.clinicianForms" >
-            <app-card-form class="card-form high-density"
-              [form]="form"
-              [model]="model[form.attribute]"
-              (modelChange)="model[form.attribute] = $event"
-              [referenceFilter]="references"></app-card-form>
-          </ng-container>
-        </mat-card-content>
-      </mat-card>
-    </div>
+  <div *ngFor="let card of formCards">
+    <mat-card class="form-card">
+      <mat-card-header *ngIf="card.title">
+        <mat-card-title>
+          {{card.title}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="form-card-content">
+        <ng-container *ngFor="let form of card.clinicianForms">
+          <app-card-form class="card-form high-density"
+                         [form]="form"
+                         [model]="model[form.attribute]"
+                         (modelChange)="model[form.attribute] = $event"
+                         [referenceFilter]="references"></app-card-form>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="form-card">
+      <mat-card-header *ngIf="card.title">
+        <mat-card-title>
+          Identifier
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="form-card-content">
+        <app-identifier-list-form [identifierList]="model.identifiers"
+                                  (identifierListChange)="model.identifiers = $event"></app-identifier-list-form>
+      </mat-card-content>
+    </mat-card>
+  </div>
   <div mat-dialog-actions align="end" class="form-action-bar">
     <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!model.id || model.id < 0" color="primary">
       <mat-icon>casino</mat-icon>

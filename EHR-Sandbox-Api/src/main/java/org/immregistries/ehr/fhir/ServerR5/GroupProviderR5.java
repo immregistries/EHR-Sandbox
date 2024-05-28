@@ -8,7 +8,6 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrGroup;
-import org.immregistries.ehr.api.entities.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
@@ -25,11 +24,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.annotation.Resource;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Optional;
 
-import static org.immregistries.ehr.api.AuditRevisionListener.*;
+import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGISTRY_ID;
+import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
 @Conditional(OnR5Condition.class)
@@ -37,10 +35,12 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     private static final Logger logger = LoggerFactory.getLogger(GroupProviderR5.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
+
     @Override
     public Class<Group> getResourceType() {
         return Group.class;
     }
+
     public ResourceType getResourceName() {
         return ResourceType.Group;
     }
@@ -55,6 +55,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
 
     /**
      * Currently unusable as is, as request
+     *
      * @param group
      * @param requestDetails
      * @return
@@ -65,27 +66,21 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
                 (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
-        return update(group,requestDetails, immunizationRegistry) ;
+        return update(group, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-        return update(group,facility,immunizationRegistry);
+        return update(group, facility, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
-        Optional<EhrGroup> old = ehrGroupRepository.findByFacilityIdAndImmunizationRegistryIdAndName(facility.getId(),immunizationRegistry.getId(), group.getName());
+        Optional<EhrGroup> old = ehrGroupRepository.findByFacilityIdAndImmunizationRegistryIdAndName(facility.getId(), immunizationRegistry.getId(), group.getName());
         if (old.isEmpty()) {
-            return create(group,facility,immunizationRegistry);
+            return create(group, facility, immunizationRegistry);
         } else {
-            EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
-            /**
-             * May need cascade rule change
-             */
-            for (EhrGroupCharacteristic ehrGroupCharacteristic: ehrGroup.getEhrGroupCharacteristics()) {
-                ehrGroupCharacteristic.setGroupId(old.get().getId());
-            }
+            EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group, facility, immunizationRegistry);
             ehrGroup.setId(old.get().getId());
             ehrGroupRepository.save(ehrGroup);
             return new MethodOutcome().setResource(group);
@@ -94,6 +89,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
 
     /**
      * Currently unusable as is, as request
+     *
      * @param group
      * @param requestDetails
      * @return
@@ -104,17 +100,17 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
                 (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
-        return create(group,requestDetails, immunizationRegistry) ;
+        return create(group, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-        return create(group,facility,immunizationRegistry);
+        return create(group, facility, immunizationRegistry);
     }
 
     public MethodOutcome create(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
-        EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group,facility,immunizationRegistry);
+        EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group, facility, immunizationRegistry);
         ehrGroupRepository.save(ehrGroup);
         return new MethodOutcome().setResource(group);
     }
