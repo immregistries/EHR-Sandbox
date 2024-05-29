@@ -19,13 +19,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private _vaccination: VaccinationEvent = { id: -1, vaccine: {}, enteringClinician: {}, administeringClinician: {}, orderingClinician: {} };
+  private _vaccination: VaccinationEvent = { id: -1, vaccine: { updatedDate: new Date() }, enteringClinician: {}, administeringClinician: {}, orderingClinician: {} };
   @Input()
   public set vaccination(v: VaccinationEvent) {
     this._vaccination = v;
     if (this._vaccination) {
       if (!this._vaccination.vaccine) {
-        this._vaccination.vaccine = {};
+        this._vaccination.vaccine = { updatedDate: new Date() };
       }
       if (!this._vaccination.enteringClinician) {
         this._vaccination.enteringClinician = {};
@@ -44,9 +44,12 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   @Output() vaccinationChange = new EventEmitter<VaccinationEvent>();
 
+  @Input()
   public patientId: number = -1
   public isEditionMode: boolean = false
   public compareTo: ComparisonResult | any | null = null
+  @Output()
+  savedEmitter = new EventEmitter<VaccinationEvent | number | string>();
 
   constructor(public codeMapsService: CodeMapsService,
     private snackBarService: SnackBarService,
@@ -76,29 +79,40 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   save(): void {
+    let formerUpdatedDate = this.vaccination.vaccine.updatedDate
     if (this.isEditionMode == true) {
       // TODO PUT implementation
+      this.vaccination.vaccine.updatedDate = new Date()
       this.vaccinationService.quickPutVaccination(this.patientId, this.vaccination).subscribe({
         next: (res: VaccinationEvent) => {
-          this._dialogRef?.close(res)
+          this.closeDialog(res)
         },
         error: (err) => {
+          this.vaccination.vaccine.updatedDate = formerUpdatedDate
           console.log(err.error)
           this.snackBarService.errorMessage(err.error.error)
         }
       });
     } else {
+      this.vaccination.vaccine.updatedDate = new Date()
       this.vaccinationService.quickPostVaccination(this.patientId, this.vaccination).subscribe({
         next: (res: HttpResponse<string>) => {
-          this._dialogRef?.close(res)
+          this.closeDialog(+(res.body ?? -1))
         },
         error: (err) => {
+          this.vaccination.vaccine.updatedDate = formerUpdatedDate
           console.log(err.error)
           this.snackBarService.errorMessage(err.error.error)
         }
       });
     }
+  }
 
+  closeDialog(res: VaccinationEvent | number | string) {
+    this.savedEmitter.emit(res)
+    if (this._dialogRef?.close) {
+      this._dialogRef.close(res);
+    }
   }
 
   public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
@@ -116,17 +130,19 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.vaccinationForm.form.controls['lotNumber'].valueChanges.subscribe((lotNumber) => {
-        this.lotNumberValid = true
-        if (lotNumber) {
-          for (const ref in this.references.getValue()) {
-            // stops checking as soon as validity is assessed
-            if (!this.checkLotNumberValidity(this.references.getValue()[ref].reference)) {
-              break;
+      if (this.vaccinationForm.form.controls['lotNumber']) {
+        this.vaccinationForm.form.controls['lotNumber'].valueChanges.subscribe((lotNumber) => {
+          this.lotNumberValid = true
+          if (lotNumber) {
+            for (const ref in this.references.getValue()) {
+              // stops checking as soon as validity is assessed
+              if (!this.checkLotNumberValidity(this.references.getValue()[ref].reference)) {
+                break;
+              }
             }
           }
-        }
-      })
+        })
+      }
     }, 0);
   }
 
@@ -171,10 +187,10 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     return this.lotNumberValid
   }
 
-  formCards: FormCard[] = [
+  readonly VACCINATION_FORM_CARDS: FormCard[] = [
     {
       title: "Vaccine", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.date, title: "Administered", attribute: "administeredDate" },
+        { type: FormType.date, title: "Administered", attribute: "administeredDate", required: true },
         { type: FormType.short, title: "Admininistered amount", attribute: "administeredAmount" },
       ], vaccinationForms: [
         { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
@@ -182,7 +198,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       title: "Codes", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Vaccine type (Cvx)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE" },
+        { type: FormType.code, title: "Vaccine type (Cvx)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true },
         { type: FormType.code, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
       ]
     },

@@ -1,0 +1,38 @@
+<mat-stepper linear #stepper style="height: 100%;" [contentEditable]="false" [linear]="true">
+  <mat-step label="Select environment" optional="false">
+    <app-tenant-menu (selectEmitter)="stepper.next()"></app-tenant-menu>
+    Name or choose a local testing environment (could also be named tenant)
+    <button *ngIf="tenantService.getCurrentId() > 0" mat-raised-button color="primary" (click)="stepper.next()"
+            type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      Skip step
+    </button>
+  </mat-step>
+  <mat-step label="Select facility">
+    <app-facility-menu (selectEmitter)="stepper.next()"></app-facility-menu>
+    Name or choose a local facility
+    <button *ngIf="facilityService.getCurrentId() > 0" mat-raised-button color="primary" (click)="stepper.next()"
+            type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      Skip step
+    </button>
+  </mat-step>
+  <mat-step label="Configure Remote IIS">
+    <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
+    <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      Skip step
+    </button>
+  </mat-step>
+  <!-- <app-first-steps [stepper]="stepper"></app-first-steps> -->
+  <mat-step label="Create Patient">
+    <app-patient-form (savedEmitter)="nextPatient($event)"></app-patient-form>
+  </mat-step>
+  <mat-step label="Create Vaccination Record">
+    <app-vaccination-form [patientId]="this.patientService.getCurrentId()"
+                          (savedEmitter)="nextVaccination($event)"></app-vaccination-form>
+  </mat-step>
+  <mat-step label="Send Vxu to IIS">
+    <app-hl7-post [hl7Message]="vxu"></app-hl7-post>
+  </mat-step>
+</mat-stepper>

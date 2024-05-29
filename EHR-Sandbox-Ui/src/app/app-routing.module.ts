@@ -16,6 +16,7 @@ import { StepsComponent } from './core/_components/steps/steps.component';
 import { ClinicianTableComponent } from './shared/_clinician/clinician-table/clinician-table.component';
 import { Hl7MessagingComponent } from './shared/_fhir/hl7-messaging/hl7-messaging.component';
 import { GroupStepsComponent } from './core/_components/group-steps/group-steps.component';
+import { VxuStepsComponent } from './shared/_components/vxu-steps/vxu-steps.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: 'clinicians', component: ClinicianTableComponent },
   { path: 'steps', component: StepsComponent },
   { path: 'group-steps', component: GroupStepsComponent },
+  { path: 'vxu-steps', component: VxuStepsComponent },
 ];
 
 @NgModule({

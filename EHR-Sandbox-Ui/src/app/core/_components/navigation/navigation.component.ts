@@ -50,7 +50,7 @@ export class NavigationComponent {
     this.router.navigate(['/home'])
   }
 
-  dontShowTopBar: string[] = ['/home','/steps']
+  dontShowTopBar: string[] = ['/home','/steps', '/vxu-steps']
   showTopMenus(): boolean {
     return !this.dontShowTopBar.includes(this.pathname.split('?')[0])
   }

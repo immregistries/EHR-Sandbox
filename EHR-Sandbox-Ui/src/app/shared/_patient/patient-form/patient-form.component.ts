@@ -45,7 +45,6 @@ export class PatientFormComponent {
   }
 
   save(): void {
-    console.log("DialogRef", this._dialogRef?.close)
     if (this.isEditionMode) {
       this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: EhrPatient) => {
@@ -83,7 +82,7 @@ export class PatientFormComponent {
   }
 
 
-  readonly formCards: FormCard[] = [
+  readonly PATIENT_FORM_CARDS: FormCard[] = [
     {
       title: 'Name', cols: 3, rows: 1, patientForms: [
         { type: FormType.text, title: 'First name', attribute: 'nameFirst' },
@@ -100,7 +99,7 @@ export class PatientFormComponent {
     },
     {
       title: 'Birth', cols: 1, rows: 1, patientForms: [
-        { type: FormType.date, title: 'Birth date', attribute: 'birthDate' },
+        { type: FormType.date, title: 'Birth date', attribute: 'birthDate', required: true },
         { type: FormType.yesNo, title: 'Multiple birth', attribute: 'birthFlag' },
         { type: FormType.short, title: 'Order', attribute: 'birthOrder' },
       ]

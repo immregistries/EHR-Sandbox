@@ -2,18 +2,20 @@
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{form.title}}</mat-label>
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field" matBadge="priority_high"
-      [matBadgeHidden]="warning == false" matBadgeColor="accent" (ngModelChange)="filterChange($event)"
-      name="{{form.attribute}}"
-      [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
+           [matBadgeHidden]="warning == false" matBadgeColor="accent" (ngModelChange)="filterChange($event)"
+           name="{{form.attribute}}"
+           [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'"
+           [required]="form.required ? 'true' : 'false'">
     <button matSuffix mat-icon-button *ngIf="model" (click)="clear()" matBadge="priority_high"
-      [matBadgeHidden]="warning == false" matBadgeColor="warn"
-      [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
+            [matBadgeHidden]="warning == false" matBadgeColor="warn"
+            [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">
       <mat-icon>cancel</mat-icon>
     </button>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"
-      (optionActivated)="valueChanged()">
+                      (optionActivated)="valueChanged()">
       <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()"
-        [matTooltip]="option.description ?? ''" [matTooltipDisabled]="toolTipDisabled" [matTooltipPosition]="'right'">
+                  [matTooltip]="option.description ?? ''" [matTooltipDisabled]="toolTipDisabled"
+                  [matTooltipPosition]="'right'">
         {{option.label + ' (' + option.value + ')'}}
       </mat-option>
     </mat-autocomplete>

@@ -71,6 +71,7 @@ export interface BaseForm {
   codeMapLabel?: string,
   disabled?: boolean,
   options?: {value: string, label?: string}[],
+  required?: boolean,
 }
 export interface PatientForm extends BaseForm {
   attribute: keyof EhrPatient,

@@ -108,7 +108,9 @@ import { Hl7PostComponent } from './_fhir/hl7-post/hl7-post.component';
 import { SubscriptionDashboardComponent } from './_fhir/subscription-dashboard/subscription-dashboard.component';
 import { SubscriptionTableComponent } from './_fhir/subscription-table/subscription-table.component';
 import { IdentifierListFormComponent } from './_components/identifier-list-form/identifier-list-form.component';
-
+import { VxuStepsComponent } from './_components/vxu-steps/vxu-steps.component';
+import { FirstStepsComponent } from './_components/first-steps/first-steps.component';
+import {MatTreeModule} from '@angular/material/tree';
 
 @NgModule({
   declarations: [
@@ -195,6 +197,8 @@ import { IdentifierListFormComponent } from './_components/identifier-list-form/
     FhirBulkNdjsonManualComponent,
     Hl7PostComponent,
     IdentifierListFormComponent,
+    VxuStepsComponent,
+    FirstStepsComponent,
   ],
   imports: [
     CommonModule,
@@ -239,6 +243,7 @@ import { IdentifierListFormComponent } from './_components/identifier-list-form/
     ClipboardModule,
     MatSlideToggleModule,
     MatStepperModule,
+    MatTreeModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -331,6 +336,7 @@ import { IdentifierListFormComponent } from './_components/identifier-list-form/
     FhirOperationComponent,
     GroupAllDashboardComponent,
     GroupFormComponent,
+    MatTreeModule,
 
   ],
 })

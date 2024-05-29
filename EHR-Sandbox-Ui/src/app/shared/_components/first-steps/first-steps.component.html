@@ -1,0 +1,13 @@
+<mat-step label="Select environment" optional="false">
+  <app-tenant-menu (selectEmitter)="stepper.next()"></app-tenant-menu>
+</mat-step>
+<mat-step label="Select facility">
+  <app-facility-menu (selectEmitter)="stepper.next()"></app-facility-menu>
+</mat-step>
+<mat-step label="Configure Remote IIS">
+  <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
+  <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+    <mat-icon>skip_next</mat-icon>
+    Skip step
+  </button>
+</mat-step>

@@ -11,17 +11,16 @@ import { Hl7MessagingComponent } from '../hl7-messaging/hl7-messaging.component'
   styleUrls: ['./hl7-post.component.css']
 })
 export class Hl7PostComponent {
-
-
   @Input() vaccinationId: number = -1;
   @Input() patientId: number = -1;
 
   loading: boolean = false
+  resultLoading: boolean = false
 
   @Input()
   public hl7Message: string = "";
   public answer: string = "";
-  public error: string = "";
+  public error: boolean = false;
 
   constructor(private vaccinationService: VaccinationService,
     private hl7Service: Hl7Service,
@@ -51,21 +50,23 @@ export class Hl7PostComponent {
   }
 
   send() {
-    this.loading = true
+    this.resultLoading = true
     if (this.vaccinationId > 0) {
       this.hl7Service.quickPostVXU(this.patientId, this.vaccinationId, this.hl7Message).subscribe({
         next: (res) => {
-          this.loading = false
+          this.resultLoading = false
+          this.error = false
           this.answer = res
-          this.error = ""
         },
         error: (err) => {
-          this.loading = false
-          this.answer = ""
-          if (err.error.text) {
-            this.error = err.error.text
+          this.error = true
+          this.resultLoading = false
+          if (err.text) {
+            this.answer = err.text
+          } else if (err.error.text) {
+            this.answer = err.error.text
           } else {
-            this.error = err.error
+            this.answer = err.error
           }
           console.error(err)
         }
@@ -73,17 +74,19 @@ export class Hl7PostComponent {
     } else {
       this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).subscribe({
         next: (res) => {
-          this.loading = false
+          this.resultLoading = false
+          this.error = false
           this.answer = res
-          this.error = ""
         },
         error: (err) => {
-          this.loading = false
-          this.answer = ""
-          if (err.error.text) {
-            this.error = err.error.text
+          this.error = true
+          this.resultLoading = false
+          if (err.text) {
+            this.answer = err.text
+          } else if (err.error.text) {
+            this.answer = err.error.text
           } else {
-            this.error = err.error
+            this.answer = err.error
           }
           console.error(err)
         }

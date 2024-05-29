@@ -3,7 +3,7 @@
     <mat-tab-group>
       <mat-tab label="Patient Form">
         <div class="grid-container">
-          <div *ngFor="let card of formCards">
+          <div *ngFor="let card of PATIENT_FORM_CARDS">
             <mat-card class="form-card">
               <mat-card-header *ngIf="card.title">
                 <mat-card-title>
@@ -25,7 +25,7 @@
         <app-patient-free-form [(patient)]="patient" [formCards]="formCards"></app-patient-free-form>
       </mat-tab> -->
       <mat-tab label="Patient display">
-        <app-patient-display [patient]="patient" [formCards]="formCards"></app-patient-display>
+        <app-patient-display [patient]="patient" [formCards]="PATIENT_FORM_CARDS"></app-patient-display>
       </mat-tab>
     </mat-tab-group>
   </mat-dialog-content>

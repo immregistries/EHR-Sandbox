@@ -8,11 +8,9 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
-
 @Entity
 @Table(name = "vaccine")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 @Audited
 public class Vaccine {
     @Id
@@ -23,10 +21,10 @@ public class Vaccine {
     @Column(name = "created_date", nullable = true)
     private Date createdDate;
 
-    @Column(name = "updated_date", nullable = false)
+    @Column(name = "updated_date", nullable = true)
     private Date updatedDate;
 
-    @Column(name = "administered_date", nullable = false)
+    @Column(name = "administered_date", nullable = true)
     private Date administeredDate;
 
     @Column(name = "vaccine_cvx_code", nullable = false, length = 250)
@@ -72,7 +70,6 @@ public class Vaccine {
     private String fundingEligibility = "";
 
     @OneToMany(mappedBy = "vaccine")
-    
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     public Set<VaccinationEvent> getVaccinationEvents() {

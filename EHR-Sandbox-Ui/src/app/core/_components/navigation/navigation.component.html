@@ -1,55 +1,74 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
-      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-      [mode]="(isHandset$ | async) ? 'over' : 'side'"
-      [opened]="(isHandset$ | async) === false">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       <!-- <a mat-list-item href="/home">Home</a> -->
-      <a mat-list-item [matTooltip]="'Home and login screen'" [matTooltipPosition]="'right'" (click)="router.navigate(['/home'])">Home</a>
+      <a mat-list-item [matTooltip]="'Home and login screen'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/home'])">Home</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Main dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/dashboard'])">Dashboard</a>
+      <a mat-list-item [matTooltip]="'Main dashboard'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/dashboard'])">Main Dashboard</a>
       <!-- <mat-divider></mat-divider>
       <a mat-list-item (click)="router.navigate(['/clinicians'])">Clinicians</a> -->
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'IIS Connexion settings'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/settings'])">IIS Settings</a>
+      <a mat-list-item [matTooltip]="'IIS Connexion settings'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/settings'])">IIS Settings</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Subscription dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/subscription'])">Subscription</a>
+      <a mat-list-item [matTooltip]="'Subscription dashboard'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/subscription'])">Subscription</a>
       <!-- TODO Reactivate -->
       <!-- <mat-divider></mat-divider>
       <a mat-list-item href="patient_form">Enter Patient sample</a>
       <mat-divider></mat-divider>
       <a mat-list-item href="vaccination_form">Enter Vaccination sample</a> -->
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Separate FHIR Client dashboard'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/fhir'])">FHIR</a>
+      <a mat-list-item [matTooltip]="'Separate FHIR Client dashboard'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/fhir'])">FHIR</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Bulk testing dashboard'" [matTooltipPosition]="'right'"  (click)="router.navigate(['/bulk'])">Bulk Data</a>
+      <a mat-list-item [matTooltip]="'Bulk testing dashboard'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/bulk'])">Bulk Data</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Group management dashboard (in progress)'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/groups'])">Groups</a>
+      <a mat-list-item [matTooltip]="'Group management dashboard (in progress)'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/groups'])">Groups</a>
       <mat-divider></mat-divider>
-      <a mat-list-item [matTooltip]="'Facilities management dashboard (in progress)'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/facilities'])">Facilities</a>      <mat-divider></mat-divider>
+      <a mat-list-item [matTooltip]="'Facilities management dashboard (in progress)'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/facilities'])">Facilities</a>
+      <mat-divider></mat-divider>
       <!-- <a mat-list-item [matTooltip]="'Tutorial / introduction prototype'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/steps'])">Steps</a> -->
-      <a mat-list-item [matTooltip]="'Clinicians management'"  [matTooltipPosition]="'right'" (click)="router.navigate(['/clinicians'])">Clinicians</a>
+      <a mat-list-item [matTooltip]="'Clinicians management'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/clinicians'])">Clinicians</a>
+      <mat-divider></mat-divider>
+      <a mat-list-item [matTooltip]="'VXU step by step'" [matTooltipPosition]="'right'"
+         (click)="router.navigate(['/vxu-steps'])">VXU
+        Step by step</a>
+
+      <!-- <mat-tree>
+        <mat-tree-node> Step by step boards </mat-tree-node>
+        <mat-tree-node><a  [matTooltip]="'Initial Configuration'" [matTooltipPosition]="'right'"
+            (click)="router.navigate(['/steps'])">First time Configuration</a></mat-tree-node>
+        <mat-tree-node><a [matTooltip]="'VXU step by step'" [matTooltipPosition]="'right'"
+            (click)="router.navigate(['/vxu-steps'])">VXU Step by step</a></mat-tree-node>
+      </mat-tree> -->
+
+
       <!-- <mat-divider></mat-divider>
       <a mat-list-item [matTooltip]="'Remote Group management dashboard'" [matTooltipPosition]="'right'" (click)="router.navigate(['/remote-groups'])">Groups Deprecated</a> -->
     </mat-nav-list>
+
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span>EHR Sandbox</span>
       <span style="width: 2em;"></span>
 
       <span *ngIf="showTopMenus()" style="display: flex;">
-        <app-tenant-menu ></app-tenant-menu>
+        <app-tenant-menu></app-tenant-menu>
         <span></span>
-        <app-facility-menu ></app-facility-menu>
+        <app-facility-menu></app-facility-menu>
         <!-- <span></span>
         <app-patient-menu></app-patient-menu> -->
       </span>
@@ -67,4 +86,3 @@
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
-

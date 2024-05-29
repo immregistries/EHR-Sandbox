@@ -6,15 +6,17 @@
     </mat-select> -->
 
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"
-      (ngModelChange)="filterChange($event)" name="clinician">
+           (ngModelChange)="filterChange($event)" name="clinician" [required]="form.required ? 'true' : 'false'">
 
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="valueChanged()"
-      (optionActivated)="valueChanged()">
+                      (optionActivated)="valueChanged()">
       <mat-option *ngFor="let clinician of filteredOptions" [value]="clinician.id" (onSelectionChange)="valueChanged()">
         {{clinician.nameFirst + " " + clinician.nameLast}}
         <mat-icon class="w3-right" (click)="$event.stopPropagation(); edit(clinician);">edit</mat-icon>
       </mat-option>
-      <mat-option (click)="$event.stopPropagation(); add(); "><mat-icon> add</mat-icon></mat-option>
+      <mat-option (click)="$event.stopPropagation(); add(); ">
+        <mat-icon> add</mat-icon>
+      </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 

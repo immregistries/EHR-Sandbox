@@ -1,4 +1,4 @@
-<ng-container [ngSwitch]="form.type">
+<ng-container *ngIf="model" [ngSwitch]="form.type">
   <div *ngSwitchCase="'code'">
     <div>
       <b>{{form.title + " : "}}</b>
