@@ -1,5 +1,5 @@
 <!-- Multiples forms like phones or identifiers are singled out -->
-<ng-container *ngIf="!(form.attribute === 'phones') ; else multiple_content" #single_form [ngSwitch]="form.type">
+<ng-container #single_form [ngSwitch]="form.type">
 
   <div *ngSwitchCase="'text'">
     <mat-form-field class="text-field" appearance="outline" [matTooltipDisabled]="!compareTo"
@@ -75,11 +75,15 @@
     </ng-template>
   </div>
 
+  <div *ngSwitchCase="'phoneNumbers'">
+    <app-phone-list-form [phoneNumberList]="model ?? []" (phoneNumberListChange)="model = $event"></app-phone-list-form>
+  </div>
+  <div *ngSwitchCase="'identifiers'">
+    <app-identifier-list-form [identifierList]="model ?? []"
+                              (identifierListChange)="model = $event"></app-identifier-list-form>
+  </div>
+
   <div *ngSwitchDefault></div>
 
 </ng-container>
 
-<ng-template #multiple_content>
-  <!-- <app-identifier-list-form [identifierList]="model" (identifierListChange)="model = $event"></app-identifier-list-form> -->
-  <app-phone-list-form [phoneNumberList]="model ?? []" (identifierListChange)="model = $event"></app-phone-list-form>
-</ng-template>

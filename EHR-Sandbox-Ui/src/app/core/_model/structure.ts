@@ -62,6 +62,8 @@ enum FormType {
   code = 'code',
   textarea = 'textarea',
   clinician = 'clinician',
+  phoneNumbers = 'phoneNumbers',
+  identifiers = 'identifiers'
 }
 export default FormType;
 export interface BaseForm {

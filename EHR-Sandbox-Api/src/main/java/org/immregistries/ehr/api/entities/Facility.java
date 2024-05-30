@@ -149,4 +149,11 @@ public class Facility extends EhrEntity {
         this.id = id;
     }
 
+    public Set<EhrIdentifier> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(Set<EhrIdentifier> identifiers) {
+        this.identifiers = identifiers;
+    }
 }

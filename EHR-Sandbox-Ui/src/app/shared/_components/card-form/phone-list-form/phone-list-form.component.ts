@@ -23,7 +23,16 @@ export class PhoneListFormComponent {
 
   readonly PHONE_NUMBER_FORMS: GenericForm<EhrPhoneNumber>[] = [
     { type: FormType.text, title: 'Phone number', attribute: 'number' },
-    { type: FormType.text, title: 'Phone label', attribute: 'type' },
+    {
+      type: FormType.code, title: 'Phone label', attribute: 'type', options: [
+        { value: 'HOME' },
+        { value: 'MOBILE' },
+        { value: 'WORK' },
+        { value: 'TEMP' },
+        { value: 'NULL' },
+        { value: 'OLD' },
+      ]
+    },
   ]
 
 

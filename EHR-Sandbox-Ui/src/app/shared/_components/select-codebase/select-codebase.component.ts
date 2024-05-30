@@ -25,7 +25,7 @@ export class SelectCodebaseComponent implements OnInit {
   @Input() toolTipDisabled: boolean = false;
   @Input() compareTo?: ComparisonResult | any | null;
 
-  codeMap!: CodeMap;
+  codeMap?: CodeMap;
   filteredOptions!: Code[];
   warning: boolean = false;
   /**
@@ -133,7 +133,7 @@ export class SelectCodebaseComponent implements OnInit {
       }
       this.erasedOnLastChange = false
       this.modelChange.emit(this.model)
-      if (this.codeMap[this.model]) {
+      if (this.codeMap && this.codeMap[this.model]) {
         this.referenceEmitter.emit({reference: (this.codeMap[this.model].reference ?? {linkTo:[]}), value: this.model})
       } else {
         this.referenceEmitter.emit({reference: {linkTo:[]}, value: this.model})
@@ -147,7 +147,7 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   displayCode(codeKey: string): string{
-    if (codeKey && this.codeMap[codeKey]) {
+    if (codeKey && this.codeMap && this.codeMap[codeKey]) {
       let code: Code = this.codeMap[codeKey]
       return code.label + ' (' + code.value + ')'
     } else {

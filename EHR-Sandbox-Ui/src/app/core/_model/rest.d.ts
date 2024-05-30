@@ -98,6 +98,7 @@ export interface EhrPatient extends ObjectWithID {
   id?: number;
   mrn?: string;
   mrnSystem?: string;
+  identifiers?: EhrIdentifier[];
   createdDate?: Date;
   updatedDate?: Date;
   birthDate?: Date;
