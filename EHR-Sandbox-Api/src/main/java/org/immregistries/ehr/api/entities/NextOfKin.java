@@ -1,10 +1,16 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+/**
+ * TODO integrate more in mapping and remove 'guardian' fields
+ */
 @Entity
 @Table(name = "next_of_kin")
 public class NextOfKin {
@@ -29,6 +35,9 @@ public class NextOfKin {
 
     @Column(name = "name_middle", length = 250)
     private String nameMiddle = "";
+
+    @Column(name = "name_suffix", length = 250)
+    private String nameSuffix = "";
 
     @Column(name = "mother_maiden", length = 250)
     private String motherMaiden = "";
@@ -60,14 +69,23 @@ public class NextOfKin {
     @Column(name = "address_county_parish", length = 250)
     private String addressCountyParish = "";
 
-    @Column(name = "phone", length = 250)
-    private String phone = "";
-
     @Column(name = "email", length = 250)
     private String email = "";
 
     @Column(name = "ethnicity", length = 250)
     private String ethnicity = "";
+
+    @ElementCollection
+    @CollectionTable(name = "next_of_kin_phone", joinColumns = @JoinColumn(name = "next_of_kin_id"))
+    private Set<EhrPhoneNumber> phoneNumbers = new LinkedHashSet<>();
+
+    public Set<EhrPhoneNumber> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
+    public void setPhoneNumbers(Set<EhrPhoneNumber> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+    }
 
     public String getEthnicity() {
         return ethnicity;
@@ -83,14 +101,6 @@ public class NextOfKin {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getAddressCountyParish() {
@@ -221,4 +231,11 @@ public class NextOfKin {
         this.id = id;
     }
 
+    public String getNameSuffix() {
+        return nameSuffix;
+    }
+
+    public void setNameSuffix(String nameSuffix) {
+        this.nameSuffix = nameSuffix;
+    }
 }

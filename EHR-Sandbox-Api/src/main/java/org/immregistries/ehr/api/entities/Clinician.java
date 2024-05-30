@@ -35,6 +35,9 @@ public class Clinician extends EhrEntity {
     @Column(name = "name_first", nullable = false, length = 250)
     private String nameFirst = "";
 
+    @Column(name = "name_Suffix", nullable = true, length = 250)
+    private String nameSuffix = "";
+
     @OneToMany(mappedBy = "enteringClinician")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
@@ -123,4 +126,11 @@ public class Clinician extends EhrEntity {
         this.identifiers = identifiers;
     }
 
+    public String getNameSuffix() {
+        return nameSuffix;
+    }
+
+    public void setNameSuffix(String nameSuffix) {
+        this.nameSuffix = nameSuffix;
+    }
 }

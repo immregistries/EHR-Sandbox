@@ -44,6 +44,7 @@ export interface Clinician {
   nameLast?: string;
   nameMiddle?: string;
   nameFirst?: string;
+  nameSuffix?: string;
   identifiers?: EhrIdentifier[];
 }
 
@@ -77,6 +78,7 @@ export interface NextOfKin {
   nameLast?: string;
   nameFirst?: string;
   nameMiddle?: string;
+  nameSuffix?: string;
   motherMaiden?: string;
   sex?: string;
   race?: string;
@@ -87,7 +89,7 @@ export interface NextOfKin {
   addressZip?: string;
   addressCountry?: string;
   addressCountyParish?: string;
-  phone?: string;
+  phones?: EhrPhoneNumber[];
   email?: string;
   ethnicity?: string;
 }
@@ -102,6 +104,7 @@ export interface EhrPatient extends ObjectWithID {
   nameLast?: string;
   nameFirst?: string;
   nameMiddle?: string;
+  nameSuffix?: string;
   motherMaiden?: string;
   sex?: string;
   race?: string;
@@ -112,7 +115,7 @@ export interface EhrPatient extends ObjectWithID {
   addressZip?: string;
   addressCountry?: string;
   addressCountyParish?: string;
-  phone?: string;
+  phones?: EhrPhoneNumber[];
   email?: string;
   ethnicity?: string;
   birthFlag?: string;
@@ -128,6 +131,7 @@ export interface EhrPatient extends ObjectWithID {
   guardianLast?: string;
   guardianFirst?: string;
   guardianMiddle?: string;
+  guardianSuffix?: string;
   guardianRelationship?: string;
   nextOfKins?: NextOfKin[];
   facility?: Facility | number;
@@ -208,6 +212,11 @@ export interface EhrGroupCharacteristic extends Serializable {
 export interface EhrIdentifier extends Serializable {
   system?: string,
   value?: string,
+  type?: string,
+}
+
+export interface EhrPhoneNumber extends Serializable {
+  number?: string,
   type?: string,
 }
 

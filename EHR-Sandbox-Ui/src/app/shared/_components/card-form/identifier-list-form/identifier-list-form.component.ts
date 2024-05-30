@@ -22,7 +22,7 @@ export class IdentifierListFormComponent {
     this.identifierListChange.emit(this.identifierList)
   }
 
-  readonly identifierForms: GenericForm<EhrIdentifier>[] = [
+  readonly IDENTIFIER_FORMS: GenericForm<EhrIdentifier>[] = [
     { type: FormType.text, title: 'System', attribute: 'system' },
     { type: FormType.text, title: 'Value', attribute: 'value' },
     // { type: FormType.text, title: 'Type', attribute: 'type' },

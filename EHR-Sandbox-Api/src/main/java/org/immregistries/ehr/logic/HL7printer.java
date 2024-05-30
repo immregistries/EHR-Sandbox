@@ -1,24 +1,23 @@
 package org.immregistries.ehr.logic;
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Random;
-
 import org.hl7.fhir.r5.model.Identifier;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.EhrApiApplication;
-import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Random;
 
 @Service
 public class HL7printer {
@@ -45,7 +44,7 @@ public class HL7printer {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         createMSH("VXU^V04^VXU_V04", "Z22", sb, facility);
         printQueryPID(patient, sb, sdf, 1);
-        printPD1(patient,sb, sdf);
+        printPD1(patient, sb, sdf);
         printQueryNK1(patient, sb, codeMap);
 
         int obxSetId = 0;
@@ -153,7 +152,7 @@ public class HL7printer {
                         || (!actionCode.equals("A") && !actionCode.equals("D"))) {
                     actionCode = "A";
                 }
-                sb.append("|" );
+                sb.append("|");
                 sb.append(vaccine.getActionCode());
                 sb.append("\r");
                 if (vaccine.getBodyRoute() != null
@@ -169,7 +168,7 @@ public class HL7printer {
                             codeMap));
                     sb.append("\r");
                 }
-                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE,vaccine.getVaccineCvxCode());
+                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, vaccine.getVaccineCvxCode());
                 obsSubId++;
                 obxSetId++;
                 String loinc = "64994-7";
@@ -200,10 +199,10 @@ public class HL7printer {
     public String printQueryNK1(EhrPatient patient, StringBuilder sb, CodeMap codeMap) {
         if (patient != null) {
             if (!patient.getGuardianRelationship().equals("")
-                    && !(patient.getGuardianLast()== null ? "": patient.getGuardianLast()).equals("")
-                    && !(patient.getGuardianFirst()== null ? "": patient.getGuardianFirst()).equals("")) {
+                    && !(patient.getGuardianLast() == null ? "" : patient.getGuardianLast()).equals("")
+                    && !(patient.getGuardianFirst() == null ? "" : patient.getGuardianFirst()).equals("")) {
                 Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
-                        (patient.getGuardianRelationship()==null ? "":patient.getGuardianRelationship()));
+                        (patient.getGuardianRelationship() == null ? "" : patient.getGuardianRelationship()));
                 if (code != null) {
                     sb.append("NK1");
                     sb.append("|1");
@@ -231,7 +230,7 @@ public class HL7printer {
         if (!patient.getMrn().isBlank()) {
             sb.append("|" + patient.getMrn() + "^^^urns:mrn^MR");
         } else {
-        sb.append("|" + patient.getId() + "^^^EHR^MR");
+            sb.append("|" + patient.getId() + "^^^EHR^MR");
         }
         // PID-4
         sb.append("|");
@@ -271,13 +270,13 @@ public class HL7printer {
                 // PID-11
                 sb.append("|" + patient.getAddressLine1() + "^" + patient.getAddressLine2()
                         + "^" + patient.getAddressCity() + "^" + patient.getAddressState() + "^"
-                        + patient.getAddressZip() + "^" + patient.getAddressCountry() + "^"+"P");
+                        + patient.getAddressZip() + "^" + patient.getAddressCountry() + "^" + "P");
                 // PID-12
                 sb.append("|");
                 // PID-13
                 sb.append("|");
-                String phone = patient.getPhone();
-                if (phone.length() == 10) {
+                String phone = patient.getPhones().stream().findFirst().orElse(new EhrPhoneNumber("")).getNumber();
+                if (phone.length() == 10) { //TODO improve support
                     sb.append("^PRN^PH^^^" + phone.substring(0, 3) + "^" + phone.substring(3, 10));
                 }
                 // PID-14
@@ -322,10 +321,10 @@ public class HL7printer {
                 sb.append("|");
                 // PID-24
                 sb.append("|");
-                sb.append(patient.getBirthFlag()== null ? "" :patient.getBirthFlag());
+                sb.append(patient.getBirthFlag() == null ? "" : patient.getBirthFlag());
                 // PID-25
                 sb.append("|");
-                sb.append(patient.getBirthOrder()== null ? "" : patient.getBirthOrder());
+                sb.append(patient.getBirthOrder() == null ? "" : patient.getBirthOrder());
 
             }
             sb.append("\r");
@@ -436,7 +435,6 @@ public class HL7printer {
     }
 
 
-
     public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
                          String loincLabel, String value, String valueLabel, String valueTable) {
         sb.append("OBX");
@@ -472,7 +470,7 @@ public class HL7printer {
     }
 
 
-    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,String loincLabel, Date value) {
+    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc, String loincLabel, Date value) {
         sb.append("OBX");
         // OBX-1
         sb.append("|");
@@ -527,7 +525,6 @@ public class HL7printer {
     private static final char[] ID_CHARS =
             {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T',
                     'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-
 
 
     public String generateId() {
@@ -655,17 +652,17 @@ public class HL7printer {
         // PD1-10
         sb.append("|");
         // PD1-11
-        if (patient.getPublicityIndicator() != null){
+        if (patient.getPublicityIndicator() != null) {
             sb.append(patient.getPublicityIndicator());
         }
         sb.append("|");
         // PD1-12
-        if (patient.getProtectionIndicator() != null){
+        if (patient.getProtectionIndicator() != null) {
             sb.append(patient.getProtectionIndicator());
         }
         sb.append("|");
         // PD1-13
-        if (patient.getProtectionIndicatorDate() != null){
+        if (patient.getProtectionIndicatorDate() != null) {
             sb.append(sdf.format(patient.getProtectionIndicatorDate()));
         }
         sb.append("|");
@@ -674,17 +671,17 @@ public class HL7printer {
         // PD1-15
         sb.append("|");
         // PD1-16
-        if (patient.getRegistryStatusIndicator() != null){
+        if (patient.getRegistryStatusIndicator() != null) {
             sb.append(patient.getRegistryStatusIndicator());
         }
         sb.append("|");
         // PD1-17
-        if (patient.getRegistryStatusIndicatorDate() != null){
+        if (patient.getRegistryStatusIndicatorDate() != null) {
             sb.append(sdf.format(patient.getRegistryStatusIndicatorDate()));
         }
         sb.append("|");
         // PD1-18
-        if (patient.getPublicityIndicatorDate() != null){
+        if (patient.getPublicityIndicatorDate() != null) {
             sb.append(sdf.format(patient.getPublicityIndicatorDate()));
         }
         sb.append("|");
@@ -695,7 +692,6 @@ public class HL7printer {
         // PD1-21
         sb.append("|");
     }
-
 
 
 }

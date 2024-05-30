@@ -193,7 +193,11 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         { type: FormType.date, title: "Administered", attribute: "administeredDate", required: true },
         { type: FormType.short, title: "Admininistered amount", attribute: "administeredAmount" },
       ], vaccinationForms: [
-        { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
+        // { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
+        {
+          type: FormType.select, title: "Record Nature", attribute: "primarySource", options: [{ value: 'true', label: 'New Administration' }, { value: 'false', label: 'Historical' },]
+          // , tooltip: 'Wether the '
+        },
       ]
     },
     {

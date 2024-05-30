@@ -27,7 +27,7 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
     "alerts",
   ]
 
-  @Input() title: string = 'Vaccination history'
+  @Input() title: string = 'Vaccinations'
 
   @Input()
   patientId!: number;
@@ -36,8 +36,8 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
     public codeMapsService: CodeMapsService,
     private vaccinationService: VaccinationService,
     private patientService: PatientService) {
-      super()
-    }
+    super()
+  }
 
   vaccinationFilterPredicate() {
     return (data: VaccinationEvent, filter: string): boolean => {
@@ -75,21 +75,33 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.ngAfterViewInit()
-        this.onSelection(result)
+        console.log(result)
+        if (result instanceof Object) {
+          this.selectedElement = result
+          this.selectEmitter.emit(this.selectedElement);
+          console.log(this.selectedElement)
+        } else {
+          this.vaccinationService.quickReadVaccinationFromFacility(+result).subscribe((newVaccination) => {
+            this.selectedElement = newVaccination
+            this.selectEmitter.emit(this.selectedElement);
+            console.log(this.selectedElement)
+
+          })
+        }
       }
     });
   }
 
-  openFeedback(element: VaccinationEvent) {
-    const dialogRef = this.dialog.open(FeedbackTableComponent, {
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      height: 'fit-content',
-      width: '100%',
-      panelClass: 'dialog-with-bar',
-      data: { vaccination: element },
-    });
-  }
+  // openFeedback(element: VaccinationEvent) {
+  //   const dialogRef = this.dialog.open(FeedbackTableComponent, {
+  //     maxWidth: '95vw',
+  //     maxHeight: '95vh',
+  //     height: 'fit-content',
+  //     width: '100%',
+  //     panelClass: 'dialog-with-bar',
+  //     data: { vaccination: element },
+  //   });
+  // }
 
   openVaccination(vaccination: VaccinationEvent | number) {
     const dialogRef = this.dialog.open(VaccinationDashboardComponent, {

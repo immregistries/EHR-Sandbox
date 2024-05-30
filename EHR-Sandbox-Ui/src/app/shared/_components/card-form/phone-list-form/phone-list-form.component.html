@@ -1,0 +1,12 @@
+<div class="phoneNumber-form-content" *ngFor="let phoneNumber of phoneNumberList">
+  <div *ngFor="let form of PHONE_NUMBER_FORMS">
+    <app-card-form class="card-form high-density" [form]="form" [model]="phoneNumber[form.attribute]"
+                   (modelChange)="phoneNumber[form.attribute] = $event; phoneNumberListChange.emit(phoneNumberList)"></app-card-form>
+  </div>
+</div>
+<div>
+  <button mat-stroked-button type="button" (click)="addPhoneNumber()" color="primary">
+    <mat-icon>add</mat-icon>
+    Add Phone Number
+  </button>
+</div>

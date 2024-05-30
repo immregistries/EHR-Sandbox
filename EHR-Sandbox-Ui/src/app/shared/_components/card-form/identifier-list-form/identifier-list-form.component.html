@@ -1,5 +1,5 @@
 <div class="identifier-form-content" *ngFor="let identifier of identifierList">
-  <div *ngFor="let form of identifierForms">
+  <div *ngFor="let form of IDENTIFIER_FORMS">
     <app-card-form class="card-form high-density" [form]="form" [model]="identifier[form.attribute]"
                    (modelChange)="identifier[form.attribute] = $event; identifierListChange.emit(identifierList)"></app-card-form>
   </div>

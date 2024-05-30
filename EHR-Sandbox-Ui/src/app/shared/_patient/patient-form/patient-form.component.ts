@@ -42,6 +42,7 @@ export class PatientFormComponent {
 
   fillRandom(): void {
     this.patientService.readRandom().subscribe((res) => this.patient = res)
+    console.log(this.patient.phones)
   }
 
   save(): void {
@@ -88,6 +89,7 @@ export class PatientFormComponent {
         { type: FormType.text, title: 'First name', attribute: 'nameFirst' },
         { type: FormType.text, title: 'Middle name', attribute: 'nameMiddle' },
         { type: FormType.text, title: 'Last name', attribute: 'nameLast' },
+        { type: FormType.text, title: 'Suffix', attribute: 'nameSuffix' },
         { type: FormType.text, title: 'Mother maiden name', attribute: 'motherMaiden' },
       ]
     },
@@ -124,8 +126,8 @@ export class PatientFormComponent {
     },
     {
       title: 'Contact', cols: 1, rows: 1, patientForms: [
-        { type: FormType.text, title: 'Phone', attribute: 'phone' },
         { type: FormType.text, title: 'Email', attribute: 'email' },
+        { type: FormType.text, title: 'Phone', attribute: 'phones' },
       ]
     },
     {
@@ -157,6 +159,7 @@ export class PatientFormComponent {
         { type: FormType.text, title: 'First name', attribute: 'guardianFirst' },
         { type: FormType.text, title: 'Middle name', attribute: 'guardianMiddle' },
         { type: FormType.text, title: 'Last name', attribute: 'guardianLast' },
+        { type: FormType.text, title: 'Suffix', attribute: 'guardianSuffix' },
         { type: FormType.code, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP" },
       ]
     },

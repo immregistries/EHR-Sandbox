@@ -7,6 +7,7 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public class RandomGenerator {
 
         }
 
-        patient.setPhone(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6));
+        patient.addPhoneNumbers(new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6)));
         patient.setEmail(patient.getNameFirst() + randDay + "@email.com");
 
         patient.setBirthFlag("");

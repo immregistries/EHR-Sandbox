@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.ResourceVersionConflictException;
 import org.hl7.fhir.r5.model.CapabilityStatement;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
@@ -37,13 +38,19 @@ public class ImmunizationRegistryController {
 
     @GetMapping({"/{id}/metadata"})
     public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable Integer id) {
+        IGenericClient client = customClientFactory.newGenericClient(id);
+        CapabilityStatement capabilityStatement;
         try {
-            IGenericClient client = customClientFactory.newGenericClient(id);
-            CapabilityStatement out  = client.capabilities().ofType(CapabilityStatement.class).prettyPrint().execute();
-            return ResponseEntity.ok(client.getFhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(out));
+            capabilityStatement = client.capabilities().ofType(CapabilityStatement.class).prettyPrint().execute();
+        } catch (ResourceVersionConflictException resourceVersionConflictException) {
+            /**
+             * Conflict might rise because iis is creating tenant, so we give it another try
+             */
+            capabilityStatement = client.capabilities().ofType(CapabilityStatement.class).prettyPrint().execute();
         } catch (Exception exception) {
-            return  ResponseEntity.internalServerError().body(exception.getMessage());
+            return ResponseEntity.internalServerError().body(exception.getMessage());
         }
+        return ResponseEntity.ok(client.getFhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(capabilityStatement));
     }
 
     @GetMapping()

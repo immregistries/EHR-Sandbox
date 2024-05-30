@@ -1,4 +1,3 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Facility, EhrPatient } from 'src/app/core/_model/rest';
@@ -63,7 +62,15 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.ngAfterViewInit()
-        this.onSelection(result)
+        if (result instanceof Object) {
+          this.selectedElement = result
+          this.selectEmitter.emit(this.selectedElement);
+        } else {
+          this.patientService.quickReadPatient(+result).subscribe((newPatient) => {
+            this.selectedElement = newPatient
+            this.selectEmitter.emit(this.selectedElement);
+          })
+        }
       }
     });
   }

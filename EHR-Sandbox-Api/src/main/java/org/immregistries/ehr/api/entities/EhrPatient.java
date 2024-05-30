@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
+import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,17 +16,12 @@ import java.util.stream.Collectors;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
-@Table(name = "patient"
-//        , indexes = {
-//        @Index(name = "facility_id", columnList = "facility_id")
-//}
-)
+@Table(name = "patient")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = EhrPatient.class)
 @Audited(targetAuditMode = NOT_AUDITED)
-//@Configurable(preConstruction = true)
 public class EhrPatient extends EhrEntity {
 
     @Id
@@ -53,6 +49,8 @@ public class EhrPatient extends EhrEntity {
     private String nameFirst = "";
     @Column(name = "name_middle", length = 250)
     private String nameMiddle = "";
+    @Column(name = "name_suffix", length = 250)
+    private String nameSuffix = "";
     @Column(name = "mother_maiden", length = 250)
     private String motherMaiden = "";
     @Column(name = "sex", length = 250)
@@ -73,8 +71,9 @@ public class EhrPatient extends EhrEntity {
     private String addressCountry = "";
     @Column(name = "address_county_parish", length = 250)
     private String addressCountyParish = "";
-    @Column(name = "phone", length = 250)
-    private String phone = "";
+    @ElementCollection
+    @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
+    private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
     @Column(name = "email", length = 250)
     private String email = "";
     @Column(name = "ethnicity", length = 250)
@@ -105,6 +104,8 @@ public class EhrPatient extends EhrEntity {
     private String guardianFirst = "";
     @Column(name = "guardian_middle", length = 250)
     private String guardianMiddle = "";
+    @Column(name = "guardian_suffix", length = 250)
+    private String guardianSuffix = "";
     @Column(name = "guardian_relationship", length = 250)
     private String guardianRelationship = "";
     @OneToMany(mappedBy = "patient")
@@ -300,14 +301,6 @@ public class EhrPatient extends EhrEntity {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getAddressCountyParish() {
         return addressCountyParish;
     }
@@ -475,5 +468,36 @@ public class EhrPatient extends EhrEntity {
 
     public void setIdentifiers(Set<EhrIdentifier> identifiers) {
         this.identifiers = identifiers;
+    }
+
+    public String getNameSuffix() {
+        return nameSuffix;
+    }
+
+    public void setNameSuffix(String nameSuffix) {
+        this.nameSuffix = nameSuffix;
+    }
+
+    public String getGuardianSuffix() {
+        return guardianSuffix;
+    }
+
+    public void setGuardianSuffix(String guardianSuffix) {
+        this.guardianSuffix = guardianSuffix;
+    }
+
+    public Set<EhrPhoneNumber> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(Set<EhrPhoneNumber> phones) {
+        this.phones = phones;
+    }
+
+    public void addPhoneNumbers(EhrPhoneNumber phoneNumber) {
+        if (phones == null) {
+            this.phones = new HashSet<>(1);
+        }
+        this.phones.add(phoneNumber);
     }
 }
