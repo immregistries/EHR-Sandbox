@@ -3,8 +3,10 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -55,22 +57,12 @@ public class EhrPatient extends EhrEntity {
     private String motherMaiden = "";
     @Column(name = "sex", length = 250)
     private String sex = "";
-    @Column(name = "race", length = 250)
-    private String race = "";
-    @Column(name = "address_line1", length = 250)
-    private String addressLine1 = "";
-    @Column(name = "address_line2", length = 250)
-    private String addressLine2 = "";
-    @Column(name = "address_city", length = 250)
-    private String addressCity = "";
-    @Column(name = "address_state", length = 250)
-    private String addressState = "";
-    @Column(name = "address_zip", length = 250)
-    private String addressZip = "";
-    @Column(name = "address_country", length = 250)
-    private String addressCountry = "";
-    @Column(name = "address_county_parish", length = 250)
-    private String addressCountyParish = "";
+    @ElementCollection
+    @CollectionTable(name = "patient_race", joinColumns = @JoinColumn(name = "patient_id"))
+    private Set<EhrRace> races = new HashSet<EhrRace>();
+    @ElementCollection
+    @CollectionTable(name = "patient_address", joinColumns = @JoinColumn(name = "patient_id"))
+    private Set<EhrAddress> addresses = new LinkedHashSet<>();
     @ElementCollection
     @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
@@ -98,6 +90,7 @@ public class EhrPatient extends EhrEntity {
     private String registryStatusIndicator = "";
     @Column(name = "registry_status_indicator_date")
     private Date registryStatusIndicatorDate;
+
     @Column(name = "guardian_last", length = 250)
     private String guardianLast = "";
     @Column(name = "guardian_first", length = 250)
@@ -106,6 +99,7 @@ public class EhrPatient extends EhrEntity {
     private String guardianMiddle = "";
     @Column(name = "guardian_suffix", length = 250)
     private String guardianSuffix = "";
+
     @Column(name = "guardian_relationship", length = 250)
     private String guardianRelationship = "";
     @OneToMany(mappedBy = "patient")
@@ -115,6 +109,20 @@ public class EhrPatient extends EhrEntity {
     @JsonManagedReference("patient-nextOfKin")
     @NotAudited
     private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
+
+    public Set<NextOfKinRelationship> getNextOfKinRelationShips() {
+        return nextOfKinRelationShips;
+    }
+
+    public void setNextOfKinRelationShips(Set<NextOfKinRelationship> nextOfKinRelationShips) {
+        this.nextOfKinRelationShips = nextOfKinRelationShips;
+    }
+
+    @OneToMany(mappedBy = "ehrPatient", cascade = CascadeType.MERGE)
+//    @JsonManagedReference("patient-nextOfKin-relationship")
+    @NotAudited
+    private Set<NextOfKinRelationship> nextOfKinRelationShips = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "patient")
     @NotAudited
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
@@ -301,70 +309,6 @@ public class EhrPatient extends EhrEntity {
         this.email = email;
     }
 
-    public String getAddressCountyParish() {
-        return addressCountyParish;
-    }
-
-    public void setAddressCountyParish(String addressCountyParish) {
-        this.addressCountyParish = addressCountyParish;
-    }
-
-    public String getAddressCountry() {
-        return addressCountry;
-    }
-
-    public void setAddressCountry(String addressCountry) {
-        this.addressCountry = addressCountry;
-    }
-
-    public String getAddressZip() {
-        return addressZip;
-    }
-
-    public void setAddressZip(String addressZip) {
-        this.addressZip = addressZip;
-    }
-
-    public String getAddressState() {
-        return addressState;
-    }
-
-    public void setAddressState(String addressState) {
-        this.addressState = addressState;
-    }
-
-    public String getAddressCity() {
-        return addressCity;
-    }
-
-    public void setAddressCity(String addressCity) {
-        this.addressCity = addressCity;
-    }
-
-    public String getAddressLine2() {
-        return addressLine2;
-    }
-
-    public void setAddressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
-    }
-
-    public String getAddressLine1() {
-        return addressLine1;
-    }
-
-    public void setAddressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
-    }
-
-    public String getRace() {
-        return race;
-    }
-
-    public void setRace(String race) {
-        this.race = race;
-    }
-
     public String getSex() {
         return sex;
     }
@@ -499,5 +443,35 @@ public class EhrPatient extends EhrEntity {
             this.phones = new HashSet<>(1);
         }
         this.phones.add(phoneNumber);
+    }
+
+    public Set<EhrRace> getRaces() {
+        return races;
+    }
+
+    public void setRaces(Set<EhrRace> races) {
+        this.races = races;
+    }
+
+    public void addRace(EhrRace race) {
+        if (this.races == null) {
+            this.races = new LinkedHashSet<>(3);
+        }
+        this.races.add(race);
+    }
+
+    public void addAddress(EhrAddress address) {
+        if (this.addresses == null) {
+            this.addresses = new LinkedHashSet<>(3);
+        }
+        this.addresses.add(address);
+    }
+
+    public Set<EhrAddress> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<EhrAddress> addresses) {
+        this.addresses = addresses;
     }
 }

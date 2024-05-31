@@ -39,6 +39,11 @@ export class ClinicianFormComponent {
         { type: FormType.text, title: "Middle name", attribute: "nameMiddle" },
         { type: FormType.text, title: "Last name", attribute: "nameLast" }
       ]
+    },
+    {
+      title: "Identifiers", rows: 1, cols: 1, clinicianForms: [
+        { type: FormType.identifiers, title: "Identifier", attribute: "identifiers" },
+      ]
     }
   ]
 

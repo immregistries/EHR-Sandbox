@@ -1,9 +1,0 @@
-.identifier-form-content {
-
-  text-align: right;
-  display: flex;
-  flex-wrap: wrap;
-  /* justify-content: center; */
-  align-items: baseline;
-  gap: 5px 5px;
-}

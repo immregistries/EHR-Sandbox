@@ -107,11 +107,15 @@ import { Hl7MessagingComponent } from './_fhir/hl7-messaging/hl7-messaging.compo
 import { Hl7PostComponent } from './_fhir/hl7-post/hl7-post.component';
 import { SubscriptionDashboardComponent } from './_fhir/subscription-dashboard/subscription-dashboard.component';
 import { SubscriptionTableComponent } from './_fhir/subscription-table/subscription-table.component';
-import { IdentifierListFormComponent } from './_components/card-form/identifier-list-form/identifier-list-form.component';
+import { IdentifierListFormComponent } from './_components/card-form/generic-list-form/identifier-list-form/identifier-list-form.component';
 import { VxuStepsComponent } from './_components/vxu-steps/vxu-steps.component';
 import { FirstStepsComponent } from './_components/first-steps/first-steps.component';
-import {MatTreeModule} from '@angular/material/tree';
-import { PhoneListFormComponent } from './_components/card-form/phone-list-form/phone-list-form.component';
+import { MatTreeModule } from '@angular/material/tree';
+import { PhoneListFormComponent } from './_components/card-form/generic-list-form/phone-list-form/phone-list-form.component';
+import { NextOfKinListFormComponent } from './_components/card-form/generic-list-form/next-of-kin-list-form/next-of-kin-list-form.component';
+import { GenericListFormComponent } from './_components/card-form/generic-list-form/generic-list-form.component';
+import { RaceListFormComponent } from './_components/card-form/generic-list-form/race-list-form/race-list-form.component';
+import { AddressListFormComponent } from './_components/card-form/generic-list-form/address-list-form/address-list-form.component';
 
 @NgModule({
   declarations: [
@@ -201,6 +205,10 @@ import { PhoneListFormComponent } from './_components/card-form/phone-list-form/
     VxuStepsComponent,
     FirstStepsComponent,
     PhoneListFormComponent,
+    NextOfKinListFormComponent,
+    GenericListFormComponent,
+    RaceListFormComponent,
+    AddressListFormComponent,
   ],
   imports: [
     CommonModule,

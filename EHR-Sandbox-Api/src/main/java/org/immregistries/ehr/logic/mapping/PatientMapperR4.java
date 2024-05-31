@@ -1,9 +1,15 @@
 package org.immregistries.ehr.logic.mapping;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +30,8 @@ import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MALE_SEX;
 @Conditional(OnR4Condition.class)
 public class PatientMapperR4 implements IPatientMapper<Patient> {
 
+    @Autowired
+    CodeMapManager codeMapManager;
     @Autowired()
     IOrganizationMapper organizationMapper;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
@@ -73,28 +81,15 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
 
         //Race and ethnicity
-        Extension raceExtension = p.addExtension();
-        raceExtension.setUrl(RACE);
-        CodeableConcept race = new CodeableConcept().setText(RACE_SYSTEM);
-        raceExtension.setValue(race);
-        if (ehrPatient.getRace() != null && !ehrPatient.getRace().isBlank()) {
-            race.addCoding().setCode(ehrPatient.getRace());
+        if (!ehrPatient.getRaces().isEmpty()) {
+            Extension raceExtension = p.addExtension();
+            raceExtension.setUrl(RACE);
+            CodeableConcept race = new CodeableConcept();
+            raceExtension.setValue(race);
+            for (EhrRace ehrRace : ehrPatient.getRaces()) {
+                race.addCoding(codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
+            }
         }
-//    if (dbPatient.getRace2() != null && !dbPatient.getRace2().isBlank()) {
-//      race.addCoding().setCode(dbPatient.getRace2());
-//    }
-//    if (dbPatient.getRace3() != null && !dbPatient.getRace3().isBlank()) {
-//      race.addCoding().setCode(dbPatient.getRace3());
-//    }
-//    if (dbPatient.getRace4() != null && !dbPatient.getRace4().isBlank()) {
-//      race.addCoding().setCode(dbPatient.getRace4());
-//    }
-//    if (dbPatient.getRace5() != null && !dbPatient.getRace5().isBlank()) {
-//      race.addCoding().setCode(dbPatient.getRace5());
-//    }
-//    if (dbPatient.getRace6() != null && !dbPatient.getRace6().isBlank()) {
-//      race.addCoding().setCode(dbPatient.getRace6());
-//    }
         p.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()));
         // telecom
         for (EhrPhoneNumber phoneNumber : ehrPatient.getPhones()) {
@@ -120,13 +115,15 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             p.setDeceased(new BooleanType(false));
         }
 
-        p.addAddress().addLine(ehrPatient.getAddressLine1())
-                .addLine(ehrPatient.getAddressLine2())
-                .setCity(ehrPatient.getAddressCity())
-                .setCountry(ehrPatient.getAddressCountry())
-                .setState(ehrPatient.getAddressState())
-                .setDistrict(ehrPatient.getAddressCountyParish())
-                .setPostalCode(ehrPatient.getAddressZip());
+        for (EhrAddress ehrAddress : ehrPatient.getAddresses()) {
+            p.addAddress()
+                    .addLine(ehrAddress.getAddressLine1())
+                    .addLine(ehrAddress.getAddressLine2())
+                    .setCity(ehrAddress.getAddressCity())
+                    .setCountry(ehrAddress.getAddressCountry())
+                    .setState(ehrAddress.getAddressState())
+                    .setPostalCode(ehrAddress.getAddressZip());
+        }
 
         if (ehrPatient.getBirthOrder() != null && !ehrPatient.getBirthOrder().isBlank()) {
             p.setMultipleBirth(new IntegerType().setValue(Integer.parseInt(ehrPatient.getBirthOrder())));
@@ -206,33 +203,11 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
                 ehrPatient.setSex("");
                 break;
         }
-        int raceNumber = 0;
         CodeableConcept races = MappingHelper.extensionGetCodeableConcept(p.getExtensionByUrl(RACE));
         if (races != null) {
             for (Coding coding : races.getCoding()) {
-                raceNumber++;
-                switch (raceNumber) {
-                    case 1: {
-                        ehrPatient.setRace(coding.getCode());
-                    }
-//        case 2: {
-//          patient.setRace2(coding.getCode());
-//        }
-//        case 3: {
-//          patient.setRace3(coding.getCode());
-//        }
-//        case 4:{
-//          patient.setRace4(coding.getCode());
-//        }
-//        case 5:{
-//          patient.setRace5(coding.getCode());
-//        }
-//        case 6:{
-//          patient.setRace6(coding.getCode());
-//        }
-                }
+                ehrPatient.addRace(new EhrRace(coding.getCode()));
             }
-
         }
         if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
             Coding ethnicity = MappingHelper.extensionGetCoding(p.getExtensionByUrl(ETHNICITY_EXTENSION));
@@ -266,18 +241,21 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             }
         }
         // Address
-        Address address = p.getAddressFirstRep();
-        if (address.getLine().size() > 0) {
-            ehrPatient.setAddressLine1(address.getLine().get(0).getValueNotNull());
+        for (Address address : p.getAddress()) {
+            EhrAddress ehrAddress = new EhrAddress();
+            if (address.getLine().size() > 0) {
+                ehrAddress.setAddressLine1(address.getLine().get(0).getValueNotNull());
+            }
+            if (address.getLine().size() > 1) {
+                ehrAddress.setAddressLine2(address.getLine().get(1).getValueNotNull());
+            }
+            ehrAddress.setAddressCity(address.getCity());
+            ehrAddress.setAddressState(address.getState());
+            ehrAddress.setAddressZip(address.getPostalCode());
+            ehrAddress.setAddressCountry(address.getCountry());
+            ehrAddress.setAddressCountyParish(address.getDistrict());
+            ehrPatient.addAddress(ehrAddress);
         }
-        if (address.getLine().size() > 1) {
-            ehrPatient.setAddressLine2(address.getLine().get(1).getValueNotNull());
-        }
-        ehrPatient.setAddressCity(address.getCity());
-        ehrPatient.setAddressState(address.getState());
-        ehrPatient.setAddressZip(address.getPostalCode());
-        ehrPatient.setAddressCountry(address.getCountry());
-        ehrPatient.setAddressCountyParish(address.getDistrict());
 
         if (null != p.getMultipleBirth()) {
             if (p.getMultipleBirth().isBooleanPrimitive()) {
@@ -328,5 +306,17 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             }
         }
         return ehrPatient;
+    }
+
+    private Coding codingFromCodeset(String value, String system, CodesetType codesetType) {
+        Coding coding = null;
+        if (StringUtils.isNotBlank(value)) {
+            coding = new Coding().setCode(value).setSystem(system);
+            Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
+            if (code != null) {
+                coding.setDisplay(code.getLabel());
+            }
+        }
+        return coding;
     }
 }

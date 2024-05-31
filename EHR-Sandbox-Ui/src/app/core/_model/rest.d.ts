@@ -2,7 +2,7 @@
 /* eslint-disable */
 // Generated using typescript-generator version 2.35.1025 on 2022-03-11 10:41:27.
 
-export interface ObjectWithID{
+export interface ObjectWithID {
   id?: number;
 }
 
@@ -28,7 +28,7 @@ export interface EhrSubscription {
 export interface Feedback {
   id?: number;
   iis?: string;
-  patient?: EhrPatient  | number;
+  patient?: EhrPatient | number;
   vaccinationEvent?: VaccinationEvent | number;
   facility?: Facility | number;
   content?: string;
@@ -92,6 +92,7 @@ export interface NextOfKin {
   phones?: EhrPhoneNumber[];
   email?: string;
   ethnicity?: string;
+  relationship?: string; // TODO CHange relationship ?
 }
 
 export interface EhrPatient extends ObjectWithID {
@@ -108,14 +109,8 @@ export interface EhrPatient extends ObjectWithID {
   nameSuffix?: string;
   motherMaiden?: string;
   sex?: string;
-  race?: string;
-  addressLine1?: string;
-  addressLine2?: string;
-  addressCity?: string;
-  addressState?: string;
-  addressZip?: string;
-  addressCountry?: string;
-  addressCountyParish?: string;
+  races?: EhrRace[];
+  addresses?: EhrAddress[];
   phones?: EhrPhoneNumber[];
   email?: string;
   ethnicity?: string;
@@ -219,6 +214,18 @@ export interface EhrIdentifier extends Serializable {
 export interface EhrPhoneNumber extends Serializable {
   number?: string,
   type?: string,
+}
+export interface EhrRace extends Serializable {
+  value?: string
+}
+export interface EhrAddress extends Serializable {
+  addressLine1?: string;
+  addressLine2?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressZip?: string;
+  addressCountry?: string;
+  addressCountyParish?: string;
 }
 
 export interface Serializable {

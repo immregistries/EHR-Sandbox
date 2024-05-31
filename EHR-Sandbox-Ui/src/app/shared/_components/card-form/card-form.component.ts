@@ -19,6 +19,7 @@ export class CardFormComponent implements OnInit {
   @Input() lotNumberValid: boolean = true;
 
   @Input() form!: BaseForm
+  @Input() overrideNoFieldsRequired: boolean = false
 
   private _model!: any;
   @Input()
@@ -47,6 +48,16 @@ export class CardFormComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  isRequired(): 'true' | 'false' {
+    if (this.overrideNoFieldsRequired) {
+      return 'false'
+    } else if (this.form.required) {
+      return 'true'
+    } else {
+      return 'false'
+    }
   }
 
 }

@@ -53,7 +53,7 @@ export class PatientFormComponent {
         },
         error: (err) => {
           console.log(err.error)
-          this.snackBarService.errorMessage(err.error.error);
+          this.snackBarService.errorMessage(err.error);
         }
       });
     } else {
@@ -69,7 +69,7 @@ export class PatientFormComponent {
         },
         error: (err) => {
           console.log(err.error)
-          this.snackBarService.errorMessage(err.error.error);
+          this.snackBarService.errorMessage(err.error);
         }
       });
     }
@@ -111,18 +111,19 @@ export class PatientFormComponent {
       title: 'Identity', cols: 1, rows: 1, patientForms: [
         { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX", options: [{ value: 'M' }, { value: 'F' }] },
         { type: FormType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
-        { type: FormType.code, title: 'Race', attribute: 'race', codeMapLabel: "PATIENT_RACE" },
+        { type: FormType.races, title: 'Race', attribute: 'races' },
       ]
     },
     {
       title: 'Address', cols: 1, rows: 2, patientForms: [
-        { type: FormType.text, title: 'Line 1', attribute: 'addressLine1' },
-        { type: FormType.text, title: 'Line 2', attribute: 'addressLine2' },
-        { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
-        { type: FormType.text, title: 'City', attribute: 'addressCity' },
-        { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
-        { type: FormType.text, title: 'State', attribute: 'addressState' },
-        { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
+        { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
+        // { type: FormType.text, title: 'Line 1', attribute: 'addressLine1' },
+        // { type: FormType.text, title: 'Line 2', attribute: 'addressLine2' },
+        // { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
+        // { type: FormType.text, title: 'City', attribute: 'addressCity' },
+        // { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
+        // { type: FormType.text, title: 'State', attribute: 'addressState' },
+        // { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
       ]
     },
     {
@@ -162,6 +163,11 @@ export class PatientFormComponent {
         { type: FormType.text, title: 'Last name', attribute: 'guardianLast' },
         { type: FormType.text, title: 'Suffix', attribute: 'guardianSuffix' },
         { type: FormType.code, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP" },
+      ]
+    },
+    {
+      title: 'Next of Kin', cols: 3, rows: 1, patientForms: [
+        { type: FormType.nextOfKins, title: '', attribute: 'nextOfKins' },
       ]
     },
   ]

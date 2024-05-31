@@ -1,13 +1,13 @@
-import { Clinician, Facility, EhrPatient, VaccinationEvent, Vaccine } from "./rest";
+import { Clinician, Facility, EhrPatient, VaccinationEvent, Vaccine, NextOfKin } from "./rest";
 /**
  * Interface for codemaps lists
  */
 
 export interface CodeBaseMap {
-  [key:string]: CodeMap
+  [key: string]: CodeMap
 }
 export interface CodeMap {
-  [key:string]: Code
+  [key: string]: Code
 }
 export interface Code {
   "value": string,
@@ -29,17 +29,14 @@ export interface CodeReferenceLink {
   codeset: string
 }
 export interface FormCardGeneric<X> {
+  // export interface FormCardGeneric<X extends Record<(string | number),Record<(string | number), any> {
   title: string,
   cols?: number, // dimensions of the card
   rows?: number,
   forms?: GenericForm<X>[],  // form fields for each specific objects
 }
-export interface GenericForm<X> {
-  type: FormType,
-  title: string,
-  attribute: keyof X,
-  codeMapLabel?: string,
-  options?: {value: string, label?: string}[],
+export interface GenericForm<X> extends BaseForm {
+  attribute: Extract<keyof X, string>,
 }
 
 export interface FormCard {
@@ -63,8 +60,12 @@ enum FormType {
   textarea = 'textarea',
   clinician = 'clinician',
   phoneNumbers = 'phoneNumbers',
-  identifiers = 'identifiers'
+  identifiers = 'identifiers',
+  nextOfKins = 'nextOfKins',
+  races = 'races',
+  addresses = 'addresses',
 }
+
 export default FormType;
 export interface BaseForm {
   type: FormType,
@@ -72,20 +73,24 @@ export interface BaseForm {
   attribute: string,
   codeMapLabel?: string,
   disabled?: boolean,
-  options?: {value: string, label?: string}[],
+  options?: { value: string, label?: string }[],
   required?: boolean,
 }
 export interface PatientForm extends BaseForm {
   attribute: keyof EhrPatient,
 }
-export interface VaccinationForm extends BaseForm{
+export interface VaccinationForm extends BaseForm {
   // attribute: keyof VaccinationEvent,
   attribute: "enteringClinician" | "orderingClinician" | "administeringClinician" | "primarySource"
 }
-export interface VaccineForm extends BaseForm{
+export interface VaccineForm extends BaseForm {
   attribute: keyof Vaccine,
 }
-export interface ClinicianForm extends BaseForm{
+
+export interface NextOfKinForms extends BaseForm {
+  attribute: keyof NextOfKin,
+}
+export interface ClinicianForm extends BaseForm {
   attribute: keyof Clinician,
   role?: "enteringClinician" | "orderingClinician" | "administeringClinician"
 }
@@ -96,7 +101,7 @@ export interface NotificationPrototype {
 }
 
 
-export interface ComparisonResult {[index:string]: ComparisonResult | any | null}
+export interface ComparisonResult { [index: string]: ComparisonResult | any | null }
 export interface BulkImportStatus {
   status?: string,
   lastAttemptCount?: number,

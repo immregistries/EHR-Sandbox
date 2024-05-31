@@ -7,7 +7,9 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,6 @@ public class RandomGenerator {
         Date fourYearsAgo = new Date(now - aDay * 365 * 4);
 
         CodeMap codeMap = codeMapManager.getCodeMap();
-        Collection<Code> codeListGuardian = codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
 
         Date birthDate = between(eightyYearsAgo, tenDaysAgo);
         Date deathDate = between(fourYearsAgo, tenDaysAgo);
@@ -97,14 +98,16 @@ public class RandomGenerator {
         patient.setBirthDate(birthDate);
 
 
-        patient.setAddressLine1(faker.address().streetAddress());
-        patient.setAddressCity(faker.address().city());
-        patient.setAddressCountry("USA");
-        patient.setAddressState(faker.address().stateAbbr());
-        patient.setAddressZip(faker.address().zipCode());
-//        patient.setAddressZip(faker.address().zipCodeByState(patient.getAddressState()).replace('#','0'));
+        EhrAddress ehrAddress = new EhrAddress();
+        patient.addAddress(ehrAddress);
+        ehrAddress.setAddressLine1(faker.address().streetAddress());
+        ehrAddress.setAddressCity(faker.address().city());
+        ehrAddress.setAddressCountry("USA");
+        ehrAddress.setAddressState(faker.address().stateAbbr());
+        ehrAddress.setAddressZip(faker.address().zipCode());
+//        ehrAddress.setAddressZip(faker.address().zipCodeByState(patient.getAddressState()).replace('#','0'));
         try {
-            patient.setAddressCountyParish(faker.address().countyByZipCode(patient.getAddressZip()));
+            ehrAddress.setAddressCountyParish(faker.address().countyByZipCode(ehrAddress.getAddressZip()));
         } catch (RuntimeException e) {
 
         }
@@ -161,9 +164,9 @@ public class RandomGenerator {
             int count = 0;
             int randomNumber = (int) (Math.random() * codeListRace.size());
             for (Code code : codeListRace) {
-                patient.setRace(code.getValue());
                 count += 1;
                 if (randomNumber == count) {
+                    patient.addRace(new EhrRace(code.getValue()));
                     break;
                 }
             }
@@ -174,7 +177,10 @@ public class RandomGenerator {
         patient.setGuardianLast(faker.name().lastName());
         patient.setGuardianMiddle(faker.name().firstName());
         patient.setMotherMaiden(faker.name().lastName());
-        patient.setGuardianRelationship("MTH");
+
+        Collection<Code> codeListGuardian = codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
+        NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship(patient, randomNextOfKin());
+        nextOfKinRelationship.setRelationshipKind("MTH");
 //        int count = 0;
 
 //        for(Code code : codeListGuardian) {
@@ -195,6 +201,16 @@ public class RandomGenerator {
         patient.setUpdatedDate(new Date());
         patient.setCreatedDate(new Date());
         return patient;
+    }
+
+    public NextOfKin randomNextOfKin() {
+        Faker faker = new Faker();
+        NextOfKin nextOfKin = new NextOfKin();
+        nextOfKin.setNameFirst(faker.name().firstName());
+        nextOfKin.setNameLast(faker.name().lastName());
+        nextOfKin.setNameMiddle(faker.name().firstName());
+//        nextOfKin.setRelationship("MTH");
+        return nextOfKin;
     }
 
     public VaccinationEvent randomVaccinationEvent(EhrPatient patient, Tenant tenant, Facility facility) {

@@ -6,7 +6,7 @@
     </mat-select> -->
 
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field"
-           (ngModelChange)="filterChange($event)" name="clinician" [required]="form.required ? 'true' : 'false'">
+           (ngModelChange)="filterChange($event)" name="clinician" [required]="isRequired()">
 
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="valueChanged()"
                       (optionActivated)="valueChanged()">

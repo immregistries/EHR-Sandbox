@@ -1,27 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { EhrPhoneNumber } from 'src/app/core/_model/rest';
 import FormType, { GenericForm } from 'src/app/core/_model/structure';
+import { GenericListFormComponent } from '../generic-list-form.component';
 
 @Component({
   selector: 'app-phone-list-form',
-  templateUrl: './phone-list-form.component.html',
-  styleUrls: ['./phone-list-form.component.css']
+  templateUrl: '../generic-list-form.component.html',
+  styleUrls: ['../generic-list-form.component.css']
 })
-export class PhoneListFormComponent {
-  @Input()
-  phoneNumberList?: EhrPhoneNumber[]
-  @Output()
-  phoneNumberListChange: EventEmitter<EhrPhoneNumber[]> = new EventEmitter<EhrPhoneNumber[]>()
+export class PhoneListFormComponent extends GenericListFormComponent<EhrPhoneNumber> {
 
-  addPhoneNumber() {
-    if (!this.phoneNumberList) {
-      this.phoneNumberList = []
-    }
-    this.phoneNumberList.push({})
-    this.phoneNumberListChange.emit(this.phoneNumberList)
-  }
+  override readonly EMPTY_VALUE: string = '{"type":""}';
 
-  readonly PHONE_NUMBER_FORMS: GenericForm<EhrPhoneNumber>[] = [
+  override readonly FORMS: GenericForm<EhrPhoneNumber>[] = [
     { type: FormType.text, title: 'Phone number', attribute: 'number' },
     {
       type: FormType.code, title: 'Phone label', attribute: 'type', options: [

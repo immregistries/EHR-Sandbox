@@ -143,6 +143,17 @@ export class ClinicianSelectComponent {
 
   }
 
+  @Input() overrideNoFieldsRequired: boolean = false
+  isRequired(): 'true' | 'false' {
+    if (this.overrideNoFieldsRequired) {
+      return 'false'
+    } else if (this.form.required) {
+      return 'true'
+    } else {
+      return 'false'
+    }
+  }
+
 
 
 

@@ -5,7 +5,7 @@
            [matBadgeHidden]="warning == false" matBadgeColor="accent" (ngModelChange)="filterChange($event)"
            name="{{form.attribute}}"
            [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'"
-           [required]="form.required ? 'true' : 'false'">
+           [required]="isRequired()">
     <button matSuffix mat-icon-button *ngIf="model" (click)="clear()" matBadge="priority_high"
             [matBadgeHidden]="warning == false" matBadgeColor="warn"
             [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'">

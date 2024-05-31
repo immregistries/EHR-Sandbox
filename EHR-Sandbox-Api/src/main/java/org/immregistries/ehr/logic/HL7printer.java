@@ -10,6 +10,7 @@ import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -266,11 +267,17 @@ public class HL7printer {
             // PID-10
             sb.append("|");
             {
-                String race = patient.getRace();
+                String race = "";
+                if (!patient.getRaces().isEmpty()) {
+                    race = patient.getRaces().stream().findFirst().get().getValue(); // TODO
+                }
                 // PID-11
-                sb.append("|" + patient.getAddressLine1() + "^" + patient.getAddressLine2()
-                        + "^" + patient.getAddressCity() + "^" + patient.getAddressState() + "^"
-                        + patient.getAddressZip() + "^" + patient.getAddressCountry() + "^" + "P");
+                //TODO support multiple address
+                EhrAddress ehrAddress = patient.getAddresses().stream().findFirst().orElse(new EhrAddress());
+                sb.append("|" + ehrAddress.getAddressLine1() + "^" + ehrAddress.getAddressLine2()
+                        + "^" + ehrAddress.getAddressCity() + "^" + ehrAddress.getAddressState() + "^"
+                        + ehrAddress.getAddressZip() + "^" + ehrAddress.getAddressCountry() + "^" + "P");
+
                 // PID-12
                 sb.append("|");
                 // PID-13

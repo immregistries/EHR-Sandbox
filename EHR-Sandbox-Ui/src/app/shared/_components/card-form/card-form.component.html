@@ -6,7 +6,7 @@
                     [matTooltip]="compareTo? 'Previously : ' + compareTo : ''">
       <mat-label>{{form.title}}</mat-label>
       <input matInput name="{{form.attribute}}" type="{{form.type}}" [(ngModel)]="model" [disabled]="false"
-             [required]="form.required ? 'true' : 'false'">
+             [required]="isRequired()">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
     </mat-form-field>
     <!-- Errors in lot number validation-->
@@ -24,8 +24,7 @@
                   [matTooltip]="compareTo? 'Previously : ' + (compareTo | date: 'MM/dd/yyyy') : ''">
     <mat-label>{{form.title}}</mat-label>
     <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="model"
-           (ngModelChange)="model = $event" [disabled]="form.disabled ? true : false"
-           [required]="form.required ? 'true' : 'false'">
+           (ngModelChange)="model = $event" [disabled]="form.disabled ? true : false" [required]="isRequired()">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
@@ -34,14 +33,14 @@
   <div *ngSwitchCase="'short'">
     <mat-label class="short-label">{{form.title}}</mat-label>
     <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="model" [matTooltipDisabled]="!compareTo"
-           [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="form.required ? 'true' : 'false'">
+           [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
   </div>
 
   <div *ngSwitchCase="'yesNo'">
     <mat-label class="short-label">{{form.title}}</mat-label>
     <select [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
-            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="form.required ? 'true' : 'false'">
+            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option value="Y">Y</option>
       <option value="N">N</option>
@@ -53,7 +52,7 @@
   <div *ngSwitchCase="'boolean'">
     <mat-label class="short-label">{{form.title}}</mat-label>
     <select [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
-            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="form.required ? 'true' : 'false'">
+            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option value="true">True</option>
       <option value="false">False</option>
@@ -65,7 +64,7 @@
     <mat-label class="short-label">{{form.title}}</mat-label>
     <select *ngIf="form.options; else short" [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style"
             [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
-            [required]="form.required ? 'true' : 'false'">
+            [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
     </select>
@@ -76,14 +75,24 @@
   </div>
 
   <div *ngSwitchCase="'phoneNumbers'">
-    <app-phone-list-form [phoneNumberList]="model ?? []" (phoneNumberListChange)="model = $event"></app-phone-list-form>
+    <app-phone-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"></app-phone-list-form>
+  </div>
+  <div *ngSwitchCase="'races'">
+    <app-race-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"></app-race-list-form>
   </div>
   <div *ngSwitchCase="'identifiers'">
-    <app-identifier-list-form [identifierList]="model ?? []"
-                              (identifierListChange)="model = $event"></app-identifier-list-form>
+    <app-identifier-list-form [form]="form" [itemList]="model ?? []"
+                              (itemListChange)="model = $event"></app-identifier-list-form>
+  </div>
+  <div *ngSwitchCase="'nextOfKins'">
+    <app-next-of-kin-list-form [form]="form" [itemList]="model ?? []"
+                               (itemListChange)="model = $event"></app-next-of-kin-list-form>
+  </div>
+  <div *ngSwitchCase="'addresses'">
+    <app-address-list-form [form]="form" [itemList]="model ?? []"
+                           (itemListChange)="model = $event"></app-address-list-form>
   </div>
 
   <div *ngSwitchDefault></div>
 
 </ng-container>
-

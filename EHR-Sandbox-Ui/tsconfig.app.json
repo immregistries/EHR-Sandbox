@@ -4,6 +4,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": []
+    // "keyofStringsOnly": true
   },
   "files": [
     "src/main.ts",
