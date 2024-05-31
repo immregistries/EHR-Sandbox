@@ -82,17 +82,10 @@ export interface NextOfKin {
   motherMaiden?: string;
   sex?: string;
   race?: string;
-  addressLine1?: string;
-  addressLine2?: string;
-  addressCity?: string;
-  addressState?: string;
-  addressZip?: string;
-  addressCountry?: string;
-  addressCountyParish?: string;
+  addresses?: EhrAddress[];
   phones?: EhrPhoneNumber[];
   email?: string;
   ethnicity?: string;
-  relationship?: string; // TODO CHange relationship ?
 }
 
 export interface EhrPatient extends ObjectWithID {
@@ -129,7 +122,8 @@ export interface EhrPatient extends ObjectWithID {
   guardianMiddle?: string;
   guardianSuffix?: string;
   guardianRelationship?: string;
-  nextOfKins?: NextOfKin[];
+  // nextOfKins?: NextOfKin[];
+  nextOfKinRelationships?: NextOfKinRelationship[];
   facility?: Facility | number;
   feedbacks?: (Feedback)[];
   groupNames?: String[];
@@ -226,6 +220,11 @@ export interface EhrAddress extends Serializable {
   addressZip?: string;
   addressCountry?: string;
   addressCountyParish?: string;
+}
+
+export interface NextOfKinRelationship {
+  nextOfKin?: NextOfKin;
+  relationshipKind?: string;
 }
 
 export interface Serializable {

@@ -9,10 +9,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
@@ -105,23 +102,14 @@ public class EhrPatient extends EhrEntity {
     @OneToMany(mappedBy = "patient")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
-    @OneToMany(mappedBy = "patient")
-    @JsonManagedReference("patient-nextOfKin")
+    //    @OneToMany(mappedBy = "patient")
+//    @JsonManagedReference("patient-nextOfKin")
+//    @NotAudited
+//    private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE})
+    @JsonManagedReference("patient_next_of_kin_relationship")
     @NotAudited
-    private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
-
-    public Set<NextOfKinRelationship> getNextOfKinRelationShips() {
-        return nextOfKinRelationShips;
-    }
-
-    public void setNextOfKinRelationShips(Set<NextOfKinRelationship> nextOfKinRelationShips) {
-        this.nextOfKinRelationShips = nextOfKinRelationShips;
-    }
-
-    @OneToMany(mappedBy = "ehrPatient", cascade = CascadeType.MERGE)
-//    @JsonManagedReference("patient-nextOfKin-relationship")
-    @NotAudited
-    private Set<NextOfKinRelationship> nextOfKinRelationShips = new LinkedHashSet<>();
+    private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
 
     @OneToMany(mappedBy = "patient")
     @NotAudited
@@ -163,14 +151,6 @@ public class EhrPatient extends EhrEntity {
 
     public void setFeedbacks(Set<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
-    }
-
-    public Set<NextOfKin> getNextOfKins() {
-        return nextOfKins;
-    }
-
-    public void setNextOfKins(Set<NextOfKin> nextOfKins) {
-        this.nextOfKins = nextOfKins;
     }
 
     public Set<VaccinationEvent> getVaccinationEvents() {
@@ -460,13 +440,6 @@ public class EhrPatient extends EhrEntity {
         this.races.add(race);
     }
 
-    public void addAddress(EhrAddress address) {
-        if (this.addresses == null) {
-            this.addresses = new LinkedHashSet<>(3);
-        }
-        this.addresses.add(address);
-    }
-
     public Set<EhrAddress> getAddresses() {
         return addresses;
     }
@@ -474,4 +447,27 @@ public class EhrPatient extends EhrEntity {
     public void setAddresses(Set<EhrAddress> addresses) {
         this.addresses = addresses;
     }
+
+    public void addAddress(EhrAddress address) {
+        if (this.addresses == null) {
+            this.addresses = new LinkedHashSet<>(3);
+        }
+        this.addresses.add(address);
+    }
+
+    public List<NextOfKinRelationship> getNextOfKinRelationships() {
+        return nextOfKinRelationships;
+    }
+
+    public void setNextOfKinRelationships(List<NextOfKinRelationship> nextOfKinRelationships) {
+        this.nextOfKinRelationships = nextOfKinRelationships;
+    }
+
+    public void addNexOfKinRelationship(NextOfKinRelationship nextOfKinRelationship) {
+        if (this.nextOfKinRelationships == null) {
+            this.nextOfKinRelationships = new ArrayList<>(3);
+        }
+        this.nextOfKinRelationships.add(nextOfKinRelationship);
+    }
+
 }

@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { NextOfKinRelationship } from 'src/app/core/_model/rest';
 import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/structure';
+import { NextOfKinRelationshipListFormComponent } from './next-of-kin-relationship-list-form/next-of-kin-relationship-list-form.component';
+import { error } from 'console';
 
 @Component({
   selector: 'app-generic-list-form',
@@ -37,7 +40,5 @@ export class GenericListFormComponent<T> {
   FORMS!: GenericForm<T>[];
   /** example of an empty object used to prevent adding new item when last is still empty */
   EMPTY_VALUE: string = '{}';
-
-
 
 }

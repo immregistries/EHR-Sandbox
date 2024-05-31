@@ -5,7 +5,8 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
@@ -177,8 +178,12 @@ public class EhrPatientController {
                 .buildAndExpand(newEntity.getId())
                 .toUri();
         if (populate.isPresent() && populate.get()) {
-            populatePatient(tenant,facility,newEntity, Optional.empty());
+            populatePatient(tenant, facility, newEntity, Optional.empty());
         }
+        logger.info("{}", patient.getNextOfKinRelationships().size());
+        logger.info("{}", patient.getNextOfKinRelationships().stream().findFirst().get().getNextOfKin().getNameFirst());
+        logger.info("{}", newEntity.getNextOfKinRelationships().size());
+        logger.info("{}", newEntity.getNextOfKinRelationships().stream().findFirst().get().getNextOfKin().getNameFirst());
         return ResponseEntity.created(location).body(newEntity.getId());
     }
 

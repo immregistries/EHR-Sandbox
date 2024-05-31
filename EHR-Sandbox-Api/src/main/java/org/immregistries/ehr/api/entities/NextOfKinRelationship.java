@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
 
 import javax.persistence.*;
@@ -14,9 +15,10 @@ public class NextOfKinRelationship implements Serializable {
     NextOfKinRelationshipPK nextOfKinRelationshipPK;
 
     //    @Id
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @MapsId("patientId")
     @JoinColumn(name = "patient_id")
+    @JsonBackReference("patient_next_of_kin_relationship")
     private EhrPatient ehrPatient;
 
     //    @Id

@@ -61,7 +61,8 @@ enum FormType {
   clinician = 'clinician',
   phoneNumbers = 'phoneNumbers',
   identifiers = 'identifiers',
-  nextOfKins = 'nextOfKins',
+  nextOfKin = 'nextOfKin',
+  nextOfKinRelationships = 'nextOfKinRelationships',
   races = 'races',
   addresses = 'addresses',
 }

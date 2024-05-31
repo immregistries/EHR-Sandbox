@@ -74,6 +74,10 @@
     </ng-template>
   </div>
 
+  <div *ngSwitchCase="'nextOfKin'">
+    <app-next-of-kin-form [form]="form" [model]="model ?? {}" (modelChange)="model = $event"></app-next-of-kin-form>
+  </div>
+
   <div *ngSwitchCase="'phoneNumbers'">
     <app-phone-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"></app-phone-list-form>
   </div>
@@ -84,9 +88,9 @@
     <app-identifier-list-form [form]="form" [itemList]="model ?? []"
                               (itemListChange)="model = $event"></app-identifier-list-form>
   </div>
-  <div *ngSwitchCase="'nextOfKins'">
-    <app-next-of-kin-list-form [form]="form" [itemList]="model ?? []"
-                               (itemListChange)="model = $event"></app-next-of-kin-list-form>
+  <div *ngSwitchCase="'nextOfKinRelationships'">
+    <app-next-of-kin-relationship-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event">
+    </app-next-of-kin-relationship-list-form>
   </div>
   <div *ngSwitchCase="'addresses'">
     <app-address-list-form [form]="form" [itemList]="model ?? []"

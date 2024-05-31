@@ -97,7 +97,7 @@ export class PatientFormComponent {
       title: 'Medical Record Number', cols: 1, rows: 1, patientForms: [
         { type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn' },
         { type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem' },
-        { type: FormType.identifiers, title: 'Identifiers', attribute: 'identifiers' },
+        { type: FormType.identifiers, title: 'Identifier', attribute: 'identifiers' },
       ]
     },
     {
@@ -167,7 +167,7 @@ export class PatientFormComponent {
     },
     {
       title: 'Next of Kin', cols: 3, rows: 1, patientForms: [
-        { type: FormType.nextOfKins, title: '', attribute: 'nextOfKins' },
+        { type: FormType.nextOfKinRelationships, title: 'Next of kin', attribute: 'nextOfKinRelationships' },
       ]
     },
   ]

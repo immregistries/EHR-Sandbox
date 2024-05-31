@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.NotAudited;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
@@ -29,9 +30,10 @@ public class NextOfKin {
     @OneToMany(mappedBy = "nextOfKin")
 //    @JsonManagedReference("patient-nextOfKin-relationship")
     @NotAudited
+    @JsonIgnore()
     private Set<NextOfKinRelationship> nextOfKinRelationShips = new LinkedHashSet<>();
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date") // TODO nullable ?
     private LocalDate birthDate;
 
     @Column(name = "name_last", length = 250)

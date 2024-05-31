@@ -7,9 +7,7 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.EhrApiApplication;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,21 +197,25 @@ public class HL7printer {
 
     public String printQueryNK1(EhrPatient patient, StringBuilder sb, CodeMap codeMap) {
         if (patient != null) {
-            if (!patient.getGuardianRelationship().equals("")
-                    && !(patient.getGuardianLast() == null ? "" : patient.getGuardianLast()).equals("")
-                    && !(patient.getGuardianFirst() == null ? "" : patient.getGuardianFirst()).equals("")) {
-                Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
-                        (patient.getGuardianRelationship() == null ? "" : patient.getGuardianRelationship()));
-                if (code != null) {
-                    sb.append("NK1");
-                    sb.append("|1");
-                    sb.append("|" + (patient.getGuardianLast() == null ? ""
-                            : patient.getGuardianLast()) + "^" + (patient.getGuardianFirst() == null
-                            ? ""
-                            : patient.getGuardianFirst()) + "^^^^^L");
-                    sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
-                    sb.append("\r");
+            if (!patient.getNextOfKinRelationships().isEmpty()) {
+                NextOfKinRelationship nextOfKinRelationship = patient.getNextOfKinRelationships().stream().findFirst().get();
+                NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
+                if (nextOfKin != null) {
+                    Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
+                            (nextOfKinRelationship.getRelationshipKind() == null ? "" : nextOfKinRelationship.getRelationshipKind()));
+                    if (code != null) {
+                        sb.append("NK1");
+                        sb.append("|1");
+                        sb.append("|" + (nextOfKin.getNameLast() == null ? ""
+                                : nextOfKin.getNameLast()) + "^" + (nextOfKin.getNameFirst() == null
+                                ? ""
+                                : nextOfKin.getNameFirst()) + "^^^^^L");
+                        sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
+                        sb.append("\r");
+                    }
                 }
+
+                //TODO multiple $ more information
             }
         }
         return sb.toString();

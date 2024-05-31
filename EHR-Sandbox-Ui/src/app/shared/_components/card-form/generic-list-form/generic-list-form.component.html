@@ -1,9 +1,9 @@
 <div class="generic-list-form-content" *ngFor="let item of itemList; let i = index">
-  {{i + 1 + ' :'}}
-  <div *ngFor="let formItem of FORMS">
+  {{form.title + (i + 1) + ':'}}
+  <span *ngFor="let formItem of FORMS">
     <app-card-form class="card-form high-density" [form]="formItem" [model]="item[formItem.attribute]"
                    (modelChange)="item[formItem.attribute] = $event; itemListChange.emit(itemList)"></app-card-form>
-  </div>
+  </span>
 </div>
 <button mat-stroked-button type="button" (click)="addItem()" color="primary">
   <mat-icon>add</mat-icon>

@@ -173,14 +173,15 @@ public class RandomGenerator {
         }
 
 
-        patient.setGuardianFirst(faker.name().firstName());
-        patient.setGuardianLast(faker.name().lastName());
-        patient.setGuardianMiddle(faker.name().firstName());
-        patient.setMotherMaiden(faker.name().lastName());
+//        patient.setGuardianFirst(faker.name().firstName());
+//        patient.setGuardianLast(faker.name().lastName());
+//        patient.setGuardianMiddle(faker.name().firstName());
+//        patient.setMotherMaiden(faker.name().lastName());
 
         Collection<Code> codeListGuardian = codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
         NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship(patient, randomNextOfKin());
         nextOfKinRelationship.setRelationshipKind("MTH");
+        patient.addNexOfKinRelationship(nextOfKinRelationship);
 //        int count = 0;
 
 //        for(Code code : codeListGuardian) {

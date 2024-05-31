@@ -112,10 +112,11 @@ import { VxuStepsComponent } from './_components/vxu-steps/vxu-steps.component';
 import { FirstStepsComponent } from './_components/first-steps/first-steps.component';
 import { MatTreeModule } from '@angular/material/tree';
 import { PhoneListFormComponent } from './_components/card-form/generic-list-form/phone-list-form/phone-list-form.component';
-import { NextOfKinListFormComponent } from './_components/card-form/generic-list-form/next-of-kin-list-form/next-of-kin-list-form.component';
 import { GenericListFormComponent } from './_components/card-form/generic-list-form/generic-list-form.component';
 import { RaceListFormComponent } from './_components/card-form/generic-list-form/race-list-form/race-list-form.component';
 import { AddressListFormComponent } from './_components/card-form/generic-list-form/address-list-form/address-list-form.component';
+import { NextOfKinRelationshipListFormComponent } from './_components/card-form/generic-list-form/next-of-kin-relationship-list-form/next-of-kin-relationship-list-form.component';
+import { NextOfKinFormComponent } from './_components/card-form/next-of-kin-form/next-of-kin-form.component';
 
 @NgModule({
   declarations: [
@@ -205,10 +206,11 @@ import { AddressListFormComponent } from './_components/card-form/generic-list-f
     VxuStepsComponent,
     FirstStepsComponent,
     PhoneListFormComponent,
-    NextOfKinListFormComponent,
     GenericListFormComponent,
     RaceListFormComponent,
     AddressListFormComponent,
+    NextOfKinRelationshipListFormComponent,
+    NextOfKinFormComponent,
   ],
   imports: [
     CommonModule,
