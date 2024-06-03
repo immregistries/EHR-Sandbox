@@ -112,7 +112,7 @@ public class RandomGenerator {
 
         }
 
-        patient.addPhoneNumbers(new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6)));
+        patient.addPhoneNumber(new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6)));
         patient.setEmail(patient.getNameFirst() + randDay + "@email.com");
 
         patient.setBirthFlag("");

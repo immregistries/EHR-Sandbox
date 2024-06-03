@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -196,6 +197,7 @@ public class HL7printer {
     }
 
     public String printQueryNK1(EhrPatient patient, StringBuilder sb, CodeMap codeMap) {
+        // https://hl7-definition.caristix.com/v2/HL7v2.5/Segments/NK1
         if (patient != null) {
             if (!patient.getNextOfKinRelationships().isEmpty()) {
                 NextOfKinRelationship nextOfKinRelationship = patient.getNextOfKinRelationships().stream().findFirst().get();
@@ -206,12 +208,21 @@ public class HL7printer {
                     if (code != null) {
                         sb.append("NK1");
                         sb.append("|1");
-                        sb.append("|" + (nextOfKin.getNameLast() == null ? ""
-                                : nextOfKin.getNameLast()) + "^" + (nextOfKin.getNameFirst() == null
-                                ? ""
-                                : nextOfKin.getNameFirst()) + "^^^^^L");
+                        sb.append("|" + (nextOfKin.getNameLast() == null ? "" : nextOfKin.getNameLast()) + "^" +
+                                (nextOfKin.getNameFirst() == null ? "" : nextOfKin.getNameFirst()) + "^" +
+                                (nextOfKin.getNameMiddle() == null ? "" : nextOfKin.getNameMiddle()) + "^" +
+                                (nextOfKin.getNameSuffix() == null ? "" : nextOfKin.getNameSuffix()) + "^" +
+                                "^^L");
                         sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
+
+                        Optional<EhrAddress> ehrAddress = nextOfKin.getAddresses().stream().findFirst();
+                        if (ehrAddress.isPresent()) {
+                            printXAD(ehrAddress.get(), sb);
+                        }
+                        sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
+
                         sb.append("\r");
+                        // TODO suffix, address, phone etc
                     }
                 }
 
@@ -276,17 +287,17 @@ public class HL7printer {
                 // PID-11
                 //TODO support multiple address
                 EhrAddress ehrAddress = patient.getAddresses().stream().findFirst().orElse(new EhrAddress());
-                sb.append("|" + ehrAddress.getAddressLine1() + "^" + ehrAddress.getAddressLine2()
-                        + "^" + ehrAddress.getAddressCity() + "^" + ehrAddress.getAddressState() + "^"
-                        + ehrAddress.getAddressZip() + "^" + ehrAddress.getAddressCountry() + "^" + "P");
+                printXAD(ehrAddress, sb);
+
 
                 // PID-12
                 sb.append("|");
                 // PID-13
                 sb.append("|");
                 String phone = patient.getPhones().stream().findFirst().orElse(new EhrPhoneNumber("")).getNumber();
-                if (phone.length() == 10) { //TODO improve support
-                    sb.append("^PRN^PH^^^" + phone.substring(0, 3) + "^" + phone.substring(3, 10));
+                Optional<EhrPhoneNumber> ehrPhoneNumber = patient.getPhones().stream().findFirst();
+                if (ehrPhoneNumber.isPresent()) {
+                    printXTN(ehrPhoneNumber.get(), sb);
                 }
                 // PID-14
                 sb.append("|");
@@ -700,6 +711,21 @@ public class HL7printer {
         sb.append("|");
         // PD1-21
         sb.append("|");
+    }
+
+    // Extended Address
+    private void printXAD(EhrAddress ehrAddress, StringBuilder sb) {
+        sb.append("|" + ehrAddress.getAddressLine1() + "^" + ehrAddress.getAddressLine2()
+                + "^" + ehrAddress.getAddressCity() + "^" + ehrAddress.getAddressState() + "^"
+                + ehrAddress.getAddressZip() + "^" + ehrAddress.getAddressCountry() + "^" + "P");
+    }
+
+    // Extended Telephone number
+    private void printXTN(EhrPhoneNumber ehrPhoneNumber, StringBuilder sb) {
+        //TODO improve support
+        if (ehrPhoneNumber.getNumber().length() == 10) {
+            sb.append("^PRN^PH^^^" + ehrPhoneNumber.getNumber().substring(0, 3) + "^" + ehrPhoneNumber.getNumber().substring(3, 10));
+        }
     }
 
 

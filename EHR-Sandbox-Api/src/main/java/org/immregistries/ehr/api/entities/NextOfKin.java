@@ -8,6 +8,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -77,6 +78,13 @@ public class NextOfKin {
 
     public void setPhoneNumbers(Set<EhrPhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
+    }
+
+    public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
+        if (this.phoneNumbers == null) {
+            this.phoneNumbers = new HashSet<>(2);
+        }
+        this.phoneNumbers.add(phoneNumber);
     }
 
     public String getEthnicity() {

@@ -88,17 +88,6 @@ public class EhrPatient extends EhrEntity {
     @Column(name = "registry_status_indicator_date")
     private Date registryStatusIndicatorDate;
 
-    @Column(name = "guardian_last", length = 250)
-    private String guardianLast = "";
-    @Column(name = "guardian_first", length = 250)
-    private String guardianFirst = "";
-    @Column(name = "guardian_middle", length = 250)
-    private String guardianMiddle = "";
-    @Column(name = "guardian_suffix", length = 250)
-    private String guardianSuffix = "";
-
-    @Column(name = "guardian_relationship", length = 250)
-    private String guardianRelationship = "";
     @OneToMany(mappedBy = "patient")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
@@ -159,38 +148,6 @@ public class EhrPatient extends EhrEntity {
 
     public void setVaccinationEvents(Set<VaccinationEvent> vaccinationEvents) {
         this.vaccinationEvents = vaccinationEvents;
-    }
-
-    public String getGuardianRelationship() {
-        return guardianRelationship;
-    }
-
-    public void setGuardianRelationship(String guardianRelationship) {
-        this.guardianRelationship = guardianRelationship;
-    }
-
-    public String getGuardianMiddle() {
-        return guardianMiddle;
-    }
-
-    public void setGuardianMiddle(String guardianMiddle) {
-        this.guardianMiddle = guardianMiddle;
-    }
-
-    public String getGuardianFirst() {
-        return guardianFirst;
-    }
-
-    public void setGuardianFirst(String guardianFirst) {
-        this.guardianFirst = guardianFirst;
-    }
-
-    public String getGuardianLast() {
-        return guardianLast;
-    }
-
-    public void setGuardianLast(String guardianLast) {
-        this.guardianLast = guardianLast;
     }
 
     public Date getRegistryStatusIndicatorDate() {
@@ -402,14 +359,6 @@ public class EhrPatient extends EhrEntity {
         this.nameSuffix = nameSuffix;
     }
 
-    public String getGuardianSuffix() {
-        return guardianSuffix;
-    }
-
-    public void setGuardianSuffix(String guardianSuffix) {
-        this.guardianSuffix = guardianSuffix;
-    }
-
     public Set<EhrPhoneNumber> getPhones() {
         return phones;
     }
@@ -418,7 +367,7 @@ public class EhrPatient extends EhrEntity {
         this.phones = phones;
     }
 
-    public void addPhoneNumbers(EhrPhoneNumber phoneNumber) {
+    public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
         if (phones == null) {
             this.phones = new HashSet<>(1);
         }

@@ -4,9 +4,11 @@ package org.immregistries.ehr.api.controllers;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.smm.tester.connectors.Connector;
+import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +21,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import org.immregistries.smm.tester.connectors.Connector;
-import org.immregistries.smm.tester.connectors.SoapConnector;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations","/tenants/{tenantId}/facilities/{facilityId}/vaccinations"})
+@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations", "/tenants/{tenantId}/facilities/{facilityId}/vaccinations"})
 public class VaccinationController {
     @Autowired
     HL7printer hl7printer;
@@ -58,7 +57,7 @@ public class VaccinationController {
 
     @GetMapping()
     public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() String facilityId, @PathVariable() Optional<String> patientId) {
-        if(patientId.isPresent()) {
+        if (patientId.isPresent()) {
             return vaccinationEventRepository.findByPatientId(patientId.get());
         } else {
             return vaccinationEventRepository.findByAdministeringFacilityId(facilityId);
@@ -67,12 +66,12 @@ public class VaccinationController {
 
     @GetMapping("/{vaccinationId}")
     public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() String vaccinationId) {
-        return  vaccinationEventRepository.findById(vaccinationId);
+        return vaccinationEventRepository.findById(vaccinationId);
     }
 
     @GetMapping("/$random")
-    public VaccinationEvent random( @RequestAttribute Tenant tenant,
-                                    @RequestAttribute Optional<EhrPatient> patient) {
+    public VaccinationEvent random(@RequestAttribute Tenant tenant,
+                                   @RequestAttribute Optional<EhrPatient> patient) {
         patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return randomGenerator.randomVaccinationEvent(patient.get(), tenant, patient.get().getFacility());
     }
@@ -81,7 +80,7 @@ public class VaccinationController {
     public ResponseEntity<String> postVaccinationEvents(@RequestAttribute() Tenant tenant,
                                                         @RequestAttribute Optional<EhrPatient> patient,
                                                         @RequestBody VaccinationEvent vaccination) {
-        VaccinationEvent newEntity = createVaccinationEvent(tenant,patient,vaccination);
+        VaccinationEvent newEntity = createVaccinationEvent(tenant, patient, vaccination);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newEntity.getId())
@@ -94,13 +93,13 @@ public class VaccinationController {
                                                     VaccinationEvent vaccination) {
         patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
         if (vaccination.getAdministeringClinician().getId() == null) {
-            vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
+            vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant, vaccination.getAdministeringClinician()));
         }
         if (vaccination.getEnteringClinician().getId() == null) {
-            vaccination.setEnteringClinician(clinicianController.postClinicians(tenant,vaccination.getEnteringClinician()));
+            vaccination.setEnteringClinician(clinicianController.postClinicians(tenant, vaccination.getEnteringClinician()));
         }
         if (vaccination.getOrderingClinician().getId() == null) {
-            vaccination.setOrderingClinician(clinicianController.postClinicians(tenant,vaccination.getOrderingClinician()));
+            vaccination.setOrderingClinician(clinicianController.postClinicians(tenant, vaccination.getOrderingClinician()));
         }
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
         vaccination.setPatient(patient.get());
@@ -117,19 +116,19 @@ public class VaccinationController {
         Optional<VaccinationEvent> old = vaccinationEventRepository.findByPatientIdAndId(patient.get().getId(), vaccination.getId());
         VaccinationEvent oldVaccination;
         if (old.isEmpty()) {
-            return createVaccinationEvent(tenant, patient,vaccination);
+            return createVaccinationEvent(tenant, patient, vaccination);
         } else {
             oldVaccination = old.get();
             vaccination.getVaccine().setCreatedDate(oldVaccination.getVaccine().getCreatedDate());
 
             if (vaccination.getAdministeringClinician().getId() == null) {
-                vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant,vaccination.getAdministeringClinician()));
+                vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant, vaccination.getAdministeringClinician()));
             }
             if (vaccination.getEnteringClinician().getId() == null) {
-                vaccination.setEnteringClinician(clinicianController.postClinicians(tenant,vaccination.getEnteringClinician()));
+                vaccination.setEnteringClinician(clinicianController.postClinicians(tenant, vaccination.getEnteringClinician()));
             }
             if (vaccination.getOrderingClinician().getId() == null) {
-                vaccination.setOrderingClinician(clinicianController.postClinicians(tenant,vaccination.getOrderingClinician()));
+                vaccination.setOrderingClinician(clinicianController.postClinicians(tenant, vaccination.getOrderingClinician()));
             }
             vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
             vaccination.setPatient(patient.get());
@@ -151,12 +150,12 @@ public class VaccinationController {
     }
 
     @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String>  vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
+    public ResponseEntity<String> vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
-            if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())){
+            if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
                 connector.setUserid(immunizationRegistry.getIisUsername());
                 connector.setPassword(immunizationRegistry.getIisPassword());
                 connector.setFacilityid(immunizationRegistry.getIisFacilityId());

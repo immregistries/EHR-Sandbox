@@ -12,8 +12,8 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "vaccination_event")
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
-        property="id",
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
         scope = VaccinationEvent.class)
 @Audited
 public class VaccinationEvent extends EhrEntity {
@@ -30,6 +30,7 @@ public class VaccinationEvent extends EhrEntity {
 
     /**
      * DO NOT USE THIS METHOD
+     *
      * @param id
      */
     @JsonProperty("patient")
@@ -47,7 +48,7 @@ public class VaccinationEvent extends EhrEntity {
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician orderingClinician;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "administering_clinician_id")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician administeringClinician;

@@ -22,6 +22,7 @@ export class NextOfKinFormComponent {
     { type: FormType.text, title: 'Suffix', attribute: 'nameSuffix' },
     { type: FormType.date, title: 'Birth Date', attribute: 'birthDate' },
     { type: FormType.text, title: 'Email', attribute: 'email' },
+    { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX" },
     { type: FormType.phoneNumbers, title: 'Phone', attribute: 'phones' },
     { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
   ]

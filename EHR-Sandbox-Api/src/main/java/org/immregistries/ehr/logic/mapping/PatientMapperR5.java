@@ -3,12 +3,13 @@ package org.immregistries.ehr.logic.mapping;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.r5.model.Enumerations.AdministrativeGender;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.NextOfKin;
+import org.immregistries.ehr.api.entities.NextOfKinRelationship;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
@@ -94,13 +95,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         } else if (ehrPatient.getBirthFlag().equals(YES)) {
             p.setMultipleBirth(new BooleanType(true));
         }
-        if (ehrPatient.getSex().equals("M")) {
-            p.setGender(AdministrativeGender.MALE);
-        } else if (ehrPatient.getSex().equals("F")) {
-            p.setGender(AdministrativeGender.FEMALE);
-        } else {
-            p.setGender(AdministrativeGender.OTHER);
-        }
+        p.setGender(toFhirGender(ehrPatient.getSex()));
 
         /**
          * Race
@@ -163,6 +158,11 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
                 registryStatus.getValueCoding().setVersion(ehrPatient.getRegistryStatusIndicatorDate().toString());
             }
         }
+
+        for (NextOfKinRelationship nextOfKinRelationship : ehrPatient.getNextOfKinRelationships()) {
+            p.addContact(toFhirContactComponent(nextOfKinRelationship));
+        }
+
         return p;
     }
 
@@ -192,18 +192,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         if (motherMaiden != null) {
             ehrPatient.setMotherMaiden(motherMaiden.getValue().toString());
         }
-        switch (p.getGender()) {
-            case MALE:
-                ehrPatient.setSex(MALE_SEX);
-                break;
-            case FEMALE:
-                ehrPatient.setSex(FEMALE_SEX);
-                break;
-            case OTHER:
-            default:
-                ehrPatient.setSex("");
-                break;
-        }
+        ehrPatient.setSex(toEhrSex(p.getGender()));
         if (p.getExtensionByUrl(RACE) != null) {
             for (Coding coding : p.getExtensionByUrl(RACE).getValueCodeableConcept().getCoding()) {
                 ehrPatient.addRace(new EhrRace(coding.getCode()));
@@ -218,11 +207,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         for (ContactPoint telecom : p.getTelecom()) {
             if (null != telecom.getSystem()) {
                 if (telecom.getSystem().equals(ContactPointSystem.PHONE)) {
-                    EhrPhoneNumber ehrPhoneNumber = new EhrPhoneNumber(telecom.getValue());
-                    if (telecom.getUse() != null) {
-                        ehrPhoneNumber.setType(telecom.getUse().toCode());
-                    }
-                    ehrPatient.addPhoneNumbers(ehrPhoneNumber);
+                    ehrPatient.addPhoneNumber(toEhrPhoneNumber(telecom));
                 } else if (telecom.getSystem().equals(ContactPointSystem.EMAIL)) {
                     ehrPatient.setEmail(telecom.getValue());
                 }
@@ -243,21 +228,8 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         }
         // Address
         for (Address address : p.getAddress()) {
-            EhrAddress ehrAddress = new EhrAddress();
-            if (address.getLine().size() > 0) {
-                ehrAddress.setAddressLine1(address.getLine().get(0).getValueNotNull());
-            }
-            if (address.getLine().size() > 1) {
-                ehrAddress.setAddressLine2(address.getLine().get(1).getValueNotNull());
-            }
-            ehrAddress.setAddressCity(address.getCity());
-            ehrAddress.setAddressState(address.getState());
-            ehrAddress.setAddressZip(address.getPostalCode());
-            ehrAddress.setAddressCountry(address.getCountry());
-            ehrAddress.setAddressCountyParish(address.getDistrict());
-            ehrPatient.addAddress(ehrAddress);
+            ehrPatient.addAddress(toEhrAddress(address));
         }
-
 
         if (null != p.getMultipleBirth() && !p.getMultipleBirth().isEmpty()) {
             if (p.getMultipleBirth().isBooleanPrimitive()) {
@@ -307,6 +279,11 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
                 }
             }
         }
+
+        for (Patient.ContactComponent contact : p.getContact()) {
+            ehrPatient.addNexOfKinRelationship(toEhrNextOfKinRelationShip(contact));
+        }
+
         return ehrPatient;
     }
 
@@ -320,5 +297,137 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
             }
         }
         return coding;
+    }
+
+    public Patient.ContactComponent toFhirContactComponent(NextOfKinRelationship nextOfKinRelationship) {
+        Patient.ContactComponent contact = new Patient.ContactComponent();
+        contact.addRelationship().setText(nextOfKinRelationship.getRelationshipKind()); //TODO SYSTEM
+
+        NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
+        HumanName contactName = new HumanName();
+        contact.setName(contactName);
+        contactName.setFamily(nextOfKin.getNameLast());
+        contactName.addGivenElement().setValue(nextOfKin.getNameFirst());
+        contactName.addGivenElement().setValue(nextOfKin.getNameMiddle());
+        contactName.addSuffix(nextOfKin.getNameSuffix());
+        contact.setGender(toFhirGender(nextOfKin.getSex()));
+        for (EhrAddress ehrAddress : nextOfKin.getAddresses()) {
+            contact.setAddress(toFhirAddress(ehrAddress)); //TODO extension for multiple NK1 addresses
+        }
+        for (EhrPhoneNumber phoneNumber : nextOfKin.getPhoneNumbers()) {
+            contact.addTelecom(toFhirContact(phoneNumber));
+        }
+        if (StringUtils.isNotBlank(nextOfKin.getEmail())) {
+            contact.addTelecom().setSystem(ContactPoint.ContactPointSystem.EMAIL)
+                    .setValue(nextOfKin.getEmail());
+        }
+        return contact;
+    }
+
+
+    public NextOfKinRelationship toEhrNextOfKinRelationShip(Patient.ContactComponent contact) {
+        NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship();
+        nextOfKinRelationship.setRelationshipKind(contact.getRelationshipFirstRep().getText());
+
+        NextOfKin nextOfKin = new NextOfKin();
+        nextOfKinRelationship.setNextOfKin(nextOfKin);
+
+        HumanName contactName = contact.getName();
+        nextOfKin.setNameLast(contactName.getFamily());
+        nextOfKin.setNameFirst(contactName.getGiven().get(0).getValueNotNull());
+        if (contactName.getGiven().size() > 1) {
+            nextOfKin.setNameMiddle(contactName.getGiven().get(1).getValueNotNull());
+        }
+        nextOfKin.setNameSuffix(contactName.getSuffixAsSingleString());
+        nextOfKin.setSex(toEhrSex(contact.getGender()));
+        nextOfKin.addAddress(toEhrAddress(contact.getAddress()));
+        for (ContactPoint telecom : contact.getTelecom()) {
+            switch (telecom.getSystem()) {
+                case PHONE: {
+                    nextOfKin.addPhoneNumber(toEhrPhoneNumber(telecom));
+                    break;
+                }
+                case EMAIL: {
+                    nextOfKin.setEmail(telecom.getValue());
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        return nextOfKinRelationship;
+    }
+
+    public ContactPoint toFhirContact(EhrPhoneNumber phoneNumber) {
+        ContactPoint contactPoint = new ContactPoint()
+                .setValue(phoneNumber.getNumber())
+                .setSystem(ContactPoint.ContactPointSystem.PHONE);
+        try {
+            contactPoint.setUse(ContactPoint.ContactPointUse.valueOf(phoneNumber.getType()));
+        } catch (IllegalArgumentException illegalArgumentException) {
+        }
+        return contactPoint;
+    }
+
+    public EhrPhoneNumber toEhrPhoneNumber(ContactPoint phoneContact) {
+        if (phoneContact.hasSystem() && phoneContact.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)) {
+            EhrPhoneNumber ehrPhoneNumber = new EhrPhoneNumber(phoneContact.getValue());
+            if (phoneContact.hasUse()) {
+                ehrPhoneNumber.setType(phoneContact.getUse().toCode());
+            }
+            return ehrPhoneNumber;
+        } else {
+            return null;
+        }
+    }
+
+    public Address toFhirAddress(EhrAddress ehrAddress) {
+        return new Address()
+                .addLine(ehrAddress.getAddressLine1())
+                .addLine(ehrAddress.getAddressLine2())
+                .setCity(ehrAddress.getAddressCity())
+                .setCountry(ehrAddress.getAddressCountry())
+                .setState(ehrAddress.getAddressState())
+                .setPostalCode(ehrAddress.getAddressZip());
+    }
+
+    public EhrAddress toEhrAddress(Address address) {
+        EhrAddress ehrAddress = new EhrAddress();
+        if (address.getLine().size() > 0) {
+            ehrAddress.setAddressLine1(address.getLine().get(0).getValueNotNull());
+        }
+        if (address.getLine().size() > 1) {
+            ehrAddress.setAddressLine2(address.getLine().get(1).getValueNotNull());
+        }
+        ehrAddress.setAddressCity(address.getCity());
+        ehrAddress.setAddressState(address.getState());
+        ehrAddress.setAddressZip(address.getPostalCode());
+        ehrAddress.setAddressCountry(address.getCountry());
+        ehrAddress.setAddressCountyParish(address.getDistrict());
+        return ehrAddress;
+    }
+
+    private Enumerations.AdministrativeGender toFhirGender(String sex) {
+        switch (sex) {
+            case MALE_SEX:
+                return Enumerations.AdministrativeGender.MALE;
+            case FEMALE_SEX:
+                return Enumerations.AdministrativeGender.FEMALE;
+            default:
+                return Enumerations.AdministrativeGender.OTHER;
+        }
+    }
+
+    private String toEhrSex(Enumerations.AdministrativeGender gender) {
+        switch (gender) {
+            case MALE:
+                return MALE_SEX;
+            case FEMALE:
+                return FEMALE_SEX;
+            case OTHER:
+            default:
+                return "";
+        }
     }
 }

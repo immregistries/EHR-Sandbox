@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.immregistries.ehr</groupId>
     <artifactId>ehr-sandbox</artifactId>
-    <version>1.2.3-SNAPSHOT-2</version>
+    <version>1.2.3-SNAPSHOT-3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -89,7 +89,7 @@
       <properties>
         <run.arguments></run.arguments>
       </properties>
-<!--      Nothing happens-->
+      <!--      Nothing happens-->
     </profile>
   </profiles>
 

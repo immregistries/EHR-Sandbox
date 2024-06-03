@@ -109,7 +109,7 @@ export class PatientFormComponent {
     },
     {
       title: 'Identity', cols: 1, rows: 1, patientForms: [
-        { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX", options: [{ value: 'M' }, { value: 'F' }] },
+        { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX" },
         { type: FormType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
         { type: FormType.races, title: 'Race', attribute: 'races' },
       ]
