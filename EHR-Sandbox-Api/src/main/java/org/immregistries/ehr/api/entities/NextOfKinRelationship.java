@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class NextOfKinRelationship implements Serializable {
 
     @EmbeddedId
-    NextOfKinRelationshipPK nextOfKinRelationshipPK;
+    NextOfKinRelationshipPK nextOfKinRelationshipPK = new NextOfKinRelationshipPK();
 
     //    @Id
     @ManyToOne
@@ -22,7 +22,7 @@ public class NextOfKinRelationship implements Serializable {
     private EhrPatient ehrPatient;
 
     //    @Id
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.ALL, CascadeType.MERGE})
     @MapsId("nextOfKinId")
     @JoinColumn(name = "next_of_kin_id")
     private NextOfKin nextOfKin;
@@ -59,5 +59,13 @@ public class NextOfKinRelationship implements Serializable {
 
     public void setRelationshipKind(String relationshipKind) {
         this.relationshipKind = relationshipKind;
+    }
+
+    public NextOfKinRelationshipPK getNextOfKinRelationshipPK() {
+        return nextOfKinRelationshipPK;
+    }
+
+    public void setNextOfKinRelationshipPK(NextOfKinRelationshipPK nextOfKinRelationshipPK) {
+        this.nextOfKinRelationshipPK = nextOfKinRelationshipPK;
     }
 }

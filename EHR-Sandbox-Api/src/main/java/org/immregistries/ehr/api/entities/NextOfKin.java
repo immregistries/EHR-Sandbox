@@ -20,7 +20,7 @@ public class NextOfKin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "next_of_kin_id", nullable = false)
-    private Integer id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
@@ -159,11 +159,11 @@ public class NextOfKin {
         this.patient = patient;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

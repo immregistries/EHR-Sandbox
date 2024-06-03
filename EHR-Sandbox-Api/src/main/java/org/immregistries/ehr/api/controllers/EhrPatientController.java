@@ -180,10 +180,6 @@ public class EhrPatientController {
         if (populate.isPresent() && populate.get()) {
             populatePatient(tenant, facility, newEntity, Optional.empty());
         }
-        logger.info("{}", patient.getNextOfKinRelationships().size());
-        logger.info("{}", patient.getNextOfKinRelationships().stream().findFirst().get().getNextOfKin().getNameFirst());
-        logger.info("{}", newEntity.getNextOfKinRelationships().size());
-        logger.info("{}", newEntity.getNextOfKinRelationships().stream().findFirst().get().getNextOfKin().getNameFirst());
         return ResponseEntity.created(location).body(newEntity.getId());
     }
 
