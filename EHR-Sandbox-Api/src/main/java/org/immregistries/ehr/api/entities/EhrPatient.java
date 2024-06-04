@@ -87,14 +87,13 @@ public class EhrPatient extends EhrEntity {
     private String registryStatusIndicator = "";
     @Column(name = "registry_status_indicator_date")
     private Date registryStatusIndicatorDate;
+    @Column(name = "financial_status", length = 50)
+    private String financialStatus = "";
 
     @OneToMany(mappedBy = "patient")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
-    //    @OneToMany(mappedBy = "patient")
-//    @JsonManagedReference("patient-nextOfKin")
-//    @NotAudited
-//    private Set<NextOfKin> nextOfKins = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE})
     @JsonManagedReference("patient_next_of_kin_relationship")
     @NotAudited
@@ -419,4 +418,11 @@ public class EhrPatient extends EhrEntity {
         this.nextOfKinRelationships.add(nextOfKinRelationship);
     }
 
+    public String getFinancialStatus() {
+        return financialStatus;
+    }
+
+    public void setFinancialStatus(String financialStatus) {
+        this.financialStatus = financialStatus;
+    }
 }

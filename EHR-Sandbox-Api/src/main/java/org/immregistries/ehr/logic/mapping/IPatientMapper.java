@@ -19,8 +19,15 @@ public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntit
     String PROTECTION_SYSTEM = "protectionIndicator";
     String YES = "Y";
     String NO = "N";
+
+    String MALE_SEX = "M";
+    String FEMALE_SEX = "F";
+
+
     Patient toFhir(EhrPatient ehrPatient, Facility facility);
+
     Patient toFhir(EhrPatient ehrPatient);
+
     EhrPatient toEhrPatient(Patient patient);
 
 }

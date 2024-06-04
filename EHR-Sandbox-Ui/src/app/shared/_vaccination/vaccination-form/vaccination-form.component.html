@@ -26,7 +26,8 @@
                                  (modelChange)="vaccination[form.attribute] = $event" [referenceFilter]="references"
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
                                  [lotNumberValid]="lotNumberValid"
-                                 [compareTo]="compareTo? compareTo[form.attribute] : null"></app-card-form>
+                                 [compareTo]="compareTo? compareTo[form.attribute] : null"
+                                 [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>
             </mat-card>
@@ -70,10 +71,10 @@
       <!-- <mat-tab label="Free form">
         <app-vaccination-free-form [formCards]="VACCINATION_FORM_CARDS" [(vaccination)]="vaccination"></app-vaccination-free-form>
       </mat-tab> -->
-      <mat-tab label="Display">
+      <!-- <mat-tab label="Display">
         <app-vaccination-display [formCards]="VACCINATION_FORM_CARDS"
-                                 [vaccinationEvent]="vaccination"></app-vaccination-display>
-      </mat-tab>
+          [vaccinationEvent]="vaccination"></app-vaccination-display>
+      </mat-tab> -->
       <button matButton></button>
     </mat-tab-group>
   </mat-dialog-content>

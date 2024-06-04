@@ -20,10 +20,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
-import static org.immregistries.ehr.logic.mapping.PatientMapperR5.FEMALE_SEX;
-import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MALE_SEX;
 
 /**
  * Maps the Database with FHIR for patient resources
@@ -37,8 +34,6 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
     @Autowired()
     IOrganizationMapper organizationMapper;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
-
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
 
     public Patient toFhir(EhrPatient dbPatient, String identifier_system) {
         Patient fhirPatient = toFhir(dbPatient);

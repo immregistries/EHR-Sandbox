@@ -157,6 +157,11 @@ export class PatientFormComponent {
       ]
     },
     {
+      title: 'Financial Status', cols: 1, rows: 1, patientForms: [
+        { type: FormType.code, title: 'Financial status', attribute: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
+      ]
+    },
+    {
       title: 'Guardian', cols: 3, rows: 1, patientForms: [
         { type: FormType.text, title: 'First name', attribute: 'guardianFirst' },
         { type: FormType.text, title: 'Middle name', attribute: 'guardianMiddle' },

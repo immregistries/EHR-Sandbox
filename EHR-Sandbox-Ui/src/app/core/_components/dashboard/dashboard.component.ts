@@ -19,7 +19,7 @@ export class DashboardComponent {
     public patientService: PatientService,
     public vaccinationService: VaccinationService,
     public feedbackService: FeedbackService,
-    ) { }
+  ) { }
 
   rowHeight(): string {
     return (window.innerHeight / 2 - 35) + 'px'

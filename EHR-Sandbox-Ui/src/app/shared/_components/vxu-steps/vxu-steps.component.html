@@ -18,6 +18,11 @@
     </button>
   </mat-step>
   <mat-step label="Configure Remote IIS">
+    Configure Remote IIS credentials, with API Urls
+    <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+      <mat-icon>skip_next</mat-icon>
+      NEXT
+    </button>
     <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
     <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
       <mat-icon>skip_next</mat-icon>

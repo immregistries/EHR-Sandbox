@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 /**
@@ -36,12 +35,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
     @Autowired
     OrganizationMapperR5 organizationMapperR5;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
-
-    public static final String MALE_SEX = "M";
-    public static final String FEMALE_SEX = "F";
-
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
-
+    
     public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
         Patient p = toFhir(ehrPatient);
         p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhir(facility).getIdentifierFirstRep()));

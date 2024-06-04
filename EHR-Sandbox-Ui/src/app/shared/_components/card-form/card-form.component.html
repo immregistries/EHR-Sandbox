@@ -15,6 +15,7 @@
 
   <app-select-codebase *ngSwitchCase="'code'" [model]="asString(model)" (modelChange)="model = $event" [form]="form"
                        class="select-field" [referenceFilter]="referenceFilter" [compareTo]="compareTo"
+                       [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                        (referenceEmitter)="referencesChange($event)"></app-select-codebase>
 
   <app-clinician-select *ngSwitchCase="'clinician'" [form]="form" [model]="model" (modelChange)="model = $event"

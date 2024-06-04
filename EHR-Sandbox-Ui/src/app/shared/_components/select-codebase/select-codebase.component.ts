@@ -10,6 +10,9 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent implements OnInit {
+  @ViewChild('selectForm', { static: true }) selectForm!: NgForm;
+
+  /** Receives */
   @Input() referenceFilter?: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>;
   @Output() referenceEmitter = new EventEmitter<{ reference: CodeReference, value: string }>();
 
@@ -20,7 +23,6 @@ export class SelectCodebaseComponent implements OnInit {
   @Input() model!: string;
   @Output() modelChange = new EventEmitter<any>();
 
-  @ViewChild('selectForm', { static: true }) selectForm!: NgForm;
 
   @Input() toolTipDisabled: boolean = false;
   @Input() compareTo?: ComparisonResult | any | null;
@@ -128,6 +130,9 @@ export class SelectCodebaseComponent implements OnInit {
   valueChanged() {
     if (this.model && this.model != '') {
       // this.warning = !this.filterWithReference(this.codeMap[this.model])
+      /**
+       * Checking if new value should trigger a warning i.e
+       */
       if (this.filteredOptions && this.form.codeMapLabel &&
         this.filteredOptions.length < 1 && this.model && this.referenceFilter && this.referenceFilter.getValue()) {
         this.warning = true
@@ -135,7 +140,13 @@ export class SelectCodebaseComponent implements OnInit {
         this.warning = false
       }
       this.erasedOnLastChange = false
+      /**
+       * emitting the new code value
+       */
       this.modelChange.emit(this.model)
+      /**
+       * emitting the references linked to the code
+       */
       if (this.codeMap && this.codeMap[this.model]) {
         this.referenceEmitter.emit({ reference: (this.codeMap[this.model].reference ?? { linkTo: [] }), value: this.model })
       } else {

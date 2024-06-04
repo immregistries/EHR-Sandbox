@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.Identifier;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
@@ -17,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class HL7printer {
@@ -25,18 +25,6 @@ public class HL7printer {
     ResourceIdentificationService resourceIdentificationService;
     @Autowired
     CodeMapManager codeMapManager;
-
-    private static final String QBP_Z34 = "Z34";
-    private static final String QBP_Z44 = "Z44";
-    private static final String RSP_Z42_MATCH_WITH_FORECAST = "Z42";
-    private static final String RSP_Z32_MATCH = "Z32";
-    private static final String RSP_Z31_MULTIPLE_MATCH = "Z31";
-    private static final String RSP_Z33_NO_MATCH = "Z33";
-    private static final String Z23_ACKNOWLEDGEMENT = "Z23";
-    private static final String QUERY_OK = "OK";
-    private static final String QUERY_NOT_FOUND = "NF";
-    private static final String QUERY_TOO_MANY = "TM";
-    private static final String QUERY_APPLICATION_ERROR = "AE";
 
     public String buildVxu(Vaccine vaccine, EhrPatient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
@@ -173,7 +161,8 @@ public class HL7printer {
                 obxSetId++;
                 String loinc = "64994-7";
                 String loincLabel = "Vaccine funding program eligibility category";
-                String value = "V02";
+//                String value = "V02"; //VFC
+                String value = patient.getFinancialStatus();
                 String valueLabel = "VFC eligible - Medicaid/Medicaid Managed Care";
                 String valueTable = "HL70064";
                 printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
@@ -198,35 +187,30 @@ public class HL7printer {
 
     public String printQueryNK1(EhrPatient patient, StringBuilder sb, CodeMap codeMap) {
         // https://hl7-definition.caristix.com/v2/HL7v2.5/Segments/NK1
-        if (patient != null) {
-            if (!patient.getNextOfKinRelationships().isEmpty()) {
-                NextOfKinRelationship nextOfKinRelationship = patient.getNextOfKinRelationships().stream().findFirst().get();
-                NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
-                if (nextOfKin != null) {
-                    Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
-                            (nextOfKinRelationship.getRelationshipKind() == null ? "" : nextOfKinRelationship.getRelationshipKind()));
-                    if (code != null) {
-                        sb.append("NK1");
-                        sb.append("|1");
-                        sb.append("|" + (nextOfKin.getNameLast() == null ? "" : nextOfKin.getNameLast()) + "^" +
-                                (nextOfKin.getNameFirst() == null ? "" : nextOfKin.getNameFirst()) + "^" +
-                                (nextOfKin.getNameMiddle() == null ? "" : nextOfKin.getNameMiddle()) + "^" +
-                                (nextOfKin.getNameSuffix() == null ? "" : nextOfKin.getNameSuffix()) + "^" +
-                                "^^L");
-                        sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
+        int count = 0;
+        for (NextOfKinRelationship nextOfKinRelationship : patient.getNextOfKinRelationships()) {
+            NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
+            if (nextOfKin != null) {
+                count++;
+                Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
+                        StringUtils.defaultIfBlank(nextOfKinRelationship.getRelationshipKind(), ""));
+                sb.append("NK1");
+                sb.append("|" + count);
+                sb.append("|" + StringUtils.defaultIfBlank(nextOfKin.getNameLast(), "") + "^" +
+                        StringUtils.defaultIfBlank(nextOfKin.getNameFirst(), "") + "^" +
+                        StringUtils.defaultIfBlank(nextOfKin.getNameMiddle(), "") + "^" +
+                        StringUtils.defaultIfBlank(nextOfKin.getNameSuffix(), "") + "^" +
+                        "^^L");
+                sb.append("|" + (code != null ? code.getValue() + "^" + code.getLabel() + "^HL70063" : ""));
 
-                        Optional<EhrAddress> ehrAddress = nextOfKin.getAddresses().stream().findFirst();
-                        if (ehrAddress.isPresent()) {
-                            printXAD(ehrAddress.get(), sb);
-                        }
-                        sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
-
-                        sb.append("\r");
-                        // TODO suffix, address, phone etc
-                    }
+                Optional<EhrAddress> ehrAddress = nextOfKin.getAddresses().stream().findFirst();
+                if (ehrAddress.isPresent()) {
+                    printXAD(ehrAddress.get(), sb);
                 }
+                sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
 
-                //TODO multiple $ more information
+                sb.append("\r");
+                // TODO suffix, address, phone etc
             }
         }
         return sb.toString();
@@ -538,21 +522,6 @@ public class HL7printer {
             }
         }
         return "";
-    }
-
-
-    private static final Random random = new Random();
-    private static final char[] ID_CHARS =
-            {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T',
-                    'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-
-
-    public String generateId() {
-        String patientRegistryId = "";
-        for (int i = 0; i < 12; i++) {
-            patientRegistryId += ID_CHARS[random.nextInt(ID_CHARS.length)];
-        }
-        return patientRegistryId;
     }
 
     public void printORC(Facility facility, StringBuilder sb, Vaccine vaccination/*,

@@ -127,6 +127,7 @@ export interface EhrPatient extends ObjectWithID {
   facility?: Facility | number;
   feedbacks?: (Feedback)[];
   groupNames?: String[];
+  financialStatus?: string;
 }
 
 export interface Tenant {

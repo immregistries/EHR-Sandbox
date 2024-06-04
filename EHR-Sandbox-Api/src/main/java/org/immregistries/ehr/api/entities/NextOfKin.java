@@ -34,7 +34,7 @@ public class NextOfKin {
     @JsonIgnore()
     private Set<NextOfKinRelationship> nextOfKinRelationShips = new LinkedHashSet<>();
 
-    @Column(name = "birth_date") // TODO nullable ?
+    @Column(name = "birth_date")
     private LocalDate birthDate;
 
     @Column(name = "name_last", length = 250)

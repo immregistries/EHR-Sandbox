@@ -29,7 +29,7 @@ export class GenericListFormComponent<T> {
       this.itemListChange.emit(this.itemList)
     } else {
       let lastValue = JSON.stringify(this.itemList[this.itemList.length - 1])
-      console.log(lastValue);
+      // console.log(lastValue);
       if (lastValue.length > 3 && !(lastValue === this.EMPTY_VALUE)) {
         this.itemList.push(newItem)
         this.itemListChange.emit(this.itemList)
