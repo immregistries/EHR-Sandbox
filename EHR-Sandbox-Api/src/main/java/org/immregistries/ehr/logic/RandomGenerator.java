@@ -2,6 +2,7 @@ package org.immregistries.ehr.logic;
 
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -193,11 +194,25 @@ public class RandomGenerator {
 //        }
 
         patient.setProtectionIndicator("");
+        {
+            int randomNumber = (int) (Math.random() * 3);
+            if (randomNumber > 2) {
+                patient.setProtectionIndicator("Y");
+            } else if (randomNumber > 1) {
+                patient.setProtectionIndicator("N");
+            }
+        }
+        if (StringUtils.isNotBlank(patient.getProtectionIndicator())) {
+            patient.setProtectionIndicatorDate(protectionIndicatorDate);
+        }
         patient.setPublicityIndicator("");
+        if (StringUtils.isNotBlank(patient.getPublicityIndicator())) {
+            patient.setPublicityIndicatorDate(publicityIndicatorDate);
+        }
         patient.setRegistryStatusIndicator("");
-        patient.setProtectionIndicatorDate(protectionIndicatorDate);
-        patient.setPublicityIndicatorDate(publicityIndicatorDate);
-        patient.setRegistryStatusIndicatorDate(registryStatusIndicatorDate);
+        if (StringUtils.isNotBlank(patient.getRegistryStatusIndicator())) {
+            patient.setRegistryStatusIndicatorDate(registryStatusIndicatorDate);
+        }
 
         patient.setUpdatedDate(new Date());
         patient.setCreatedDate(new Date());

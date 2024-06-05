@@ -17,6 +17,9 @@
                                  [referenceFilter]="references"></app-card-form>
                 </ng-container>
               </mat-card-content>
+              <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
+                {{card.toolTips}}
+              </mat-card-footer>
             </mat-card>
           </div>
         </div>
@@ -37,6 +40,9 @@
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>
+              <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
+                {{card.toolTips}}
+              </mat-card-footer>
             </mat-card>
           </div>
         </div>

@@ -16,18 +16,18 @@ export class HomeComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public token: TokenStorageService,
-    ) {
-      this.route.queryParams.subscribe(params => {
-        this.loginError = params['loginError'];
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.loginError = params['loginError'];
     });
-     }
+  }
 
   ngOnInit(): void {
   }
 
   authenticationSuccess(status: number) {
     if (status == 201) {
-      this.router.navigate(['steps'])
+      this.router.navigate(['first-steps'])
     } else {
       this.router.navigate(['dashboard'])
 

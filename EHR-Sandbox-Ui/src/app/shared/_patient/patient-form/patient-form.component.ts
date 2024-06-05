@@ -139,19 +139,25 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Protection', cols: 1, rows: 1, patientForms: [
-        { type: FormType.short, title: 'Indicator', attribute: 'protectionIndicator' },
+      title: 'Protection', cols: 1, rows: 1,
+      toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
+      patientForms: [
+        { type: FormType.yesNo, title: 'Indicator', attribute: 'protectionIndicator' },
         { type: FormType.date, title: 'Date', attribute: 'protectionIndicatorDate' },
       ]
     },
     {
-      title: 'Registry', cols: 1, rows: 1, patientForms: [
-        { type: FormType.short, title: 'Indicator', attribute: 'registryStatusIndicator' },
+      title: 'Registry', cols: 1, rows: 1,
+      toolTips: 'Current status of the patient in relation to the sending provider organization',
+      patientForms: [
+        { type: FormType.short, title: 'Indicator', attribute: 'registryStatusIndicator', },
         { type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate' },
       ]
     },
     {
-      title: 'Publicity', cols: 1, rows: 1, patientForms: [
+      title: 'Publicity', cols: 1, rows: 1,
+      toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
+      patientForms: [
         { type: FormType.short, title: 'Indicator', attribute: 'publicityIndicator' },
         { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
       ]

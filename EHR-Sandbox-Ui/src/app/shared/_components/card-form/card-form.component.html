@@ -69,7 +69,7 @@
     <select *ngIf="form.options; else short" [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style"
             [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
             [required]="isRequired()">
-      <option [hidden]="model != undefined" value=""></option>
+      <option [hidden]="model == undefined" value=""></option>
       <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
     </select>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>

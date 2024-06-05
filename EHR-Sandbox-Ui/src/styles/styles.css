@@ -1,13 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
 
-.close-button{
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.close-button {
   position: absolute;
   float: right;
-  top:-24px;
-  right:-24px;
+  top: -24px;
+  right: -24px;
 }
 
 .form-dialog-container .mat-mdc-dialog-container {
@@ -65,7 +72,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .sticky-header {
   text-align: left;
-  position:sticky;
+  position: sticky;
   top: 0;
   z-index: 1;
   /* height: min-content; */
@@ -149,6 +156,12 @@ tr.element-row:not(.expanded-row):active {
   gap: 5px 5px;
 }
 
+.mat-mdc-card-footer.form-card-footer {
+  font-style: italic;
+  /* text-align: right; */
+  padding-left: 5px;
+}
+
 
 .tool-buttons-wrap-flex {
   display: flex;
@@ -159,11 +172,13 @@ tr.element-row:not(.expanded-row):active {
 .textarea-container {
   position: relative;
 }
+
 .textarea-container textarea {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
 }
+
 .textarea-container button {
   position: absolute;
   top: 0;
@@ -176,4 +191,3 @@ tr.element-row:not(.expanded-row):active {
   align-items: last baseline;
   justify-content: flex-end;
 }
-

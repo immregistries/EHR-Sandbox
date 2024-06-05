@@ -36,7 +36,7 @@ const routes: Routes = [
   { path: 'groups', component: GroupAllDashboardComponent },
   { path: 'facilities', component: FacilityDashboardComponent },
   { path: 'clinicians', component: ClinicianTableComponent },
-  { path: 'steps', component: StepsComponent },
+  { path: 'first-steps', component: StepsComponent },
   { path: 'group-steps', component: GroupStepsComponent },
   { path: 'vxu-steps', component: VxuStepsComponent },
 ];

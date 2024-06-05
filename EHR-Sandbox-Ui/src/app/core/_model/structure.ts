@@ -43,6 +43,7 @@ export interface FormCard {
   title: string,
   cols?: number, // dimensions of the card
   rows?: number,
+  toolTips?: string,
   patientForms?: PatientForm[],  // form fields for each specific objects
   vaccinationForms?: VaccinationForm[],
   vaccineForms?: VaccineForm[],
