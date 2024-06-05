@@ -34,7 +34,6 @@ public class NextOfKinRelationshipPK implements Serializable {
     }
 
     public void setNextOfKinId(String nextOfKinId) {
-        System.out.println("TETTETETTETETET");
         this.nextOfKinId = nextOfKinId;
     }
 }

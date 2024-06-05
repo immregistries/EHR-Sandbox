@@ -7,7 +7,7 @@ import { BaseForm, CodeReference, ComparisonResult } from 'src/app/core/_model/s
   templateUrl: './card-form.component.html',
   styleUrls: ['./card-form.component.css']
 })
-export class CardFormComponent implements OnInit {
+export class CardFormComponent {
 
   /**
    * solely for select-codebase components
@@ -19,7 +19,7 @@ export class CardFormComponent implements OnInit {
   @Input() lotNumberValid: boolean = true;
 
   @Input() form!: BaseForm
-  @Input() overrideNoFieldsRequired: boolean = false
+
 
   private _model!: any;
   @Input()
@@ -45,14 +45,13 @@ export class CardFormComponent implements OnInit {
    */
   asString(val: any): string { return val; }
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  @Input() overrideNoFieldsRequired: boolean = false
+  @Input() overrideAllFieldsRequired: boolean = false
   isRequired(): 'true' | 'false' {
     if (this.overrideNoFieldsRequired) {
       return 'false'
+    } else if (this.overrideAllFieldsRequired) {
+      return 'true'
     } else if (this.form.required) {
       return 'true'
     } else {

@@ -18,7 +18,7 @@ export class ClinicianSelectComponent {
 
   constructor(public clinicianService: ClinicianService,
     private tenantService: TenantService,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog) { }
 
   @ViewChild('selectClinicianForm', { static: true }) selectClinicianForm!: NgForm;
 
@@ -36,9 +36,9 @@ export class ClinicianSelectComponent {
     if (!clinician) {
       this._clinician = undefined
       this.filterChange('')
-    } else if (typeof clinician === "number" || typeof clinician ===  "string") {
+    } else if (typeof clinician === "number" || typeof clinician === "string") {
       if (this.firstInit) {
-        this.clinicianService.readClinician(this.tenantService.getCurrentId(),clinician).subscribe((res) => {
+        this.clinicianService.readClinician(this.tenantService.getCurrentId(), clinician).subscribe((res) => {
           this._clinician = res
         })
       } else {
@@ -67,7 +67,7 @@ export class ClinicianSelectComponent {
       this.clinicianService.readClinicians(this.tenantService.getCurrentId()).subscribe((res) => {
         this.options = res
         this.filterChange('')
-       })
+      })
     })
     this.formChangesSubscription = this.selectClinicianForm.form.valueChanges.subscribe((value) => {
       this.valueChanged()
@@ -87,7 +87,7 @@ export class ClinicianSelectComponent {
     return selected && selected.nameFirst ? selected.nameFirst + ' ' + selected.nameLast : '';
   }
 
-  filterChange(event: string){
+  filterChange(event: string) {
     let filterValue = ''
     if (typeof event == 'string') {
       if (event) {
@@ -101,7 +101,7 @@ export class ClinicianSelectComponent {
     }
   }
 
-  valueChanged(){
+  valueChanged() {
     this.modelChange.emit(this._clinician)
   }
 
@@ -133,7 +133,7 @@ export class ClinicianSelectComponent {
       height: 'fit-content',
       width: '30vw',
       panelClass: 'dialog-with-bar',
-      data: {clinician: cli}
+      data: { clinician: cli }
     });
     dialogRef.afterClosed().subscribe(result => {
       this.clinicianService.doRefresh()
@@ -144,9 +144,12 @@ export class ClinicianSelectComponent {
   }
 
   @Input() overrideNoFieldsRequired: boolean = false
+  @Input() overrideAllFieldsRequired: boolean = false
   isRequired(): 'true' | 'false' {
     if (this.overrideNoFieldsRequired) {
       return 'false'
+    } else if (this.overrideAllFieldsRequired) {
+      return 'true'
     } else if (this.form.required) {
       return 'true'
     } else {

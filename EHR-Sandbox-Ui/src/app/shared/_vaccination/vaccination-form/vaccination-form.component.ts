@@ -187,6 +187,19 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     return this.lotNumberValid
   }
 
+  allFieldsRequired(): boolean {
+    // if Not historical, all fields are required
+    /**
+     * TODO investigate behaviour with string
+     */
+    //@ts-ignore
+    if (this.vaccination.primarySource === true || this.vaccination.primarySource === 'true') {
+      return true
+    } else {
+      return false
+    }
+  }
+
   readonly VACCINATION_FORM_CARDS: FormCard[] = [
     {
       title: "Vaccine", rows: 1, cols: 1, vaccineForms: [
@@ -195,7 +208,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ], vaccinationForms: [
         // { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
         {
-          type: FormType.select, title: "Record Nature", attribute: "primarySource", options: [{ value: 'true', label: 'New Administration' }, { value: 'false', label: 'Historical' },]
+          type: FormType.select, title: "Record Nature", attribute: "primarySource", options: [{ value: true, label: 'New Administration' }, { value: false, label: 'Historical' },]
           // , tooltip: 'Wether the '
         },
       ]

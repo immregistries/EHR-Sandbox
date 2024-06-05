@@ -27,4 +27,18 @@ export class NextOfKinFormComponent {
     { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
   ]
 
+  @Input() overrideNoFieldsRequired: boolean = false
+  @Input() overrideAllFieldsRequired: boolean = false
+  isRequired(): 'true' | 'false' {
+    if (this.overrideNoFieldsRequired) {
+      return 'false'
+    } else if (this.overrideAllFieldsRequired) {
+      return 'true'
+    } else if (this.form.required) {
+      return 'true'
+    } else {
+      return 'false'
+    }
+  }
+
 }

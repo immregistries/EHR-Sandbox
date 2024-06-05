@@ -74,7 +74,7 @@ export interface BaseForm {
   attribute: string,
   codeMapLabel?: string,
   disabled?: boolean,
-  options?: { value: string, label?: string }[],
+  options?: { value: string | boolean, label?: string }[],
   required?: boolean,
 }
 export interface PatientForm extends BaseForm {

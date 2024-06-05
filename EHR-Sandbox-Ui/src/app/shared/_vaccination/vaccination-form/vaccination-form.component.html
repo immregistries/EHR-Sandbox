@@ -19,7 +19,8 @@
                                  [referenceFilter]="references"
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
                                  [lotNumberValid]="lotNumberValid"
-                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"></app-card-form>
+                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"
+                                 [overrideAllFieldsRequired]="allFieldsRequired()"></app-card-form>
                 </ng-container>
                 <ng-container *ngFor="let form of card.vaccinationForms">
                   <app-card-form class="card-form high-density" [form]="form" [model]="vaccination[form.attribute]"
@@ -27,7 +28,7 @@
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
                                  [lotNumberValid]="lotNumberValid"
                                  [compareTo]="compareTo? compareTo[form.attribute] : null"
-                                 [overrideNoFieldsRequired]="true"></app-card-form>
+                                 [overrideAllFieldsRequired]="allFieldsRequired()"></app-card-form>
                 </ng-container>
               </mat-card-content>
             </mat-card>

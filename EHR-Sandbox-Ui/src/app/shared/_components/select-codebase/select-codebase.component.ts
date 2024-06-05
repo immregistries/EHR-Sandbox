@@ -176,9 +176,12 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   @Input() overrideNoFieldsRequired: boolean = false
+  @Input() overrideAllFieldsRequired: boolean = false
   isRequired(): 'true' | 'false' {
     if (this.overrideNoFieldsRequired) {
       return 'false'
+    } else if (this.overrideAllFieldsRequired) {
+      return 'true'
     } else if (this.form.required) {
       return 'true'
     } else {

@@ -41,4 +41,7 @@ export class GenericListFormComponent<T> {
   /** example of an empty object used to prevent adding new item when last is still empty */
   EMPTY_VALUE: string = '{}';
 
+  @Input() overrideNoFieldsRequired: boolean = false
+  @Input() overrideAllFieldsRequired: boolean = false
+
 }

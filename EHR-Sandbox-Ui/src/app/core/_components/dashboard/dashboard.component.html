@@ -3,21 +3,30 @@
     <mat-grid-tile [colspan]="4">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
-          <app-patient-table (selectEmitter)="this.patientService.setCurrent($event ?? {})" [observableRefresh]="patientListRefreshObservable()" [observableSource]="patientListObservable()" [facility]="facilityService.getCurrentObservable() | async" [allow_populate]="true"></app-patient-table>
+          <app-patient-table (selectEmitter)="this.patientService.setCurrent($event ?? {})"
+                             [observableRefresh]="patientListRefreshObservable()"
+                             [observableSource]="patientListObservable()"
+                             [facility]="facilityService.getCurrentObservable() | async"
+                             [allow_populate]="true"></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="3">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #feedback>
-          <app-feedback-table [facility]="facilityService.getCurrentObservable() | async" [observableRefresh]="patientListRefreshObservable()" [observableSource]="feedbackListObservable()"></app-feedback-table>
+          <app-feedback-table [facility]="facilityService.getCurrentObservable() | async"
+                              [observableRefresh]="patientListRefreshObservable()"
+                              [observableSource]="feedbackListObservable()"></app-feedback-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="4" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #vaccinations>
-          <app-vaccination-table [patientId]="patientService.getCurrentId()" [observableSource]="vaccinationListObservable()" [observableRefresh]="vaccinationListRefreshObservable()" [allow_populate]="true"></app-vaccination-table>
+          <app-vaccination-table [patientId]="patientService.getCurrentId()"
+                                 [observableSource]="vaccinationListObservable()"
+                                 [observableRefresh]="vaccinationListRefreshObservable()"
+                                 [allow_populate]="true"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
