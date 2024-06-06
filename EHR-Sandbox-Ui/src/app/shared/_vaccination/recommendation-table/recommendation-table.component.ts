@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { CodeBaseMap } from 'src/app/core/_model/structure';
+import { CodeBaseMap } from "src/app/core/_model/code-base-map";
 import { merge, tap } from 'rxjs';
 import { RecommendationService } from 'src/app/core/_services/recommendation.service';
 import { ImmunizationRecommendation } from 'fhir/r5';

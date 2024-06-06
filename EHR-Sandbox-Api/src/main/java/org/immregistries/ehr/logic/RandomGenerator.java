@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.generated.LinkTo;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
@@ -19,11 +20,14 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
+import static java.lang.Math.random;
+import static org.immregistries.codebase.client.reference.CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE;
 import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @Service
@@ -272,69 +276,45 @@ public class RandomGenerator {
         CodeMap codeMap = codeMapManager.getCodeMap();
         Collection<Code> codeListCVX = codeMap.getCodesForTable(CodesetType.VACCINATION_CVX_CODE);
         Collection<Code> codeListMVX = codeMap.getCodesForTable(CodesetType.VACCINATION_MANUFACTURER_CODE);
-        Collection<Code> codeListNDC = codeMap.getCodesForTable(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+        Collection<Code> codeListNDC = codeMap.getCodesForTable(VACCINATION_NDC_CODE_UNIT_OF_USE);
         Collection<Code> codeListInfSource = codeMap.getCodesForTable(CodesetType.VACCINATION_INFORMATION_SOURCE);
         Collection<Code> codeListBodyRoute = codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
         Collection<Code> codeListBodySite = codeMap.getCodesForTable(CodesetType.BODY_SITE);
         Collection<Code> codeListFundingSource = codeMap.getCodesForTable(CodesetType.VACCINATION_FUNDING_SOURCE);
 
-        int count = 0;
-        for (Code code : codeListCVX) {
-            vaccine.setVaccineCvxCode(code.getValue());
-            count += 1;
-            if (randDay == count) {
-                break;
+        int randomIndex = (int) (random() * codeListCVX.size());
+        Code cvxCode = randomCode(codeListCVX);
+        vaccine.setVaccineCvxCode(cvxCode.getValue());
+
+        Code ndcCode = null;
+        if (cvxCode.getReference() != null && !cvxCode.getReference().getLinkTo().isEmpty()) {
+            Optional<LinkTo> optionalLinkTo = cvxCode.getReference().getLinkTo().stream().filter((linkTo -> linkTo.getCodeset().equals(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE.name()))).findFirst();
+            if (optionalLinkTo.isPresent()) {
+                ndcCode = codeListNDC.stream().filter((code -> code.getValue().equals(optionalLinkTo.get().getValue()))).findFirst().get();
+            } else {
+//                ndcCode
             }
         }
-        count = 0;
-        for (Code code : codeListNDC) {
-            vaccine.setVaccineNdcCode(code.getValue());
-            count += 1;
-            if (randomN == count) {
-                break;
-            }
+
+        if (ndcCode != null) {
+            vaccine.setVaccineNdcCode(ndcCode.getValue());
         }
-        count = 0;
-        for (Code code : codeListMVX) {
-            vaccine.setVaccineMvxCode(code.getValue());
-            count += 1;
-            if (randomN == count) {
-                break;
-            }
-        }
-        count = 0;
-        for (Code code : codeListBodyRoute) {
-            vaccine.setBodyRoute(code.getValue());
-            count += 1;
-            if (randomN == count) {
-                break;
-            }
-        }
-        count = 0;
-        for (Code code : codeListBodySite) {
-            vaccine.setBodySite(code.getValue());
-            count += 1;
-            if (randomN == count) {
-                break;
-            }
-        }
-//        count = 0;
-//        for(Code code : codeListInfSource) {
-//            vaccine.setInformationSource(code.getValue());
-//            count+=1;
-//            if(randDay==count) {
-//                break;
-//            }
-//        }
+
+        Code mvxCode = randomCode(codeListMVX);
+        vaccine.setVaccineMvxCode(mvxCode.getValue());
+
+        Code bodyRouteCode = randomCode(codeListBodyRoute);
+        vaccine.setBodyRoute(bodyRouteCode.getValue());
+
+
+        Code bodyRouteSite = randomCode(codeListBodySite);
+        vaccine.setBodySite(bodyRouteSite.getValue());
+
         vaccine.setInformationSource("00");
-        count = 0;
-        for (Code code : codeListFundingSource) {
-            vaccine.setFundingSource(code.getValue());
-            count += 1;
-            if (randomN == count) {
-                break;
-            }
-        }
+
+        Code fundingSourceCode = randomCode(codeListFundingSource);
+        vaccine.setFundingSource(fundingSourceCode.getValue());
+
 
         return vaccine;
     }
@@ -347,5 +327,9 @@ public class RandomGenerator {
         clinician.setNameLast(faker.name().lastName());
         clinician.setNameMiddle(faker.name().firstName());
         return clinician;
+    }
+
+    private Code randomCode(Collection<Code> collection) {
+        return collection.stream().skip((long) (random() * collection.size())).findFirst().get();
     }
 }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, take } from 'rxjs';
-import { Code, CodeBaseMap, CodeMap } from '../_model/structure';
+import { Code, CodeBaseMap, CodeMap } from "../_model/code-base-map";
 import { SettingsService } from './settings.service';
 
 
@@ -20,22 +20,22 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class CodeMapsService {
-  private codeBaseMap!:  BehaviorSubject<CodeBaseMap>;
+  private codeBaseMap!: BehaviorSubject<CodeBaseMap>;
 
   constructor(private http: HttpClient,
     private settings: SettingsService,) {
-      this.load()
-     }
+    this.load()
+  }
 
-  getObservableCodeBaseMap(): BehaviorSubject<CodeBaseMap>{
-    if (!this.codeBaseMap){
+  getObservableCodeBaseMap(): BehaviorSubject<CodeBaseMap> {
+    if (!this.codeBaseMap) {
       this.refreshCodeMaps()
     }
     return this.codeBaseMap
   }
 
-  getCodeMap(label: string | undefined): CodeMap  {
-    if (label){
+  getCodeMap(label: string | undefined): CodeMap {
+    if (label) {
       if (!this.codeBaseMap) {
         /**
          * TODO clean this up there may be some unnecesary steps now that take(1) was added
@@ -51,7 +51,7 @@ export class CodeMapsService {
           }
         });
         return {}
-      }else {
+      } else {
         return this.codeBaseMap.value[label];
       }
     } else {
@@ -74,5 +74,5 @@ export class CodeMapsService {
     return new Promise((resolve, reject) => {
       this.refreshCodeMaps()
     })
-}
+  }
 }

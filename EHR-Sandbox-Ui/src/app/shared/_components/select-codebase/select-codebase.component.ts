@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { Code, CodeMap, ComparisonResult, BaseForm, CodeReference } from 'src/app/core/_model/structure';
+import { ComparisonResult, BaseForm } from 'src/app/core/_model/structure';
+import { Code, CodeMap, CodeReference } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
 @Component({
@@ -23,18 +24,15 @@ export class SelectCodebaseComponent implements OnInit {
   @Input() model!: string;
   @Output() modelChange = new EventEmitter<any>();
 
-
   @Input() toolTipDisabled: boolean = false;
   @Input() compareTo?: ComparisonResult | any | null;
 
   codeMap?: CodeMap;
-  filteredOptions!: Code[];
   warning: boolean = false;
   /**
    * Used to avoid an interblocking situation with autoselection on filter changes
    */
   erasedOnLastChange: boolean = false;
-
 
   constructor(public codeMapsService: CodeMapsService) { }
 
@@ -47,12 +45,12 @@ export class SelectCodebaseComponent implements OnInit {
       }
       this.referenceFilter?.subscribe((ref) => {
         this.filterChange(this.model)
-        if (this.filteredOptions && this.filteredOptions.length == 0) {
+        if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 0) {
           this.warning = true
         }
-        // if (this.filteredOptions && this.filteredOptions.length == 1 && ( this.model == '' || !this.model )  && this.erasedOnLastChange == false) {
-        if (this.filteredOptions && this.filteredOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
-          this.model = this.filteredOptions[0].value
+        // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && ( this.model == '' || !this.model )  && this.erasedOnLastChange == false) {
+        if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
+          this.model = this.filteredCodeMapsOptions[0].value
           this.valueChanged()
           // this.autofilled = true
         }
@@ -68,21 +66,40 @@ export class SelectCodebaseComponent implements OnInit {
     this.formChangesSubscription.unsubscribe();
   }
 
+  public filteredCodeMapsOptions!: Code[];
+  public filteredFormOptions!: [];
+  /**
+   * Buffer for ordering filtered options
+   */
+  private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
   filterChange(event: string) {
     let filterValue = ''
     if (event) {
       filterValue = event.toLowerCase();
     }
     if (this.codeMap) {
-      this.filteredOptions = Object.values(this.codeMap).filter(
+      this.filteredCodeMapsOn = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
+      Object.values(this.codeMap).forEach(
         option => {
-          if (!JSON.stringify(option).toLowerCase().includes(filterValue)) {
-            return false
-          } else {
-            return this.filterWithReference(option)
+          if (option.value.toLowerCase().includes(filterValue)) {
+            if (this.filterWithReference(option)) {
+              this.filteredCodeMapsOn.byValue.push(option)
+            }
+          } else if (option.label.toLowerCase().includes(filterValue)) {
+            if (this.filterWithReference(option)) {
+              this.filteredCodeMapsOn.byLabel.push(option)
+            }
+          } else if (option.description?.toLowerCase().includes(filterValue)) {
+            if (this.filterWithReference(option)) {
+              this.filteredCodeMapsOn.byDescription.push(option)
+            }
           }
         }
       )
+      this.filteredCodeMapsOptions = this.filteredCodeMapsOn.byValue.concat(this.filteredCodeMapsOn.byLabel, this.filteredCodeMapsOn.byDescription, this.filteredCodeMapsOn.byOther)
+    }
+    if (this.form.options) {
+      // this.filteredFormOptions = this.form.options.filter
     }
   }
 
@@ -133,8 +150,8 @@ export class SelectCodebaseComponent implements OnInit {
       /**
        * Checking if new value should trigger a warning i.e
        */
-      if (this.filteredOptions && this.form.codeMapLabel &&
-        this.filteredOptions.length < 1 && this.model && this.referenceFilter && this.referenceFilter.getValue()) {
+      if (this.filteredCodeMapsOptions && this.form.codeMapLabel &&
+        this.filteredCodeMapsOptions.length < 1 && this.model && this.referenceFilter && this.referenceFilter.getValue()) {
         this.warning = true
       } else {
         this.warning = false
@@ -155,6 +172,7 @@ export class SelectCodebaseComponent implements OnInit {
     } else {
       this.warning = false
       this.erasedOnLastChange = true
+      this.filterChange('')
       this.modelChange.emit('')
       this.referenceEmitter.emit(undefined)
     }

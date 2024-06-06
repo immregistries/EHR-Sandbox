@@ -2,7 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
-import { CodeBaseMap } from 'src/app/core/_model/structure';
+import { CodeBaseMap } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';

@@ -1,7 +1,7 @@
 <form #selectForm="ngForm">
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{form.title}}</mat-label>
-    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field" matBadge="priority_high"
+    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field-input" matBadge="priority_high"
            [matBadgeHidden]="warning == false" matBadgeColor="accent" (ngModelChange)="filterChange($event)"
            name="{{form.attribute}}"
            [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'"
@@ -13,9 +13,9 @@
     </button>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"
                       (optionActivated)="valueChanged()">
-      <mat-option *ngFor="let option of filteredOptions" [value]="option.value" (onSelectionChange)="valueChanged()"
-                  [matTooltip]="option.description ?? ''" [matTooltipDisabled]="toolTipDisabled"
-                  [matTooltipPosition]="'right'">
+      <mat-option *ngFor="let option of filteredCodeMapsOptions" [value]="option.value"
+                  (onSelectionChange)="valueChanged()" [matTooltip]="option.description ?? ''"
+                  [matTooltipDisabled]="toolTipDisabled" [matTooltipPosition]="'right'">
         {{option.label + ' (' + option.value + ')'}}
       </mat-option>
       <mat-option *ngFor="let option of form.options" [value]="option.value" (onSelectionChange)="valueChanged()"

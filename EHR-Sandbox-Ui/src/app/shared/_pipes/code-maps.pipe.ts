@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Code, CodeMap } from 'src/app/core/_model/structure';
+import { Code, CodeMap } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
 @Pipe({

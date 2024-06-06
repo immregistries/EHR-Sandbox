@@ -10,7 +10,8 @@
 
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="valueChanged()"
                       (optionActivated)="valueChanged()">
-      <mat-option *ngFor="let clinician of filteredOptions" [value]="clinician.id" (onSelectionChange)="valueChanged()">
+      <mat-option *ngFor="let clinician of filteredCodeMapsOptions" [value]="clinician.id"
+                  (onSelectionChange)="valueChanged()">
         {{clinician.nameFirst + " " + clinician.nameLast}}
         <mat-icon class="w3-right" (click)="$event.stopPropagation(); edit(clinician);">edit</mat-icon>
       </mat-option>

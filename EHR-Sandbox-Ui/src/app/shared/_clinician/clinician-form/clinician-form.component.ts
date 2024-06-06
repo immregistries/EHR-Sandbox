@@ -2,7 +2,8 @@ import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angul
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
-import FormType, { CodeReference, FormCard } from 'src/app/core/_model/structure';
+import FormType, { FormCard } from 'src/app/core/_model/structure';
+import { CodeReference } from "src/app/core/_model/code-base-map";
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 

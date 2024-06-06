@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BaseForm, CodeReference, ComparisonResult } from 'src/app/core/_model/structure';
+import { BaseForm, ComparisonResult } from 'src/app/core/_model/structure';
+import { CodeReference } from "src/app/core/_model/code-base-map";
 
 @Component({
   selector: 'app-card-form',

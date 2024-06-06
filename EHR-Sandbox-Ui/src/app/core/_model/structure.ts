@@ -1,33 +1,24 @@
 import { Clinician, Facility, EhrPatient, VaccinationEvent, Vaccine, NextOfKin } from "./rest";
-/**
- * Interface for codemaps lists
- */
 
-export interface CodeBaseMap {
-  [key: string]: CodeMap
-}
-export interface CodeMap {
-  [key: string]: Code
-}
-export interface Code {
-  "value": string,
-  "label": string,
-  "description"?: string,
-  "codeStatus"?: string,
-  "reference"?: CodeReference,
-  "useDate"?: Date,
-  "useAge"?: string,
-  "conceptType"?: string,
-  "testAge"?: string
-}
-export interface CodeReference {
-  linkTo: CodeReferenceLink[]
+enum FormType {
+  text = 'text',
+  date = 'date',
+  short = 'short',
+  boolean = 'boolean',
+  select = 'select',
+  yesNo = 'yesNo',
+  code = 'code',
+  textarea = 'textarea',
+  clinician = 'clinician',
+  phoneNumbers = 'phoneNumbers',
+  identifiers = 'identifiers',
+  nextOfKin = 'nextOfKin',
+  nextOfKinRelationships = 'nextOfKinRelationships',
+  races = 'races',
+  addresses = 'addresses',
 }
 
-export interface CodeReferenceLink {
-  value: string,
-  codeset: string
-}
+export default FormType;
 export interface FormCardGeneric<X> {
   // export interface FormCardGeneric<X extends Record<(string | number),Record<(string | number), any> {
   title: string,
@@ -50,33 +41,18 @@ export interface FormCard {
   clinicianForms?: ClinicianForm[],
 }
 
-enum FormType {
-  text = 'text',
-  date = 'date',
-  short = 'short',
-  boolean = 'boolean',
-  select = 'select',
-  yesNo = 'yesNo',
-  code = 'code',
-  textarea = 'textarea',
-  clinician = 'clinician',
-  phoneNumbers = 'phoneNumbers',
-  identifiers = 'identifiers',
-  nextOfKin = 'nextOfKin',
-  nextOfKinRelationships = 'nextOfKinRelationships',
-  races = 'races',
-  addresses = 'addresses',
-}
 
-export default FormType;
 export interface BaseForm {
   type: FormType,
   title: string,
   attribute: string,
   codeMapLabel?: string,
   disabled?: boolean,
-  options?: { value: string | boolean, label?: string }[],
+  options?: BaseFormOption[],
   required?: boolean,
+}
+export interface BaseFormOption {
+  value: string | boolean, label?: string
 }
 export interface PatientForm extends BaseForm {
   attribute: keyof EhrPatient,

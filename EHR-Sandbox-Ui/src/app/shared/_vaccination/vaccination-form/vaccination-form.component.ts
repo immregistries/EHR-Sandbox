@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import FormType, { Code, ComparisonResult, FormCard, CodeReference } from 'src/app/core/_model/structure';
+import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/structure';
+import { Code, CodeReference } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
@@ -118,12 +119,11 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
   @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
-  public filteredOptions: { [key: string]: KeyValue<string, Code>[] } = {};
+  public filteredCodeMapsOptions: { [key: string]: KeyValue<string, Code>[] } = {};
   private formChangesSubscription!: Subscription;
 
   ngOnInit() {
     this.formChangesSubscription = this.vaccinationForm.form.valueChanges.subscribe(x => {
-      // this.references.next({})
       this.references.next(this.references.getValue())
     })
   }
@@ -145,7 +145,6 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       }
     }, 0);
   }
-
 
   ngOnDestroy() {
     this.formChangesSubscription.unsubscribe();

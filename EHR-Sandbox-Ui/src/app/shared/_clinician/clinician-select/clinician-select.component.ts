@@ -58,7 +58,7 @@ export class ClinicianSelectComponent {
   @Output() modelChange: EventEmitter<Clinician> = new EventEmitter()
 
   options: Clinician[] = []
-  filteredOptions: Clinician[] = []
+  filteredCodeMapsOptions: Clinician[] = []
   ngOnInit() {
     concat(
       this.clinicianService.getRefresh(),
@@ -93,7 +93,7 @@ export class ClinicianSelectComponent {
       if (event) {
         filterValue = event.toLowerCase();
       }
-      this.filteredOptions = this.options.filter(
+      this.filteredCodeMapsOptions = this.options.filter(
         option => {
           return JSON.stringify(option).toLowerCase().includes(filterValue)
         }

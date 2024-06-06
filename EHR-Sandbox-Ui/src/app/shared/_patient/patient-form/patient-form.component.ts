@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import FormType, { FormCard, CodeReference } from 'src/app/core/_model/structure';
+import FormType, { FormCard } from 'src/app/core/_model/structure';
+import { CodeReference } from "src/app/core/_model/code-base-map";
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BehaviorSubject } from 'rxjs';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -117,13 +118,6 @@ export class PatientFormComponent {
     {
       title: 'Address', cols: 1, rows: 2, patientForms: [
         { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
-        // { type: FormType.text, title: 'Line 1', attribute: 'addressLine1' },
-        // { type: FormType.text, title: 'Line 2', attribute: 'addressLine2' },
-        // { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
-        // { type: FormType.text, title: 'City', attribute: 'addressCity' },
-        // { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
-        // { type: FormType.text, title: 'State', attribute: 'addressState' },
-        // { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
       ]
     },
     {
@@ -150,7 +144,7 @@ export class PatientFormComponent {
       title: 'Registry', cols: 1, rows: 1,
       toolTips: 'Current status of the patient in relation to the sending provider organization',
       patientForms: [
-        { type: FormType.short, title: 'Indicator', attribute: 'registryStatusIndicator', },
+        { type: FormType.code, title: 'Indicator', attribute: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS' },
         { type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate' },
       ]
     },
@@ -158,22 +152,14 @@ export class PatientFormComponent {
       title: 'Publicity', cols: 1, rows: 1,
       toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
       patientForms: [
-        { type: FormType.short, title: 'Indicator', attribute: 'publicityIndicator' },
+
+        { type: FormType.code, title: 'Indicator', attribute: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
         { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
       ]
     },
     {
       title: 'Financial Status', cols: 1, rows: 1, patientForms: [
         { type: FormType.code, title: 'Financial status', attribute: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
-      ]
-    },
-    {
-      title: 'Guardian', cols: 3, rows: 1, patientForms: [
-        { type: FormType.text, title: 'First name', attribute: 'guardianFirst' },
-        { type: FormType.text, title: 'Middle name', attribute: 'guardianMiddle' },
-        { type: FormType.text, title: 'Last name', attribute: 'guardianLast' },
-        { type: FormType.text, title: 'Suffix', attribute: 'guardianSuffix' },
-        { type: FormType.code, title: 'Relationship', attribute: 'guardianRelationship', codeMapLabel: "PERSON_RELATIONSHIP" },
       ]
     },
     {

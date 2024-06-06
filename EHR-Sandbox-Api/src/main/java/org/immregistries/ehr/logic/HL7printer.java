@@ -161,7 +161,6 @@ public class HL7printer {
                 obxSetId++;
                 String loinc = "64994-7";
                 String loincLabel = "Vaccine funding program eligibility category";
-//                String value = "V02"; //VFC
                 String value = patient.getFinancialStatus();
                 String valueLabel = "VFC eligible - Medicaid/Medicaid Managed Care";
                 String valueTable = "HL70064";
