@@ -70,7 +70,7 @@
             [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
             [required]="isRequired()">
       <option [hidden]="model == undefined" value=""></option>
-      <option *ngFor="let option of form.options" value="{{option.value}}">{{option.label ?? option.value}}</option>
+      <option *ngFor="let option of form.options" value="{{option.code}}">{{option.display ?? option.code}}</option>
     </select>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
     <ng-template #short>

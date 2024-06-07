@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { Code, CodeBaseMap, CodeMap } from "../_model/code-base-map";
 import { SettingsService } from './settings.service';
+import { CodeSystem } from 'fhir/r5';
 
 
 // Potentially needed to load codemaps on application init : Not currently used in providers
@@ -21,6 +22,14 @@ const httpOptions = {
 })
 export class CodeMapsService {
   private codeBaseMap!: BehaviorSubject<CodeBaseMap>;
+  private readonly IDENTIFIER_TYPE_SYSTEM_FILE_NAME = "assets/CodeSystem-v2-0203.json";
+  private _IdentifierTypeCodeSystem!: CodeSystem;
+  public get identifierTypeCodeSystem(): CodeSystem {
+    return this._IdentifierTypeCodeSystem;
+  }
+  private set identifierTypeCodeSystem(value: CodeSystem) {
+    this._IdentifierTypeCodeSystem = value;
+  }
 
   constructor(private http: HttpClient,
     private settings: SettingsService,) {
@@ -70,6 +79,9 @@ export class CodeMapsService {
   }
 
   load() {
+    this.http.get<CodeSystem>(this.IDENTIFIER_TYPE_SYSTEM_FILE_NAME).subscribe(res => {
+      this.identifierTypeCodeSystem = res;
+    });
     this.codeBaseMap = new BehaviorSubject<CodeBaseMap>({})
     return new Promise((resolve, reject) => {
       this.refreshCodeMaps()

@@ -18,10 +18,11 @@
                   [matTooltipDisabled]="toolTipDisabled" [matTooltipPosition]="'right'">
         {{option.label + ' (' + option.value + ')'}}
       </mat-option>
-      <mat-option *ngFor="let option of form.options" [value]="option.value" (onSelectionChange)="valueChanged()"
-                  [matTooltip]="option.label?? ''" [matTooltipDisabled]="toolTipDisabled"
+      <mat-option *ngFor="let option of this.filteredFormOptions" [value]="option.code"
+                  (onSelectionChange)="valueChanged()" [matTooltip]="option.display ?? ''"
+                  [matTooltipDisabled]="toolTipDisabled"
                   [matTooltipPosition]="'right'">
-        {{option.label ? option.label + ' (' + option.value + ')' : option.value }}
+        {{option.display ? option.display + ' (' + option.code + ')' : option.code }}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>

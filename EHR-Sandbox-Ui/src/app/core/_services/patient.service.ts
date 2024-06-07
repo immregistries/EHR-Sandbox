@@ -39,9 +39,15 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
    *
    * @returns Patient object filled with random information
    */
-  readRandom(): Observable<EhrPatient> {
-    return this.http.get<EhrPatient>(
-      this.settings.getApiUrl() + '/$random_patient', httpOptions);
+  readRandom(facilityId?: number): Observable<EhrPatient> {
+    if (facilityId && facilityId > 0) {
+      return this.http.get<EhrPatient>(
+        this.settings.getApiUrl() + `/tenants/${this.tenantService.getCurrentId()}/facilities/${facilityId}/$random_patient`, httpOptions);
+    } else {
+      return this.http.get<EhrPatient>(
+        this.settings.getApiUrl() + '/$random_patient', httpOptions);
+    }
+
   }
 
   /**

@@ -1,3 +1,5 @@
+import { CodeSystemConcept } from "fhir/r5";
+import { Code } from "./code-base-map";
 import { Clinician, Facility, EhrPatient, VaccinationEvent, Vaccine, NextOfKin } from "./rest";
 
 enum FormType {
@@ -52,7 +54,11 @@ export interface BaseForm {
   required?: boolean,
 }
 export interface BaseFormOption {
-  value: string | boolean, label?: string
+  code: string | boolean, display?: string, definition?: string,
+}
+
+export interface BaseFormOptionCodeSystemConcept extends BaseFormOption, CodeSystemConcept {
+  code: string;
 }
 export interface PatientForm extends BaseForm {
   attribute: keyof EhrPatient,

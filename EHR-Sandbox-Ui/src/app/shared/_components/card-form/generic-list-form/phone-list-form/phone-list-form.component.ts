@@ -16,12 +16,12 @@ export class PhoneListFormComponent extends GenericListFormComponent<EhrPhoneNum
     { type: FormType.text, title: 'Phone number', attribute: 'number' },
     {
       type: FormType.code, title: 'Phone label', attribute: 'type', options: [
-        { value: 'HOME' },
-        { value: 'MOBILE' },
-        { value: 'WORK' },
-        { value: 'TEMP' },
-        { value: 'NULL' },
-        { value: 'OLD' },
+        { code: 'HOME' },
+        { code: 'MOBILE' },
+        { code: 'WORK' },
+        { code: 'TEMP' },
+        { code: 'NULL' },
+        { code: 'OLD' },
       ]
     },
   ]

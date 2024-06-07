@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
-import { EhrPatient } from 'src/app/core/_model/rest';
+import { EhrPatient, Facility } from 'src/app/core/_model/rest';
 import FormType, { FormCard } from 'src/app/core/_model/structure';
 import { CodeReference } from "src/app/core/_model/code-base-map";
 import { PatientService } from 'src/app/core/_services/patient.service';
@@ -8,6 +8,7 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Dialog } from '@angular/cdk/dialog';
+import { FacilityService } from 'src/app/core/_services/facility.service';
 
 @Component({
   selector: 'app-patient-form',
@@ -32,6 +33,7 @@ export class PatientFormComponent {
   public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
 
   constructor(private patientService: PatientService,
+    private facilityService: FacilityService,
     private snackBarService: SnackBarService,
     @Optional() public _dialogRef?: MatDialogRef<PatientFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient }) {
@@ -42,8 +44,7 @@ export class PatientFormComponent {
   }
 
   fillRandom(): void {
-    this.patientService.readRandom().subscribe((res) => this.patient = res)
-    console.log(this.patient.phones)
+    this.patientService.readRandom(this.facilityService.getCurrentId()).subscribe((res) => this.patient = res)
   }
 
   save(): void {

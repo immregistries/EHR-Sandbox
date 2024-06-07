@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { ComparisonResult, BaseForm } from 'src/app/core/_model/structure';
+import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
 import { Code, CodeMap, CodeReference } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
@@ -67,7 +67,7 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   public filteredCodeMapsOptions!: Code[];
-  public filteredFormOptions!: [];
+  public filteredFormOptions!: BaseFormOption[];
   /**
    * Buffer for ordering filtered options
    */
@@ -85,7 +85,7 @@ export class SelectCodebaseComponent implements OnInit {
             if (this.filterWithReference(option)) {
               this.filteredCodeMapsOn.byValue.push(option)
             }
-          } else if (option.label.toLowerCase().includes(filterValue)) {
+          } else if (option.label && option.label?.toLowerCase().includes(filterValue)) {
             if (this.filterWithReference(option)) {
               this.filteredCodeMapsOn.byLabel.push(option)
             }
@@ -99,7 +99,22 @@ export class SelectCodebaseComponent implements OnInit {
       this.filteredCodeMapsOptions = this.filteredCodeMapsOn.byValue.concat(this.filteredCodeMapsOn.byLabel, this.filteredCodeMapsOn.byDescription, this.filteredCodeMapsOn.byOther)
     }
     if (this.form.options) {
-      // this.filteredFormOptions = this.form.options.filter
+      this.filteredFormOptions = this.form.options.filter((option) => {
+        if (option.code === true && 'true'.includes(filterValue)) {
+          return true
+        } else if (option.code === false && 'false'.includes(filterValue)) {
+          return true
+          //@ts-ignore
+        } else if (option.code.toLowerCase().includes(filterValue)) {
+          return true
+        } else if (option.display?.toLowerCase().includes(filterValue)) {
+          return true
+        } else if (option.definition?.toLowerCase().includes(filterValue)) {
+          return true
+        } else {
+          return false
+        }
+      })
     }
   }
 
@@ -182,9 +197,13 @@ export class SelectCodebaseComponent implements OnInit {
     if (codeKey && this.codeMap && this.codeMap[codeKey]) {
       let code: Code = this.codeMap[codeKey]
       return code.label + ' (' + code.value + ')'
-    } else {
-      return codeKey
+    } else if (this.form.options) {
+      let option: BaseFormOption | undefined = this.form.options.find((opt) => opt.code == codeKey)
+      if (option?.display) {
+        return option.display + ' (' + codeKey + ')'
+      }
     }
+    return codeKey
   }
 
   clear() {

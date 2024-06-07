@@ -207,7 +207,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ], vaccinationForms: [
         // { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
         {
-          type: FormType.select, title: "Record Nature", attribute: "primarySource", options: [{ value: true, label: 'New Administration' }, { value: false, label: 'Historical' },]
+          type: FormType.select, title: "Record Nature", attribute: "primarySource", options: [{ code: true, display: 'New Administration' }, { code: false, display: 'Historical' },]
           // , tooltip: 'Wether the '
         },
       ]
@@ -234,7 +234,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     {
       title: "Funding", rows: 1, cols: 1, vaccineForms: [
         { type: FormType.code, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE" },
-        { type: FormType.select, title: "Eligibility", attribute: "fundingEligibility", options: [{ value: 'Y', label: 'Y' }, { value: 'N', label: 'N' }] },
+        { type: FormType.select, title: "Eligibility", attribute: "fundingEligibility", options: [{ code: 'Y', display: 'Y' }, { code: 'N', display: 'N' }] },
       ]
     },
     {

@@ -22,7 +22,7 @@
       <div>
         <b>{{form.title + " : "}}</b>
         <span *ngFor="let option of form.options" ngIf="option.value === model.value">
-          {{isEmpty() ? "N/A" : option.label ?? option.value}}
+          {{isEmpty() ? "N/A" : option.display ?? option.code}}
         </span>
       </div>
     </div>
