@@ -10,6 +10,7 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -224,8 +225,9 @@ public class HL7printer {
         // PID-2
         sb.append("|");
         // PID-3
-        if (!patient.getMrn().isBlank()) {
-            sb.append("|" + patient.getMrn() + "^^^urns:mrn^MR");
+        EhrIdentifier mrn = patient.getMrnEhrIdentifier();
+        if (mrn != null) {
+            sb.append("|" + mrn.getValue() + "^^^" + StringUtils.defaultIfBlank(mrn.getSystem(), "") + "^MR");
         } else {
             sb.append("|" + patient.getId() + "^^^EHR^MR");
         }

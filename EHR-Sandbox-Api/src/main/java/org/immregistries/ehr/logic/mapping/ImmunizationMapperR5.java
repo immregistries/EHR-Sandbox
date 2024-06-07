@@ -8,6 +8,7 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,182 +26,178 @@ import java.util.Date;
 @Conditional(OnR5Condition.class)
 public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 
-  @Autowired
-  CodeMapManager codeMapManager;
-  @Autowired
-  ClinicianRepository clinicianRepository;
+    @Autowired
+    CodeMapManager codeMapManager;
+    @Autowired
+    ClinicianRepository clinicianRepository;
 
 
-
-
-  public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
-    Immunization i = toFhir(vaccinationEvent);
-    Identifier identifier = i.addIdentifier();
-    identifier.setValue(""+vaccinationEvent.getId());
-    identifier.setSystem(identifier_system);
+    public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
+        Immunization i = toFhir(vaccinationEvent);
+        Identifier identifier = i.addIdentifier();
+        identifier.setValue("" + vaccinationEvent.getId());
+        identifier.setSystem(identifier_system);
 //    i.setPatient(new Reference()
 ////            .setReference("Patient/" + vaccinationEvent.getPatient().getId())
 //            .setIdentifier(new Identifier()
 //                    .setValue(vaccinationEvent.getPatient().getId())
 //                    .setSystem(patient_identifier_system)));
-    return  i;
-  }
-  
-  private Immunization toFhir(VaccinationEvent vaccinationEvent) {
-
-    Vaccine vaccine = vaccinationEvent.getVaccine();
-    Facility facility = vaccinationEvent.getAdministeringFacility();
-    Immunization i = new Immunization();
-    i.setPrimarySource(vaccinationEvent.isPrimarySource());
-
-    if (!vaccinationEvent.getPatient().getMrn().isBlank()) {
-      i.setPatient(new Reference()
-              .setIdentifier(new Identifier()
-                      .setValue(vaccinationEvent.getPatient().getMrn())
-                      .setSystem(PatientMapperR5.MRN_SYSTEM)));
-    }
-    i.setLotNumber(vaccine.getLotNumber());
-    i.getOccurrenceDateTimeType().setValue(vaccine.getAdministeredDate());
-    i.setDoseQuantity(new Quantity());
-    i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
-    i.setExpirationDate(vaccine.getExpirationDate());
-    if (vaccine.getActionCode().equals("D")) {
-      i.setStatus(Immunization.ImmunizationStatusCodes.ENTEREDINERROR);
-    } else {
-      switch(vaccine.getCompletionStatus()) {
-        case "CP" : {
-          i.setStatus(Immunization.ImmunizationStatusCodes.COMPLETED);
-          break;
-        }
-        case "NA" :
-        case "PA" :
-        case "RE" : {
-          i.setStatus(Immunization.ImmunizationStatusCodes.NOTDONE);
-          break;
-        }
-        case "" : {
-          i.setStatus(Immunization.ImmunizationStatusCodes.NULL);
-          break;
-        }
-      }
-    }
-    CodeMap codeMap = codeMapManager.getCodeMap();
-    Collection<Code> codeRoute= codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
-    for (Code c: codeRoute) {
-      if (c.getValue().equals(vaccine.getBodyRoute())) {
-        i.setRoute(new CodeableConcept(new Coding(c.getConceptType(), c.getValue(), c.getLabel())));
-      }
+        return i;
     }
 
-    i.addReason().setConcept(new CodeableConcept(new Coding(REFUSAL_REASON_CODE,vaccine.getRefusalReasonCode(),vaccine.getRefusalReasonCode())));
-    i.getSite().addCoding().setSystem(BODY_PART).setCode(vaccine.getBodySite());
-    i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
-    i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
-    i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility())));
-    i.getInformationSource().setConcept(new CodeableConcept(new Coding().setSystem(INFORMATION_SOURCE).setCode(vaccine.getInformationSource())));
-    i.getVaccineCode().addCoding()
-            .setSystem(CVX)
-            .setCode(vaccine.getVaccineCvxCode());
-    i.getVaccineCode().addCoding()
-            .setSystem(NDC)
-            .setCode(vaccine.getVaccineNdcCode());
+    private Immunization toFhir(VaccinationEvent vaccinationEvent) {
 
-    i.setManufacturer(new CodeableReference(new Reference()
-            .setType("Organisation")
-            .setIdentifier(new Identifier()
-                    .setSystem(MVX)
-                    .setValue(vaccine.getVaccineMvxCode()))));
+        Vaccine vaccine = vaccinationEvent.getVaccine();
+        Facility facility = vaccinationEvent.getAdministeringFacility();
+        Immunization i = new Immunization();
+        i.setPrimarySource(vaccinationEvent.isPrimarySource());
+
+        EhrIdentifier mrnIdentifier = vaccinationEvent.getPatient().getMrnEhrIdentifier();
+        if (mrnIdentifier != null) {
+            i.setPatient(new Reference()
+                    .setIdentifier(mrnIdentifier.toR5()));
+        }
+        i.setLotNumber(vaccine.getLotNumber());
+        i.getOccurrenceDateTimeType().setValue(vaccine.getAdministeredDate());
+        i.setDoseQuantity(new Quantity());
+        i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
+        i.setExpirationDate(vaccine.getExpirationDate());
+        if (vaccine.getActionCode().equals("D")) {
+            i.setStatus(Immunization.ImmunizationStatusCodes.ENTEREDINERROR);
+        } else {
+            switch (vaccine.getCompletionStatus()) {
+                case "CP": {
+                    i.setStatus(Immunization.ImmunizationStatusCodes.COMPLETED);
+                    break;
+                }
+                case "NA":
+                case "PA":
+                case "RE": {
+                    i.setStatus(Immunization.ImmunizationStatusCodes.NOTDONE);
+                    break;
+                }
+                case "": {
+                    i.setStatus(Immunization.ImmunizationStatusCodes.NULL);
+                    break;
+                }
+            }
+        }
+        CodeMap codeMap = codeMapManager.getCodeMap();
+        Collection<Code> codeRoute = codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
+        for (Code c : codeRoute) {
+            if (c.getValue().equals(vaccine.getBodyRoute())) {
+                i.setRoute(new CodeableConcept(new Coding(c.getConceptType(), c.getValue(), c.getLabel())));
+            }
+        }
+
+        i.addReason().setConcept(new CodeableConcept(new Coding(REFUSAL_REASON_CODE, vaccine.getRefusalReasonCode(), vaccine.getRefusalReasonCode())));
+        i.getSite().addCoding().setSystem(BODY_PART).setCode(vaccine.getBodySite());
+        i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
+        i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
+        i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility())));
+        i.getInformationSource().setConcept(new CodeableConcept(new Coding().setSystem(INFORMATION_SOURCE).setCode(vaccine.getInformationSource())));
+        i.getVaccineCode().addCoding()
+                .setSystem(CVX)
+                .setCode(vaccine.getVaccineCvxCode());
+        i.getVaccineCode().addCoding()
+                .setSystem(NDC)
+                .setCode(vaccine.getVaccineNdcCode());
+
+        i.setManufacturer(new CodeableReference(new Reference()
+                .setType("Organisation")
+                .setIdentifier(new Identifier()
+                        .setSystem(MVX)
+                        .setValue(vaccine.getVaccineMvxCode()))));
 //    i.getLocation().setReferenceElement();
 //    location.setName(facility.getNameDisplay());
-    return i;
-  }
+        return i;
+    }
 
-  public VaccinationEvent toVaccinationEvent(Immunization i) {
-    VaccinationEvent ve = new VaccinationEvent();
-    ve.setVaccine(toVaccine(i));
-    ve.setPrimarySource(i.getPrimarySource());
+    public VaccinationEvent toVaccinationEvent(Immunization i) {
+        VaccinationEvent ve = new VaccinationEvent();
+        ve.setVaccine(toVaccine(i));
+        ve.setPrimarySource(i.getPrimarySource());
 //    ve.setExternalLink(i.getIdentifierFirstRep().getValue());
-    if (i.getPatient() != null && i.getPatient().getReference() != null && !i.getPatient().getReference().isBlank()) {
-    }
-    if (i.getLocation() != null && i.getLocation().getReference() != null && !i.getLocation().getReference().isBlank()){
+        if (i.getPatient() != null && i.getPatient().getReference() != null && !i.getPatient().getReference().isBlank()) {
+        }
+        if (i.getLocation() != null && i.getLocation().getReference() != null && !i.getLocation().getReference().isBlank()) {
 //      ve.setOrgLocation(fhirRequests.readOrgLocation(i.getLocation().getReference()));
-    }
+        }
 //    if (i.hasInformationSourceReference() && i.getInformationSourceReference().getReference() != null && !i.getInformationSourceReference().getReference().isBlank()) {
 //      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]); // TODO
 //      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
 //    }
-    for (Immunization.ImmunizationPerformerComponent performer: i.getPerformer()) {
-      if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()){
-        Integer performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
-        switch (performer.getFunction().getCode(FUNCTION)){
-          case ADMINISTERING: {
-            ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO
-            break;
-          }
-          case ORDERING: {
-            ve.setOrderingClinician(clinicianRepository.findById(performerId).get());//TODO
-            break;
-          }
+        for (Immunization.ImmunizationPerformerComponent performer : i.getPerformer()) {
+            if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()) {
+                Integer performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+                switch (performer.getFunction().getCode(FUNCTION)) {
+                    case ADMINISTERING: {
+                        ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO
+                        break;
+                    }
+                    case ORDERING: {
+                        ve.setOrderingClinician(clinicianRepository.findById(performerId).get());//TODO
+                        break;
+                    }
+                }
+            }
         }
-      }
+        return ve;
     }
-    return  ve;
-  }
 
-  public Vaccine toVaccine(Immunization i) {
-    Vaccine v = new Vaccine();
-    v.setUpdatedDate(i.getMeta().getLastUpdated());
+    public Vaccine toVaccine(Immunization i) {
+        Vaccine v = new Vaccine();
+        v.setUpdatedDate(i.getMeta().getLastUpdated());
 
 //    v.setCreatedDate(i.getRecorded());
-    v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
+        v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
 
-    v.setVaccineCvxCode(i.getVaccineCode().getCode(CVX));
-    v.setVaccineNdcCode(i.getVaccineCode().getCode(NDC));
-    v.setVaccineMvxCode(i.getVaccineCode().getCode(MVX));
+        v.setVaccineCvxCode(i.getVaccineCode().getCode(CVX));
+        v.setVaccineNdcCode(i.getVaccineCode().getCode(NDC));
+        v.setVaccineMvxCode(i.getVaccineCode().getCode(MVX));
 
-    v.setVaccineMvxCode(i.getManufacturer().getReference().getIdentifier().getValue());
+        v.setVaccineMvxCode(i.getManufacturer().getReference().getIdentifier().getValue());
 
-    v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
+        v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
 
-    v.setUpdatedDate(new Date());
+        v.setUpdatedDate(new Date());
 
-    v.setLotNumber(i.getLotNumber());
-    v.setExpirationDate(i.getExpirationDate());
-    if (i.getStatus() != null) {
-      switch(i.getStatus()){
-        case COMPLETED: {
-          v.setCompletionStatus("CP");
-          break;
+        v.setLotNumber(i.getLotNumber());
+        v.setExpirationDate(i.getExpirationDate());
+        if (i.getStatus() != null) {
+            switch (i.getStatus()) {
+                case COMPLETED: {
+                    v.setCompletionStatus("CP");
+                    break;
+                }
+                case ENTEREDINERROR: {
+                    v.setActionCode("D");
+                    break;
+                }
+                case NOTDONE: {
+                    v.setCompletionStatus("RE");
+                    break;
+                } //Could also be NA or PA
+                case NULL:
+                default:
+                    v.setCompletionStatus("");
+                    break;
+            }
         }
-        case ENTEREDINERROR: {
-          v.setActionCode("D");
-          break;
+        v.setRefusalReasonCode(i.getReasonFirstRep().getConcept().getCodingFirstRep().getCode());
+        v.setBodySite(i.getSite().getCodingFirstRep().getCode());
+        v.setBodyRoute(i.getRoute().getCodingFirstRep().getCode());
+
+        v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
+        if (i.hasProgramEligibility()) {
+            v.setFundingEligibility(i.getProgramEligibilityFirstRep().getProgram().getCodingFirstRep().getCode());
         }
-        case NOTDONE: {
-          v.setCompletionStatus("RE");
-          break;
-        } //Could also be NA or PA
-        case NULL:
-        default:
-          v.setCompletionStatus("");
-          break;
-      }
-    }
-    v.setRefusalReasonCode(i.getReasonFirstRep().getConcept().getCodingFirstRep().getCode());
-    v.setBodySite(i.getSite().getCodingFirstRep().getCode());
-    v.setBodyRoute(i.getRoute().getCodingFirstRep().getCode());
+        if (i.hasInformationSource() && i.getInformationSource().getConcept() != null) {
+            v.setInformationSource(i.getInformationSource().getConcept().getCodingFirstRep().getCode());
+        }
 
-    v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
-    if (i.hasProgramEligibility()){
-      v.setFundingEligibility(i.getProgramEligibilityFirstRep().getProgram().getCodingFirstRep().getCode());
-    }
-    if (i.hasInformationSource() && i.getInformationSource().getConcept() != null) {
-      v.setInformationSource(i.getInformationSource().getConcept().getCodingFirstRep().getCode());
+        return v;
     }
 
-    return v;
-  }
-  
-  
 
 }

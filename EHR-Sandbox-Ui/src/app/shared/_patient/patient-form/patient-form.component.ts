@@ -96,8 +96,8 @@ export class PatientFormComponent {
     },
     {
       title: 'Medical Record Number', cols: 1, rows: 1, patientForms: [
-        { type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn' },
-        { type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem' },
+        // { type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn' },
+        // { type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem' },
         { type: FormType.identifiers, title: 'Identifier', attribute: 'identifiers' },
       ]
     },

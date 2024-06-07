@@ -13,6 +13,7 @@ import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -266,7 +267,8 @@ public class EhrGroupController {
             /**
              * First do match to get destination reference or identifier
              */
-            in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
+            EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
+            in.addParameter("memberId", ehrIdentifier.toR5());
             in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
             IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
             IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
@@ -290,7 +292,8 @@ public class EhrGroupController {
             return ehrGroup;
         } else {
             Parameters in = new Parameters();
-            in.addParameter("memberId", new Identifier().setValue(ehrPatient.getMrn()).setSystem(ehrPatient.getMrnSystem()));
+            EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
+            in.addParameter("memberId", ehrIdentifier.toR5());
             in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
             /**
              * First do match to get destination reference or identifier

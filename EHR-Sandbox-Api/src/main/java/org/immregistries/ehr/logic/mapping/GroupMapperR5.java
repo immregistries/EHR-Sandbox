@@ -6,6 +6,7 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
@@ -92,10 +93,9 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         }
         if (ehrGroup.getPatientList() != null) {
             for (EhrPatient patient : ehrGroup.getPatientList()) {
+                EhrIdentifier ehrIdentifier = patient.getMrnEhrIdentifier();
                 group.addMember().setEntity(new Reference()
-                        .setIdentifier(new Identifier()
-                                .setSystem(patient.getMrnSystem())
-                                .setValue(patient.getMrn())));
+                        .setIdentifier(ehrIdentifier.toR5()));
             }
         }
 

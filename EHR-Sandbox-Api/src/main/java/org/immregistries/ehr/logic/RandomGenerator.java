@@ -10,6 +10,7 @@ import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 import org.slf4j.Logger;
@@ -97,8 +98,11 @@ public class RandomGenerator {
         patient.setNameLast(lastname);
         patient.setNameMiddle(faker.name().firstName());
 
-        patient.setMrn(mrn);
-        patient.setMrnSystem(mrnSystem);
+        EhrIdentifier ehrIdentifier = new EhrIdentifier();
+        ehrIdentifier.setType("MR");
+        ehrIdentifier.setValue(mrn);
+        ehrIdentifier.setSystem(mrnSystem);
+        patient.getIdentifiers().add(ehrIdentifier);
 
         patient.setBirthDate(birthDate);
 

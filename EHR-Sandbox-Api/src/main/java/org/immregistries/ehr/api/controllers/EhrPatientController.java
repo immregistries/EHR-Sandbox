@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
@@ -36,7 +37,6 @@ import java.util.stream.StreamSupport;
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_ENTITY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_FACILITY_ID;
 import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
-import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
 
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
@@ -206,9 +206,10 @@ public class EhrPatientController {
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
 
         // TODO switch to $match ?
+        EhrIdentifier ehrIdentifier = patient.getMrnEhrIdentifier();
         Bundle searchBundle = client.search()
                 .forResource(Patient.class)
-                .where(Patient.IDENTIFIER.exactly().systemAndCode(MRN_SYSTEM, patient.getMrn()))
+                .where(Patient.IDENTIFIER.exactly().systemAndCode(ehrIdentifier.getSystem(), ehrIdentifier.getValue()))
                 .returnBundle(Bundle.class).execute();
         String id = null;
         for (Bundle.BundleEntryComponent entry : searchBundle.getEntry()) {

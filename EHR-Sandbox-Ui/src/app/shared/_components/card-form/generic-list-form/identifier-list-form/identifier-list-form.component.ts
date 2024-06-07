@@ -14,7 +14,12 @@ export class IdentifierListFormComponent extends GenericListFormComponent<EhrIde
   override readonly FORMS: GenericForm<EhrIdentifier>[] = [
     { type: FormType.text, title: 'Identifier Value', attribute: 'value' },
     { type: FormType.text, title: 'Identifier System', attribute: 'system' },
-    { type: FormType.text, title: 'Identifier Type', attribute: 'type' },
+    {
+      type: FormType.text, title: 'Identifier Type', attribute: 'type', options: [
+        { value: 'MR', label: 'Medical record number' },
+        { value: 'MC', label: "Patient's Medicare number" },
+      ]
+    },
   ]
 
 }

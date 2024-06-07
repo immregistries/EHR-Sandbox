@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 
 @Entity
 @Table(name = "patient")
@@ -38,10 +39,6 @@ public class EhrPatient extends EhrEntity {
     private Date updatedDate;
     @Column(name = "birth_date", nullable = false)
     private Date birthDate;
-    @Column(name = "mrn", length = 125)
-    private String mrn = "";
-    @Column(name = "mrn_system", length = 125)
-    private String mrnSystem = "";
     @Column(name = "name_last", length = 250)
     private String nameLast = "";
     @Column(name = "name_first", length = 250)
@@ -325,29 +322,22 @@ public class EhrPatient extends EhrEntity {
         this.id = id;
     }
 
-    public String getMrn() {
-        return mrn;
-    }
-
-    public void setMrn(String mrn) {
-        this.mrn = mrn;
-    }
-
-    public String getMrnSystem() {
-        return mrnSystem;
-    }
-
-    public void setMrnSystem(String mrnSystem) {
-        this.mrnSystem = mrnSystem;
-    }
-
-
     public Set<EhrIdentifier> getIdentifiers() {
         return identifiers;
     }
 
     public void setIdentifiers(Set<EhrIdentifier> identifiers) {
         this.identifiers = identifiers;
+    }
+
+    /**
+     * Helping method to extract MRN from patient identifiers, according to the type criteria
+     */
+    @JsonIgnore
+    @NotAudited
+    @Transient
+    public EhrIdentifier getMrnEhrIdentifier() {
+        return identifiers.stream().filter((identifier) -> identifier.getType().equals(MRN_TYPE_VALUE)).findFirst().orElse(null);
     }
 
     public String getNameSuffix() {

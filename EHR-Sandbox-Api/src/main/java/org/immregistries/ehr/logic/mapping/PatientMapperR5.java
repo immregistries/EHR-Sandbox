@@ -11,6 +11,7 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.NextOfKin;
 import org.immregistries.ehr.api.entities.NextOfKinRelationship;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -35,7 +36,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
     @Autowired
     OrganizationMapperR5 organizationMapperR5;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
-    
+
     public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
         Patient p = toFhir(ehrPatient);
         p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhir(facility).getIdentifierFirstRep()));
@@ -45,8 +46,9 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
     public Patient toFhir(EhrPatient ehrPatient) {
         Patient p = new Patient();
 //    p.setId("" + ehrPatient.getId());
-        if (!ehrPatient.getMrn().isBlank()) {
-            p.addIdentifier().setSystem(MRN_SYSTEM).setValue(ehrPatient.getMrn());
+        EhrIdentifier mrnIdentifier = ehrPatient.getMrnEhrIdentifier();
+        if (mrnIdentifier != null) {
+            p.addIdentifier(mrnIdentifier.toR5());
         }
 
         if (Objects.nonNull(ehrPatient.getFacility())) {
@@ -177,10 +179,10 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
             ehrPatient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
         }
 
-        Identifier chosenIdentifier = p.getIdentifier().stream().filter(identifier -> identifier.getSystem().equals(MRN_SYSTEM)).findFirst()
-                .orElse(p.getIdentifierFirstRep());
-        ehrPatient.setMrn(chosenIdentifier.getValue());
-        ehrPatient.setMrnSystem(chosenIdentifier.getSystem());
+        for (Identifier identifier : p.getIdentifier()) {
+            EhrIdentifier ehrIdentifier = new EhrIdentifier(identifier);
+            ehrPatient.getIdentifiers().add(ehrIdentifier);
+        }
 
         Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME);
         if (motherMaiden != null) {

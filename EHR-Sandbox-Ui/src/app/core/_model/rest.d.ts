@@ -90,8 +90,6 @@ export interface NextOfKin {
 
 export interface EhrPatient extends ObjectWithID {
   id?: number;
-  mrn?: string;
-  mrnSystem?: string;
   identifiers?: EhrIdentifier[];
   createdDate?: Date;
   updatedDate?: Date;

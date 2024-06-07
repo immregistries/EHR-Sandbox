@@ -21,7 +21,7 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   @Input()
   facility!: Facility | null;
   @Input()
-  columns: (keyof EhrPatient | "alerts" | "remove")[] = [
+  columns: (keyof EhrPatient | "alerts" | "remove" | "mrn")[] = [
     "mrn",
     "nameLast",
     "nameFirst",
@@ -95,6 +95,12 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
         this.facilityService.doRefresh()
       })
     }
+  }
+
+  extractMrn(element: EhrPatient): string {
+    return element.identifiers?.find((identifier) => {
+      return identifier.type == 'MR'
+    })?.value ?? ''
   }
 
 }
