@@ -23,12 +23,16 @@ const httpOptions = {
 export class CodeMapsService {
   private codeBaseMap!: BehaviorSubject<CodeBaseMap>;
   private readonly IDENTIFIER_TYPE_SYSTEM_FILE_NAME = "assets/CodeSystem-v2-0203.json";
-  private _IdentifierTypeCodeSystem!: CodeSystem;
-  public get identifierTypeCodeSystem(): CodeSystem {
-    return this._IdentifierTypeCodeSystem;
+  private readonly QUALIFICATION_SYSTEM_FILE_NAME = "assets/CodeSystem-v2-0360.json";
+
+  private _qualificationTypeCodeSystem!: CodeSystem;
+  public get qualificationTypeCodeSystem(): CodeSystem {
+    return this._qualificationTypeCodeSystem;
   }
-  private set identifierTypeCodeSystem(value: CodeSystem) {
-    this._IdentifierTypeCodeSystem = value;
+
+  private _identifierTypeCodeSystem!: CodeSystem;
+  public get identifierTypeCodeSystem(): CodeSystem {
+    return this._identifierTypeCodeSystem;
   }
 
   constructor(private http: HttpClient,
@@ -80,7 +84,10 @@ export class CodeMapsService {
 
   load() {
     this.http.get<CodeSystem>(this.IDENTIFIER_TYPE_SYSTEM_FILE_NAME).subscribe(res => {
-      this.identifierTypeCodeSystem = res;
+      this._identifierTypeCodeSystem = res;
+    });
+    this.http.get<CodeSystem>(this.QUALIFICATION_SYSTEM_FILE_NAME).subscribe(res => {
+      this._qualificationTypeCodeSystem = res;
     });
     this.codeBaseMap = new BehaviorSubject<CodeBaseMap>({})
     return new Promise((resolve, reject) => {

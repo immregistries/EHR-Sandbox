@@ -330,6 +330,21 @@ public class RandomGenerator {
         clinician.setNameFirst(faker.name().firstName());
         clinician.setNameLast(faker.name().lastName());
         clinician.setNameMiddle(faker.name().firstName());
+
+        clinician.setQualification("MD");
+        double randomNumber = random();
+        if (randomNumber > 0.8) {
+            clinician.setQualification("RN");
+        }
+        if (randomNumber > 0.6) {
+            clinician.setQualification("MA");
+        }
+        if (randomNumber > 0.4) {
+            clinician.setQualification("PN");
+        }
+        if (randomNumber > 0.2) {
+            clinician.setQualification("NP");
+        }
         return clinician;
     }
 

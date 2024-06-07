@@ -38,6 +38,17 @@ public class Clinician extends EhrEntity {
     @Column(name = "name_Suffix", nullable = true, length = 250)
     private String nameSuffix = "";
 
+    public String getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(String qualification) {
+        this.qualification = qualification;
+    }
+
+    @Column(name = "qualification", nullable = true, length = 250)
+    private String qualification = "";
+
     @OneToMany(mappedBy = "enteringClinician")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
