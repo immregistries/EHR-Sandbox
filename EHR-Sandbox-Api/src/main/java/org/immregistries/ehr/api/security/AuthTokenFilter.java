@@ -54,7 +54,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         boolean authorized = false;
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+            if (request.getServletPath().split("/").length == 2 &&
+                    (request.getServletPath().endsWith(".js") || request.getServletPath().endsWith(".ico") || request.getServletPath().endsWith(".css"))) {
+                authorized = true;
+            } else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") || request.getServletPath().startsWith("/healthy") || request.getServletPath().startsWith("/assets") || request.getServletPath().startsWith("/styles") || request.getServletPath().equals("/")) { // for registration no authorization needed
+                authorized = true;
+            } else if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -65,14 +70,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authorized = filterUrl(request);
 
             } // TODO figure why http security configuration does not skip filter
-            else if (request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") || request.getServletPath().startsWith("/healthy")) { // for registration no authorization needed
-                authorized = true;
-            } else if (request.getServletPath().split("/").length == 1 &&
-                    (request.getServletPath().endsWith(".js") || request.getServletPath().endsWith(".ico") || request.getServletPath().endsWith(".css"))) {
-
-            }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            logger.error("Cannot set user authentication: ", e);
         }
         if (authorized) {
             filterChain.doFilter(request, response);
