@@ -76,7 +76,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         if (authorized) {
             filterChain.doFilter(request, response);
         } else {
-            logger.error("Unauthorized request {}", request.getServletPath());
+            logger.error("Unauthorized request path: '{}'", request.getServletPath());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
         }
     }
