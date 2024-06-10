@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, NgForm } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
 import { Code, CodeMap, CodeReference } from "src/app/core/_model/code-base-map";
@@ -11,13 +11,34 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent implements OnInit {
-  @ViewChild('selectForm', { static: true }) selectForm!: NgForm;
-
+  formControl: FormControl = new FormControl();
+  @ViewChild('selectForm', { static: true })
+  selectForm!: NgForm;
   /** Receives */
-  @Input() referenceFilter?: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>;
+  private _referenceFilter?: BehaviorSubject<{ [key: string]: { reference: CodeReference; value: string; }; }> | undefined;
+  public get referenceFilter(): BehaviorSubject<{ [key: string]: { reference: CodeReference; value: string; }; }> | undefined {
+    return this._referenceFilter;
+  }
+  @Input()
+  public set referenceFilter(value: BehaviorSubject<{ [key: string]: { reference: CodeReference; value: string; }; }> | undefined) {
+    this._referenceFilter = value;
+    this.referenceFilter?.subscribe((ref) => {
+      this.filterChange(this.model)
+      if (this.filteredCodeMapsOptions?.length == 0) {
+        this.warning = true
+      }
+      // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
+      //   this.model = this.filteredCodeMapsOptions[0].value
+      //   this.valueChanged()
+      // }
+      this.erasedOnLastChange = false
+      this.refreshWarning()
+    })
+
+  }
   @Output() referenceEmitter = new EventEmitter<{ reference: CodeReference, value: string }>();
 
-  @Input() form!: BaseForm;
+  @Input() baseForm!: BaseForm;
 
   @Input() warningCheck!: EventListener;
 
@@ -28,7 +49,13 @@ export class SelectCodebaseComponent implements OnInit {
   @Input() compareTo?: ComparisonResult | any | null;
 
   codeMap?: CodeMap;
-  warning: boolean = false;
+  private _warning: boolean = false;
+  public get warning(): boolean {
+    return this._warning;
+  }
+  public set warning(value: boolean) {
+    this._warning = value;
+  }
   /**
    * Used to avoid an interblocking situation with autoselection on filter changes
    */
@@ -40,23 +67,24 @@ export class SelectCodebaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
-      if (this.form.codeMapLabel && codeBaseMap[this.form.codeMapLabel]) {
-        this.codeMap = codeBaseMap[this.form.codeMapLabel]
+      if (this.baseForm.codeMapLabel && codeBaseMap[this.baseForm.codeMapLabel]) {
+        this.codeMap = codeBaseMap[this.baseForm.codeMapLabel]
       }
       this.referenceFilter?.subscribe((ref) => {
         this.filterChange(this.model)
         if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 0) {
           this.warning = true
         }
-        // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && ( this.model == '' || !this.model )  && this.erasedOnLastChange == false) {
-        if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
-          this.model = this.filteredCodeMapsOptions[0].value
-          this.valueChanged()
-          // this.autofilled = true
-        }
+        // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
+        //   this.model = this.filteredCodeMapsOptions[0].value
+        //   this.valueChanged()
+        // }
         this.erasedOnLastChange = false
       })
     })
+    // this.formControl.valueChanges.subscribe((value) => {
+    //   this.valueChanged()
+    // })
     this.formChangesSubscription = this.selectForm.form.valueChanges.subscribe((value) => {
       this.valueChanged()
     })
@@ -97,9 +125,10 @@ export class SelectCodebaseComponent implements OnInit {
         }
       )
       this.filteredCodeMapsOptions = this.filteredCodeMapsOn.byValue.concat(this.filteredCodeMapsOn.byLabel, this.filteredCodeMapsOn.byDescription, this.filteredCodeMapsOn.byOther)
+      // console.log(this.form.codeMapLabel, filterValue, this.filteredCodeMapsOptions)
     }
-    if (this.form.options) {
-      this.filteredFormOptions = this.form.options.filter((option) => {
+    if (this.baseForm.options) {
+      this.filteredFormOptions = this.baseForm.options.filter((option) => {
         if (option.code === true && 'true'.includes(filterValue)) {
           return true
         } else if (option.code === false && 'false'.includes(filterValue)) {
@@ -127,7 +156,7 @@ export class SelectCodebaseComponent implements OnInit {
         scanned = false
         included = false
         this.referenceFilter.getValue()[codeMapType].reference.linkTo.forEach((ref) => {
-          if (ref.codeset == this.form.codeMapLabel) {
+          if (ref.codeset == this.baseForm.codeMapLabel) {
             scanned = true
             if (option.value == ref.value) {
               included = true
@@ -165,12 +194,7 @@ export class SelectCodebaseComponent implements OnInit {
       /**
        * Checking if new value should trigger a warning i.e
        */
-      if (this.filteredCodeMapsOptions && this.form.codeMapLabel &&
-        this.filteredCodeMapsOptions.length < 1 && this.model && this.referenceFilter && this.referenceFilter.getValue()) {
-        this.warning = true
-      } else {
-        this.warning = false
-      }
+      this.refreshWarning()
       this.erasedOnLastChange = false
       /**
        * emitting the new code value
@@ -193,23 +217,25 @@ export class SelectCodebaseComponent implements OnInit {
     }
   }
 
+  clear() {
+    this.model = '';
+    this.erasedOnLastChange = true
+    console.log('clear', this.erasedOnLastChange)
+    this.valueChanged()
+    console.log('clear value changed', this.erasedOnLastChange)
+  }
+
   displayCode(codeKey: string): string {
     if (codeKey && this.codeMap && this.codeMap[codeKey]) {
       let code: Code = this.codeMap[codeKey]
       return code.label + ' (' + code.value + ')'
-    } else if (this.form.options) {
-      let option: BaseFormOption | undefined = this.form.options.find((opt) => opt.code == codeKey)
+    } else if (this.baseForm.options) {
+      let option: BaseFormOption | undefined = this.baseForm.options.find((opt) => opt.code == codeKey)
       if (option?.display) {
         return option.display + ' (' + codeKey + ')'
       }
     }
     return codeKey
-  }
-
-  clear() {
-    this.model = '';
-    this.erasedOnLastChange = true
-    this.valueChanged()
   }
 
   @Input() overrideNoFieldsRequired: boolean = false
@@ -219,10 +245,19 @@ export class SelectCodebaseComponent implements OnInit {
       return 'false'
     } else if (this.overrideAllFieldsRequired) {
       return 'true'
-    } else if (this.form.required) {
+    } else if (this.baseForm.required) {
       return 'true'
     } else {
       return 'false'
+    }
+  }
+
+  refreshWarning() {
+    if (this.filteredCodeMapsOptions && this.baseForm.codeMapLabel &&
+      this.filteredCodeMapsOptions.length < 1 && this.model && this.referenceFilter && this.referenceFilter.getValue()) {
+      this.warning = true
+    } else {
+      this.warning = false
     }
   }
 }

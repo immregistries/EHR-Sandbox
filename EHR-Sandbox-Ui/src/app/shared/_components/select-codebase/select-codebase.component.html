@@ -1,9 +1,9 @@
 <form #selectForm="ngForm">
   <mat-form-field appearance="outline" class="select-field">
-    <mat-label>{{form.title}}</mat-label>
+    <mat-label>{{baseForm.title}}</mat-label>
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field-input" matBadge="priority_high"
            [matBadgeHidden]="warning == false" matBadgeColor="accent" (ngModelChange)="filterChange($event)"
-           name="{{form.attribute}}"
+           name="{{baseForm.attribute}}"
            [matTooltip]="warning == false ? '': 'Current value not referenced by other selected fields'"
            [required]="isRequired()">
     <button matSuffix mat-icon-button *ngIf="model" (click)="clear()" matBadge="priority_high"
@@ -25,5 +25,6 @@
         {{option.display ? option.display + ' (' + option.code + ')' : option.code }}
       </mat-option>
     </mat-autocomplete>
+    <mat-error *ngIf="warning">Incompatible with another field</mat-error>
   </mat-form-field>
 </form>

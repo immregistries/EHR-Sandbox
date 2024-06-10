@@ -8,12 +8,13 @@
       <input matInput name="{{form.attribute}}" type="{{form.type}}" [(ngModel)]="model" [disabled]="false"
              [required]="isRequired()">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
+      <!-- <mat-error>TEST ERROR 1</mat-error> -->
     </mat-form-field>
     <!-- Errors in lot number validation-->
     <div *ngIf="!lotNumberValid && form.attribute == 'lotNumber'" class="error">Not matching manufacturer patterns</div>
   </div>
 
-  <app-select-codebase *ngSwitchCase="'code'" [model]="asString(model)" (modelChange)="model = $event" [form]="form"
+  <app-select-codebase *ngSwitchCase="'code'" [model]="asString(model)" (modelChange)="model = $event" [baseForm]="form"
                        class="select-field" [referenceFilter]="referenceFilter" [compareTo]="compareTo"
                        [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                        [overrideAllFieldsRequired]="overrideAllFieldsRequired"
