@@ -28,3 +28,11 @@ export interface CodeReferenceLink {
   value: string;
   codeset: string;
 }
+
+export interface CodeReferenceTable {
+  [origin_label: string]: CodeReferenceTableMember
+}
+export interface CodeReferenceTableMember {
+  reference: CodeReference;
+  value: string;
+}

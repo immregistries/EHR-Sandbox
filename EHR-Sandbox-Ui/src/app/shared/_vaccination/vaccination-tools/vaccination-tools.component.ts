@@ -36,8 +36,8 @@ export class VaccinationToolsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.vaccinationService.doRefresh()
         this.vaccination = result
-        // this.vaccinationService.doRefresh()
       }
     });
   }

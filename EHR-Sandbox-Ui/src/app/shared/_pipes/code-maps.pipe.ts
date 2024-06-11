@@ -6,12 +6,13 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
   name: 'codeMaps'
 })
 export class CodeMapsPipe implements PipeTransform {
-  constructor(private service: CodeMapsService) {
-
-  }
+  constructor(private service: CodeMapsService) { }
 
   transform(value: string, ...args: string[]): Code {
-    return this.service.getCodeMap(args[0])[value];
+    if (!value) {
+      return { value: value, label: '' }
+    }
+    return this.service.getCodeMap(args[0])[value] ?? { value: value, label: '' };
   }
 
 }

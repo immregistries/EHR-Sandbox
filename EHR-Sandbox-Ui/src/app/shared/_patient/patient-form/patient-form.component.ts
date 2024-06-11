@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { EhrPatient, Facility } from 'src/app/core/_model/rest';
 import FormType, { FormCard } from 'src/app/core/_model/structure';
-import { CodeReference } from "src/app/core/_model/code-base-map";
+import { CodeReference, CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BehaviorSubject } from 'rxjs';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -30,7 +30,7 @@ export class PatientFormComponent {
   /**
    * Currently unusused, just initialised
    */
-  public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
+  public references: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
 
   constructor(private patientService: PatientService,
     private facilityService: FacilityService,

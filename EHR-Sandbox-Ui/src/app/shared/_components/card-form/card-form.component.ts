@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { BaseForm, ComparisonResult } from 'src/app/core/_model/structure';
-import { CodeReference } from "src/app/core/_model/code-base-map";
+import { Code, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
+import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-card-form',
@@ -13,8 +14,8 @@ export class CardFormComponent {
   /**
    * solely for select-codebase components
    */
-  @Input() referenceFilter!: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>;
-  @Output() referenceEmitter = new EventEmitter<{ reference: CodeReference, value: string }>();
+  @Input() referenceFilter!: BehaviorSubject<CodeReferenceTable>;
+  @Output() referenceEmitter = new EventEmitter<CodeReferenceTableMember>();
   @Input() toolTipDisabled: boolean = false;
 
   @Input() lotNumberValid: boolean = true;
@@ -35,7 +36,7 @@ export class CardFormComponent {
 
   @Input() compareTo?: string;
 
-  referencesChange(emitted: { reference: CodeReference, value: string }): void {
+  referencesChange(emitted: CodeReferenceTableMember): void {
     this.referenceEmitter.emit(emitted)
   }
 
@@ -59,5 +60,34 @@ export class CardFormComponent {
       return 'false'
     }
   }
+
+  // lotNumberValidator(): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     if (!(this.form.attribute === 'lotNumber')) {
+  //       return null;
+  //     }
+  //     let scanned = false
+  //     let regexFit = false
+  //     Object.keys
+  //     this.referenceFilter.getValue()
+  //     for (const ref of this.referenceFilter.) {
+  //       if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN") {
+  //         scanned = true
+  //         if (!this.vaccination.vaccine.lotNumber || this.vaccination.vaccine.lotNumber.length == 0) {
+  //           this.vaccination.vaccine.lotNumber = randexp(ref.value)
+  //           regexFit = true
+  //           break;
+  //         } else if (new RegExp(ref.value).test(this.vaccination.vaccine.lotNumber)) {
+  //           regexFit = true
+  //           break;
+  //         }
+  //       }
+  //     }
+  //     if (scanned && !regexFit) {
+  //       return
+  //     }
+  //     return null;
+  //   };
+  // }
 
 }

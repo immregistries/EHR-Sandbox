@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/structure';
-import { Code, CodeReference } from "src/app/core/_model/code-base-map";
+import { Code, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
@@ -116,7 +116,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
+  public references: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
   @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
   public filteredCodeMapsOptions: { [key: string]: KeyValue<string, Code>[] } = {};
@@ -150,9 +150,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     this.formChangesSubscription.unsubscribe();
   }
 
-  referencesChange(emitted: { reference: CodeReference, value: string }, codeMapKey?: string): void {
+  referencesChange(emitted: CodeReferenceTableMember, codeMapKey: string | undefined): void {
     if (codeMapKey) {
-      let newRefList: { [key: string]: { reference: CodeReference, value: string } } = JSON.parse(JSON.stringify(this.references.value))
+      let newRefList: { [key: string]: CodeReferenceTableMember } = JSON.parse(JSON.stringify(this.references.value))
       if (emitted) {
         newRefList[codeMapKey] = emitted
         this.checkLotNumberValidity(emitted.reference)

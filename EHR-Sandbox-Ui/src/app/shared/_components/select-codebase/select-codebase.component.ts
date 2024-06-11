@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormControl, NgForm } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
-import { Code, CodeMap, CodeReference } from "src/app/core/_model/code-base-map";
+import { Code, CodeMap, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
 @Component({
@@ -11,87 +11,37 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent implements OnInit {
-  formControl: FormControl = new FormControl();
-  @ViewChild('selectForm', { static: true })
-  selectForm!: NgForm;
-  /** Receives */
-  private _referenceFilter?: BehaviorSubject<{ [key: string]: { reference: CodeReference; value: string; }; }> | undefined;
-  public get referenceFilter(): BehaviorSubject<{ [key: string]: { reference: CodeReference; value: string; }; }> | undefined {
-    return this._referenceFilter;
-  }
-  @Input()
-  public set referenceFilter(value: BehaviorSubject<{ [key: string]: { reference: CodeReference; value: string; }; }> | undefined) {
-    this._referenceFilter = value;
-    this.referenceFilter?.subscribe((ref) => {
-      this.filterChange(this.model)
-      if (this.filteredCodeMapsOptions?.length == 0) {
-        this.warning = true
-      }
-      // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
-      //   this.model = this.filteredCodeMapsOptions[0].value
-      //   this.valueChanged()
-      // }
-      this.erasedOnLastChange = false
-      this.refreshWarning()
-    })
-
-  }
-  @Output() referenceEmitter = new EventEmitter<{ reference: CodeReference, value: string }>();
 
   @Input() baseForm!: BaseForm;
 
-  @Input() warningCheck!: EventListener;
-
-  @Input() model!: string;
+  public formControl: FormControl<string> = new FormControl();
+  @Input()
+  public set model(value: string) {
+    this.formControl.setValue(value);
+  }
   @Output() modelChange = new EventEmitter<any>();
 
   @Input() toolTipDisabled: boolean = false;
   @Input() compareTo?: ComparisonResult | any | null;
 
-  codeMap?: CodeMap;
-  private _warning: boolean = false;
-  public get warning(): boolean {
-    return this._warning;
-  }
-  public set warning(value: boolean) {
-    this._warning = value;
-  }
-  /**
-   * Used to avoid an interblocking situation with autoselection on filter changes
-   */
-  erasedOnLastChange: boolean = false;
+  private codeMap?: CodeMap;
 
   constructor(public codeMapsService: CodeMapsService) { }
 
-  private formChangesSubscription!: Subscription
-
   ngOnInit(): void {
+    this.formControl.addValidators(this.codebaseReferenceValidator())
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       if (this.baseForm.codeMapLabel && codeBaseMap[this.baseForm.codeMapLabel]) {
         this.codeMap = codeBaseMap[this.baseForm.codeMapLabel]
       }
-      this.referenceFilter?.subscribe((ref) => {
-        this.filterChange(this.model)
-        if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 0) {
-          this.warning = true
-        }
-        // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.model == '' || !this.model)) {
-        //   this.model = this.filteredCodeMapsOptions[0].value
-        //   this.valueChanged()
-        // }
-        this.erasedOnLastChange = false
-      })
+      this.filterChange(this.formControl.value)
     })
-    // this.formControl.valueChanges.subscribe((value) => {
-    //   this.valueChanged()
-    // })
-    this.formChangesSubscription = this.selectForm.form.valueChanges.subscribe((value) => {
-      this.valueChanged()
+    this.formControl.valueChanges.subscribe((value) => {
+      this.filterChange(value)
+      console.log(value)
+      // this.modelChange.emit(this.formControl.value)
+      // this.valueChanged()
     })
-  }
-
-  ngOnDestroy() {
-    this.formChangesSubscription.unsubscribe();
   }
 
   public filteredCodeMapsOptions!: Code[];
@@ -101,10 +51,7 @@ export class SelectCodebaseComponent implements OnInit {
    */
   private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
   filterChange(event: string) {
-    let filterValue = ''
-    if (event) {
-      filterValue = event.toLowerCase();
-    }
+    let filterValue = event ? event.toLowerCase() : ''
     if (this.codeMap) {
       this.filteredCodeMapsOn = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
       Object.values(this.codeMap).forEach(
@@ -125,7 +72,6 @@ export class SelectCodebaseComponent implements OnInit {
         }
       )
       this.filteredCodeMapsOptions = this.filteredCodeMapsOn.byValue.concat(this.filteredCodeMapsOn.byLabel, this.filteredCodeMapsOn.byDescription, this.filteredCodeMapsOn.byOther)
-      // console.log(this.form.codeMapLabel, filterValue, this.filteredCodeMapsOptions)
     }
     if (this.baseForm.options) {
       this.filteredFormOptions = this.baseForm.options.filter((option) => {
@@ -189,40 +135,76 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   valueChanged() {
-    if (this.model && this.model != '') {
-      // this.warning = !this.filterWithReference(this.codeMap[this.model])
-      /**
-       * Checking if new value should trigger a warning i.e
-       */
-      this.refreshWarning()
-      this.erasedOnLastChange = false
+    if (this.formControl.value && this.formControl.value != '') {
       /**
        * emitting the new code value
        */
-      this.modelChange.emit(this.model)
+      this.modelChange.emit(this.formControl.value)
       /**
        * emitting the references linked to the code
        */
-      if (this.codeMap && this.codeMap[this.model]) {
-        this.referenceEmitter.emit({ reference: (this.codeMap[this.model].reference ?? { linkTo: [] }), value: this.model })
+      if (!this._blockReferenceEmit) {
+        if (this.codeMap && this.codeMap[this.formControl.value]) {
+          this.referenceEmitter.emit({ reference: (this.codeMap[this.formControl.value].reference ?? { linkTo: [] }), value: this.formControl.value })
+        } else {
+          this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.formControl.value })
+        }
       } else {
-        this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.model })
+        this._blockReferenceEmit = false
       }
     } else {
-      this.warning = false
-      this.erasedOnLastChange = true
       this.filterChange('')
-      this.modelChange.emit('')
-      this.referenceEmitter.emit(undefined)
+      this.modelChange.emit(this.formControl.value)
+      if (!this._blockReferenceEmit) {
+        this.referenceEmitter.emit(undefined)
+      } else {
+        this._blockReferenceEmit = false
+      }
     }
   }
 
+
+  @Output() referenceEmitter = new EventEmitter<CodeReferenceTableMember>();
+
+  private _blockReferenceEmit: boolean = false
+
+  /** Receives */
+  private _referenceFilter: BehaviorSubject<CodeReferenceTable> | undefined;
+  public get referenceFilter(): BehaviorSubject<CodeReferenceTable> | undefined {
+    return this._referenceFilter;
+  }
+  @Input()
+  public set referenceFilter(value: BehaviorSubject<CodeReferenceTable> | undefined) {
+    this._referenceFilter = value;
+    this.referenceFilter?.subscribe((ref) => {
+      this.filterChange(this.formControl.value)
+      // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.formControl.value == '' || !this.formControl.value)) {
+      //   this.formControl.value = this.filteredCodeMapsOptions[0].value
+      //   this.valueChanged()
+      // }
+      this._blockReferenceEmit = true
+      this.formControl.updateValueAndValidity()
+      this._blockReferenceEmit = false
+    })
+  }
+
+  codebaseReferenceValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!this.codeMap) {
+        return null
+      }
+      const valueCode: Code | undefined = Object.values(this.codeMap).find((code) => code.value === control.value)
+      if (!valueCode) {
+        return null
+      }
+      const forbidden = !this.filterWithReference(valueCode);
+      return forbidden ? { codeMapIssue: 'Not referenced by other field' } : null;
+    };
+  }
+
+
   clear() {
-    this.model = '';
-    this.erasedOnLastChange = true
-    console.log('clear', this.erasedOnLastChange)
-    this.valueChanged()
-    console.log('clear value changed', this.erasedOnLastChange)
+    this.formControl.setValue('');
   }
 
   displayCode(codeKey: string): string {
@@ -252,12 +234,4 @@ export class SelectCodebaseComponent implements OnInit {
     }
   }
 
-  refreshWarning() {
-    if (this.filteredCodeMapsOptions && this.baseForm.codeMapLabel &&
-      this.filteredCodeMapsOptions.length < 1 && this.model && this.referenceFilter && this.referenceFilter.getValue()) {
-      this.warning = true
-    } else {
-      this.warning = false
-    }
-  }
 }

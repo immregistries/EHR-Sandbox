@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
 import FormType, { FormCard } from 'src/app/core/_model/structure';
-import { CodeReference } from "src/app/core/_model/code-base-map";
+import { CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
@@ -28,7 +28,7 @@ export class ClinicianFormComponent implements OnInit {
   /**
    * Currently unusused, just initialised
    */
-  public references: BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }> = new BehaviorSubject<{ [key: string]: { reference: CodeReference, value: string } }>({});
+  public references: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
 
   @Input()
   model: Clinician = {}

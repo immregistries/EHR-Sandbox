@@ -85,7 +85,6 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
             this.selectedElement = newVaccination
             this.selectEmitter.emit(this.selectedElement);
             console.log(this.selectedElement)
-
           })
         }
       }
