@@ -22,8 +22,8 @@
     </mat-option>
   </mat-autocomplete>
 
-  <mat-error *ngIf="formControl.errors && formControl.errors['codeMapIssue']; else req">{{formControl.errors |
-    json}}
+  <mat-error
+    *ngIf="formControl.errors && formControl.errors['codeMapIssue']; else req">{{formControl.errors['codeMapIssue']}}
   </mat-error>
   <ng-template #req>
     <mat-error>required</mat-error>

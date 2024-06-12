@@ -38,17 +38,17 @@ public class VaccinationEvent extends EhrEntity {
         // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
     @JoinColumn(name = "entering_clinician_id")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician enteringClinician;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ordering_clinician_id")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician orderingClinician;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
     @JoinColumn(name = "administering_clinician_id")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician administeringClinician;

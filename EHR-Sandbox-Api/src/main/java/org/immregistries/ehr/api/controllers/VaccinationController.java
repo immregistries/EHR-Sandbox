@@ -92,13 +92,13 @@ public class VaccinationController {
                                                     Optional<EhrPatient> patient,
                                                     VaccinationEvent vaccination) {
         patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
-        if (vaccination.getAdministeringClinician().getId() == null) {
+        if (vaccination.getAdministeringClinician() != null && vaccination.getAdministeringClinician().getId() == null) {
             vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant, vaccination.getAdministeringClinician()));
         }
-        if (vaccination.getEnteringClinician().getId() == null) {
+        if (vaccination.getEnteringClinician() != null && vaccination.getEnteringClinician().getId() == null) {
             vaccination.setEnteringClinician(clinicianController.postClinicians(tenant, vaccination.getEnteringClinician()));
         }
-        if (vaccination.getOrderingClinician().getId() == null) {
+        if (vaccination.getOrderingClinician() != null && vaccination.getOrderingClinician().getId() == null) {
             vaccination.setOrderingClinician(clinicianController.postClinicians(tenant, vaccination.getOrderingClinician()));
         }
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
@@ -120,14 +120,13 @@ public class VaccinationController {
         } else {
             oldVaccination = old.get();
             vaccination.getVaccine().setCreatedDate(oldVaccination.getVaccine().getCreatedDate());
-
-            if (vaccination.getAdministeringClinician().getId() == null) {
+            if (vaccination.getAdministeringClinician() != null && vaccination.getAdministeringClinician().getId() == null) {
                 vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant, vaccination.getAdministeringClinician()));
             }
-            if (vaccination.getEnteringClinician().getId() == null) {
+            if (vaccination.getEnteringClinician() != null && vaccination.getEnteringClinician().getId() == null) {
                 vaccination.setEnteringClinician(clinicianController.postClinicians(tenant, vaccination.getEnteringClinician()));
             }
-            if (vaccination.getOrderingClinician().getId() == null) {
+            if (vaccination.getOrderingClinician() != null && vaccination.getOrderingClinician().getId() == null) {
                 vaccination.setOrderingClinician(clinicianController.postClinicians(tenant, vaccination.getOrderingClinician()));
             }
             vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));

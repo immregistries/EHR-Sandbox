@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NextOfKinRelationship } from 'src/app/core/_model/rest';
 import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/structure';
 import { NextOfKinRelationshipListFormComponent } from './next-of-kin-relationship-list-form/next-of-kin-relationship-list-form.component';
@@ -9,14 +9,29 @@ import { error } from 'console';
   templateUrl: './generic-list-form.component.html',
   styleUrls: ['./generic-list-form.component.css']
 })
-export class GenericListFormComponent<T> {
+export class GenericListFormComponent<T> implements OnInit {
 
   @Input()
   form!: BaseForm;
+  public _itemList?: (T)[] | undefined;
+  public get itemList(): (T)[] | undefined {
+    return this._itemList;
+  }
   @Input()
-  itemList?: (T)[]
+  public set itemList(value: (T)[] | undefined) {
+    this._itemList = value;
+    if (!this.itemList || this.itemList.length < 1) {
+      this.addItem()
+    }
+  }
   @Output()
   itemListChange: EventEmitter<(T)[]> = new EventEmitter<(T)[]>()
+
+  ngOnInit(): void {
+    // if (!this.itemList || this.itemList.length < 1) {
+    //   this.addItem()
+    // }
+  }
 
   addItem() {
     /**

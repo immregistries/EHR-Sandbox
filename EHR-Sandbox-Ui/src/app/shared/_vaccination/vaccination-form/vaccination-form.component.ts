@@ -234,7 +234,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     {
       title: "Funding", rows: 1, cols: 1, vaccineForms: [
         { type: FormType.code, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE" },
-        { type: FormType.select, title: "Eligibility", attribute: "fundingEligibility", options: [{ code: 'Y', display: 'Y' }, { code: 'N', display: 'N' }] },
+        { type: FormType.select, title: "Dose level accountability", attribute: "fundingEligibility", options: [{ code: 'Y', display: 'Y' }, { code: 'N', display: 'N' }] },
       ]
     },
     {

@@ -13,10 +13,11 @@ export class AddressListFormComponent extends GenericListFormComponent<EhrAddres
   override readonly FORMS: GenericForm<EhrAddress>[] = [
     { type: FormType.text, title: 'Line 1', attribute: 'addressLine1' },
     { type: FormType.text, title: 'Line 2', attribute: 'addressLine2' },
-    { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
     { type: FormType.text, title: 'City', attribute: 'addressCity' },
-    { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
     { type: FormType.text, title: 'State', attribute: 'addressState' },
+
+    { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
+    { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
     { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
   ]
 }

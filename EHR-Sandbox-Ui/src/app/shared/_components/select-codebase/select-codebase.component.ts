@@ -18,6 +18,8 @@ export class SelectCodebaseComponent implements OnInit {
   @Input()
   public set model(value: string) {
     this.formControl.setValue(value);
+    // this.valueChanged()
+    // this._blockReferenceEmit = true
   }
   @Output() modelChange = new EventEmitter<any>();
 
@@ -38,9 +40,10 @@ export class SelectCodebaseComponent implements OnInit {
     })
     this.formControl.valueChanges.subscribe((value) => {
       this.filterChange(value)
-      console.log(value)
+      // this.modelChange.emit(this.formControl.value ?? '')
+      // console.log(value)
+      // this._blockReferenceEmit = false
       // this.modelChange.emit(this.formControl.value)
-      // this.valueChanged()
     })
   }
 
@@ -94,6 +97,11 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   filterWithReference(option: Code): boolean {
+    // console.log(option.value, this.incompatibleReferences(option))
+    return !this.incompatibleReferences(option)
+  }
+
+  incompatibleReferences(option: Code): string | null {
     let scanned = false
     let included = false
     if (this.referenceFilter) {
@@ -110,7 +118,7 @@ export class SelectCodebaseComponent implements OnInit {
           }
         })
         if (scanned && !included) {
-          return false
+          return 'Incompatible with ' + codeMapType + ' ' + this.referenceFilter.getValue()[codeMapType].value
         }
         // Scanning the options own references
         scanned = false
@@ -127,39 +135,29 @@ export class SelectCodebaseComponent implements OnInit {
           )
         }
         if (scanned && !included) {
-          return false
+          return 'Incompatible with ' + codeMapType
         }
       }
     }
-    return true
+    return null
   }
 
   valueChanged() {
-    if (this.formControl.value && this.formControl.value != '') {
-      /**
-       * emitting the new code value
-       */
-      this.modelChange.emit(this.formControl.value)
-      /**
-       * emitting the references linked to the code
-       */
-      if (!this._blockReferenceEmit) {
-        if (this.codeMap && this.codeMap[this.formControl.value]) {
-          this.referenceEmitter.emit({ reference: (this.codeMap[this.formControl.value].reference ?? { linkTo: [] }), value: this.formControl.value })
-        } else {
-          this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.formControl.value })
-        }
+    this.modelChange.emit(this.formControl.value ?? '')
+    this.emitReferences()
+  }
+
+  emitReferences() {
+    if (!this._blockReferenceEmit) {
+      if (!this.formControl.value || this.formControl.value == '') {
+        this.referenceEmitter.emit(undefined)
+      } else if (this.codeMap && this.codeMap[this.formControl.value]) {
+        this.referenceEmitter.emit({ reference: (this.codeMap[this.formControl.value].reference ?? { linkTo: [] }), value: this.formControl.value })
       } else {
-        this._blockReferenceEmit = false
+        this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.formControl.value })
       }
     } else {
-      this.filterChange('')
-      this.modelChange.emit(this.formControl.value)
-      if (!this._blockReferenceEmit) {
-        this.referenceEmitter.emit(undefined)
-      } else {
-        this._blockReferenceEmit = false
-      }
+      // this._blockReferenceEmit = false
     }
   }
 
@@ -178,11 +176,8 @@ export class SelectCodebaseComponent implements OnInit {
     this._referenceFilter = value;
     this.referenceFilter?.subscribe((ref) => {
       this.filterChange(this.formControl.value)
-      // if (this.filteredCodeMapsOptions && this.filteredCodeMapsOptions.length == 1 && !this.erasedOnLastChange && (this.formControl.value == '' || !this.formControl.value)) {
-      //   this.formControl.value = this.filteredCodeMapsOptions[0].value
-      //   this.valueChanged()
-      // }
       this._blockReferenceEmit = true
+      console.log(this.baseForm.attribute, " reference set validity")
       this.formControl.updateValueAndValidity()
       this._blockReferenceEmit = false
     })
@@ -197,8 +192,8 @@ export class SelectCodebaseComponent implements OnInit {
       if (!valueCode) {
         return null
       }
-      const forbidden = !this.filterWithReference(valueCode);
-      return forbidden ? { codeMapIssue: 'Not referenced by other field' } : null;
+      const message = this.incompatibleReferences(valueCode);
+      return message ? { codeMapIssue: message } : null;
     };
   }
 

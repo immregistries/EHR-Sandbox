@@ -1,8 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 import javax.persistence.*;
@@ -12,9 +10,9 @@ import java.util.Set;
 @Entity
 @Table(name = "clinician")
 //@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id",
-        scope = Clinician.class)
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "id",
+//        scope = Clinician.class)
 public class Clinician extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -194,6 +194,7 @@ public class HL7printer {
                 count++;
                 Code code = codeMap.getCodeForCodeset(CodesetType.PERSON_RELATIONSHIP,
                         StringUtils.defaultIfBlank(nextOfKinRelationship.getRelationshipKind(), ""));
+                sb.append("\r");
                 sb.append("NK1");
                 sb.append("|" + count);
                 sb.append("|" + StringUtils.defaultIfBlank(nextOfKin.getNameLast(), "") + "^" +
@@ -209,7 +210,6 @@ public class HL7printer {
                 }
                 sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
 
-                sb.append("\r");
                 // TODO suffix, address, phone etc
             }
         }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GenericListFormComponent } from '../generic-list-form.component';
 import { NextOfKinRelationship } from 'src/app/core/_model/rest';
 import FormType, { GenericForm } from 'src/app/core/_model/structure';
@@ -9,6 +9,16 @@ import FormType, { GenericForm } from 'src/app/core/_model/structure';
   styleUrls: ['../generic-list-form.component.css']
 })
 export class NextOfKinRelationshipListFormComponent extends GenericListFormComponent<NextOfKinRelationship> {
+
+
+  /**
+   * Override to not add one by default
+   */
+  @Input()
+  override set itemList(value: (NextOfKinRelationship)[] | undefined) {
+    this._itemList = value;
+
+  }
 
   override readonly FORMS: GenericForm<NextOfKinRelationship>[] = [
     { type: FormType.code, title: 'Relationship', attribute: 'relationshipKind', codeMapLabel: "PERSON_RELATIONSHIP" },

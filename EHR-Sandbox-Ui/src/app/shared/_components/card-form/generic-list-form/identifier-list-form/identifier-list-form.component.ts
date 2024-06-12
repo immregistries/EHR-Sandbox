@@ -15,7 +15,8 @@ export class IdentifierListFormComponent extends GenericListFormComponent<EhrIde
   }
   identifierOptions?: BaseFormOptionCodeSystemConcept[]
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit()
     this.identifierOptions = this.codeMapsService.identifierTypeCodeSystem.concept
     this.FORMS = [
       { type: FormType.text, title: 'Identifier Value', attribute: 'value' },
