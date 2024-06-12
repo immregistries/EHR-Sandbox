@@ -157,29 +157,84 @@ public class HL7printer {
                             codeMap));
                     sb.append("\r");
                 }
-                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, vaccine.getVaccineCvxCode());
+
                 obsSubId++;
+                Code codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus());
+                if (codeFinancial == null) {
+                    codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, patient.getFinancialStatus());
+                }
+
                 obxSetId++;
-                String loinc = "64994-7";
-                String loincLabel = "Vaccine funding program eligibility category";
-                String value = patient.getFinancialStatus();
-                String valueLabel = "VFC eligible - Medicaid/Medicaid Managed Care";
-                String valueTable = "HL70064";
-                printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                {
+                    String loinc = "64994-7";
+                    String loincLabel = "Eligibility Status";
+                    String value = patient.getFinancialStatus();
+                    String valueLabel;
+                    if (codeFinancial != null) {
+                        valueLabel = codeFinancial.getLabel();
+                    } else {
+                        valueLabel = "";
+                    }
+                    String valueTable = "HL70064";
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                }
+
+
+                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, vaccine.getVaccineCvxCode());
                 obxSetId++;
-                loinc = "30956-7";
-                loincLabel = "Vaccine type";
-                value = codeVacc.getValue();
-                valueLabel = codeVacc.getLabel();
-                valueTable = "CVX";
-                printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                {
+                    String loinc = "30956-7";
+                    String loincLabel = "Vaccine type";
+                    String value = vaccine.getVaccineCvxCode();
+                    String valueLabel;
+                    if (codeVacc != null) {
+                        valueLabel = codeVacc.getLabel();
+                    } else {
+                        valueLabel = "";
+                    }
+                    String valueTable = "CVX";
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                }
+
                 obxSetId++;
-                loinc = "59781-5";
-                loincLabel = "Dose validity";
-                value = vaccine.getAdministeredAmount();
-                valueLabel = value; //don't know what to put here
-                valueTable = "99107";
-                printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                {
+                    String loinc = "59781-5";
+                    String loincLabel = "Dose validity";
+                    String value = vaccine.getAdministeredAmount();
+                    String valueLabel = "";
+                    String valueTable = "99107";
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                }
+
+                if (vaccine.getInformationStatementDate() != null) {
+                    obxSetId++;
+                    {
+                        String loinc = "29769-7";
+                        String loincLabel = "VIS presented";
+                        String value = sdf.format(vaccine.getInformationStatementDate());
+                        String valueLabel = "";
+                        String valueTable = "99107";
+                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                    }
+
+                }
+
+                Code codeInformationStatement = codeMap.getCodeForCodeset(CodesetType.VACCINATION_VIS_DOC_TYPE, vaccine.getInformationStatement());
+                obxSetId++;
+                {
+                    String loinc = "69764-9";
+                    String loincLabel = "Document Type";
+                    String value = vaccine.getInformationStatement();
+                    String valueLabel;
+                    if (codeInformationStatement != null) {
+                        valueLabel = codeInformationStatement.getLabel();
+                    } else {
+                        valueLabel = "";
+                    }
+                    String valueTable = "cdcgs1vis";
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                }
+
             }
         }
         return sb.toString();

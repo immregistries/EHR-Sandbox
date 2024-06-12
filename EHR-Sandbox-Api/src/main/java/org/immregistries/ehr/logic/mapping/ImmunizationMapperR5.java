@@ -94,7 +94,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
         i.getSite().addCoding().setSystem(BODY_PART).setCode(vaccine.getBodySite());
         i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
         i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
-        i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFundingEligibility())));
+        i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFinancialStatus())));
         i.getInformationSource().setConcept(new CodeableConcept(new Coding().setSystem(INFORMATION_SOURCE).setCode(vaccine.getInformationSource())));
         i.getVaccineCode().addCoding()
                 .setSystem(CVX)
@@ -190,7 +190,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 
         v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
         if (i.hasProgramEligibility()) {
-            v.setFundingEligibility(i.getProgramEligibilityFirstRep().getProgram().getCodingFirstRep().getCode());
+            v.setFinancialStatus(i.getProgramEligibilityFirstRep().getProgram().getCodingFirstRep().getCode());
         }
         if (i.hasInformationSource() && i.getInformationSource().getConcept() != null) {
             v.setInformationSource(i.getInformationSource().getConcept().getCodingFirstRep().getCode());

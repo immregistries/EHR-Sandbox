@@ -172,8 +172,10 @@ export interface Vaccine {
   bodySite?: string;
   bodyRoute?: string;
   fundingSource?: string;
-  fundingEligibility?: string;
+  financialStatus?: string;
   vaccinationEvents?: VaccinationEvent[];
+  informationStatement?: string;
+  informationStatementDate?: Date;
 }
 
 

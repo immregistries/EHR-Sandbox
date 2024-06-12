@@ -272,8 +272,6 @@ public class RandomGenerator {
         vaccine.setAdministeredAmount(randomN + ".5");
         vaccine.setActionCode("A");
         vaccine.setCompletionStatus("CP");
-        vaccine.setFundingEligibility("fundR");
-        vaccine.setInformationSource("infSource");
         vaccine.setLotNumber(Integer.toString(randomN));
         vaccine.setRefusalReasonCode("");
 
@@ -285,6 +283,7 @@ public class RandomGenerator {
         Collection<Code> codeListBodyRoute = codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
         Collection<Code> codeListBodySite = codeMap.getCodesForTable(CodesetType.BODY_SITE);
         Collection<Code> codeListFundingSource = codeMap.getCodesForTable(CodesetType.VACCINATION_FUNDING_SOURCE);
+        Collection<Code> codeListFinancialStatus = codeMap.getCodesForTable(CodesetType.FINANCIAL_STATUS_CODE);
 
         int randomIndex = (int) (random() * codeListCVX.size());
         Code cvxCode = randomCode(codeListCVX);
@@ -313,6 +312,8 @@ public class RandomGenerator {
 
         Code bodyRouteSite = randomCode(codeListBodySite);
         vaccine.setBodySite(bodyRouteSite.getValue());
+
+        vaccine.setFinancialStatus(randomCode(codeListFinancialStatus).getValue());
 
         vaccine.setInformationSource("00");
 

@@ -66,8 +66,15 @@ public class Vaccine {
     @Column(name = "funding_source", length = 250)
     private String fundingSource = "";
 
-    @Column(name = "funding_eligibility", length = 250)
-    private String fundingEligibility = "";
+    @Column(name = "information_statement", length = 250)
+    private String informationStatement = "";
+
+    @Column(name = "information_statement_date")
+    private Date informationStatementDate;
+
+    @Column(name = "financial_status", length = 250)
+    private String financialStatus = "";
+
 
     @OneToMany(mappedBy = "vaccine")
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
@@ -78,14 +85,6 @@ public class Vaccine {
 
     public void setVaccinationEvents(Set<VaccinationEvent> vaccinationEvents) {
         this.vaccinationEvents = vaccinationEvents;
-    }
-
-    public String getFundingEligibility() {
-        return fundingEligibility;
-    }
-
-    public void setFundingEligibility(String fundingEligibility) {
-        this.fundingEligibility = fundingEligibility;
     }
 
     public String getFundingSource() {
@@ -224,4 +223,27 @@ public class Vaccine {
         this.id = id;
     }
 
+    public String getInformationStatement() {
+        return informationStatement;
+    }
+
+    public void setInformationStatement(String informationStatement) {
+        this.informationStatement = informationStatement;
+    }
+
+    public Date getInformationStatementDate() {
+        return informationStatementDate;
+    }
+
+    public void setInformationStatementDate(Date informationStatementDate) {
+        this.informationStatementDate = informationStatementDate;
+    }
+
+    public String getFinancialStatus() {
+        return financialStatus;
+    }
+
+    public void setFinancialStatus(String financialStatus) {
+        this.financialStatus = financialStatus;
+    }
 }
