@@ -35,7 +35,7 @@ export class FacilityToolsComponent {
   }
 
   openFhir() {
-    this.fhirResourceService.quickGetOrganizationResource(this.facility.id).subscribe({
+    this.fhirResourceService.quickGetOrganizationResource(this.facility.id ?? -1).subscribe({
       next: (res) => {
         const dialogRef = this.dialog.open(FhirMessagingComponent, {
           maxWidth: '95vw',
@@ -56,6 +56,9 @@ export class FacilityToolsComponent {
   }
 
   openFhirBundle() {
+    if (!this.facility.id) {
+      return;
+    }
     const dialogRef = this.dialog.open(FhirMessagingComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',

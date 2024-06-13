@@ -36,6 +36,9 @@ public class Facility extends EhrEntity {
     @Column(name = "name_display", nullable = false, length = 250)
     private String nameDisplay = "";
 
+    @Column(name = "type", nullable = false, length = 250)
+    private String type = "";
+
     @OneToMany(mappedBy = "administeringFacility")
     @JsonIgnore()
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
@@ -155,5 +158,13 @@ public class Facility extends EhrEntity {
 
     public void setIdentifiers(Set<EhrIdentifier> identifiers) {
         this.identifiers = identifiers;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

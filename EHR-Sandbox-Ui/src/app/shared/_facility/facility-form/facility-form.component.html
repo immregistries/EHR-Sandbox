@@ -2,18 +2,34 @@
   Facility Form
 </h3>
 <form (submit)="save()">
+  <div class="grid-container">
+    <div *ngFor="let card of FORM_CARDS">
+      <mat-card class="form-card">
+        <mat-card-header *ngIf="card.title">
+          <mat-card-title>
+            {{card.title}}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="form-card-content">
+          <ng-container *ngFor="let form of card.forms">
+            <app-card-form class="card-form high-density" [form]="form" [model]="facility[form.attribute]"
+                           (modelChange)="facility[form.attribute] = $event"></app-card-form>
+          </ng-container>
+        </mat-card-content>
+        <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
+          {{card.toolTips}}
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </div>
   <div>
     <mat-card class="form-card">
       <mat-card-header>
         <mat-card-title>
-          Main characteristics
+          Parent Facility
         </mat-card-title>
       </mat-card-header>
       <mat-card-content class="form-card-content">
-        <mat-form-field appearance="fill">
-          <mat-label>Facility name</mat-label>
-          <input matInput [(ngModel)]="facility.nameDisplay" name="nameDisplay">
-        </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Parent Facility</mat-label>
           <mat-select [(ngModel)]="parentId" name="parentFacility">

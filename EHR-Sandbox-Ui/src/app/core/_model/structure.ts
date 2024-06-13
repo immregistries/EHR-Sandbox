@@ -21,11 +21,8 @@ enum FormType {
 }
 
 export default FormType;
-export interface FormCardGeneric<X> {
+export interface FormCardGeneric<X> extends FormCard {
   // export interface FormCardGeneric<X extends Record<(string | number),Record<(string | number), any> {
-  title: string,
-  cols?: number, // dimensions of the card
-  rows?: number,
   forms?: GenericForm<X>[],  // form fields for each specific objects
 }
 export interface GenericForm<X> extends BaseForm {
@@ -34,13 +31,12 @@ export interface GenericForm<X> extends BaseForm {
 
 export interface FormCard {
   title: string,
-  cols?: number, // dimensions of the card
+  cols?: number, // dimensions of the card not used anymore
   rows?: number,
   toolTips?: string,
   patientForms?: PatientForm[],  // form fields for each specific objects
   vaccinationForms?: VaccinationForm[],
   vaccineForms?: VaccineForm[],
-  clinicianForms?: ClinicianForm[],
 }
 
 

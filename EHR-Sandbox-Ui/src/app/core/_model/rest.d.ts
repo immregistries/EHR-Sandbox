@@ -50,13 +50,14 @@ export interface Clinician {
 }
 
 export interface Facility {
-  id: number;
+  id?: number;
   tenant?: Tenant | number;
   nameDisplay?: string;
   facilities?: (Facility | number)[];
   parentFacility?: Facility;
   childrenCount?: number;
   identifiers?: EhrIdentifier[],
+  type?: string;
 }
 
 export interface ImmunizationRegistry {

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
-import FormType, { FormCard } from 'src/app/core/_model/structure';
+import FormType, { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
 import { CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -35,11 +35,11 @@ export class ClinicianFormComponent implements OnInit {
 
   @Output() modelChange = new EventEmitter<Clinician>();
 
-  formCards: FormCard[] = []
+  formCards: FormCardGeneric<Clinician>[] = []
 
   ngOnInit(): void {
     this.formCards = [{
-      title: "Clinician Name", rows: 1, cols: 1, clinicianForms: [
+      title: "Clinician Name", rows: 1, cols: 1, forms: [
         { type: FormType.text, title: "First name", attribute: "nameFirst" },
         { type: FormType.text, title: "Middle name", attribute: "nameMiddle" },
         { type: FormType.text, title: "Last name", attribute: "nameLast" },
@@ -48,12 +48,12 @@ export class ClinicianFormComponent implements OnInit {
       ]
     },
     {
-      title: "Qualification", rows: 1, cols: 1, clinicianForms: [
+      title: "Qualification", rows: 1, cols: 1, forms: [
         { type: FormType.code, title: "Qualification", attribute: "qualification", options: this.codeMapsService.qualificationTypeCodeSystem.concept },
       ]
     },
     {
-      title: "Identifiers", rows: 1, cols: 1, clinicianForms: [
+      title: "Identifiers", rows: 1, cols: 1, forms: [
         { type: FormType.identifiers, title: "Identifier", attribute: "identifiers" },
       ]
     }]

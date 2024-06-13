@@ -159,7 +159,7 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Financial Status', cols: 1, rows: 1, patientForms: [
+      title: 'Immunization Financial Status', cols: 1, rows: 1, patientForms: [
         { type: FormType.code, title: 'Financial status', attribute: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
       ]
     },

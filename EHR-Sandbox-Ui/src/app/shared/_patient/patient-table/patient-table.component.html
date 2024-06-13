@@ -2,11 +2,12 @@
   <div class="sticky-header-prefix">
     <span class="custom-title">{{title}}</span>
     <button mat-icon-button *ngIf="allow_create" style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()"
-            color="primary" [disabled]="!(facility && facility.id > 0)" matTooltip="New Patient">
+            color="primary" [disabled]="!(facility && facility.id && facility.id > 0)" matTooltip="New Patient">
       <mat-icon>add</mat-icon>
     </button>
-    <button *ngIf="allow_populate" [disabled]="!(facility && facility.id > 0) || dataSource.data.length > 0"
-            mat-stroked-button matTooltip="Populate with random patients" color="primary" (click)="populate()">
+    <button *ngIf="allow_populate"
+            [disabled]="!(facility && facility.id && facility.id > 0) || dataSource.data.length > 0" mat-stroked-button
+            matTooltip="Populate with random patients" color="primary" (click)="populate()">
       <mat-icon>casino</mat-icon>
       Populate
     </button>
@@ -70,8 +71,8 @@
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
-<button *ngIf="allow_create" mat-mini-fab [disabled]="!(facility && facility.id > 0)" style="float: center;"
-        (click)="openCreation()" color="primary">
+<button *ngIf="allow_create" mat-mini-fab [disabled]="!(facility && facility.id && facility.id > 0)"
+        style="float: center;" (click)="openCreation()" color="primary">
   <mat-icon>add</mat-icon>
 </button>
 <app-empty-list-message></app-empty-list-message>

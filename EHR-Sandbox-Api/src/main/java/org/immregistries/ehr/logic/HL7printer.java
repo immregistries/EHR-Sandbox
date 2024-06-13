@@ -158,6 +158,8 @@ public class HL7printer {
                     sb.append("\r");
                 }
 
+                codeMap.getCodesForTable(CodesetType.OBSERVATION_IDENTIFIER);
+
                 obsSubId++;
                 Code codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus());
                 if (codeFinancial == null) {

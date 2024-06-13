@@ -16,7 +16,7 @@ export class FacilityDashboardComponent {
     this._facility = value
     if (!this.facility.facilities) {
       this.children = []
-      this.facilityService.readFacilityChildren(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
+      this.facilityService.readFacilityChildren(this.tenantService.getCurrentId(), this.facility.id ?? -1).subscribe((res) => {
         this._facility.facilities = res
         this.children = res
       });
@@ -32,7 +32,7 @@ export class FacilityDashboardComponent {
     public facilityService: FacilityService,
     public dialog: MatDialog,
     @Optional() public _dialogRef: MatDialogRef<FacilityDashboardComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility | number}) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility | number }) {
     if (data?.facility) {
       if (typeof data.facility === "number" || typeof data.facility === "string") {
         this.facilityService.readFacility(tenantService.getCurrentId(), +data.facility).subscribe((res) => {
@@ -56,7 +56,7 @@ export class FacilityDashboardComponent {
         height: 'fit-content',
         width: '100%',
         panelClass: 'dialog-with-bar',
-        data: {facility: element}
+        data: { facility: element }
       })
     }
   }

@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angu
 import { UntypedFormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
+import FormType, { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -44,7 +45,7 @@ export class FacilityFormComponent implements OnInit {
   }
   public set parentId(value: number | undefined) {
     this._parentId = value;
-    this._facility.parentFacility = value? {id: value} : undefined
+    this._facility.parentFacility = value ? { id: value } : undefined
     // if (this._parentId) { // TODO change the whole mechanism
     //    this.facilityService.readFacility(this.tenantService.getCurrentId(), this._parentId).subscribe((res) => {
     //     this._facility.parentFacility = res
@@ -75,7 +76,7 @@ export class FacilityFormComponent implements OnInit {
   }
 
   save() {
-    console.log("dialog",this._dialogRef)
+    console.log("dialog", this._dialogRef)
     // console.log("dialog", JSON.stringify(this._dialogRef))
     if (this.editionMode) {
       this.facilityService.putFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
@@ -112,13 +113,26 @@ export class FacilityFormComponent implements OnInit {
 
   onSuccess(res: HttpResponse<Facility>) {
     if (res.body) {
-      if (this._dialogRef &&  this._dialogRef.id
-        ) {
+      if (this._dialogRef && this._dialogRef.id
+      ) {
         this._dialogRef.close(res.body)
       } else {
         this.success.emit(res.body)
       }
     }
   }
+
+  readonly FORM_CARDS: FormCardGeneric<Facility>[] = [{
+    title: 'Facility name and type',
+    forms: [
+      { type: FormType.text, title: 'Name', attribute: 'nameDisplay' },
+      { type: FormType.code, title: 'Type', attribute: 'type', codeMapLabel: 'FACILITY_TYPE' },
+    ]
+  }, {
+    title: 'Identifiers',
+    forms: [
+      { type: FormType.identifiers, title: 'identifier', attribute: 'identifiers' },
+    ]
+  }]
 
 }

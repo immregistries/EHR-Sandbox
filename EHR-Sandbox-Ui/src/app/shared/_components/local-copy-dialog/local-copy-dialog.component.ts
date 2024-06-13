@@ -72,7 +72,7 @@ export class LocalCopyDialogComponent implements OnInit {
       } else {
         tenantId = +facility.tenant
       }
-      this.patientService.postPatient(tenantId, facility.id, patientCopy, params).subscribe((res) => {
+      this.patientService.postPatient(tenantId, facility.id ?? -1, patientCopy, params).subscribe((res) => {
         if (this.vaccination && facility.tenant) {
           let vaccinationCopy: VaccinationEvent = JSON.parse(JSON.stringify(this.vaccination))
           if (!res.body) {
@@ -95,7 +95,7 @@ export class LocalCopyDialogComponent implements OnInit {
             if (this.setPrimarySourceToFalse) {
               vaccinationCopy.primarySource = false
             }
-            this.vaccinationService.postVaccination(tenantId, facility.id, +res.body, vaccinationCopy, params).subscribe((res) => {
+            this.vaccinationService.postVaccination(tenantId, facility.id ?? -1, +res.body, vaccinationCopy, params).subscribe((res) => {
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()
             })

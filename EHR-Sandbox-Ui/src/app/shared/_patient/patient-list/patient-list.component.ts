@@ -46,13 +46,13 @@ export class PatientListComponent implements OnInit {
   }
 
   getList(facility: Facility | undefined): Observable<EhrPatient[]> {
-    if (!facility || facility.id <= 0) {
+    if (!facility?.id || facility.id <= 0) {
       this.tenantService.getCurrentObservable().subscribe(() => {
         return this.patientService.readAllPatients(this.tenantService.getCurrentId())
       })
       return this.patientService.readAllPatients(this.tenantService.getCurrentId())
     } else {
-      return this.patientService.readPatients(this.tenantService.getCurrentId(), facility.id)
+      return this.patientService.readPatients(this.tenantService.getCurrentId(), facility.id ?? -1)
     }
 
   }
@@ -82,8 +82,8 @@ export class PatientListComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(
       () => this.getList(this.facility).subscribe((res) => {
-      this.list = res
-    }))
+        this.list = res
+      }))
   }
 
   onSelection(event: EhrPatient) {

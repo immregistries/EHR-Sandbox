@@ -21,23 +21,24 @@ export class GenericListFormComponent<T> implements OnInit {
   public set itemList(value: (T)[] | undefined) {
     this._itemList = value;
     if (!this.itemList || this.itemList.length < 1) {
-      this.addItem()
+      this._itemList = []
+      this._itemList.push(JSON.parse(this.EMPTY_VALUE))
     }
   }
   @Output()
   itemListChange: EventEmitter<(T)[]> = new EventEmitter<(T)[]>()
 
   ngOnInit(): void {
-    // if (!this.itemList || this.itemList.length < 1) {
-    //   this.addItem()
-    // }
+    if (!this.itemList || this.itemList.length < 1) {
+      this.addItem()
+    }
   }
 
   addItem() {
     /**
      * Necessary to bypass type checking, as I did not find a way to specify that all fields are optional in generic type
      */
-    let newItem = JSON.parse(JSON.stringify({}))
+    let newItem = JSON.parse(this.EMPTY_VALUE)
     if (!this.itemList || this.itemList.length == 0) {
       this.itemList = []
       this.itemList.push(newItem)

@@ -1,22 +1,23 @@
 <app-hover-menu [disabled]="disabled()">
-    <button trigger mat-raised-button (click)="selectFirstOrCreate()"
-      [color]="facilityService.getCurrentId() > 0 ? 'primary' : 'basic'" [disabled]="disabled()"
-      [matTooltip]="disabled() ? 'Select Tenant to enable' : ''">
-      <mat-icon>arrow_drop_down</mat-icon>
-      <span style="display: flex;align-items: center;">
-        {{(facilityService.getCurrent().id > 0)? ("Facility: " + facilityService.getCurrent().nameDisplay) : "Select
-        Facility" }}
+  <button trigger mat-raised-button (click)="selectFirstOrCreate()"
+          [color]="facilityService.getCurrentId() > 0 ? 'primary' : 'basic'" [disabled]="disabled()"
+          [matTooltip]="disabled() ? 'Select Tenant to enable' : ''">
+    <mat-icon>arrow_drop_down</mat-icon>
+    <span style="display: flex;align-items: center;">
+      {{(facilityService.getCurrentId() > 0)? ("Facility: " + facilityService.getCurrent().nameDisplay) : "Select
+      Facility" }}
 
-        <button mat-icon-button type="button" (click)="openFacility();$event.stopPropagation();"
-          *ngIf="facilityService.getCurrent().id > 0"><mat-icon>open_in_new</mat-icon></button>
+      <button mat-icon-button type="button" (click)="openFacility();$event.stopPropagation();"
+              *ngIf="facilityService.getCurrentId() > 0"><mat-icon>open_in_new</mat-icon></button>
 
-      </span>
-    </button>
-
+    </span>
+  </button>
 
 
   <div content>
     <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)">{{item.nameDisplay}}</button>
-    <button mat-menu-item (click)="openDialog()" *ngIf="!disabled()"><mat-icon>add</mat-icon></button>
+    <button mat-menu-item (click)="openDialog()" *ngIf="!disabled()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </app-hover-menu>

@@ -14,9 +14,12 @@ export class NextOfKinRelationshipListFormComponent extends GenericListFormCompo
   /**
    * Override to not add one by default
    */
-  @Input()
-  override set itemList(value: (NextOfKinRelationship)[] | undefined) {
-    this._itemList = value;
+  // @Input()
+  // override set itemList(value: (NextOfKinRelationship)[] | undefined) {
+  //   this._itemList = value;
+  // }
+
+  override ngOnInit(): void {
 
   }
 

@@ -29,4 +29,6 @@ export class IdentifierListFormComponent extends GenericListFormComponent<EhrIde
 
   override FORMS: GenericForm<EhrIdentifier>[] = []
 
+  override EMPTY_VALUE: string = JSON.stringify({ value: "", system: "", type: "" });
+
 }
