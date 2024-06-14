@@ -51,13 +51,13 @@ public class EhrPatient extends EhrEntity {
     private String motherMaiden = "";
     @Column(name = "sex", length = 250)
     private String sex = "";
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "patient_race", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrRace> races = new HashSet<EhrRace>();
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "patient_address", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
     @Column(name = "email", length = 250)
@@ -91,7 +91,7 @@ public class EhrPatient extends EhrEntity {
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE})
+    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JsonManagedReference("patient_next_of_kin_relationship")
     @NotAudited
     private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
@@ -100,7 +100,7 @@ public class EhrPatient extends EhrEntity {
     @NotAudited
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "patient_identifiers", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 

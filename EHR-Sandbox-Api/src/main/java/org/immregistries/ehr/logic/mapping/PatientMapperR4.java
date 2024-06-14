@@ -336,7 +336,9 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
                 .setValue(phoneNumber.getNumber())
                 .setSystem(ContactPoint.ContactPointSystem.PHONE);
         try {
-            contactPoint.setUse(ContactPoint.ContactPointUse.valueOf(phoneNumber.getType()));
+            if (StringUtils.isNotBlank(phoneNumber.getType())) {
+                contactPoint.setUse(ContactPoint.ContactPointUse.valueOf(phoneNumber.getType()));
+            }
         } catch (IllegalArgumentException illegalArgumentException) {
         }
         return contactPoint;

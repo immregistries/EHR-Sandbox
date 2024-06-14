@@ -58,7 +58,7 @@ public class NextOfKin {
     @Column(name = "race", length = 250)
     private String race = "";
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "next_of_kin_address", joinColumns = @JoinColumn(name = "next_of_kin_id"))
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
@@ -68,7 +68,7 @@ public class NextOfKin {
     @Column(name = "ethnicity", length = 250)
     private String ethnicity = "";
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "next_of_kin_phone", joinColumns = @JoinColumn(name = "next_of_kin_id"))
     private Set<EhrPhoneNumber> phoneNumbers = new LinkedHashSet<>();
 

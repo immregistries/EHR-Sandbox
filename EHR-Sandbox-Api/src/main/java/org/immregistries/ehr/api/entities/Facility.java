@@ -68,7 +68,7 @@ public class Facility extends EhrEntity {
     @JsonIgnore
     private Set<EhrGroup> groups = new LinkedHashSet<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "facility_identifiers", joinColumns = @JoinColumn(name = "facility_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
