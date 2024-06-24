@@ -1,13 +1,12 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
-import { EhrPatient, Facility } from 'src/app/core/_model/rest';
-import FormType, { FormCard } from 'src/app/core/_model/structure';
-import { CodeReference, CodeReferenceTable } from "src/app/core/_model/code-base-map";
+import { EhrPatient } from 'src/app/core/_model/rest';
+import FormType, { FormCardGeneric } from 'src/app/core/_model/structure';
+import { CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BehaviorSubject } from 'rxjs';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Dialog } from '@angular/cdk/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 
 @Component({
@@ -85,9 +84,9 @@ export class PatientFormComponent {
   }
 
 
-  readonly PATIENT_FORM_CARDS: FormCard[] = [
+  readonly PATIENT_FORM_CARDS: FormCardGeneric<EhrPatient>[] = [
     {
-      title: 'Name', cols: 3, rows: 1, patientForms: [
+      title: 'Name', cols: 3, rows: 1, forms: [
         { type: FormType.text, title: 'First name', attribute: 'nameFirst' },
         { type: FormType.text, title: 'Middle name', attribute: 'nameMiddle' },
         { type: FormType.text, title: 'Last name', attribute: 'nameLast' },
@@ -96,39 +95,39 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Medical Record Number', cols: 1, rows: 1, patientForms: [
+      title: 'Medical Record Number', cols: 1, rows: 1, forms: [
         // { type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn' },
         // { type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem' },
-        { type: FormType.identifiers, title: 'Identifier', attribute: 'identifiers' },
+        { type: FormType.identifiers, title: 'Identifier', attribute: 'identifiers', defaultListEmptyValue: JSON.stringify({ value: "", system: "", type: "MR" }) },
       ]
     },
     {
-      title: 'Birth', cols: 1, rows: 1, patientForms: [
+      title: 'Birth', cols: 1, rows: 1, forms: [
         { type: FormType.date, title: 'Birth date', attribute: 'birthDate', required: true },
         { type: FormType.yesNo, title: 'Multiple birth', attribute: 'birthFlag' },
         { type: FormType.short, title: 'Order', attribute: 'birthOrder' },
       ]
     },
     {
-      title: 'Identity', cols: 1, rows: 1, patientForms: [
+      title: 'Identity', cols: 1, rows: 1, forms: [
         { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX" },
         { type: FormType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
-        { type: FormType.races, title: 'Race', attribute: 'races' },
+        { type: FormType.races, title: 'Race', attribute: 'races', defaultListEmptyValue: '{}' },
       ]
     },
     {
-      title: 'Address', cols: 1, rows: 2, patientForms: [
-        { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
+      title: 'Address', cols: 1, rows: 2, forms: [
+        { type: FormType.addresses, title: 'Address', attribute: 'addresses', defaultListEmptyValue: '{}' },
       ]
     },
     {
-      title: 'Contact', cols: 1, rows: 1, patientForms: [
+      title: 'Contact', cols: 1, rows: 1, forms: [
         { type: FormType.text, title: 'Email', attribute: 'email' },
-        { type: FormType.phoneNumbers, title: 'Phone', attribute: 'phones' },
+        { type: FormType.phoneNumbers, title: 'Phone', attribute: 'phones', defaultListEmptyValue: '{}' },
       ]
     },
     {
-      title: 'Death', cols: 1, rows: 1, patientForms: [
+      title: 'Death', cols: 1, rows: 1, forms: [
         { type: FormType.yesNo, title: 'Death flag', attribute: 'deathFlag' },
         { type: FormType.date, title: 'Death date', attribute: 'deathDate' },
       ]
@@ -136,7 +135,7 @@ export class PatientFormComponent {
     {
       title: 'Protection', cols: 1, rows: 1,
       toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
-      patientForms: [
+      forms: [
         { type: FormType.yesNo, title: 'Indicator', attribute: 'protectionIndicator' },
         { type: FormType.date, title: 'Date', attribute: 'protectionIndicatorDate' },
       ]
@@ -144,7 +143,7 @@ export class PatientFormComponent {
     {
       title: 'Registry', cols: 1, rows: 1,
       toolTips: 'Current status of the patient in relation to the sending provider organization',
-      patientForms: [
+      forms: [
         { type: FormType.code, title: 'Indicator', attribute: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS' },
         { type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate' },
       ]
@@ -152,19 +151,19 @@ export class PatientFormComponent {
     {
       title: 'Publicity', cols: 1, rows: 1,
       toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
-      patientForms: [
+      forms: [
 
         { type: FormType.code, title: 'Indicator', attribute: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
         { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
       ]
     },
     {
-      title: 'Immunization Financial Status', cols: 1, rows: 1, patientForms: [
+      title: 'Immunization Financial Status', cols: 1, rows: 1, forms: [
         { type: FormType.code, title: 'Financial status', attribute: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
       ]
     },
     {
-      title: 'Next of Kin', cols: 3, rows: 1, patientForms: [
+      title: 'Next of Kin', cols: 3, rows: 1, forms: [
         { type: FormType.nextOfKinRelationships, title: 'Next of kin', attribute: 'nextOfKinRelationships' },
       ]
     },

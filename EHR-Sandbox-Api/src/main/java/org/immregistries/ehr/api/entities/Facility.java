@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 import javax.persistence.*;
@@ -77,6 +78,10 @@ public class Facility extends EhrEntity {
     public Integer getChildrenCount() {
         return facilities.size();
     }
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "facility_addresses", joinColumns = @JoinColumn(name = "facility_id"))
+    private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
     public Set<EhrGroup> getGroups() {
         return groups;
@@ -166,5 +171,13 @@ public class Facility extends EhrEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Set<EhrAddress> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<EhrAddress> addresses) {
+        this.addresses = addresses;
     }
 }

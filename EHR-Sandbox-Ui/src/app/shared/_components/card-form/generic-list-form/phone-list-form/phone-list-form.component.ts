@@ -12,10 +12,24 @@ export class PhoneListFormComponent extends GenericListFormComponent<EhrPhoneNum
 
   override readonly EMPTY_VALUE: string = '{"type":""}';
 
+  constructor() {
+    super()
+  }
+
   override readonly FORMS: GenericForm<EhrPhoneNumber>[] = [
     { type: FormType.text, title: 'Phone number', attribute: 'number' },
     {
-      type: FormType.code, title: 'Phone label', attribute: 'type', options: [
+      type: FormType.code, title: 'Phone type', attribute: 'type', options: [
+        { code: 'HOME' },
+        { code: 'MOBILE' },
+        { code: 'WORK' },
+        { code: 'TEMP' },
+        { code: 'NULL' },
+        { code: 'OLD' },
+      ]
+    },
+    {
+      type: FormType.code, title: 'Phone type', attribute: 'use', options: [
         { code: 'HOME' },
         { code: 'MOBILE' },
         { code: 'WORK' },

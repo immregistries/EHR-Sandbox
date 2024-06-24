@@ -9,6 +9,8 @@ public class EhrPhoneNumber {
     private String number;
     @Size(max = 300)
     private String type;
+    @Size(max = 300)
+    private String use;
 
     public EhrPhoneNumber() {
     }
@@ -36,5 +38,13 @@ public class EhrPhoneNumber {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUse() {
+        return use;
+    }
+
+    public void setUse(String use) {
+        this.use = use;
     }
 }

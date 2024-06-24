@@ -11,8 +11,15 @@ import { error } from 'console';
 })
 export class GenericListFormComponent<T> implements OnInit {
 
+  private _form!: BaseForm;
+  public get form(): BaseForm {
+    return this._form;
+  }
   @Input()
-  form!: BaseForm;
+  public set form(value: BaseForm) {
+    this._form = value;
+    this.addDefaultValue()
+  }
   public _itemList?: (T)[] | undefined;
   public get itemList(): (T)[] | undefined {
     return this._itemList;
@@ -20,18 +27,15 @@ export class GenericListFormComponent<T> implements OnInit {
   @Input()
   public set itemList(value: (T)[] | undefined) {
     this._itemList = value;
-    if (!this.itemList || this.itemList.length < 1) {
-      this._itemList = []
-      this._itemList.push(JSON.parse(this.EMPTY_VALUE))
-    }
+    this.addDefaultValue()
   }
   @Output()
   itemListChange: EventEmitter<(T)[]> = new EventEmitter<(T)[]>()
 
   ngOnInit(): void {
-    if (!this.itemList || this.itemList.length < 1) {
-      this.addItem()
-    }
+    // if (!this.itemList || this.itemList.length < 1) {
+    //   this.addItem()
+    // }
   }
 
   addItem() {
@@ -59,5 +63,16 @@ export class GenericListFormComponent<T> implements OnInit {
 
   @Input() overrideNoFieldsRequired: boolean = false
   @Input() overrideAllFieldsRequired: boolean = false
+
+  addDefaultValue() {
+    if ((!this.itemList || this.itemList.length < 1) && this.form.defaultListEmptyValue) {
+      this._itemList = []
+      if (this.form.defaultListEmptyValue.length < 2) {
+        this._itemList.push(JSON.parse(this.EMPTY_VALUE))
+      } else {
+        this._itemList.push(JSON.parse(this.form.defaultListEmptyValue))
+      }
+    }
+  }
 
 }

@@ -12,6 +12,8 @@ import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import java.util.Optional;
 
 @Service
 public class HL7printer {
+
+    Logger logger = LoggerFactory.getLogger(HL7printer.class);
     @Autowired
     ResourceIdentificationService resourceIdentificationService;
     @Autowired
@@ -39,9 +43,7 @@ public class HL7printer {
         int obxSetId = 0;
         int obsSubId = 0;
         if (vaccine != null) {
-            Code cvxCode = codeMap.getCodeForCodeset(
-                    CodesetType.VACCINATION_CVX_CODE,
-                    vaccine.getVaccineCvxCode());
+            Code cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, vaccine.getVaccineCvxCode());
             if (cvxCode != null) {
                 printORC(facility, sb, vaccine);
                 sb.append("RXA");
@@ -54,12 +56,13 @@ public class HL7printer {
                 // RXA-4
                 sb.append("|");
                 // RXA-5
-                sb.append("|" + cvxCode.getValue() + "^" + cvxCode.getLabel() + "^CVX");
-                if (!vaccine.getVaccineNdcCode().equals("")) {
-                    Code ndcCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE,
-                            vaccine.getVaccineNdcCode());
+                sb.append("|");
+                printCode(cvxCode, "CVX", sb);
+                if (StringUtils.isNotBlank(vaccine.getVaccineNdcCode())) {
+                    Code ndcCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE, vaccine.getVaccineNdcCode());
                     if (ndcCode != null) {
-                        sb.append("~" + ndcCode.getValue() + "^" + ndcCode.getLabel() + "^NDC");
+                        sb.append("~");
+                        printCode(ndcCode, "NDC", sb);
                     }
                 }
                 {
@@ -119,64 +122,52 @@ public class HL7printer {
                 }
                 // RXA-17
                 sb.append("|");
-                sb.append(printCode(vaccine.getVaccineMvxCode(),
-                        CodesetType.VACCINATION_MANUFACTURER_CODE, "MVX", codeMap));
+                printCode(vaccine.getVaccineMvxCode(), CodesetType.VACCINATION_MANUFACTURER_CODE, codeMap, "MVX", sb);
                 // RXA-18
                 sb.append("|");
-                sb.append(printCode(vaccine.getRefusalReasonCode(),
-                        CodesetType.VACCINATION_REFUSAL, "NIP002", codeMap));
+                printCode(vaccine.getRefusalReasonCode(), CodesetType.VACCINATION_REFUSAL, codeMap, "NIP002", sb);
                 // RXA-19
                 sb.append("|");
                 // RXA-20
                 sb.append("|");
                 String completionStatus = vaccine.getCompletionStatus();
-                if (completionStatus == null || completionStatus.equals("")) {
+                if (StringUtils.isBlank(completionStatus)) {
                     completionStatus = "CP";
                 }
-                sb.append(printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, null, codeMap));
+                printCode(completionStatus, CodesetType.VACCINATION_COMPLETION, codeMap, null, sb);
 
                 // RXA-21
                 String actionCode = vaccine.getActionCode();
-                if (actionCode == null || actionCode.equals("")
-                        || (!actionCode.equals("A") && !actionCode.equals("D"))) {
+                sb.append("|");
+                if (StringUtils.isBlank(actionCode)) {
                     actionCode = "A";
                 }
-                sb.append("|");
-                sb.append(vaccine.getActionCode());
+                sb.append(actionCode);
                 sb.append("\r");
-                if (vaccine.getBodyRoute() != null
-                        && !vaccine.getBodyRoute().equals("")) {
+                if (StringUtils.isNotBlank(vaccine.getBodyRoute())) {
                     sb.append("RXR");
                     // RXR-1
                     sb.append("|");
-                    sb.append(printCode(vaccine.getBodyRoute(), CodesetType.BODY_ROUTE, "NCIT",
-                            codeMap));
+                    printCode(vaccine.getBodyRoute(), CodesetType.BODY_ROUTE, codeMap, "NCIT", sb);
                     // RXR-2
                     sb.append("|");
-                    sb.append(printCode(vaccine.getBodySite(), CodesetType.BODY_SITE, "HL70163",
-                            codeMap));
+                    printCode(vaccine.getBodySite(), CodesetType.BODY_SITE, codeMap, "HL70163", sb);
                     sb.append("\r");
                 }
 
                 codeMap.getCodesForTable(CodesetType.OBSERVATION_IDENTIFIER);
 
                 obsSubId++;
-                Code codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus());
-                if (codeFinancial == null) {
-                    codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, patient.getFinancialStatus());
-                }
-
                 obxSetId++;
                 {
+                    Code codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus());
+                    if (codeFinancial == null) {
+                        codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, patient.getFinancialStatus());
+                    }
                     String loinc = "64994-7";
                     String loincLabel = "Eligibility Status";
                     String value = patient.getFinancialStatus();
-                    String valueLabel;
-                    if (codeFinancial != null) {
-                        valueLabel = codeFinancial.getLabel();
-                    } else {
-                        valueLabel = "";
-                    }
+                    String valueLabel = StringUtils.defaultIfBlank(codeFinancial.getLabel(), "");
                     String valueTable = "HL70064";
                     printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
                 }
@@ -188,12 +179,7 @@ public class HL7printer {
                     String loinc = "30956-7";
                     String loincLabel = "Vaccine type";
                     String value = vaccine.getVaccineCvxCode();
-                    String valueLabel;
-                    if (codeVacc != null) {
-                        valueLabel = codeVacc.getLabel();
-                    } else {
-                        valueLabel = "";
-                    }
+                    String valueLabel = StringUtils.defaultIfBlank(codeVacc.getLabel(), "");
                     String valueTable = "CVX";
                     printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
                 }
@@ -218,21 +204,15 @@ public class HL7printer {
                         String valueTable = "99107";
                         printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
                     }
-
                 }
 
-                Code codeInformationStatement = codeMap.getCodeForCodeset(CodesetType.VACCINATION_VIS_DOC_TYPE, vaccine.getInformationStatement());
                 obxSetId++;
                 {
+                    Code codeInformationStatement = codeMap.getCodeForCodeset(CodesetType.VACCINATION_VIS_DOC_TYPE, vaccine.getInformationStatement());
                     String loinc = "69764-9";
                     String loincLabel = "Document Type";
                     String value = vaccine.getInformationStatement();
-                    String valueLabel;
-                    if (codeInformationStatement != null) {
-                        valueLabel = codeInformationStatement.getLabel();
-                    } else {
-                        valueLabel = "";
-                    }
+                    String valueLabel = StringUtils.defaultIfBlank(codeInformationStatement.getLabel(), "");
                     String valueTable = "cdcgs1vis";
                     printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
                 }
@@ -246,6 +226,7 @@ public class HL7printer {
         // https://hl7-definition.caristix.com/v2/HL7v2.5/Segments/NK1
         int count = 0;
         for (NextOfKinRelationship nextOfKinRelationship : patient.getNextOfKinRelationships()) {
+            logger.info("nk1 {} {}", count, nextOfKinRelationship.getRelationshipKind());
             NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
             if (nextOfKin != null) {
                 count++;
@@ -253,21 +234,32 @@ public class HL7printer {
                         StringUtils.defaultIfBlank(nextOfKinRelationship.getRelationshipKind(), ""));
                 sb.append("\r");
                 sb.append("NK1");
+//                NK1-1
                 sb.append("|" + count);
+//                NK1-2
                 sb.append("|" + StringUtils.defaultIfBlank(nextOfKin.getNameLast(), "") + "^" +
                         StringUtils.defaultIfBlank(nextOfKin.getNameFirst(), "") + "^" +
                         StringUtils.defaultIfBlank(nextOfKin.getNameMiddle(), "") + "^" +
                         StringUtils.defaultIfBlank(nextOfKin.getNameSuffix(), "") + "^" +
                         "^^L");
-                sb.append("|" + (code != null ? code.getValue() + "^" + code.getLabel() + "^HL70063" : ""));
-
-                Optional<EhrAddress> ehrAddress = nextOfKin.getAddresses().stream().findFirst();
-                if (ehrAddress.isPresent()) {
-                    printXAD(ehrAddress.get(), sb);
+//                NK1-3
+                sb.append("|");
+                printCode(nextOfKinRelationship.getRelationshipKind(), CodesetType.PERSON_RELATIONSHIP, codeMap, "HL70063", sb);
+//                NK1-4
+                nextOfKin.getAddresses().stream().findFirst().ifPresent(address -> printXAD(address, sb));
+//                NK1-5
+                sb.append("|");
+                Optional<EhrPhoneNumber> ehrPhoneNumber = nextOfKin.getPhoneNumbers().stream().findFirst();
+                if (ehrPhoneNumber.isPresent()) {
+                    printXTN(ehrPhoneNumber.get(), sb);
+                    if (StringUtils.isNotBlank(nextOfKin.getEmail())) {
+                        sb.append("~");
+                    }
                 }
-                sb.append("|" + code.getValue() + "^" + code.getLabel() + "^HL70063");
-
-                // TODO suffix, address, phone etc
+//                NK1-5[2]
+                if (StringUtils.isNotBlank(nextOfKin.getEmail())) {
+                    printXtnEmail(nextOfKin.getEmail(), sb);
+                }
             }
         }
         return sb.toString();
@@ -326,12 +318,13 @@ public class HL7printer {
                 if (!patient.getRaces().isEmpty()) {
                     race = patient.getRaces().stream().findFirst().get().getValue(); // TODO
                 }
+            }
+            {
                 // PID-11
-                //TODO support multiple address
+                //TODO support multiple address ?
+                sb.append("|");
                 EhrAddress ehrAddress = patient.getAddresses().stream().findFirst().orElse(new EhrAddress());
                 printXAD(ehrAddress, sb);
-
-
                 // PID-12
                 sb.append("|");
                 // PID-13
@@ -340,6 +333,12 @@ public class HL7printer {
                 Optional<EhrPhoneNumber> ehrPhoneNumber = patient.getPhones().stream().findFirst();
                 if (ehrPhoneNumber.isPresent()) {
                     printXTN(ehrPhoneNumber.get(), sb);
+                    if (StringUtils.isNotBlank(patient.getEmail())) {
+                        sb.append('~');
+                    }
+                }
+                if (StringUtils.isNotBlank(patient.getEmail())) {
+                    printXtnEmail(patient.getEmail(), sb);
                 }
                 // PID-14
                 sb.append("|");
@@ -359,35 +358,19 @@ public class HL7printer {
                 sb.append("|");
                 // PID-22
                 sb.append("|");
-        /*{
-        String ethnicity = patient.getEthnicity();
-        if (!ethnicity.equals("")) {
-          if (processingFlavorSet.contains(ProcessingFlavor.PITAYA)
-              || processingFlavorSet.contains(ProcessingFlavor.PERSIMMON)) {
-            CodeMap codeMap = CodeMapManager.getCodeMap();
-            Code ethnicityCode =
-                codeMap.getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, ethnicity);
-            if (processingFlavorSet.contains(ProcessingFlavor.PITAYA) || (ethnicityCode != null
-                && CodeStatusValue.getBy(ethnicityCode.getCodeStatus()) != CodeStatusValue.VALID)) {
-              sb.append(ethnicityCode);
-              sb.append("^");
-              if (ethnicityCode != null) {
-                sb.append(ethnicityCode.getDescription());
-              }
-              sb.append("^CDCREC");
-            }
-          }
-        }
-        }*/
+                Code ethnicityCode = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, patient.getEthnicity());
+                if (ethnicityCode != null) {
+                    sb.append("^" + StringUtils.defaultIfBlank(ethnicityCode.getValue(), "") + "^"
+                            + StringUtils.defaultIfBlank(ethnicityCode.getLabel(), "") + "^CDCREC");
+                }
                 // PID-23
                 sb.append("|");
                 // PID-24
                 sb.append("|");
-                sb.append(patient.getBirthFlag() == null ? "" : patient.getBirthFlag());
+                sb.append(StringUtils.defaultIfBlank(patient.getBirthFlag(), ""));
                 // PID-25
                 sb.append("|");
-                sb.append(patient.getBirthOrder() == null ? "" : patient.getBirthOrder());
-
+                sb.append(StringUtils.defaultIfBlank(patient.getBirthOrder(), ""));
             }
             sb.append("\r");
         }
@@ -463,41 +446,6 @@ public class HL7printer {
     }
 
     public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
-                         String loincLabel, String value) {
-        sb.append("OBX");
-        // OBX-1
-        sb.append("|");
-        sb.append(obxSetId);
-        // OBX-2
-        sb.append("|");
-        sb.append("CE");
-        // OBX-3
-        sb.append("|");
-        sb.append(loinc + "^" + loincLabel + "^LN");
-        // OBX-4
-        sb.append("|");
-        sb.append(obsSubId);
-        // OBX-5
-        sb.append("|");
-        sb.append(value);
-        // OBX-6
-        sb.append("|");
-        // OBX-7
-        sb.append("|");
-        // OBX-8
-        sb.append("|");
-        // OBX-9
-        sb.append("|");
-        // OBX-10
-        sb.append("|");
-        // OBX-11
-        sb.append("|");
-        sb.append("F");
-        sb.append("\r");
-    }
-
-
-    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
                          String loincLabel, String value, String valueLabel, String valueTable) {
         sb.append("OBX");
         // OBX-1
@@ -529,57 +477,6 @@ public class HL7printer {
         sb.append("|");
         sb.append("F");
         sb.append("\r");
-    }
-
-
-    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc, String loincLabel, Date value) {
-        sb.append("OBX");
-        // OBX-1
-        sb.append("|");
-        sb.append(obxSetId);
-        // OBX-2
-        sb.append("|");
-        sb.append("DT");
-        // OBX-3
-        sb.append("|");
-        sb.append(loinc + "^" + loincLabel + "^LN");
-        // OBX-4
-        sb.append("|");
-        sb.append(obsSubId);
-        // OBX-5
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        sb.append("|");
-        if (value != null) {
-            sb.append(sdf.format(value));
-        }
-        // OBX-6
-        sb.append("|");
-        // OBX-7
-        sb.append("|");
-        // OBX-8
-        sb.append("|");
-        // OBX-9
-        sb.append("|");
-        // OBX-10
-        sb.append("|");
-        // OBX-11
-        sb.append("|");
-        sb.append("F");
-        sb.append("\r");
-    }
-
-    public String printCode(String value, CodesetType codesetType, String tableName,
-                            CodeMap codeMap) {
-        if (value != null) {
-            Code code = codeMap.getCodeForCodeset(codesetType, value);
-            if (code != null) {
-                if (tableName == null) {
-                    return code.getValue();
-                }
-                return code.getValue() + "^" + code.getLabel() + "^" + tableName;
-            }
-        }
-        return "";
     }
 
     public void printORC(Facility facility, StringBuilder sb, Vaccine vaccination/*,
@@ -742,7 +639,7 @@ public class HL7printer {
 
     // Extended Address
     private void printXAD(EhrAddress ehrAddress, StringBuilder sb) {
-        sb.append("|" + ehrAddress.getAddressLine1() + "^" + ehrAddress.getAddressLine2()
+        sb.append(ehrAddress.getAddressLine1() + "^" + ehrAddress.getAddressLine2()
                 + "^" + ehrAddress.getAddressCity() + "^" + ehrAddress.getAddressState() + "^"
                 + ehrAddress.getAddressZip() + "^" + ehrAddress.getAddressCountry() + "^" + "P");
     }
@@ -755,5 +652,23 @@ public class HL7printer {
         }
     }
 
+    // XTN for email
+    private void printXtnEmail(String email, StringBuilder sb) {
+        sb.append("^NET^X.400^" + StringUtils.defaultIfBlank(email, ""));
+    }
+
+
+    public void printCode(Code code, String tableName, StringBuilder sb) {
+        if (code != null) {
+            sb.append(code.getValue() + "^" + StringUtils.defaultIfBlank(code.getLabel(), "") + "^" +
+                    StringUtils.defaultIfBlank(tableName, ""));
+        }
+    }
+
+    public void printCode(String value, CodesetType codesetType, CodeMap codeMap, String tableName, StringBuilder sb) {
+        if (StringUtils.isNotBlank(value)) {
+            printCode(codeMap.getCodeForCodeset(codesetType, value), tableName, sb);
+        }
+    }
 
 }

@@ -43,7 +43,7 @@ export class ClinicianFormComponent implements OnInit {
         { type: FormType.text, title: "First name", attribute: "nameFirst" },
         { type: FormType.text, title: "Middle name", attribute: "nameMiddle" },
         { type: FormType.text, title: "Last name", attribute: "nameLast" },
-        { type: FormType.text, title: "Last suffix", attribute: "nameSuffix" },
+        { type: FormType.text, title: "Suffix", attribute: "nameSuffix" },
         // { type: FormType.text, title: "Title", attribute: "title" }
       ]
     },

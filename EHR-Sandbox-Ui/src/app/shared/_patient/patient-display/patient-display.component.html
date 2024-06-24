@@ -7,9 +7,9 @@
         </mat-card-title>
       </mat-card-header>
       <mat-card-content class="display-card-content">
-        <ng-container *ngFor="let form of card.patientForms">
+        <ng-container *ngFor="let form of card.forms">
           <app-card-display class="card-form high-density" [form]="form"
-            [model]="patient[form.attribute]"></app-card-display>
+                            [model]="patient[form.attribute]"></app-card-display>
         </ng-container>
       </mat-card-content>
     </mat-card>

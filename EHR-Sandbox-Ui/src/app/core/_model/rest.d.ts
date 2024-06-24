@@ -58,6 +58,7 @@ export interface Facility {
   childrenCount?: number;
   identifiers?: EhrIdentifier[],
   type?: string;
+  addresses?: EhrAddress[]
 }
 
 export interface ImmunizationRegistry {
@@ -206,11 +207,13 @@ export interface EhrIdentifier extends Serializable {
   system?: string,
   value?: string,
   type?: string,
+  assignerReference?: string,
 }
 
 export interface EhrPhoneNumber extends Serializable {
   number?: string,
   type?: string,
+  use?: string,
 }
 export interface EhrRace extends Serializable {
   value?: string

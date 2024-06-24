@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
-import { Code, CodeMap, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
+import { Code, CodeSet, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class SelectCodebaseComponent implements OnInit {
   @Input() toolTipDisabled: boolean = false;
   @Input() compareTo?: ComparisonResult | any | null;
 
-  private codeMap?: CodeMap;
+  private codeSet?: CodeSet;
 
   constructor(public codeMapsService: CodeMapsService) { }
 
@@ -34,7 +34,7 @@ export class SelectCodebaseComponent implements OnInit {
     this.formControl.addValidators(this.codebaseReferenceValidator())
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       if (this.baseForm.codeMapLabel && codeBaseMap[this.baseForm.codeMapLabel]) {
-        this.codeMap = codeBaseMap[this.baseForm.codeMapLabel]
+        this.codeSet = codeBaseMap[this.baseForm.codeMapLabel]
       }
       this.filterChange(this.formControl.value)
     })
@@ -55,9 +55,9 @@ export class SelectCodebaseComponent implements OnInit {
   private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
   filterChange(event: string) {
     let filterValue = event ? event.toLowerCase() : ''
-    if (this.codeMap) {
+    if (this.codeSet) {
       this.filteredCodeMapsOn = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
-      Object.values(this.codeMap).forEach(
+      Object.values(this.codeSet).forEach(
         option => {
           if (option.value.toLowerCase().includes(filterValue)) {
             if (this.filterWithReference(option)) {
@@ -151,8 +151,8 @@ export class SelectCodebaseComponent implements OnInit {
     if (!this._blockReferenceEmit) {
       if (!this.formControl.value || this.formControl.value == '') {
         this.referenceEmitter.emit(undefined)
-      } else if (this.codeMap && this.codeMap[this.formControl.value]) {
-        this.referenceEmitter.emit({ reference: (this.codeMap[this.formControl.value].reference ?? { linkTo: [] }), value: this.formControl.value })
+      } else if (this.codeSet && this.codeSet[this.formControl.value]) {
+        this.referenceEmitter.emit({ reference: (this.codeSet[this.formControl.value].reference ?? { linkTo: [] }), value: this.formControl.value })
       } else {
         this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.formControl.value })
       }
@@ -185,10 +185,10 @@ export class SelectCodebaseComponent implements OnInit {
 
   codebaseReferenceValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (!this.codeMap) {
+      if (!this.codeSet) {
         return null
       }
-      const valueCode: Code | undefined = Object.values(this.codeMap).find((code) => code.value === control.value)
+      const valueCode: Code | undefined = Object.values(this.codeSet).find((code) => code.value === control.value)
       if (!valueCode) {
         return null
       }
@@ -203,8 +203,8 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   displayCode(codeKey: string): string {
-    if (codeKey && this.codeMap && this.codeMap[codeKey]) {
-      let code: Code = this.codeMap[codeKey]
+    if (codeKey && this.codeSet && this.codeSet[codeKey]) {
+      let code: Code = this.codeSet[codeKey]
       return code.label + ' (' + code.value + ')'
     } else if (this.baseForm.options) {
       let option: BaseFormOption | undefined = this.baseForm.options.find((opt) => opt.code == codeKey)

@@ -21,9 +21,8 @@ export class IdentifierListFormComponent extends GenericListFormComponent<EhrIde
     this.FORMS = [
       { type: FormType.text, title: 'Identifier Value', attribute: 'value' },
       { type: FormType.text, title: 'Identifier System', attribute: 'system' },
-      {
-        type: FormType.code, title: 'Identifier Type', attribute: 'type', options: this.identifierOptions
-      },
+      { type: FormType.code, title: 'Identifier Type', attribute: 'type', options: this.identifierOptions },
+      { type: FormType.text, title: 'Assigner (reference)', attribute: 'assignerReference' },
     ]
   }
 

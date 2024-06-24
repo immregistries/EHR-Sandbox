@@ -93,4 +93,12 @@ public class EhrIdentifier {
 //        }
         return identifier;
     }
+
+    public String getAssignerReference() {
+        return assignerReference;
+    }
+
+    public void setAssignerReference(String assignerReference) {
+        this.assignerReference = assignerReference;
+    }
 }

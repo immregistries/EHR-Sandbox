@@ -8,11 +8,11 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <ng-container *ngFor="let form of card.patientForms">
+          <ng-container *ngFor="let form of card.forms">
 
-            <mat-form-field  appearance="outline" class="text-field">
+            <mat-form-field appearance="outline" class="text-field">
               <mat-label>{{form.title}}</mat-label>
-              <input matInput  type="text"  [(ngModel)]="patient[form.attribute]">
+              <input matInput type="text" [(ngModel)]="patient[form.attribute]">
             </mat-form-field>
 
           </ng-container>

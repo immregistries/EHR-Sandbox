@@ -133,6 +133,11 @@ export class FacilityFormComponent implements OnInit {
     forms: [
       { type: FormType.identifiers, title: 'identifier', attribute: 'identifiers' },
     ]
+  }, {
+    title: 'Address',
+    forms: [
+      { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
+    ]
   }]
 
 }

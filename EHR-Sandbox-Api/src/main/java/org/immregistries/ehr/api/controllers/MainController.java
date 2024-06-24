@@ -65,6 +65,18 @@ public class MainController {
     public String codeMaps() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CodeMap codeMap = codeMapManager.getCodeMap();
+        /**
+         * DONE IN UI NOW
+         */
+//        for (Codeset codeset : codeMap.getCodesets()) {
+//            codeset.getCode().removeIf(code -> {
+//                if (code.getCodeStatus() == null) {
+//                    return false;
+//                } else {
+//                    return "Deprecated".equals(code.getCodeStatus().getStatus());
+//                }
+//            });
+//        }
         return gson.toJson(codeMap);
     }
 
@@ -75,6 +87,7 @@ public class MainController {
 
     /**
      * Method to assert that backend is not down
+     *
      * @return
      */
     @GetMapping("/healthy")

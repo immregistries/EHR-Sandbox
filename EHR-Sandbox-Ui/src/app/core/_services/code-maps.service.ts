@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, take } from 'rxjs';
-import { Code, CodeBaseMap, CodeMap } from "../_model/code-base-map";
+import { Code, CodeBaseMap, CodeMap, CodeSet } from "../_model/code-base-map";
 import { SettingsService } from './settings.service';
 import { CodeSystem } from 'fhir/r5';
+import { TenantService } from './tenant.service';
 
 
 // Potentially needed to load codemaps on application init : Not currently used in providers
@@ -36,7 +37,8 @@ export class CodeMapsService {
   }
 
   constructor(private http: HttpClient,
-    private settings: SettingsService,) {
+    private settings: SettingsService,
+    private tenantService: TenantService) {
     this.load()
   }
 
@@ -47,38 +49,28 @@ export class CodeMapsService {
     return this.codeBaseMap
   }
 
-  getCodeMap(label: string | undefined): CodeMap {
-    if (label) {
-      if (!this.codeBaseMap) {
-        /**
-         * TODO clean this up there may be some unnecesary steps now that take(1) was added
-         */
-        this.readCodeMaps().pipe(take(1)).subscribe({
-          next: (codeMap) => {
-            this.codeBaseMap.next(codeMap["codeBaseMap"])
-            return this.codeBaseMap.value[label];
-          },
-          error: (error) => {
-            // console.error(error)
-            return {}
-          }
-        });
-        return {}
-      } else {
-        return this.codeBaseMap.value[label];
-      }
+  getCodeMap(label: string | undefined): CodeSet | undefined {
+    if (!label) {
+      return undefined
+    }
+    if (!this.codeBaseMap) {
+      return undefined
+    }
+    if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.includes('NO_DEPRECATED')) {
+      return Object.fromEntries(Object.entries<Code>(this.codeBaseMap.value[label]).filter((entry) => entry[1].codeStatus?.status != "Deprecated"))
     } else {
-      return {}
+      return this.codeBaseMap.value[label];
     }
   }
 
-  readCodeMaps(): Observable<any> {
-    return this.http.get<any>(this.settings.getApiUrl() + '/code_maps', httpOptions)
-  }
-
   refreshCodeMaps() {
-    this.http.get<any>(this.settings.getApiUrl() + '/code_maps', httpOptions).subscribe((codeMap) => {
-      this.codeBaseMap.next(codeMap["codeBaseMap"])
+    this.http.get<CodeMap>(this.settings.getApiUrl() + '/code_maps', httpOptions).subscribe((codeMap) => {
+      // if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.includes('NO_DEPRECATED')) {
+      //   Object.values(codeMap.codeBaseMap).forEach((codeSet) => {
+      //     codeSet = Object.fromEntries(Object.entries<Code>(codeSet).filter((entry) => entry[1].codeStatus?.status != "Deprecated"))
+      //   })
+      // }
+      this.codeBaseMap.next(codeMap.codeBaseMap)
     });
   }
 

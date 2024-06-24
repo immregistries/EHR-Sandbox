@@ -114,7 +114,7 @@ export class ClinicianSelectComponent {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
-      width: '30vw',
+      minWidth: '30vw',
       panelClass: 'dialog-with-bar',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -131,7 +131,7 @@ export class ClinicianSelectComponent {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
-      width: '30vw',
+      minWidth: '30vw',
       panelClass: 'dialog-with-bar',
       data: { clinician: cli }
     });

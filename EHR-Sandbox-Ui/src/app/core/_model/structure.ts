@@ -34,7 +34,6 @@ export interface FormCard {
   cols?: number, // dimensions of the card not used anymore
   rows?: number,
   toolTips?: string,
-  patientForms?: PatientForm[],  // form fields for each specific objects
   vaccinationForms?: VaccinationForm[],
   vaccineForms?: VaccineForm[],
 }
@@ -48,6 +47,7 @@ export interface BaseForm {
   disabled?: boolean,
   options?: BaseFormOption[],
   required?: boolean,
+  defaultListEmptyValue?: string, // Set default value when used in a list type form, '{}' string will use hard coded default, undefined will add no value
 }
 export interface BaseFormOption {
   code: string | boolean, display?: string, definition?: string,

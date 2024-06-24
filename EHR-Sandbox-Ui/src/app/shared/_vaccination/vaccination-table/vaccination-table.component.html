@@ -1,11 +1,12 @@
-
 <div class="sticky-header">
   <div class="sticky-header-prefix">
     <span class="custom-title">{{title}}</span>
-    <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(patientId && patientId > 0)"  *ngIf="allow_create"  matTooltip="New Record">
+    <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary"
+            [disabled]="!(patientId && patientId > 0)" *ngIf="allow_create" matTooltip="New Record">
       <mat-icon>add</mat-icon>
     </button>
-    <button *ngIf="allow_populate" [disabled]="!(patientId && patientId > 0) || dataSource.data.length > 0" mat-stroked-button matTooltip="Populate with random vaccinations" color="primary" (click)="populate()">
+    <button *ngIf="allow_populate" [disabled]="!(patientId && patientId > 0) || dataSource.data.length > 0"
+            mat-stroked-button matTooltip="Populate with random vaccinations" color="primary" (click)="populate()">
       <mat-icon>casino</mat-icon>
       Populate
     </button>
@@ -13,32 +14,31 @@
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>
 <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-<table mat-table
-       [dataSource]="dataSource" multiTemplateDataRows
-       class="mat-elevation-z8">
-  <ng-container matColumnDef="vaccineCvxCode" >
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+  <ng-container matColumnDef="vaccineCvxCode">
     <th mat-header-cell *matHeaderCellDef>Code (CVX)</th>
     <td mat-cell *matCellDef="let element">
-      {{(element.vaccine && element.vaccine.vaccineCvxCode ? (element.vaccine.vaccineCvxCode | codeMaps: "VACCINATION_CVX_CODE").label : "")
-      + ' (' + (element.vaccine.vaccineCvxCode  ?? "-None-") + ')'}}
+      {{(element.vaccine && element.vaccine.vaccineCvxCode ? (element.vaccine.vaccineCvxCode | codeMaps:
+      "VACCINATION_CVX_CODE").label : "")
+      + ' (' + (element.vaccine.vaccineCvxCode ?? "-None-") + ')'}}
     </td>
   </ng-container>
-  <ng-container matColumnDef="administeredDate" >
-    <th mat-header-cell *matHeaderCellDef> Administration Date </th>
-    <td mat-cell *matCellDef="let element"> {{element.vaccine.administeredDate | date: 'yyyy-MM-dd'}} </td>
+  <ng-container matColumnDef="administeredDate">
+    <th mat-header-cell *matHeaderCellDef> Administration Date</th>
+    <td mat-cell *matCellDef="let element"> {{element.vaccine.administeredDate | date: 'yyyy-MM-dd'}}</td>
   </ng-container>
-  <ng-container matColumnDef="lotNumber" >
-    <th mat-header-cell *matHeaderCellDef> Lot number </th>
-    <td mat-cell *matCellDef="let element"> {{element.vaccine.lotNumber}} </td>
+  <ng-container matColumnDef="lotNumber">
+    <th mat-header-cell *matHeaderCellDef> Lot number</th>
+    <td mat-cell *matCellDef="let element"> {{element.vaccine.lotNumber}}</td>
   </ng-container>
   <ng-container matColumnDef="primarySource">
-    <th mat-header-cell *matHeaderCellDef> Primary source </th>
+    <th mat-header-cell *matHeaderCellDef> Record Nature</th>
     <td mat-cell *matCellDef="let element">
-      {{element.primarySource}}
+      {{element.primarySource ? 'New Admin.' : 'Historical'}}
     </td>
   </ng-container>
-  <ng-container matColumnDef="alerts" >
-    <th mat-header-cell *matHeaderCellDef> Alerts </th>
+  <ng-container matColumnDef="alerts">
+    <th mat-header-cell *matHeaderCellDef> Alerts</th>
     <td mat-cell *matCellDef="let element">
       <app-feedback-icon [element]="element"></app-feedback-icon>
     </td>
@@ -47,10 +47,10 @@
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
-      <div class="element-detail"
-           [@detailExpand]="element == selectedElement ? 'expanded' : 'collapsed'">
+      <div class="element-detail" [@detailExpand]="element == selectedElement ? 'expanded' : 'collapsed'">
         <app-vaccination-tools [vaccination]="element" [patientId]="patientId">
-          <button mat-icon-button color="primary" (click)="openVaccination(element.id); $event.stopPropagation();" matTooltip="Open Dashboard">
+          <button mat-icon-button color="primary" (click)="openVaccination(element.id); $event.stopPropagation();"
+                  matTooltip="Open Dashboard">
             <mat-icon>open_in_new</mat-icon>
           </button>
         </app-vaccination-tools>
@@ -61,14 +61,12 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let element; columns: columns;"
-      class="element-row"
-      [class.expanded-row]="selectedElement === element"
-      (click)="onSelection(element)">
+  <tr mat-row *matRowDef="let element; columns: columns;" class="element-row"
+      [class.expanded-row]="selectedElement === element" (click)="onSelection(element)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
-<button mat-mini-fab [disabled]="!(patientId && patientId > 0)" *ngIf="allow_create"  (click)="openCreation()" color="primary" >
+<button mat-mini-fab [disabled]="!(patientId && patientId > 0)" *ngIf="allow_create" (click)="openCreation()"
+        color="primary">
   <mat-icon>add</mat-icon>
 </button>
-

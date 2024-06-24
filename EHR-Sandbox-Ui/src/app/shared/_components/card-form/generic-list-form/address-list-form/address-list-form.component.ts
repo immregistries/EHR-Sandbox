@@ -17,7 +17,7 @@ export class AddressListFormComponent extends GenericListFormComponent<EhrAddres
     { type: FormType.text, title: 'State', attribute: 'addressState' },
 
     { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
-    { type: FormType.text, title: 'County', attribute: 'addressCountyParish' },
+    { type: FormType.text, title: 'County/Parish', attribute: 'addressCountyParish' },
     { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
   ]
 }
