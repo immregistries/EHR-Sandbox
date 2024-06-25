@@ -1,0 +1,21 @@
+<form [style]="'width: 100%'" (submit)="send()">
+  <div class="textarea-container">
+    <mat-form-field style="width: 100%;" appearance="fill">
+      <mat-label>Json value</mat-label>
+      <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="model" name="message"></textarea>
+    </mat-form-field>
+  </div>
+  <div class="footer low-density">
+    <div class="footer-end">
+      <button mat-raised-button class="w3-right" type="submit" color="primary">
+        <mat-icon>send</mat-icon>
+        Send to API
+      </button>
+    </div>
+  </div>
+  <div [style]="{width: '90%'}" class="w3-right textarea-container">
+    <textarea [ngClass]="resultClass()" [rows]="6" [style]="{width: '100%'}" readonly
+              name="answer">{{answer}}</textarea>
+  </div>
+
+</form>

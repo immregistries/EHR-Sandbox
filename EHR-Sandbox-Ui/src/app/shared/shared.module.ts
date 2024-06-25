@@ -117,6 +117,8 @@ import { RaceListFormComponent } from './_components/card-form/generic-list-form
 import { AddressListFormComponent } from './_components/card-form/generic-list-form/address-list-form/address-list-form.component';
 import { NextOfKinRelationshipListFormComponent } from './_components/card-form/generic-list-form/next-of-kin-relationship-list-form/next-of-kin-relationship-list-form.component';
 import { NextOfKinFormComponent } from './_components/card-form/next-of-kin-form/next-of-kin-form.component';
+import { JsonFormComponent } from './_components/abstract-json-form/abstract-json-form.component';
+import { PatientJsonFormComponent } from './_components/abstract-json-form/patient-json-form/patient-json-form.component';
 
 @NgModule({
   declarations: [
@@ -211,6 +213,7 @@ import { NextOfKinFormComponent } from './_components/card-form/next-of-kin-form
     AddressListFormComponent,
     NextOfKinRelationshipListFormComponent,
     NextOfKinFormComponent,
+    PatientJsonFormComponent,
   ],
   imports: [
     CommonModule,

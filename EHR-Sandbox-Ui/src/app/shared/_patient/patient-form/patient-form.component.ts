@@ -133,6 +133,15 @@ export class PatientFormComponent {
       ]
     },
     {
+      title: 'Publicity', cols: 1, rows: 1,
+      toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
+      forms: [
+
+        { type: FormType.code, title: 'Indicator', attribute: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
+        { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
+      ]
+    },
+    {
       title: 'Protection', cols: 1, rows: 1,
       toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
       forms: [
@@ -148,15 +157,7 @@ export class PatientFormComponent {
         { type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate' },
       ]
     },
-    {
-      title: 'Publicity', cols: 1, rows: 1,
-      toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
-      forms: [
 
-        { type: FormType.code, title: 'Indicator', attribute: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
-        { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
-      ]
-    },
     {
       title: 'Immunization Financial Status', cols: 1, rows: 1, forms: [
         { type: FormType.code, title: 'Financial status', attribute: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },

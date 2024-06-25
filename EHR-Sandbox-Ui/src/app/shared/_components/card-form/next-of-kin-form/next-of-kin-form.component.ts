@@ -25,6 +25,7 @@ export class NextOfKinFormComponent {
     { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX" },
     { type: FormType.phoneNumbers, title: 'Phone', attribute: 'phones' },
     { type: FormType.addresses, title: 'Address', attribute: 'addresses' },
+    // Maiden name ---------- TODO
   ]
 
   @Input() overrideNoFieldsRequired: boolean = false

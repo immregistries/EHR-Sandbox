@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
+import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
@@ -172,6 +173,10 @@ public class EhrPatientController {
         patient.setFacility(facility);
         patient.setCreatedDate(new Date());
         patient.setUpdatedDate(new Date());
+        for (NextOfKinRelationship nextOfKinRelationship : patient.getNextOfKinRelationships()) {
+            nextOfKinRelationship.setNextOfKinRelationshipPK(new NextOfKinRelationshipPK());
+            nextOfKinRelationship.getNextOfKin().setId(null);
+        }
         EhrPatient newEntity = ehrPatientRepository.save(patient);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -184,9 +189,7 @@ public class EhrPatientController {
     }
 
     @PutMapping("")
-    public EhrPatient putPatient(@RequestAttribute Tenant tenant,
-                                 @RequestAttribute Facility facility,
-//                                 @RequestAttribute EhrPatient patient,
+    public EhrPatient putPatient(@RequestAttribute Facility facility,
                                  @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
 //        logger.info("facility {}", newPatient.getFacility().getNameDisplay());

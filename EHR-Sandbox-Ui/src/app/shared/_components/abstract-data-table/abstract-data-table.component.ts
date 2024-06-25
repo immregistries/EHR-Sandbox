@@ -2,7 +2,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
-import { ObjectWithID } from 'src/app/core/_model/rest';
 
 @Component({
   template: '',

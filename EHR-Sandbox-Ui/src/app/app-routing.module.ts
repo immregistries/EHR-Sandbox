@@ -17,6 +17,8 @@ import { ClinicianTableComponent } from './shared/_clinician/clinician-table/cli
 import { Hl7MessagingComponent } from './shared/_fhir/hl7-messaging/hl7-messaging.component';
 import { GroupStepsComponent } from './core/_components/group-steps/group-steps.component';
 import { VxuStepsComponent } from './shared/_components/vxu-steps/vxu-steps.component';
+import { JsonFormComponent } from './shared/_components/abstract-json-form/abstract-json-form.component';
+import { PatientJsonFormComponent } from './shared/_components/abstract-json-form/patient-json-form/patient-json-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -39,6 +41,7 @@ const routes: Routes = [
   { path: 'first-steps', component: StepsComponent },
   { path: 'group-steps', component: GroupStepsComponent },
   { path: 'vxu-steps', component: VxuStepsComponent },
+  { path: 'json-form', component: PatientJsonFormComponent },
 ];
 
 @NgModule({

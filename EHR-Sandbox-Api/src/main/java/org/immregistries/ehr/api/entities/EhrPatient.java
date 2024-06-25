@@ -95,6 +95,7 @@ public class EhrPatient extends EhrEntity {
     @JsonManagedReference("patient_next_of_kin_relationship")
     @NotAudited
     private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
+//    private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
 
     @OneToMany(mappedBy = "patient")
     @NotAudited

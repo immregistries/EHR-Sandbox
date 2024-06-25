@@ -37,7 +37,7 @@ public class HL7printer {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         createMSH("VXU^V04^VXU_V04", "Z22", sb, facility);
         printQueryPID(patient, sb, sdf, 1);
-        printPD1(patient, sb, sdf);
+        printPD1(sb, patient, sdf);
         printQueryNK1(patient, sb, codeMap);
 
         int obxSetId = 0;
@@ -160,28 +160,26 @@ public class HL7printer {
                 obsSubId++;
                 obxSetId++;
                 {
-                    Code codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus());
-                    if (codeFinancial == null) {
-                        codeFinancial = codeMap.getCodeForCodeset(CodesetType.FINANCIAL_STATUS_CODE, patient.getFinancialStatus());
+                    String value;
+                    if (StringUtils.isNotBlank(vaccine.getFinancialStatus())) {
+                        value = vaccine.getFinancialStatus();
+                    } else {
+                        value = patient.getFinancialStatus();
                     }
                     String loinc = "64994-7";
                     String loincLabel = "Eligibility Status";
-                    String value = patient.getFinancialStatus();
-                    String valueLabel = StringUtils.defaultIfBlank(codeFinancial.getLabel(), "");
                     String valueTable = "HL70064";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable);
                 }
 
 
-                Code codeVacc = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, vaccine.getVaccineCvxCode());
                 obxSetId++;
                 {
                     String loinc = "30956-7";
                     String loincLabel = "Vaccine type";
                     String value = vaccine.getVaccineCvxCode();
-                    String valueLabel = StringUtils.defaultIfBlank(codeVacc.getLabel(), "");
                     String valueTable = "CVX";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_CVX_CODE, valueTable);
                 }
 
                 obxSetId++;
@@ -208,13 +206,11 @@ public class HL7printer {
 
                 obxSetId++;
                 {
-                    Code codeInformationStatement = codeMap.getCodeForCodeset(CodesetType.VACCINATION_VIS_DOC_TYPE, vaccine.getInformationStatement());
                     String loinc = "69764-9";
                     String loincLabel = "Document Type";
                     String value = vaccine.getInformationStatement();
-                    String valueLabel = StringUtils.defaultIfBlank(codeInformationStatement.getLabel(), "");
                     String valueTable = "cdcgs1vis";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_VIS_DOC_TYPE, valueTable);
                 }
 
             }
@@ -445,6 +441,15 @@ public class HL7printer {
         }
     }
 
+    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc, String loincLabel, String value, CodeMap codeMap, CodesetType codesetType, String valueTable) {
+        String valueLabel = "";
+        Code code = codeMap.getCodeForCodeset(codesetType, value);
+        if (code != null) {
+            valueLabel = StringUtils.defaultIfBlank(code.getLabel(), "");
+        }
+        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+    }
+
     public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
                          String loincLabel, String value, String valueLabel, String valueTable) {
         sb.append("OBX");
@@ -572,8 +577,7 @@ public class HL7printer {
     }
 
 
-    public void printPD1(EhrPatient patient, StringBuilder sb,
-                         SimpleDateFormat sdf) {
+    public void printPD1(StringBuilder sb, EhrPatient patient, SimpleDateFormat sdf) {
         sb.append("PD1");
         // PD1-1
         sb.append("|");
