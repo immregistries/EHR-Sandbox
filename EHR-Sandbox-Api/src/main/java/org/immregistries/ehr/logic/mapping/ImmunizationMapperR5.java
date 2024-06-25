@@ -1,5 +1,6 @@
 package org.immregistries.ehr.logic.mapping;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
@@ -60,7 +61,9 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
         i.setLotNumber(vaccine.getLotNumber());
         i.getOccurrenceDateTimeType().setValue(vaccine.getAdministeredDate());
         i.setDoseQuantity(new Quantity());
-        i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
+        if (StringUtils.isNotBlank(vaccine.getAdministeredAmount())) {
+            i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
+        }
         i.setExpirationDate(vaccine.getExpirationDate());
         if (vaccine.getActionCode().equals("D")) {
             i.setStatus(Immunization.ImmunizationStatusCodes.ENTEREDINERROR);

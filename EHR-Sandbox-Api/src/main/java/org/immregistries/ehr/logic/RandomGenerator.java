@@ -13,6 +13,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class RandomGenerator {
 
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
+    @Autowired
+    private TenantRepository tenantRepository;
 
     private static Date between(Date startInclusive, Date endExclusive) {
         long startMillis = startInclusive.getTime();
@@ -322,6 +325,10 @@ public class RandomGenerator {
 
 
         return vaccine;
+    }
+
+    public Clinician randomClinician(String tenantId) {
+        return randomClinician(tenantRepository.findById(tenantId).get());
     }
 
     public Clinician randomClinician(Tenant tenant) {

@@ -41,13 +41,18 @@ public class ClinicianController {
     }
 
     @GetMapping("/$random")
-    public Clinician random(@RequestAttribute Tenant tenant) {
-        return randomGenerator.randomClinician(tenant);
+    public Clinician random(@PathVariable String tenantId) {
+        return randomGenerator.randomClinician(tenantId);
     }
 
 
     @PostMapping()
-    public Clinician postClinicians(@RequestAttribute Tenant tenant, @RequestBody Clinician clinician) {
+    public Clinician postClinicians(@PathVariable String tenantId, @RequestBody Clinician clinician) {
+        return postClinicians(tenantRepository.findById(tenantId).get(), clinician);
+    }
+
+    @PostMapping()
+    public Clinician postClinicians(@PathVariable Tenant tenant, Clinician clinician) {
         clinician.setTenant(tenant);
         for (EhrIdentifier clinicianIdentifier : clinician.getIdentifiers()) {
 //            clinicianIdentifier.setClinicianId(clinician.getId());

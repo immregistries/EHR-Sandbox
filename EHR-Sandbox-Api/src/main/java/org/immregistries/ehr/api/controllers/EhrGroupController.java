@@ -83,16 +83,17 @@ public class EhrGroupController {
 
     @PostMapping()
     @Transactional()
-    public ResponseEntity<String> post(@RequestAttribute Facility facility,
+    public ResponseEntity<String> post(@PathVariable String facilityId,
                                        @RequestBody EhrGroup ehrGroup) {
-        if (ehrGroupRepository.existsByFacilityIdAndName(facility.getId(), ehrGroup.getName())) {
+        if (ehrGroupRepository.existsByFacilityIdAndName(facilityId, ehrGroup.getName())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used for this facility");
         } else {
+            Facility facility = facilityRepository.findById(facilityId).get();
             ehrGroup.setFacility(facility);
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
             if (ehrGroup.getImmunizationRegistry() != null) {
-                fhirClientController.postResource(ehrGroup.getImmunizationRegistry().getId(), "Group", fhirConversionController.groupResource(newEntity.getId(), facility).getBody());
+                fhirClientController.postResource(ehrGroup.getImmunizationRegistry().getId(), "Group", fhirConversionController.groupResource(newEntity.getId()).getBody());
             }
             return new ResponseEntity<>(newEntity.getId(), HttpStatus.CREATED);
         }
@@ -101,22 +102,22 @@ public class EhrGroupController {
 
     @PutMapping({"", "/{groupId}"})
     @Transactional
-    public ResponseEntity<EhrGroup> put(@RequestAttribute Facility facility, @RequestBody EhrGroup ehrGroup) {
-        EhrGroup oldEntity = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId())
+    public ResponseEntity<EhrGroup> put(@PathVariable String facilityId, @RequestBody EhrGroup ehrGroup) {
+        EhrGroup oldEntity = ehrGroupRepository.findByFacilityIdAndId(facilityId, ehrGroup.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
-        Optional<EhrGroup> groupUsingNewName = ehrGroupRepository.findByFacilityIdAndId(facility.getId(), ehrGroup.getId());
+        Optional<EhrGroup> groupUsingNewName = ehrGroupRepository.findByFacilityIdAndId(facilityId, ehrGroup.getId());
         if (groupUsingNewName.isPresent() && !groupUsingNewName.get().getId().equals(oldEntity.getId())) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used by another group");
         } else {
-            ehrGroup.setFacility(facility);
+            ehrGroup.setFacility(oldEntity.getFacility());
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
             return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
         }
     }
 
     @GetMapping("/$random")
-    public EhrGroup random(@RequestAttribute Facility facility) {
+    public EhrGroup random(@PathVariable String facilityId) {
         Faker faker = new Faker();
         EhrGroup ehrGroup = new EhrGroup();
         ehrGroup.setName(faker.educator().campus());
@@ -149,14 +150,14 @@ public class EhrGroupController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getAll(@RequestAttribute Facility facility, @RequestParam Optional<String> name) {
+    public ResponseEntity<?> getAll(@PathVariable String facilityId, @RequestParam Optional<String> name) {
         if (name.isPresent()) {
-            return ResponseEntity.ok(ehrGroupRepository.findByFacilityIdAndName(facility.getId(), name.get())
+            return ResponseEntity.ok(ehrGroupRepository.findByFacilityIdAndName(facilityId, name.get())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")));
         } else {
-            Iterable<EhrGroup> ehrGroups = ehrGroupRepository.findByFacilityId(facility.getId());
+            Iterable<EhrGroup> ehrGroups = ehrGroupRepository.findByFacilityId(facilityId);
             Stream<EhrGroup> stream = StreamSupport.stream(ehrGroups.spliterator(), false);
-            for (Facility childFacility : facilityRepository.findByParentFacilityId(facility.getId())) {
+            for (Facility childFacility : facilityRepository.findByParentFacilityId(facilityId)) {
                 Iterable<EhrGroup> childEhrGroups = ehrGroupRepository.findByFacilityId(childFacility.getId());
                 stream = Stream.concat(stream, StreamSupport.stream(childEhrGroups.spliterator(), false));
             }
@@ -173,7 +174,7 @@ public class EhrGroupController {
     public ResponseEntity<Set<EhrEntity>> getImportStatusResult(@PathVariable String groupId, @RequestBody String url) {
 //        BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
         EhrGroup group = ehrGroupRepository.findById(groupId).get();
-        return bulkImportController.viewBulkResult(group.getImmunizationRegistry().getId(), group.getFacility(), url);
+        return bulkImportController.viewBulkResult(group.getImmunizationRegistry().getId(), group.getFacility().getId(), url);
     }
 
     @GetMapping("/{groupId}/$import")

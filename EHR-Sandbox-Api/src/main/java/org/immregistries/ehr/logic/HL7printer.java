@@ -222,7 +222,6 @@ public class HL7printer {
         // https://hl7-definition.caristix.com/v2/HL7v2.5/Segments/NK1
         int count = 0;
         for (NextOfKinRelationship nextOfKinRelationship : patient.getNextOfKinRelationships()) {
-            logger.info("nk1 {} {}", count, nextOfKinRelationship.getRelationshipKind());
             NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
             if (nextOfKin != null) {
                 count++;

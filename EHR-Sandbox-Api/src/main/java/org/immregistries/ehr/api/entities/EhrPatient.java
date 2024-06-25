@@ -51,13 +51,13 @@ public class EhrPatient extends EhrEntity {
     private String motherMaiden = "";
     @Column(name = "sex", length = 250)
     private String sex = "";
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_race", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrRace> races = new HashSet<EhrRace>();
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_address", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
     @Column(name = "email", length = 250)
@@ -91,7 +91,7 @@ public class EhrPatient extends EhrEntity {
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JsonManagedReference("patient_next_of_kin_relationship")
     @NotAudited
     private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
@@ -101,7 +101,7 @@ public class EhrPatient extends EhrEntity {
     @NotAudited
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_identifiers", joinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 

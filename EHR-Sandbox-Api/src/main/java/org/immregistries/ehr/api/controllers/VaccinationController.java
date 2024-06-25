@@ -70,16 +70,24 @@ public class VaccinationController {
     }
 
     @GetMapping("/$random")
-    public VaccinationEvent random(@RequestAttribute Tenant tenant,
-                                   @RequestAttribute Optional<EhrPatient> patient) {
-        patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-        return randomGenerator.randomVaccinationEvent(patient.get(), tenant, patient.get().getFacility());
+    public VaccinationEvent random(@PathVariable String tenantId,
+                                   @PathVariable String facilityId,
+                                   @PathVariable Optional<String> patientId) {
+        patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+        return randomGenerator.randomVaccinationEvent(patientRepository.findById(patientId.get()).get(), tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get());
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@RequestAttribute() Tenant tenant,
-                                                        @RequestAttribute Optional<EhrPatient> patient,
+    public ResponseEntity<String> postVaccinationEvents(@PathVariable String tenantId,
+                                                        @PathVariable Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
+        patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+        return postVaccinationEvents(tenantRepository.findById(tenantId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
+    }
+
+    public ResponseEntity<String> postVaccinationEvents(Tenant tenant,
+                                                        EhrPatient patient,
+                                                        VaccinationEvent vaccination) {
         VaccinationEvent newEntity = createVaccinationEvent(tenant, patient, vaccination);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -89,9 +97,8 @@ public class VaccinationController {
     }
 
     private VaccinationEvent createVaccinationEvent(Tenant tenant,
-                                                    Optional<EhrPatient> patient,
+                                                    EhrPatient patient,
                                                     VaccinationEvent vaccination) {
-        patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
         if (vaccination.getAdministeringClinician() != null && vaccination.getAdministeringClinician().getId() == null) {
             vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant, vaccination.getAdministeringClinician()));
         }
@@ -102,19 +109,26 @@ public class VaccinationController {
             vaccination.setOrderingClinician(clinicianController.postClinicians(tenant, vaccination.getOrderingClinician()));
         }
         vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
-        vaccination.setPatient(patient.get());
-        vaccination.setAdministeringFacility(patient.get().getFacility());
+        vaccination.setPatient(patient);
+        vaccination.setAdministeringFacility(patient.getFacility());
         return vaccinationEventRepository.save(vaccination);
     }
 
     @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@RequestAttribute() Tenant tenant,
-                                                 @RequestAttribute() Facility facility,
-                                                 @RequestAttribute Optional<EhrPatient> patient,
+    public VaccinationEvent putVaccinationEvents(@PathVariable String tenantId,
+                                                 @PathVariable String facilityId,
+                                                 @PathVariable Optional<String> patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
-        patient.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
-        Optional<VaccinationEvent> old = vaccinationEventRepository.findByPatientIdAndId(patient.get().getId(), vaccination.getId());
+        patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
+        return putVaccinationEvents(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
+    }
+
+    public VaccinationEvent putVaccinationEvents(Tenant tenant,
+                                                 Facility facility,
+                                                 EhrPatient patient,
+                                                 VaccinationEvent vaccination) {
         VaccinationEvent oldVaccination;
+        Optional<VaccinationEvent> old = vaccinationEventRepository.findByPatientIdAndId(patient.getId(), vaccination.getId());
         if (old.isEmpty()) {
             return createVaccinationEvent(tenant, patient, vaccination);
         } else {
@@ -130,7 +144,7 @@ public class VaccinationController {
                 vaccination.setOrderingClinician(clinicianController.postClinicians(tenant, vaccination.getOrderingClinician()));
             }
             vaccination.setVaccine(vaccineRepository.save(vaccination.getVaccine()));
-            vaccination.setPatient(patient.get());
+            vaccination.setPatient(patient);
             vaccination.setAdministeringFacility(facility);
             return vaccinationEventRepository.save(vaccination);
         }

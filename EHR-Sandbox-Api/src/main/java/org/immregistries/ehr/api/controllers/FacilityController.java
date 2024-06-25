@@ -6,6 +6,7 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.util.Set;
 @RequestMapping({"/tenants/{tenantId}/facilities"})
 public class FacilityController {
 
+    @Autowired
+    private TenantRepository tenantRepository;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
@@ -66,8 +69,11 @@ public class FacilityController {
     }
 
     @PostMapping()
-    public ResponseEntity<Facility> postFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility, @RequestParam Optional<Boolean> populate
-    ) {
+    public ResponseEntity<Facility> postFacility(@PathVariable String tenantId, @RequestBody Facility facility, @RequestParam Optional<Boolean> populate) {
+        return postFacility(tenantRepository.findById(tenantId).get(), facility, populate);
+    }
+
+    public ResponseEntity<Facility> postFacility(Tenant tenant, Facility facility, Optional<Boolean> populate) {
         if (facility.getNameDisplay().length() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
@@ -89,18 +95,18 @@ public class FacilityController {
     }
 
     @PutMapping()
-    public ResponseEntity<Facility> putFacility(@RequestAttribute Tenant tenant, @RequestBody Facility facility) {
+    public ResponseEntity<Facility> putFacility(@PathVariable String tenantId, @RequestBody Facility facility) {
         if (facility.getNameDisplay().length() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
         }
-        Optional<Facility> oldWithSameName = facilityRepository.findByTenantIdAndNameDisplay(tenant.getId(), facility.getNameDisplay());
+        Optional<Facility> oldWithSameName = facilityRepository.findByTenantIdAndNameDisplay(tenantId, facility.getNameDisplay());
         if (oldWithSameName.isPresent() && !Objects.equals(oldWithSameName.get().getId(), facility.getId())) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Name is already used");
         }
-        Facility oldFacility = facilityRepository.findByIdAndTenantId(facility.getId(), tenant.getId())
+        Facility oldFacility = facilityRepository.findByIdAndTenantId(facility.getId(), tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid put facility, must have same tenant"));
-        facility.setTenant(tenant);
+        facility.setTenant(oldFacility.getTenant());
         Facility newEntity = facilityRepository.save(facility);
         return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
     }
@@ -108,16 +114,23 @@ public class FacilityController {
     @GetMapping("/{facilityId}/$populate")
     @Transactional()
     public ResponseEntity<String> populateFacility(
-            @RequestAttribute Tenant tenant,
-            @RequestAttribute Facility facility,
+            @PathVariable String tenantId,
+            @PathVariable String facilityId,
             @RequestParam Optional<Integer> patientNumber) {
+        return populateFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), patientNumber);
+    }
+
+    public ResponseEntity<String> populateFacility(
+            Tenant tenant,
+            Facility facility,
+            Optional<Integer> patientNumber) {
         if (patientNumber.isEmpty()) {
             patientNumber = Optional.of(3);
         } else if (patientNumber.get() > 30) {
             patientNumber = Optional.of(3);
         }
         for (int i = 0; i < patientNumber.get(); i++) {
-            ehrPatientController.postPatient(tenant, facility, randomGenerator.randomPatient(facility), Optional.empty(), Optional.empty(), Optional.of(true));
+            ehrPatientController.postPatient(tenant, facility, randomGenerator.randomPatient(facility), Optional.of(true));
         }
         return ResponseEntity.ok("{}");
     }

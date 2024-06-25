@@ -7,10 +7,6 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.Parameters;
-import org.hl7.fhir.r5.model.StringType;
-import org.hl7.fhir.r5.model.DateType;
 import org.immregistries.ehr.api.controllers.ImmunizationRegistryController;
 import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
@@ -54,15 +50,15 @@ public class BulkImportController {
 
 
     @GetMapping("/registry/{registryId}/Group/{groupId}/$export-synch")
-    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer registryId, @PathVariable()  String groupId
-            ,@RequestParam Optional<String> _outputFormat
-            ,@RequestParam Optional<String> _type
-            ,@RequestParam Optional<Date> _since
-            ,@RequestParam Optional<String> _typeFilter
-            ,@RequestParam Optional<String> _elements
-            ,@RequestParam Optional<String> includeAssociatedData
-            ,@RequestParam Optional<String> patient
-            ,@RequestParam Optional<Boolean> _mdm
+    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer registryId, @PathVariable() String groupId
+            , @RequestParam Optional<String> _outputFormat
+            , @RequestParam Optional<String> _type
+            , @RequestParam Optional<Date> _since
+            , @RequestParam Optional<String> _typeFilter
+            , @RequestParam Optional<String> _elements
+            , @RequestParam Optional<String> includeAssociatedData
+            , @RequestParam Optional<String> patient
+            , @RequestParam Optional<Boolean> _mdm
     ) throws IOException {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         IGenericClient client = customClientFactory.newGenericClient(ir);
@@ -81,12 +77,12 @@ public class BulkImportController {
         _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
         Parameters outParams = client.operation()
-                        .onInstance(new IdType("Group", groupId))
-                        .named("$export")
-                        .withParameters(inParams).accept("*/*")
-                        .useHttpGet()
-                        .withAdditionalHeader("Prefer", "respond-sync")
-                        .execute();
+                .onInstance(new IdType("Group", groupId))
+                .named("$export")
+                .withParameters(inParams).accept("*/*")
+                .useHttpGet()
+                .withAdditionalHeader("Prefer", "respond-sync")
+                .execute();
         IHttpResponse response = capturingInterceptor.getLastResponse();
         if (response.getStatus() == 200) {
             return ResponseEntity.ok(response.readEntity().readAllBytes());
@@ -96,14 +92,14 @@ public class BulkImportController {
     }
 
     @GetMapping("/registry/{registryId}/Group/{groupId}/$export-asynch")
-    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() Integer registryId, @PathVariable()  String groupId
-            ,@RequestParam Optional<String> _outputFormat
-            ,@RequestParam Optional<String> _type
-            ,@RequestParam Optional<Date> _since
-            ,@RequestParam Optional<String> _typeFilter
-            ,@RequestParam Optional<Boolean> _mdm
+    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() Integer registryId, @PathVariable() String groupId
+            , @RequestParam Optional<String> _outputFormat
+            , @RequestParam Optional<String> _type
+            , @RequestParam Optional<Date> _since
+            , @RequestParam Optional<String> _typeFilter
+            , @RequestParam Optional<Boolean> _mdm
     ) {
-        IHttpResponse response = bulkKickOffHttpResponse(registryId,groupId,_outputFormat,_type,_since,_typeFilter,_mdm);
+        IHttpResponse response = bulkKickOffHttpResponse(registryId, groupId, _outputFormat, _type, _since, _typeFilter, _mdm);
         if (response.getStatus() == 202) {
             String contentLocationUrl = response.getHeaders("Content-Location").get(0);
             return ResponseEntity.ok(contentLocationUrl);
@@ -111,7 +107,7 @@ public class BulkImportController {
         return ResponseEntity.internalServerError().body(response.getStatusInfo());
     }
 
-    public IHttpResponse bulkKickOffHttpResponse(@PathVariable() Integer registryId, @PathVariable()  String groupId
+    public IHttpResponse bulkKickOffHttpResponse(@PathVariable() Integer registryId, @PathVariable() String groupId
             , @RequestParam Optional<String> _outputFormat
             , @RequestParam Optional<String> _type
             , @RequestParam Optional<Date> _since
@@ -131,12 +127,12 @@ public class BulkImportController {
         _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
 
         Parameters outParams = client.operation()
-                        .onInstance(new IdType("Group", groupId))
-                        .named("$export")
-                        .withParameters(inParams)
-                        .useHttpGet()
-                        .withAdditionalHeader("Prefer", "respond-async")
-                        .execute();
+                .onInstance(new IdType("Group", groupId))
+                .named("$export")
+                .withParameters(inParams)
+                .useHttpGet()
+                .withAdditionalHeader("Prefer", "respond-async")
+                .execute();
         return capturingInterceptor.getLastResponse();
 
     }
@@ -172,9 +168,9 @@ public class BulkImportController {
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else if (status == 202) {
                 StringBuilder builder = new StringBuilder();
-                for (Map.Entry<String,List<String>> entry: con.getHeaderFields().entrySet()) {
+                for (Map.Entry<String, List<String>> entry : con.getHeaderFields().entrySet()) {
                     builder.append(entry.getKey()).append("=");
-                    for (String header: entry.getValue()) {
+                    for (String header : entry.getValue()) {
                         builder.append(header).append(",\t");
                     }
                     builder.append("\n");
@@ -226,9 +222,9 @@ public class BulkImportController {
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else if (status == 202) {
                 StringBuilder builder = new StringBuilder();
-                for (Map.Entry<String,List<String>> entry: con.getHeaderFields().entrySet()) {
+                for (Map.Entry<String, List<String>> entry : con.getHeaderFields().entrySet()) {
                     builder.append(entry.getKey()).append("=");
-                    for (String header: entry.getValue()) {
+                    for (String header : entry.getValue()) {
                         builder.append(header).append(",\t");
                     }
                     builder.append("\n");
@@ -312,7 +308,7 @@ public class BulkImportController {
                             () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
                     IParser parser = fhirContext.newNDJsonParser();
                     Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
-                    return bundleImportService.importBundle(ir,facility, bundle);
+                    return bundleImportService.importBundle(ir, facility, bundle);
                 }
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
@@ -331,13 +327,14 @@ public class BulkImportController {
         }
     }
 
-//    @GetMapping("/registry/{registryId}/$export-result-view")
-    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable() Integer registryId, @RequestAttribute Facility facility, @RequestParam String contentUrl) {
+    //    @GetMapping("/registry/{registryId}/$export-result-view")
+    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable() Integer registryId, @PathVariable String facilityId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
         HttpURLConnection con = null;
         URL url;
+        Facility facility = facilityRepository.findById(facilityId).get();
         try {
             url = new URL(contentUrl);
             con = (HttpURLConnection) url.openConnection();
@@ -353,7 +350,7 @@ public class BulkImportController {
             if (status == 200 || status == 202) {
                 IParser parser = fhirContext.newNDJsonParser();
                 Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
-                return ResponseEntity.ok(bundleImportService.viewBundleAndMatchIdentifiers(ir,facility,bundle, false));
+                return ResponseEntity.ok(bundleImportService.viewBundleAndMatchIdentifiers(ir, facility, bundle, false));
             }
             return ResponseEntity.internalServerError().build();
         } catch (MalformedURLException | ProtocolException e) {

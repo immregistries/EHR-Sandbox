@@ -7,9 +7,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
-import org.immregistries.ehr.api.repositories.VaccineRepository;
+import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
@@ -17,8 +15,8 @@ import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.immregistries.ehr.logic.mapping.PractitionerMapperR5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,6 +57,10 @@ public class MacroEndpointsController {
     private VaccineRepository vaccineRepository;
     @Autowired
     private EhrFhirProvider<ImmunizationRecommendation> immunizationRecommendationProvider;
+    @Autowired
+    private TenantRepository tenantRepository;
+    @Autowired
+    private FacilityRepository facilityRepository;
 
     @PostMapping(value = "/$create", consumes = {"application/json"})
     @Transactional()
@@ -121,9 +123,9 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity createFacility(@RequestAttribute Tenant tenant, @RequestBody String bundleString) {
+    public ResponseEntity createFacility(@PathVariable String tenantId, @RequestBody String bundleString) {
         Bundle facilityBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
-        return createFacility(tenant, facilityBundle);
+        return createFacility(tenantRepository.findById(tenantId).get(), facilityBundle);
     }
 
     public ResponseEntity createFacility(Tenant tenant, Bundle facilityBundle) {
@@ -142,16 +144,16 @@ public class MacroEndpointsController {
         }
         facility = facilityController.postFacility(tenant, facility, Optional.empty()).getBody();
 
-        fillFacility(tenant,facility,facilityBundle);
+        fillFacility(tenant, facility, facilityBundle);
 
         return ResponseEntity.ok(facility.getId());
     }
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity fillFacility(@RequestAttribute Tenant tenant, @RequestAttribute Facility facility, @RequestBody String bundleString) {
+    public ResponseEntity fillFacility(@PathVariable String tenantId, @PathVariable String facilityId, @RequestBody String bundleString) {
         Bundle bundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
-        return fillFacility(tenant, facility, bundle);
+        return fillFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), bundle);
     }
 
     public ResponseEntity fillFacility(Tenant tenant, Facility facility, Bundle bundle) {
@@ -172,7 +174,7 @@ public class MacroEndpointsController {
             if (entry.getResource() instanceof Patient) {
                 Patient patient = (Patient) entry.getResource();
                 EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
-                String localId = ehrPatientController.postPatient(tenant, facility, ehrPatient, Optional.empty(), Optional.empty(), Optional.empty()).getBody();
+                String localId = ehrPatientController.postPatient(tenant, facility, ehrPatient, Optional.empty()).getBody();
                 ehrPatients.put(patient.getIdElement().getIdPart(), localId);
             }
         }
