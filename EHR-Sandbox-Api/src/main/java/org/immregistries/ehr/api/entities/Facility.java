@@ -69,7 +69,7 @@ public class Facility extends EhrEntity {
     @JsonIgnore
     private Set<EhrGroup> groups = new LinkedHashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     @CollectionTable(name = "facility_identifiers", joinColumns = @JoinColumn(name = "facility_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
@@ -79,7 +79,7 @@ public class Facility extends EhrEntity {
         return facilities.size();
     }
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     @CollectionTable(name = "facility_addresses", joinColumns = @JoinColumn(name = "facility_id"))
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
 

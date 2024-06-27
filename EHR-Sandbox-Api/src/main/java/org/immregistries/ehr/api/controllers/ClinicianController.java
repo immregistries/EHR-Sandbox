@@ -31,28 +31,27 @@ public class ClinicianController {
     private RandomGenerator randomGenerator;
 
     @GetMapping()
-    public Iterable<Clinician> clinicians(@PathVariable String tenantId) {
+    public Iterable<Clinician> clinicians(@PathVariable() String tenantId) {
         return clinicianRepository.findByTenantId(tenantId);
     }
 
     @GetMapping("/{clinicianId}")
-    public Optional<Clinician> clinician(@PathVariable Integer clinicianId) {
+    public Optional<Clinician> clinician(@PathVariable() Integer clinicianId) {
         return clinicianRepository.findById(clinicianId);
     }
 
     @GetMapping("/$random")
-    public Clinician random(@PathVariable String tenantId) {
+    public Clinician random(@PathVariable() String tenantId) {
         return randomGenerator.randomClinician(tenantId);
     }
 
 
     @PostMapping()
-    public Clinician postClinicians(@PathVariable String tenantId, @RequestBody Clinician clinician) {
+    public Clinician postClinicians(@PathVariable() String tenantId, @RequestBody Clinician clinician) {
         return postClinicians(tenantRepository.findById(tenantId).get(), clinician);
     }
 
-    @PostMapping()
-    public Clinician postClinicians(@PathVariable Tenant tenant, Clinician clinician) {
+    public Clinician postClinicians(Tenant tenant, Clinician clinician) {
         clinician.setTenant(tenant);
         for (EhrIdentifier clinicianIdentifier : clinician.getIdentifiers()) {
 //            clinicianIdentifier.setClinicianId(clinician.getId());
@@ -63,7 +62,7 @@ public class ClinicianController {
     }
 
     @PutMapping("/{clinicianId}")
-    public Clinician putClinicians(@PathVariable String tenantId, @PathVariable Integer clinicianId, @RequestBody Clinician clinician) {
+    public Clinician putClinicians(@PathVariable() String tenantId, @PathVariable() Integer clinicianId, @RequestBody Clinician clinician) {
         Optional<Clinician> old = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId);
         clinician.setTenant(old.get().getTenant());
         return clinicianRepository.save(clinician);

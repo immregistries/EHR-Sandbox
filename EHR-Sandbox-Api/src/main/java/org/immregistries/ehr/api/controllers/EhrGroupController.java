@@ -69,21 +69,14 @@ public class EhrGroupController {
     @Autowired
     private BundleImportService bundleImportService;
 
-    /**
-     * hollow method for url mapping
-     * query is actually executed in authorization filter
-     *
-     * @param ehrGroup
-     * @return
-     */
     @GetMapping("/{groupId}")
-    public EhrGroup get(@RequestAttribute EhrGroup ehrGroup) {
-        return ehrGroup;
+    public EhrGroup get(@PathVariable() String groupId) {
+        return ehrGroupRepository.findById(groupId).get();
     }
 
     @PostMapping()
     @Transactional()
-    public ResponseEntity<String> post(@PathVariable String facilityId,
+    public ResponseEntity<String> post(@PathVariable() String facilityId,
                                        @RequestBody EhrGroup ehrGroup) {
         if (ehrGroupRepository.existsByFacilityIdAndName(facilityId, ehrGroup.getName())) {
             throw new ResponseStatusException(
@@ -102,7 +95,7 @@ public class EhrGroupController {
 
     @PutMapping({"", "/{groupId}"})
     @Transactional
-    public ResponseEntity<EhrGroup> put(@PathVariable String facilityId, @RequestBody EhrGroup ehrGroup) {
+    public ResponseEntity<EhrGroup> put(@PathVariable() String facilityId, @RequestBody EhrGroup ehrGroup) {
         EhrGroup oldEntity = ehrGroupRepository.findByFacilityIdAndId(facilityId, ehrGroup.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
         Optional<EhrGroup> groupUsingNewName = ehrGroupRepository.findByFacilityIdAndId(facilityId, ehrGroup.getId());
@@ -117,7 +110,7 @@ public class EhrGroupController {
     }
 
     @GetMapping("/$random")
-    public EhrGroup random(@PathVariable String facilityId) {
+    public EhrGroup random(@PathVariable() String facilityId) {
         Faker faker = new Faker();
         EhrGroup ehrGroup = new EhrGroup();
         ehrGroup.setName(faker.educator().campus());
@@ -150,7 +143,7 @@ public class EhrGroupController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getAll(@PathVariable String facilityId, @RequestParam Optional<String> name) {
+    public ResponseEntity<?> getAll(@PathVariable() String facilityId, @RequestParam Optional<String> name) {
         if (name.isPresent()) {
             return ResponseEntity.ok(ehrGroupRepository.findByFacilityIdAndName(facilityId, name.get())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")));
@@ -166,12 +159,12 @@ public class EhrGroupController {
     }
 
     @GetMapping("/{groupId}/$import-status")
-    public ResponseEntity<BulkImportStatus> getImportStatus(@PathVariable String groupId) {
+    public ResponseEntity<BulkImportStatus> getImportStatus(@PathVariable() String groupId) {
         return ResponseEntity.ok(resultCacheStore.get(groupId));
     }
 
     @PostMapping("/{groupId}/$import-view-result")
-    public ResponseEntity<Set<EhrEntity>> getImportStatusResult(@PathVariable String groupId, @RequestBody String url) {
+    public ResponseEntity<Set<EhrEntity>> getImportStatusResult(@PathVariable() String groupId, @RequestBody String url) {
 //        BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
         EhrGroup group = ehrGroupRepository.findById(groupId).get();
         return bulkImportController.viewBulkResult(group.getImmunizationRegistry().getId(), group.getFacility().getId(), url);
@@ -179,7 +172,8 @@ public class EhrGroupController {
 
     @GetMapping("/{groupId}/$import")
     @PostMapping("/{groupId}/$import")
-    public ResponseEntity<?> bulkImport(@RequestAttribute EhrGroup ehrGroup) throws IOException {
+    public ResponseEntity<?> bulkImport(@PathVariable() String groupId) throws IOException {
+        EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
         if (immunizationRegistry == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
@@ -254,7 +248,8 @@ public class EhrGroupController {
 
     @PostMapping("/{groupId}/$add")
     @Transactional()
-    public EhrGroup add(@RequestAttribute EhrGroup ehrGroup, @RequestParam String patientId) {
+    public EhrGroup add(@PathVariable() String groupId, @RequestParam String patientId) {
+        EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
@@ -283,7 +278,8 @@ public class EhrGroupController {
     }
 
     @PostMapping("/{groupId}/$remove")
-    public EhrGroup remove_member(@RequestAttribute EhrGroup ehrGroup, @RequestParam String patientId) {
+    public EhrGroup remove_member(@PathVariable() String groupId, @RequestParam String patientId) {
+        EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
@@ -307,12 +303,12 @@ public class EhrGroupController {
     }
 
     @GetMapping("/{groupId}/$refresh")
-    public EhrGroup refreshOne(@PathVariable String groupId) {
+    public EhrGroup refreshOne(@PathVariable() String groupId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("group not found"));
         return refreshOne(ehrGroup);
     }
 
-    public EhrGroup refreshOne(@RequestAttribute EhrGroup ehrGroup) {
+    public EhrGroup refreshOne(EhrGroup ehrGroup) {
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
         if (immunizationRegistry == null) {
             ehrGroup.setFacility(null);

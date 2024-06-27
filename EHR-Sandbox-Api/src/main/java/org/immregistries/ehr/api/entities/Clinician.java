@@ -59,7 +59,7 @@ public class Clinician extends EhrEntity {
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     @CollectionTable(name = "clinician_identifiers", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 

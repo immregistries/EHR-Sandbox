@@ -70,16 +70,16 @@ public class VaccinationController {
     }
 
     @GetMapping("/$random")
-    public VaccinationEvent random(@PathVariable String tenantId,
-                                   @PathVariable String facilityId,
-                                   @PathVariable Optional<String> patientId) {
+    public VaccinationEvent random(@PathVariable() String tenantId,
+                                   @PathVariable() String facilityId,
+                                   @PathVariable() Optional<String> patientId) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return randomGenerator.randomVaccinationEvent(patientRepository.findById(patientId.get()).get(), tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get());
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@PathVariable String tenantId,
-                                                        @PathVariable Optional<String> patientId,
+    public ResponseEntity<String> postVaccinationEvents(@PathVariable() String tenantId,
+                                                        @PathVariable() Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return postVaccinationEvents(tenantRepository.findById(tenantId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
@@ -115,9 +115,9 @@ public class VaccinationController {
     }
 
     @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@PathVariable String tenantId,
-                                                 @PathVariable String facilityId,
-                                                 @PathVariable Optional<String> patientId,
+    public VaccinationEvent putVaccinationEvents(@PathVariable() String tenantId,
+                                                 @PathVariable() String facilityId,
+                                                 @PathVariable() Optional<String> patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
         return putVaccinationEvents(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), patientRepository.findById(patientId.get()).get(), vaccination);

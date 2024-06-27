@@ -91,7 +91,7 @@ public class EhrPatient extends EhrEntity {
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference("patient_next_of_kin_relationship")
     @NotAudited
     private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();

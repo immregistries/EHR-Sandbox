@@ -7,7 +7,7 @@
                    [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                    [overrideAllFieldsRequired]="i === 0 ? overrideAllFieldsRequired : false"></app-card-form>
   </span>
-  <button mat-stroked-button type="button" (click)="removeItem(i -1)" color="primary">
+  <button mat-stroked-button type="button" (click)="removeItem(i)" color="primary">
     <mat-icon>remove</mat-icon>
     Remove {{form.title}}
   </button>

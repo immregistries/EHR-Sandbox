@@ -84,7 +84,7 @@ public class FhirClientController {
     }
 
     @GetMapping("/smart-test/{keyId}")
-    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable String keyId) {
+    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable() String keyId) {
         ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
         immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
         immunizationRegistry.setIisUsername(keyId);
@@ -342,7 +342,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-//    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
+    //    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
     @PostMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
     public ResponseEntity<String> transaction(
             @PathVariable() Integer registryId,

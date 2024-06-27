@@ -43,17 +43,17 @@ public class FacilityController {
     }
 
     @GetMapping("/$random")
-    public Facility getRandom(@RequestAttribute() Tenant tenant) {
+    public Facility getRandom(@PathVariable() String tenantId) {
         Faker faker = new Faker();
         Facility facility = new Facility();
-        facility.setTenant(tenant);
+        facility.setTenant(tenantRepository.findById(tenantId).get());
         facility.setNameDisplay(faker.company().name());
         return facility;
     }
 
     @GetMapping("/{facilityId}/$random_patient")
-    public EhrPatient getRandomPatient(@RequestAttribute() Facility facility) {
-        return randomGenerator.randomPatient(facility);
+    public EhrPatient getRandomPatient(@PathVariable() String facilityId) {
+        return randomGenerator.randomPatient(facilityRepository.findById(facilityId).get());
     }
 
     @GetMapping("/{facilityId}")
@@ -63,13 +63,12 @@ public class FacilityController {
     }
 
     @GetMapping("/{facilityId}/$children")
-    public Set<Facility> getFacilityChildren(@PathVariable() String tenantId,
-                                             @PathVariable() String facilityId) {
+    public Set<Facility> getFacilityChildren(@PathVariable() String tenantId, @PathVariable() String facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId, tenantId).orElseThrow().getFacilities();
     }
 
     @PostMapping()
-    public ResponseEntity<Facility> postFacility(@PathVariable String tenantId, @RequestBody Facility facility, @RequestParam Optional<Boolean> populate) {
+    public ResponseEntity<Facility> postFacility(@PathVariable() String tenantId, @RequestBody Facility facility, @RequestParam Optional<Boolean> populate) {
         return postFacility(tenantRepository.findById(tenantId).get(), facility, populate);
     }
 
@@ -95,7 +94,7 @@ public class FacilityController {
     }
 
     @PutMapping()
-    public ResponseEntity<Facility> putFacility(@PathVariable String tenantId, @RequestBody Facility facility) {
+    public ResponseEntity<Facility> putFacility(@PathVariable() String tenantId, @RequestBody Facility facility) {
         if (facility.getNameDisplay().length() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
@@ -114,8 +113,8 @@ public class FacilityController {
     @GetMapping("/{facilityId}/$populate")
     @Transactional()
     public ResponseEntity<String> populateFacility(
-            @PathVariable String tenantId,
-            @PathVariable String facilityId,
+            @PathVariable() String tenantId,
+            @PathVariable() String facilityId,
             @RequestParam Optional<Integer> patientNumber) {
         return populateFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), patientNumber);
     }

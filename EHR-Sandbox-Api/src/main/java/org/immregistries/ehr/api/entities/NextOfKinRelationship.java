@@ -15,7 +15,7 @@ public class NextOfKinRelationship implements Serializable {
     NextOfKinRelationshipPK nextOfKinRelationshipPK = new NextOfKinRelationshipPK();
 
     //    @Id
-    @ManyToOne
+    @ManyToOne()
     @MapsId("patientId")
     @JoinColumn(name = "patient_id")
     @JsonBackReference("patient_next_of_kin_relationship")

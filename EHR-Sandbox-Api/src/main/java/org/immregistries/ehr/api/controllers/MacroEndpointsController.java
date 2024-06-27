@@ -123,7 +123,7 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity createFacility(@PathVariable String tenantId, @RequestBody String bundleString) {
+    public ResponseEntity createFacility(@PathVariable() String tenantId, @RequestBody String bundleString) {
         Bundle facilityBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
         return createFacility(tenantRepository.findById(tenantId).get(), facilityBundle);
     }
@@ -151,7 +151,7 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity fillFacility(@PathVariable String tenantId, @PathVariable String facilityId, @RequestBody String bundleString) {
+    public ResponseEntity fillFacility(@PathVariable() String tenantId, @PathVariable() String facilityId, @RequestBody String bundleString) {
         Bundle bundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
         return fillFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), bundle);
     }

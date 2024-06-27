@@ -92,9 +92,9 @@ public class EhrPatientController {
     @GetMapping("/{patientId}/$populate")
     @Transactional()
     public ResponseEntity<String> populatePatient(
-            @PathVariable String tenantId,
-            @PathVariable String facilityId,
-            @PathVariable String patientId,
+            @PathVariable() String tenantId,
+            @PathVariable() String facilityId,
+            @PathVariable() String patientId,
             @RequestParam Optional<Integer> vaccinationNumber) {
         return populatePatient(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), ehrPatientRepository.findById(patientId).get(), vaccinationNumber);
     }
@@ -120,8 +120,8 @@ public class EhrPatientController {
     @PostMapping()
     @Transactional()
     public ResponseEntity<String> postPatient(
-            @PathVariable String tenantId,
-            @PathVariable String facilityId,
+            @PathVariable() String tenantId,
+            @PathVariable() String facilityId,
             @RequestBody EhrPatient patient,
             @RequestParam(COPIED_ENTITY_ID) Optional<String> copiedEntityId,
             @RequestParam(COPIED_FACILITY_ID) Optional<Integer> copiedFacilityId,
@@ -212,7 +212,7 @@ public class EhrPatientController {
     }
 
     @PutMapping("")
-    public EhrPatient putPatient(@PathVariable String facilityId,
+    public EhrPatient putPatient(@PathVariable() String facilityId,
                                  @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
 //        logger.info("facility {}", newPatient.getFacility().getNameDisplay());
@@ -224,8 +224,8 @@ public class EhrPatientController {
     }
 
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
-    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable String facilityId,
-                                                                                  @PathVariable String patientId,
+    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() String facilityId,
+                                                                                  @PathVariable() String patientId,
                                                                                   @PathVariable() Integer registryId,
                                                                                   @RequestParam Optional<Long> _since) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);

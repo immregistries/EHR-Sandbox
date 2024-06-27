@@ -42,7 +42,7 @@ public class EhrGroup extends EhrEntity {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
     private Set<EhrPatient> patientList;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     @CollectionTable(name = "group_characteristics", joinColumns = @JoinColumn(name = "group_id"))
     private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
 

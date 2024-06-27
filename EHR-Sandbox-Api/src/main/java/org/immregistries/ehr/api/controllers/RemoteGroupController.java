@@ -81,13 +81,13 @@ public class RemoteGroupController {
     }
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable String facilityId,@PathVariable Integer registryId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() Integer registryId) {
         IParser parser = fhirContext.newJsonParser();
 //        ehrGroupRepository.findByFacilityIdAndImmunizationRegistryId(facilityId, registryId);
 
         Set<String> set = remoteGroupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
-                .getOrDefault(registryId,new HashMap<>(0))
+                .getOrDefault(registryId, new HashMap<>(0))
                 .entrySet().stream().map(
                         entry -> parser.encodeResourceToString(entry.getValue()))
                 .collect(Collectors.toSet());
@@ -97,12 +97,13 @@ public class RemoteGroupController {
 
     /**
      * Fetches remote groups from registry to store them locally and make them available
+     *
      * @param facilityId
      * @param registryId
      * @return
      */
     @GetMapping("/$fetch")
-    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable String facilityId, @PathVariable Integer registryId) {
+    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable() String facilityId, @PathVariable() Integer registryId) {
         IParser parser = fhirContext.newJsonParser();
         ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
         servletRequestDetails.setTenantId(String.valueOf(facilityId));
@@ -111,7 +112,7 @@ public class RemoteGroupController {
 //                .where(Group.MANAGING_ENTITY.hasId(String.valueOf(facilityId)))
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
                 .execute();
-        for (Bundle.BundleEntryComponent entry: bundle.getEntry()) {
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.hasResource() && entry.getResource() instanceof Group
 //                    && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))
             ) {
@@ -122,8 +123,8 @@ public class RemoteGroupController {
     }
 
     @PostMapping("/{groupId}/$member-add")
-    public ResponseEntity<String> add_member(@PathVariable String facilityId, @PathVariable Integer registryId, @PathVariable String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
-        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId).orElseThrow();
+    public ResponseEntity<String> add_member(@PathVariable() String facilityId, @PathVariable() Integer registryId, @PathVariable() String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
+        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhir(ehrPatient);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         Parameters in = new Parameters();
@@ -131,7 +132,7 @@ public class RemoteGroupController {
          * First do match to get destination reference or identifier
          */
         if (match.isPresent() && match.get()) {
-            Bundle bundle = fhirClientController.matchPatientOperation(facilityId,registryId,patientId,null);
+            Bundle bundle = fhirClientController.matchPatientOperation(facilityId, registryId, patientId, null);
             if (!bundle.hasEntry()) {
                 return ResponseEntity.internalServerError().body("Patient $match failed : IIS does not know about this patient");
             }
@@ -140,7 +141,8 @@ public class RemoteGroupController {
             in.addParameter("patientReference", new Reference(id).setIdentifier(patient.getIdentifierFirstRep()));
         } else {
             in.addParameter("memberId", patient.getIdentifierFirstRep());
-            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facilityId)));;
+            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(String.valueOf(facilityId)));
+            ;
         }
 
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
@@ -151,21 +153,21 @@ public class RemoteGroupController {
         /**
          * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
          */
-        fetchFromIis(facilityId,registryId);
+        fetchFromIis(facilityId, registryId);
         return ResponseEntity.ok("Success");
     }
 
     @PostMapping("/{groupId}/$member-remove")
-    public ResponseEntity<String> remove_member(@PathVariable String facilityId,
-                                                @PathVariable Integer registryId,
-                                                @PathVariable String groupId,
+    public ResponseEntity<String> remove_member(@PathVariable() String facilityId,
+                                                @PathVariable() Integer registryId,
+                                                @PathVariable() String groupId,
                                                 @RequestParam() Optional<String> patientId,
                                                 @RequestParam() Optional<Identifier> identifier,
                                                 @RequestParam() Optional<String> reference
     ) {
         Parameters in = new Parameters();
-        if (patientId.isPresent()){
-            EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId,patientId.get()).orElseThrow();
+        if (patientId.isPresent()) {
+            EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId.get()).orElseThrow();
             Patient patient = patientMapperR5.toFhir(ehrPatient);
             in.addParameter("memberId", patient.getIdentifierFirstRep());
         }
@@ -178,7 +180,7 @@ public class RemoteGroupController {
          */
 
 
-        logger.info("{}",in);
+        logger.info("{}", in);
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
         Group group = remoteGroupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
@@ -190,7 +192,7 @@ public class RemoteGroupController {
          * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
          */
 //        groupsStore.get(facilityId).put(immunizationRegistry.getId(), group);
-        fetchFromIis(facilityId,registryId);
+        fetchFromIis(facilityId, registryId);
         return ResponseEntity.ok("");
     }
 

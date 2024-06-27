@@ -26,7 +26,7 @@ public class ImmunizationRegistryController {
     private CustomClientFactory customClientFactory;
 
     @GetMapping({"/{id}"})
-    public ImmunizationRegistry getImmunizationRegistry(@PathVariable Integer id) {
+    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() Integer id) {
         Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(id, userDetailsService.currentUserId());
         if (immunizationRegistry.isPresent()) {
             return immunizationRegistry.get();
@@ -37,7 +37,7 @@ public class ImmunizationRegistryController {
     }
 
     @GetMapping({"/{id}/metadata"})
-    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable Integer id) {
+    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() Integer id) {
         IGenericClient client = customClientFactory.newGenericClient(id);
         CapabilityStatement capabilityStatement;
         try {
@@ -83,7 +83,7 @@ public class ImmunizationRegistryController {
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity removeImmunizationRegistry(@PathVariable Integer id) {
+    public ResponseEntity removeImmunizationRegistry(@PathVariable() Integer id) {
         immunizationRegistryRepository.deleteByIdAndUserId(id, userDetailsService.currentUserId());
         return ResponseEntity.ok().build();
     }

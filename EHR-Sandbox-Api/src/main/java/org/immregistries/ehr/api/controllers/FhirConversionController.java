@@ -97,7 +97,7 @@ public class FhirConversionController {
     @GetMapping(FACILITY_PREFIX + "/{facilityId}/resource")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> facilityResource(
-            @PathVariable String facilityId) {
+            @PathVariable() String facilityId) {
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         IBaseResource organization = organizationMapper.toFhir(facilityRepository.findById(facilityId).get());
         String resource = parser.encodeResourceToString(organization);
@@ -107,7 +107,7 @@ public class FhirConversionController {
 
     @GetMapping(FACILITY_PREFIX + "/{facilityId}/bundle")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> facilityAllResourcesTransaction(@PathVariable String facilityId) {
+    public ResponseEntity<String> facilityAllResourcesTransaction(@PathVariable() String facilityId) {
         Facility facility = facilityRepository.findById(facilityId).get();
         IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
         Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
@@ -230,7 +230,7 @@ public class FhirConversionController {
 
 
     @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
-    public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @PathVariable String facilityId) {
+    public ResponseEntity bulkResultLoad(@PathVariable() Integer registryId, @RequestBody String ndjson, @PathVariable() String facilityId) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         return loadNdJson(ir, facilityRepository.findById(facilityId).get(), ndjson);
     }

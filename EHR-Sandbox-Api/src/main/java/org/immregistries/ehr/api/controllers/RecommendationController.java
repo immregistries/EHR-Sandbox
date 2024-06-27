@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController()
@@ -32,7 +34,7 @@ public class RecommendationController {
     private FacilityRepository facilityRepository;
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable String facilityId,@PathVariable String patientId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() String patientId) {
         IParser parser = fhirContext.newJsonParser();
         Set<String> set = immunizationRecommendationsStore
                 .getOrDefault(facilityId, new HashMap<>(0))

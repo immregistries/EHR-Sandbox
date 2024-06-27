@@ -156,7 +156,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(tenantId);
                     Tenant tenant = tenantRepository.findByIdAndUserId(String.valueOf(tenantId), userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid tenant id"));
-                    request.setAttribute("tenant", tenant);
                 }
             }
             if (item.equals("facilities")) {
@@ -165,7 +164,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(facilityId);
                     Facility facility = facilityRepository.findByUserAndId(userDetailsService.currentUser(), facilityId)
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
-                    request.setAttribute("facility", facility);
                 }
             }
         }
@@ -179,7 +177,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(facilityId);
                     Facility facility = facilityRepository.findByIdAndTenantId(facilityId, tenantId)
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
-                    request.setAttribute("facility", facility);
                 }
             } else if (item.equals("clinicians")) {
                 if (scanner.hasNextInt()) {
@@ -187,7 +184,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 //                    checkIfPotentialValidId(clinicianId);
                     Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId)
                             .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));
-                    request.setAttribute("clinician", clinician);
                 }
             }
         }
@@ -201,7 +197,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(patientId);
                     EhrPatient ehrPatient = patientRepository.findByFacilityIdAndId(facilityId, patientId)
                             .orElseThrow(() -> new InvalidRequestException("invalid patient id"));
-                    request.setAttribute("patient", ehrPatient);
                 }
             }
             if (item.equals("vaccinations")) {
@@ -210,7 +205,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(vaccinationId);
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId, vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
-                    request.setAttribute("vaccinationEvent", vaccinationEvent);
                 }
             }
             if (item.equals("groups")) {
@@ -228,7 +222,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                         ehrGroup = ehrGroupRepository.findByTenantIdAndId(tenantId, groupId)
                                 .orElseThrow(() -> new InvalidRequestException("invalid group id"));
                     }
-                    request.setAttribute("ehrGroup", ehrGroup);
                 }
             }
         }
@@ -241,7 +234,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     vaccinationId = scanner.next();
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
-                    request.setAttribute("vaccinationEvent", vaccinationEvent);
                 }
             }
         }

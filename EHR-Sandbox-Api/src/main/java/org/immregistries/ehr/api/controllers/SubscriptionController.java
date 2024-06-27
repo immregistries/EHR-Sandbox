@@ -5,16 +5,18 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r5.model.Coding;
+import org.hl7.fhir.r5.model.Enumerations;
+import org.hl7.fhir.r5.model.Subscription;
+import org.immregistries.ehr.api.entities.EhrSubscription;
+import org.immregistries.ehr.api.entities.EhrSubscriptionInfo;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.EhrSubscriptionInfo;
-import org.immregistries.ehr.api.entities.EhrSubscription;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
-import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
 import org.immregistries.ehr.fhir.Client.IResourceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +59,14 @@ public class SubscriptionController {
     IResourceClient resourceClient;
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/subscription")
-    public Optional<EhrSubscription> ehrSubscription(@PathVariable() String facilityId){
+    public Optional<EhrSubscription> ehrSubscription(@PathVariable() String facilityId) {
         Optional<EhrSubscription> ehrSubscription = ehrSubscriptionRepository.findByIdentifier(facilityId);
         return ehrSubscription;
     }
 
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/sample")
-    public ResponseEntity<String> getSample(@RequestAttribute() Facility facility, @PathVariable() Integer registryId) {
+    public ResponseEntity<String> getSample(@PathVariable() String facilityId, @PathVariable() Integer registryId) {
+        Facility facility = facilityRepository.findById(facilityId).get();
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         return ResponseEntity.ok().body(fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
@@ -72,20 +75,20 @@ public class SubscriptionController {
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualCreate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-        Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class,stringBody);
+        Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = customClientFactory.newGenericClient(ir);
         MethodOutcome outcome = resourceClient.create(sub, client);
-        processSubscriptionOutcome(ir,outcome);
+        processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
     }
 
     @PutMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualUpdate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-        Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class,stringBody);
+        Subscription sub = fhirContext.newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = customClientFactory.newGenericClient(ir);
-        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
-        processSubscriptionOutcome(ir,outcome);
+        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
+        processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
     }
 
@@ -95,15 +98,15 @@ public class SubscriptionController {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = customClientFactory.newGenericClient(ir);
-        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription",sub.getIdentifierFirstRep(), client);
-        processSubscriptionOutcome(ir,outcome);
+        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
+        processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
     }
 
 
     private EhrSubscription processSubscriptionOutcome(ImmunizationRegistry ir, MethodOutcome outcome) {
         Subscription outcomeSub = (Subscription) outcome.getResource();
-        if ((outcome.getCreated() != null && outcome.getCreated()) || (outcome.getResource()!=null)){
+        if ((outcome.getCreated() != null && outcome.getCreated()) || (outcome.getResource() != null)) {
             outcomeSub.setStatus(Enumerations.SubscriptionStatusCodes.ACTIVE);
         }
         EhrSubscription ehrSubscription = new EhrSubscription(outcomeSub);
@@ -152,7 +155,7 @@ public class SubscriptionController {
         sub.setContent(Subscription.SubscriptionPayloadContent.FULLRESOURCE);
         sub.setContentType("application/fhir+json");
 
-        sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK,RESTHOOK));
+        sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK, RESTHOOK));
         sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/" + facility.getId());
 
         /**

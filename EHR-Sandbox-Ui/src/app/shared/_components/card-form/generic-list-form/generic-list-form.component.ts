@@ -52,6 +52,7 @@ export class GenericListFormComponent<T> implements OnInit {
       // console.log(lastValue);
       if (lastValue.length > 3 && !(lastValue === this.EMPTY_VALUE)) {
         this.itemList.push(newItem)
+        this.itemListChange.emit(this.itemList)
       }
     }
   }
@@ -62,7 +63,7 @@ export class GenericListFormComponent<T> implements OnInit {
 
   removeItem(index: number) {
     if (this.itemList) {
-      this.itemList = this.itemList.splice(index, 1)
+      this.itemList.splice(index, 1)
       this.itemListChange.emit(this.itemList)
     }
   }
