@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
 import { Code, CodeSet, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-select-codebase',
@@ -11,6 +12,8 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent implements OnInit {
+  @ViewChild('auto')
+  matAutoComplete!: MatAutocomplete;
 
   @Input() baseForm!: BaseForm;
 
@@ -53,6 +56,7 @@ export class SelectCodebaseComponent implements OnInit {
    * Buffer for ordering filtered options
    */
   private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
+
   filterChange(event: string) {
     let filterValue = event ? event.toLowerCase() : ''
     if (this.codeSet) {
@@ -200,6 +204,7 @@ export class SelectCodebaseComponent implements OnInit {
 
   clear() {
     this.formControl.setValue('');
+    this.emitReferences()
   }
 
   displayCode(codeKey: string): string {
@@ -227,6 +232,19 @@ export class SelectCodebaseComponent implements OnInit {
     } else {
       return 'false'
     }
+  }
+
+  /**
+   * On press enter key select first visible option
+   */
+  submit() {
+    if (this.matAutoComplete.options && this.matAutoComplete.options.first) {
+      this.model = this.matAutoComplete.options.first?.value ?? this.matAutoComplete.options.first?.value.code ?? this.model
+    }
+  }
+
+  order() {
+    this.matAutoComplete.options.reduce
   }
 
 }
