@@ -1,10 +1,17 @@
 <app-hover-menu>
-  <button trigger mat-raised-button class="button-protected" (click)="selectFirstOrCreate()" [color]="tenantService.getCurrentId() > 0 ? 'primary' : 'basic'" >
-    {{(tenantService.getCurrentId() > 0)? ("Environment: " + tenantService.getCurrent().nameDisplay) : "Select Environment" }}
+  <button trigger mat-raised-button class="button-protected" (click)="selectFirstOrCreate()"
+          [color]="tenantService.getCurrentId() > 0 ? 'primary' : 'basic'">
+    {{(tenantService.getCurrentId() > 0)? ("Environment: " + tenantService.getCurrent().nameDisplay) : "Select
+    Environment" }}
     <mat-icon>arrow_drop_down</mat-icon>
   </button>
   <div content>
-    <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)"> {{item.nameDisplay}}</button>
-    <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
+    <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)">
+      {{item.nameDisplay}}
+      <!-- <mat-icon *ngIf="tenantService.getCurrentId() === item.id" class="pseudo-check">check</mat-icon> -->
+    </button>
+    <button mat-menu-item (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </app-hover-menu>

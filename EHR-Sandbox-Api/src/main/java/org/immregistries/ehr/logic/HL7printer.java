@@ -30,14 +30,26 @@ public class HL7printer {
     ResourceIdentificationService resourceIdentificationService;
     @Autowired
     CodeMapManager codeMapManager;
+    private SimpleDateFormat simpleDateFormat;
+
+    private String formatDate(Date date) {
+        if (simpleDateFormat == null) {
+            simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        }
+        if (date == null) {
+            return "";
+        } else {
+            return simpleDateFormat.format(date);
+        }
+
+    }
 
     public String buildVxu(Vaccine vaccine, EhrPatient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
         CodeMap codeMap = codeMapManager.getCodeMap();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         createMSH("VXU^V04^VXU_V04", "Z22", sb, facility);
-        printQueryPID(patient, sb, sdf, 1);
-        printPD1(sb, patient, sdf);
+        printQueryPID(patient, sb, 1);
+        printPD1(sb, patient);
         printQueryNK1(patient, sb, codeMap);
 
         int obxSetId = 0;
@@ -52,7 +64,7 @@ public class HL7printer {
                 // RXA-2
                 sb.append("|1");
                 // RXA-3
-                sb.append("|" + sdf.format(vaccine.getAdministeredDate()));
+                sb.append("|" + formatDate(vaccine.getAdministeredDate()));
                 // RXA-4
                 sb.append("|");
                 // RXA-5
@@ -96,7 +108,7 @@ public class HL7printer {
                                 vaccine.getInformationSource());
                     }
                     if (informationCode != null) {
-                        sb.append(informationCode.getValue() + "^" + informationCode.getLabel() + "^NIP001");
+                        printCode(informationCode, "NIP001", sb);
                     }
                 }
                 // RXA-10
@@ -118,7 +130,7 @@ public class HL7printer {
                 // RXA-16
                 sb.append("|");
                 if (vaccine.getExpirationDate() != null) {
-                    sb.append(sdf.format(vaccine.getExpirationDate()));
+                    sb.append(formatDate(vaccine.getExpirationDate()));
                 }
                 // RXA-17
                 sb.append("|");
@@ -197,10 +209,7 @@ public class HL7printer {
                     {
                         String loinc = "29769-7";
                         String loincLabel = "VIS presented";
-                        String value = sdf.format(vaccine.getInformationStatementDate());
-                        String valueLabel = "";
-                        String valueTable = "99107";
-                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, vaccine.getInformationStatementDate());
                     }
                 }
 
@@ -213,6 +222,15 @@ public class HL7printer {
                     printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_VIS_DOC_TYPE, valueTable);
                 }
 
+                if (vaccine.getInformationStatementDate() != null) {
+                    obxSetId++;
+                    {
+                        String loinc = "29769-7";
+                        String loincLabel = "Date Vaccine Information Statement Presented";
+                        Date date = vaccine.getInformationStatementDate();
+                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, date);
+                    }
+                }
             }
         }
         return sb.toString();
@@ -260,8 +278,7 @@ public class HL7printer {
         return sb.toString();
     }
 
-    public String printQueryPID(EhrPatient patient, StringBuilder sb,
-                                SimpleDateFormat sdf, int pidCount) {
+    public String printQueryPID(EhrPatient patient, StringBuilder sb, int pidCount) {
         // PID
         sb.append("PID");
         // PID-1
@@ -282,7 +299,7 @@ public class HL7printer {
         String middleName = patient.getNameMiddle();
         String lastName = patient.getNameLast();
 
-        String dateOfBirth = patient.getBirthDate() == null ? "" : sdf.format(patient.getBirthDate());
+        String dateOfBirth = patient.getBirthDate() == null ? "" : formatDate(patient.getBirthDate());
 
 
         sb.append("|" + lastName + "^" + firstName + "^" + middleName + "^^^^L");
@@ -324,7 +341,6 @@ public class HL7printer {
                 sb.append("|");
                 // PID-13
                 sb.append("|");
-                String phone = patient.getPhones().stream().findFirst().orElse(new EhrPhoneNumber("")).getNumber();
                 Optional<EhrPhoneNumber> ehrPhoneNumber = patient.getPhones().stream().findFirst();
                 if (ehrPhoneNumber.isPresent()) {
                     printXTN(ehrPhoneNumber.get(), sb);
@@ -355,8 +371,8 @@ public class HL7printer {
                 sb.append("|");
                 Code ethnicityCode = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, patient.getEthnicity());
                 if (ethnicityCode != null) {
-                    sb.append("^" + StringUtils.defaultIfBlank(ethnicityCode.getValue(), "") + "^"
-                            + StringUtils.defaultIfBlank(ethnicityCode.getLabel(), "") + "^CDCREC");
+                    sb.append("^");
+                    printCode(ethnicityCode, "CDCREC", sb);
                 }
                 // PID-23
                 sb.append("|");
@@ -427,16 +443,41 @@ public class HL7printer {
         sb.append(profileId + "^CDCPHINVS\r");
     }
 
-    private static Integer increment = 1;
 
-    private static int nextIncrement() {
-        synchronized (increment) {
-            if (increment < Integer.MAX_VALUE) {
-                increment = increment + 1;
-            } else {
-                increment = 1;
-            }
-            return increment;
+    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
+                         String loincLabel, Date date) {
+        if (date != null) {
+            sb.append("OBX");
+            // OBX-1
+            sb.append("|");
+            sb.append(obxSetId);
+            // OBX-2
+            sb.append("|DT");
+            // OBX-3
+            sb.append("|");
+            sb.append(loinc + "^" + loincLabel + "^LN");
+            // OBX-4
+            sb.append("|");
+            sb.append(obsSubId);
+            // OBX-5
+            sb.append("|");
+            sb.append(formatDate(date));
+            // OBX-6
+            sb.append("|");
+            // OBX-7
+            sb.append("|");
+            // OBX-8
+            sb.append("|");
+            // OBX-9
+            sb.append("|");
+            // OBX-10
+            sb.append("|");
+            // OBX-11
+            sb.append("|");
+            sb.append("F");
+            sb.append("|||");
+            sb.append(formatDate(date));
+            sb.append("\r");
         }
     }
 
@@ -444,7 +485,7 @@ public class HL7printer {
         String valueLabel = "";
         Code code = codeMap.getCodeForCodeset(codesetType, value);
         if (code != null) {
-            valueLabel = StringUtils.defaultIfBlank(code.getLabel(), "");
+            valueLabel = StringUtils.defaultIfBlank(code.getLabel(), "").replaceAll("[\\t\\n\\r]+", " ");
         }
         printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
     }
@@ -558,8 +599,7 @@ public class HL7printer {
         // OBX-14
         sb.append("|");
         if (ob.getObservationDate() != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            sb.append(sdf.format(ob.getObservationDate()));
+            sb.append(formatDate(ob.getObservationDate()));
         }
         // OBX-15
         sb.append("|");
@@ -576,7 +616,7 @@ public class HL7printer {
     }
 
 
-    public void printPD1(StringBuilder sb, EhrPatient patient, SimpleDateFormat sdf) {
+    public void printPD1(StringBuilder sb, EhrPatient patient) {
         sb.append("PD1");
         // PD1-1
         sb.append("|");
@@ -610,7 +650,7 @@ public class HL7printer {
         sb.append("|");
         // PD1-13
         if (patient.getProtectionIndicatorDate() != null) {
-            sb.append(sdf.format(patient.getProtectionIndicatorDate()));
+            sb.append(formatDate(patient.getProtectionIndicatorDate()));
         }
         sb.append("|");
         // PD1-14
@@ -624,12 +664,12 @@ public class HL7printer {
         sb.append("|");
         // PD1-17
         if (patient.getRegistryStatusIndicatorDate() != null) {
-            sb.append(sdf.format(patient.getRegistryStatusIndicatorDate()));
+            sb.append(formatDate(patient.getRegistryStatusIndicatorDate()));
         }
         sb.append("|");
         // PD1-18
         if (patient.getPublicityIndicatorDate() != null) {
-            sb.append(sdf.format(patient.getPublicityIndicatorDate()));
+            sb.append(formatDate(patient.getPublicityIndicatorDate()));
         }
         sb.append("|");
         // PD1-19
@@ -649,9 +689,9 @@ public class HL7printer {
 
     // Extended Telephone number
     private void printXTN(EhrPhoneNumber ehrPhoneNumber, StringBuilder sb) {
-        //TODO improve support
-        if (ehrPhoneNumber.getNumber().length() == 10) {
-            sb.append("^PRN^PH^^^" + ehrPhoneNumber.getNumber().substring(0, 3) + "^" + ehrPhoneNumber.getNumber().substring(3, 10));
+        String number = ehrPhoneNumber.getNumber().replaceAll("[()\\s-]", "").strip();
+        if (number.length() > 3) {
+            sb.append("^PRN^PH^^^" + number.substring(0, 3) + "^" + number.substring(3));
         }
     }
 
@@ -662,8 +702,9 @@ public class HL7printer {
 
 
     public void printCode(Code code, String tableName, StringBuilder sb) {
+        String label = StringUtils.defaultIfBlank(code.getLabel(), "").replaceAll("[\\t\\n\\r]+", " ");
         if (code != null) {
-            sb.append(code.getValue() + "^" + StringUtils.defaultIfBlank(code.getLabel(), "") + "^" +
+            sb.append(code.getValue() + "^" + label + "^" +
                     StringUtils.defaultIfBlank(tableName, ""));
         }
     }
@@ -671,6 +712,19 @@ public class HL7printer {
     public void printCode(String value, CodesetType codesetType, CodeMap codeMap, String tableName, StringBuilder sb) {
         if (StringUtils.isNotBlank(value)) {
             printCode(codeMap.getCodeForCodeset(codesetType, value), tableName, sb);
+        }
+    }
+
+    private static Integer increment = 1;
+
+    private static int nextIncrement() {
+        synchronized (increment) {
+            if (increment < Integer.MAX_VALUE) {
+                increment = increment + 1;
+            } else {
+                increment = 1;
+            }
+            return increment;
         }
     }
 

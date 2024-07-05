@@ -1,5 +1,3 @@
-import { BaseFormOption } from "./structure";
-
 /**
  * Interface for codemaps lists
  */

@@ -243,8 +243,8 @@ export class SelectCodebaseComponent implements OnInit {
     }
   }
 
-  order() {
-    this.matAutoComplete.options.reduce
-  }
+  // order() {
+  //   this.matAutoComplete.options.reduce.
+  // }
 
 }

@@ -11,16 +11,16 @@ import org.slf4j.LoggerFactory;
  * NOT WORKING
  * For some reason setting it as narrativeGenerator in FhirContext doesn't change anything, no logs
  */
-public class CustomNarrativeGenerator implements  INarrativeGenerator {
+public class CustomNarrativeGenerator implements INarrativeGenerator {
     Logger logger = LoggerFactory.getLogger(CustomNarrativeGenerator.class);
 
     public boolean populateResourceNarrative(FhirContext var1, IBaseResource var2) {
-        logger.info("populateResourceNarrative");
+//        logger.info("populateResourceNarrative");
         return true;
     }
 
-    public String generateResourceNarrative(FhirContext var1, IBaseResource var2){
-        logger.info("generateResourceNarrative");
-        return "empty narrative";
+    public String generateResourceNarrative(FhirContext var1, IBaseResource var2) {
+//        logger.info("generateResourceNarrative");
+        return "";
     }
 }
