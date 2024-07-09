@@ -177,7 +177,9 @@ export interface Vaccine {
   financialStatus?: string;
   vaccinationEvents?: VaccinationEvent[];
   informationStatement?: string;
-  informationStatementDate?: Date;
+  informationStatementCvx?: string;
+  informationStatementPublishedDate?: Date;
+  informationStatementPresentedDate?: Date;
 }
 
 

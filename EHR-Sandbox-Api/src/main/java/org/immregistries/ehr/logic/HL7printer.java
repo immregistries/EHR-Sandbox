@@ -170,8 +170,8 @@ public class HL7printer {
                 codeMap.getCodesForTable(CodesetType.OBSERVATION_IDENTIFIER);
 
                 obsSubId++;
-                obxSetId++;
                 {
+                    obxSetId++;
                     String value;
                     if (StringUtils.isNotBlank(vaccine.getFinancialStatus())) {
                         value = vaccine.getFinancialStatus();
@@ -184,52 +184,60 @@ public class HL7printer {
                     printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable);
                 }
 
-
-                obxSetId++;
-                {
-                    String loinc = "30956-7";
-                    String loincLabel = "Vaccine type";
-                    String value = vaccine.getVaccineCvxCode();
-                    String valueTable = "CVX";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_CVX_CODE, valueTable);
-                }
-
-                obxSetId++;
-                {
-                    String loinc = "59781-5";
-                    String loincLabel = "Dose validity";
-                    String value = vaccine.getAdministeredAmount();
-                    String valueLabel = "";
-                    String valueTable = "99107";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
-                }
-
-                if (vaccine.getInformationStatementDate() != null) {
+                if (StringUtils.isNotBlank(vaccine.getFundingSource())) {
                     obxSetId++;
-                    {
-                        String loinc = "29769-7";
-                        String loincLabel = "VIS presented";
-                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, vaccine.getInformationStatementDate());
-                    }
+                    obsSubId++;
+                    String loinc = "30963-3";
+                    String loincLabel = "Vaccine funding source";
+                    String valueTable = "CDCPHINVS";
+                    String value = vaccine.getFundingSource();
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable);
                 }
 
-                obxSetId++;
-                {
+//                obsSubId++;
+//                {
+//                    obxSetId++;
+//                    String loinc = "59781-5";
+//                    String loincLabel = "Dose validity";
+//                    String value = vaccine.getAdministeredAmount(); //TODO CHECK
+//                    String valueLabel = "";
+//                    String valueTable = "99107";
+//                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+//                }
+
+                obsSubId++;
+                // page 24 https://www.cdc.gov/vaccines/programs/iis/technical-guidance/downloads/hl7-clarification-r6.pdf
+                if (StringUtils.isNotBlank(vaccine.getInformationStatement())) {
+                    obxSetId++;
                     String loinc = "69764-9";
                     String loincLabel = "Document Type";
                     String value = vaccine.getInformationStatement();
                     String valueTable = "cdcgs1vis";
                     printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_VIS_DOC_TYPE, valueTable);
-                }
-
-                if (vaccine.getInformationStatementDate() != null) {
-                    obxSetId++;
+                } else {
                     {
-                        String loinc = "29769-7";
-                        String loincLabel = "Date Vaccine Information Statement Presented";
-                        Date date = vaccine.getInformationStatementDate();
+                        obxSetId++;
+                        String loinc = "30956-7";
+                        String loincLabel = "Vaccine type";
+                        String value = vaccine.getInformationStatementCvx();
+                        String valueTable = "CVX";
+                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_CVX_CODE, valueTable);
+                    }
+                    if (vaccine.getInformationStatementPublishedDate() != null) {
+                        obxSetId++;
+                        String loinc = "29768-9";
+                        String loincLabel = "Date Vaccine Information Statement Published";
+                        Date date = vaccine.getInformationStatementPublishedDate();
                         printObx(sb, obxSetId, obsSubId, loinc, loincLabel, date);
                     }
+                }
+
+                if (vaccine.getInformationStatementPresentedDate() != null) {
+                    obxSetId++;
+                    String loinc = "29769-7";
+                    String loincLabel = "Date Vaccine Information Statement Presented";
+                    Date date = vaccine.getInformationStatementPresentedDate();
+                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, date);
                 }
             }
         }

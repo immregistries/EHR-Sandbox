@@ -239,8 +239,11 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       title: "Information Statement", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Information Statement", attribute: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE" },
-        { type: FormType.date, title: "Publishing date", attribute: "informationStatementDate" },
+        { type: FormType.code, title: "Information Statement Document", attribute: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE" },
+        { type: FormType.date, title: "Presented date", attribute: "informationStatementPresentedDate" },
+
+        { type: FormType.code, title: "Information Statement Cvx", attribute: "informationStatement", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
+        { type: FormType.date, title: "Published date", attribute: "informationStatementPublishedDate" },
       ]
     },
     {

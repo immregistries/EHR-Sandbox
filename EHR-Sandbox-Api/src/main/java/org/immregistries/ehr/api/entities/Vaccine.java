@@ -69,8 +69,14 @@ public class Vaccine {
     @Column(name = "information_statement", length = 250)
     private String informationStatement = "";
 
-    @Column(name = "information_statement_date")
-    private Date informationStatementDate;
+    @Column(name = "information_statement_cvx", length = 250)
+    private String informationStatementCvx = "";
+
+    @Column(name = "information_statement_presented_date")
+    private Date informationStatementPresentedDate;
+
+    @Column(name = "information_statement_published_date")
+    private Date informationStatementPublishedDate;
 
     @Column(name = "financial_status", length = 250)
     private String financialStatus = "";
@@ -231,12 +237,12 @@ public class Vaccine {
         this.informationStatement = informationStatement;
     }
 
-    public Date getInformationStatementDate() {
-        return informationStatementDate;
+    public Date getInformationStatementPresentedDate() {
+        return informationStatementPresentedDate;
     }
 
-    public void setInformationStatementDate(Date informationStatementDate) {
-        this.informationStatementDate = informationStatementDate;
+    public void setInformationStatementPresentedDate(Date informationStatementPresentedDate) {
+        this.informationStatementPresentedDate = informationStatementPresentedDate;
     }
 
     public String getFinancialStatus() {
@@ -245,5 +251,21 @@ public class Vaccine {
 
     public void setFinancialStatus(String financialStatus) {
         this.financialStatus = financialStatus;
+    }
+
+    public String getInformationStatementCvx() {
+        return informationStatementCvx;
+    }
+
+    public void setInformationStatementCvx(String informationStatementCvx) {
+        this.informationStatementCvx = informationStatementCvx;
+    }
+
+    public Date getInformationStatementPublishedDate() {
+        return informationStatementPublishedDate;
+    }
+
+    public void setInformationStatementPublishedDate(Date informationStatementPublishedDate) {
+        this.informationStatementPublishedDate = informationStatementPublishedDate;
     }
 }
