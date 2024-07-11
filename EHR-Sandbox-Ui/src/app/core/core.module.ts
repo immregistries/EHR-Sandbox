@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SharedModule } from '../shared/shared.module';
@@ -13,7 +13,7 @@ import { ClinicianService } from './_services/clinician.service';
 
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { LayoutModule } from '@angular/cdk/layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavigationComponent } from './_components/navigation/navigation.component';
@@ -33,6 +33,14 @@ import { FhirResourceService } from './_services/_fhir/fhir-resource.service';
 import { Hl7Service } from './_services/_fhir/hl7.service';
 import { SubscriptionService } from './_services/_fhir/subscription.service';
 import { GroupStepsComponent } from './_components/group-steps/group-steps.component';
+import { firstValueFrom } from 'rxjs';
+
+
+
+const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsService) => {
+  return () => settingsService.loadEnvConfig('/runtime-config.json').then(() => firstValueFrom(codeMapsService.load()));
+};
+
 
 @NgModule({
   declarations: [
@@ -81,10 +89,6 @@ import { GroupStepsComponent } from './_components/group-steps/group-steps.compo
   ],
   exports: [
     AuthenticationModule,
-    // FhirModule,
-    // PatientModule,
-    // VaccinationModule,
-
     NavigationComponent,
     HomeComponent,
     DashboardComponent,
@@ -112,6 +116,12 @@ import { GroupStepsComponent } from './_components/group-steps/group-steps.compo
       provide: MAT_DIALOG_DATA,
       useValue: {}
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initAppFn,
+      multi: true,
+      deps: [SettingsService, CodeMapsService],
+    }
   ]
 })
 export class CoreModule { }

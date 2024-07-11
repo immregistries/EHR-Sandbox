@@ -45,6 +45,7 @@ export interface Clinician {
   nameMiddle?: string;
   nameFirst?: string;
   nameSuffix?: string;
+  namePrefix?: string;
   identifiers?: EhrIdentifier[];
   qualification?: string
 }

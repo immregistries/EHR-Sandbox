@@ -158,7 +158,7 @@ public class VaccinationController {
         Vaccine vaccine = vaccinationEvent.getVaccine();
         EhrPatient patient = vaccinationEvent.getPatient();
         Facility facility = vaccinationEvent.getAdministeringFacility();
-        String vxu = hl7printer.buildVxu(vaccine, patient, facility);
+        String vxu = hl7printer.buildVxu(vaccinationEvent, patient, facility);
         return ResponseEntity.ok(vxu);
     }
 

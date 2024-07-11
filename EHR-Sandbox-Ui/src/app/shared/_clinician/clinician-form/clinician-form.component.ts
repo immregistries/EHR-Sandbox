@@ -40,6 +40,8 @@ export class ClinicianFormComponent implements OnInit {
   ngOnInit(): void {
     this.formCards = [{
       title: "Clinician Name", rows: 1, cols: 1, forms: [
+        { type: FormType.text, title: "Prefix", attribute: "namePrefix" },
+
         { type: FormType.text, title: "First name", attribute: "nameFirst" },
         { type: FormType.text, title: "Middle name", attribute: "nameMiddle" },
         { type: FormType.text, title: "Last name", attribute: "nameLast" },

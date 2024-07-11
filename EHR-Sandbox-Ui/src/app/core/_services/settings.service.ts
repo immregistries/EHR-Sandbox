@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
+import { Observable, catchError, lastValueFrom, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import packageJson from '../../../../package.json';
+import { error } from 'console';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -17,7 +18,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class SettingsService {
-  private envConfig!: EnvConfig;
+  private envConfig: EnvConfig = environment;
   private version: string = packageJson.version;
 
   constructor(private http: HttpClient,) {

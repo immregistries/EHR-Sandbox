@@ -44,7 +44,7 @@ public class HL7printer {
 
     }
 
-    public String buildVxu(Vaccine vaccine, EhrPatient patient, Facility facility) {
+    public String buildVxu(VaccinationEvent vaccinationEvent, EhrPatient patient, Facility facility) {
         StringBuilder sb = new StringBuilder();
         CodeMap codeMap = codeMapManager.getCodeMap();
         createMSH("VXU^V04^VXU_V04", "Z22", sb, facility);
@@ -54,10 +54,12 @@ public class HL7printer {
 
         int obxSetId = 0;
         int obsSubId = 0;
-        if (vaccine != null) {
+        if (vaccinationEvent != null) {
+            Vaccine vaccine = vaccinationEvent.getVaccine();
             Code cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, vaccine.getVaccineCvxCode());
             if (cvxCode != null) {
-                printORC(facility, sb, vaccine);
+                sb.append("\n");
+                printORC(facility, sb, vaccinationEvent);
                 sb.append("RXA");
                 // RXA-1
                 sb.append("|0");
@@ -113,6 +115,7 @@ public class HL7printer {
                 }
                 // RXA-10
                 sb.append("|");
+                printXCN(vaccinationEvent.getAdministeringClinician(), sb);
                 // RXA-11
                 sb.append("|");
                 sb.append("^^^");
@@ -172,16 +175,19 @@ public class HL7printer {
                 obsSubId++;
                 {
                     obxSetId++;
-                    String value;
-                    if (StringUtils.isNotBlank(vaccine.getFinancialStatus())) {
-                        value = vaccine.getFinancialStatus();
-                    } else {
-                        value = patient.getFinancialStatus();
-                    }
                     String loinc = "64994-7";
                     String loincLabel = "Eligibility Status";
                     String valueTable = "HL70064";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable);
+                    String value;
+                    String method;
+                    if (StringUtils.isNotBlank(vaccine.getFinancialStatus())) {
+                        value = vaccine.getFinancialStatus();
+                        method = "VXC40^Eligibility captured at the immunization level^CDCPHINVS";
+                    } else {
+                        value = patient.getFinancialStatus();
+                        method = "VXC41^Eligibility captured at the visit level^CDCPHINVS";
+                    }
+                    printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable, method);
                 }
 
                 if (StringUtils.isNotBlank(vaccine.getFundingSource())) {
@@ -191,7 +197,7 @@ public class HL7printer {
                     String loincLabel = "Vaccine funding source";
                     String valueTable = "CDCPHINVS";
                     String value = vaccine.getFundingSource();
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable);
+                    printObx(sb, obxSetId, obsSubId, null, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable, "");
                 }
 
 //                obsSubId++;
@@ -213,7 +219,7 @@ public class HL7printer {
                     String loincLabel = "Document Type";
                     String value = vaccine.getInformationStatement();
                     String valueTable = "cdcgs1vis";
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_VIS_DOC_TYPE, valueTable);
+                    printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_VIS_DOC_TYPE, valueTable, "");
                 } else {
                     {
                         obxSetId++;
@@ -221,14 +227,14 @@ public class HL7printer {
                         String loincLabel = "Vaccine type";
                         String value = vaccine.getInformationStatementCvx();
                         String valueTable = "CVX";
-                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_CVX_CODE, valueTable);
+                        printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_CVX_CODE, valueTable, "");
                     }
                     if (vaccine.getInformationStatementPublishedDate() != null) {
                         obxSetId++;
                         String loinc = "29768-9";
                         String loincLabel = "Date Vaccine Information Statement Published";
                         Date date = vaccine.getInformationStatementPublishedDate();
-                        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, date);
+                        printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, date);
                     }
                 }
 
@@ -237,7 +243,7 @@ public class HL7printer {
                     String loinc = "29769-7";
                     String loincLabel = "Date Vaccine Information Statement Presented";
                     Date date = vaccine.getInformationStatementPresentedDate();
-                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, date);
+                    printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, date);
                 }
             }
         }
@@ -267,6 +273,8 @@ public class HL7printer {
                 sb.append("|");
                 printCode(nextOfKinRelationship.getRelationshipKind(), CodesetType.PERSON_RELATIONSHIP, codeMap, "HL70063", sb);
 //                NK1-4
+//                Optional<EhrAddress> ehrAddress = nextOfKin.getAddresses().stream().findFirst();
+                sb.append("|");
                 nextOfKin.getAddresses().stream().findFirst().ifPresent(address -> printXAD(address, sb));
 //                NK1-5
                 sb.append("|");
@@ -452,7 +460,7 @@ public class HL7printer {
     }
 
 
-    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
+    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, Date observationDate, String loinc,
                          String loincLabel, Date date) {
         if (date != null) {
             sb.append("OBX");
@@ -484,22 +492,22 @@ public class HL7printer {
             sb.append("|");
             sb.append("F");
             sb.append("|||");
-            sb.append(formatDate(date));
+            sb.append(formatDate(observationDate));
             sb.append("\r");
         }
     }
 
-    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc, String loincLabel, String value, CodeMap codeMap, CodesetType codesetType, String valueTable) {
+    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, Date observationDate, String loinc, String loincLabel, String value, CodeMap codeMap, CodesetType codesetType, String valueTable, String method) {
         String valueLabel = "";
         Code code = codeMap.getCodeForCodeset(codesetType, value);
         if (code != null) {
             valueLabel = StringUtils.defaultIfBlank(code.getLabel(), "").replaceAll("[\\t\\n\\r]+", " ");
         }
-        printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
+        printObx(sb, obxSetId, obsSubId, observationDate, loinc, loincLabel, value, valueLabel, valueTable, method);
     }
 
-    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, String loinc,
-                         String loincLabel, String value, String valueLabel, String valueTable) {
+    public void printObx(StringBuilder sb, int obxSetId, int obsSubId, Date observationDate, String loinc,
+                         String loincLabel, String value, String valueLabel, String valueTable, String method) {
         sb.append("OBX");
         // OBX-1
         sb.append("|");
@@ -529,32 +537,61 @@ public class HL7printer {
         // OBX-11
         sb.append("|");
         sb.append("F");
+        // OBX-12
+        sb.append("|");
+        // OBX-13
+        sb.append("|");
+        // OBX-14
+        sb.append("|");
+        sb.append(formatDate(observationDate));
+        // OBX-15
+        sb.append("|");
+        // OBX-16
+        sb.append("|");
+        // OBX-17
+        sb.append("|");
+        sb.append(StringUtils.defaultIfBlank(method, ""));
         sb.append("\r");
     }
 
-    public void printORC(Facility facility, StringBuilder sb, Vaccine vaccination/*,
-      VaccinationEvent vaccinationReported, boolean originalReporter*/) {
-
+    public void printORC(Facility facility, StringBuilder sb, VaccinationEvent vaccinationEvent) {
+        Vaccine vaccine = vaccinationEvent.getVaccine();
         sb.append("ORC");
         // ORC-1
         sb.append("|RE");
         // ORC-2
         sb.append("|");
-        if (vaccination != null) {
-            sb.append(vaccination.getId() + "^IIS");
+        if (vaccine != null) {
+            sb.append(vaccinationEvent.getId() + "^IIS");
         }
         // ORC-3
         sb.append("|");
-        if (vaccination == null) {
-      /*if (processingFlavorSet.contains(ProcessingFlavor.LIME)) {
-        sb.append("999^IIS");
-      } else {
-        sb.append("9999^IIS");
-      }*/
+        if (vaccinationEvent == null) {
+
         } else {
             sb.append(facility.getId() + "^"
                     + facility.getNameDisplay());
         }
+        // ORC-4
+        sb.append("|");
+        // ORC-5
+        sb.append("|");
+        // ORC-6
+        sb.append("|");
+        // ORC-7
+        sb.append("|");
+        // ORC-8
+        sb.append("|");
+        // ORC-9
+        sb.append("|");
+        // ORC-10
+        sb.append("|");
+        printXCN(vaccinationEvent.getEnteringClinician(), sb);
+        // ORC-11
+        sb.append("|");
+        // ORC-12
+        sb.append("|");
+        printXCN(vaccinationEvent.getOrderingClinician(), sb);
         sb.append("\r");
     }
 
@@ -708,6 +745,20 @@ public class HL7printer {
         sb.append("^NET^X.400^" + StringUtils.defaultIfBlank(email, ""));
     }
 
+
+    // Extended Clinician
+    private void printXCN(Clinician clinician, StringBuilder sb) {
+        if (clinician != null) {
+            EhrIdentifier ehrIdentifier = clinician.getIdentifiers().stream().findFirst().orElse(new EhrIdentifier());
+            sb.append(StringUtils.defaultIfBlank(ehrIdentifier.getValue(), "") + "^");
+            sb.append(StringUtils.defaultIfBlank(clinician.getNameLast(), "") + "^");
+            sb.append(StringUtils.defaultIfBlank(clinician.getNameFirst(), "") + "^");
+            sb.append(StringUtils.defaultIfBlank(clinician.getNameMiddle(), "") + "^");
+            sb.append(StringUtils.defaultIfBlank(clinician.getNameSuffix(), "") + "^");
+            sb.append(StringUtils.defaultIfBlank(clinician.getNamePrefix(), "") + "^");
+            sb.append(StringUtils.defaultIfBlank(clinician.getQualification(), "") + "^");
+        }
+    }
 
     public void printCode(Code code, String tableName, StringBuilder sb) {
         String label = StringUtils.defaultIfBlank(code.getLabel(), "").replaceAll("[\\t\\n\\r]+", " ");

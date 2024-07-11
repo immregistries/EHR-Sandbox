@@ -36,6 +36,9 @@ public class Clinician extends EhrEntity {
     @Column(name = "name_Suffix", nullable = true, length = 250)
     private String nameSuffix = "";
 
+    @Column(name = "name_Prefix", nullable = true, length = 250)
+    private String namePrefix = "";
+
     public String getQualification() {
         return qualification;
     }
@@ -141,5 +144,13 @@ public class Clinician extends EhrEntity {
 
     public void setNameSuffix(String nameSuffix) {
         this.nameSuffix = nameSuffix;
+    }
+
+    public String getNamePrefix() {
+        return namePrefix;
+    }
+
+    public void setNamePrefix(String namePrefix) {
+        this.namePrefix = namePrefix;
     }
 }
