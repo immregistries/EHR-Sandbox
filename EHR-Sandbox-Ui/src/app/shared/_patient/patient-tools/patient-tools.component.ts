@@ -28,15 +28,16 @@ export class PatientToolsComponent implements OnInit {
   openEdition() {
     const dialogRef = this.dialog.open(PatientFormComponent, {
       maxWidth: '95vw',
-      maxHeight: '95vh',
+      maxHeight: '100vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patient: this.patient},
+      data: { patient: this.patient },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.patientService.setCurrent(result)
+        this.patientService.doRefresh()
       }
     });
   }
@@ -57,7 +58,7 @@ export class PatientToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: {patientId: this.patient.id, show_hl7_tab: true},
+      data: { patientId: this.patient.id, show_hl7_tab: true },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
@@ -71,7 +72,7 @@ export class PatientToolsComponent implements OnInit {
       height: 'fit-content',
       width: '50%',
       panelClass: 'dialog-without-bar',
-      data: {patient: this.patient},
+      data: { patient: this.patient },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
@@ -85,7 +86,7 @@ export class PatientToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patientId: this.patient.id},
+      data: { patientId: this.patient.id },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
@@ -99,7 +100,7 @@ export class PatientToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patientId: this.patient.id},
+      data: { patientId: this.patient.id },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()

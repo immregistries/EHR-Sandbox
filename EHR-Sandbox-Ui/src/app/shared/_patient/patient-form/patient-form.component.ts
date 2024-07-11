@@ -16,8 +16,10 @@ import { FacilityService } from 'src/app/core/_services/facility.service';
 
 })
 export class PatientFormComponent {
+  private _patientId: number = -1;
+
   @Input()
-  patient: EhrPatient = { id: -1 };
+  public patient: EhrPatient = { id: -1 };
   @Output()
   patientChange = new EventEmitter<EhrPatient>();
   @Output()
@@ -38,6 +40,7 @@ export class PatientFormComponent {
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient }) {
     if (data && data.patient) {
       this.patient = data.patient;
+      this._patientId = data.patient.id ?? -1
       this.isEditionMode = true
     }
   }
@@ -47,6 +50,8 @@ export class PatientFormComponent {
   }
 
   save(): void {
+    // Just making sure this right id is used
+    this.patient.id = this._patientId
     if (this.isEditionMode) {
       this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: EhrPatient) => {
@@ -74,6 +79,10 @@ export class PatientFormComponent {
         }
       });
     }
+  }
+
+  jsonChange(value: EhrPatient) {
+    this.patient = value
   }
 
   closeDialog(res: EhrPatient | number | string) {

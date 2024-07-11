@@ -214,8 +214,8 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       title: "Codes", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Vaccine type (Cvx)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true },
-        { type: FormType.code, title: "Ndc", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
+        { type: FormType.code, title: "Vaccine type (CVX)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true },
+        { type: FormType.code, title: "Unit of Use (NDC)", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
       ]
     },
     {
@@ -226,7 +226,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       title: "Lot", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Manifacturer (Mvx)", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
+        { type: FormType.code, title: "Manifacturer (MVX)", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
         { type: FormType.text, title: "Lot number", attribute: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN" },
         { type: FormType.date, title: "Expiration date", attribute: "expirationDate" },
       ]
@@ -243,7 +243,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         { type: FormType.date, title: "Presented date", attribute: "informationStatementPresentedDate" },
         { type: FormType.code, title: "Information Statement Cvx", attribute: "informationStatement", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
         { type: FormType.date, title: "Published date", attribute: "informationStatementPublishedDate" },
-      ], toolTips: "Preferred method for VXU reporting includes Document type and Presented Date"
+      ], toolTips: "Preferred method for VXU reporting includes Document type and Presented Date, supporting deprecated method with CVX alongside Published and Presented Date"
     },
     {
       title: "Injection route", rows: 1, cols: 1, vaccineForms: [
