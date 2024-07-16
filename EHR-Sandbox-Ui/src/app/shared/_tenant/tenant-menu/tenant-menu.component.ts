@@ -30,7 +30,14 @@ export class TenantMenuComponent implements AfterViewInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(TenantFormComponent);
+    const dialogRef = this.dialog.open(TenantFormComponent, {
+      maxWidth: '48vw',
+      maxHeight: '98vh',
+      minWidth: '33vw',
+      height: 'fit-content',
+      width: 'fit-content',
+      panelClass: 'dialog-without-bar'
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.tenantService.setCurrent(result)

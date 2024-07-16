@@ -1,15 +1,31 @@
-import { Component, EventEmitter, Injectable, Input } from '@angular/core';
+import { EventEmitter, Injectable, ViewChild } from '@angular/core';
 import { ValidatorFn, AbstractControl, ValidationErrors, FormControl } from '@angular/forms';
-import { EhrPatient } from 'src/app/core/_model/rest';
+import { MatInput } from '@angular/material/input';
 
 @Injectable()
 export abstract class JsonFormComponent<T extends Object> {
+
+  abstract txtArea: HTMLTextAreaElement;
+  abstract matInput: MatInput;
   formControl: FormControl<string>;
 
   allow_emit: boolean = false
 
+  set model(value: string) {
+    this.allow_emit = false
+    this.formControl.setValue(value);
+    // this.txtArea.selectionEnd = 10
 
-  abstract set model(value: string);
+    // this.txtArea.setSelectionRange(1, 10)
+    // if (this.txtArea.selection)
+    if (this.matInput) {
+      console.log(this.matInput.focused, this.txtArea.selectionStart)
+      this.txtArea.selectionStart = 3
+      console.log(this.txtArea.selectionStart)
+    }
+    // if ()
+    // this.txtArea.focus()
+  }
   abstract modelChange: EventEmitter<T>;
 
 
@@ -17,16 +33,25 @@ export abstract class JsonFormComponent<T extends Object> {
     this.formControl = new FormControl()
     this.formControl.addValidators(this.jsonValidator())
     this.formControl.updateValueAndValidity()
+  }
+
+  ngAfterViewInit() {
     this.formControl.valueChanges.subscribe((value) => {
-      // if (this.formControl.valid != valid) {
-      //   this
-      // }
+      // let selection = this.txtArea.selectionEnd
+
       if (this.allow_emit && this.formControl.valid) {
+        console.log("emit")
+        let selection = this.txtArea.selectionEnd
         this.modelChange.emit(JSON.parse(value))
+        // this.txtArea.
+        // this.txtArea.selectionEnd = 1
+        // this.txtArea.selectionStart = 1
+        // this.txtArea.selectionEnd = selection + 20
       } else {
         this.allow_emit = true
       }
     })
+    // this.matInput.
   }
 
   answer: string = ""

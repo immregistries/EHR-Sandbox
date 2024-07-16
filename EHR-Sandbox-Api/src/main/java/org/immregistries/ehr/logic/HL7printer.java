@@ -734,9 +734,14 @@ public class HL7printer {
 
     // Extended Telephone number
     private void printXTN(EhrPhoneNumber ehrPhoneNumber, StringBuilder sb) {
+        sb.append("^");
+        sb.append(StringUtils.defaultIfBlank(ehrPhoneNumber.getUse(), ""));
+        sb.append("^");
+        sb.append(StringUtils.defaultIfBlank(ehrPhoneNumber.getType(), ""));
+        sb.append("^^^");
         String number = ehrPhoneNumber.getNumber().replaceAll("[()\\s-]", "").strip();
         if (number.length() > 3) {
-            sb.append("^PRN^PH^^^" + number.substring(0, 3) + "^" + number.substring(3));
+            sb.append(number.substring(0, 3) + "^" + number.substring(3));
         }
     }
 

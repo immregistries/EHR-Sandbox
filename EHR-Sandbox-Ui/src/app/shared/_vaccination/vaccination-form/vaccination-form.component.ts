@@ -20,6 +20,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  private _vaccinationId = -1
+  private _vaccineId = -1
   private _vaccination: VaccinationEvent = { id: -1, vaccine: { updatedDate: new Date() }, enteringClinician: {}, administeringClinician: {}, orderingClinician: {} };
   @Input()
   public set vaccination(v: VaccinationEvent) {
@@ -61,6 +63,8 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     if (data) {
       this.patientId = data.patientId;
       if (data.vaccination) {
+        this._vaccinationId = data.vaccination.id ?? -1
+        this._vaccineId = data.vaccination.vaccine?.id ?? -1
         this.vaccination = data.vaccination
         this.isEditionMode = true
         if (data.comparedVaccination) {
@@ -81,6 +85,8 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   save(): void {
     let formerUpdatedDate = this.vaccination.vaccine.updatedDate
+    this.vaccination.id = this._vaccinationId
+    this.vaccination.vaccine.id = this._vaccineId
     if (this.isEditionMode == true) {
       // TODO PUT implementation
       this.vaccination.vaccine.updatedDate = new Date()

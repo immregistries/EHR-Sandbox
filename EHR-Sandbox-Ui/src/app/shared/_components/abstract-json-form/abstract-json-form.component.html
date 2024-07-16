@@ -3,12 +3,13 @@
 
   <mat-form-field style="width: 100%;" appearance="fill">
     <mat-label>Json value</mat-label>
-    <textarea matInput style="height: 60vh;" placeholder="" [formControl]="formControl" name="message"></textarea>
+    <textarea #txtarea matInput style="height: 60vh;" placeholder="" [formControl]="formControl"
+              name="message"></textarea>
     <mat-error>{{formControl.errors ? formControl.errors['message'] : "JSON error"}}</mat-error>
 
   </mat-form-field>
 
-  <button mat-stroked-button color="primary" [cdkCopyToClipboard]="formControl.value | json" type="button">
+  <button mat-stroked-button color="primary" [cdkCopyToClipboard]="formControl.value" type="button">
     <mat-icon>content_copy</mat-icon>
     Copy to clipboard
   </button>

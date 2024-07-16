@@ -124,7 +124,10 @@ public class RandomGenerator {
 
         }
 
-        patient.addPhoneNumber(new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6)));
+        EhrPhoneNumber phoneNumber = new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6));
+        phoneNumber.setUse("PRN");
+        phoneNumber.setType("CP");
+        patient.addPhoneNumber(phoneNumber);
         patient.setEmail(patient.getNameFirst() + randDay + "@email.com");
 
         patient.setBirthFlag("");

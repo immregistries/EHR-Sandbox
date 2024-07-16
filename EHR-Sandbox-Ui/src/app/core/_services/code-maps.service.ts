@@ -55,15 +55,15 @@ export class CodeMapsService {
     return this.codeBaseMap
   }
 
-  getCodeMap(label: string | undefined): CodeSet | undefined {
+  getCodeSet(label: string | undefined): CodeSet | undefined {
     if (!label) {
       return undefined
     }
     if (!this.codeBaseMap) {
       return undefined
     }
-    if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.includes('NO_DEPRECATED')) {
-      return Object.fromEntries(Object.entries<Code>(this.codeBaseMap.value[label]).filter((entry) => entry[1].codeStatus?.status != "Deprecated"))
+    if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.toUpperCase().includes('NO_DEPRECATED')) {
+      return Object.fromEntries(Object.entries<Code>(this.codeBaseMap.value[label]).filter((entry) => entry[1].codeStatus?.status?.toLowerCase() != "deprecated"))
     } else {
       return this.codeBaseMap.value[label];
     }
@@ -84,19 +84,6 @@ export class CodeMapsService {
   }
 
   load() {
-    this.codeBaseMap = new BehaviorSubject<CodeBaseMap>({})
-    return zip(
-      this.http.get<CodeSystem>(this.IDENTIFIER_TYPE_SYSTEM_FILE_NAME).pipe(tap(res => {
-        this._identifierTypeCodeSystem = res;
-      })),
-      this.http.get<CodeSystem>(this.QUALIFICATION_SYSTEM_FILE_NAME).pipe(tap(res => {
-        this._qualificationTypeCodeSystem = res;
-      })),
-      this.refreshCodeMapsObservable()
-    )
-  }
-
-  loadCopy() {
     this.codeBaseMap = new BehaviorSubject<CodeBaseMap>({})
     return zip(
       this.http.get<CodeSystem>(this.IDENTIFIER_TYPE_SYSTEM_FILE_NAME).pipe(tap(res => {

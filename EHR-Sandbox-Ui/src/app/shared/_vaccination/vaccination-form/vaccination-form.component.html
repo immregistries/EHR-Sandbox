@@ -76,7 +76,10 @@
         <app-vaccination-display [formCards]="VACCINATION_FORM_CARDS"
           [vaccinationEvent]="vaccination"></app-vaccination-display>
       </mat-tab> -->
-      <button matButton></button>
+      <mat-tab label="Json">
+        <app-vaccination-json-form [model]="vaccination | json"
+                                   (modelChange)="vaccination = $event"></app-vaccination-json-form>
+      </mat-tab>
     </mat-tab-group>
   </mat-dialog-content>
   <div mat-dialog-actions align="end" class="form-action-bar">

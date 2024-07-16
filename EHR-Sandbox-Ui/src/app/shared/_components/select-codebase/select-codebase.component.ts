@@ -35,12 +35,8 @@ export class SelectCodebaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.formControl.addValidators(this.codebaseReferenceValidator())
-    this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
-      if (this.baseForm.codeMapLabel && codeBaseMap[this.baseForm.codeMapLabel]) {
-        this.codeSet = codeBaseMap[this.baseForm.codeMapLabel]
-      }
-      this.filterChange(this.formControl.value)
-    })
+    this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
+    this.filterChange(this.formControl.value)
     this.formControl.valueChanges.subscribe((value) => {
       this.filterChange(value)
       // this.modelChange.emit(this.formControl.value ?? '')
@@ -181,7 +177,7 @@ export class SelectCodebaseComponent implements OnInit {
     this.referenceFilter?.subscribe((ref) => {
       this.filterChange(this.formControl.value)
       this._blockReferenceEmit = true
-      console.log(this.baseForm.attribute, " reference set validity")
+      // console.log(this.baseForm.attribute, " reference set validity")
       this.formControl.updateValueAndValidity()
       this._blockReferenceEmit = false
     })

@@ -1,12 +1,40 @@
-<h3 mat-dialog-title>
-  Create Tenant
-</h3>
+<h2 mat-dialog-title>
+  Environment / Tenant Form
+</h2>
 <form (submit)="save()">
-  <!-- Tenants are independant testing environments and include multiple facilities. -->
-  <mat-form-field appearance="fill">
-    <mat-label>Tenant name</mat-label>
-    <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay">
-  </mat-form-field>
+  <!-- Tenants are independent testing environments and include multiple facilities. -->
+  <mat-card class="form-card">
+    <mat-card-content>
+      <mat-form-field appearance="fill">
+        <mat-label>Tenant name</mat-label>
+        <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay">
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+  <!-- <mat-divider></mat-divider> -->
+  <mat-card class="form-card">
+    <mat-card-header>
+      <div> This sandbox works with independent testing environments, which can then include multiple facilities</div>
+    </mat-card-header>
+    <mat-card-content>
+      Flavors: activate options by including keywords in environment name
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle>NO_DEPRECATED</span>
+          <span matListItemLine>excludes deprecated fields from codesets in forms and tables</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+  <!-- <h3>
+    Flavors, include keys in name to activate
+  </h3>
+  <mat-list>
+    <mat-list-item>
+      <span matListItemTitle>NO_DEPRECATED:</span>
+      <span matListItemLine>excludes deprecated fields from codesets and forms</span>
+    </mat-list-item>
+  </mat-list> -->
 
   <div mat-dialog-actions align="end" class="form-action-bar">
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
@@ -19,5 +47,3 @@
     </button>
   </div>
 </form>
-
-

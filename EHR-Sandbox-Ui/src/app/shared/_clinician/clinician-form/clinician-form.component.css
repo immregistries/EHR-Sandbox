@@ -1,4 +1,4 @@
-.mat-button-toggle-group {
-  height: 22px;
-  align-items: center;
+.mat-mdc-dialog-content {
+  padding: 0;
+  max-height: 80vh;
 }

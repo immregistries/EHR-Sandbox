@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { JsonFormComponent } from '../abstract-json-form.component';
 import { EhrPatient } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-patient-json-form',
@@ -9,10 +10,15 @@ import { PatientService } from 'src/app/core/_services/patient.service';
   styleUrls: ['../abstract-json-form.component.css']
 })
 export class PatientJsonFormComponent extends JsonFormComponent<EhrPatient> {
+
+  @ViewChild('txtarea', { static: false })
+  public txtArea!: HTMLTextAreaElement;
+  @ViewChild('txtarea', { static: false })
+  public matInput!: MatInput;
+
   @Input()
-  public set model(value: string) {
-    this.allow_emit = false
-    this.formControl.setValue(value);
+  override set model(value: string) {
+    super.model = value
   }
 
   @Output()
