@@ -91,7 +91,10 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
 
   filterChange(event: string) {
     console.log("event", event)
-    let filterValue = ((event ?? '') + '').toLowerCase();
+    let filterValue = '';
+    if (event) {
+      filterValue = (event + '').toLowerCase();
+    }
     this.filteredOptions = this.options.filter(
       option => {
         return JSON.stringify(option).toLowerCase().includes(filterValue) || this.displayFn(option).toLowerCase().includes(filterValue)
@@ -100,7 +103,7 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   }
 
   valueChanged(log?: string) {
-    console.log('log', log, this._model)
+    // console.log('log', log, this._model)
     this.modelChange.emit(this._model)
   }
 

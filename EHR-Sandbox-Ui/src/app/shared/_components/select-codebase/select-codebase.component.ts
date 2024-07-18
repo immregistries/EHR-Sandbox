@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, NgForm, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
 import { Code, CodeSet, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
@@ -13,12 +13,13 @@ import { AbstractBaseFormComponent } from '../card-form/abstract-base-form/abstr
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent extends AbstractBaseFormComponent implements OnInit {
+  @ViewChild('selectCodebaseForm', { static: true })
+  selectClinicianForm!: NgForm;
+  @ViewChild('auto')
+  private matAutoComplete!: MatAutocomplete;
+
   @Input()
   public baseForm!: BaseForm;
-  @Input()
-  public toolTipDisabled: boolean = false;
-  @Input()
-  public compareTo?: ComparisonResult | any | null;
   @Input()
   public set model(value: string) {
     this.formControl.setValue(value);
@@ -27,8 +28,16 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   }
   @Output()
   public modelChange = new EventEmitter<any>();
-  @ViewChild('auto')
-  private matAutoComplete!: MatAutocomplete;
+  @Input()
+  public overrideNoFieldsRequired: boolean = false
+  @Input()
+  public overrideAllFieldsRequired: boolean = false
+
+  @Input()
+  public toolTipDisabled: boolean = false;
+  @Input()
+  public compareTo?: ComparisonResult | any | null;
+
 
   private codeSet?: CodeSet;
   public formControl: FormControl<string> = new FormControl();
@@ -40,10 +49,6 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   */
   private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
 
-  @Input()
-  public overrideNoFieldsRequired: boolean = false
-  @Input()
-  public overrideAllFieldsRequired: boolean = false
 
   private _blockReferenceEmit: boolean = false
   /** Receives */
@@ -176,7 +181,6 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   valueChanged(log?: string) {
     console.log('log', log, this.formControl.value)
-
     this.modelChange.emit(this.formControl.value ?? '')
     this.emitReferences()
   }
