@@ -21,6 +21,7 @@ export class NextOfKinFormComponent extends AbstractBaseFormComponent {
     { type: FormType.text, title: 'Middle name', attribute: 'nameMiddle' },
     { type: FormType.text, title: 'Last name', attribute: 'nameLast' },
     { type: FormType.text, title: 'Suffix', attribute: 'nameSuffix' },
+    { type: FormType.text, title: 'Maiden Name', attribute: 'motherMaiden' },
     { type: FormType.date, title: 'Birth Date', attribute: 'birthDate' },
     { type: FormType.text, title: 'Email', attribute: 'email' },
     { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX" },

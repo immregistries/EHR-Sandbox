@@ -20,6 +20,10 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   @ViewChild('auto')
   matAutoComplete!: MatAutocomplete;
 
+  @Input() overrideNoFieldsRequired: boolean = false
+  @Input() overrideAllFieldsRequired: boolean = false
+
+
   constructor(public clinicianService: ClinicianService,
     private tenantService: TenantService,
     private dialog: MatDialog) {
@@ -78,6 +82,7 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
     })
     this.formChangesSubscription = this.selectClinicianForm.form.valueChanges.subscribe((value) => {
       this.valueChanged('sub')
+      // this.filterChange()
     })
   }
 
@@ -90,9 +95,9 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   }
 
   filterChange(event: string) {
-    console.log("event", event)
+    // console.log("event", event)
     let filterValue = '';
-    if (event) {
+    if (typeof event != "number") {
       filterValue = (event + '').toLowerCase();
     }
     this.filteredOptions = this.options.filter(
@@ -103,8 +108,9 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   }
 
   valueChanged(log?: string) {
-    // console.log('log', log, this._model)
+    // console.log('log clini', log, this._model)
     this.modelChange.emit(this._model)
+    this.filterChange('')
   }
 
   add() {
@@ -143,19 +149,14 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
 
   }
 
-  @Input() overrideNoFieldsRequired: boolean = false
-  @Input() overrideAllFieldsRequired: boolean = false
-
   /**
    * On press enter key select first visible option
    */
   submit() {
     if (this.matAutoComplete.options && this.matAutoComplete.options.first) {
       this.model = this.matAutoComplete.options.first?.value ?? this.matAutoComplete.options.first?.value.code ?? this.model
-      this.valueChanged('enter')
-    } else {
-      this.valueChanged('enter')
     }
+    this.valueChanged('enter')
   }
 
 
