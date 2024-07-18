@@ -136,21 +136,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      if (this.vaccinationForm.form.controls['lotNumber']) {
-        this.vaccinationForm.form.controls['lotNumber'].valueChanges.subscribe((lotNumber) => {
-          this.lotNumberValid = true
-          if (lotNumber) {
-            for (const ref in this.references.getValue()) {
-              // stops checking as soon as validity is assessed
-              if (!this.checkLotNumberValidity(this.references.getValue()[ref].reference)) {
-                break;
-              }
-            }
-          }
-        })
-      }
-    }, 0);
+
   }
 
   ngOnDestroy() {
