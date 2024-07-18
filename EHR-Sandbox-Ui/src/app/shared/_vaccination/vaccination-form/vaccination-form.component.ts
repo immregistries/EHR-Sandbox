@@ -86,6 +86,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   save(): void {
     let formerUpdatedDate = this.vaccination.vaccine.updatedDate
     this.vaccination.id = this._vaccinationId
+    this.vaccination.patient = this.patientId
     this.vaccination.vaccine.id = this._vaccineId
     if (this.isEditionMode == true) {
       // TODO PUT implementation
