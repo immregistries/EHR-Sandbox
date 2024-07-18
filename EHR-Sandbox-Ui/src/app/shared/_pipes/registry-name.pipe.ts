@@ -18,11 +18,8 @@ export class RegistryNamePipe implements PipeTransform {
 
   }
 
-  transform(id: number): Observable<string>{
-    // console.log("call")
+  transform(id: number): Observable<string> {
     if (!this.registriesCached$) {
-      // console.log("http")
-
       this.registriesCached$ = this.immunizationRegistryService.readImmRegistries()
         .pipe(
           shareReplay(1)
@@ -30,7 +27,7 @@ export class RegistryNamePipe implements PipeTransform {
           // tap((res) => console.log(this.registries)),
           // mergeMap(registries => registries.find((reg) => id == reg.id)?.name ?? 'not found')
           // map(registries => registries?.find((reg) => id == reg.id)?.name ?? '' + id)
-          )
+        )
     }
     return this.registriesCached$.pipe(
       map(registries => registries?.find((reg) => id == reg.id)?.name ?? '' + id)

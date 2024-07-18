@@ -37,8 +37,8 @@ export class PatientToolsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.patientService.setCurrent(result)
-        this.patientService.doRefresh()
       }
+      this.patientService.doRefresh()
     });
   }
 

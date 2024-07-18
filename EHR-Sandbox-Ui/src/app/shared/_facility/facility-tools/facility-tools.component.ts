@@ -30,8 +30,12 @@ export class FacilityToolsComponent {
         facility: this.facility
       }
     });
-    // dialogRef.afterClosed().subscribe(result => {
-    // });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.facility = result
+
+      }
+    });
   }
 
   openFhir() {

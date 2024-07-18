@@ -41,7 +41,6 @@ export class GroupDashboardComponent {
   }
 
   openImmunizationRegistry() {
-    // console.log(this.ehrGroup.immunizationRegistry)
     const dialogRef = this.dialog.open(ImmunizationRegistryFormComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',

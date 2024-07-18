@@ -1,7 +1,6 @@
 <form (submit)="submit()">
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{baseForm.title}}</mat-label>
-
     <input matInput [formControl]="formControl" [matAutocomplete]="auto" class="select-field-input"
            name="{{baseForm.attribute}}" [required]="isRequired()">
 
@@ -9,22 +8,24 @@
       <mat-icon>cancel</mat-icon>
     </button>
 
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)" (optionSelected)="valueChanged()"
-                      (optionActivated)="valueChanged()">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCode.bind(this)"
+                      (optionSelected)="valueChanged('selected')">
       <mat-option *ngFor="let option of filteredCodeMapsOptions" [value]="option.value"
                   [matTooltip]="option.description ?? ''" [matTooltipDisabled]="toolTipDisabled"
-                  [matTooltipPosition]="'right'">
-        {{option.label + ' (' + option.value + ')'}}
+                  [matTooltipPosition]="'right'"
+                  (onSelectionChange)="valueChanged('select')">
+        {{displayCode(option.value)}}
       </mat-option>
       <mat-option *ngFor="let option of this.filteredFormOptions" [value]="option.code"
                   [matTooltip]="option.display ?? ''" [matTooltipDisabled]="toolTipDisabled"
-                  [matTooltipPosition]="'right'">
-        {{option.display ? option.display + ' (' + option.code + ')' : option.code }}
+                  [matTooltipPosition]="'right'"
+                  (onSelectionChange)="valueChanged('select')">
+        {{displayCode(option.code)}}
       </mat-option>
     </mat-autocomplete>
 
-    <mat-error
-      *ngIf="formControl.errors && formControl.errors['codeMapIssue']; else req">{{formControl.errors['codeMapIssue']}}
+    <mat-error *ngIf="formControl.errors && formControl.errors['codeMapIssue']; else req">
+      {{formControl.errors['codeMapIssue']}}
     </mat-error>
     <ng-template #req>
       <mat-error>required</mat-error>

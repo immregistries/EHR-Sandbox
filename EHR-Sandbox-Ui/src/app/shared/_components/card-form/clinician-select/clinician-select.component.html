@@ -1,0 +1,24 @@
+<form #selectClinicianForm="ngForm" (submit)="submit()">
+  <mat-form-field appearance="outline">
+    <mat-label>{{baseForm.title}}</mat-label>
+    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field-input"
+           name="{{baseForm.attribute}}" (ngModelChange)="filterChange($event)" [required]="isRequired()">
+
+    <!-- <button matSuffix mat-icon-button *ngIf="formControl.value" (click)="clear()" type="button">
+      <mat-icon>cancel</mat-icon>
+    </button> -->
+
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+      <mat-option *ngFor="let clinician of filteredOptions" [value]="clinician.id">
+        {{displayFn(clinician)}}
+        <mat-icon class="w3-right" (click)="$event.stopPropagation(); openEdition(clinician);">edit</mat-icon>
+      </mat-option>
+      <mat-option (click)="$event.stopPropagation(); add(); ">
+        <mat-icon>add</mat-icon>
+      </mat-option>
+    </mat-autocomplete>
+
+
+  </mat-form-field>
+
+</form>

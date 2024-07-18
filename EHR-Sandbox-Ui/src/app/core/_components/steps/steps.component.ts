@@ -21,10 +21,9 @@ export class StepsComponent {
     private tenantService: TenantService,
     private facilityService: FacilityService,
     private router: Router) {
-    }
+  }
 
   nextTenant(tenant: Tenant) {
-    // console.log("NEXT", tenant)
     this.tenantService.setCurrent(tenant)
     this.stepper.next()
   }

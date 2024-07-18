@@ -1,23 +1,19 @@
-<div class="generic-list-form-content" *ngFor="let item of itemList; let i = index">
-  {{form.title + (i + 1) + ':'}}
-  <button mat-stroked-button type="button" (click)="removeItem(i)" color="primary">
-    <mat-icon>remove</mat-icon>
-    Remove
-  </button>
-  <!-- <button mat-stroked-button type="button" (click)="removeItem(i)" color="primary">
-    <mat-icon>remove</mat-icon>
-    Remove {{form.title}}
-  </button> -->
+<div class="generic-list-form-content" *ngFor="let item of model; let i = index">
+  {{baseForm.title + (i + 1) + ':'}}
   <span *ngFor="let formItem of FORMS">
     <!-- When overriding, All fields required only applied to first value -->
-    <app-card-form class="card-form high-density" [form]="formItem" [model]="item[formItem.attribute]"
-                   (modelChange)="item[formItem.attribute] = $event; itemListChange.emit(itemList)"
+    <app-card-form class="card-form high-density" [baseForm]="formItem" [model]="item[formItem.attribute]"
+                   (modelChange)="item[formItem.attribute] = $event; modelChange.emit(model)"
                    [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                    [overrideAllFieldsRequired]="i === 0 ? overrideAllFieldsRequired : false"></app-card-form>
   </span>
+  <button mat-stroked-button type="button" (click)="removeItem(i)" color="primary">
+    <mat-icon>remove</mat-icon>
+    Remove {{baseForm.title + (i + 1)}}
+  </button>
 
 </div>
 <button mat-stroked-button type="button" (click)="addItem()" color="primary">
   <mat-icon>add</mat-icon>
-  Add {{form.title}}
+  Add {{baseForm.title}}
 </button>

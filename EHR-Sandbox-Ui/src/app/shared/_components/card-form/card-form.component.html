@@ -1,50 +1,51 @@
 <!-- Multiples forms like phones or identifiers are singled out -->
-<ng-container #single_form [ngSwitch]="form.type">
-
+<ng-container [ngSwitch]="baseForm.type">
   <div *ngSwitchCase="'text'">
     <mat-form-field class="text-field" appearance="outline" [matTooltipDisabled]="!compareTo"
                     [matTooltip]="compareTo? 'Previously : ' + compareTo : ''">
-      <mat-label>{{form.title}}</mat-label>
-      <input matInput name="{{form.attribute}}" type="{{form.type}}" [(ngModel)]="model" [disabled]="false"
+      <mat-label>{{baseForm.title}}</mat-label>
+      <input matInput name="{{baseForm.attribute}}" type="{{baseForm.type}}" [(ngModel)]="model" [disabled]="false"
              [required]="isRequired()">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
       <!-- <mat-error>TEST ERROR 1</mat-error> -->
     </mat-form-field>
     <!-- Errors in lot number validation-->
-    <div *ngIf="!lotNumberValid && form.attribute == 'lotNumber'" class="error">Not matching manufacturer patterns</div>
+    <div *ngIf="!lotNumberValid && baseForm.attribute == 'lotNumber'" class="error">Not matching manufacturer patterns
+    </div>
   </div>
 
-  <app-select-codebase *ngSwitchCase="'code'" [model]="asString(model)" (modelChange)="model = $event" [baseForm]="form"
-                       class="select-field" [referenceFilter]="referenceFilter" [compareTo]="compareTo"
+  <app-select-codebase *ngSwitchCase="'code'" [model]="asString(model)" (modelChange)="model = $event"
+                       [baseForm]="baseForm" class="select-field" [referenceFilter]="referenceFilter"
+                       [compareTo]="compareTo"
                        [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                        [overrideAllFieldsRequired]="overrideAllFieldsRequired"
                        (referenceEmitter)="referencesChange($event)"></app-select-codebase>
 
-  <app-clinician-select *ngSwitchCase="'clinician'" [form]="form" [model]="model" (modelChange)="model = $event"
+  <app-clinician-select *ngSwitchCase="'clinician'" [baseForm]="baseForm" [model]="model" (modelChange)="model = $event"
                         [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                         [overrideAllFieldsRequired]="overrideAllFieldsRequired"
                         class="select-field"></app-clinician-select>
 
   <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="date-field" [matTooltipDisabled]="!compareTo"
                   [matTooltip]="compareTo? 'Previously : ' + (compareTo | date: 'MM/dd/yyyy') : ''">
-    <mat-label>{{form.title}}</mat-label>
-    <input matInput name="{{form.attribute}}" [matDatepicker]="picker" [ngModel]="model"
-           (ngModelChange)="model = $event" [disabled]="form.disabled ? true : false" [required]="isRequired()">
+    <mat-label>{{baseForm.title}}</mat-label>
+    <input matInput name="{{baseForm.attribute}}" [matDatepicker]="picker" [ngModel]="model"
+           (ngModelChange)="model = $event" [disabled]="baseForm.disabled ? true : false" [required]="isRequired()">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
   </mat-form-field>
 
   <div *ngSwitchCase="'short'">
-    <mat-label class="short-label">{{form.title}}</mat-label>
-    <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="model" [matTooltipDisabled]="!compareTo"
+    <mat-label class="short-label">{{baseForm.title}}</mat-label>
+    <input name="{{baseForm.attribute}}" class="short-text-field" [(ngModel)]="model" [matTooltipDisabled]="!compareTo"
            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
   </div>
 
   <div *ngSwitchCase="'yesNo'">
-    <mat-label class="short-label">{{form.title}}</mat-label>
-    <select [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
+    <mat-label class="short-label">{{baseForm.title}}</mat-label>
+    <select [(ngModel)]="model" name="{{baseForm.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
             [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option value="Y">Y</option>
@@ -55,8 +56,8 @@
   </div>
 
   <div *ngSwitchCase="'boolean'">
-    <mat-label class="short-label">{{form.title}}</mat-label>
-    <select [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
+    <mat-label class="short-label">{{baseForm.title}}</mat-label>
+    <select [(ngModel)]="model" name="{{baseForm.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
             [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option value="true">True</option>
@@ -66,46 +67,47 @@
   </div>
 
   <div *ngSwitchCase="'select'">
-    <mat-label class="short-label">{{form.title}}</mat-label>
-    <select *ngIf="form.options; else short" [(ngModel)]="model" name="{{form.attribute}}" aria-label="Font Style"
-            [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
+    <mat-label class="short-label">{{baseForm.title}}</mat-label>
+    <select *ngIf="baseForm.options; else short" [(ngModel)]="model" name="{{baseForm.attribute}}"
+            aria-label="Font Style" [matTooltipDisabled]="!compareTo"
+            [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
             [required]="isRequired()">
       <option [hidden]="model == undefined" value=""></option>
-      <option *ngFor="let option of form.options" value="{{option.code}}">{{option.display ?? option.code}}</option>
+      <option *ngFor="let option of baseForm.options" value="{{option.code}}">{{option.display ?? option.code}}</option>
     </select>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
     <ng-template #short>
-      <input name="{{form.attribute}}" class="short-text-field" [(ngModel)]="model">
+      <input name="{{baseForm.attribute}}" class="short-text-field" [(ngModel)]="model">
     </ng-template>
   </div>
 
   <div *ngSwitchCase="'nextOfKin'">
-    <app-next-of-kin-form [form]="form" [model]="model ?? {}" (modelChange)="model = $event"
+    <app-next-of-kin-form [baseForm]="baseForm" [model]="model ?? {}" (modelChange)="model = $event"
                           [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                           [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-next-of-kin-form>
   </div>
 
   <div *ngSwitchCase="'phoneNumbers'">
-    <app-phone-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"
+    <app-phone-list-form [baseForm]="baseForm" [model]="model ?? []" (modelChange)="model = $event"
                          [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                          [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-phone-list-form>
   </div>
   <div *ngSwitchCase="'races'">
-    <app-race-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"
+    <app-race-list-form [baseForm]="baseForm" [model]="model ?? []" (modelChange)="model = $event"
                         [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                         [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-race-list-form>
   </div>
   <div *ngSwitchCase="'identifiers'">
-    <app-identifier-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"
+    <app-identifier-list-form [baseForm]="baseForm" [model]="model ?? []" (modelChange)="model = $event"
                               [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                               [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-identifier-list-form>
   </div>
   <div *ngSwitchCase="'nextOfKinRelationships'">
-    <app-next-of-kin-relationship-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event">
+    <app-next-of-kin-relationship-list-form [baseForm]="baseForm" [model]="model ?? []" (modelChange)="model = $event">
     </app-next-of-kin-relationship-list-form>
   </div>
   <div *ngSwitchCase="'addresses'">
-    <app-address-list-form [form]="form" [itemList]="model ?? []" (itemListChange)="model = $event"
+    <app-address-list-form [baseForm]="baseForm" [model]="model ?? []" (modelChange)="model = $event"
                            [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                            [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-address-list-form>
   </div>

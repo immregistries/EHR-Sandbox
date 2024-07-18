@@ -5,20 +5,26 @@ import { Subscription, concat } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { ClinicianFormComponent } from '../clinician-form/clinician-form.component';
-import { CardFormComponent } from '../../_components/card-form/card-form.component';
+import { ClinicianFormComponent } from '../../../_clinician/clinician-form/clinician-form.component';
+import { CardFormComponent } from '../card-form.component';
 import { BaseForm } from 'src/app/core/_model/structure';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
 
 @Component({
   selector: 'app-clinician-select',
   templateUrl: './clinician-select.component.html',
   styleUrls: ['./clinician-select.component.css']
 })
-export class ClinicianSelectComponent {
+export class ClinicianSelectComponent extends AbstractBaseFormComponent {
+  @ViewChild('auto')
+  matAutoComplete!: MatAutocomplete;
 
   constructor(public clinicianService: ClinicianService,
     private tenantService: TenantService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog) {
+    super()
+  }
 
   @ViewChild('selectClinicianForm', { static: true }) selectClinicianForm!: NgForm;
 
@@ -27,38 +33,39 @@ export class ClinicianSelectComponent {
     this.formChangesSubscription.unsubscribe();
   }
 
-  private _clinician?: Clinician;
-  firstInit: boolean = true;
+  private _model?: Clinician;
+  private _isFirstInit: boolean = true;
   @Input()
-  form!: BaseForm;
+  baseForm!: BaseForm;
+
   @Input()
   set model(clinician: Clinician | number | undefined) {
     if (!clinician) {
-      this._clinician = undefined
+      this._model = undefined
       this.filterChange('')
     } else if (typeof clinician === "number" || typeof clinician === "string") {
-      if (this.firstInit) {
+      if (this._isFirstInit) {
         this.clinicianService.readClinician(this.tenantService.getCurrentId(), clinician).subscribe((res) => {
-          this._clinician = res
+          this._model = res
         })
       } else {
-        this._clinician = this.options.find((opt) => opt.id == clinician)
+        this._model = this.options.find((opt) => opt.id == clinician)
       }
     } else {
-      this._clinician = clinician
+      // console.log('clinician', clinician)
+      this._model = clinician
     }
-    this.firstInit = false
+    this._isFirstInit = false
   }
 
   get model(): Clinician | number | undefined {
-    return this._clinician
+    return this._model
   }
-
 
   @Output() modelChange: EventEmitter<Clinician> = new EventEmitter()
 
-  options: Clinician[] = []
-  filteredCodeMapsOptions: Clinician[] = []
+  private options: Clinician[] = []
+  filteredOptions: Clinician[] = []
   ngOnInit() {
     concat(
       this.clinicianService.getRefresh(),
@@ -70,13 +77,8 @@ export class ClinicianSelectComponent {
       })
     })
     this.formChangesSubscription = this.selectClinicianForm.form.valueChanges.subscribe((value) => {
-      this.valueChanged()
+      this.valueChanged('sub')
     })
-  }
-
-  onSelect(c: number) {
-    this.model = c
-    this.filterChange('')
   }
 
   displayFn(clinician: Clinician): string {
@@ -88,25 +90,18 @@ export class ClinicianSelectComponent {
   }
 
   filterChange(event: string) {
-    let filterValue = ''
-    if (typeof event == 'string') {
-      if (event) {
-        filterValue = event.toLowerCase();
+    console.log("event", event)
+    let filterValue = ((event ?? '') + '').toLowerCase();
+    this.filteredOptions = this.options.filter(
+      option => {
+        return JSON.stringify(option).toLowerCase().includes(filterValue) || this.displayFn(option).toLowerCase().includes(filterValue)
       }
-      this.filteredCodeMapsOptions = this.options.filter(
-        option => {
-          return JSON.stringify(option).toLowerCase().includes(filterValue)
-        }
-      )
-    }
+    )
   }
 
-  valueChanged() {
-    this.modelChange.emit(this._clinician)
-  }
-
-  openEdition() {
-
+  valueChanged(log?: string) {
+    console.log('log', log, this._model)
+    this.modelChange.emit(this._model)
   }
 
   add() {
@@ -120,13 +115,14 @@ export class ClinicianSelectComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.model = result
+        this.valueChanged()
       }
       this.clinicianService.doRefresh()
     });
 
   }
 
-  edit(cli: Clinician) {
+  openEdition(cli: Clinician) {
     const dialogRef = this.dialog.open(ClinicianFormComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
@@ -136,24 +132,26 @@ export class ClinicianSelectComponent {
       data: { clinician: cli }
     });
     dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.model = result
+      }
       this.clinicianService.doRefresh()
-      // this.ngOnInit()
-      this.model = result
     });
 
   }
 
   @Input() overrideNoFieldsRequired: boolean = false
   @Input() overrideAllFieldsRequired: boolean = false
-  isRequired(): 'true' | 'false' {
-    if (this.overrideNoFieldsRequired) {
-      return 'false'
-    } else if (this.overrideAllFieldsRequired) {
-      return 'true'
-    } else if (this.form.required) {
-      return 'true'
+
+  /**
+   * On press enter key select first visible option
+   */
+  submit() {
+    if (this.matAutoComplete.options && this.matAutoComplete.options.first) {
+      this.model = this.matAutoComplete.options.first?.value ?? this.matAutoComplete.options.first?.value.code ?? this.model
+      this.valueChanged('enter')
     } else {
-      return 'false'
+      this.valueChanged('enter')
     }
   }
 

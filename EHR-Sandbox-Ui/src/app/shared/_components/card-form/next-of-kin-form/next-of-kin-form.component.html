@@ -1,5 +1,5 @@
 <div class="next-of-kin-form-content">
-  <app-card-form *ngFor="let formItem of FORMS" class="card-form high-density" [form]="formItem"
+  <app-card-form *ngFor="let formItem of FORMS" class="card-form high-density" [baseForm]="formItem"
                  [model]="model[formItem.attribute]"
                  (modelChange)="model[formItem.attribute] = $event; modelChange.emit(model)"></app-card-form>
 </div>

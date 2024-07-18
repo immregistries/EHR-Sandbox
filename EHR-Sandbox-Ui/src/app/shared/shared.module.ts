@@ -57,7 +57,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RegistryNamePipe } from './_pipes/registry-name.pipe';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ClinicianSelectComponent } from './_clinician/clinician-select/clinician-select.component';
+import { ClinicianSelectComponent } from './_components/card-form/clinician-select/clinician-select.component';
 import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-form.component';
 import { RemoteGroupTableComponent } from './_components/remote-group-table/remote-group-table.component';
 import { PatientMatchComponent } from './_patient/patient-match/patient-match.component';

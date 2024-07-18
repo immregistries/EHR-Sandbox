@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NextOfKin } from 'src/app/core/_model/rest';
 import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/structure';
+import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
 
 @Component({
   selector: 'app-next-of-kin-form',
   templateUrl: './next-of-kin-form.component.html',
   styleUrls: ['./next-of-kin-form.component.css']
 })
-export class NextOfKinFormComponent {
+export class NextOfKinFormComponent extends AbstractBaseFormComponent {
   @Input()
-  form!: BaseForm;
+  baseForm!: BaseForm;
   @Input()
   model!: NextOfKin;
   @Output()
@@ -30,16 +31,5 @@ export class NextOfKinFormComponent {
 
   @Input() overrideNoFieldsRequired: boolean = false
   @Input() overrideAllFieldsRequired: boolean = false
-  isRequired(): 'true' | 'false' {
-    if (this.overrideNoFieldsRequired) {
-      return 'false'
-    } else if (this.overrideAllFieldsRequired) {
-      return 'true'
-    } else if (this.form.required) {
-      return 'true'
-    } else {
-      return 'false'
-    }
-  }
 
 }

@@ -38,7 +38,6 @@ export class GroupStepsComponent implements AfterViewInit {
   }
 
   nextTenant(tenant: Tenant) {
-    // console.log("NEXT", tenant)
     this.tenantService.setCurrent(tenant)
     this.stepper.next()
   }

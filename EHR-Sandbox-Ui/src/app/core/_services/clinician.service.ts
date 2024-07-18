@@ -58,16 +58,16 @@ export class ClinicianService extends RefreshService {
       httpOptions);
   }
 
-  postClinician(tenantId: number, clinician: Clinician): Observable<HttpResponse<Clinician>> {
+  postClinician(tenantId: number, clinician: Clinician): Observable<Clinician> {
     return this.http.post<Clinician>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians`,
-      clinician, { observe: 'response' })
+      clinician, httpOptions)
   }
 
-  putClinician(tenantId: number, clinician: Clinician): Observable<HttpResponse<Clinician>> {
+  putClinician(tenantId: number, clinician: Clinician): Observable<Clinician> {
     clinician.tenant = undefined
     return this.http.put<Clinician>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians/${clinician.id}`,
-      clinician, { observe: 'response' })
+      clinician, httpOptions)
   }
 }

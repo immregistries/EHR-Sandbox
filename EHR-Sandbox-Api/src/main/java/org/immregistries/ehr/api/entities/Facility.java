@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
@@ -32,6 +33,7 @@ public class Facility extends EhrEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
 //    @JsonIgnore()
+    @JsonIdentityReference()
     private Tenant tenant;
 
     @Column(name = "name_display", nullable = false, length = 250)

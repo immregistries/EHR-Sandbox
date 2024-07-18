@@ -10,7 +10,6 @@ export class JsonDialogService {
   constructor(private dialog: Dialog) { }
 
   open(content: any) {
-    console.log("service", content)
     this.dialog.open(JsonDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',

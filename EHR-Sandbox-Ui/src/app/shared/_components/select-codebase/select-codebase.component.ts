@@ -5,33 +5,67 @@ import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/
 import { Code, CodeSet, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { MatAutocomplete } from '@angular/material/autocomplete';
+import { AbstractBaseFormComponent } from '../card-form/abstract-base-form/abstract-base-form.component';
 
 @Component({
   selector: 'app-select-codebase',
   templateUrl: './select-codebase.component.html',
   styleUrls: ['./select-codebase.component.css']
 })
-export class SelectCodebaseComponent implements OnInit {
-  @ViewChild('auto')
-  matAutoComplete!: MatAutocomplete;
-
-  @Input() baseForm!: BaseForm;
-
-  public formControl: FormControl<string> = new FormControl();
+export class SelectCodebaseComponent extends AbstractBaseFormComponent implements OnInit {
+  @Input()
+  public baseForm!: BaseForm;
+  @Input()
+  public toolTipDisabled: boolean = false;
+  @Input()
+  public compareTo?: ComparisonResult | any | null;
   @Input()
   public set model(value: string) {
     this.formControl.setValue(value);
     // this.valueChanged()
     // this._blockReferenceEmit = true
   }
-  @Output() modelChange = new EventEmitter<any>();
-
-  @Input() toolTipDisabled: boolean = false;
-  @Input() compareTo?: ComparisonResult | any | null;
+  @Output()
+  public modelChange = new EventEmitter<any>();
+  @ViewChild('auto')
+  private matAutoComplete!: MatAutocomplete;
 
   private codeSet?: CodeSet;
+  public formControl: FormControl<string> = new FormControl();
 
-  constructor(public codeMapsService: CodeMapsService) { }
+  public filteredCodeMapsOptions!: Code[];
+  public filteredFormOptions!: BaseFormOption[];
+  /**
+  * Buffer for ordering filtered options
+  */
+  private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
+
+  @Input()
+  public overrideNoFieldsRequired: boolean = false
+  @Input()
+  public overrideAllFieldsRequired: boolean = false
+
+  private _blockReferenceEmit: boolean = false
+  /** Receives */
+  private _referenceFilter: BehaviorSubject<CodeReferenceTable> | undefined;
+  public get referenceFilter(): BehaviorSubject<CodeReferenceTable> | undefined {
+    return this._referenceFilter;
+  }
+  @Input()
+  public set referenceFilter(value: BehaviorSubject<CodeReferenceTable> | undefined) {
+    this._referenceFilter = value;
+    this.referenceFilter?.subscribe((ref) => {
+      this.filterChange(this.formControl.value)
+      this._blockReferenceEmit = true
+      // console.log(this.baseForm.attribute, " reference set validity")
+      this.formControl.updateValueAndValidity()
+      this._blockReferenceEmit = false
+    })
+  }
+  @Output()
+  referenceEmitter = new EventEmitter<CodeReferenceTableMember>();
+
+  constructor(public codeMapsService: CodeMapsService) { super() }
 
   ngOnInit(): void {
     this.formControl.addValidators(this.codebaseReferenceValidator())
@@ -39,22 +73,24 @@ export class SelectCodebaseComponent implements OnInit {
     this.filterChange(this.formControl.value)
     this.formControl.valueChanges.subscribe((value) => {
       this.filterChange(value)
-      // this.modelChange.emit(this.formControl.value ?? '')
       // console.log(value)
-      // this._blockReferenceEmit = false
-      // this.modelChange.emit(this.formControl.value)
+
+      // if (!this._blockReferenceEmit) {
+      //   console.log(value)
+      //   this.modelChange.emit(this.formControl.value ?? '')
+      // } else {
+      //   this._blockReferenceEmit = false
+
+      // }
     })
   }
 
-  public filteredCodeMapsOptions!: Code[];
-  public filteredFormOptions!: BaseFormOption[];
-  /**
-   * Buffer for ordering filtered options
-   */
-  private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
 
   filterChange(event: string) {
     let filterValue = event ? event.toLowerCase() : ''
+    if (!(typeof event == 'string')) {
+      filterValue = ''
+    }
     if (this.codeSet) {
       this.filteredCodeMapsOn = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
       Object.values(this.codeSet).forEach(
@@ -63,7 +99,7 @@ export class SelectCodebaseComponent implements OnInit {
             if (this.filterWithReference(option)) {
               this.filteredCodeMapsOn.byValue.push(option)
             }
-          } else if (option.label && option.label?.toLowerCase().includes(filterValue)) {
+          } else if (this.displayCode(option.value).toLowerCase().includes(filterValue)) {
             if (this.filterWithReference(option)) {
               this.filteredCodeMapsOn.byLabel.push(option)
             }
@@ -82,10 +118,7 @@ export class SelectCodebaseComponent implements OnInit {
           return true
         } else if (option.code === false && 'false'.includes(filterValue)) {
           return true
-          //@ts-ignore
-        } else if (option.code.toLowerCase().includes(filterValue)) {
-          return true
-        } else if (option.display?.toLowerCase().includes(filterValue)) {
+        } else if (this.displayCode(option.code).toLowerCase().includes(filterValue)) {
           return true
         } else if (option.definition?.toLowerCase().includes(filterValue)) {
           return true
@@ -97,7 +130,6 @@ export class SelectCodebaseComponent implements OnInit {
   }
 
   filterWithReference(option: Code): boolean {
-    // console.log(option.value, this.incompatibleReferences(option))
     return !this.incompatibleReferences(option)
   }
 
@@ -142,7 +174,9 @@ export class SelectCodebaseComponent implements OnInit {
     return null
   }
 
-  valueChanged() {
+  valueChanged(log?: string) {
+    console.log('log', log, this.formControl.value)
+
     this.modelChange.emit(this.formControl.value ?? '')
     this.emitReferences()
   }
@@ -161,28 +195,6 @@ export class SelectCodebaseComponent implements OnInit {
     }
   }
 
-
-  @Output() referenceEmitter = new EventEmitter<CodeReferenceTableMember>();
-
-  private _blockReferenceEmit: boolean = false
-
-  /** Receives */
-  private _referenceFilter: BehaviorSubject<CodeReferenceTable> | undefined;
-  public get referenceFilter(): BehaviorSubject<CodeReferenceTable> | undefined {
-    return this._referenceFilter;
-  }
-  @Input()
-  public set referenceFilter(value: BehaviorSubject<CodeReferenceTable> | undefined) {
-    this._referenceFilter = value;
-    this.referenceFilter?.subscribe((ref) => {
-      this.filterChange(this.formControl.value)
-      this._blockReferenceEmit = true
-      // console.log(this.baseForm.attribute, " reference set validity")
-      this.formControl.updateValueAndValidity()
-      this._blockReferenceEmit = false
-    })
-  }
-
   codebaseReferenceValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!this.codeSet) {
@@ -197,14 +209,14 @@ export class SelectCodebaseComponent implements OnInit {
     };
   }
 
-
   clear() {
     this.formControl.setValue('');
+    this.modelChange.emit('')
     this.emitReferences()
   }
 
-  displayCode(codeKey: string): string {
-    if (codeKey && this.codeSet && this.codeSet[codeKey]) {
+  displayCode(codeKey: string | boolean): string {
+    if (typeof codeKey != 'boolean' && codeKey && this.codeSet && this.codeSet[codeKey]) {
       let code: Code = this.codeSet[codeKey]
       return code.label + ' (' + code.value + ')'
     } else if (this.baseForm.options) {
@@ -213,22 +225,13 @@ export class SelectCodebaseComponent implements OnInit {
         return option.display + ' (' + codeKey + ')'
       }
     }
-    return codeKey
-  }
-
-  @Input() overrideNoFieldsRequired: boolean = false
-  @Input() overrideAllFieldsRequired: boolean = false
-  isRequired(): 'true' | 'false' {
-    if (this.overrideNoFieldsRequired) {
-      return 'false'
-    } else if (this.overrideAllFieldsRequired) {
-      return 'true'
-    } else if (this.baseForm.required) {
-      return 'true'
+    if (typeof codeKey == 'boolean') {
+      return codeKey + ""
     } else {
-      return 'false'
+      return codeKey
     }
   }
+
 
   /**
    * On press enter key select first visible option
@@ -236,11 +239,10 @@ export class SelectCodebaseComponent implements OnInit {
   submit() {
     if (this.matAutoComplete.options && this.matAutoComplete.options.first) {
       this.model = this.matAutoComplete.options.first?.value ?? this.matAutoComplete.options.first?.value.code ?? this.model
+      this.valueChanged('enter')
+    } else {
+      this.valueChanged('enter')
     }
   }
-
-  // order() {
-  //   this.matAutoComplete.options.reduce.
-  // }
 
 }

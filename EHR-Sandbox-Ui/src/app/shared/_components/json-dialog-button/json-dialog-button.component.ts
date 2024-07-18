@@ -26,7 +26,6 @@ export class JsonDialogButtonComponent {
   constructor(private dialog: MatDialog) { }
 
   open(content: any) {
-    console.log("button", content)
     this.dialog.open(JsonDialogComponent, {
       maxWidth: '95vw',
       maxHeight: '98vh',

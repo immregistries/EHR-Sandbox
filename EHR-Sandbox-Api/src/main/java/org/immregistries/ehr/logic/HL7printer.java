@@ -407,13 +407,15 @@ public class HL7printer {
     public void createMSH(String messageType, String profileId, StringBuilder sb, Facility facility) {
         // TODO Check that this is accurate as previous implementation did not fit the MSH doc
         String sendingApp = "EHR Sandbox" + " v" + EhrApiApplication.VERSION;
-        String sendingFac;
+        String sendingFacIdentifier;
         if (Objects.nonNull(facility)) {
             Identifier identifier = resourceIdentificationService.facilityIdentifier(facility);
-            sendingFac = identifier.getValue();
+            sendingFacIdentifier = StringUtils.defaultIfBlank(identifier.getAssigner().getReference(), "") + "^"
+                    + StringUtils.defaultIfBlank(identifier.getValue(), "") + "^" +
+                    StringUtils.defaultIfBlank(identifier.getType().getText(), "");
 //        "^" + identifier.getValue() + "^L,M,N";
         } else {
-            sendingFac = "";
+            sendingFacIdentifier = "";
         }
         String receivingApp = "";
         String receivingFac = "";
@@ -434,7 +436,7 @@ public class HL7printer {
 //      MSH.3
         sb.append(sendingApp + "|");
 //      MSH.4
-        sb.append(sendingFac + "|");
+        sb.append(sendingFacIdentifier + "|");
 //      MSH.5
         sb.append(receivingApp + "|");
 //      MSH.6
@@ -456,7 +458,11 @@ public class HL7printer {
         sb.append("|");
         sb.append("|");
         sb.append("|");
-        sb.append(profileId + "^CDCPHINVS\r");
+        sb.append(profileId + "^CDCPHINVS");
+        if (Objects.nonNull(facility)) {
+            sb.append("|" + StringUtils.defaultIfBlank(facility.getNameDisplay(), ""));
+        }
+        sb.append("\r");
     }
 
 

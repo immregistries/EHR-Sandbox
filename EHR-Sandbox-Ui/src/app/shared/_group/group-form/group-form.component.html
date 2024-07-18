@@ -10,7 +10,7 @@
           </mat-card-header>
           <mat-card-content class="form-card-content">
             <ng-container class="form-card-content" *ngFor="let form of card.forms">
-              <app-card-form class="card-form high-density" [form]="form" [model]="ehrGroup[form.attribute]"
+              <app-card-form class="card-form high-density" [baseForm]="form" [model]="ehrGroup[form.attribute]"
                              (modelChange)="ehrGroup[form.attribute] = $event"></app-card-form>
             </ng-container>
           </mat-card-content>
@@ -39,7 +39,7 @@
             <!-- <div> -->
             <div class="characteristic-form-content" *ngFor="let characteristic of ehrGroup.ehrGroupCharacteristics">
               <div *ngFor="let form of characteristicForms">
-                <app-card-form class="card-form high-density" [form]="form" [model]="characteristic[form.attribute]"
+                <app-card-form class="card-form high-density" [baseForm]="form" [model]="characteristic[form.attribute]"
                                (modelChange)="characteristic[form.attribute] = $event"></app-card-form>
               </div>
             </div>

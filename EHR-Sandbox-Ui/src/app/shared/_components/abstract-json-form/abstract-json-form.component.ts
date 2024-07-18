@@ -18,11 +18,11 @@ export abstract class JsonFormComponent<T extends Object> {
 
     // this.txtArea.setSelectionRange(1, 10)
     // if (this.txtArea.selection)
-    if (this.matInput) {
-      console.log(this.matInput.focused, this.txtArea.selectionStart)
-      this.txtArea.selectionStart = 3
-      console.log(this.txtArea.selectionStart)
-    }
+    // if (this.matInput) {
+    //   console.log(this.matInput.focused, this.txtArea.selectionStart)
+    //   this.txtArea.selectionStart = 3
+    //   console.log(this.txtArea.selectionStart)
+    // }
     // if ()
     // this.txtArea.focus()
   }

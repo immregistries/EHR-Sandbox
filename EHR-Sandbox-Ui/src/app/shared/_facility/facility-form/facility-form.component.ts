@@ -76,9 +76,8 @@ export class FacilityFormComponent implements OnInit {
   }
 
   save() {
-    console.log("dialog", this._dialogRef)
-    // console.log("dialog", JSON.stringify(this._dialogRef))
     if (this.editionMode) {
+      this.facility.tenant = undefined // Bad Practice TODO find better fix
       this.facilityService.putFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
         next: (res: HttpResponse<Facility>) => {
           this.onSuccess(res)

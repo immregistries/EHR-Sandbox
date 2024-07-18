@@ -8,7 +8,7 @@
       </mat-card-header>
       <mat-card-content class="form-card-content">
         <ng-container *ngFor="let form of card.forms">
-          <app-card-form class="card-form high-density" [form]="form" [model]="model[form.attribute]"
+          <app-card-form class="card-form high-density" [baseForm]="form" [model]="model[form.attribute]"
                          (modelChange)="model[form.attribute] = $event" [referenceFilter]="references"></app-card-form>
         </ng-container>
       </mat-card-content>
