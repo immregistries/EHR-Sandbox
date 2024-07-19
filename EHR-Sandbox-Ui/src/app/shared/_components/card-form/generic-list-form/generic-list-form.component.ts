@@ -44,7 +44,7 @@ export class GenericListFormComponent<T> extends AbstractBaseFormComponent imple
     /**
      * Necessary to bypass type checking, as I did not find a way to specify that all fields are optional in generic type
      */
-    let newItem = JSON.parse(this.EMPTY_VALUE)
+    const newItem = JSON.parse(this.EMPTY_VALUE)
     if (!this._itemList) {
       this._itemList = []
     }
@@ -52,7 +52,7 @@ export class GenericListFormComponent<T> extends AbstractBaseFormComponent imple
       this._itemList.push(newItem)
       this.modelChange.emit(this.model)
     } else {
-      let lastValue = JSON.stringify(this._itemList[this._itemList.length - 1])
+      const lastValue = JSON.stringify(this._itemList[this._itemList.length - 1])
       // console.log(lastValue);
       if (lastValue.length > 3 && !(lastValue === this.EMPTY_VALUE)) {
         this._itemList.push(newItem)

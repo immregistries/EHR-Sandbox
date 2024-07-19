@@ -17,7 +17,6 @@ export class CardFormComponent extends AbstractBaseFormComponent {
    */
   @Input() referenceFilter!: BehaviorSubject<CodeReferenceTable>;
   @Output() referenceEmitter = new EventEmitter<CodeReferenceTableMember>();
-  @Input() lotNumberValid: boolean = true;
   @Input() baseForm!: BaseForm
 
   private _model!: any;

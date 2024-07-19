@@ -12,7 +12,7 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 })
 export class TenantFormComponent implements OnInit {
 
-  public tenant: Tenant = {id: -1}
+  public tenant: Tenant = { id: -1 }
   editionMode: boolean = false;
 
   @Output()
@@ -22,19 +22,19 @@ export class TenantFormComponent implements OnInit {
     private snackBarService: SnackBarService,
     @Optional() public _dialogRef?: MatDialogRef<TenantFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: { tenant?: Tenant }) {
-      if (data && data.tenant) {
-        this.tenant = data.tenant
-        this.editionMode = true
-      } else {
-        this.tenant = { id: -1 }
-      }
+    if (data && data.tenant) {
+      this.tenant = data.tenant
+      this.editionMode = true
+    } else {
+      this.tenant = { id: -1 }
     }
+  }
 
   ngOnInit(): void {
   }
 
   save() {
-    this.tenantService.postTenant( this.tenant).subscribe({
+    this.tenantService.postTenant(this.tenant).subscribe({
       next: (res: HttpResponse<Tenant>) => {
         if (res.body) {
           if (this._dialogRef && this._dialogRef.id) {
@@ -55,6 +55,15 @@ export class TenantFormComponent implements OnInit {
     this.tenantService.getRandom().subscribe((res) => {
       this.tenant = res
     })
+  }
+
+  append(flavor_name: string) {
+    if (!this.tenant.nameDisplay) {
+      this.tenant.nameDisplay = ''
+    }
+    if (!this.tenant.nameDisplay.endsWith(" " + flavor_name)) {
+      this.tenant.nameDisplay += ' ' + flavor_name
+    }
   }
 }
 

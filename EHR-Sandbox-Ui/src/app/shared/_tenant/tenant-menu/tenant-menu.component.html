@@ -1,7 +1,9 @@
 <app-hover-menu>
   <button trigger mat-raised-button class="button-protected" (click)="selectFirstOrCreate()"
           [color]="tenantService.getCurrentId() > 0 ? 'primary' : 'basic'">
-    {{(tenantService.getCurrentId() > 0)? ("Environment: " + tenantService.getCurrent().nameDisplay) : "Select
+    {{(tenantService.getCurrentId() > 0)? ("Environment: " + shortenedName() )
+    :
+    "Select
     Environment" }}
     <mat-icon>arrow_drop_down</mat-icon>
   </button>

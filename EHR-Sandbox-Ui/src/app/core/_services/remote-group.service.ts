@@ -22,7 +22,7 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private immunizationRegistryService: ImmunizationRegistryService) {
-      super(new BehaviorSubject<Group>({resourceType: "Group", type: "person", membership: "definitional"}))
+    super(new BehaviorSubject<Group>({ resourceType: "Group", type: "person", membership: "definitional" }))
   }
 
   readSample(): Observable<string> {
@@ -37,76 +37,75 @@ export class RemoteGroupService extends CurrentSelectedService<Group> {
       httpOptions);
   }
 
-  readGroups(): Observable<Group[]>{
+  readGroups(): Observable<Group[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
+    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0) {
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups`,
         httpOptions)
-          .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
+        .pipe(map((array: string[]) => { return array.map((json) => { return (JSON.parse(json) as Group) }) }));
     } else {
       return of([])
     }
   }
 
-  addMember(groupId:string, patientId: string): Observable<string>{
+  addMember(groupId: string, patientId: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    let params: HttpParams = new HttpParams()
-      .append("patientId", patientId)
-      .append("match",true)
-    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
+    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0) {
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/${groupId}/$member-add`, null,
         {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-          params: params
+          params: new HttpParams()
+            .append("patientId", patientId)
+            .append("match", true)
         }
-        )
+      )
     } else {
       return of("")
     }
   }
 
-  removeMember(groupId:string, patientId?: string, reference?: string, identifier?: Identifier): Observable<string>{
+  removeMember(groupId: string, patientId?: string, reference?: string, identifier?: Identifier): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
     let params: HttpParams = new HttpParams();
-    if(patientId) {
+    if (patientId) {
       params = params.append("patientId", patientId)
     }
     if (reference) {
-      params = params.append("reference",reference)
+      params = params.append("reference", reference)
     }
     if (identifier) {
-      params = params.append("identifier",JSON.stringify(identifier))
+      params = params.append("identifier", JSON.stringify(identifier))
     }
-    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0){
+    if (tenantId > 0 && facilityId > 0 && registryId && registryId > 0) {
       return this.http.post<string>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/${groupId}/$member-remove`,null,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/${groupId}/$member-remove`, null,
         {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
           params: params
         }
-        )
+      )
     } else {
       return of("")
     }
   }
 
-  triggerFetch(): Observable<Group[]>{
+  triggerFetch(): Observable<Group[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0  && registryId > 0){
+    if (tenantId > 0 && facilityId > 0 && registryId > 0) {
       return this.http.get<string[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/groups/$fetch`,
         httpOptions)
-          .pipe(map((array: string[]) => {return array.map((json) => { return (JSON.parse(json) as Group)})}));
+        .pipe(map((array: string[]) => { return array.map((json) => { return (JSON.parse(json) as Group) }) }));
     } else {
       return of([])
     }

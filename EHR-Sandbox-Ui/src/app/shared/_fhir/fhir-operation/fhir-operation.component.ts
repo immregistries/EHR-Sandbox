@@ -30,10 +30,10 @@ export class FhirOperationComponent implements OnInit {
   @Input()
   resourceId: string = ""
   // @Input()
-  parameters: {[name: string]: { value: string, type?: 'string' | 'date' | 'boolean'}} = {
-    "_type": { value: "Immunization", type: 'string'},
-    "_since": { value: "", type: 'date'},
-    ":mdm": { value: "false", type: 'string'},
+  parameters: { [name: string]: { value: string, type?: 'string' | 'date' | 'boolean' } } = {
+    "_type": { value: "Immunization", type: 'string' },
+    "_since": { value: "", type: 'date' },
+    ":mdm": { value: "false", type: 'string' },
   }
 
 
@@ -41,14 +41,13 @@ export class FhirOperationComponent implements OnInit {
   body: string = ""
 
   public requestUrl(): string {
-    let paramString = ""
     return "Request URI : /" + this.resourceType
       + this.as_path_variable(this.resourceId)
       + this.as_path_variable(this.operation)
       + this.parameter_string()
   }
 
-  private as_path_variable(pathVariable: string):string {
+  private as_path_variable(pathVariable: string): string {
     return pathVariable.length > 0 ? "/" + pathVariable : ""
   }
 
@@ -65,7 +64,7 @@ export class FhirOperationComponent implements OnInit {
         }
       }
     }
-     return "?" + paramString
+    return "?" + paramString
   }
 
 
@@ -77,7 +76,7 @@ export class FhirOperationComponent implements OnInit {
   }
 
   // Allows Date type casting in HTML template
-  asDate(val: any) : Date { return val; }
+  asDate(val: any): Date { return val; }
   formatDate(val: Date): string {
     return val.toISOString()
   }

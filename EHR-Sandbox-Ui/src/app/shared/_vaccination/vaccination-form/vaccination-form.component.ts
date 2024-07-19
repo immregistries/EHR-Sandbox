@@ -6,7 +6,7 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { NgForm } from '@angular/forms';
+import { FormGroup, NgForm } from '@angular/forms';
 import { randexp } from 'randexp';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
@@ -19,6 +19,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./vaccination-form.component.css']
 })
 export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestroy {
+  form!: FormGroup;
 
   private _vaccinationId = -1
   private _vaccineId = -1
@@ -84,7 +85,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   save(): void {
-    let formerUpdatedDate = this.vaccination.vaccine.updatedDate
+    const formerUpdatedDate = this.vaccination.vaccine.updatedDate
     this.vaccination.id = this._vaccinationId
     this.vaccination.patient = this.patientId
     this.vaccination.vaccine.id = this._vaccineId

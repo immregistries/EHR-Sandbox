@@ -13,7 +13,7 @@ export class VaccinationComparePipe implements PipeTransform {
   ]
 
   transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): {} {
-    let differences = this.recursiveComparison(value, args[0]);
+    const differences = this.recursiveComparison(value, args[0]);
     if (!differences) {
       return "MATCH"
     } else {
@@ -21,11 +21,11 @@ export class VaccinationComparePipe implements PipeTransform {
     }
   }
 
-  recursiveComparison(a: any, b: any) : ComparisonResult | any | null {
+  recursiveComparison(a: any, b: any): ComparisonResult | any | null {
     if (a === b) return null;
     if (a instanceof Date && b instanceof Date && (a.getTime() === b.getTime())) return null;
     if ((a === null || a === undefined) && (b === null || b === undefined)) return null;
-    if (a === null || a === undefined  || b === null || b === undefined) {
+    if (a === null || a === undefined || b === null || b === undefined) {
       return a
     }
     // if (a.prototype !== b.prototype) return false;
@@ -37,14 +37,14 @@ export class VaccinationComparePipe implements PipeTransform {
     }
     let result: ComparisonResult = {};
     for (const key in b) {
-      if (Object.prototype.hasOwnProperty.call(b, key) && !Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key) ) {
+      if (Object.prototype.hasOwnProperty.call(b, key) && !Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key)) {
         result[key] = b
       }
     }
     for (const key in a) {
-      if (Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key) ) {
+      if (Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key)) {
         if (Object.prototype.hasOwnProperty.call(b, key)) {
-          let next : ComparisonResult | any | null = this.recursiveComparison(a[key], b[key]);
+          let next: ComparisonResult | any | null = this.recursiveComparison(a[key], b[key]);
           if (next != null) {
             result[key] = next;
           }
