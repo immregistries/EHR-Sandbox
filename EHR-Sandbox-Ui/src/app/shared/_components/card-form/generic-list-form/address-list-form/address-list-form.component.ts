@@ -11,13 +11,13 @@ import { GenericListFormComponent } from '../generic-list-form.component';
 export class AddressListFormComponent extends GenericListFormComponent<EhrAddress> {
   override readonly EMPTY_VALUE: string = '{"value":""}';
   override readonly FORMS: GenericForm<EhrAddress>[] = [
-    { type: FormType.text, title: 'Line 1', attribute: 'addressLine1' },
-    { type: FormType.text, title: 'Line 2', attribute: 'addressLine2' },
-    { type: FormType.text, title: 'City', attribute: 'addressCity' },
-    { type: FormType.text, title: 'State', attribute: 'addressState' },
+    { type: FormType.text, title: 'Line 1', attributeName: 'addressLine1' },
+    { type: FormType.text, title: 'Line 2', attributeName: 'addressLine2' },
+    { type: FormType.text, title: 'City', attributeName: 'addressCity' },
+    { type: FormType.text, title: 'State', attributeName: 'addressState' },
 
-    { type: FormType.text, title: 'Zip code', attribute: 'addressZip' },
-    { type: FormType.text, title: 'County/Parish', attribute: 'addressCountyParish' },
-    { type: FormType.text, title: 'Country', attribute: 'addressCountry' },
+    { type: FormType.text, title: 'Zip code', attributeName: 'addressZip' },
+    { type: FormType.text, title: 'County/Parish', attributeName: 'addressCountyParish' },
+    { type: FormType.text, title: 'Country', attributeName: 'addressCountry' },
   ]
 }

@@ -2,8 +2,8 @@
   {{baseForm.title + (i + 1) + ':'}}
   <span *ngFor="let formItem of FORMS">
     <!-- When overriding, All fields required only applied to first value -->
-    <app-card-form class="card-form high-density" [baseForm]="formItem" [model]="item[formItem.attribute]"
-                   (modelChange)="item[formItem.attribute] = $event; modelChange.emit(model)"
+    <app-card-form class="card-form high-density" [baseForm]="formItem" [model]="item[formItem.attributeName]"
+                   (modelChange)="item[formItem.attributeName] = $event; modelChange.emit(model)"
                    [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                    [overrideAllFieldsRequired]="i === 0 ? overrideAllFieldsRequired : false"></app-card-form>
   </span>

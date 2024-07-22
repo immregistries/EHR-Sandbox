@@ -17,13 +17,13 @@ export class PhoneListFormComponent extends GenericListFormComponent<EhrPhoneNum
   }
 
   override readonly FORMS: GenericForm<EhrPhoneNumber>[] = [
-    { type: FormType.text, title: 'Phone number', attribute: 'number' },
+    { type: FormType.text, title: 'Phone number', attributeName: 'number' },
 
     {
-      type: FormType.code, title: 'Phone Use', attribute: 'use', codeMapLabel: 'TELECOMMUNICATION_USE'
+      type: FormType.code, title: 'Phone Use', attributeName: 'use', codeMapLabel: 'TELECOMMUNICATION_USE'
     },
     {
-      type: FormType.code, title: 'Phone type / Equipment', attribute: 'type', codeMapLabel: 'TELECOMMUNICATION_EQUIPMENT'
+      type: FormType.code, title: 'Phone type / Equipment', attributeName: 'type', codeMapLabel: 'TELECOMMUNICATION_EQUIPMENT'
     },
   ]
 

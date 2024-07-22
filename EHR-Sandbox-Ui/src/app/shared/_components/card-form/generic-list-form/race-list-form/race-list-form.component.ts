@@ -11,6 +11,6 @@ import FormType, { GenericForm } from 'src/app/core/_model/structure';
 export class RaceListFormComponent extends GenericListFormComponent<EhrRace> {
   override readonly EMPTY_VALUE: string = '{"value":""}';
   override readonly FORMS: GenericForm<EhrRace>[] = [
-    { type: FormType.code, title: 'Race', attribute: 'value', codeMapLabel: "PATIENT_RACE" },
+    { type: FormType.code, title: 'Race', attributeName: 'value', codeMapLabel: "PATIENT_RACE" },
   ]
 }

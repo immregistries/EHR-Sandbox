@@ -12,8 +12,8 @@
         </mat-card-header>
         <mat-card-content class="form-card-content">
           <ng-container *ngFor="let form of card.forms">
-            <app-card-form class="card-form high-density" [baseForm]="form" [model]="facility[form.attribute]"
-                           (modelChange)="facility[form.attribute] = $event"></app-card-form>
+            <app-card-form class="card-form high-density" [baseForm]="form" [model]="facility[form.attributeName]"
+                           (modelChange)="facility[form.attributeName] = $event"></app-card-form>
           </ng-container>
         </mat-card-content>
         <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">

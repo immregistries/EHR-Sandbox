@@ -15,21 +15,21 @@ export class GroupFormComponent {
   readonly formCards: FormCardGeneric<EhrGroup>[] = [
     {
       title: 'Name', cols: 1, rows: 1, forms: [
-        { type: FormType.text, title: 'name', attribute: 'name' },
-        { type: FormType.text, title: 'description', attribute: 'description' },
-        { type: FormType.text, title: 'type', attribute: 'type' },
-        { type: FormType.text, title: 'code', attribute: 'code' },
-        // {type: FormType.text, title: 'authority', attribute: ''},
+        { type: FormType.text, title: 'name', attributeName: 'name' },
+        { type: FormType.text, title: 'description', attributeName: 'description' },
+        { type: FormType.text, title: 'type', attributeName: 'type' },
+        { type: FormType.text, title: 'code', attributeName: 'code' },
+        // {type: FormType.text, title: 'authority', attributeName: ''},
       ]
     }
   ]
 
   readonly characteristicForms: GenericForm<EhrGroupCharacteristic>[] = [
-    { type: FormType.text, title: 'Kind System', attribute: 'codeSystem' },
-    { type: FormType.text, title: 'Kind Code', attribute: 'codeValue' },
-    { type: FormType.boolean, title: 'exclude', attribute: 'exclude' },
-    { type: FormType.text, title: 'Value', attribute: 'value' },
-    // {type: FormType.text, title: 'authority', attribute: ''},
+    { type: FormType.text, title: 'Kind System', attributeName: 'codeSystem' },
+    { type: FormType.text, title: 'Kind Code', attributeName: 'codeValue' },
+    { type: FormType.boolean, title: 'exclude', attributeName: 'exclude' },
+    { type: FormType.text, title: 'Value', attributeName: 'value' },
+    // {type: FormType.text, title: 'authority', attributeName: ''},
   ]
 
   @Input()

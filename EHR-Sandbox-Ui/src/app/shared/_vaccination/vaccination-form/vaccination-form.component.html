@@ -14,18 +14,20 @@
                 <!-- Vaccine forms -->
                 <ng-container *ngFor="let form of card.vaccineForms">
                   <app-card-form class="card-form high-density" [baseForm]="form"
-                                 [model]="vaccination.vaccine[form.attribute]"
-                                 (modelChange)="vaccination.vaccine[form.attribute] = $event"
+                                 [model]="vaccination.vaccine[form.attributeName]"
+                                 (modelChange)="vaccination.vaccine[form.attributeName] = $event"
                                  [referenceFilter]="references"
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
-                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"
+                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attributeName] : null"
                                  [overrideAllFieldsRequired]="allFieldsRequired()"></app-card-form>
                 </ng-container>
                 <ng-container *ngFor="let form of card.vaccinationForms">
-                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="vaccination[form.attribute]"
-                                 (modelChange)="vaccination[form.attribute] = $event" [referenceFilter]="references"
+                  <app-card-form class="card-form high-density" [baseForm]="form"
+                                 [model]="vaccination[form.attributeName]"
+                                 (modelChange)="vaccination[form.attributeName] = $event"
+                                 [referenceFilter]="references"
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
-                                 [compareTo]="compareTo? compareTo[form.attribute] : null"
+                                 [compareTo]="compareTo? compareTo[form.attributeName] : null"
                                  [overrideAllFieldsRequired]="allFieldsRequired()"></app-card-form>
                 </ng-container>
               </mat-card-content>
@@ -46,18 +48,20 @@
                 <!-- Vaccine forms -->
                 <ng-container *ngFor="let form of card.vaccineForms">
                   <app-card-form class="card-form high-density" [baseForm]="form"
-                                 [model]="vaccination.vaccine[form.attribute]"
-                                 (modelChange)="vaccination.vaccine[form.attribute] = $event"
+                                 [model]="vaccination.vaccine[form.attributeName]"
+                                 (modelChange)="vaccination.vaccine[form.attributeName] = $event"
                                  [referenceFilter]="references"
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
-                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attribute] : null"
+                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attributeName] : null"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
                 <ng-container *ngFor="let form of card.vaccinationForms">
-                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="vaccination[form.attribute]"
-                                 (modelChange)="vaccination[form.attribute] = $event" [referenceFilter]="references"
+                  <app-card-form class="card-form high-density" [baseForm]="form"
+                                 [model]="vaccination[form.attributeName]"
+                                 (modelChange)="vaccination[form.attributeName] = $event"
+                                 [referenceFilter]="references"
                                  (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
-                                 [compareTo]="compareTo? compareTo[form.attribute] : null"
+                                 [compareTo]="compareTo? compareTo[form.attributeName] : null"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>

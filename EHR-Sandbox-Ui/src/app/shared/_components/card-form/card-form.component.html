@@ -4,7 +4,7 @@
     <mat-form-field class="text-field" appearance="outline" [matTooltipDisabled]="!compareTo"
                     [matTooltip]="compareTo? 'Previously : ' + compareTo : ''">
       <mat-label>{{baseForm.title}}</mat-label>
-      <input matInput name="{{baseForm.attribute}}" type="{{baseForm.type}}" [(ngModel)]="model" [disabled]="false"
+      <input matInput name="{{baseForm.attributeName}}" type="{{baseForm.type}}" [(ngModel)]="model" [disabled]="false"
              [required]="isRequired()">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
       <!-- <mat-error>TEST ERROR 1</mat-error> -->
@@ -26,7 +26,7 @@
   <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="date-field" [matTooltipDisabled]="!compareTo"
                   [matTooltip]="compareTo? 'Previously : ' + (compareTo | date: 'MM/dd/yyyy') : ''">
     <mat-label>{{baseForm.title}}</mat-label>
-    <input matInput name="{{baseForm.attribute}}" [matDatepicker]="picker" [ngModel]="model"
+    <input matInput name="{{baseForm.attributeName}}" [matDatepicker]="picker" [ngModel]="model"
            (ngModelChange)="model = $event" [disabled]="baseForm.disabled ? true : false" [required]="isRequired()">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
@@ -35,15 +35,17 @@
 
   <div *ngSwitchCase="'short'">
     <mat-label class="short-label">{{baseForm.title}}</mat-label>
-    <input name="{{baseForm.attribute}}" class="short-text-field" [(ngModel)]="model" [matTooltipDisabled]="!compareTo"
-           [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
+    <input name="{{baseForm.attributeName}}" class="short-text-field" [(ngModel)]="model"
+           [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
+           [required]="isRequired()">
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
   </div>
 
   <div *ngSwitchCase="'yesNo'">
     <mat-label class="short-label">{{baseForm.title}}</mat-label>
-    <select [(ngModel)]="model" name="{{baseForm.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
-            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
+    <select [(ngModel)]="model" name="{{baseForm.attributeName}}" aria-label="Font Style"
+            [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
+            [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option value="Y">Y</option>
       <option value="N">N</option>
@@ -54,8 +56,9 @@
 
   <div *ngSwitchCase="'boolean'">
     <mat-label class="short-label">{{baseForm.title}}</mat-label>
-    <select [(ngModel)]="model" name="{{baseForm.attribute}}" aria-label="Font Style" [matTooltipDisabled]="!compareTo"
-            [matTooltip]="compareTo? 'Previously ' + compareTo : ''" [required]="isRequired()">
+    <select [(ngModel)]="model" name="{{baseForm.attributeName}}" aria-label="Font Style"
+            [matTooltipDisabled]="!compareTo" [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
+            [required]="isRequired()">
       <option [hidden]="!model" value=""></option>
       <option value="true">True</option>
       <option value="false">False</option>
@@ -65,7 +68,7 @@
 
   <div *ngSwitchCase="'select'">
     <mat-label class="short-label">{{baseForm.title}}</mat-label>
-    <select *ngIf="baseForm.options; else short" [(ngModel)]="model" name="{{baseForm.attribute}}"
+    <select *ngIf="baseForm.options; else short" [(ngModel)]="model" name="{{baseForm.attributeName}}"
             aria-label="Font Style" [matTooltipDisabled]="!compareTo"
             [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
             [required]="isRequired()">
@@ -74,7 +77,7 @@
     </select>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
     <ng-template #short>
-      <input name="{{baseForm.attribute}}" class="short-text-field" [(ngModel)]="model">
+      <input name="{{baseForm.attributeName}}" class="short-text-field" [(ngModel)]="model">
     </ng-template>
   </div>
 

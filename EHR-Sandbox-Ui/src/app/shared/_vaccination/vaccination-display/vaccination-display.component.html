@@ -10,11 +10,11 @@
         <!-- Vaccine forms -->
         <ng-container *ngFor="let form of card.vaccineForms">
           <app-card-display class="card-form high-density" [form]="form"
-            [model]="vaccinationEvent.vaccine[form.attribute]"></app-card-display>
+                            [model]="vaccinationEvent.vaccine[form.attributeName]"></app-card-display>
         </ng-container>
         <ng-container *ngFor="let form of card.vaccinationForms">
           <app-card-display class="card-form high-density" [form]="form"
-            [model]="vaccinationEvent[form.attribute]"></app-card-display>
+                            [model]="vaccinationEvent[form.attributeName]"></app-card-display>
         </ng-container>
       </mat-card-content>
     </mat-card>

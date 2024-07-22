@@ -40,23 +40,23 @@ export class ClinicianFormComponent implements OnInit {
   ngOnInit(): void {
     this.formCards = [{
       title: "Clinician Name", rows: 1, cols: 1, forms: [
-        { type: FormType.text, title: "Prefix", attribute: "namePrefix" },
+        { type: FormType.text, title: "Prefix", attributeName: "namePrefix" },
 
-        { type: FormType.text, title: "First name", attribute: "nameFirst" },
-        { type: FormType.text, title: "Middle name", attribute: "nameMiddle" },
-        { type: FormType.text, title: "Last name", attribute: "nameLast" },
-        { type: FormType.text, title: "Suffix", attribute: "nameSuffix" },
-        // { type: FormType.text, title: "Title", attribute: "title" }
+        { type: FormType.text, title: "First name", attributeName: "nameFirst" },
+        { type: FormType.text, title: "Middle name", attributeName: "nameMiddle" },
+        { type: FormType.text, title: "Last name", attributeName: "nameLast" },
+        { type: FormType.text, title: "Suffix", attributeName: "nameSuffix" },
+        // { type: FormType.text, title: "Title", attributeName: "title" }
       ]
     },
     {
       title: "Qualification", rows: 1, cols: 1, forms: [
-        { type: FormType.code, title: "Qualification", attribute: "qualification", options: this.codeMapsService.qualificationTypeCodeSystem.concept },
+        { type: FormType.code, title: "Qualification", attributeName: "qualification", options: this.codeMapsService.qualificationTypeCodeSystem.concept },
       ]
     },
     {
       title: "Identifiers", rows: 1, cols: 1, forms: [
-        { type: FormType.identifiers, title: "Identifier", attribute: "identifiers" },
+        { type: FormType.identifiers, title: "Identifier", attributeName: "identifiers" },
       ]
     }]
   }

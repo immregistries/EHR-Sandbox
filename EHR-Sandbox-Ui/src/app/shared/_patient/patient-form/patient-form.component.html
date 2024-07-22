@@ -12,8 +12,8 @@
               </mat-card-header>
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
-                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attribute]"
-                                 (modelChange)="patient[form.attribute] = $event"
+                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
+                                 (modelChange)="patient[form.attributeName] = $event"
                                  [referenceFilter]="references"></app-card-form>
                 </ng-container>
               </mat-card-content>
@@ -35,8 +35,8 @@
               </mat-card-header>
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
-                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attribute]"
-                                 (modelChange)="patient[form.attribute] = $event" [referenceFilter]="references"
+                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
+                                 (modelChange)="patient[form.attributeName] = $event" [referenceFilter]="references"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>

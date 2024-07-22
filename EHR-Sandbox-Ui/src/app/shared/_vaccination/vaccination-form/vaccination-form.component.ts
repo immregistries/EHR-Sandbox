@@ -196,72 +196,72 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   readonly VACCINATION_FORM_CARDS: FormCard[] = [
     {
       title: "Vaccine", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.date, title: "Administered", attribute: "administeredDate", required: true },
-        { type: FormType.text, title: "Amount Admininistered (mL)", attribute: "administeredAmount" },
+        { type: FormType.date, title: "Administered", attributeName: "administeredDate", required: true },
+        { type: FormType.text, title: "Amount Admininistered (mL)", attributeName: "administeredAmount" },
       ], vaccinationForms: [
-        // { type: FormType.boolean, title: "Primary Source", attribute: "primarySource" },
+        // { type: FormType.boolean, title: "Primary Source", attributeName: "primarySource" },
         {
-          type: FormType.select, title: "Record Nature", attribute: "primarySource", options: [{ code: true, display: 'New Administration' }, { code: false, display: 'Historical' },]
+          type: FormType.select, title: "Record Nature", attributeName: "primarySource", options: [{ code: true, display: 'New Administration' }, { code: false, display: 'Historical' },]
           // , tooltip: 'Wether the '
         },
       ]
     },
     {
       title: "Codes", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Vaccine type (CVX)", attribute: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true },
-        { type: FormType.code, title: "Unit of Use (NDC)", attribute: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
+        { type: FormType.code, title: "Vaccine type (CVX)", attributeName: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true },
+        { type: FormType.code, title: "Unit of Use (NDC)", attributeName: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
       ]
     },
     {
       title: "Request", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Information source", attribute: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", required: true },
-        { type: FormType.code, title: "Action code", attribute: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE" },
+        { type: FormType.code, title: "Information source", attributeName: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", required: true },
+        { type: FormType.code, title: "Action code", attributeName: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE" },
       ]
     },
     {
       title: "Lot", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Manifacturer (MVX)", attribute: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
-        { type: FormType.text, title: "Lot number", attribute: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN" },
-        { type: FormType.date, title: "Expiration date", attribute: "expirationDate" },
+        { type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
+        { type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN" },
+        { type: FormType.date, title: "Expiration date", attributeName: "expirationDate" },
       ]
     },
     {
       title: "Funding", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Source", attribute: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE" },
-        { type: FormType.code, title: "Financial status (Dose level accountability)", attribute: "financialStatus", codeMapLabel: "FINANCIAL_STATUS_CODE" },
+        { type: FormType.code, title: "Source", attributeName: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE" },
+        { type: FormType.code, title: "Financial status (Dose level accountability)", attributeName: "financialStatus", codeMapLabel: "FINANCIAL_STATUS_CODE" },
       ]
     },
     {
       title: "Information Statement (VIS)", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Information Statement Document", attribute: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE" },
-        { type: FormType.date, title: "Presented date", attribute: "informationStatementPresentedDate" },
-        { type: FormType.code, title: "Information Statement Cvx", attribute: "informationStatement", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
-        { type: FormType.date, title: "Published date", attribute: "informationStatementPublishedDate" },
+        { type: FormType.code, title: "Information Statement Document", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE" },
+        { type: FormType.date, title: "Presented date", attributeName: "informationStatementPresentedDate" },
+        { type: FormType.code, title: "Information Statement Cvx", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
+        { type: FormType.date, title: "Published date", attributeName: "informationStatementPublishedDate" },
       ], toolTips: "Preferred method for VXU reporting includes Document type and Presented Date, supporting deprecated method with CVX alongside Published and Presented Date"
     },
     {
       title: "Injection route", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Route", attribute: "bodyRoute", codeMapLabel: "BODY_ROUTE" },
-        { type: FormType.code, title: "Site", attribute: "bodySite", codeMapLabel: "BODY_SITE" },
+        { type: FormType.code, title: "Route", attributeName: "bodyRoute", codeMapLabel: "BODY_ROUTE" },
+        { type: FormType.code, title: "Site", attributeName: "bodySite", codeMapLabel: "BODY_SITE" },
       ]
     },
     {
       title: "Injection status", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Completion status", attribute: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION" },
-        { type: FormType.code, title: "Refusal reason", attribute: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL" },
+        { type: FormType.code, title: "Completion status", attributeName: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION" },
+        { type: FormType.code, title: "Refusal reason", attributeName: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL" },
       ]
     },
     {
       title: "Clinicians", rows: 1, cols: 1, vaccinationForms: [
-        { type: FormType.clinician, title: "Entering", attribute: "enteringClinician" },
-        { type: FormType.clinician, title: "Ordering", attribute: "orderingClinician" },
-        { type: FormType.clinician, title: "Administering", attribute: "administeringClinician" }
+        { type: FormType.clinician, title: "Entering", attributeName: "enteringClinician" },
+        { type: FormType.clinician, title: "Ordering", attributeName: "orderingClinician" },
+        { type: FormType.clinician, title: "Administering", attributeName: "administeringClinician" }
       ]
     },
     {
       title: "Update dates", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.date, title: "Creation date", attribute: "createdDate", disabled: true },
-        { type: FormType.date, title: "Updated date", attribute: "updatedDate", disabled: true },
+        { type: FormType.date, title: "Creation date", attributeName: "createdDate", disabled: true },
+        { type: FormType.date, title: "Updated date", attributeName: "updatedDate", disabled: true },
       ]
     },
   ]

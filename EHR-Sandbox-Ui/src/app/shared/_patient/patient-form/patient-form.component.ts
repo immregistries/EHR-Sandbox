@@ -96,49 +96,49 @@ export class PatientFormComponent {
   readonly PATIENT_FORM_CARDS: FormCardGeneric<EhrPatient>[] = [
     {
       title: 'Name', cols: 3, rows: 1, forms: [
-        { type: FormType.text, title: 'First name', attribute: 'nameFirst' },
-        { type: FormType.text, title: 'Middle name', attribute: 'nameMiddle' },
-        { type: FormType.text, title: 'Last name', attribute: 'nameLast' },
-        { type: FormType.text, title: 'Suffix', attribute: 'nameSuffix' },
-        { type: FormType.text, title: 'Mother maiden name', attribute: 'motherMaiden' },
+        { type: FormType.text, title: 'First name', attributeName: 'nameFirst' },
+        { type: FormType.text, title: 'Middle name', attributeName: 'nameMiddle' },
+        { type: FormType.text, title: 'Last name', attributeName: 'nameLast' },
+        { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
+        { type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden' },
       ]
     },
     {
       title: 'Medical Record Number', cols: 1, rows: 1, forms: [
-        // { type: FormType.text, title: 'Mrn Identifier', attribute: 'mrn' },
-        // { type: FormType.text, title: 'Mrn System', attribute: 'mrnSystem' },
-        { type: FormType.identifiers, title: 'Identifier', attribute: 'identifiers', defaultListEmptyValue: JSON.stringify({ value: "", system: "", type: "MR" }) },
+        // { type: FormType.text, title: 'Mrn Identifier', attributeName: 'mrn' },
+        // { type: FormType.text, title: 'Mrn System', attributeName: 'mrnSystem' },
+        { type: FormType.identifiers, title: 'Identifier', attributeName: 'identifiers', defaultListEmptyValue: JSON.stringify({ value: "", system: "", type: "MR" }) },
       ]
     },
     {
       title: 'Birth', cols: 1, rows: 1, forms: [
-        { type: FormType.date, title: 'Birth date', attribute: 'birthDate', required: true },
-        { type: FormType.yesNo, title: 'Multiple birth', attribute: 'birthFlag' },
-        { type: FormType.short, title: 'Order', attribute: 'birthOrder' },
+        { type: FormType.date, title: 'Birth date', attributeName: 'birthDate', required: true },
+        { type: FormType.yesNo, title: 'Multiple birth', attributeName: 'birthFlag' },
+        { type: FormType.short, title: 'Order', attributeName: 'birthOrder' },
       ]
     },
     {
       title: 'Identity', cols: 1, rows: 1, forms: [
-        { type: FormType.code, title: 'Sex', attribute: 'sex', codeMapLabel: "PATIENT_SEX" },
-        { type: FormType.code, title: 'Ethnicity', attribute: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
-        { type: FormType.races, title: 'Race', attribute: 'races', defaultListEmptyValue: '{}' },
+        { type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX" },
+        { type: FormType.code, title: 'Ethnicity', attributeName: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
+        { type: FormType.races, title: 'Race', attributeName: 'races', defaultListEmptyValue: '{}' },
       ]
     },
     {
       title: 'Address', cols: 1, rows: 2, forms: [
-        { type: FormType.addresses, title: 'Address', attribute: 'addresses', defaultListEmptyValue: '{}' },
+        { type: FormType.addresses, title: 'Address', attributeName: 'addresses', defaultListEmptyValue: '{}' },
       ]
     },
     {
       title: 'Contact', cols: 1, rows: 1, forms: [
-        { type: FormType.text, title: 'Email', attribute: 'email' },
-        { type: FormType.phoneNumbers, title: 'Phone', attribute: 'phones', defaultListEmptyValue: '{}' },
+        { type: FormType.text, title: 'Email', attributeName: 'email' },
+        { type: FormType.phoneNumbers, title: 'Phone', attributeName: 'phones', defaultListEmptyValue: '{}' },
       ]
     },
     {
       title: 'Death', cols: 1, rows: 1, forms: [
-        { type: FormType.yesNo, title: 'Death flag', attribute: 'deathFlag' },
-        { type: FormType.date, title: 'Death date', attribute: 'deathDate' },
+        { type: FormType.yesNo, title: 'Death flag', attributeName: 'deathFlag' },
+        { type: FormType.date, title: 'Death date', attributeName: 'deathDate' },
       ]
     },
     {
@@ -146,35 +146,35 @@ export class PatientFormComponent {
       toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
       forms: [
 
-        { type: FormType.code, title: 'Indicator', attribute: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
-        { type: FormType.date, title: 'Date', attribute: 'publicityIndicatorDate' },
+        { type: FormType.code, title: 'Indicator', attributeName: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
+        { type: FormType.date, title: 'Date', attributeName: 'publicityIndicatorDate' },
       ]
     },
     {
       title: 'Protection', cols: 1, rows: 1,
       toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
       forms: [
-        { type: FormType.yesNo, title: 'Indicator', attribute: 'protectionIndicator' },
-        { type: FormType.date, title: 'Date', attribute: 'protectionIndicatorDate' },
+        { type: FormType.yesNo, title: 'Indicator', attributeName: 'protectionIndicator' },
+        { type: FormType.date, title: 'Date', attributeName: 'protectionIndicatorDate' },
       ]
     },
     {
       title: 'Registry', cols: 1, rows: 1,
       toolTips: 'Current status of the patient in relation to the sending provider organization',
       forms: [
-        { type: FormType.code, title: 'Indicator', attribute: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS' },
-        { type: FormType.date, title: 'Date', attribute: 'registryStatusIndicatorDate' },
+        { type: FormType.code, title: 'Indicator', attributeName: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS' },
+        { type: FormType.date, title: 'Date', attributeName: 'registryStatusIndicatorDate' },
       ]
     },
 
     {
       title: 'Immunization Financial Status', cols: 1, rows: 1, forms: [
-        { type: FormType.code, title: 'Financial status', attribute: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
+        { type: FormType.code, title: 'Financial status', attributeName: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
       ]
     },
     {
       title: 'Next of Kin', cols: 3, rows: 1, forms: [
-        { type: FormType.nextOfKinRelationships, title: 'Next of kin', attribute: 'nextOfKinRelationships' },
+        { type: FormType.nextOfKinRelationships, title: 'Next of kin', attributeName: 'nextOfKinRelationships' },
       ]
     },
   ]

@@ -2,7 +2,7 @@
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{baseForm.title}}</mat-label>
     <input matInput [formControl]="formControl" [matAutocomplete]="auto" class="select-field-input"
-           name="{{baseForm.attribute}}" [required]="isRequired()">
+           name="{{baseForm.attributeName}}" [required]="isRequired()">
 
     <button matSuffix mat-icon-button *ngIf="formControl.value" (click)="clear()" type="button">
       <mat-icon>cancel</mat-icon>

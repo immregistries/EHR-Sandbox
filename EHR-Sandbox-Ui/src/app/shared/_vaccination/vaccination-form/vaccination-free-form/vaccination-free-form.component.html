@@ -8,18 +8,19 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <ng-container *ngFor="let form of card.vaccineForms" >
+          <ng-container *ngFor="let form of card.vaccineForms">
 
-            <mat-form-field  appearance="outline" class="text-field">
+            <mat-form-field appearance="outline" class="text-field">
               <mat-label>{{form.title}}</mat-label>
-              <input matInput  type="'text'" name="{{form.attribute}}" [(ngModel)]="vaccination.vaccine[form.attribute]">
+              <input matInput type="'text'" name="{{form.attributeName}}"
+                     [(ngModel)]="vaccination.vaccine[form.attributeName]">
             </mat-form-field>
           </ng-container>
-<!--
+          <!--
           <ng-container *ngFor="let form of card.clinicianForms">
             <mat-form-field  appearance="outline" class="text-field">
               <mat-label>{{form.title}}</mat-label>
-              <input matInput  type="'text" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attribute]">
+              <input matInput  type="'text" name="{{form.attribute}}" [(ngModel)]="vaccination[form.role][form.attributeName]">
             </mat-form-field>
           </ng-container> -->
 
