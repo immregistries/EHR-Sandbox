@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { EhrAddress, EhrRace } from 'src/app/core/_model/rest';
-import FormType, { GenericForm } from 'src/app/core/_model/structure';
+import FormType, { GenericForm } from 'src/app/core/_model/form-structure';
 import { GenericListFormComponent } from '../generic-list-form.component';
 
 @Component({

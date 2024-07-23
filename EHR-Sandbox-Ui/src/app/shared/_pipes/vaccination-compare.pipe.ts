@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import { ComparisonResult } from 'src/app/core/_model/structure';
+import { ComparisonResult } from 'src/app/core/_model/form-structure';
 
 @Pipe({
   name: 'vaccinationCompare'

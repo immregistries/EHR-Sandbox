@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
-import { Clinician } from 'src/app/core/_model/rest';
-import FormType, { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
 import { CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
+import FormType, { FormCardGeneric } from 'src/app/core/_model/form-structure';
+import { Clinician } from 'src/app/core/_model/rest';
 
 @Component({
   selector: 'app-clinician-form',

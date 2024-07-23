@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
+import { FormCard, FormCardGeneric } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-patient-free-form',

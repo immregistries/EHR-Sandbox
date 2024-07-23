@@ -13,8 +13,7 @@
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
                   <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
-                                 (modelChange)="patient[form.attributeName] = $event"
-                                 [referenceFilter]="references"></app-card-form>
+                                 (modelChange)="patient[form.attributeName] = $event"></app-card-form>
                 </ng-container>
               </mat-card-content>
               <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
@@ -36,7 +35,7 @@
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
                   <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
-                                 (modelChange)="patient[form.attributeName] = $event" [referenceFilter]="references"
+                                 (modelChange)="patient[form.attributeName] = $event"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>
@@ -55,7 +54,7 @@
       </mat-tab> -->
       <mat-tab label="Json">
         <!-- <app-patient-display [patient]="patient" [formCards]="PATIENT_FORM_CARDS"></app-patient-display> -->
-        <app-patient-json-form [model]="patient | json" (modelChange)="jsonChange($event)"></app-patient-json-form>
+        <app-patient-json-form [model]="patient | json" (modelChange)="patient = $event"></app-patient-json-form>
         <div>Native Json model, useful to copy and paste patient to different users, ID fields changes are ignored</div>
       </mat-tab>
     </mat-tab-group>

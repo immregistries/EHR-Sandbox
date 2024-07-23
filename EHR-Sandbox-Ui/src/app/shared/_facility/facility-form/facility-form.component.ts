@@ -1,9 +1,8 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility } from 'src/app/core/_model/rest';
-import FormType, { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
+import FormType, { FormCard, FormCardGeneric } from 'src/app/core/_model/form-structure';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';

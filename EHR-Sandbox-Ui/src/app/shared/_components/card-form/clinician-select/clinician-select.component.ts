@@ -7,7 +7,7 @@ import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { ClinicianFormComponent } from '../../../_clinician/clinician-form/clinician-form.component';
 import { CardFormComponent } from '../card-form.component';
-import { BaseForm } from 'src/app/core/_model/structure';
+import { BaseForm } from 'src/app/core/_model/form-structure';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
 

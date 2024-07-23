@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { EhrPhoneNumber } from 'src/app/core/_model/rest';
-import FormType, { GenericForm } from 'src/app/core/_model/structure';
+import FormType, { GenericForm } from 'src/app/core/_model/form-structure';
 import { GenericListFormComponent } from '../generic-list-form.component';
 
 @Component({

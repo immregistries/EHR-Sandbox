@@ -2,7 +2,7 @@
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{baseForm.title}}</mat-label>
     <input matInput [formControl]="formControl" [matAutocomplete]="auto" class="select-field-input"
-           name="{{baseForm.attributeName}}" [required]="isRequired()">
+           name="{{baseForm.attributeName}}">
 
     <button matSuffix mat-icon-button *ngIf="formControl.value" (click)="clear()" type="button">
       <mat-icon>cancel</mat-icon>
@@ -28,7 +28,8 @@
       {{formControl.errors['codeMapIssue']}}
     </mat-error>
     <ng-template #req>
-      <mat-error>required</mat-error>
+
+      <mat-error>required {{formControl.errors | json}}</mat-error>
     </ng-template>
 
   </mat-form-field>

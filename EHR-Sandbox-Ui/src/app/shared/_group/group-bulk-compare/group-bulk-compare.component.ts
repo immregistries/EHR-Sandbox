@@ -2,7 +2,7 @@ import { Component, Inject, Input, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { EhrGroup, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
-import { BulkImportStatus } from 'src/app/core/_model/structure';
+import { BulkImportStatus } from 'src/app/core/_model/form-structure';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';

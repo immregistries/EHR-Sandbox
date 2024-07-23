@@ -2,7 +2,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Inject, Input, Optional, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EhrGroup, EhrGroupCharacteristic, ImmunizationRegistry } from 'src/app/core/_model/rest';
-import FormType, { FormCard, FormCardGeneric, GenericForm } from 'src/app/core/_model/structure';
+import FormType, { FormCard, FormCardGeneric, GenericForm } from 'src/app/core/_model/form-structure';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 

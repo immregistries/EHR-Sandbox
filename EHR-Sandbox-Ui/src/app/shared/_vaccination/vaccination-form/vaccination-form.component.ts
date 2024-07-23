@@ -1,17 +1,17 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/structure';
 import { Code, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FormGroup, NgForm } from '@angular/forms';
+import { AbstractControl, FormGroup, NgForm, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { randexp } from 'randexp';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -58,7 +58,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   constructor(public codeMapsService: CodeMapsService,
     private snackBarService: SnackBarService,
     private vaccinationService: VaccinationService,
-    private vaccineComparePipe: VaccinationComparePipe,
+    vaccineComparePipe: VaccinationComparePipe,
     @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent, changePrimarySourceToFalse?: Boolean }) {
     if (data) {
@@ -124,7 +124,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  public references: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
+  public referenceTableObservable: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
   @ViewChild('vaccinationForm', { static: true }) vaccinationForm!: NgForm;
 
   public filteredCodeMapsOptions: { [key: string]: KeyValue<string, Code>[] } = {};
@@ -132,7 +132,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit() {
     this.formChangesSubscription = this.vaccinationForm.form.valueChanges.subscribe(x => {
-      this.references.next(this.references.getValue())
+      this.referenceTableObservable.next(this.referenceTableObservable.getValue())
     })
   }
 
@@ -144,41 +144,19 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     this.formChangesSubscription.unsubscribe();
   }
 
-  referencesChange(emitted: CodeReferenceTableMember, codeMapKey: string | undefined): void {
+  referenceTableChanges(emitted: CodeReferenceTableMember, codeMapKey: string | undefined): void {
     if (codeMapKey) {
-      let newRefList: { [key: string]: CodeReferenceTableMember } = JSON.parse(JSON.stringify(this.references.value))
+      let newRefList: { [key: string]: CodeReferenceTableMember } = JSON.parse(JSON.stringify(this.referenceTableObservable.value))
       if (emitted) {
         newRefList[codeMapKey] = emitted
-        this.checkLotNumberValidity(emitted.reference)
       } else {
         delete newRefList[codeMapKey]
       }
-      this.references.next(newRefList)
+      this.referenceTableObservable.next(newRefList)
+      this.updateLotHint();
     }
   }
 
-  public lotNumberValid: boolean = true
-  checkLotNumberValidity(reference: CodeReference): boolean {
-    let scanned = false
-    let regexFit = false
-    for (const ref of reference.linkTo) {
-      if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN") {
-        scanned = true
-        if (!this.vaccination.vaccine.lotNumber || this.vaccination.vaccine.lotNumber.length == 0) {
-          this.vaccination.vaccine.lotNumber = randexp(ref.value)
-          regexFit = true
-          break;
-        } else if (new RegExp(ref.value).test(this.vaccination.vaccine.lotNumber)) {
-          regexFit = true
-          break;
-        }
-      }
-    }
-    if (scanned && !regexFit) {
-      this.lotNumberValid = false
-    }
-    return this.lotNumberValid
-  }
 
   allFieldsRequired(): boolean {
     // if Not historical, all fields are required
@@ -192,6 +170,65 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       return false
     }
   }
+
+
+  private _lot_hint_value: string = '';
+  lotNumberHint = (value?: string): string => {
+    // this._produce_hint_value = false
+    // for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
+    //   const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, '  ')
+    //   if (exampleValidTemplate) {
+    //     return 'example: ' + randexp(exampleValidTemplate)
+    //   }
+    // }
+    // }
+    return this._lot_hint_value;
+  }
+
+  updateLotHint() {
+    for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
+      const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, '  ')
+      if (exampleValidTemplate) {
+        this._lot_hint_value = 'example: ' + randexp(exampleValidTemplate)
+      }
+    }
+  }
+
+
+  lotNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
+        const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, this.vaccination.vaccine.lotNumber)
+        if (exampleValidTemplate) {
+          return { customIssue: "'" + codeReferenceTableMember.value + "'" + ' template: ' + exampleValidTemplate + ' example: ' + randexp(exampleValidTemplate) }
+        }
+      }
+      return null;
+    };
+  }
+
+  /**
+   * returns a valid template example if no templates are valid
+   * @param reference
+   * @returns
+   */
+  invalidatingLotNumberTemplates(reference: CodeReference, lotNumber: string | undefined): string | undefined {
+    let latestScannedTemplate = undefined
+    if (!lotNumber || lotNumber.length == 0) {
+      return undefined;
+    }
+    for (const ref of reference.linkTo) {
+      if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN") {
+        latestScannedTemplate = ref.value
+        if (new RegExp(ref.value).test(lotNumber)) {
+          // Valid lotNumber
+          return undefined
+        }
+      }
+    }
+    return latestScannedTemplate
+  }
+
 
   readonly VACCINATION_FORM_CARDS: FormCard[] = [
     {
@@ -221,7 +258,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     {
       title: "Lot", rows: 1, cols: 2, vaccineForms: [
         { type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
-        { type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN" },
+        { type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN", customValidator: this.lotNumberValidator(), hintProducer: this.lotNumberHint },
         { type: FormType.date, title: "Expiration date", attributeName: "expirationDate" },
       ]
     },
@@ -265,5 +302,8 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
   ]
+
+
+
 
 }

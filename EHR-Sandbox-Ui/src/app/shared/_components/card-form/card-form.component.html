@@ -5,16 +5,28 @@
                     [matTooltip]="compareTo? 'Previously : ' + compareTo : ''">
       <mat-label>{{baseForm.title}}</mat-label>
       <input matInput name="{{baseForm.attributeName}}" type="{{baseForm.type}}" [(ngModel)]="model" [disabled]="false"
-             [required]="isRequired()">
+             [required]="isRequired()" [customValidator]="baseForm.customValidator" #valueCtrl="ngModel">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
-      <!-- <mat-error>TEST ERROR 1</mat-error> -->
+
+      <mat-hint align="start" *ngIf="baseForm.hintProducer"><strong>{{baseForm.hintProducer()}}</strong></mat-hint>
+      <mat-error *ngIf="valueCtrl.errors && valueCtrl.errors['customIssue']; else otherError">
+        {{valueCtrl.errors['customIssue']}}
+      </mat-error>
+      <ng-template #otherError>
+        <mat-error *ngIf="valueCtrl.errors && !valueCtrl.errors['required']; else requiredError">
+          {{valueCtrl.errors | json}}
+        </mat-error>
+        <ng-template #requiredError>
+          <mat-error>required</mat-error>
+        </ng-template>
+      </ng-template>
     </mat-form-field>
   </div>
 
   <app-select-codebase *ngSwitchCase="'code'" [model]="asString(model)" (modelChange)="model = $event"
-                       [baseForm]="baseForm" class="select-field" [referenceFilter]="referenceFilter"
-                       [compareTo]="compareTo"
-                       [overrideNoFieldsRequired]="overrideNoFieldsRequired"
+                       [baseForm]="baseForm" class="select-field"
+                       [referenceFilterTableObservable]="referenceFilterTableObservable"
+                       [compareTo]="compareTo" [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                        [overrideAllFieldsRequired]="overrideAllFieldsRequired"
                        (referenceEmitter)="referencesChange($event)"></app-select-codebase>
 

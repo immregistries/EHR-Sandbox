@@ -1,7 +1,7 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import { FormCard, FormCardGeneric } from 'src/app/core/_model/structure';
+import { FormCard, FormCardGeneric } from 'src/app/core/_model/form-structure';
 import { PatientService } from 'src/app/core/_services/patient.service';
 
 @Component({

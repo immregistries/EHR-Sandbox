@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { FormCard } from 'src/app/core/_model/form-structure';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
-import { FormCard } from 'src/app/core/_model/structure';
 
 @Component({
   selector: 'app-vaccination-free-form',

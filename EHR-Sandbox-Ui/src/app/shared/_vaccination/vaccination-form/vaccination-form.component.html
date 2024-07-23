@@ -16,17 +16,17 @@
                   <app-card-form class="card-form high-density" [baseForm]="form"
                                  [model]="vaccination.vaccine[form.attributeName]"
                                  (modelChange)="vaccination.vaccine[form.attributeName] = $event"
-                                 [referenceFilter]="references"
-                                 (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
-                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attributeName] : null"
+                                 [referenceFilterTableObservable]="referenceTableObservable"
+                                 (referenceTableMemberEmitter)="referenceTableChanges($event, form.codeMapLabel)"
+                                 [compareTo]="(compareTo && compareTo['vaccine'])? compareTo['vaccine'][form.attributeName] : null"
                                  [overrideAllFieldsRequired]="allFieldsRequired()"></app-card-form>
                 </ng-container>
                 <ng-container *ngFor="let form of card.vaccinationForms">
                   <app-card-form class="card-form high-density" [baseForm]="form"
                                  [model]="vaccination[form.attributeName]"
                                  (modelChange)="vaccination[form.attributeName] = $event"
-                                 [referenceFilter]="references"
-                                 (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
+                                 [referenceFilterTableObservable]="referenceTableObservable"
+                                 (referenceTableMemberEmitter)="referenceTableChanges($event, form.codeMapLabel)"
                                  [compareTo]="compareTo? compareTo[form.attributeName] : null"
                                  [overrideAllFieldsRequired]="allFieldsRequired()"></app-card-form>
                 </ng-container>
@@ -50,8 +50,8 @@
                   <app-card-form class="card-form high-density" [baseForm]="form"
                                  [model]="vaccination.vaccine[form.attributeName]"
                                  (modelChange)="vaccination.vaccine[form.attributeName] = $event"
-                                 [referenceFilter]="references"
-                                 (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
+                                 [referenceFilterTableObservable]="referenceTableObservable"
+                                 (referenceTableMemberEmitter)="referenceTableChanges($event, form.codeMapLabel)"
                                  [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attributeName] : null"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
@@ -59,8 +59,8 @@
                   <app-card-form class="card-form high-density" [baseForm]="form"
                                  [model]="vaccination[form.attributeName]"
                                  (modelChange)="vaccination[form.attributeName] = $event"
-                                 [referenceFilter]="references"
-                                 (referenceEmitter)="referencesChange($event, form.codeMapLabel)"
+                                 [referenceFilterTableObservable]="referenceTableObservable"
+                                 (referenceTableMemberEmitter)="referenceTableChanges($event, form.codeMapLabel)"
                                  [compareTo]="compareTo? compareTo[form.attributeName] : null"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>

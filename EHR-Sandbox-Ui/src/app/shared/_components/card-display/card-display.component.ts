@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { BaseForm } from 'src/app/core/_model/structure';
+import { BaseForm } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-card-display',

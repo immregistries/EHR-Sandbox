@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NextOfKinRelationship } from 'src/app/core/_model/rest';
-import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/structure';
+import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/form-structure';
 import { NextOfKinRelationshipListFormComponent } from './next-of-kin-relationship-list-form/next-of-kin-relationship-list-form.component';
 import { error } from 'console';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';

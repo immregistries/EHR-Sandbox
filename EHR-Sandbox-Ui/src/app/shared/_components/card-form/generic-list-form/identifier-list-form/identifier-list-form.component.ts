@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EhrIdentifier } from 'src/app/core/_model/rest';
-import FormType, { BaseFormOptionCodeSystemConcept, GenericForm } from 'src/app/core/_model/structure';
+import FormType, { BaseFormOptionCodeSystemConcept, GenericForm } from 'src/app/core/_model/form-structure';
 import { GenericListFormComponent } from '../generic-list-form.component';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { GenericListFormComponent } from '../generic-list-form.component';
 import { NextOfKinRelationship } from 'src/app/core/_model/rest';
-import FormType, { GenericForm } from 'src/app/core/_model/structure';
+import FormType, { GenericForm } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-next-of-kin-relationship-list-form',

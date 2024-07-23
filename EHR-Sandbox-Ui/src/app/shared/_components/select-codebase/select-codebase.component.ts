@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, NgForm, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/structure';
+import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/form-structure';
 import { Code, CodeSet, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { MatAutocomplete } from '@angular/material/autocomplete';
@@ -12,9 +12,9 @@ import { AbstractBaseFormComponent } from '../card-form/abstract-base-form/abstr
   templateUrl: './select-codebase.component.html',
   styleUrls: ['./select-codebase.component.css']
 })
-export class SelectCodebaseComponent extends AbstractBaseFormComponent implements OnInit {
+export class SelectCodebaseComponent extends AbstractBaseFormComponent implements OnInit, AfterViewInit {
   @ViewChild('selectCodebaseForm', { static: true })
-  selectClinicianForm!: NgForm;
+  ngForm!: NgForm;
   @ViewChild('auto')
   private matAutoComplete!: MatAutocomplete;
 
@@ -53,16 +53,15 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   private _blockReferenceEmit: boolean = false
   /** Receives */
   private _referenceFilter: BehaviorSubject<CodeReferenceTable> | undefined;
-  public get referenceFilter(): BehaviorSubject<CodeReferenceTable> | undefined {
+  public get referenceFilterTableObservable(): BehaviorSubject<CodeReferenceTable> | undefined {
     return this._referenceFilter;
   }
   @Input()
-  public set referenceFilter(value: BehaviorSubject<CodeReferenceTable> | undefined) {
+  public set referenceFilterTableObservable(value: BehaviorSubject<CodeReferenceTable> | undefined) {
     this._referenceFilter = value;
-    this.referenceFilter?.subscribe((ref) => {
+    this.referenceFilterTableObservable?.subscribe((ref) => {
       this.filterChange(this.formControl.value)
       this._blockReferenceEmit = true
-      // console.log(this.baseForm.attribute, " reference set validity")
       this.formControl.updateValueAndValidity()
       this._blockReferenceEmit = false
     })
@@ -73,21 +72,16 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   constructor(public codeMapsService: CodeMapsService) { super() }
 
   ngOnInit(): void {
-    this.formControl.addValidators(this.codebaseReferenceValidator())
     this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
-    this.filterChange(this.formControl.value)
+    this.formControl.addValidators(this.codebaseReferenceValidator())
+    this.formControl.addValidators(this.codebaseReferenceValidator())
     this.formControl.valueChanges.subscribe((value) => {
       this.filterChange(value)
-      // console.log(value)
-
-      // if (!this._blockReferenceEmit) {
-      //   console.log(value)
-      //   this.modelChange.emit(this.formControl.value ?? '')
-      // } else {
-      //   this._blockReferenceEmit = false
-
-      // }
     })
+  }
+
+  ngAfterViewInit() {
+
   }
 
 
@@ -141,12 +135,12 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   incompatibleReferences(option: Code): string | null {
     let scanned = false
     let included = false
-    if (this.referenceFilter) {
-      for (const codeMapType in this.referenceFilter.getValue()) {
+    if (this.referenceFilterTableObservable) {
+      for (const codeMapType in this.referenceFilterTableObservable.getValue()) {
         // Checking if option is referred to in the other codes selected
         scanned = false
         included = false
-        this.referenceFilter.getValue()[codeMapType].reference.linkTo.forEach((ref) => {
+        this.referenceFilterTableObservable.getValue()[codeMapType].reference.linkTo.forEach((ref) => {
           if (ref.codeset == this.baseForm.codeMapLabel) {
             scanned = true
             if (option.value == ref.value) {
@@ -155,7 +149,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
           }
         })
         if (scanned && !included) {
-          return 'Incompatible with ' + codeMapType + ' ' + this.referenceFilter.getValue()[codeMapType].value
+          return 'Incompatible with ' + codeMapType + ' ' + this.referenceFilterTableObservable.getValue()[codeMapType].value
         }
         // Scanning the options own references
         scanned = false
@@ -164,7 +158,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
           option.reference.linkTo.forEach((ref) => {
             if (ref.codeset == codeMapType) {
               scanned = true
-              if (this.referenceFilter?.getValue()[codeMapType].value == ref.value) {
+              if (this.referenceFilterTableObservable?.getValue()[codeMapType].value == ref.value) {
                 included = true
               }
             }

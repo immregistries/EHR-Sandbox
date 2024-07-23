@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BaseForm, ComparisonResult } from 'src/app/core/_model/structure';
-import { Code, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
-import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { BaseForm } from 'src/app/core/_model/form-structure';
+import { CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { AbstractBaseFormComponent } from './abstract-base-form/abstract-base-form.component';
+import { EhrFormControl } from 'src/app/core/_model/form-test';
+import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-card-form',
@@ -15,9 +16,20 @@ export class CardFormComponent extends AbstractBaseFormComponent {
   /**
    * solely for select-codebase components
    */
-  @Input() referenceFilter!: BehaviorSubject<CodeReferenceTable>;
-  @Output() referenceEmitter = new EventEmitter<CodeReferenceTableMember>();
+  @Input() referenceFilterTableObservable?: BehaviorSubject<CodeReferenceTable>;
+  @Output() referenceTableMemberEmitter = new EventEmitter<CodeReferenceTableMember>();
   @Input() baseForm!: BaseForm
+  private _ehrFormControl?: EhrFormControl<any>;
+  public get ehrFormControl(): EhrFormControl<any> | undefined {
+    return this._ehrFormControl;
+  }
+  @Input()
+  public set ehrFormControl(value: EhrFormControl<any> | undefined) {
+    this._ehrFormControl = value;
+    if (value) {
+      this.baseForm = value.genericForm
+    }
+  }
 
   private _model!: any;
   @Input()
@@ -33,40 +45,10 @@ export class CardFormComponent extends AbstractBaseFormComponent {
   @Input() compareTo?: string;
 
   referencesChange(emitted: CodeReferenceTableMember): void {
-    this.referenceEmitter.emit(emitted)
+    this.referenceTableMemberEmitter.emit(emitted)
   }
 
   @Input() overrideNoFieldsRequired: boolean = false
   @Input() overrideAllFieldsRequired: boolean = false
-
-
-  // lotNumberValidator(): ValidatorFn {
-  //   return (control: AbstractControl): ValidationErrors | null => {
-  //     if (!(this.form.attribute === 'lotNumber')) {
-  //       return null;
-  //     }
-  //     let scanned = false
-  //     let regexFit = false
-  //     Object.keys
-  //     this.referenceFilter.getValue()
-  //     for (const ref of this.referenceFilter.) {
-  //       if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN") {
-  //         scanned = true
-  //         if (!this.vaccination.vaccine.lotNumber || this.vaccination.vaccine.lotNumber.length == 0) {
-  //           this.vaccination.vaccine.lotNumber = randexp(ref.value)
-  //           regexFit = true
-  //           break;
-  //         } else if (new RegExp(ref.value).test(this.vaccination.vaccine.lotNumber)) {
-  //           regexFit = true
-  //           break;
-  //         }
-  //       }
-  //     }
-  //     if (scanned && !regexFit) {
-  //       return
-  //     }
-  //     return null;
-  //   };
-  // }
 
 }

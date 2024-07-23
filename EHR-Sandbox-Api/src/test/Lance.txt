@@ -1,0 +1,124 @@
+{
+  "id": "132",
+  "createdDate": "2024-07-18T22:42:32.001+00:00",
+  "updatedDate": "2024-07-18T22:43:14.822+00:00",
+  "birthDate": "2024-07-01T04:00:00.000+00:00",
+  "nameLast": "Duncan",
+  "nameFirst": "Lance",
+  "nameMiddle": "Gaige",
+  "nameSuffix": "Jr.",
+  "motherMaiden": "King",
+  "sex": "M",
+  "races": [
+    {
+      "value": "1002-5"
+    }
+  ],
+  "addresses": [
+    {
+      "addressLine1": "749 Evergreen Ter.",
+      "addressLine2": "Unit A",
+      "addressCity": "Springfield",
+      "addressState": "OR",
+      "addressZip": "97477",
+      "addressCountry": "USA",
+      "addressCountyParish": ""
+    }
+  ],
+  "phones": [
+    {
+      "number": "(541) 555-1111",
+      "type": "CP",
+      "use": "PRN"
+    }
+  ],
+  "email": "IIPMP@gmail.com",
+  "ethnicity": "2186-5",
+  "birthFlag": "N",
+  "birthOrder": "1",
+  "deathFlag": "",
+  "deathDate": null,
+  "publicityIndicator": "02",
+  "publicityIndicatorDate": null,
+  "protectionIndicator": "N",
+  "protectionIndicatorDate": null,
+  "registryStatusIndicator": "A",
+  "registryStatusIndicatorDate": null,
+  "financialStatus": "V04",
+  "nextOfKinRelationships": [
+    {
+      "nextOfKinRelationshipPK": {
+        "patientId": "132",
+        "nextOfKinId": "152"
+      },
+      "nextOfKin": {
+        "id": "152",
+        "birthDate": null,
+        "nameLast": "Duncan",
+        "nameFirst": "Ingrid",
+        "nameMiddle": "Stacy",
+        "nameSuffix": "",
+        "motherMaiden": "King",
+        "sex": "",
+        "race": "",
+        "addresses": [
+          {
+            "addressLine1": "749 Evergreen Ter.",
+            "addressLine2": "Unit A",
+            "addressCity": "Springfield",
+            "addressState": "OR",
+            "addressZip": "97477",
+            "addressCountry": "USA",
+            "addressCountyParish": ""
+          }
+        ],
+        "email": "IIPMP@gmail.com",
+        "ethnicity": "",
+        "phoneNumbers": []
+      },
+      "relationshipKind": "MTH"
+    },
+    {
+      "nextOfKinRelationshipPK": {
+        "patientId": "132",
+        "nextOfKinId": "153"
+      },
+      "nextOfKin": {
+        "id": "153",
+        "birthDate": null,
+        "nameLast": "Duncan",
+        "nameFirst": "Simon",
+        "nameMiddle": "Isaiah",
+        "nameSuffix": "Sr.",
+        "motherMaiden": "",
+        "sex": "",
+        "race": "",
+        "addresses": [
+          {
+            "addressLine1": "749 Evergreen Ter.",
+            "addressLine2": "Unit A",
+            "addressCity": "Springfield",
+            "addressState": "OR",
+            "addressZip": "97477",
+            "addressCountry": "USA",
+            "addressCountyParish": ""
+          }
+        ],
+        "email": "",
+        "ethnicity": "",
+        "phoneNumbers": []
+      },
+      "relationshipKind": "FTH"
+    }
+  ],
+  "feedbacks": [],
+  "identifiers": [
+    {
+      "system": "",
+      "value": "1111",
+      "type": "MR",
+      "assignerReference": null
+    }
+  ],
+  "groupNames": []
+}

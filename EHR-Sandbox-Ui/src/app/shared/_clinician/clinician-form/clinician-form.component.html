@@ -10,7 +10,7 @@
         <ng-container *ngFor="let form of card.forms">
           <app-card-form class="card-form high-density" [baseForm]="form" [model]="model[form.attributeName]"
                          (modelChange)="model[form.attributeName] = $event"
-                         [referenceFilter]="references"></app-card-form>
+                         [referenceFilterTableObservable]="references"></app-card-form>
         </ng-container>
       </mat-card-content>
     </mat-card>

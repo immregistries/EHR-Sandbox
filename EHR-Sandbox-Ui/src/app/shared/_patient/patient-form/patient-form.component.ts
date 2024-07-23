@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import FormType, { FormCardGeneric } from 'src/app/core/_model/structure';
 import { CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { BehaviorSubject } from 'rxjs';
@@ -8,6 +7,7 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
+import FormType, { FormCardGeneric } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-patient-form',
@@ -27,11 +27,6 @@ export class PatientFormComponent {
 
   isEditionMode: boolean = false;
   populate = false
-
-  /**
-   * Currently unusused, just initialised
-   */
-  public references: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
 
   constructor(private patientService: PatientService,
     private facilityService: FacilityService,

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EhrGroup } from 'src/app/core/_model/rest';
-import { BulkImportStatus } from 'src/app/core/_model/structure';
+import { BulkImportStatus } from 'src/app/core/_model/form-structure';
 import { GroupService } from 'src/app/core/_services/group.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogComponent } from '../../_components/json-dialog/json-dialog.component';
@@ -25,7 +25,7 @@ export class GroupBulkCardComponent {
 
   importStatus?: BulkImportStatus = {};
 
-  constructor(private groupService: GroupService, private snackBarService: SnackBarService, private dialog: MatDialog) {}
+  constructor(private groupService: GroupService, private snackBarService: SnackBarService, private dialog: MatDialog) { }
 
   kickoff() {
     if (this.group?.id && this.group.immunizationRegistry) {
@@ -74,7 +74,7 @@ export class GroupBulkCardComponent {
       height: 'fit-content',
       width: '100%',
       // panelClass: 'dialog-without-bar',
-      data: {ehrGroup: this.group, bulkImportStatus: this.importStatus}
+      data: { ehrGroup: this.group, bulkImportStatus: this.importStatus }
     })
   }
 }
