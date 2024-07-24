@@ -74,7 +74,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   ngOnInit(): void {
     this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
     this.formControl.addValidators(this.codebaseReferenceValidator())
-    this.formControl.addValidators(this.codebaseReferenceValidator())
+    this.filterChange('')
     this.formControl.valueChanges.subscribe((value) => {
       this.filterChange(value)
     })
@@ -174,7 +174,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   }
 
   valueChanged(log?: string) {
-    console.log('log', log, this.formControl.value)
+    // console.log('log', log, this.formControl.value)
     this.modelChange.emit(this.formControl.value ?? '')
     this.emitReferences()
   }

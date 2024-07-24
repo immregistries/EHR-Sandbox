@@ -187,9 +187,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   updateLotHint() {
     for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
-      const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, '  ')
+      const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, ' ')
       if (exampleValidTemplate) {
-        this._lot_hint_value = 'example: ' + randexp(exampleValidTemplate)
+        this._lot_hint_value = ' example: ' + randexp(exampleValidTemplate)
       }
     }
   }
@@ -197,10 +197,18 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   lotNumberValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      // return { customIssue: control.value }
+      // console.log("lotnumber 3", this.vaccination.vaccine.lotNumber, exampleValidTemplate)
+      if (!control.value || control.value.length == 0) {
+        return null
+      }
       for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
-        const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, this.vaccination.vaccine.lotNumber)
+        let exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, this.vaccination.vaccine.lotNumber)
+        // return { customIssue: "oh" }
+
         if (exampleValidTemplate) {
-          return { customIssue: "'" + codeReferenceTableMember.value + "'" + ' template: ' + exampleValidTemplate + ' example: ' + randexp(exampleValidTemplate) }
+
+          return { customIssue: "'" + control.value + " " + codeReferenceTableMember.value + "'" + ' template: ' + exampleValidTemplate + this._lot_hint_value }
         }
       }
       return null;
@@ -214,7 +222,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
    */
   invalidatingLotNumberTemplates(reference: CodeReference, lotNumber: string | undefined): string | undefined {
     let latestScannedTemplate = undefined
-    if (!lotNumber || lotNumber.length == 0) {
+    if (!lotNumber) {
       return undefined;
     }
     for (const ref of reference.linkTo) {
