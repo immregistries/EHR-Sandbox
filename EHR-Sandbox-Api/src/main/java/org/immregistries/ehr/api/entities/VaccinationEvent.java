@@ -64,7 +64,7 @@ public class VaccinationEvent extends EhrEntity {
     private Facility administeringFacility;
 
     @Column(name = "primary_source")
-    private boolean primarySource;
+    private Boolean primarySource;
     @OneToMany(mappedBy = "vaccinationEvent")
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     @NotAudited
@@ -143,11 +143,11 @@ public class VaccinationEvent extends EhrEntity {
         this.id = id;
     }
 
-    public boolean isPrimarySource() {
+    public Boolean getPrimarySource() {
         return primarySource;
     }
 
-    public void setPrimarySource(boolean primarySource) {
+    public void setPrimarySource(Boolean primarySource) {
         this.primarySource = primarySource;
     }
 

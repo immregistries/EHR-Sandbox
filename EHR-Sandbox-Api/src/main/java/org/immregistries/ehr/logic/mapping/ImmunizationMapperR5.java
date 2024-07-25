@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Maps the Database with FHIR for the immunization resources
@@ -51,7 +52,9 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
         Vaccine vaccine = vaccinationEvent.getVaccine();
         Facility facility = vaccinationEvent.getAdministeringFacility();
         Immunization i = new Immunization();
-        i.setPrimarySource(vaccinationEvent.isPrimarySource());
+        if (Objects.nonNull(vaccinationEvent.getPrimarySource())) {
+            i.setPrimarySource(vaccinationEvent.getPrimarySource());
+        }
 
         EhrIdentifier mrnIdentifier = vaccinationEvent.getPatient().getMrnEhrIdentifier();
         if (mrnIdentifier != null) {
@@ -65,6 +68,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
             i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
         }
         i.setExpirationDate(vaccine.getExpirationDate());
+        i.setStatus(Immunization.ImmunizationStatusCodes.COMPLETED);
         if (vaccine.getActionCode().equals("D")) {
             i.setStatus(Immunization.ImmunizationStatusCodes.ENTEREDINERROR);
         } else {
@@ -79,7 +83,8 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                     i.setStatus(Immunization.ImmunizationStatusCodes.NOTDONE);
                     break;
                 }
-                case "": {
+                case "":
+                default: {
                     i.setStatus(Immunization.ImmunizationStatusCodes.NULL);
                     break;
                 }

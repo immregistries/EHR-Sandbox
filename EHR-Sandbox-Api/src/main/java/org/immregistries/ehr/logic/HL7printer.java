@@ -82,20 +82,21 @@ public class HL7printer {
                 {
                     // RXA-6
                     sb.append("|");
-                    double adminAmount = 0.0;
-                    if (!vaccine.getAdministeredAmount().equals("")) {
-                        try {
-                            adminAmount = Double.parseDouble(vaccine.getAdministeredAmount());
-                        } catch (NumberFormatException nfe) {
-                            adminAmount = 0.0;
-                        }
-                    }
-                    if (adminAmount > 0) {
-                        sb.append(adminAmount);
-                    }
+                    sb.append(StringUtils.defaultIfBlank(vaccine.getAdministeredAmount(), ""));
+//                    double adminAmount = 0.0;
+//                    if (!vaccine.getAdministeredAmount().equals("")) {
+//                        try {
+//                            adminAmount = Double.parseDouble(vaccine.getAdministeredAmount());
+//                        } catch (NumberFormatException nfe) {
+//                            adminAmount = 0.0;
+//                        }
+//                    }
+//                    if (adminAmount > 0) {
+//                        sb.append(adminAmount);
+//                    }
                     // RXA-7
                     sb.append("|");
-                    if (adminAmount > 0) {
+                    if (StringUtils.isNotBlank(vaccine.getInformationStatement())) {
                         sb.append("mL^milliliters^UCUM");
                     }
                 }
@@ -106,8 +107,7 @@ public class HL7printer {
                 {
                     Code informationCode = null;
                     if (vaccine.getInformationSource() != null) {
-                        informationCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_INFORMATION_SOURCE,
-                                vaccine.getInformationSource());
+                        informationCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource());
                     }
                     if (informationCode != null) {
                         printCode(informationCode, "NIP001", sb);
@@ -221,7 +221,7 @@ public class HL7printer {
                     String valueTable = "cdcgs1vis";
                     printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_VIS_DOC_TYPE, valueTable, "");
                 } else {
-                    {
+                    if (StringUtils.isNotBlank(vaccine.getInformationStatementCvx())) {
                         obxSetId++;
                         String loinc = "30956-7";
                         String loincLabel = "Vaccine type";

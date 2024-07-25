@@ -71,7 +71,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         if (data.comparedVaccination) {
           this.compareTo = vaccineComparePipe.transform(this.vaccination, data.comparedVaccination)
         }
-        if (data.changePrimarySourceToFalse) {
+        if (data.changePrimarySourceToFalse === true) {
           this.vaccination.primarySource = false;
         }
       }
@@ -237,7 +237,6 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         { type: FormType.date, title: "Administered", attributeName: "administeredDate", required: true },
         { type: FormType.text, title: "Amount Admininistered (mL)", attributeName: "administeredAmount" },
       ], vaccinationForms: [
-        // { type: FormType.boolean, title: "Primary Source", attributeName: "primarySource" },
         {
           type: FormType.select, title: "Record Nature", attributeName: "primarySource", options: [{ code: true, display: 'New Administration' }, { code: false, display: 'Historical' },]
           // , tooltip: 'Wether the '

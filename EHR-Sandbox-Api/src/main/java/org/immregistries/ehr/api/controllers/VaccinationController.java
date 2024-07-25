@@ -82,6 +82,7 @@ public class VaccinationController {
                                                         @PathVariable() Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
+        logger.info("pm srouce {}", vaccination.getPrimarySource());
         return postVaccinationEvents(tenantRepository.findById(tenantId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
     }
 

@@ -85,7 +85,7 @@
             aria-label="Font Style" [matTooltipDisabled]="!compareTo"
             [matTooltip]="compareTo? 'Previously ' + compareTo : ''"
             [required]="isRequired()">
-      <option [hidden]="model == undefined" value=""></option>
+      <option [hidden]="model == undefined" value="null"></option>
       <option *ngFor="let option of baseForm.options" value="{{option.code}}">{{option.display ?? option.code}}</option>
     </select>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
