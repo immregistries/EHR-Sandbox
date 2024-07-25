@@ -19,15 +19,14 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
   styleUrls: ['./feedback-table.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
-export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements  OnInit,AfterViewInit {
+export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements OnInit, AfterViewInit {
   // dataSource = new MatTableDataSource<Feedback>([]);
-  expandedElement: Feedback | null = null;
 
   @Input() facility: Facility | null = null;
   private _patient?: EhrPatient | undefined;
@@ -74,17 +73,17 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     private immunizationRegistryService: ImmunizationRegistryService,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
 
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patient: EhrPatient, vaccination: VaccinationEvent}
-    ) {
-      super()
-      this.allow_create = false
-      if (data?.patient){
-        this.patient = data.patient;
-      }
-      if (data.vaccination){
-        this.vaccination = data.vaccination;
-      }
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent }
+  ) {
+    super()
+    this.allow_create = false
+    if (data?.patient) {
+      this.patient = data.patient;
     }
+    if (data.vaccination) {
+      this.vaccination = data.vaccination;
+    }
+  }
 
   ngOnInit(): void {
     this.refreshColumns()
@@ -132,29 +131,29 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
 
 
 
-  openPatient(patient: EhrPatient | number){
+  openPatient(patient: EhrPatient | number) {
     const dialogRef = this.dialog.open(PatientDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patient: patient},
+      data: { patient: patient },
     });
   }
 
-  openVaccination(vaccination: VaccinationEvent | number){
+  openVaccination(vaccination: VaccinationEvent | number) {
     const dialogRef = this.dialog.open(VaccinationDashboardComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {vaccination: vaccination},
+      data: { vaccination: vaccination },
     });
   }
 
-  remove(element: Feedback){
+  remove(element: Feedback) {
 
   }
 

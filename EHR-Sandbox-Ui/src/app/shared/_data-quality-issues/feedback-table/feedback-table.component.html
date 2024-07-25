@@ -5,61 +5,60 @@
 </div>
 <div class="table-container mat-elevation-z8">
   <div>
-    <table mat-table
-          [dataSource]="dataSource" multiTemplateDataRows
-          class="mat-elevation-z8">
-      <ng-container matColumnDef="severity" >
+    <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+      <ng-container matColumnDef="severity">
         <th mat-header-cell *matHeaderCellDef>Severity</th>
-        <td mat-cell *matCellDef="let element"> {{element.severity | textShorten: 12 | uppercase}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.severity | textShorten: 12 | uppercase}}</td>
       </ng-container>
-      <ng-container matColumnDef="code" >
+      <ng-container matColumnDef="code">
         <th mat-header-cell *matHeaderCellDef>Code</th>
-        <td mat-cell *matCellDef="let element"> {{element.code | textShorten: 12 | uppercase}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.code | textShorten: 12 | uppercase}}</td>
       </ng-container>
-      <ng-container matColumnDef="patient" >
+      <ng-container matColumnDef="patient">
         <th mat-header-cell *matHeaderCellDef>Patient</th>
         <td mat-cell *matCellDef="let element">
-          <span *ngIf="element.patient" (click)="openPatient(element.patient); $event.stopPropagation();" class="button-wrapper">
+          <span *ngIf="element.patient" (click)="openPatient(element.patient); $event.stopPropagation();"
+                class="button-wrapper">
             <span class="button-label">{{element.patient.nameLast ?? element.patient}}</span>
-            <button mat-icon-button color="primary"
-                matTooltip="Open Patient Dashboard">
+            <button mat-icon-button color="primary" matTooltip="Open Patient Dashboard">
               <mat-icon>open_in_new</mat-icon>
             </button>
           </span>
         </td>
       </ng-container>
-      <ng-container matColumnDef="vaccinationEvent" >
+      <ng-container matColumnDef="vaccinationEvent">
         <th mat-header-cell *matHeaderCellDef>Vaccination</th>
         <td mat-cell *matCellDef="let element">
-          <span *ngIf="element.vaccinationEvent" (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();" class="button-wrapper">
+          <span *ngIf="element.vaccinationEvent"
+                (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();" class="button-wrapper">
             <span class="button-label">
-              {{element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode : element.vaccinationEvent}}
+              {{element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode :
+              element.vaccinationEvent}}
             </span>
-            <button mat-icon-button color="primary"
-                matTooltip="Open Vaccination Dashboard">
+            <button mat-icon-button color="primary" matTooltip="Open Vaccination Dashboard">
               <mat-icon>open_in_new</mat-icon>
             </button>
           </span>
         </td>
       </ng-container>
-      <ng-container matColumnDef="timestamp" >
+      <ng-container matColumnDef="timestamp">
         <th mat-header-cell *matHeaderCellDef>Date</th>
-        <td mat-cell *matCellDef="let element"> {{element.timestamp | date: 'yyyy-MM-dd'}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.timestamp | date: 'yyyy-MM-dd'}}</td>
       </ng-container>
-      <ng-container matColumnDef="iis" >
+      <ng-container matColumnDef="iis">
         <th mat-header-cell *matHeaderCellDef>IIS</th>
-        <td mat-cell *matCellDef="let element"> {{registryName(element.iis)}} </td>
+        <td mat-cell *matCellDef="let element"> {{registryName(element.iis)}}</td>
       </ng-container>
-      <ng-container matColumnDef="content" >
+      <ng-container matColumnDef="content">
         <th mat-header-cell *matHeaderCellDef>Content</th>
-        <td mat-cell *matCellDef="let element"> {{element.content | textShorten: 10}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.content | textShorten: 10}}</td>
       </ng-container>
 
 
       <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
       <ng-container matColumnDef="expandedDetail">
         <td mat-cell *matCellDef="let element" [attr.colspan]="columns.length">
-          <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+          <div class="element-detail" [@detailExpand]="element == selectedElement ? 'expanded' : 'collapsed'">
             <table>
               <tr>
                 <th>Content</th>
@@ -75,11 +74,9 @@
       </ng-container>
 
 
-      <tr mat-header-row *matHeaderRowDef="columns;" ></tr>
-      <tr mat-row *matRowDef="let element; columns: columns;"
-          class="element-row"
-          [class.expanded-row]="expandedElement === element"
-          (click)="onSelection(element)">
+      <tr mat-header-row *matHeaderRowDef="columns;"></tr>
+      <tr mat-row *matRowDef="let element; columns: columns;" class="element-row"
+          [class.expanded-row]="selectedElement === element" (click)="onSelection(element)">
       </tr>
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
     </table>

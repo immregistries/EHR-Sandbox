@@ -68,7 +68,6 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
             i.getDoseQuantity().setValue(new BigDecimal(vaccine.getAdministeredAmount()));
         }
         i.setExpirationDate(vaccine.getExpirationDate());
-        i.setStatus(Immunization.ImmunizationStatusCodes.COMPLETED);
         if (vaccine.getActionCode().equals("D")) {
             i.setStatus(Immunization.ImmunizationStatusCodes.ENTEREDINERROR);
         } else {
@@ -85,7 +84,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                 }
                 case "":
                 default: {
-                    i.setStatus(Immunization.ImmunizationStatusCodes.NULL);
+                    i.setStatus(null);
                     break;
                 }
             }
