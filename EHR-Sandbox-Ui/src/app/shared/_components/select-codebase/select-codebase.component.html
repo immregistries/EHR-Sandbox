@@ -1,10 +1,10 @@
 <form #selectCodebaseForm="ngForm" (submit)="submit()">
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{baseForm.title}}</mat-label>
-    <input matInput [formControl]="formControl" [matAutocomplete]="auto" class="select-field-input"
-           name="{{baseForm.attributeName}}">
+    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field-input"
+           name="{{baseForm.attributeName}}" #formeControl="ngModel" [customValidator]="codebaseReferenceValidator">
 
-    <button matSuffix mat-icon-button *ngIf="formControl.value" (click)="clear()" type="button">
+    <button matSuffix mat-icon-button *ngIf="formeControl.value" (click)="clear()" type="button">
       <mat-icon>cancel</mat-icon>
     </button>
 
@@ -24,12 +24,12 @@
       </mat-option>
     </mat-autocomplete>
 
-    <mat-error *ngIf="formControl.errors && formControl.errors['codeMapIssue']; else req">
-      {{formControl.errors['codeMapIssue']}}
+    <mat-error *ngIf="formeControl.errors && formeControl.errors['codeMapIssue']; else req">
+      {{formeControl.errors['codeMapIssue']}}
     </mat-error>
     <ng-template #req>
 
-      <mat-error>required {{formControl.errors | json}}</mat-error>
+      <mat-error>required {{formeControl.errors | json}}</mat-error>
     </ng-template>
 
   </mat-form-field>

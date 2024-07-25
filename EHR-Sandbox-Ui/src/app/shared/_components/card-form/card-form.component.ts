@@ -3,8 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { BaseForm } from 'src/app/core/_model/form-structure';
 import { CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { AbstractBaseFormComponent } from './abstract-base-form/abstract-base-form.component';
-import { EhrFormControl } from 'src/app/core/_model/form-test';
-import { ValidatorFn, AbstractControl, ValidationErrors, FormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-card-form',
@@ -54,9 +53,8 @@ export class CardFormComponent extends AbstractBaseFormComponent implements Afte
   @ViewChild('valueCtrl') valueCtrl?: FormControl
 
   ngAfterViewInit(): void {
-    this.valueCtrl?.valueChanges.subscribe(value => {
-      console.log('valuectrlsub', value, this.valueCtrl?.errors)
-    })
+    // this.valueCtrl?.valueChanges.subscribe(value => {
+    // })
   }
 
 }

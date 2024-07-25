@@ -53,7 +53,6 @@
         <app-patient-display [patient]="patient" [formCards]="PATIENT_FORM_CARDS"></app-patient-display>
       </mat-tab> -->
       <mat-tab label="Json">
-        <!-- <app-patient-display [patient]="patient" [formCards]="PATIENT_FORM_CARDS"></app-patient-display> -->
         <app-patient-json-form [model]="patient | json" (modelChange)="patient = $event"></app-patient-json-form>
         <div>Native Json model, useful to copy and paste patient to different users, ID fields changes are ignored</div>
       </mat-tab>

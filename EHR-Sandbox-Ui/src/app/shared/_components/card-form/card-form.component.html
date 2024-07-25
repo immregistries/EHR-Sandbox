@@ -8,10 +8,8 @@
              [required]="isRequired()" [customValidator]="baseForm.customValidator" #valueCtrl="ngModel">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
 
-      <!-- <mat-hint align="start" *ngIf="baseForm.hintProducer"><strong>{{baseForm.hintProducer()}}</strong></mat-hint> -->
-      <!-- <mat-error>
-        eoor
-      </mat-error> -->
+      <mat-hint align="start" *ngIf="baseForm.hintProducer"><strong>{{baseForm.hintProducer()}}</strong></mat-hint>
+
       <mat-error *ngIf="valueCtrl.errors && valueCtrl.errors['customIssue']; else otherError">
         {{valueCtrl.errors['customIssue']}}
       </mat-error>

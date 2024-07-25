@@ -15,9 +15,9 @@ export class AuthenticationFormComponent implements OnInit {
   constructor(private authService: AuthService, private tokenStorage: TokenStorageService) { }
 
 
-  authFormGroup = new UntypedFormGroup({username: new UntypedFormControl(''), password: new UntypedFormControl(''), email: new UntypedFormControl('')})
+  authFormGroup = new UntypedFormGroup({ username: new UntypedFormControl(''), password: new UntypedFormControl(''), email: new UntypedFormControl('') })
 
-  user: User = {id: 0, username: '', password: ''};
+  user: User = { id: 0, username: '', password: '' };
   isLoggedIn = false;
   isLoginFailed = false;
   errorMessage = '';
@@ -33,13 +33,13 @@ export class AuthenticationFormComponent implements OnInit {
     window.location.reload();
   }
 
-  onSubmit(){
+  onSubmit() {
     this.user.username = this.authFormGroup.value['username']
     this.user.password = this.authFormGroup.value['password']
     this.authService.login(this.user).subscribe({
       next: (data) => {
-        console.log("data", data.ok, data.status)
-        console.log("data", data)
+        // console.log("data", data.ok, data.status)
+        // console.log("data", data)
         if (data.ok) {
           if (data.body) {
             this.tokenStorage.saveToken(data.body.accessToken);

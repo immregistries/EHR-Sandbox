@@ -20,11 +20,15 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   @Input()
   public baseForm!: BaseForm;
+  // private _model: string = ''
   @Input()
   public set model(value: string) {
     this.formControl.setValue(value);
     // this.valueChanged()
     // this._blockReferenceEmit = true
+  }
+  public get model(): string {
+    return this.formControl.value ?? ''
   }
   @Output()
   public modelChange = new EventEmitter<any>();
@@ -60,7 +64,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   public set referenceFilterTableObservable(value: BehaviorSubject<CodeReferenceTable> | undefined) {
     this._referenceFilter = value;
     this.referenceFilterTableObservable?.subscribe((ref) => {
-      this.filterChange(this.formControl.value)
+      this.filterChange(this.model)
       this._blockReferenceEmit = true
       this.formControl.updateValueAndValidity()
       this._blockReferenceEmit = false
@@ -73,7 +77,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   ngOnInit(): void {
     this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
-    this.formControl.addValidators(this.codebaseReferenceValidator())
+    this.formControl.addValidators(this.codebaseReferenceValidatorFn())
     this.filterChange('')
     this.formControl.valueChanges.subscribe((value) => {
       this.filterChange(value)
@@ -174,42 +178,45 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   }
 
   valueChanged(log?: string) {
-    // console.log('log', log, this.formControl.value)
-    this.modelChange.emit(this.formControl.value ?? '')
+    // console.log('log', log, this.model)
+    this.modelChange.emit(this.model ?? '')
     this.emitReferences()
   }
 
   emitReferences() {
     if (!this._blockReferenceEmit) {
-      if (!this.formControl.value || this.formControl.value == '') {
+      if (!this.model || this.model == '') {
         this.referenceEmitter.emit(undefined)
-      } else if (this.codeSet && this.codeSet[this.formControl.value]) {
-        this.referenceEmitter.emit({ reference: (this.codeSet[this.formControl.value].reference ?? { linkTo: [] }), value: this.formControl.value })
+      } else if (this.codeSet && this.codeSet[this.model]) {
+        this.referenceEmitter.emit({ reference: (this.codeSet[this.model].reference ?? { linkTo: [] }), value: this.model })
       } else {
-        this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.formControl.value })
+        this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.model })
       }
     } else {
       // this._blockReferenceEmit = false
     }
   }
 
-  codebaseReferenceValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!this.codeSet) {
-        return null
-      }
-      const valueCode: Code | undefined = Object.values(this.codeSet).find((code) => code.value === control.value)
-      if (!valueCode) {
-        return null
-      }
-      const message = this.incompatibleReferences(valueCode);
-      return message ? { codeMapIssue: message } : null;
-    };
+  codebaseReferenceValidatorFn(): ValidatorFn {
+    return this.codebaseReferenceValidator
   }
 
+
+  codebaseReferenceValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    if (!this.codeSet) {
+      return null
+    }
+    const valueCode: Code | undefined = Object.values(this.codeSet).find((code) => code.value === control.value)
+    if (!valueCode) {
+      return null
+    }
+    const message = this.incompatibleReferences(valueCode);
+    return message ? { codeMapIssue: message } : null;
+  };
+
   clear() {
-    this.formControl.setValue('');
-    this.modelChange.emit('')
+    this.model = ''
+    // this.modelChange.emit('')
     this.emitReferences()
   }
 

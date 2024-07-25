@@ -75,16 +75,16 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.ngAfterViewInit()
-        console.log(result)
+        // console.log(result)
         if (result instanceof Object) {
           this.selectedElement = result
           this.selectEmitter.emit(this.selectedElement);
-          console.log(this.selectedElement)
+          // console.log(this.selectedElement)
         } else {
           this.vaccinationService.quickReadVaccinationFromFacility(+result).subscribe((newVaccination) => {
             this.selectedElement = newVaccination
             this.selectEmitter.emit(this.selectedElement);
-            console.log(this.selectedElement)
+            // console.log(this.selectedElement)
           })
         }
       }

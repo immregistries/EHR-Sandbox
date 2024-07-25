@@ -77,8 +77,8 @@
           [vaccinationEvent]="vaccination"></app-vaccination-display>
       </mat-tab> -->
       <mat-tab label="Json">
-        <!-- <app-vaccination-json-form [model]="vaccination | json" (modelChange)="vaccination = $event"
-          name="json"></app-vaccination-json-form> -->
+        <app-vaccination-json-form [model]="vaccination | json" (modelChange)="vaccination = $event"
+                                   name="json"></app-vaccination-json-form>
       </mat-tab>
     </mat-tab-group>
   </mat-dialog-content>

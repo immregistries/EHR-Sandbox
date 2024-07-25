@@ -194,26 +194,19 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-
-  lotNumberValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      // return { customIssue: control.value }
-      // console.log("lotnumber 3", this.vaccination.vaccine.lotNumber, exampleValidTemplate)
-      if (!control.value || control.value.length == 0) {
-        return null
+  lotNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value || control.value.length == 0) {
+      return null
+    }
+    for (const codeReferenceTableMember of Object.entries(this.referenceTableObservable.getValue())) {
+      let exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember[1].reference, control.value)
+      if (exampleValidTemplate) {
+        return { customIssue: codeReferenceTableMember[1].value + ' template: ' + exampleValidTemplate + this._lot_hint_value }
       }
-      for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
-        let exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, this.vaccination.vaccine.lotNumber)
-        // return { customIssue: "oh" }
+    }
+    return null;
+  };
 
-        if (exampleValidTemplate) {
-
-          return { customIssue: "'" + control.value + " " + codeReferenceTableMember.value + "'" + ' template: ' + exampleValidTemplate + this._lot_hint_value }
-        }
-      }
-      return null;
-    };
-  }
 
   /**
    * returns a valid template example if no templates are valid
@@ -266,7 +259,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     {
       title: "Lot", rows: 1, cols: 2, vaccineForms: [
         { type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
-        { type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN", customValidator: this.lotNumberValidator(), hintProducer: this.lotNumberHint },
+        { type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN", customValidator: this.lotNumberValidator, hintProducer: this.lotNumberHint },
         { type: FormType.date, title: "Expiration date", attributeName: "expirationDate" },
       ]
     },
