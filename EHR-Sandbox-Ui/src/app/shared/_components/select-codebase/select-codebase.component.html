@@ -1,10 +1,11 @@
-<form #selectCodebaseForm="ngForm" (submit)="submit()">
+<form (submit)="submit()">
   <mat-form-field appearance="outline" class="select-field">
     <mat-label>{{baseForm.title}}</mat-label>
-    <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field-input"
-           name="{{baseForm.attributeName}}" #formeControl="ngModel" [customValidator]="codebaseReferenceValidator">
+    <input matInput #matInput="matInput" [(ngModel)]="model" #valueCtrl="ngModel" [matAutocomplete]="auto"
+           (blur)="onBlur()" class="select-field-input" name="{{baseForm.attributeName}}"
+           [customValidator]="codebaseReferenceValidator" [required]="isRequired()">
 
-    <button matSuffix mat-icon-button *ngIf="formeControl.value" (click)="clear()" type="button">
+    <button matSuffix mat-icon-button *ngIf="valueCtrl.value" (click)="clear()" type="button">
       <mat-icon>cancel</mat-icon>
     </button>
 
@@ -24,12 +25,16 @@
       </mat-option>
     </mat-autocomplete>
 
-    <mat-error *ngIf="formeControl.errors && formeControl.errors['codeMapIssue']; else req">
-      {{formeControl.errors['codeMapIssue']}}
+    <mat-error *ngIf="valueCtrl.errors && valueCtrl.errors['codeMapIssue']; else otherError">
+      {{valueCtrl.errors['codeMapIssue']}}
     </mat-error>
-    <ng-template #req>
-
-      <mat-error>required {{formeControl.errors | json}}</mat-error>
+    <ng-template #otherError>
+      <mat-error *ngIf="valueCtrl.errors && !valueCtrl.errors['required']; else requiredError">
+        {{valueCtrl.errors | json}}
+      </mat-error>
+      <ng-template #requiredError>
+        <mat-error>required</mat-error>
+      </ng-template>
     </ng-template>
 
   </mat-form-field>

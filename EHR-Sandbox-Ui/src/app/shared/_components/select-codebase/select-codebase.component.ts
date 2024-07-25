@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, NgForm, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/form-structure';
-import { Code, CodeSet, CodeReference, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
+import { Code, CodeSet, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { AbstractBaseFormComponent } from '../card-form/abstract-base-form/abstract-base-form.component';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-select-codebase',
@@ -13,22 +14,26 @@ import { AbstractBaseFormComponent } from '../card-form/abstract-base-form/abstr
   styleUrls: ['./select-codebase.component.css']
 })
 export class SelectCodebaseComponent extends AbstractBaseFormComponent implements OnInit, AfterViewInit {
-  @ViewChild('selectCodebaseForm', { static: true })
-  ngForm!: NgForm;
+  // @ViewChild('selectCodebaseForm', { static: true })
+  // ngForm!: NgForm;
+  @ViewChild('matInput')
+  private matInput!: MatInput;
   @ViewChild('auto')
   private matAutoComplete!: MatAutocomplete;
-
+  @ViewChild('valueCtrl')
+  public valueCtrl!: AbstractControl<string>;
   @Input()
   public baseForm!: BaseForm;
-  // private _model: string = ''
+  private _model: string = ''
   @Input()
   public set model(value: string) {
-    this.formControl.setValue(value);
-    // this.valueChanged()
-    // this._blockReferenceEmit = true
+    this._model = value
+    if (this.baseForm) {
+      this.filterChange(value)
+    }
   }
   public get model(): string {
-    return this.formControl.value ?? ''
+    return this._model
   }
   @Output()
   public modelChange = new EventEmitter<any>();
@@ -44,7 +49,6 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
 
   private codeSet?: CodeSet;
-  public formControl: FormControl<string> = new FormControl();
 
   public filteredCodeMapsOptions!: Code[];
   public filteredFormOptions!: BaseFormOption[];
@@ -54,7 +58,6 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
 
 
-  private _blockReferenceEmit: boolean = false
   /** Receives */
   private _referenceFilter: BehaviorSubject<CodeReferenceTable> | undefined;
   public get referenceFilterTableObservable(): BehaviorSubject<CodeReferenceTable> | undefined {
@@ -65,9 +68,9 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
     this._referenceFilter = value;
     this.referenceFilterTableObservable?.subscribe((ref) => {
       this.filterChange(this.model)
-      this._blockReferenceEmit = true
-      this.formControl.updateValueAndValidity()
-      this._blockReferenceEmit = false
+      // TODO find a way to update validation
+      // this.matInput?.updateErrorState()
+      // this.control?.updateValueAndValidity({ onlySelf: true, emitEvent: false })
     })
   }
   @Output()
@@ -77,17 +80,11 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   ngOnInit(): void {
     this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
-    this.formControl.addValidators(this.codebaseReferenceValidatorFn())
     this.filterChange('')
-    this.formControl.valueChanges.subscribe((value) => {
-      this.filterChange(value)
-    })
   }
 
   ngAfterViewInit() {
-
   }
-
 
   filterChange(event: string) {
     let filterValue = event ? event.toLowerCase() : ''
@@ -155,7 +152,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
         if (scanned && !included) {
           return 'Incompatible with ' + codeMapType + ' ' + this.referenceFilterTableObservable.getValue()[codeMapType].value
         }
-        // Scanning the options own references
+        // Scanning the option's own references
         scanned = false
         included = false
         if (option && option.reference) {
@@ -184,23 +181,18 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   }
 
   emitReferences() {
-    if (!this._blockReferenceEmit) {
-      if (!this.model || this.model == '') {
-        this.referenceEmitter.emit(undefined)
-      } else if (this.codeSet && this.codeSet[this.model]) {
-        this.referenceEmitter.emit({ reference: (this.codeSet[this.model].reference ?? { linkTo: [] }), value: this.model })
-      } else {
-        this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.model })
-      }
+    if (!this.model || this.model == '') {
+      this.referenceEmitter.emit(undefined)
+    } else if (this.codeSet && this.codeSet[this.model]) {
+      this.referenceEmitter.emit({ reference: (this.codeSet[this.model].reference ?? { linkTo: [] }), value: this.model })
     } else {
-      // this._blockReferenceEmit = false
+      this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.model })
     }
   }
 
   codebaseReferenceValidatorFn(): ValidatorFn {
     return this.codebaseReferenceValidator
   }
-
 
   codebaseReferenceValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (!this.codeSet) {
@@ -216,8 +208,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   clear() {
     this.model = ''
-    // this.modelChange.emit('')
-    this.emitReferences()
+    this.valueChanged()
   }
 
   displayCode(codeKey: string | boolean): string {
@@ -248,6 +239,10 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
     } else {
       this.valueChanged('enter')
     }
+  }
+
+  onBlur() {
+    this.valueChanged('blur')
   }
 
 }
