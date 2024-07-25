@@ -272,7 +272,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       title: "Information Statement (VIS)", rows: 1, cols: 1, vaccineForms: [
         { type: FormType.code, title: "Information Statement Document", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE" },
         { type: FormType.date, title: "Presented date", attributeName: "informationStatementPresentedDate" },
-        { type: FormType.code, title: "Information Statement Cvx", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
+        { type: FormType.code, title: "Information Statement Cvx", attributeName: "informationStatementCvx", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
         { type: FormType.date, title: "Published date", attributeName: "informationStatementPublishedDate" },
       ], toolTips: "Preferred method for VXU reporting includes Document type and Presented Date, supporting deprecated method with CVX alongside Published and Presented Date"
     },

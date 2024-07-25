@@ -229,13 +229,13 @@ public class HL7printer {
                         String valueTable = "CVX";
                         printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, value, codeMap, CodesetType.VACCINATION_CVX_CODE, valueTable, "");
                     }
-                    if (vaccine.getInformationStatementPublishedDate() != null) {
-                        obxSetId++;
-                        String loinc = "29768-9";
-                        String loincLabel = "Date Vaccine Information Statement Published";
-                        Date date = vaccine.getInformationStatementPublishedDate();
-                        printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, date);
-                    }
+                }
+                if (vaccine.getInformationStatementPublishedDate() != null) {
+                    obxSetId++;
+                    String loinc = "29768-9";
+                    String loincLabel = "Date Vaccine Information Statement Published";
+                    Date date = vaccine.getInformationStatementPublishedDate();
+                    printObx(sb, obxSetId, obsSubId, vaccine.getUpdatedDate(), loinc, loincLabel, date);
                 }
 
                 if (vaccine.getInformationStatementPresentedDate() != null) {
