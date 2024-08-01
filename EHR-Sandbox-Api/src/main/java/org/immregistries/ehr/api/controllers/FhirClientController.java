@@ -15,6 +15,7 @@ import org.immregistries.ehr.api.entities.Feedback;
 import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.PatientExternalIdentifier;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
@@ -71,14 +72,16 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryController.getImmunizationRegistry(registryId)));
     }
 
+
     @PostMapping(IMM_REGISTRY_SUFFIX + "/{resourceType}/search")
     public ResponseEntity<String> searchFhirResourceFromIIS(
             @PathVariable() Integer registryId,
             @PathVariable() String resourceType,
-            @RequestBody Identifier identifier) {
+            @RequestBody EhrIdentifier ehrIdentifier) {
         Bundle bundle = customClientFactory.newGenericClient(registryId).search()
                 .forResource(resourceType)
-                .where(Patient.IDENTIFIER.exactly().identifier(identifier.getValue()))
+
+                .where(Patient.IDENTIFIER.exactly().identifier(ehrIdentifier.toR5().getValue()))
                 .returnBundle(Bundle.class).execute();
         return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
     }

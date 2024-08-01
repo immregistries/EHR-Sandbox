@@ -149,9 +149,9 @@ export interface User {
 export interface VaccinationEvent {
   id?: number;
   patient?: number
-  enteringClinician: Clinician;
-  orderingClinician: Clinician;
-  administeringClinician: Clinician;
+  enteringClinician?: Clinician;
+  orderingClinician?: Clinician;
+  administeringClinician?: Clinician;
   vaccine: Vaccine;
   feedbacks?: Feedback[];
   primarySource?: boolean;

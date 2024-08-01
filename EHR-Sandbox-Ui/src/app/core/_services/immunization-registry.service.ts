@@ -17,22 +17,33 @@ export class ImmunizationRegistryService extends CurrentSelectedWithIdService<Im
     super(new BehaviorSubject<ImmunizationRegistry>({}))
   }
 
-  public readImmRegistries(): Observable<ImmunizationRegistry[]>{
+  public readImmRegistries(): Observable<ImmunizationRegistry[]> {
     return this.http.get<ImmunizationRegistry[]>(
       this.settings.getApiUrl() + `/registry`, httpOptions).pipe(share());
   }
 
-  public deleteImmRegistry(id: number): Observable<HttpResponse<string>>{
+  public checkConnectivity(registryId: number | undefined): Observable<string> {
+    return this.http.get(
+      this.settings.getApiUrl() + `/registry/${registryId}/$connectivity`,
+      { ...httpOptions, responseType: 'text' }).pipe(share());
+  }
+  public checkConnectivityAuth(registryId: number | undefined): Observable<string> {
+    return this.http.get(
+      this.settings.getApiUrl() + `/registry/${registryId}/$auth`,
+      { ...httpOptions, responseType: 'text' }).pipe(share());
+  }
+
+  public deleteImmRegistry(id: number): Observable<HttpResponse<string>> {
     return this.http.delete<HttpResponse<string>>(
       this.settings.getApiUrl() + `/registry/${id}`, httpOptions);
   }
 
-  public putImmRegistry(registry: ImmunizationRegistry): Observable<ImmunizationRegistry>{
+  public putImmRegistry(registry: ImmunizationRegistry): Observable<ImmunizationRegistry> {
     return this.http.put<ImmunizationRegistry>(
       this.settings.getApiUrl() + `/registry`, registry, httpOptions);
   }
 
-  public postImmRegistry(registry: ImmunizationRegistry): Observable<ImmunizationRegistry>{
+  public postImmRegistry(registry: ImmunizationRegistry): Observable<ImmunizationRegistry> {
     return this.http.post<ImmunizationRegistry>(
       this.settings.getApiUrl() + `/registry`, registry, httpOptions);
   }

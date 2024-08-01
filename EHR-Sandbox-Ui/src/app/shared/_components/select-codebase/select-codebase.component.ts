@@ -50,13 +50,6 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   private codeSet?: CodeSet;
 
-  public filteredCodeMapsOptions!: Code[];
-  public filteredFormOptions!: BaseFormOption[];
-  /**
-  * Buffer for ordering filtered options
-  */
-  private filteredCodeMapsOn: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] } = { byValue: [], byLabel: [], byDescription: [], byOther: [] };
-
 
   /** Receives */
   private _referenceFilter: BehaviorSubject<CodeReferenceTable> | undefined;
@@ -81,10 +74,24 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   ngOnInit(): void {
     this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
     this.filterChange('')
+    // if (this.model && this.model != '') {
+    //   this.emitReferences()
+    // }
   }
 
   ngAfterViewInit() {
+    if (this.model && this.model != '') {
+      this.emitReferences()
+    }
   }
+
+  public filteredCodeMapsOptions!: Code[];
+  public filteredFormOptions!: BaseFormOption[];
+  /**
+  * Buffer for ordering filtered options
+  */
+  private filteredCodeMapsBuffer!: { byValue: Code[], byLabel: Code[], byDescription: Code[], byOther: Code[] };
+  private filteredFormOptionsBuffer!: { byCode: BaseFormOption[], byDisplay: BaseFormOption[], byDefinition: BaseFormOption[], byOther: BaseFormOption[] };
 
   filterChange(event: string) {
     let filterValue = event ? event.toLowerCase() : ''
@@ -92,40 +99,39 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
       filterValue = ''
     }
     if (this.codeSet) {
-      this.filteredCodeMapsOn = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
+      this.filteredCodeMapsBuffer = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
       Object.values(this.codeSet).forEach(
         option => {
           if (option.value.toLowerCase().includes(filterValue)) {
             if (this.filterWithReference(option)) {
-              this.filteredCodeMapsOn.byValue.push(option)
+              this.filteredCodeMapsBuffer.byValue.push(option)
             }
           } else if (this.displayCode(option.value).toLowerCase().includes(filterValue)) {
             if (this.filterWithReference(option)) {
-              this.filteredCodeMapsOn.byLabel.push(option)
+              this.filteredCodeMapsBuffer.byLabel.push(option)
             }
           } else if (option.description?.toLowerCase().includes(filterValue)) {
             if (this.filterWithReference(option)) {
-              this.filteredCodeMapsOn.byDescription.push(option)
+              this.filteredCodeMapsBuffer.byDescription.push(option)
             }
           }
         }
       )
-      this.filteredCodeMapsOptions = this.filteredCodeMapsOn.byValue.concat(this.filteredCodeMapsOn.byLabel, this.filteredCodeMapsOn.byDescription, this.filteredCodeMapsOn.byOther)
+      this.filteredCodeMapsOptions = this.filteredCodeMapsBuffer.byValue.concat(this.filteredCodeMapsBuffer.byLabel, this.filteredCodeMapsBuffer.byDescription, this.filteredCodeMapsBuffer.byOther)
     }
     if (this.baseForm.options) {
-      this.filteredFormOptions = this.baseForm.options.filter((option) => {
-        if (option.code === true && 'true'.includes(filterValue)) {
-          return true
-        } else if (option.code === false && 'false'.includes(filterValue)) {
-          return true
+      this.filteredFormOptionsBuffer = { byCode: [], byDisplay: [], byDefinition: [], byOther: [] };
+      this.baseForm.options.forEach((option) => {
+        if ((option.code + '').toLowerCase().includes(filterValue)) {
+          this.filteredFormOptionsBuffer.byCode.push(option)
         } else if (this.displayCode(option.code).toLowerCase().includes(filterValue)) {
-          return true
+          this.filteredFormOptionsBuffer.byDisplay.push(option)
         } else if (option.definition?.toLowerCase().includes(filterValue)) {
-          return true
-        } else {
-          return false
+          this.filteredFormOptionsBuffer.byDefinition.push(option)
         }
       })
+      this.filteredFormOptions = this.filteredFormOptionsBuffer.byCode.concat(this.filteredFormOptionsBuffer.byDisplay, this.filteredFormOptionsBuffer.byDefinition, this.filteredFormOptionsBuffer.byOther)
+
     }
   }
 
@@ -175,7 +181,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   }
 
   valueChanged(log?: string) {
-    // console.log('log', log, this.model)
+    console.log('log', log, this.model)
     this.modelChange.emit(this.model ?? '')
     this.emitReferences()
   }
@@ -188,10 +194,6 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
     } else {
       this.referenceEmitter.emit({ reference: { linkTo: [] }, value: this.model })
     }
-  }
-
-  codebaseReferenceValidatorFn(): ValidatorFn {
-    return this.codebaseReferenceValidator
   }
 
   codebaseReferenceValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
@@ -211,9 +213,12 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
     this.valueChanged()
   }
 
-  displayCode(codeKey: string | boolean): string {
+  displayCode(codeKey: string | boolean | number): string {
+    if (!codeKey) {
+      return ""
+    }
     if (typeof codeKey != 'boolean' && codeKey && this.codeSet && this.codeSet[codeKey]) {
-      let code: Code = this.codeSet[codeKey]
+      let code: Code = this.codeSet[codeKey + '']
       return code.label + ' (' + code.value + ')'
     } else if (this.baseForm.options) {
       let option: BaseFormOption | undefined = this.baseForm.options.find((opt) => opt.code == codeKey)
@@ -221,11 +226,7 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
         return option.display + ' (' + codeKey + ')'
       }
     }
-    if (typeof codeKey == 'boolean') {
-      return codeKey + ""
-    } else {
-      return codeKey
-    }
+    return codeKey + ""
   }
 
 
@@ -235,14 +236,16 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
   submit() {
     if (this.matAutoComplete.options && this.matAutoComplete.options.first) {
       this.model = this.matAutoComplete.options.first?.value ?? this.matAutoComplete.options.first?.value.code ?? this.model
-      this.valueChanged('enter')
+      this.valueChanged('enter 1')
     } else {
-      this.valueChanged('enter')
+      this.valueChanged('enter 2')
     }
+    this.matInput.value = this.displayCode(this._model)
   }
 
   onBlur() {
     this.valueChanged('blur')
+    this.matInput.value = this.displayCode(this._model)
   }
 
 }

@@ -23,24 +23,15 @@
         <mat-list-item>
           Flavors: activate options by including keywords in name
         </mat-list-item>
-        <mat-list-item>
-          <span matListItemTitle>NO_DEPRECATED</span>
-          <span matListItemLine>excludes deprecated fields from codesets in forms and tables</span>
+        <mat-list-item *ngFor="let flavor of FLAVORS">
+          <span matListItemTitle>{{flavor.name}}</span>
+          <span matListItemLine>{{flavor.description}}</span>
           <span matListItemMeta><button mat-stroked-button type="button"
-                                        (click)="append('NO_DEPRECATED')">Append</button></span>
+                                        (click)="append(flavor.name)">Append</button></span>
         </mat-list-item>
       </mat-list>
     </mat-card-content>
   </mat-card>
-  <!-- <h3>
-    Flavors, include keys in name to activate
-  </h3>
-  <mat-list>
-    <mat-list-item>
-      <span matListItemTitle>NO_DEPRECATED:</span>
-      <span matListItemLine>excludes deprecated fields from codesets and forms</span>
-    </mat-list-item>
-  </mat-list> -->
 
   <div mat-dialog-actions align="end" class="form-action-bar">
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">

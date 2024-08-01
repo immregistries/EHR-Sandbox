@@ -120,6 +120,7 @@ import { NextOfKinFormComponent } from './_components/card-form/next-of-kin-form
 import { PatientJsonFormComponent } from './_components/abstract-json-form/patient-json-form/patient-json-form.component';
 import { VaccinationJsonFormComponent } from './_components/abstract-json-form/vaccination-json-form/vaccination-json-form.component';
 import { CustomValidatorDirective } from './_directive/custom-validator.directive';
+import { ImmunizationRegistryCheckComponent } from './_immunization-registry/immunization-registry-check/immunization-registry-check.component';
 
 @NgModule({
   declarations: [
@@ -217,6 +218,7 @@ import { CustomValidatorDirective } from './_directive/custom-validator.directiv
     PatientJsonFormComponent,
     VaccinationJsonFormComponent,
     CustomValidatorDirective,
+    ImmunizationRegistryCheckComponent,
   ],
   imports: [
     CommonModule,

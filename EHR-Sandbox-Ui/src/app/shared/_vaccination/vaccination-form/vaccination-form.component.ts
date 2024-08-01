@@ -12,6 +12,7 @@ import { HttpResponse } from '@angular/common/http';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/form-structure';
+import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -23,7 +24,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   private _vaccinationId = -1
   private _vaccineId = -1
-  private _vaccination: VaccinationEvent = { id: -1, vaccine: { updatedDate: new Date() }, enteringClinician: {}, administeringClinician: {}, orderingClinician: {} };
+  private _vaccination: VaccinationEvent = { id: -1, vaccine: { updatedDate: new Date() } };
   @Input()
   public set vaccination(v: VaccinationEvent) {
     this._vaccination = v;
@@ -57,6 +58,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   constructor(public codeMapsService: CodeMapsService,
     private snackBarService: SnackBarService,
+    private tenantService: TenantService,
     private vaccinationService: VaccinationService,
     vaccineComparePipe: VaccinationComparePipe,
     @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
@@ -174,14 +176,6 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   private _lot_hint_value: string = '';
   lotNumberHint = (value?: string): string => {
-    // this._produce_hint_value = false
-    // for (const codeReferenceTableMember of Object.values(this.referenceTableObservable.getValue())) {
-    //   const exampleValidTemplate: string | undefined = this.invalidatingLotNumberTemplates(codeReferenceTableMember.reference, '  ')
-    //   if (exampleValidTemplate) {
-    //     return 'example: ' + randexp(exampleValidTemplate)
-    //   }
-    // }
-    // }
     return this._lot_hint_value;
   }
 
@@ -195,6 +189,9 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   lotNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    if (this.tenantService.getCurrent().nameDisplay?.includes('LOTTERY')) {
+
+    }
     if (!control.value || control.value.length == 0) {
       return null
     }
@@ -219,8 +216,10 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       return undefined;
     }
     for (const ref of reference.linkTo) {
+
       if (ref.codeset == "VACCINATION_LOT_NUMBER_PATTERN") {
-        latestScannedTemplate = ref.value
+        latestScannedTemplate = ref.value.replace("\\", "\\\\")
+        latestScannedTemplate = latestScannedTemplate.replace("\\\\", "\\")
         if (new RegExp(ref.value).test(lotNumber)) {
           // Valid lotNumber
           return undefined
@@ -239,7 +238,6 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ], vaccinationForms: [
         {
           type: FormType.select, title: "Record Nature", attributeName: "primarySource", options: [{ code: true, display: 'New Administration' }, { code: false, display: 'Historical' },]
-          // , tooltip: 'Wether the '
         },
       ]
     },
@@ -258,7 +256,10 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     {
       title: "Lot", rows: 1, cols: 2, vaccineForms: [
         { type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
-        { type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN", customValidator: this.lotNumberValidator, hintProducer: this.lotNumberHint },
+        {
+          type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN",
+          customValidator: this.lotNumberValidator, hintProducer: this.lotNumberHint
+        },
         { type: FormType.date, title: "Expiration date", attributeName: "expirationDate" },
       ]
     },

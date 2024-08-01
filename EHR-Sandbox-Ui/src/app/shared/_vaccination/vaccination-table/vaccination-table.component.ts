@@ -24,6 +24,7 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
     "administeredDate",
     "lotNumber",
     "primarySource",
+    "actionCode",
     "alerts",
   ]
 

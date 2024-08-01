@@ -46,9 +46,9 @@ export class FacilityMenuComponent implements OnInit {
       panelClass: 'dialog-without-bar',
     });
     dialogRef.afterClosed().subscribe(result => {
+      this.facilityService.doRefresh()
       if (result) {
         this.facilityService.setCurrent(result)
-        this.facilityService.doRefresh()
         this.selectEmitter.emit(this.facilityService.getCurrent())
       }
     });

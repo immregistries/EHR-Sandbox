@@ -4,7 +4,7 @@
     <input matInput [(ngModel)]="model" [matAutocomplete]="auto" class="select-field-input"
            name="{{baseForm.attributeName}}" (ngModelChange)="filterChange($event)" [required]="isRequired()">
 
-    <!-- <button matSuffix mat-icon-button *ngIf="formControl.value" (click)="clear()" type="button">
+    <!-- <button matSuffix mat-icon-button *ngIf="model" (click)="clear()" type="button">
       <mat-icon>cancel</mat-icon>
     </button> -->
 

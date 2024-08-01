@@ -147,7 +147,7 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
         patient,
-        { observe: 'response', params: params });
+        { ...httpOptions, observe: 'response', params: params });
     } else {
       throw throwError(() => new Error("No facility selected"))
     }
@@ -158,7 +158,7 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
       return this.http.post<string>(
         `${this.settings.getApiUrl()}/facilities/${facilityId}/patients`,
         patient,
-        { observe: 'response' });
+        { ...httpOptions, observe: 'response' });
     } else {
       throw throwError(() => new Error("No facility selected"))
     }

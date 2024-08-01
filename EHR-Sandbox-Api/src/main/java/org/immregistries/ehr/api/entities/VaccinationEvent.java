@@ -43,7 +43,7 @@ public class VaccinationEvent extends EhrEntity {
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician enteringClinician;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
     @JoinColumn(name = "ordering_clinician_id")
     @Audited(targetAuditMode = NOT_AUDITED)
     private Clinician orderingClinician;

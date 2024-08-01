@@ -82,7 +82,6 @@ public class VaccinationController {
                                                         @PathVariable() Optional<String> patientId,
                                                         @RequestBody VaccinationEvent vaccination) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-        logger.info("pm srouce {}", vaccination.getPrimarySource());
         return postVaccinationEvents(tenantRepository.findById(tenantId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
     }
 
@@ -164,8 +163,9 @@ public class VaccinationController {
     }
 
     @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String> vxuSend(@PathVariable() Integer registryId, @RequestBody String message) {
+    public ResponseEntity<String> vxuSend(@PathVariable() Integer registryId, @PathVariable() String vaccinationId, @RequestBody String message) {
         Connector connector;
+        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
         ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
@@ -179,10 +179,15 @@ public class VaccinationController {
 //                connector.setKeyStore(new KeyStore());
 //            }
 
-            return ResponseEntity.ok(connector.submitMessage(message, false));
+            String result = connector.submitMessage(message, false);
+            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
+            if (vaccinationEvent.getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0) {
+
+            }
+            return ResponseEntity.ok(result);
         } catch (Exception e1) {
             e1.printStackTrace();
-            return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());
         }
     }
 

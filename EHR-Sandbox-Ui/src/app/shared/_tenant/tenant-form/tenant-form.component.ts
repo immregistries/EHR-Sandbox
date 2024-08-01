@@ -61,10 +61,25 @@ export class TenantFormComponent implements OnInit {
     if (!this.tenant.nameDisplay) {
       this.tenant.nameDisplay = ''
     }
-    if (!this.tenant.nameDisplay.endsWith(" " + flavor_name)) {
-      this.tenant.nameDisplay += ' ' + flavor_name
+    if (!this.tenant.nameDisplay.endsWith(flavor_name)) {
+      if (this.tenant.nameDisplay.length > 0) {
+        this.tenant.nameDisplay += ' '
+      }
+      this.tenant.nameDisplay += flavor_name
     }
   }
+
+  readonly FLAVORS = [
+    {
+      name: 'NO_DEPRECATED',
+      description: 'excludes deprecated fields from codesets in forms and tables'
+    },
+    {
+      name: 'LOTTERY',
+      description: '(Incoming) Use external API to verify Lot Number validity'
+    }
+
+  ]
 }
 
 

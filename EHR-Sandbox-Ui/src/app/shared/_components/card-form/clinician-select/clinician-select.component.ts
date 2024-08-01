@@ -43,21 +43,21 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   baseForm!: BaseForm;
 
   @Input()
-  set model(clinician: Clinician | number | undefined) {
-    if (!clinician) {
+  set model(value: Clinician | number | undefined) {
+    if (!value) {
       this._model = undefined
       this.filterChange('')
-    } else if (typeof clinician === "number" || typeof clinician === "string") {
+    } else if (typeof value === "number" || typeof value === "string") {
       if (this._isFirstInit) {
-        this.clinicianService.readClinician(this.tenantService.getCurrentId(), clinician).subscribe((res) => {
+        this.clinicianService.readClinician(this.tenantService.getCurrentId(), value).subscribe((res) => {
           this._model = res
         })
       } else {
-        this._model = this.options.find((opt) => opt.id == clinician)
+        this._model = this.options.find((opt) => opt.id == value)
       }
     } else {
-      // console.log('clinician', clinician)
-      this._model = clinician
+      // console.log('clinician', value)
+      this._model = value
     }
     this._isFirstInit = false
   }

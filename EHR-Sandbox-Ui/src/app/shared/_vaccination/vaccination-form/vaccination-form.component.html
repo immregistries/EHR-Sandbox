@@ -37,6 +37,8 @@
       </mat-tab>
       <mat-tab label="Form with Requirements lifted">
         <div class="grid-container special-icon-badge">
+          For testing: this forms lifts requirements and removes complex functionalities like filtering options
+          according to other fields
           <div *ngFor="let card of VACCINATION_FORM_CARDS">
             <mat-card class="form-card">
               <mat-card-header *ngIf="card.title">
@@ -50,18 +52,12 @@
                   <app-card-form class="card-form high-density" [baseForm]="form"
                                  [model]="vaccination.vaccine[form.attributeName]"
                                  (modelChange)="vaccination.vaccine[form.attributeName] = $event"
-                                 [referenceFilterTableObservable]="referenceTableObservable"
-                                 (referenceTableMemberEmitter)="referenceTableChanges($event, form.codeMapLabel)"
-                                 [compareTo]="(compareTo && compareTo['vaccine'])?  compareTo['vaccine'][form.attributeName] : null"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
                 <ng-container *ngFor="let form of card.vaccinationForms">
                   <app-card-form class="card-form high-density" [baseForm]="form"
                                  [model]="vaccination[form.attributeName]"
                                  (modelChange)="vaccination[form.attributeName] = $event"
-                                 [referenceFilterTableObservable]="referenceTableObservable"
-                                 (referenceTableMemberEmitter)="referenceTableChanges($event, form.codeMapLabel)"
-                                 [compareTo]="compareTo? compareTo[form.attributeName] : null"
                                  [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>
@@ -77,6 +73,10 @@
           [vaccinationEvent]="vaccination"></app-vaccination-display>
       </mat-tab> -->
       <mat-tab label="Json">
+        <div>
+          Native Json model form, useful to copy and paste records to different users & different patients, ID fields
+          changes are ignored i.e. patient will not be changed by this form
+        </div>
         <app-vaccination-json-form [model]="vaccination | json" (modelChange)="vaccination = $event"
                                    name="json"></app-vaccination-json-form>
       </mat-tab>

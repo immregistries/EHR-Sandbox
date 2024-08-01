@@ -1,0 +1,56 @@
+<mat-grid-list cols=2>
+  <mat-grid-tile>
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          Connectivity Checks
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            Hl7v2 SOAP URL Connectivity:
+            <mat-icon *ngIf="hl7State; else cross" color="primary">check</mat-icon>
+            <ng-template #cross>
+              <mat-icon color="warn">close</mat-icon>
+            </ng-template>
+          </mat-list-item>
+          <mat-list-item>
+            Hl7v2 SOAP Authentication:
+            <mat-icon *ngIf="hl7Auth; else cross" color="primary">check</mat-icon>
+            <ng-template #cross>
+              <mat-icon color="warn">close</mat-icon>
+            </ng-template>
+          </mat-list-item>
+          <mat-list-item>
+            FHIR Server Connectivity:
+            <mat-icon *ngIf="fhirState; else cross" color="primary">check</mat-icon>
+            <ng-template #cross>
+              <mat-icon color="warn">close</mat-icon>
+            </ng-template>
+          </mat-list-item>
+          <mat-list-item>
+            FHIR Server Authentication:
+            <mat-icon *ngIf="fhirAuth; else cross" color="primary">check</mat-icon>
+            <ng-template #cross>
+              <mat-icon color="warn">close</mat-icon>
+            </ng-template>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          FHIR Server Metadata
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-fhir-get [resourceType]="'metadata'" [trigger]="true"
+                      (resultBooleanEmitter)="fhirState = $event"></app-fhir-get>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

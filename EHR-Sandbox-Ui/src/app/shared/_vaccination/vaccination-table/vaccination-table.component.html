@@ -18,23 +18,38 @@
   <ng-container matColumnDef="vaccineCvxCode">
     <th mat-header-cell *matHeaderCellDef>Code (CVX)</th>
     <td mat-cell *matCellDef="let element">
-      {{(element.vaccine && element.vaccine.vaccineCvxCode ? (element.vaccine.vaccineCvxCode | codeMaps:
-      "VACCINATION_CVX_CODE").label : "")
-      + ' (' + (element.vaccine.vaccineCvxCode ?? "-None-") + ')'}}
+      {{(
+      element.vaccine && element.vaccine.vaccineCvxCode ?
+      (element.vaccine.vaccineCvxCode | codeMaps: "VACCINATION_CVX_CODE").label
+      + ' (' + (element.vaccine.vaccineCvxCode) + ')' : "")
+      }}
     </td>
   </ng-container>
   <ng-container matColumnDef="administeredDate">
-    <th mat-header-cell *matHeaderCellDef> Administration Date</th>
-    <td mat-cell *matCellDef="let element"> {{element.vaccine.administeredDate | date: 'yyyy-MM-dd'}}</td>
+    <th mat-header-cell *matHeaderCellDef>Administration Date</th>
+    <td mat-cell *matCellDef="let element">{{element.vaccine.administeredDate | date: 'yyyy-MM-dd'}}</td>
   </ng-container>
   <ng-container matColumnDef="lotNumber">
-    <th mat-header-cell *matHeaderCellDef> Lot number</th>
-    <td mat-cell *matCellDef="let element"> {{element.vaccine.lotNumber}}</td>
+    <th mat-header-cell *matHeaderCellDef>Lot number</th>
+    <td mat-cell *matCellDef="let element">{{element.vaccine.lotNumber}}</td>
   </ng-container>
   <ng-container matColumnDef="primarySource">
     <th mat-header-cell *matHeaderCellDef> Record Nature</th>
     <td mat-cell *matCellDef="let element">
       {{element.primarySource === true ? 'New Admin.' : element.primarySource === false ? 'Historical' : ''}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="actionCode">
+    <th mat-header-cell *matHeaderCellDef>Action / Status</th>
+    <td mat-cell *matCellDef="let element">
+      {{
+      (element.vaccine.actionCode ? (element.vaccine.actionCode | codeMaps: "VACCINATION_ACTION_CODE").label + ' (' +
+      element.vaccine.actionCode + ')' : "")
+      }}
+      {{
+      (element.vaccine.completionStatus ? (element.vaccine.completionStatus | codeMaps: "VACCINATION_COMPLETION").label
+      + ' (' + element.vaccine.completionStatus + ')' : "")
+      }}
     </td>
   </ng-container>
   <ng-container matColumnDef="alerts">

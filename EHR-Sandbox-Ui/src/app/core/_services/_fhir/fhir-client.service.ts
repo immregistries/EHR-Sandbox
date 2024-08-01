@@ -118,14 +118,10 @@ export class FhirClientService {
 
   postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
     const registryId = this.registryService.getCurrentId()
-    const options = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-      params: new HttpParams().append("type", "Group")
-    };
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/registry/${registryId}`,
       resource,
-      options);
+      { ...httpOptions, params: new HttpParams().append("type", "Group") });
   }
 
   quickPostImmunization(patientId: number, vaccinationId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", patientFhirId?: string): Observable<string> {
@@ -242,10 +238,14 @@ export class FhirClientService {
       params: {}
     }
     if (patientFhirId && patientFhirId.length > 0) {
-      options.params = {
-        patientFhirId: patientFhirId
+      return {
+        ...httpOptions,
+        params: {
+          patientFhirId: patientFhirId
+        }
       }
+    } else {
+      return httpOptions
     }
-    return options
   }
 }

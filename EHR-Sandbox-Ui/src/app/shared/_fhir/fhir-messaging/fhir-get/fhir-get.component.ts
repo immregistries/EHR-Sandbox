@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Identifier } from 'fhir/r5';
 import { map, Observable, of, switchMap, tap, throwError } from 'rxjs';
@@ -11,6 +11,12 @@ import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.serv
   styleUrls: ['./fhir-get.component.css']
 })
 export class FhirGetComponent {
+  @Input()
+  set trigger(value: boolean) {
+    if (value) {
+      this.get()
+    }
+  }
 
   @Input() resourceType: string = 'Patient'
   @Input() identifierString: string = ''
@@ -18,6 +24,9 @@ export class FhirGetComponent {
   loading = false
   error: boolean = false
   // identifier: Identifier = {};
+
+  @Output()
+  resultBooleanEmitter: EventEmitter<boolean> = new EventEmitter<boolean>()
 
   constructor(public fhir: FhirClientService, public snackBarService: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<FhirGetComponent>,
@@ -57,6 +66,7 @@ export class FhirGetComponent {
         this.loading = false
         this.error = false
         this.result = JSON.parse(res)
+        this.resultBooleanEmitter.emit(true)
       },
       error: (err) => {
         this.loading = false
@@ -66,6 +76,8 @@ export class FhirGetComponent {
         } else {
           this.result = JSON.stringify(JSON.parse(err))
         }
+        this.resultBooleanEmitter.emit(false)
+
       },
     })
 

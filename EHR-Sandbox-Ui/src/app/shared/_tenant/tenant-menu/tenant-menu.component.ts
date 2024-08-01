@@ -39,10 +39,10 @@ export class TenantMenuComponent implements AfterViewInit {
       panelClass: 'dialog-without-bar'
     });
     dialogRef.afterClosed().subscribe(result => {
+      this.tenantService.doRefresh()
       if (result) {
         this.tenantService.setCurrent(result)
         this.facilityService.setCurrent({ id: -1 })
-        this.tenantService.doRefresh()
         this.selectEmitter.emit(this.tenantService.getCurrent())
       }
     });

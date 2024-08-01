@@ -5,6 +5,7 @@ import { ImmunizationRegistryService } from 'src/app/core/_services/immunization
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { FhirGetComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-get/fhir-get.component';
 import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
+import { ImmunizationRegistryCheckComponent } from '../immunization-registry-check/immunization-registry-check.component';
 
 @Component({
   selector: 'app-immunization-registry-form',
@@ -74,13 +75,13 @@ export class ImmunizationRegistryFormComponent implements OnInit {
       this.registryService.doRefresh();
       this.registryService.setCurrent(res);
       this.success.emit(res)
-      const dialogRef = this.dialog.open(FhirGetComponent, {
+      const dialogRef = this.dialog.open(ImmunizationRegistryCheckComponent, {
         maxWidth: '95vw',
         maxHeight: '98vh',
         height: 'fit-content',
         width: '100%',
         panelClass: 'dialog-without-bar',
-        data: { resourceType: 'metadata' },
+        data: { registry: this.registryService.getCurrent() },
       });
       dialogRef.afterClosed().subscribe(result => {
 

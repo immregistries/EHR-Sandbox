@@ -79,6 +79,7 @@ export class Hl7PostComponent {
           this.answer = res
         },
         error: (err) => {
+
           this.error = true
           this.resultLoading = false
           if (err.text) {
