@@ -3,10 +3,10 @@
   "version": "1.2.3-SNAPSHOT-4",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start": "nx serve",
+    "build": "nx build",
+    "watch": "nx build --watch --configuration development",
+    "test": "nx test"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^15.2.8",
     "@angular/router": "^15.2.8",
     "@ngneat/reactive-forms": "^4.1.0",
+    "@nx/angular": "19.0.8",
     "@types/fhir": "^0.0.36",
     "angular": "^1.8.3",
     "moment": "^2.29.1",
@@ -32,8 +33,13 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.6",
+    "@angular-devkit/core": "^15.2.6",
+    "@angular-devkit/schematics": "^15.2.6",
     "@angular/cli": "^15.2.6",
     "@angular/compiler-cli": "^15.2.8",
+    "@nx/angular": "19.0.8",
+    "@nx/workspace": "19.0.8",
+    "@schematics/angular": "^15.2.6",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
     "jasmine-core": "~4.0.0",
@@ -42,6 +48,7 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "nx": "19.0.8",
     "typescript": "~4.8.4"
   }
 }

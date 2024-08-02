@@ -27,6 +27,7 @@ export class ImmunizationRegistryCheckComponent {
       next: res => {
         this.hl7Auth = true
         this.hl7State = true
+        this.hl7State = true
       },
       error: err => {
         this.hl7Auth = false
