@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ComparisonResult, BaseForm, BaseFormOption } from 'src/app/core/_model/form-structure';
 import { Code, CodeSet, CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
@@ -7,6 +7,7 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { AbstractBaseFormComponent } from '../card-form/abstract-base-form/abstract-base-form.component';
 import { MatInput } from '@angular/material/input';
+import FuzzySearch from 'fuzzy-search';
 
 @Component({
   selector: 'app-select-codebase',
@@ -73,6 +74,14 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
 
   ngOnInit(): void {
     this.codeSet = this.codeMapsService.getCodeSet(this.baseForm.codeMapLabel)
+    if (this.codeSet) {
+      // this.codeSetSearcher = new FuzzySearch(Object.values(this.codeSet),
+      //   ['value', 'label', 'description'], {
+      //   caseSensitive: false,
+      //   sort: true
+      // });
+    }
+
     this.filterChange('')
     // if (this.model && this.model != '') {
     //   this.emitReferences()
@@ -99,39 +108,47 @@ export class SelectCodebaseComponent extends AbstractBaseFormComponent implement
       filterValue = ''
     }
     if (this.codeSet) {
-      this.filteredCodeMapsBuffer = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
-      Object.values(this.codeSet).forEach(
-        option => {
-          if (option.value.toLowerCase().includes(filterValue)) {
-            if (this.filterWithReference(option)) {
-              this.filteredCodeMapsBuffer.byValue.push(option)
-            }
-          } else if (this.displayCode(option.value).toLowerCase().includes(filterValue)) {
-            if (this.filterWithReference(option)) {
-              this.filteredCodeMapsBuffer.byLabel.push(option)
-            }
-          } else if (option.description?.toLowerCase().includes(filterValue)) {
-            if (this.filterWithReference(option)) {
-              this.filteredCodeMapsBuffer.byDescription.push(option)
+      if (filterValue === '') {
+        this.filteredCodeMapsOptions = Object.values(this.codeSet)
+      } else {
+        this.filteredCodeMapsBuffer = { byValue: [], byLabel: [], byDescription: [], byOther: [] }
+        Object.values(this.codeSet).forEach(
+          option => {
+            if (FuzzySearch.isMatch(option.value, filterValue, false)) {
+              if (this.filterWithReference(option)) {
+                this.filteredCodeMapsBuffer.byValue.push(option)
+              }
+            } else if (FuzzySearch.isMatch(this.displayCode(option.value), filterValue, false)) {
+              if (this.filterWithReference(option)) {
+                this.filteredCodeMapsBuffer.byLabel.push(option)
+              }
+            } else if (option.description && FuzzySearch.isMatch(option.description, filterValue, false)) {
+              if (this.filterWithReference(option)) {
+                this.filteredCodeMapsBuffer.byDescription.push(option)
+              }
             }
           }
-        }
-      )
-      this.filteredCodeMapsOptions = this.filteredCodeMapsBuffer.byValue.concat(this.filteredCodeMapsBuffer.byLabel, this.filteredCodeMapsBuffer.byDescription, this.filteredCodeMapsBuffer.byOther)
+        )
+        this.filteredCodeMapsOptions = this.filteredCodeMapsBuffer.byValue.concat(this.filteredCodeMapsBuffer.byLabel, this.filteredCodeMapsBuffer.byDescription, this.filteredCodeMapsBuffer.byOther)
+      }
     }
     if (this.baseForm.options) {
-      this.filteredFormOptionsBuffer = { byCode: [], byDisplay: [], byDefinition: [], byOther: [] };
-      this.baseForm.options.forEach((option) => {
-        if ((option.code + '').toLowerCase().includes(filterValue)) {
-          this.filteredFormOptionsBuffer.byCode.push(option)
-        } else if (this.displayCode(option.code).toLowerCase().includes(filterValue)) {
-          this.filteredFormOptionsBuffer.byDisplay.push(option)
-        } else if (option.definition?.toLowerCase().includes(filterValue)) {
-          this.filteredFormOptionsBuffer.byDefinition.push(option)
-        }
-      })
-      this.filteredFormOptions = this.filteredFormOptionsBuffer.byCode.concat(this.filteredFormOptionsBuffer.byDisplay, this.filteredFormOptionsBuffer.byDefinition, this.filteredFormOptionsBuffer.byOther)
+      if (filterValue === '') {
+        this.filteredFormOptions = this.baseForm.options
+      } else {
+        this.filteredFormOptionsBuffer = { byCode: [], byDisplay: [], byDefinition: [], byOther: [] };
+        this.baseForm.options.forEach((option) => {
+          if (FuzzySearch.isMatch(option.code + '', filterValue, false)) {
+            this.filteredFormOptionsBuffer.byCode.push(option)
+          } else if (FuzzySearch.isMatch(this.displayCode(option.code), filterValue, false)) {
+            this.filteredFormOptionsBuffer.byDisplay.push(option)
+          } else if (option.definition && FuzzySearch.isMatch(option.definition, filterValue, false)) {
+            this.filteredFormOptionsBuffer.byDefinition.push(option)
+          }
+        })
+        this.filteredFormOptions = this.filteredFormOptionsBuffer.byCode.concat(this.filteredFormOptionsBuffer.byDisplay, this.filteredFormOptionsBuffer.byDefinition, this.filteredFormOptionsBuffer.byOther)
 
+      }
     }
   }
 

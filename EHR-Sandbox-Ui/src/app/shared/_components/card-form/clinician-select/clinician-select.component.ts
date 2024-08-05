@@ -10,6 +10,7 @@ import { CardFormComponent } from '../card-form.component';
 import { BaseForm } from 'src/app/core/_model/form-structure';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
+import FuzzySearch from 'fuzzy-search';
 
 @Component({
   selector: 'app-clinician-select',
@@ -100,11 +101,16 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
     if (typeof event != "number") {
       filterValue = (event + '').toLowerCase();
     }
-    this.filteredOptions = this.options.filter(
-      option => {
-        return JSON.stringify(option).toLowerCase().includes(filterValue) || this.displayFn(option).toLowerCase().includes(filterValue)
-      }
-    )
+    if (filterValue === '') {
+      this.filteredOptions = this.options
+    } else {
+      this.filteredOptions = this.options.filter(
+        option => {
+          return FuzzySearch.isMatch(this.displayFn(option), filterValue, false)
+          // return JSON.stringify(option).toLowerCase().includes(filterValue) || this.displayFn(option).toLowerCase().includes(filterValue)
+        }
+      )
+    }
   }
 
   valueChanged(log?: string) {
