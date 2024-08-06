@@ -54,8 +54,8 @@ export interface Facility {
   id?: number;
   tenant?: Tenant | number;
   nameDisplay?: string;
-  facilities?: (Facility | number)[];
-  parentFacility?: Facility;
+  facilities?: Facility[];
+  parentFacility?: Facility | number;
   childrenCount?: number;
   identifiers?: EhrIdentifier[],
   type?: string;

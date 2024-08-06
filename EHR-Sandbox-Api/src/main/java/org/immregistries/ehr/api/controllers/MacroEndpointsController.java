@@ -187,7 +187,8 @@ public class MacroEndpointsController {
                 if (StringUtils.isNotBlank(immunization.getPatient().getReference())) {
 //                    vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), immunization.getPatient().getReference())
 //                            .orElseThrow(() -> new InvalidRequestException("Invalid id")));
-                    vaccinationEvent.setPatient(ehrPatients.get(immunization.getPatient().getReference()));
+                    vaccinationEvent.setPatient(ehrPatientRepository.findById(ehrPatients.get(immunization.getPatient().getReference()))
+                            .orElseThrow(() -> new InvalidRequestException("Missing patient " + immunization.getPatient().getReference())));
                 } else if (immunization.getPatient().getIdentifier() != null) {
                     vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), immunization.getPatient().getIdentifier().getValue())
                             .orElseThrow(() -> new InvalidRequestException("Mrn not recognised")));

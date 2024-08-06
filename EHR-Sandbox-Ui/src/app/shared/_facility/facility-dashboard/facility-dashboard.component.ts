@@ -14,12 +14,20 @@ export class FacilityDashboardComponent {
   @Input()
   set facility(value: Facility) {
     this._facility = value
+    if (this.facility.parentFacility && typeof this.facility.parentFacility != "object") {
+      this.facilityService.readFacility(this.tenantService.getCurrentId(), this.facility.parentFacility).subscribe((res) => {
+        this._facility.parentFacility = res
+        this.parentDisplay = this._facility.parentFacility.nameDisplay ?? ""
+      });
+    }
     if (!this.facility.facilities) {
       this.children = []
       this.facilityService.readFacilityChildren(this.tenantService.getCurrentId(), this.facility.id ?? -1).subscribe((res) => {
         this._facility.facilities = res
         this.children = res
       });
+    } else {
+      this.children = this.facility.facilities
     }
   }
   get facility(): Facility {
@@ -27,6 +35,7 @@ export class FacilityDashboardComponent {
   }
 
   children: Facility[] = [];
+  parentDisplay: String = "";
 
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
@@ -48,7 +57,7 @@ export class FacilityDashboardComponent {
     }
   }
 
-  openFacility(element?: Facility) {
+  openFacility(element?: Facility | number) {
     if (this.facility) {
       this.dialog.open(FacilityDashboardComponent, {
         maxWidth: '95vw',

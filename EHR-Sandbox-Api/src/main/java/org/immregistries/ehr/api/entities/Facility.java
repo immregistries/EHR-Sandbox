@@ -1,8 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
@@ -15,15 +13,12 @@ import java.util.Set;
         @Index(name = "idx_facility_id", columnList = "facility_id"),
         @Index(name = "idx_facility", columnList = "parent_facility_id")
 })
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "id",
-//        scope = Facility.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Facility.class)
 ///**
 // * Solves a "No Session exception" when using facility.getPatients(), issue about lazy loading apparently
 // */
-//@NamedEntityGraph(name = "Facility.patients",
-//        attributeNodes = @NamedAttributeNode("patients")
-//)
 public class Facility extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,11 +44,12 @@ public class Facility extends EhrEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_facility_id")
 //    @JsonBackReference("parent")
+    @JsonIdentityReference(alwaysAsId = true)
     private Facility parentFacility;
 
     @OneToMany(mappedBy = "parentFacility", cascade = CascadeType.DETACH)
 //    @JsonManagedReference("parent")
-    @JsonIgnore()
+//    @JsonIgnore()
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
@@ -133,12 +129,10 @@ public class Facility extends EhrEntity {
         this.nameDisplay = nameDisplay;
     }
 
-    //    @JsonInclude()
     public Tenant getTenant() {
         return tenant;
     }
 
-    //    @JsonIgnore
     public void setTenant(Tenant tenant) {
         this.tenant = tenant;
     }

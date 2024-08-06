@@ -34,8 +34,7 @@ public class VaccinationEvent extends EhrEntity {
      * @param id
      */
     @JsonProperty("patient")
-    public void setPatient(String id) {
-        // TODO is currently taken care of in the controller (Problem is I can't make repositories accessible in Entity definition)
+    public void dontUseThisMethod(String id) {
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
