@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Scanner;
 
-import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
+import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_SYSTEM;
+import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 
 @Service
 public class ResourceIdentificationService {
@@ -80,18 +81,16 @@ public class ResourceIdentificationService {
     public String getPatientLocalId(Identifier identifier, Facility facility) {
 //        logger.info("Reference identifier {} {}", identifier.getSystem(), identifier.getValue());
 //        logger.info("Facility identifier  system {} {}", getFacilityPatientIdentifierSystem(facility), identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility)));
-        if (StringUtils.isBlank(identifier.getSystem())) {
-            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
+        String id = null;
+        if (identifier.hasType() && identifier.getType().getCoding().stream().anyMatch(coding -> coding.getCode().equals(MRN_TYPE_VALUE) && coding.getSystem().equals(MRN_TYPE_SYSTEM))) {
+            id = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
                     .map(EhrPatient::getId).orElse(null);
-        } else if (identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility))) {
-            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
-                    .map(EhrPatient::getId).orElse(identifier.getValue()); // TODO Decide on what to do with this kind of identifier
-        } else if (identifier.getSystem().equals(MRN_SYSTEM)) {
-            return ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
-                    .map(EhrPatient::getId).orElse(null);
-        } else {
-            return null;
         }
+        if (id == null) {
+            id = ehrPatientRepository.findByFacilityIdAndIdentifier(facility.getId(), StringUtils.defaultIfBlank(identifier.getSystem(), ""), identifier.getValue())
+                    .map(EhrPatient::getId).orElse(null);
+        }
+        return id;
     }
 
 

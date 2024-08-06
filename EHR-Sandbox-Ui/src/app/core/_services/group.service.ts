@@ -1,7 +1,6 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Group, GroupMember, Identifier } from 'fhir/r5';
-import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, share, switchMap } from 'rxjs';
 import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
@@ -37,7 +36,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
       if (value) {
         return this.http.get<EhrGroup[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/groups`,
-          httpOptions)
+          httpOptions).pipe(share())
       } else {
         return of([])
       }
@@ -126,8 +125,8 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     if (tenantId > 0 && facilityId > 0) {
       return this.http.post<[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$import-view-result`, body,
-         httpOptions
-        );
+        httpOptions
+      );
     } else {
       return of()
     }
@@ -197,7 +196,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     if (tenantId > 0 && facilityId > 0 && groupId && groupId > -1) {
       return this.http.get<EhrGroup>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$refresh`,
-        httpOptions);
+        httpOptions).pipe(share());
     } else {
       return of()
     }

@@ -46,7 +46,7 @@ export class TenantFormComponent implements OnInit {
       },
       error: (err) => {
         console.log(err.error)
-        this.snackBarService.errorMessage(err.error.error)
+        this.snackBarService.errorMessage(err.error.error ?? err.error)
       }
     });
   }

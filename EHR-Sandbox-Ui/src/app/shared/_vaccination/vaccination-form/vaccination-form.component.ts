@@ -101,7 +101,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         error: (err) => {
           this.vaccination.vaccine.updatedDate = formerUpdatedDate
           console.log(err.error)
-          this.snackBarService.errorMessage(err.error.error)
+          this.snackBarService.errorMessage(err.error.error ?? err.error)
         }
       });
     } else {
@@ -113,7 +113,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         error: (err) => {
           this.vaccination.vaccine.updatedDate = formerUpdatedDate
           console.log(err.error)
-          this.snackBarService.errorMessage(err.error.error)
+          this.snackBarService.errorMessage(err.error.error ?? err.error)
         }
       });
     }

@@ -76,14 +76,13 @@ export class FacilityFormComponent implements OnInit {
 
   save() {
     if (this.editionMode) {
-      this.facility.tenant = undefined // Bad Practice TODO find better fix
       this.facilityService.putFacility(this.tenantService.getCurrentId(), this.facility).subscribe({
         next: (res: HttpResponse<Facility>) => {
           this.onSuccess(res)
         },
         error: (err) => {
           console.log(err.error)
-          this.snackBarService.errorMessage(err.error.error)
+          this.snackBarService.errorMessage(err.error.error ?? err.error)
         }
       });
 
@@ -94,7 +93,7 @@ export class FacilityFormComponent implements OnInit {
         },
         error: (err) => {
           console.log(err.error)
-          this.snackBarService.errorMessage(err.error.error)
+          this.snackBarService.errorMessage(err.error.error ?? err.error)
         }
       });
 

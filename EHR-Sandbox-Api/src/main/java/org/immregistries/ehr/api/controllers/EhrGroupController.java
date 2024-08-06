@@ -20,6 +20,7 @@ import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.logic.BundleImportService;
+import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,8 @@ public class EhrGroupController {
     private FacilityRepository facilityRepository;
     @Autowired
     private GroupProviderR5 groupProviderR5;
+    @Autowired
+    private OrganizationMapperR5 organizationMapperR5;
     @Autowired
     private FhirClientController fhirClientController;
     @Autowired
@@ -154,7 +157,7 @@ public class EhrGroupController {
                 Iterable<EhrGroup> childEhrGroups = ehrGroupRepository.findByFacilityId(childFacility.getId());
                 stream = Stream.concat(stream, StreamSupport.stream(childEhrGroups.spliterator(), false));
             }
-            return ResponseEntity.ok().body(stream.collect(Collectors.toSet()));
+            return ResponseEntity.ok().body(stream.collect(Collectors.toList()));
         }
     }
 
@@ -248,7 +251,7 @@ public class EhrGroupController {
 
     @PostMapping("/{groupId}/$add")
     @Transactional()
-    public EhrGroup add(@PathVariable() String groupId, @RequestParam String patientId) {
+    public EhrGroup add(@PathVariable() String groupId, @RequestParam("patientId") String patientId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient Not found"));
@@ -263,9 +266,13 @@ public class EhrGroupController {
             /**
              * First do match to get destination reference or identifier
              */
+
             EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
+            if (ehrIdentifier == null) {
+                throw new RuntimeException("MRN required to add patient");
+            }
             in.addParameter("memberId", ehrIdentifier.toR5());
-            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
+            in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility())); //TODO update with managingEntity ?
             IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
             IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
             Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();

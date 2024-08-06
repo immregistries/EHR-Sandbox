@@ -9,12 +9,15 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_SYSTEM;
+import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 
 public interface EhrPatientRepository extends CrudRepository<EhrPatient, String>, RevisionRepository<EhrPatient, String, Integer> {
 
-    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.type = '" + MRN_TYPE_SYSTEM + "' ANd i.value = :mrn")
-    Optional<EhrPatient> findByFacilityIdAndMrn(String facilityId, String mrn);
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.type = '" + MRN_TYPE_VALUE + "' ANd i.value = :mrn")
+    Optional<EhrPatient> findByFacilityIdAndMrn(@Param("facilityId") String facilityId, @Param("mrn") String mrn);
+
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' ANd i.value = :value")
+    Optional<EhrPatient> findByFacilityIdAndIdentifier(@Param("facilityId") String facilityId, @Param("system") String system, @Param("value") String value);
 
     @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f  WHERE f.tenant = :tenant")
     Iterable<EhrPatient> findByTenantId(@Param("tenant") Tenant tenant);
