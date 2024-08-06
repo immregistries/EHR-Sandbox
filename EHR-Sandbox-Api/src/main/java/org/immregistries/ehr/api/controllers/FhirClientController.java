@@ -217,6 +217,15 @@ public class FhirClientController {
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
+
+        /**
+         * If no fatal exception caught : stored fatal feedbacks are erased for the patient
+         *
+         */
+        feedbackRepository.deleteByPatientIdAndIisAndSeverityAndVaccinationEventNull(
+                patientId,
+                immunizationRegistry.getId().toString(),
+                "fatal");
         logger.info(String.valueOf(outcome.getResponseHeaders()));
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
@@ -278,7 +287,7 @@ public class FhirClientController {
 
             /**
              * If no fatal exception caught : stored fatal feedbacks are erased for the vaccination
-             * TODO do the same for Patient ?
+             *
              */
             feedbackRepository.deleteByVaccinationEventIdAndIisAndSeverity(
                     vaccinationId,

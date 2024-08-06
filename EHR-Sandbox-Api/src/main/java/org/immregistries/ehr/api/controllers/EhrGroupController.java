@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.Group;
-import org.hl7.fhir.r5.model.Identifier;
 import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.entities.*;
@@ -36,8 +35,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
 
 @RestController
@@ -272,7 +269,7 @@ public class EhrGroupController {
                 throw new RuntimeException("MRN required to add patient");
             }
             in.addParameter("memberId", ehrIdentifier.toR5());
-            in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility())); //TODO update with managingEntity ?
+            in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility()));
             IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
             IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
             Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
@@ -298,7 +295,7 @@ public class EhrGroupController {
             Parameters in = new Parameters();
             EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
             in.addParameter("memberId", ehrIdentifier.toR5());
-            in.addParameter("providerNpi", new Identifier().setSystem(FACILITY_SYSTEM).setValue(ehrGroup.getFacility().getId())); //TODO update with managingEntity
+            in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility()));
             /**
              * First do match to get destination reference or identifier
              */

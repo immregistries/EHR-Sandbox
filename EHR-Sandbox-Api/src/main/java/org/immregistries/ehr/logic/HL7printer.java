@@ -12,6 +12,7 @@ import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -199,18 +201,7 @@ public class HL7printer {
                     String value = vaccine.getFundingSource();
                     printObx(sb, obxSetId, obsSubId, null, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable, "");
                 }
-
-//                obsSubId++;
-//                {
-//                    obxSetId++;
-//                    String loinc = "59781-5";
-//                    String loincLabel = "Dose validity";
-//                    String value = vaccine.getAdministeredAmount(); //TODO CHECK
-//                    String valueLabel = "";
-//                    String valueTable = "99107";
-//                    printObx(sb, obxSetId, obsSubId, loinc, loincLabel, value, valueLabel, valueTable);
-//                }
-
+                
                 obsSubId++;
                 // page 24 https://www.cdc.gov/vaccines/programs/iis/technical-guidance/downloads/hl7-clarification-r6.pdf
                 if (StringUtils.isNotBlank(vaccine.getInformationStatement())) {
@@ -342,63 +333,79 @@ public class HL7printer {
             // PID-10
             sb.append("|");
             {
-                String race = "";
-                if (!patient.getRaces().isEmpty()) {
-                    race = patient.getRaces().stream().findFirst().get().getValue(); // TODO
+                Iterator<EhrRace> iterator = patient.getRaces().iterator();
+                if (iterator.hasNext()) {
+                    printCode(iterator.next().getValue(), CodesetType.PATIENT_RACE, codeMapManager.getCodeMap(), "0005", sb);
+                }
+                while (iterator.hasNext()) {
+                    sb.append("~");
+                    printCode(iterator.next().getValue(), CodesetType.PATIENT_RACE, codeMapManager.getCodeMap(), "0005", sb);
                 }
             }
+            // PID-11
+            sb.append("|");
             {
-                // PID-11
-                //TODO support multiple address ?
-                sb.append("|");
-                EhrAddress ehrAddress = patient.getAddresses().stream().findFirst().orElse(new EhrAddress());
-                printXAD(ehrAddress, sb);
-                // PID-12
-                sb.append("|");
-                // PID-13
-                sb.append("|");
-                Optional<EhrPhoneNumber> ehrPhoneNumber = patient.getPhones().stream().findFirst();
-                if (ehrPhoneNumber.isPresent()) {
-                    printXTN(ehrPhoneNumber.get(), sb);
-                    if (StringUtils.isNotBlank(patient.getEmail())) {
-                        sb.append('~');
-                    }
+                Iterator<EhrAddress> iterator = patient.getAddresses().iterator();
+                if (iterator.hasNext()) {
+                    printXAD(iterator.next(), sb);
+                }
+                while (iterator.hasNext()) {
+                    sb.append("~");
+                    printXAD(iterator.next(), sb);
+                }
+            }
+            // PID-12
+            sb.append("|");
+            // PID-13
+            sb.append("|");
+            {
+                Iterator<EhrPhoneNumber> iterator = patient.getPhones().iterator();
+                if (iterator.hasNext()) {
+                    printXTN(iterator.next(), sb);
+                }
+                while (iterator.hasNext()) {
+                    sb.append("~");
+                    printXTN(iterator.next(), sb);
                 }
                 if (StringUtils.isNotBlank(patient.getEmail())) {
+                    if (!patient.getPhones().isEmpty()) {
+                        sb.append('~');
+                    }
                     printXtnEmail(patient.getEmail(), sb);
                 }
-                // PID-14
-                sb.append("|");
-                // PID-15
-                sb.append("|");
-                // PID-16
-                sb.append("|");
-                // PID-17
-                sb.append("|");
-                // PID-18
-                sb.append("|");
-                // PID-19
-                sb.append("|");
-                // PID-20
-                sb.append("|");
-                // PID-21
-                sb.append("|");
-                // PID-22
-                sb.append("|");
-                Code ethnicityCode = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, patient.getEthnicity());
-                if (ethnicityCode != null) {
-                    sb.append("^");
-                    printCode(ethnicityCode, "CDCREC", sb);
-                }
-                // PID-23
-                sb.append("|");
-                // PID-24
-                sb.append("|");
-                sb.append(StringUtils.defaultIfBlank(patient.getBirthFlag(), ""));
-                // PID-25
-                sb.append("|");
-                sb.append(StringUtils.defaultIfBlank(patient.getBirthOrder(), ""));
             }
+            // PID-14
+            sb.append("|");
+            // PID-15
+            sb.append("|");
+            // PID-16
+            sb.append("|");
+            // PID-17
+            sb.append("|");
+            // PID-18
+            sb.append("|");
+            // PID-19
+            sb.append("|");
+            // PID-20
+            sb.append("|");
+            // PID-21
+            sb.append("|");
+            // PID-22
+            sb.append("|");
+            Code ethnicityCode = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, patient.getEthnicity());
+            if (ethnicityCode != null) {
+                sb.append("^");
+                printCode(ethnicityCode, "CDCREC", sb);
+            }
+            // PID-23
+            sb.append("|");
+            // PID-24
+            sb.append("|");
+            sb.append(StringUtils.defaultIfBlank(patient.getBirthFlag(), ""));
+            // PID-25
+            sb.append("|");
+            sb.append(StringUtils.defaultIfBlank(patient.getBirthOrder(), ""));
+
             sb.append("\r");
         }
         return sb.toString();
