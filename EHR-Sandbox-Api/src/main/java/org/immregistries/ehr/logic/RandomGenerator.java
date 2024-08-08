@@ -93,31 +93,29 @@ public class RandomGenerator {
         }
 
 
-        EhrPatient patient = new EhrPatient();
-        // patient.setTenant(tenant);
-        patient.setFacility(facility);
+        EhrPatient ehrPatient = new EhrPatient();
+        ehrPatient.setFacility(facility);
 
-        patient.setNameFirst(faker.name().firstName());
-        patient.setNameLast(lastname);
-        patient.setNameMiddle(faker.name().firstName());
+        ehrPatient.setNameFirst(faker.name().firstName());
+        ehrPatient.setNameLast(lastname);
+        ehrPatient.setNameMiddle(faker.name().firstName());
 
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setType("MR");
         ehrIdentifier.setValue(mrn);
         ehrIdentifier.setSystem(mrnSystem);
-        patient.getIdentifiers().add(ehrIdentifier);
+        ehrPatient.getIdentifiers().add(ehrIdentifier);
 
-        patient.setBirthDate(birthDate);
+        ehrPatient.setBirthDate(birthDate);
 
 
         EhrAddress ehrAddress = new EhrAddress();
-        patient.addAddress(ehrAddress);
+        ehrPatient.addAddress(ehrAddress);
         ehrAddress.setAddressLine1(faker.address().streetAddress());
         ehrAddress.setAddressCity(faker.address().city());
         ehrAddress.setAddressCountry("USA");
         ehrAddress.setAddressState(faker.address().stateAbbr());
         ehrAddress.setAddressZip(faker.address().zipCode());
-//        ehrAddress.setAddressZip(faker.address().zipCodeByState(patient.getAddressState()).replace('#','0'));
         try {
             ehrAddress.setAddressCountyParish(faker.address().countyByZipCode(ehrAddress.getAddressZip()));
         } catch (RuntimeException e) {
@@ -127,16 +125,16 @@ public class RandomGenerator {
         EhrPhoneNumber phoneNumber = new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6));
         phoneNumber.setUse("PRN");
         phoneNumber.setType("CP");
-        patient.addPhoneNumber(phoneNumber);
-        patient.setEmail(patient.getNameFirst() + randDay + "@email.com");
+        ehrPatient.addPhoneNumber(phoneNumber);
+        ehrPatient.setEmail(ehrPatient.getNameFirst() + randDay + "@email.com");
 
-        patient.setBirthFlag("");
-        patient.setBirthOrder("");
+        ehrPatient.setBirthFlag("");
+        ehrPatient.setBirthOrder("");
 
-        patient.setDeathFlag("");
+        ehrPatient.setDeathFlag("");
         int randomDecision = rand.nextInt(100);
         if (randomDecision < 30) {
-            patient.setDeathDate(deathDate);
+            ehrPatient.setDeathDate(deathDate);
         }
 
         Collection<Code> codeListEthnicity = codeMap.getCodesForTable(CodesetType.PATIENT_ETHNICITY);
@@ -150,7 +148,7 @@ public class RandomGenerator {
             int count = 0;
             int randomNumber = (int) (Math.random() * codeListSex.size());
             for (Code code : codeListSex) {
-                patient.setSex(code.getValue());
+                ehrPatient.setSex(code.getValue());
                 count += 1;
                 if (randomNumber == count) {
                     break;
@@ -165,7 +163,7 @@ public class RandomGenerator {
             int count = 0;
             int randomNumber = (int) (Math.random() * codeListEthnicity.size());
             for (Code code : codeListEthnicity) {
-                patient.setEthnicity(code.getValue());
+                ehrPatient.setEthnicity(code.getValue());
                 count += 1;
                 if (randomNumber == count) {
                     break;
@@ -181,56 +179,51 @@ public class RandomGenerator {
             for (Code code : codeListRace) {
                 count += 1;
                 if (randomNumber == count) {
-                    patient.addRace(new EhrRace(code.getValue()));
+                    ehrPatient.addRace(new EhrRace(code.getValue()));
                     break;
                 }
             }
         }
-
-
-//        patient.setGuardianFirst(faker.name().firstName());
-//        patient.setGuardianLast(faker.name().lastName());
-//        patient.setGuardianMiddle(faker.name().firstName());
-//        patient.setMotherMaiden(faker.name().lastName());
+//        ehrPatient.setMotherMaiden(faker.name().lastName());
 
         Collection<Code> codeListGuardian = codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
-        NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship(patient, randomNextOfKin());
+        NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship(ehrPatient, randomNextOfKin());
         nextOfKinRelationship.setRelationshipKind("MTH");
-        patient.addNexOfKinRelationship(nextOfKinRelationship);
+        ehrPatient.addNextOfKinRelationship(nextOfKinRelationship);
 //        int count = 0;
 
 //        for(Code code : codeListGuardian) {
-//            patient.setGuardianRelationship(code.getValue());
+//            ehrPatient.setGuardianRelationship(code.getValue());
 //            count+=1;
 //            if(randDay==count) {
 //                break;
 //            }
 //        }
 
-        patient.setProtectionIndicator("");
+        ehrPatient.setProtectionIndicator("");
         {
             int randomNumber = (int) (Math.random() * 3);
             if (randomNumber > 2) {
-                patient.setProtectionIndicator("Y");
+                ehrPatient.setProtectionIndicator("Y");
             } else if (randomNumber > 1) {
-                patient.setProtectionIndicator("N");
+                ehrPatient.setProtectionIndicator("N");
             }
         }
-        if (StringUtils.isNotBlank(patient.getProtectionIndicator())) {
-            patient.setProtectionIndicatorDate(protectionIndicatorDate);
+        if (StringUtils.isNotBlank(ehrPatient.getProtectionIndicator())) {
+            ehrPatient.setProtectionIndicatorDate(protectionIndicatorDate);
         }
-        patient.setPublicityIndicator("");
-        if (StringUtils.isNotBlank(patient.getPublicityIndicator())) {
-            patient.setPublicityIndicatorDate(publicityIndicatorDate);
+        ehrPatient.setPublicityIndicator("");
+        if (StringUtils.isNotBlank(ehrPatient.getPublicityIndicator())) {
+            ehrPatient.setPublicityIndicatorDate(publicityIndicatorDate);
         }
-        patient.setRegistryStatusIndicator("");
-        if (StringUtils.isNotBlank(patient.getRegistryStatusIndicator())) {
-            patient.setRegistryStatusIndicatorDate(registryStatusIndicatorDate);
+        ehrPatient.setRegistryStatusIndicator("");
+        if (StringUtils.isNotBlank(ehrPatient.getRegistryStatusIndicator())) {
+            ehrPatient.setRegistryStatusIndicatorDate(registryStatusIndicatorDate);
         }
 
-        patient.setUpdatedDate(new Date());
-        patient.setCreatedDate(new Date());
-        return patient;
+        ehrPatient.setUpdatedDate(new Date());
+        ehrPatient.setCreatedDate(new Date());
+        return ehrPatient;
     }
 
     public NextOfKin randomNextOfKin() {

@@ -12,9 +12,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * TODO integrate more in mapping and remove 'guardian' fields
- */
 @Entity
 @Table(name = "next_of_kin")
 public class NextOfKin {
@@ -78,6 +75,12 @@ public class NextOfKin {
 
     public void setPhoneNumbers(Set<EhrPhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
+    }
+
+    public EhrPhoneNumber addPhoneNumber() {
+        EhrPhoneNumber phoneNumber = new EhrPhoneNumber();
+        addPhoneNumber(phoneNumber);
+        return phoneNumber;
     }
 
     public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
@@ -197,6 +200,12 @@ public class NextOfKin {
 
     public void setAddresses(Set<EhrAddress> addresses) {
         this.addresses = addresses;
+    }
+
+    public EhrAddress addAddress() {
+        EhrAddress ehrAddress = new EhrAddress();
+        addAddress(ehrAddress);
+        return ehrAddress;
     }
 
     public void addAddress(EhrAddress address) {

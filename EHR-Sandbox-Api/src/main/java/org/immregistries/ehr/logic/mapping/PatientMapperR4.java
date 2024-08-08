@@ -253,7 +253,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
 
         for (Patient.ContactComponent contact : p.getContact()) {
-            ehrPatient.addNexOfKinRelationship(toEhrNextOfKinRelationShip(contact));
+            ehrPatient.addNextOfKinRelationship(toEhrNextOfKinRelationShip(contact));
         }
 
         return ehrPatient;

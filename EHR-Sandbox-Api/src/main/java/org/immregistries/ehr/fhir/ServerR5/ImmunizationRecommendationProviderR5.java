@@ -5,14 +5,17 @@ import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r5.model.IdType;
+import org.hl7.fhir.r5.model.ImmunizationRecommendation;
+import org.hl7.fhir.r5.model.Reference;
+import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
+import org.immregistries.ehr.logic.RecommendationService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +24,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGISTRY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
@@ -39,15 +34,19 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationRecommendationProviderR5.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
+
     @Override
     public Class<ImmunizationRecommendation> getResourceType() {
         return ImmunizationRecommendation.class;
     }
+
     public ResourceType getResourceName() {
         return ResourceType.ImmunizationRecommendation;
     }
-    @Resource
-    Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendationsStore;
+
+    @Autowired
+    private RecommendationService recommendationService;
+
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
     @Autowired
@@ -55,6 +54,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
 
     /**
      * Currently unusable as is, as request
+     *
      * @param immunizationRecommendation
      * @param requestDetails
      * @return
@@ -65,23 +65,15 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
                 (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
-        return update(immunizationRecommendation,requestDetails, immunizationRegistry) ;
+        return update(immunizationRecommendation, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam ImmunizationRecommendation immunizationRecommendation, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-
-        logger.info("{}", immunizationRecommendation.getPatient());
-
-        String dbPatientID = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
-        immunizationRecommendation.setPatient(new Reference(dbPatientID));
-
-        immunizationRecommendationsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
-        immunizationRecommendationsStore.get(facility.getId()).putIfAbsent(dbPatientID, new HashMap<>(1));
-        immunizationRecommendationsStore.get(facility.getId()).get(dbPatientID).put(immunizationRegistry.getId(), immunizationRecommendation); // TODO add
-        logger.info("{}", immunizationRecommendationsStore);
-        return new MethodOutcome().setResource(immunizationRecommendation);
+        String patientLocalId = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
+        immunizationRecommendation.setPatient(new Reference(patientLocalId));
+        return new MethodOutcome().setResource(recommendationService.saveInStore(immunizationRecommendation, facility, patientLocalId, immunizationRegistry));
     }
 
 

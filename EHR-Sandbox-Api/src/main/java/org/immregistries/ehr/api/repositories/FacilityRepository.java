@@ -12,12 +12,13 @@ import java.util.Optional;
 public interface FacilityRepository extends CrudRepository<Facility, String>, JpaSpecificationExecutor<Facility> {
 
     @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user")
-//    @EntityGraph(value = "Facility.patients")
     Iterable<Facility> findByUser(@Param("user") User user);
 
     @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user AND f.id = :id")
-//    @EntityGraph(value = "Facility.patients")
     Optional<Facility> findByUserAndId(@Param("user") User user, @Param("id") String id);
+
+    @Query(value = "SELECT f FROM Facility f RIGHT JOIN Tenant t ON f.tenant = t WHERE t.user = :user AND f.id = :id")
+    boolean existsByUserIdAndId(@Param("user") Integer userId, @Param("id") String id);
 
     Iterable<Facility> findByTenantId(String tenantId);
 

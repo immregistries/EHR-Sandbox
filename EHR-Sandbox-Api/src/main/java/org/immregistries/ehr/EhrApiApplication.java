@@ -3,7 +3,6 @@ package org.immregistries.ehr;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.hl7.fhir.r5.model.Group;
-import org.hl7.fhir.r5.model.ImmunizationRecommendation;
 import org.immregistries.ehr.api.entities.BulkImportStatus;
 import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
@@ -112,15 +111,6 @@ public class EhrApiApplication extends SpringBootServletInitializer {
     @Bean
     public RequestContextListener requestContextListener() {
         return new RequestContextListener();
-    }
-
-    @Bean
-    /**
-     * Map<FacilityId,Map<EhrPatientId, MAP<RegistryID, ImmunizationRecommendation>>>
-     */
-    public Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendations() {
-        Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> map = new HashMap<>(20);
-        return map;
     }
 
 

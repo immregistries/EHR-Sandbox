@@ -10,7 +10,7 @@ import javax.persistence.*;
  * Replaces Envers default Revinfo entity to add User information and more fields
  */
 @Entity
-@Table(name="revinfo")
+@Table(name = "revinfo")
 @AttributeOverrides({
         @AttributeOverride(name = "timestamp", column = @Column(name = "revtstmp")),
         @AttributeOverride(name = "id", column = @Column(name = "rev"))
@@ -30,7 +30,7 @@ public class AuditRevisionEntity extends DefaultRevisionEntity {
     private String copiedEntityId;
 
     @Column(name = "copied_facility_id")
-    private Integer copiedFacilityId;
+    private String copiedFacilityId;
 
     public Integer getUser() {
         return user;
@@ -64,11 +64,11 @@ public class AuditRevisionEntity extends DefaultRevisionEntity {
         this.copiedEntityId = copiedEntityId;
     }
 
-    public Integer getCopiedFacilityId() {
+    public String getCopiedFacilityId() {
         return copiedFacilityId;
     }
 
-    public void setCopiedFacilityId(Integer copiedFacilityId) {
+    public void setCopiedFacilityId(String copiedFacilityId) {
         this.copiedFacilityId = copiedFacilityId;
     }
 }

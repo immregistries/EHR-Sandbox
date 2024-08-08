@@ -357,6 +357,12 @@ public class EhrPatient extends EhrEntity {
         this.phones = phones;
     }
 
+    public EhrPhoneNumber addPhoneNumber() {
+        EhrPhoneNumber phoneNumber = new EhrPhoneNumber();
+        addPhoneNumber(phoneNumber);
+        return phoneNumber;
+    }
+
     public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
         if (phones == null) {
             this.phones = new HashSet<>(1);
@@ -370,6 +376,12 @@ public class EhrPatient extends EhrEntity {
 
     public void setRaces(Set<EhrRace> races) {
         this.races = races;
+    }
+
+    public EhrRace addRace() {
+        EhrRace race = new EhrRace();
+        addRace(race);
+        return race;
     }
 
     public void addRace(EhrRace race) {
@@ -387,6 +399,12 @@ public class EhrPatient extends EhrEntity {
         this.addresses = addresses;
     }
 
+    public EhrAddress addAddress() {
+        EhrAddress ehrAddress = new EhrAddress();
+        addAddress(ehrAddress);
+        return ehrAddress;
+    }
+
     public void addAddress(EhrAddress address) {
         if (this.addresses == null) {
             this.addresses = new LinkedHashSet<>(3);
@@ -402,7 +420,14 @@ public class EhrPatient extends EhrEntity {
         this.nextOfKinRelationships = nextOfKinRelationships;
     }
 
-    public void addNexOfKinRelationship(NextOfKinRelationship nextOfKinRelationship) {
+    public NextOfKinRelationship addNextOfKinRelationship() {
+        NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship();
+        addNextOfKinRelationship(nextOfKinRelationship);
+        return nextOfKinRelationship;
+    }
+
+
+    public void addNextOfKinRelationship(NextOfKinRelationship nextOfKinRelationship) {
         if (this.nextOfKinRelationships == null) {
             this.nextOfKinRelationships = new ArrayList<>(3);
         }

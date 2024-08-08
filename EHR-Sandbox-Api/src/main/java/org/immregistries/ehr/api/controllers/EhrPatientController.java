@@ -14,6 +14,7 @@ import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.RecommendationService;
 import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
@@ -49,11 +50,11 @@ public class EhrPatientController {
 
     private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     @Autowired
-    HL7printer hl7printer;
+    private HL7printer hl7printer;
     @Autowired
-    ImmunizationRegistryController immRegistryController;
+    private ImmunizationRegistryController immRegistryController;
     @Autowired
-    IImmunizationMapper immunizationMapper;
+    private IImmunizationMapper immunizationMapper;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -71,6 +72,8 @@ public class EhrPatientController {
     private TenantRepository tenantRepository;
     @Autowired
     private FacilityRepository facilityRepository;
+    @Autowired
+    private RecommendationService recommendationService;
 
 
     @GetMapping()
@@ -276,8 +279,11 @@ public class EhrPatientController {
                         set.add(immunizationMapper.toVaccinationEvent(immunization));
                     }
                 }
+                if (entry.getResource().getResourceType().name().equals("ImmunizationRecomendation")) {
+                    ImmunizationRecommendation recommendation = (ImmunizationRecommendation) entry.getResource();
+                    recommendationService.saveInStore(recommendation, facility, patient.getId(), immunizationRegistry);
+                }
 
-                //TODO Recommendations
             }
             return ResponseEntity.accepted().body(set);
         }
