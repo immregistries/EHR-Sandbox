@@ -229,7 +229,7 @@ public class EhrPatientController {
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
     public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() String facilityId,
                                                                                   @PathVariable() String patientId,
-                                                                                  @PathVariable() Integer registryId,
+                                                                                  @PathVariable() String registryId,
                                                                                   @RequestParam Optional<Long> _since) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
@@ -303,7 +303,7 @@ public class EhrPatientController {
     }
 
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
-    public ResponseEntity<String> qbpSend(@PathVariable() Integer registryId, @RequestBody String message) {
+    public ResponseEntity<String> qbpSend(@PathVariable() String registryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
         try {

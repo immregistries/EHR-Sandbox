@@ -62,7 +62,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
     @Update
     public MethodOutcome update(@ResourceParam ImmunizationRecommendation immunizationRecommendation, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(immunizationRecommendation, requestDetails, immunizationRegistry);

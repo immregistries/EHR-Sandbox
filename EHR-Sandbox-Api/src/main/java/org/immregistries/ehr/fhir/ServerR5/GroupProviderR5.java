@@ -63,7 +63,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     @Update
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(group, requestDetails, immunizationRegistry);
@@ -97,7 +97,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProvider<Group
     @Update
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return create(group, requestDetails, immunizationRegistry);

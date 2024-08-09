@@ -126,11 +126,11 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                     && performer.getActor().getType().equals("Clinician") //TODO support more actor types
             ) {
                 String performerRef = performer.getActor().getReference();
-                Integer performerId;
+                String performerId;
                 if (performerRef.split("Clinician/").length > 1) {
-                    performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]);
+                    performerId = performer.getActor().getReference().split("Clinician/")[1];
                 } else {
-                    performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[0]);
+                    performerId = performer.getActor().getReference();
                 }
                 switch (performer.getFunction().getCodingFirstRep().getCode()) { // TODO make sure system is FUNCTION
                     case ADMINISTERING: {

@@ -81,7 +81,7 @@ public class RemoteGroupController {
     }
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() Integer registryId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() String registryId) {
         IParser parser = fhirContext.newJsonParser();
 //        ehrGroupRepository.findByFacilityIdAndImmunizationRegistryId(facilityId, registryId);
 
@@ -103,7 +103,7 @@ public class RemoteGroupController {
      * @return
      */
     @GetMapping("/$fetch")
-    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable() String facilityId, @PathVariable() Integer registryId) {
+    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable() String facilityId, @PathVariable() String registryId) {
         IParser parser = fhirContext.newJsonParser();
         ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
         servletRequestDetails.setTenantId(String.valueOf(facilityId));
@@ -123,7 +123,7 @@ public class RemoteGroupController {
     }
 
     @PostMapping("/{groupId}/$member-add")
-    public ResponseEntity<String> add_member(@PathVariable() String facilityId, @PathVariable() Integer registryId, @PathVariable() String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
+    public ResponseEntity<String> add_member(@PathVariable() String facilityId, @PathVariable() String registryId, @PathVariable() String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhir(ehrPatient);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
@@ -159,7 +159,7 @@ public class RemoteGroupController {
 
     @PostMapping("/{groupId}/$member-remove")
     public ResponseEntity<String> remove_member(@PathVariable() String facilityId,
-                                                @PathVariable() Integer registryId,
+                                                @PathVariable() String registryId,
                                                 @PathVariable() String groupId,
                                                 @RequestParam() Optional<String> patientId,
                                                 @RequestParam() Optional<Identifier> identifier,

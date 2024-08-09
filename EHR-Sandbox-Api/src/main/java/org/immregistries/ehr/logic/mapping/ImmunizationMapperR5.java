@@ -136,7 +136,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 //    }
         for (Immunization.ImmunizationPerformerComponent performer : i.getPerformer()) {
             if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()) {
-                Integer performerId = Integer.parseInt(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+                String performerId = performer.getActor().getReference().split("Clinician/")[1]; // TODO
                 switch (performer.getFunction().getCode(FUNCTION)) {
                     case ADMINISTERING: {
                         ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO

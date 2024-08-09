@@ -36,7 +36,7 @@ public class ClinicianController {
     }
 
     @GetMapping("/{clinicianId}")
-    public Optional<Clinician> clinician(@PathVariable() Integer clinicianId) {
+    public Optional<Clinician> clinician(@PathVariable() String clinicianId) {
         return clinicianRepository.findById(clinicianId);
     }
 
@@ -62,7 +62,7 @@ public class ClinicianController {
     }
 
     @PutMapping("/{clinicianId}")
-    public Clinician putClinicians(@PathVariable() String tenantId, @PathVariable() Integer clinicianId, @RequestBody Clinician clinician) {
+    public Clinician putClinicians(@PathVariable() String tenantId, @PathVariable() String clinicianId, @RequestBody Clinician clinician) {
         Optional<Clinician> old = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId);
         clinician.setTenant(old.get().getTenant());
         return clinicianRepository.save(clinician);

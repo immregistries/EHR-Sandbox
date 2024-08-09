@@ -17,7 +17,7 @@ public class ImmunizationIdentifier {
 
     @Id
     @Column(name = "immunization_registry_id", nullable = true)
-    private Integer immunizationRegistryId;
+    private String immunizationRegistryId;
 
 //    @Id
 //    @Column(name = "system", nullable = false)
@@ -30,7 +30,7 @@ public class ImmunizationIdentifier {
     public ImmunizationIdentifier() {
     }
 
-    public ImmunizationIdentifier(String vaccinationEventId, Integer immunizationRegistryId, String identifier) {
+    public ImmunizationIdentifier(String vaccinationEventId, String immunizationRegistryId, String identifier) {
         this.vaccinationEventId = vaccinationEventId;
         this.immunizationRegistryId = immunizationRegistryId;
         this.identifier = identifier;
@@ -44,11 +44,11 @@ public class ImmunizationIdentifier {
         this.vaccinationEventId = vaccinationEventId;
     }
 
-    public Integer getImmunizationRegistryId() {
+    public String getImmunizationRegistryId() {
         return immunizationRegistryId;
     }
 
-    public void setImmunizationRegistryId(Integer immunizationRegistryId) {
+    public void setImmunizationRegistryId(String immunizationRegistryId) {
         this.immunizationRegistryId = immunizationRegistryId;
     }
 

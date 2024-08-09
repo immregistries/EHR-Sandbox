@@ -34,7 +34,7 @@ public class ImmunizationRegistryController {
     private CustomClientFactory customClientFactory;
 
     @GetMapping({"/{id}"})
-    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() Integer id) {
+    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String id) {
         Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(id, userDetailsService.currentUserId());
         if (immunizationRegistry.isPresent()) {
             return immunizationRegistry.get();
@@ -45,8 +45,8 @@ public class ImmunizationRegistryController {
     }
 
     @GetMapping({"/{id}/metadata"})
-    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() Integer id) {
-        IGenericClient client = customClientFactory.newGenericClient(id);
+    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() String id) {
+        IGenericClient client = customClientFactory.newGenericClient(getImmunizationRegistry(id));
         CapabilityStatement capabilityStatement;
         try {
             capabilityStatement = client.capabilities().ofType(CapabilityStatement.class).prettyPrint().execute();
@@ -91,13 +91,13 @@ public class ImmunizationRegistryController {
     }
 
     @DeleteMapping({"/{id}"})
-    public ResponseEntity removeImmunizationRegistry(@PathVariable() Integer id) {
+    public ResponseEntity removeImmunizationRegistry(@PathVariable() String id) {
         immunizationRegistryRepository.deleteByIdAndUserId(id, userDetailsService.currentUserId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{registryId}/$connectivity")
-    public ResponseEntity<String> checkHl7Connectivity(@PathVariable() Integer registryId) {
+    public ResponseEntity<String> checkHl7Connectivity(@PathVariable() String registryId) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = this.getImmunizationRegistry(registryId);
         try {
@@ -117,7 +117,7 @@ public class ImmunizationRegistryController {
     }
 
     @GetMapping("/{registryId}/$auth")
-    public ResponseEntity<String> checkHl7Auth(@PathVariable() Integer registryId) {
+    public ResponseEntity<String> checkHl7Auth(@PathVariable() String registryId) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = this.getImmunizationRegistry(registryId);
         try {

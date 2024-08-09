@@ -1,6 +1,8 @@
 package org.immregistries.ehr.fhir.ServerR5;
 
-import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -11,8 +13,8 @@ import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
+import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -51,6 +53,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
     public Class<Patient> getResourceType() {
         return Patient.class;
     }
+
     @Override
     public ResourceType getResourceName() {
         return ResourceType.Patient;
@@ -74,6 +77,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
 
     /**
      * Currently unusable as is, as request
+     *
      * @param patient
      * @param requestDetails
      * @return
@@ -81,16 +85,16 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
     @Update
     public MethodOutcome update(@ResourceParam Patient patient, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                    (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
-                    (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
-                ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
-        return  update(patient,requestDetails, immunizationRegistry);
+                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
+        ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
+        return update(patient, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Patient patient, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-        return update(patient,facility,immunizationRegistry);
+        return update(patient, facility, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Patient patient, Facility facility, ImmunizationRegistry immunizationRegistry) {
@@ -99,8 +103,8 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
          *
          * if not recognised store unmatched reference ?
          */
-        String dbPatientId = resourceIdentificationService.getPatientLocalId(patient,immunizationRegistry,facility);
-        EhrPatient oldPatient = patientRepository.findByFacilityIdAndId(facility.getId(),dbPatientId).orElse(null);
+        String dbPatientId = resourceIdentificationService.getPatientLocalId(patient, immunizationRegistry, facility);
+        EhrPatient oldPatient = patientRepository.findByFacilityIdAndId(facility.getId(), dbPatientId).orElse(null);
 
         if (oldPatient != null) {
             EhrPatient ehrPatient;
@@ -114,7 +118,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
             ehrPatient = patientRepository.save(ehrPatient);
             return new MethodOutcome()
                     .setId(new IdType().setValue(ehrPatient.getId()))
-                    .setResource(patientMapper.toFhir(ehrPatient,facility));
+                    .setResource(patientMapper.toFhir(ehrPatient, facility));
         } else {
             return create(patient, facility);
         }

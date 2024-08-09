@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class RecommendationService {
 
-    Map<Integer, Map<String, Map<Integer, ImmunizationRecommendation>>> immunizationRecommendationsStore;
+    Map<Integer, Map<String, Map<String, ImmunizationRecommendation>>> immunizationRecommendationsStore;
 
     RecommendationService() {
         immunizationRecommendationsStore = new HashMap<>(20);
@@ -26,7 +26,7 @@ public class RecommendationService {
         return immunizationRecommendation;
     }
 
-    public Map<Integer, ImmunizationRecommendation> getPatientMap(String facilityId, String patientId) {
+    public Map<String, ImmunizationRecommendation> getPatientMap(String facilityId, String patientId) {
         return immunizationRecommendationsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(patientId, new HashMap<>(0));

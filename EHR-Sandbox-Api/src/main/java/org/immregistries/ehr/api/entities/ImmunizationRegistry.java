@@ -12,7 +12,7 @@ public class ImmunizationRegistry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "immunization_registry_id", nullable = false)
-    private Integer id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -102,11 +102,11 @@ public class ImmunizationRegistry {
         this.user = user;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

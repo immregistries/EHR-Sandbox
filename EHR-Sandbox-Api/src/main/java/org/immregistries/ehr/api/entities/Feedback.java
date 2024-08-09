@@ -1,6 +1,9 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -13,14 +16,14 @@ import java.sql.Timestamp;
 //        @Index(name = "patient_id_idx", columnList = "patient_id")
 //}
 )
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
-        property="id",
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
         scope = Feedback.class)
 public class Feedback extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_id", nullable = false)
-    private Integer id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
@@ -112,11 +115,11 @@ public class Feedback extends EhrEntity {
         this.patient = patient;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

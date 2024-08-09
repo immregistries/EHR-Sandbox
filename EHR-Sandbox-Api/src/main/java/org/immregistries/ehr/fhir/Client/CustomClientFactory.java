@@ -9,36 +9,31 @@ import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.*;
 import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
 import com.google.gson.Gson;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r5.model.CanonicalType;
-import org.hl7.fhir.r5.model.SubscriptionTopic;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
@@ -48,7 +43,6 @@ import java.util.Map;
 
 /**
  * CustomClientBuilder
- * 
  */
 @Component
 public class CustomClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
@@ -65,29 +59,30 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
 
-    public IGenericClient newGenericClient(Integer registryId){
-         return newGenericClient(immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsServiceImpl.currentUserId()).orElseThrow(
-                 ()-> new RuntimeException("Invalid immunization registry id")
-         ));
-    }
+//    public IGenericClient newGenericClient(String registryId) {
+//        return newGenericClient(immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsServiceImpl.currentUserId()).orElseThrow(
+//                () -> new RuntimeException("Invalid immunization registry id")
+//        ));
+//    }
 
-    public IGenericClient newGenericClient(ImmunizationRegistry registry){
-         return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword(), registry.getHeaders());
+    public IGenericClient newGenericClient(ImmunizationRegistry registry) {
+        return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword(), registry.getHeaders());
     }
 
     public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password, String headers) {
-        IGenericClient client = newGenericClient(serverURL, tenantId,  username,  password);
+        IGenericClient client = newGenericClient(serverURL, tenantId, username, password);
         AdditionalRequestHeadersInterceptor additionalRequestHeadersInterceptor = new AdditionalRequestHeadersInterceptor();
-        for (String header: headers.split("\n")) {
-            String[] headsplit = header.split(":",1);
+        for (String header : headers.split("\n")) {
+            String[] headsplit = header.split(":", 1);
             if (headsplit.length > 1) {
                 additionalRequestHeadersInterceptor.addHeaderValue(headsplit[0], headsplit[1]);
             }
         }
         client.registerInterceptor(additionalRequestHeadersInterceptor);
-        return  client;
+        return client;
     }
-    public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password){
+
+    public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password) {
         IGenericClient client = newGenericClient(serverURL);
         // Register a tenancy interceptor to add /$tenantid to the url
         if (StringUtils.isNotBlank(tenantId)) {
@@ -101,7 +96,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
              * If username is blank : use token bearer auth
              */
             authInterceptor = new BearerTokenAuthInterceptor(password);
-        }else {
+        } else {
             // Create an HTTP basic auth interceptor
             authInterceptor = new BasicAuthInterceptor(username, password);
         }
@@ -109,7 +104,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
         return client;
     }
 
-    public IGenericClient newGenericClient(String serverURL, String username, String password){
+    public IGenericClient newGenericClient(String serverURL, String username, String password) {
         IGenericClient client = newGenericClient(serverURL);
         IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
         client.registerInterceptor(authInterceptor);
@@ -128,7 +123,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
     }
 
     private void asynchInit() {
-        if (this.getFhirContext() == null ){
+        if (this.getFhirContext() == null) {
             setFhirContext(fhirContext);
             setServerValidationMode(ServerValidationModeEnum.NEVER);
             loggingInterceptor = new LoggingInterceptor();
@@ -150,7 +145,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
              * If username is blank : use token bearer auth
              */
             return "Bearer " + ir.getIisPassword();
-        }else {
+        } else {
             // Create an HTTP basic auth interceptor
             String encoded = Base64.getEncoder()
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
@@ -164,7 +159,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
         String authToken = smartGetAuthToken(ir);
         UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(ir.getIisFacilityId());
         client.registerInterceptor(tenantSelection);
-        if (authToken != null){
+        if (authToken != null) {
             BearerTokenAuthInterceptor bearerTokenAuthInterceptor = new BearerTokenAuthInterceptor(authToken);
             client.registerInterceptor(bearerTokenAuthInterceptor);
         } else {
@@ -176,9 +171,9 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
     public String smartGetAuthToken(ImmunizationRegistry ir) {
         String token_url = smartGetTokenUrl(ir);
         String encodedKey = ir.getIisPassword()
-                .replace("-----BEGIN PRIVATE KEY-----","")
-                .replace("\n","")
-                .replace("-----END PRIVATE KEY-----","");
+                .replace("-----BEGIN PRIVATE KEY-----", "")
+                .replace("\n", "")
+                .replace("-----END PRIVATE KEY-----", "");
         byte[] bytes = DatatypeConverter.parseBase64Binary(encodedKey);
         bytes = Base64.getDecoder().decode(encodedKey);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
@@ -207,7 +202,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
                 .header()
                 .type("JWT")
                 .keyId(ir.getIisUsername())
-                .add("alg","RS384")
+                .add("alg", "RS384")
 
                 .and()
                 .audience().add("test")
@@ -228,8 +223,8 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
             con.setDoInput(true);
             String body = "{\"client_assertion_type\": \"urn:ietf:params:oauth:client-assertion-type:jwt-bearer\", \"client_assertion\": \"" + registeringToken + "\"}";
             byte[] input = body.getBytes("utf-8");
-            con.setRequestProperty( "Content-Length", Integer.toString( input.length));
-            try(OutputStream os = con.getOutputStream()) {
+            con.setRequestProperty("Content-Length", Integer.toString(input.length));
+            try (OutputStream os = con.getOutputStream()) {
                 os.write(input, 0, input.length);
             }
 

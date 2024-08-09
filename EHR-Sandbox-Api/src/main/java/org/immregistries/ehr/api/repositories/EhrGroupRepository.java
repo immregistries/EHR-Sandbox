@@ -19,11 +19,11 @@ public interface EhrGroupRepository extends CrudRepository<EhrGroup, String> {
     @Query(value = "SELECT g FROM EhrGroup g RIGHT JOIN Facility f on g.facility = f  WHERE f.tenant = :tenant")
     Iterable<EhrGroup> findByTenant(@Param("tenant") Tenant tenant);
 
-    Iterable<EhrGroup> findByFacilityIdAndImmunizationRegistryId(String facilityId, Integer immunizationRegistryId);
+    Iterable<EhrGroup> findByFacilityIdAndImmunizationRegistryId(String facilityId, String immunizationRegistryId);
 
     Iterable<EhrGroup> findByFacilityId(String facilityId);
 
-    Optional<EhrGroup> findByFacilityIdAndImmunizationRegistryIdAndName(String facilityId, Integer immunizationRegistryId, String name);
+    Optional<EhrGroup> findByFacilityIdAndImmunizationRegistryIdAndName(String facilityId, String immunizationRegistryId, String name);
 
     Optional<EhrGroup> findByFacilityIdAndId(String facilityId, String id);
 

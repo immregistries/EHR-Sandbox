@@ -121,8 +121,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 //        logger.info("{}", url);
         String tenantId = null;
         String facilityId = null;
-        int clinicianId = -1;
-        int registryId = -1;
+        String clinicianId = null;
+        String registryId = null;
         String patientId = null;
         String vaccinationId = null;
         String groupId = null;
@@ -144,7 +144,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
              */
             if (item.equals("imm-registry")) {
                 if (scanner.hasNextInt()) {
-                    registryId = scanner.nextInt();
+                    registryId = scanner.next();
 //                    checkIfPotentialValidId(vaccinationId);
                     ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid registry id"));
@@ -180,7 +180,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             } else if (item.equals("clinicians")) {
                 if (scanner.hasNextInt()) {
-                    clinicianId = scanner.nextInt();
+                    clinicianId = scanner.next();
 //                    checkIfPotentialValidId(clinicianId);
                     Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId)
                             .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));

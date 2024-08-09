@@ -1,6 +1,8 @@
 package org.immregistries.ehr.fhir.ServerR5;
 
-import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -8,7 +10,9 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Immunization;
 import org.hl7.fhir.r5.model.ResourceType;
-import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
@@ -44,10 +48,12 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
     private VaccineRepository vaccineRepository;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
+
     @Override
     public Class<Immunization> getResourceType() {
         return Immunization.class;
     }
+
     @Override
     public ResourceType getResourceName() {
         return ResourceType.Immunization;
@@ -62,6 +68,7 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
 
     /**
      * Currently unusable as is, as request
+     *
      * @param immunization
      * @param requestDetails
      * @return
@@ -69,10 +76,10 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
     @Update
     public MethodOutcome update(@ResourceParam Immunization immunization, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (int) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
-        return update(immunization,requestDetails, immunizationRegistry);
+        return update(immunization, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Immunization immunization, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
@@ -92,7 +99,7 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
         String vaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
         if (vaccinationId == null) {
-            return create(immunization,facility, dbPatientId);
+            return create(immunization, facility, dbPatientId);
         } else {
             VaccinationEvent old = vaccinationEventRepository.findById(vaccinationId).get();
             vaccinationEvent.setAdministeringFacility(facility);
@@ -115,8 +122,9 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
 
     public MethodOutcome create(Immunization immunization, Facility facility) {
         String patientId = new IdType(immunization.getPatient().getReference()).getIdPart();
-        return create(immunization,facility,patientId);
+        return create(immunization, facility, patientId);
     }
+
     public MethodOutcome create(Immunization immunization, Facility facility, String patientId) {
         MethodOutcome methodOutcome = new MethodOutcome();
         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);

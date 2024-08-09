@@ -17,7 +17,7 @@ public class Clinician extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "clinician_id", nullable = false)
-    private Integer id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "tenant_id")
@@ -122,11 +122,11 @@ public class Clinician extends EhrEntity {
         this.nameLast = nameLast;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

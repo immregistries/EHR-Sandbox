@@ -17,7 +17,7 @@ public class PatientExternalIdentifier {
 
     @Id
     @Column(name = "immunization_registry_id", nullable = false)
-    private Integer immunizationRegistryId;
+    private String immunizationRegistryId;
 
 
     @Column(name = "identifier", nullable = true)
@@ -26,7 +26,7 @@ public class PatientExternalIdentifier {
     public PatientExternalIdentifier() {
     }
 
-    public PatientExternalIdentifier(String patientId, Integer immunizationRegistryId, String identifier) {
+    public PatientExternalIdentifier(String patientId, String immunizationRegistryId, String identifier) {
         this.patientId = patientId;
         this.immunizationRegistryId = immunizationRegistryId;
         this.identifier = identifier;
@@ -41,11 +41,11 @@ public class PatientExternalIdentifier {
         this.patientId = patientId;
     }
 
-    public Integer getImmunizationRegistryId() {
+    public String getImmunizationRegistryId() {
         return immunizationRegistryId;
     }
 
-    public void setImmunizationRegistryId(Integer immunizationRegistryId) {
+    public void setImmunizationRegistryId(String immunizationRegistryId) {
         this.immunizationRegistryId = immunizationRegistryId;
     }
 
