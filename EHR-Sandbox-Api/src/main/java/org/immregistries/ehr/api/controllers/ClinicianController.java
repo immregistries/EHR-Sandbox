@@ -3,7 +3,6 @@ package org.immregistries.ehr.api.controllers;
 
 import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.Tenant;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
@@ -52,13 +51,8 @@ public class ClinicianController {
     }
 
     public Clinician postClinicians(Tenant tenant, Clinician clinician) {
-        clinician.setTenant(tenant);
-        for (EhrIdentifier clinicianIdentifier : clinician.getIdentifiers()) {
-//            clinicianIdentifier.setClinicianId(clinician.getId());
-            logger.info("Clinician Identifier {}", clinicianIdentifier);
-        }
         Clinician newClinician = clinicianRepository.save(clinician);
-        return clinicianRepository.save(clinician);
+        return newClinician;
     }
 
     @PutMapping("/{clinicianId}")
