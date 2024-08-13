@@ -14,11 +14,9 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -28,7 +26,7 @@ import java.util.Objects;
  * Maps the Database with FHIR for patient resources
  */
 @Service
-@Conditional(OnR5Condition.class)
+
 public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     @Autowired

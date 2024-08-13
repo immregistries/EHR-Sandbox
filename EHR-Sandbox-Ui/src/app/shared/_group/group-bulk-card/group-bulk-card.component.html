@@ -2,14 +2,15 @@
   <mat-icon>start</mat-icon>
   Initiate import
 </button>
-<button mat-stroked-button color="primary" [disabled]="!importStatus?.status" (click)="refreshStatus(true)">
+<button mat-stroked-button color="primary" [disabled]="!importStatus?.status" (click)="refreshStatus(true)"
+        [matTooltip]="'Fetch import status from EHR'">
   <mat-icon>refresh</mat-icon>
-  Check Import status
+  Check Importer status
 </button>
-<button mat-stroked-button color="primary" [matTooltip]="'Not Recommanded, force refresh from IIS'"
+<button mat-stroked-button color="primary" [matTooltip]="'Not Recommended, force refresh from IIS'"
         [disabled]="!importStatus?.status" (click)="refreshStatus(true, true)">
   <mat-icon>refresh</mat-icon>
-  Refresh from IIS
+  Check Exporter status
 </button>
 <button mat-stroked-button color="primary" [disabled]="!importStatus?.result" (click)="openResult()">
   <mat-icon>sync</mat-icon>

@@ -1,14 +1,12 @@
 package org.immregistries.ehr.api.controllers;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,12 +17,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController()
-@Conditional(OnR5Condition.class)
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/recommendations"})
 public class RecommendationController {
     Logger logger = LoggerFactory.getLogger(RecommendationController.class);
-    @Autowired
-    FhirContext fhirContext;
+    @Autowired()
+    FhirComponentsService fhirComponentsService;
 
     @Autowired
     private FacilityRepository facilityRepository;
@@ -33,7 +30,7 @@ public class RecommendationController {
 
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() String patientId) {
-        IParser parser = fhirContext.newJsonParser();
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser();
         Set<String> set = recommendationService.getPatientMap(facilityId, patientId).entrySet().stream().map(
                         entry -> parser.encodeResourceToString(entry.getValue()))
                 .collect(Collectors.toSet());

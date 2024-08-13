@@ -1,6 +1,5 @@
 package org.immregistries.ehr;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
@@ -12,7 +11,7 @@ import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.Client.CustomClientFactory;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +35,10 @@ public class BulkImportController {
     private Map<String, String> resultCacheStore;
 
     private static final Logger logger = LoggerFactory.getLogger(BulkImportController.class);
-    @Autowired
-    FhirContext fhirContext;
+    @Autowired()
+    FhirComponentsService fhirComponentsService;
     @Autowired
     ImmunizationRegistryController immunizationRegistryController;
-    @Autowired
-    CustomClientFactory customClientFactory;
     @Autowired
     FacilityRepository facilityRepository;
 
@@ -61,7 +58,7 @@ public class BulkImportController {
             , @RequestParam Optional<Boolean> _mdm
     ) throws IOException {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-        IGenericClient client = customClientFactory.newGenericClient(ir);
+        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
@@ -114,7 +111,7 @@ public class BulkImportController {
             , @RequestParam Optional<String> _typeFilter
             , @RequestParam Optional<Boolean> _mdm) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-        IGenericClient client = customClientFactory.newGenericClient(ir);
+        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
@@ -156,7 +153,7 @@ public class BulkImportController {
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));
             if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
-                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", fhirComponentsService.clientFactory().authorisationTokenContent(ir));
             } else {
                 con.setRequestProperty("Authorization", "Basic " + encoded);
 
@@ -210,7 +207,7 @@ public class BulkImportController {
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));
             if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
-                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", fhirComponentsService.clientFactory().authorisationTokenContent(ir));
             } else {
                 con.setRequestProperty("Authorization", "Basic " + encoded);
 
@@ -260,7 +257,7 @@ public class BulkImportController {
             con.setRequestProperty("Accept", "application/json");
 
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", fhirComponentsService.clientFactory().authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -296,7 +293,7 @@ public class BulkImportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", fhirComponentsService.clientFactory().authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -306,7 +303,7 @@ public class BulkImportController {
                 if (loadInFacility.isPresent()) {
                     Facility facility = facilityRepository.findById(loadInFacility.get()).orElseThrow(
                             () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
-                    IParser parser = fhirContext.newNDJsonParser();
+                    IParser parser = fhirComponentsService.fhirContext().newNDJsonParser();
                     Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
                     return bundleImportService.importBundle(ir, facility, bundle);
                 }
@@ -341,14 +338,14 @@ public class BulkImportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", customClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", fhirComponentsService.clientFactory().authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
             int status = con.getResponseCode();
             logger.info("RESPONSE {}", status);
             if (status == 200 || status == 202) {
-                IParser parser = fhirContext.newNDJsonParser();
+                IParser parser = fhirComponentsService.fhirContext().newNDJsonParser();
                 Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
                 return ResponseEntity.ok(bundleImportService.viewBundleAndMatchIdentifiers(ir, facility, bundle, false));
             }

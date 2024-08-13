@@ -11,10 +11,8 @@ import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.Vaccine;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
-import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,7 +25,6 @@ import java.util.Objects;
  * Maps the Database with FHIR for the immunization resources
  */
 @Service
-@Conditional(OnR4Condition.class)
 public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
 
     @Autowired
@@ -108,6 +105,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         i.addProgramEligibility().addCoding(toFhirCoding(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus()));
 //        i.getInformationSource().setConcept(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource())));
 
+        i.setReportOrigin(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource())));
         i.getVaccineCode().addCoding(toFhirCoding(CodesetType.VACCINATION_CVX_CODE, CVX, vaccine.getVaccineCvxCode()));
         i.getVaccineCode().addCoding(toFhirCoding(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, NDC, vaccine.getVaccineCvxCode()));
 

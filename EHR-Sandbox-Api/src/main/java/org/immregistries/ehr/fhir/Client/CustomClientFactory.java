@@ -1,11 +1,9 @@
 package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.*;
 import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
 import com.google.gson.Gson;
@@ -14,12 +12,8 @@ import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
@@ -40,30 +34,23 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-
-/**
- * CustomClientBuilder
- */
-@Component
 public class CustomClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
-
-    // Needs to be static object and built only one time in whole project
-    @Autowired
-    FhirContext fhirContext;
+    private static final Logger logger = LoggerFactory.getLogger(CustomClientFactory.class);
 
     LoggingInterceptor loggingInterceptor;
-    private static final Logger logger = LoggerFactory.getLogger(CustomClientFactory.class);
-    @Autowired
-    private ImmunizationRegistryRepository immunizationRegistryRepository;
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
 
-
-//    public IGenericClient newGenericClient(String registryId) {
+    //    public IGenericClient newGenericClient(String registryId) {
 //        return newGenericClient(immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsServiceImpl.currentUserId()).orElseThrow(
 //                () -> new RuntimeException("Invalid immunization registry id")
 //        ));
 //    }
+    public CustomClientFactory() {
+        super();
+        loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLogger(logger);
+        loggingInterceptor.setLogRequestSummary(true);
+        loggingInterceptor.setLogRequestBody(true);
+    }
 
     public IGenericClient newGenericClient(ImmunizationRegistry registry) {
         return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword(), registry.getHeaders());
@@ -113,25 +100,12 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
 
     @Override
     public synchronized IGenericClient newGenericClient(String theServerBase) {
-        asynchInit();
         IGenericClient client = super.newGenericClient(theServerBase);
         client.registerInterceptor(loggingInterceptor);
-//        AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+//        AdditxionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
 //        interceptor.addHeaderValue("Cache-Control", "no-cache");
 //        client.registerInterceptor(interceptor);
         return client;
-    }
-
-    private void asynchInit() {
-        if (this.getFhirContext() == null) {
-            setFhirContext(fhirContext);
-            setServerValidationMode(ServerValidationModeEnum.NEVER);
-            loggingInterceptor = new LoggingInterceptor();
-            loggingInterceptor.setLogger(logger);
-            loggingInterceptor.setLogRequestSummary(true);
-            loggingInterceptor.setLogRequestBody(true);
-            fhirContext.setNarrativeGenerator(new CustomNarrativeGenerator());
-        }
     }
 
     @Override
@@ -249,7 +223,6 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
 
     private String smartGetTokenUrl(ImmunizationRegistry ir) {
         URL url;
-        IParser parser = fhirContext.newJsonParser();
         HttpURLConnection con = null;
         String site_url = ir.getIisFhirUrl().split("/fhir")[0];
         try {

@@ -9,8 +9,8 @@ import org.immregistries.ehr.api.repositories.ImmunizationIdentifierRepository;
 import org.immregistries.ehr.api.repositories.PatientIdentifierRepository;
 import org.immregistries.ehr.fhir.ServerR5.ImmunizationProviderR5;
 import org.immregistries.ehr.fhir.ServerR5.PatientProviderR5;
-import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
-import org.immregistries.ehr.logic.mapping.IPatientMapper;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
+import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +35,9 @@ public class BundleImportService {
     ImmunizationProviderR5 immunizationProvider;
 
     @Autowired
-    IImmunizationMapper immunizationMapper;
+    ImmunizationMapperR5 immunizationMapper;
     @Autowired
-    IPatientMapper patientMapper;
+    PatientMapperR5 patientMapper;
 
     @Autowired
     private ImmunizationIdentifierRepository immunizationIdentifierRepository;

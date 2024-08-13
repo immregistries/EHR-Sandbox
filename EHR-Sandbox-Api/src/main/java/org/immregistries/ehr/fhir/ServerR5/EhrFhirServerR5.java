@@ -11,20 +11,17 @@ import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
 import org.immregistries.ehr.fhir.FhirAuthInterceptor;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.web.servlet.FrameworkServlet;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import java.util.ArrayList;
 import java.util.List;
 
 //@WebServlet(urlPatterns = {"/fhir/R5/*"}, displayName = "FHIR Server for subscription endpoint")
-//@Conditional(OnR5Condition.class)
+//
 public class EhrFhirServerR5 extends RestfulServer {
     private static final Logger logger = LoggerFactory.getLogger(EhrFhirServerR5.class);
 

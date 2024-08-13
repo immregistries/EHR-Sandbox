@@ -1,6 +1,5 @@
 package org.immregistries.ehr.fhir;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.interceptor.api.Interceptor;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
@@ -48,7 +47,7 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
-    private FhirContext context;
+    FhirComponentsService fhirComponentsService;
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired

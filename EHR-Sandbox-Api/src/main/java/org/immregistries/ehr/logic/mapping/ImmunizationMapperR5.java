@@ -12,10 +12,8 @@ import org.immregistries.ehr.api.entities.Vaccine;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,7 +24,7 @@ import java.util.Objects;
  * Maps the Database with FHIR for the immunization resources
  */
 @Service
-@Conditional(OnR5Condition.class)
+
 public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 
     @Autowired

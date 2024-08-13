@@ -15,13 +15,11 @@ import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +28,6 @@ import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGIS
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
-@Conditional(OnR5Condition.class)
 public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvider<Immunization> {
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationProviderR5.class);
 

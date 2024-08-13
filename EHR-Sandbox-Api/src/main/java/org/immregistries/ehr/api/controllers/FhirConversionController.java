@@ -1,6 +1,5 @@
 package org.immregistries.ehr.api.controllers;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
@@ -9,6 +8,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.*;
@@ -57,7 +57,7 @@ public class FhirConversionController {
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
-    private FhirContext fhirContext;
+    FhirComponentsService fhirComponentsService;
     @Autowired
     private EhrGroupRepository ehrGroupRepository;
 
@@ -69,14 +69,14 @@ public class FhirConversionController {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
         IBaseResource patient = patientMapper.toFhir(ehrPatient, facility);
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
         String resource = parser.encodeResourceToString(patient);
         return ResponseEntity.ok(resource);
     }
 
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/resource")
     public ResponseEntity<String> immunizationResource(@PathVariable() String facilityId, @PathVariable() String patientId, @PathVariable() String vaccinationId) {
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource immunization = immunizationMapper.toFhir(vaccinationEventRepository.findById(vaccinationId).get(),
                 resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facilityRepository.findById(facilityId).get()));
         String resource = parser.encodeResourceToString(immunization);
@@ -88,7 +88,7 @@ public class FhirConversionController {
     public ResponseEntity<String> groupResource(
             @PathVariable() String groupId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource group = groupMapper.toFhir(ehrGroup);
         String resource = parser.encodeResourceToString(group);
         return ResponseEntity.ok(resource);
@@ -98,7 +98,7 @@ public class FhirConversionController {
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> facilityResource(
             @PathVariable() String facilityId) {
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource organization = organizationMapper.toFhir(facilityRepository.findById(facilityId).get());
         String resource = parser.encodeResourceToString(organization);
         return ResponseEntity.ok(resource);
@@ -109,7 +109,7 @@ public class FhirConversionController {
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> facilityAllResourcesTransaction(@PathVariable() String facilityId) {
         Facility facility = facilityRepository.findById(facilityId).get();
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
         Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
         Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facility);
         for (EhrPatient ehrPatient : patientRepository.findByFacilityId(facilityId)) {
@@ -132,7 +132,7 @@ public class FhirConversionController {
     @GetMapping(PATIENT_PREFIX + "/{patientId}/bundle")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> qpdEquivalentTransaction(@PathVariable() String facilityId, @PathVariable() String patientId) {
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
         Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
         Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facilityRepository.findById(facilityId).get());
         Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patientRepository.findById(patientId).get());
@@ -143,7 +143,7 @@ public class FhirConversionController {
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/bundle")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> vxuEquivalentTransaction(@PathVariable() String facilityId, @PathVariable() String patientId, @PathVariable() String vaccinationId) {
-        IParser parser = fhirContext.newJsonParser().setPrettyPrint(true);
+        IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
         Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
         Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facilityRepository.findById(facilityId).get());
         Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patientRepository.findById(patientId).get());
@@ -236,14 +236,14 @@ public class FhirConversionController {
     }
 
     private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, String ndJson) {
-        IParser parser = fhirContext.newNDJsonParser();
+        IParser parser = fhirComponentsService.fhirContext().newNDJsonParser();
         Bundle bundle = (Bundle) parser.parseResource(ndJson);
         return bundleImportService.importBundle(immunizationRegistry, facility, bundle);
     }
 
     private String validateNdJsonBundle(Bundle bundle) {
-        FhirValidator validator = fhirContext.newValidator();
-        IValidatorModule module = new FhirInstanceValidator(fhirContext);
+        FhirValidator validator = fhirComponentsService.fhirContext().newValidator();
+        IValidatorModule module = new FhirInstanceValidator(fhirComponentsService.fhirContext());
         validator.registerValidatorModule(module);
         return "";
     }

@@ -1,6 +1,5 @@
 package org.immregistries.ehr.api.controllers;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import org.apache.commons.codec.binary.Base64;
@@ -9,6 +8,7 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class MacroEndpointsController {
 
     @Autowired
-    private FhirContext fhirContext;
+    private FhirComponentsService fhirComponentsService;
     @Autowired
     private AuthController authController;
     @Autowired
@@ -65,7 +65,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createAll(HttpServletRequest httpRequest, @RequestBody String bundleString) {
-        Bundle globalBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle globalBundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         User user = new User();
         String authHeader = httpRequest.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Basic ")) {
@@ -81,7 +81,7 @@ public class MacroEndpointsController {
 
         for (Bundle.BundleEntryComponent entry : globalBundle.getEntry()) {
             if (entry.getResource() instanceof Bundle) {
-                createTenant((Bundle) entry.getResource());
+                createTenant(httpRequest, (Bundle) entry.getResource());
             } else {
                 throw new InvalidRequestException("Bundle for user creation should only contain bundles");
             }
@@ -89,14 +89,14 @@ public class MacroEndpointsController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "tenants/$create", consumes = {"application/json"})
+    @PostMapping(value = "/tenants/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity createTenant(@RequestBody String bundleString) {
-        Bundle tenantBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
-        return createTenant(tenantBundle);
+    public ResponseEntity createTenant(HttpServletRequest httpRequest, @RequestBody String bundleString) {
+        Bundle tenantBundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
+        return createTenant(httpRequest, tenantBundle);
     }
 
-    public ResponseEntity createTenant(Bundle tenantBundle) {
+    public ResponseEntity createTenant(HttpServletRequest httpRequest, Bundle tenantBundle) {
         Tenant tenant = null;
         for (Bundle.BundleEntryComponent entry : tenantBundle.getEntry()) {
             if (entry.getResource() instanceof Organization) {
@@ -110,6 +110,7 @@ public class MacroEndpointsController {
             throw new InvalidRequestException("No organization found for tenant definition");
         }
         tenant = tenantController.postTenant(tenant).getBody();
+//        httpRequest.setAttribute("TENANT_ID", tenant.getNameDisplay());
 
         for (Bundle.BundleEntryComponent entry : tenantBundle.getEntry()) {
             if (entry.getResource() instanceof Bundle) {
@@ -124,7 +125,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createFacility(@PathVariable() String tenantId, @RequestBody String bundleString) {
-        Bundle facilityBundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle facilityBundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return createFacility(tenantRepository.findById(tenantId).get(), facilityBundle);
     }
 
@@ -152,7 +153,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity fillFacility(@PathVariable() String tenantId, @PathVariable() String facilityId, @RequestBody String bundleString) {
-        Bundle bundle = fhirContext.newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle bundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return fillFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), bundle);
     }
 

@@ -11,7 +11,7 @@ import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
-import org.immregistries.ehr.fhir.Client.CustomClientFactory;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.RecommendationService;
@@ -58,7 +58,7 @@ public class EhrPatientController {
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
-    private CustomClientFactory customClientFactory;
+    private FhirComponentsService fhirComponentsService;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
@@ -232,7 +232,7 @@ public class EhrPatientController {
                                                                                   @PathVariable() String registryId,
                                                                                   @RequestParam Optional<Long> _since) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
-        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistry);
+        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
         Facility facility = facilityRepository.findById(facilityId).get();
         EhrPatient patient = ehrPatientRepository.findById(patientId).get();
 

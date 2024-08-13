@@ -1,13 +1,11 @@
 package org.immregistries.ehr;
 
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.hl7.fhir.r5.model.Group;
 import org.immregistries.ehr.api.entities.BulkImportStatus;
-import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
 import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
-import org.immregistries.ehr.fhir.annotations.OnR4Condition;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -35,7 +32,6 @@ import java.util.Map;
         FhirConfig.class
 })
 public class EhrApiApplication extends SpringBootServletInitializer {
-    private final CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
     @Autowired
     AutowireCapableBeanFactory beanFactory;
     @Autowired
@@ -43,19 +39,18 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 
     public static String VERSION = "1.2.3-SNAPSHOT-4";
 
-    @Bean
-    @Conditional(OnR4Condition.class)
+    @Bean("fhirContextR4")
     public FhirContext fhirContextR4() {
         FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
-        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
+
+//        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
         return fhirContext;
     }
 
-    @Bean
-    @Conditional(OnR5Condition.class)
+    @Bean("fhirContextR5")
     public FhirContext fhirContextR5() {
         FhirContext fhirContext = new FhirContext(FhirVersionEnum.R5);
-        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
+//        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
 //		fhirContext.setValidationSupport();
         return fhirContext;
     }
@@ -91,10 +86,9 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 //	}
 
     @Bean
-    @Conditional(OnR5Condition.class)
     public ServletRegistrationBean<EhrFhirServerR5> ServerR5RegistrationBean() {
         ServletRegistrationBean<EhrFhirServerR5> registrationBean = new ServletRegistrationBean<>();
-        EhrFhirServerR5 servlet = new EhrFhirServerR5(context.getBean(FhirContext.class));
+        EhrFhirServerR5 servlet = new EhrFhirServerR5((FhirContext) context.getBean("fhirContextR5"));
         beanFactory.autowireBean(servlet);
         registrationBean.setServlet(servlet);
         registrationBean.addUrlMappings("/fhir/*", "/ehr/fhir/*");

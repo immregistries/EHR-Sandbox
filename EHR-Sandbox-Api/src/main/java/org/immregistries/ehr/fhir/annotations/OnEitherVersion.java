@@ -6,23 +6,23 @@ import org.springframework.context.annotation.Conditional;
 
 public class OnEitherVersion extends AnyNestedCondition {
 
-  OnEitherVersion() {
-    super(ConfigurationPhase.REGISTER_BEAN);
-  }
+    OnEitherVersion() {
+        super(ConfigurationPhase.REGISTER_BEAN);
+    }
 
-  @Override
-  protected ConditionOutcome getFinalMatchOutcome(MemberMatchOutcomes memberOutcomes) {
-    ConditionOutcome result = super.getFinalMatchOutcome(memberOutcomes);
-    return result;
-  }
+    @Override
+    protected ConditionOutcome getFinalMatchOutcome(MemberMatchOutcomes memberOutcomes) {
+        ConditionOutcome result = super.getFinalMatchOutcome(memberOutcomes);
+        return result;
+    }
 
 
-  @Conditional(OnR4Condition.class)
-  static class OnR4 {
-  }
+    @Conditional(OnR4Condition.class)
+    static class OnR4 {
+    }
 
-  @Conditional(OnR5Condition.class)
-  static class OnR5 {
-  }
+
+    static class OnR5 {
+    }
 
 }

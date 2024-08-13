@@ -12,11 +12,9 @@ import org.immregistries.ehr.api.entities.NextOfKinRelationship;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
-import org.immregistries.ehr.fhir.annotations.OnR4Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -26,7 +24,7 @@ import java.text.ParseException;
  * Maps the Database with FHIR for patient resources
  */
 @Service
-@Conditional(OnR4Condition.class)
+
 public class PatientMapperR4 implements IPatientMapper<Patient> {
 
     @Autowired

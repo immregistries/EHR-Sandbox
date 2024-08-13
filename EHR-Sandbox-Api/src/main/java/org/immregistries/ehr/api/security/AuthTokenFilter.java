@@ -156,6 +156,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(tenantId);
                     Tenant tenant = tenantRepository.findByIdAndUserId(String.valueOf(tenantId), userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid tenant id"));
+                    request.setAttribute("TENANT_ID", tenant.getId());
+                    request.setAttribute("TENANT_NAME", tenant.getNameDisplay());
                 }
             }
             if (item.equals("facilities")) {

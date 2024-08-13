@@ -7,7 +7,7 @@ import org.hl7.fhir.r5.model.CapabilityStatement;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.fhir.Client.CustomClientFactory;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class ImmunizationRegistryController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private CustomClientFactory customClientFactory;
+    private FhirComponentsService fhirComponentsService;
 
     @GetMapping({"/{id}"})
     public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String id) {
@@ -46,7 +46,7 @@ public class ImmunizationRegistryController {
 
     @GetMapping({"/{id}/metadata"})
     public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() String id) {
-        IGenericClient client = customClientFactory.newGenericClient(getImmunizationRegistry(id));
+        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(getImmunizationRegistry(id));
         CapabilityStatement capabilityStatement;
         try {
             capabilityStatement = client.capabilities().ofType(CapabilityStatement.class).prettyPrint().execute();

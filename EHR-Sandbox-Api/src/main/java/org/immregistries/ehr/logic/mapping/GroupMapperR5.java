@@ -8,10 +8,8 @@ import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -20,7 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-@Conditional(OnR5Condition.class)
+
 public class GroupMapperR5 implements IGroupMapper<Group> {
 
     @Autowired

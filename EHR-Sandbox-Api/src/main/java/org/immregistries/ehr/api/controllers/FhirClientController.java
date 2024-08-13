@@ -1,6 +1,5 @@
 package org.immregistries.ehr.api.controllers;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -17,8 +16,8 @@ import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.PatientExternalIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
+import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +41,9 @@ public class FhirClientController {
     public static final String IMM_REGISTRY_SUFFIX = "/registry/{registryId}";
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
-    private FhirContext fhirContext;
+    private FhirComponentsService fhirComponentsService;
     @Autowired
     private ResourceClient resourceClient;
-    @Autowired
-    private CustomClientFactory customClientFactory;
     @Autowired
     private FhirConversionController fhirConversionController;
     @Autowired
@@ -78,12 +75,12 @@ public class FhirClientController {
             @PathVariable() String registryId,
             @PathVariable() String resourceType,
             @RequestBody EhrIdentifier ehrIdentifier) {
-        Bundle bundle = customClientFactory.newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId)).search()
+        Bundle bundle = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId)).search()
                 .forResource(resourceType)
 
                 .where(Patient.IDENTIFIER.exactly().identifier(ehrIdentifier.toR5().getValue()))
                 .returnBundle(Bundle.class).execute();
-        return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
+        return ResponseEntity.ok(fhirComponentsService.parser("").encodeResourceToString(bundle));
     }
 
     @GetMapping("/smart-test/{keyId}")
@@ -144,10 +141,10 @@ public class FhirClientController {
                 "eqceZ+pNrtgucUV8PNrTgb4ZUBWISA==\n" +
                 "-----END PRIVATE KEY-----\n");
         immunizationRegistry.setIisFacilityId("");
-        Bundle bundle = customClientFactory.smartAuthClient(immunizationRegistry).search()
+        Bundle bundle = fhirComponentsService.clientFactory().smartAuthClient(immunizationRegistry).search()
                 .forResource("Patient")
                 .returnBundle(Bundle.class).execute();
-        return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
+        return ResponseEntity.ok(fhirComponentsService.parser("").encodeResourceToString(bundle));
     }
 
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
@@ -155,7 +152,7 @@ public class FhirClientController {
             @PathVariable() String registryId,
             @PathVariable() String patientId,
             @RequestBody String message) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         Patient patient = parser.parseResource(Patient.class, message);
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.create(patient, ir);
@@ -191,10 +188,10 @@ public class FhirClientController {
         if (message == null) {
             message = fhirConversionController.getPatientAsResource(patientId, facilityId).getBody();
         }
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         Patient patient = parser.parseResource(Patient.class, message);
         Parameters parameters = new Parameters();
-        return customClientFactory.newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId))
+        return fhirComponentsService.clientFactory().newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId))
                 .operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource", patient).returnResourceType(Bundle.class).execute();
     }
 
@@ -204,7 +201,7 @@ public class FhirClientController {
             @PathVariable() String registryId,
             @PathVariable() String patientId,
             @RequestBody String message) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         Patient patient = parser.parseResource(Patient.class, message);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(patient,
@@ -245,7 +242,7 @@ public class FhirClientController {
             @PathVariable() String vaccinationId,
             @RequestBody String message,
             @RequestParam(required = false) String patientFhirId) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         Immunization immunization = parser.parseResource(Immunization.class, message);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         if (patientFhirId != null && !patientFhirId.isEmpty()) {
@@ -269,7 +266,7 @@ public class FhirClientController {
             @PathVariable() String vaccinationId,
             @RequestBody String message,
             @RequestParam(required = false) String patientFhirId) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         Immunization immunization = parser.parseResource(Immunization.class, message);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         if (patientFhirId != null && !patientFhirId.isEmpty()) {
@@ -328,7 +325,7 @@ public class FhirClientController {
             @PathVariable() String registryId,
             @RequestParam(name = "type") String type,
             @RequestBody String message) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         IBaseResource resource = parser.parseResource(message);
         ImmunizationRegistry registry = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.create(resource, registry);
@@ -344,7 +341,7 @@ public class FhirClientController {
             @PathVariable() String registryId,
             @RequestParam String type,
             @RequestBody String message) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         IBaseResource resource = parser.parseResource(message);
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(resource, type, null, ir);
@@ -360,11 +357,11 @@ public class FhirClientController {
     public ResponseEntity<String> transaction(
             @PathVariable() String registryId,
             @RequestBody String message) {
-        IParser parser = parser(message);
+        IParser parser = fhirComponentsService.parser(message);
         IBaseBundle bundle = (IBaseBundle) parser.parseResource(message);
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-//        customClientFactory.newGenericClient(ir).transaction().withBundle(message).execute();
-        IBaseBundle result = customClientFactory.newGenericClient(ir).transaction().withBundle(bundle).execute();
+//        fhirComponentsService.clientFactory().newGenericClient(ir).transaction().withBundle(message).execute();
+        IBaseBundle result = fhirComponentsService.clientFactory().newGenericClient(ir).transaction().withBundle(bundle).execute();
         return ResponseEntity.ok(parser.encodeResourceToString(result));
     }
 
@@ -388,7 +385,7 @@ public class FhirClientController {
         }
         operationType = operationType.replaceFirst("\\$", "");
 
-        IGenericClient client = customClientFactory.newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId));
+        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistryController.getImmunizationRegistry(registryId));
 
         IOperation iOperation = client.operation();
         IOperationUnnamed iOperationUnnamed;
@@ -402,24 +399,7 @@ public class FhirClientController {
                 .prettyPrint().useHttpGet().returnResourceType(Bundle.class)
                 .execute();
 
-        return ResponseEntity.ok(parser("").encodeResourceToString(bundle));
-    }
-
-
-    /**
-     * Provides the accurate parser for said message
-     *
-     * @param message
-     * @return
-     */
-    private IParser parser(String message) {
-        IParser parser;
-        if (message.startsWith("<")) {
-            parser = fhirContext.newXmlParser().setPrettyPrint(true);
-        } else {
-            parser = fhirContext.newJsonParser().setPrettyPrint(true);
-        }
-        return parser;
+        return ResponseEntity.ok(fhirComponentsService.parser("").encodeResourceToString(bundle));
     }
 
 }

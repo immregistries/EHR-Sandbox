@@ -4,12 +4,10 @@ import org.hl7.fhir.r5.model.HumanName;
 import org.hl7.fhir.r5.model.Practitioner;
 import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 @Service
-@Conditional(OnR5Condition.class)
+
 public class PractitionerMapperR5 implements IPractitionerMapper<Practitioner> {
 
     public Clinician toClinician(Practitioner practitioner) {

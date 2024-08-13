@@ -9,28 +9,24 @@ import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.EhrSubscription;
-import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
+import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.fhir.EhrFhirProvider;
-import org.immregistries.ehr.fhir.annotations.OnR5Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.*;
 import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_HEADER_NAME;
 import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_PREFIX;
 
 @Controller
-@Conditional(OnR5Condition.class)
 public class BundleProviderR5 implements IResourceProvider {
     private static final Logger logger = LoggerFactory.getLogger(BundleProviderR5.class);
 
@@ -47,7 +43,8 @@ public class BundleProviderR5 implements IResourceProvider {
     @Autowired
     EhrSubscriptionRepository ehrSubscriptionRepository;
     @Autowired
-    FhirContext fhirContext;
+    @Qualifier("fhirContextR5")
+    FhirContext fhirContextR5;
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
 
