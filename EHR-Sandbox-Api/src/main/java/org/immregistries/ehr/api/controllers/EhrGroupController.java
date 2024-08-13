@@ -40,10 +40,12 @@ import java.util.stream.StreamSupport;
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/groups"})
 public class EhrGroupController {
+
+    public static long DEFAULT_DELAY = 60;
     @Autowired
     Map<String, BulkImportStatus> resultCacheStore;
 
-    Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
+    Logger logger = LoggerFactory.getLogger(EhrGroupController.class);
     @Autowired
     CustomClientFactory customClientFactory;
     //    @Autowired
@@ -163,6 +165,20 @@ public class EhrGroupController {
         return ResponseEntity.ok(resultCacheStore.get(groupId));
     }
 
+    @GetMapping("/{groupId}/$import-status-refresh")
+    public ResponseEntity<BulkImportStatus> getImportStatusWithForceRefresh(@PathVariable() String groupId) {
+        EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).orElseThrow();
+        BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
+        if (bulkImportStatus == null || ehrGroup.getImmunizationRegistry() == null) {
+            throw new RuntimeException("No import found");
+        }
+        if (bulkImportStatus.getStatus().equals("done")) {
+            return ResponseEntity.ok(bulkImportStatus);
+        }
+        remoteStatusRefresh(ehrGroup, bulkImportStatus.getCheckUrl(), bulkImportStatus.getLastAttemptCount());
+        return ResponseEntity.ok(resultCacheStore.get(groupId));
+    }
+
     @PostMapping("/{groupId}/$import-view-result")
     public ResponseEntity<Set<EhrEntity>> getImportStatusResult(@PathVariable() String groupId, @RequestBody String url) {
 //        BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
@@ -192,12 +208,12 @@ public class EhrGroupController {
             throw new RuntimeException(kickoff.getResponse().toString());
         } else if (kickoff.getStatus() == 200 | kickoff.getStatus() == 202) {
             String contentLocationUrl = kickoff.getHeaders("Content-Location").get(0);
-            BulkImportStatus bulkImportStatusStarted = new BulkImportStatus("Started", 0, new Date().getTime());
+            BulkImportStatus bulkImportStatusStarted = BulkImportStatus.started(contentLocationUrl);
             resultCacheStore.put(ehrGroup.getId(), bulkImportStatusStarted);
             /**
              * Check thread async
              */
-            Thread checkStatusThread = new Thread(() -> {
+            Thread checkStatusThread = new Thread(null, () -> {
                 logger.info("Thread started");
                 int count = 0;
                 try {
@@ -205,45 +221,62 @@ public class EhrGroupController {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                while (count++ < 30) {
+                boolean stop = false;
+                ResponseEntity responseEntity;
+                while (count++ < 30 && !stop) {
                     logger.info("Thread checking bulk status for the {} time", count);
-                    ResponseEntity responseEntity = bulkImportController.bulkCheckStatusHttpResponse(immunizationRegistry, contentLocationUrl);
+                    responseEntity = remoteStatusRefresh(ehrGroup, contentLocationUrl, count);
                     if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-                        BulkImportStatus bulkImportSuccess = new BulkImportStatus(new String((byte[]) Objects.requireNonNull(responseEntity.getBody()), StandardCharsets.UTF_8));
-                        resultCacheStore.put(ehrGroup.getId(), bulkImportSuccess);
                         /**
                          * end
                          */
-                        break;
+                        stop = true;
                     } else if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)) {
-                        BulkImportStatus bulkImportStatus = new BulkImportStatus("In Progress", count, new Date().getTime());
-                        resultCacheStore.put(ehrGroup.getId(), bulkImportStatus);
                         /**
                          * Keep trying, wait the expected delay
                          */
                         //unchecked
                         Map<String, java.util.List<String>> headers = (Map<String, java.util.List<String>>) responseEntity.getBody();
-                        {
-                            assert headers != null;
-                            final long delay;
-                            if (headers.get("Retry-After").size() > 0 && StringUtils.isNotBlank(headers.get("Retry-After").get(0))) {
-                                delay = Integer.parseInt(headers.get("Retry-After").get(0));
-                            } else {
-                                delay = 120;
-                            }
-                            try {
-                                Thread.sleep(delay * 1000);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
+                        assert headers != null;
+                        final long delay;
+                        if (headers.get("Retry-After").size() > 0 && StringUtils.isNotBlank(headers.get("Retry-After").get(0))) {
+                            delay = Integer.parseInt(headers.get("Retry-After").get(0));
+                        } else {
+                            delay = DEFAULT_DELAY;
+                        }
+                        try {
+                            Thread.sleep(delay * 1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
                 logger.info("Thread Stopped");
-            });
+            }, "bulk-import-group-" + ehrGroup.getId());
             checkStatusThread.start();
         }
         return ResponseEntity.ok(kickoff.getStatus());
+    }
+
+    private ResponseEntity remoteStatusRefresh(EhrGroup ehrGroup, String contentLocationUrl, Integer count) {
+        logger.info("Thread checking bulk status for the {} time", count);
+        ResponseEntity responseEntity = bulkImportController.bulkCheckStatusHttpResponse(ehrGroup.getImmunizationRegistry(), contentLocationUrl);
+
+        if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+            BulkImportStatus bulkImportSuccess = BulkImportStatus.success(new String((byte[]) Objects.requireNonNull(responseEntity.getBody()), StandardCharsets.UTF_8));
+            resultCacheStore.put(ehrGroup.getId(), bulkImportSuccess);
+            /**
+             * end
+             */
+            return responseEntity;
+        } else if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)) {
+            BulkImportStatus bulkImportStatus = BulkImportStatus.inProgress(count, contentLocationUrl);
+            resultCacheStore.put(ehrGroup.getId(), bulkImportStatus);
+            return responseEntity;
+        } else { // TODO support error
+            throw new RuntimeException("ERROR " + responseEntity.getStatusCode());
+        }
+
     }
 
     @PostMapping("/{groupId}/$add")

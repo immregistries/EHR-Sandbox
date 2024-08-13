@@ -57,7 +57,7 @@ public class BundleImportService {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     String receivedId = new IdType(patient.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getPatientLocalId(patient, immunizationRegistry, facility);
+                    String localPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
 
                     MethodOutcome methodOutcome;
                     methodOutcome = patientProvider.update(patient, facility, immunizationRegistry);
@@ -73,7 +73,7 @@ public class BundleImportService {
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
                     String receivedId = new IdType(immunization.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getPatientLocalId(immunization.getPatient(), immunizationRegistry, facility);
+                    String localPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
                     if (StringUtils.isNotBlank(localPatientId)) {
                         immunization.setPatient(new Reference("Patient/" + localPatientId));
                         MethodOutcome methodOutcome = immunizationProvider.create(immunization, facility);
@@ -102,10 +102,10 @@ public class BundleImportService {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     String receivedId = new IdType(patient.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getPatientLocalId(patient, immunizationRegistry, facility);
+                    String localPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
                     patientIdentifierRepository.save(new PatientExternalIdentifier(localPatientId, immunizationRegistry.getId(), receivedId));
 
-                    if (includeOnlyGolden && patient.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) == null){
+                    if (includeOnlyGolden && patient.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) == null) {
                         break;
                     }
                     EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
@@ -117,13 +117,13 @@ public class BundleImportService {
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
                     String receivedId = new IdType(immunization.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getPatientLocalId(immunization.getPatient(), immunizationRegistry, facility);
-                    if (includeOnlyGolden && immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) == null){
+                    String localPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
+                    if (includeOnlyGolden && immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) == null) {
                         break;
                     }
                     if (StringUtils.isNotBlank(localPatientId)) {
                         immunization.setPatient(new Reference("Patient/" + localPatientId));
-                        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
+                        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
                         vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), localPatientId).get());
                         String localVaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
                         immunizationIdentifierRepository.save(new ImmunizationIdentifier(localVaccinationId, immunizationRegistry.getId(), receivedId));

@@ -90,13 +90,13 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
          *
          *  TODO if not recognised store unmatched reference ?
          */
-        String dbPatientId = resourceIdentificationService.getPatientLocalId(immunization.getPatient(), immunizationRegistry, facility);
+        String dbPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
         immunization.getPatient().setId(dbPatientId + "");
         return update(immunization, immunizationRegistry, facility, dbPatientId);
     }
 
     public MethodOutcome update(@ResourceParam Immunization immunization, ImmunizationRegistry immunizationRegistry, Facility facility, String dbPatientId) {
-        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
+        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
         String vaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
         if (vaccinationId == null) {
             return create(immunization, facility, dbPatientId);
@@ -127,7 +127,7 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
 
     public MethodOutcome create(Immunization immunization, Facility facility, String patientId) {
         MethodOutcome methodOutcome = new MethodOutcome();
-        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
+        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
         vaccinationEvent.setAdministeringFacility(facility);
         vaccinationEvent.setPatient(
                 patientRepository.findByFacilityIdAndId(facility.getId(), patientId)

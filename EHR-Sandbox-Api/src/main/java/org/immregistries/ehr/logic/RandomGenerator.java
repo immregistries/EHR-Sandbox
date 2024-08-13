@@ -349,6 +349,9 @@ public class RandomGenerator {
         if (randomNumber > 0.2) {
             clinician.setQualification("NP");
         }
+        EhrIdentifier ehrIdentifier = new EhrIdentifier();
+        ehrIdentifier.setValue(RandomStringUtils.random(15, true, true));
+        clinician.getIdentifiers().add(ehrIdentifier);
         return clinician;
     }
 

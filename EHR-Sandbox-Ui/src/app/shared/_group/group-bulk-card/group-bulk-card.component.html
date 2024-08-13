@@ -6,7 +6,8 @@
   <mat-icon>refresh</mat-icon>
   Check Import status
 </button>
-<button mat-stroked-button color="primary" [matTooltip]="'Not Recommended, force refrsh from IIS'" [disabled]="!importStatus?.status">
+<button mat-stroked-button color="primary" [matTooltip]="'Not Recommanded, force refresh from IIS'"
+        [disabled]="!importStatus?.status" (click)="refreshStatus(true, true)">
   <mat-icon>refresh</mat-icon>
   Refresh from IIS
 </button>
@@ -18,8 +19,10 @@
 <mat-list>
   <mat-list-item>Status: {{importStatus?.status ?? 'N/A'}}</mat-list-item>
   <mat-divider></mat-divider>
-  <mat-list-item>Number of attempts: {{importStatus?.lastAttemptCount ?? 'N/A'}}</mat-list-item>
+  <mat-list-item>Number of automatic check: {{importStatus?.lastAttemptCount ?? 'N/A'}}</mat-list-item>
   <mat-divider></mat-divider>
+  <!-- <mat-list-item>Delay applied between automatic checks: {{importStatus?.delay ?? 'N/A'}}</mat-list-item>
+  <mat-divider></mat-divider> -->
   <mat-list-item>Last attempt time: {{importStatus?.lastAttemptTime | date: 'medium'}}</mat-list-item>
   <mat-divider></mat-divider>
   <!-- <mat-list-item *ngIf="importStatus?.result"> Result: <mat-icon>open</mat-icon></mat-list-item> -->
@@ -27,8 +30,10 @@
     <span style="display: flex; align-items: center; justify-content: center;">
       Result:
       <!-- <button mat-icon-button type="button" (click)="openResult()"><mat-icon>open_in_new</mat-icon></button> -->
-      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResult()" color="primary"><mat-icon>open_in_new</mat-icon></button>
-      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResultJson()" color="primary"><mat-icon>description</mat-icon></button>
+      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResult()"
+              color="primary"><mat-icon>open_in_new</mat-icon></button>
+      <button mat-icon-button type="button" [disabled]="!importStatus?.result" (click)="openResultJson()"
+              color="primary"><mat-icon>description</mat-icon></button>
     </span>
   </mat-list-item>
   <mat-divider></mat-divider>

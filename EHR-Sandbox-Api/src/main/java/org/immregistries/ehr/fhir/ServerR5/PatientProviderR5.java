@@ -103,7 +103,7 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Pat
          *
          * if not recognised store unmatched reference ?
          */
-        String dbPatientId = resourceIdentificationService.getPatientLocalId(patient, immunizationRegistry, facility);
+        String dbPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
         EhrPatient oldPatient = patientRepository.findByFacilityIdAndId(facility.getId(), dbPatientId).orElse(null);
 
         if (oldPatient != null) {

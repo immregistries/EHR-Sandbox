@@ -72,7 +72,7 @@ export class FhirBulkService {
     const registryId = this.registryService.getCurrentId()
     if (loadInFacility) {
       const facilityId = this.facilityService.getCurrentId()
-      if ( facilityId > -1) {
+      if (facilityId > -1) {
         return this.http.get(
           `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
           {
@@ -82,18 +82,18 @@ export class FhirBulkService {
               loadInFacility: facilityId
             }
           });
-        } else {
-          return of("")
-        }
       } else {
-        return this.http.get(
-          `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
-          {
-            responseType: 'text',
-            params: {
-              contentUrl: contentUrl
-            }
-          });
+        return of("")
+      }
+    } else {
+      return this.http.get(
+        `${this.settings.getApiUrl()}/registry/${registryId}/$export-result`,
+        {
+          responseType: 'text',
+          params: {
+            contentUrl: contentUrl
+          }
+        });
     }
 
   }
@@ -104,7 +104,7 @@ export class FhirBulkService {
     const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, body);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, body, httpOptions);
   }
 
   // viewResult(url: string): Observable<string> {

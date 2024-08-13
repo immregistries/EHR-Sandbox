@@ -182,7 +182,7 @@ public class MacroEndpointsController {
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Immunization) {
                 Immunization immunization = (Immunization) entry.getResource();
-                VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
+                VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
                 vaccinationEvent.setAdministeringFacility(facility);
                 if (StringUtils.isNotBlank(immunization.getPatient().getReference())) {
 //                    vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), immunization.getPatient().getReference())
@@ -193,6 +193,7 @@ public class MacroEndpointsController {
                     vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), immunization.getPatient().getIdentifier().getValue())
                             .orElseThrow(() -> new InvalidRequestException("Mrn not recognised")));
                 }
+                // TODO CLINICIAN
                 vaccinationEvent.setVaccine(vaccineRepository.save(vaccinationEvent.getVaccine()));
                 vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
             }

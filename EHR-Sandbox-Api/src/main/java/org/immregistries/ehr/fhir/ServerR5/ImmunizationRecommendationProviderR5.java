@@ -71,7 +71,7 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
     public MethodOutcome update(@ResourceParam ImmunizationRecommendation immunizationRecommendation, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
         Facility facility = facilityRepository.findById(requestDetails.getTenantId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-        String patientLocalId = resourceIdentificationService.getPatientLocalId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
+        String patientLocalId = resourceIdentificationService.getLocalPatientId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
         immunizationRecommendation.setPatient(new Reference(patientLocalId));
         return new MethodOutcome().setResource(recommendationService.saveInStore(immunizationRecommendation, facility, patientLocalId, immunizationRegistry));
     }

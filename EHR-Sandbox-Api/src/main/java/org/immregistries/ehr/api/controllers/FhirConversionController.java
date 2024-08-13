@@ -216,7 +216,7 @@ public class FhirConversionController {
 
     }
 
-    @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")
+    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")
     public ResponseEntity<String> loadNdJsonBundle(
             @PathVariable() String facilityId,
             @PathVariable() String registryId,
@@ -229,8 +229,8 @@ public class FhirConversionController {
     }
 
 
-    @PostMapping("/tenant/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
-    public ResponseEntity bulkResultLoad(@PathVariable() String registryId, @RequestBody String ndjson, @PathVariable() String facilityId) {
+    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
+    public ResponseEntity bulkResultLoad(@PathVariable() String facilityId, @PathVariable() String registryId, @RequestBody String ndjson) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         return loadNdJson(ir, facilityRepository.findById(facilityId).get(), ndjson);
     }

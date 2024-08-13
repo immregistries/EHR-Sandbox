@@ -1,24 +1,45 @@
 package org.immregistries.ehr.api.entities;
 
+import java.util.Date;
+
 public class BulkImportStatus {
 
-//    private String groupId;
+    //    private String groupId;
 //    private String registryId;
     private String status;
     private int lastAttemptCount;
     private long lastAttemptTime;
+    private long delay;
     private String result;
     private String checkUrl;
 
-    public BulkImportStatus(String status, int lastAttemptCount, long lastAttemptTime) {
-        this.status = status;
-        this.lastAttemptCount = lastAttemptCount;
-        this.lastAttemptTime = lastAttemptTime;
+    public static BulkImportStatus success(String result) {
+        BulkImportStatus bulkImportStatus = new BulkImportStatus();
+        bulkImportStatus.setStatus("done");
+        bulkImportStatus.setResult(result);
+        return bulkImportStatus;
     }
 
-    public BulkImportStatus(String result) {
-        this.status = "done";
-        this.result = result;
+    public static BulkImportStatus started(String checkUrl) {
+        BulkImportStatus bulkImportStatus = new BulkImportStatus();
+        bulkImportStatus.setStatus("Started");
+        bulkImportStatus.setLastAttemptCount(0);
+        bulkImportStatus.setLastAttemptTime(new Date().getTime());
+        bulkImportStatus.setCheckUrl(checkUrl);
+        return bulkImportStatus;
+    }
+
+    public static BulkImportStatus inProgress(int lastAttemptCount, String checkUrl) {
+        BulkImportStatus bulkImportStatus = new BulkImportStatus();
+        bulkImportStatus.setStatus("In Progress");
+        bulkImportStatus.setLastAttemptCount(lastAttemptCount);
+        bulkImportStatus.setLastAttemptTime(new Date().getTime());
+        bulkImportStatus.setCheckUrl(checkUrl);
+        return bulkImportStatus;
+    }
+
+    public BulkImportStatus() {
+
     }
 
     public String getStatus() {

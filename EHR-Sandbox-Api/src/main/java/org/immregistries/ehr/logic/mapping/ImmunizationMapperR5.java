@@ -2,22 +2,23 @@ package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
+import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.Vaccine;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.annotations.OnR5Condition;
+import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 
@@ -32,6 +33,12 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
     CodeMapManager codeMapManager;
     @Autowired
     ClinicianRepository clinicianRepository;
+    @Autowired
+    EhrPatientRepository ehrPatientRepository;
+    @Autowired
+    PractitionerMapperR5 practitionerMapper;
+    @Autowired
+    ResourceIdentificationService resourceIdentificationService;
 
 
     public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
@@ -48,9 +55,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
     }
 
     private Immunization toFhir(VaccinationEvent vaccinationEvent) {
-
         Vaccine vaccine = vaccinationEvent.getVaccine();
-        Facility facility = vaccinationEvent.getAdministeringFacility();
         Immunization i = new Immunization();
         if (Objects.nonNull(vaccinationEvent.getPrimarySource())) {
             i.setPrimarySource(vaccinationEvent.getPrimarySource());
@@ -89,44 +94,70 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                 }
             }
         }
-        CodeMap codeMap = codeMapManager.getCodeMap();
-        Collection<Code> codeRoute = codeMap.getCodesForTable(CodesetType.BODY_ROUTE);
-        for (Code c : codeRoute) {
-            if (c.getValue().equals(vaccine.getBodyRoute())) {
-                i.setRoute(new CodeableConcept(new Coding(c.getConceptType(), c.getValue(), c.getLabel())));
-            }
-        }
-
-        i.addReason().setConcept(new CodeableConcept(new Coding(REFUSAL_REASON_CODE, vaccine.getRefusalReasonCode(), vaccine.getRefusalReasonCode())));
-        i.getSite().addCoding().setSystem(BODY_PART).setCode(vaccine.getBodySite());
-        i.getRoute().addCoding().setSystem(BODY_ROUTE).setCode(vaccine.getBodyRoute());
-        i.getFundingSource().addCoding().setSystem(FUNDING_SOURCE).setCode(vaccine.getFundingSource());
-        i.addProgramEligibility().setProgram(new CodeableConcept(new Coding().setSystem(FUNDING_ELIGIBILITY).setCode(vaccine.getFinancialStatus())));
-        i.getInformationSource().setConcept(new CodeableConcept(new Coding().setSystem(INFORMATION_SOURCE).setCode(vaccine.getInformationSource())));
-        i.getVaccineCode().addCoding()
-                .setSystem(CVX)
-                .setCode(vaccine.getVaccineCvxCode());
-        i.getVaccineCode().addCoding()
-                .setSystem(NDC)
-                .setCode(vaccine.getVaccineNdcCode());
+        i.getRoute().addCoding(toFhirCoding(CodesetType.BODY_ROUTE, vaccine.getBodyRoute()));
+        i.addReason().setConcept(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_REFUSAL, vaccine.getRefusalReasonCode())));
+        i.getSite().addCoding(toFhirCoding(CodesetType.BODY_SITE, vaccine.getBodySite()));
+        i.getFundingSource().addCoding(toFhirCoding(CodesetType.VACCINATION_FUNDING_SOURCE, vaccine.getFundingSource()));
+        i.addProgramEligibility().setProgram(new CodeableConcept(toFhirCoding(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus())));
+        i.getInformationSource().setConcept(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource())));
+        i.getVaccineCode().addCoding(toFhirCoding(CodesetType.VACCINATION_CVX_CODE, CVX, vaccine.getVaccineCvxCode()));
+        i.getVaccineCode().addCoding(toFhirCoding(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, NDC, vaccine.getVaccineCvxCode()));
 
         i.setManufacturer(new CodeableReference(new Reference()
                 .setType("Organisation")
                 .setIdentifier(new Identifier()
                         .setSystem(MVX)
                         .setValue(vaccine.getVaccineMvxCode()))));
-//    i.getLocation().setReferenceElement();
-//    location.setName(facility.getNameDisplay());
+
+        i.addPerformer(fhirPerformer(vaccinationEvent.getEnteringClinician(), ENTERING));
+        i.addPerformer(fhirPerformer(vaccinationEvent.getOrderingClinician(), ORDERING));
+        i.addPerformer(fhirPerformer(vaccinationEvent.getAdministeringClinician(), ADMINISTERING));
         return i;
+    }
+
+    public VaccinationEvent toVaccinationEvent(Facility facility, Immunization i) {
+        VaccinationEvent ve = toVaccinationEvent(i);
+        if (i.getPatient() != null && i.getPatient().getReference() != null) {
+            ve.setPatient(resourceIdentificationService.getLocalPatient(i.getPatient(), null, facility));
+        }
+        for (Immunization.ImmunizationPerformerComponent performer : i.getPerformer()) {
+            if (performer.getActor() != null) {
+                Clinician clinician = null;
+                if (StringUtils.isNotBlank(performer.getActor().getReference())) {
+                    String performerId = performer.getActor().getReference().split("Clinician/")[1]; // TODO
+                    clinician = clinicianRepository.findByTenantIdAndId(facility.getTenant().getId(), performerId).orElse(null);
+                }
+                if (clinician != null) {
+                    if (performer.getActor().hasIdentifier()) {
+                        Identifier identifier = performer.getActor().getIdentifier();
+                        clinician = clinicianRepository.findByTenantIdAndIdentifier(facility.getTenant().getId(), identifier.getSystem(), identifier.getValue()).orElse(null);
+                    }
+                }
+                if (clinician != null) {
+                    switch (performer.getFunction().getCode(FUNCTION)) {
+                        case ADMINISTERING: {
+                            ve.setAdministeringClinician(clinician);
+                            break;
+                        }
+                        case ORDERING: {
+                            ve.setOrderingClinician(clinician);
+                            break;
+                        }
+                        case ENTERING: {
+                            ve.setEnteringClinician(clinician);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ve;
     }
 
     public VaccinationEvent toVaccinationEvent(Immunization i) {
         VaccinationEvent ve = new VaccinationEvent();
         ve.setVaccine(toVaccine(i));
         ve.setPrimarySource(i.getPrimarySource());
-//    ve.setExternalLink(i.getIdentifierFirstRep().getValue());
-        if (i.getPatient() != null && i.getPatient().getReference() != null && !i.getPatient().getReference().isBlank()) {
-        }
         if (i.getLocation() != null && i.getLocation().getReference() != null && !i.getLocation().getReference().isBlank()) {
 //      ve.setOrgLocation(fhirRequests.readOrgLocation(i.getLocation().getReference()));
         }
@@ -134,21 +165,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 //      Integer informationSourceId = Integer.parseInt(i.getInformationSourceReference().getReference().split("Clinician/")[1]); // TODO
 //      ve.setEnteringClinician(clinicianRepository.findById(informationSourceId).get());
 //    }
-        for (Immunization.ImmunizationPerformerComponent performer : i.getPerformer()) {
-            if (performer.getActor() != null && performer.getActor().getReference() != null && !performer.getActor().getReference().isBlank()) {
-                String performerId = performer.getActor().getReference().split("Clinician/")[1]; // TODO
-                switch (performer.getFunction().getCode(FUNCTION)) {
-                    case ADMINISTERING: {
-                        ve.setAdministeringClinician(clinicianRepository.findById(performerId).get());//TODO
-                        break;
-                    }
-                    case ORDERING: {
-                        ve.setOrderingClinician(clinicianRepository.findById(performerId).get());//TODO
-                        break;
-                    }
-                }
-            }
-        }
+
         return ve;
     }
 
@@ -161,9 +178,9 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 
         v.setVaccineCvxCode(i.getVaccineCode().getCode(CVX));
         v.setVaccineNdcCode(i.getVaccineCode().getCode(NDC));
-        v.setVaccineMvxCode(i.getVaccineCode().getCode(MVX));
-
-        v.setVaccineMvxCode(i.getManufacturer().getReference().getIdentifier().getValue());
+        if (i.getManufacturer().getReference().hasIdentifier() && MVX.equals(i.getManufacturer().getReference().getIdentifier().getSystem())) {
+            v.setVaccineMvxCode(i.getManufacturer().getReference().getIdentifier().getValue());
+        }
 
         v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
 
@@ -204,6 +221,34 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
         }
 
         return v;
+    }
+
+    private Coding toFhirCoding(Code code) {
+        Coding coding = new Coding(code.getConceptType(), code.getValue(), code.getLabel());
+        return coding;
+    }
+
+    private Coding toFhirCoding(CodesetType codesetType, String system, String value) {
+        return toFhirCoding(codesetType, value).setSystem(system);
+    }
+
+    private Coding toFhirCoding(CodesetType codesetType, String value) {
+        Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
+        if (code != null) {
+            return toFhirCoding(code);
+        } else {
+            return new Coding().setCode(value);
+        }
+    }
+
+    private Immunization.ImmunizationPerformerComponent fhirPerformer(Clinician clinician, String function) {
+        if (clinician != null) {
+            return new Immunization.ImmunizationPerformerComponent().setActor(new Reference()
+                            .setIdentifier(practitionerMapper.toFhir(clinician).getIdentifierFirstRep()))
+                    .setFunction(new CodeableConcept(new Coding(FUNCTION, function, function)));
+        } else {
+            return null;
+        }
     }
 
 

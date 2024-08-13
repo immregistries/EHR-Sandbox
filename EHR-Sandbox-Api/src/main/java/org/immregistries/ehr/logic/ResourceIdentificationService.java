@@ -46,13 +46,13 @@ public class ResourceIdentificationService {
     private EhrPatientRepository ehrPatientRepository;
 
 
-    public String getPatientLocalId(Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
+    public String getLocalPatientId(Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
         String id;
         /**
          * first we check if the patient has known identifier for the facility system or MRN
          */
         for (Identifier identifier : remotePatient.getIdentifier()) {
-            id = getPatientLocalId(identifier, facility);
+            id = getLocalPatientId(identifier, facility);
             if (id != null && !id.isBlank()) {
                 return id;
             }
@@ -60,37 +60,76 @@ public class ResourceIdentificationService {
         /**
          * if not we check if ID is known is external identifier registry
          */
-        return getPatientLocalId(new IdType(remotePatient.getId()), immunizationRegistry);
+        return getLocalPatientId(new IdType(remotePatient.getId()), immunizationRegistry);
     }
 
-    public String getPatientLocalId(Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+    public String getLocalPatientId(Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
         String localId = null;
         if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
-            localId = getPatientLocalId(reference.getIdentifier(), facility);
-        } else if (reference.getReference() != null && !reference.getReference().isBlank()) {
-            localId = getPatientLocalId(new IdType(reference.getReference()), immunizationRegistry);
+            localId = getLocalPatientId(reference.getIdentifier(), facility);
+        } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
+            localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
         }
         return localId;
     }
 
-    public String getPatientLocalId(IdType idType, ImmunizationRegistry immunizationRegistry) {
+    public EhrPatient getLocalPatient(Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        EhrPatient ehrPatient = null;
+        if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
+            return getLocalPatient(reference.getIdentifier(), facility);
+        } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
+            String localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
+            ehrPatient = ehrPatientRepository.findById(localId).orElse(null);
+        }
+        return ehrPatient;
+    }
+
+    public EhrPatient getLocalPatient(org.hl7.fhir.r4.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        EhrPatient ehrPatient = null;
+        if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
+            return getLocalPatient(reference.getIdentifier(), facility);
+        } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
+            String localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
+            ehrPatient = ehrPatientRepository.findById(localId).orElse(null);
+        }
+        return ehrPatient;
+    }
+
+    public String getLocalPatientId(IdType idType, ImmunizationRegistry immunizationRegistry) {
         return patientIdentifierRepository.findByIdentifierAndImmunizationRegistryId(idType.getIdPart(), immunizationRegistry.getId())
                 .orElse(new PatientExternalIdentifier()).getPatientId();
     }
 
-    public String getPatientLocalId(Identifier identifier, Facility facility) {
-//        logger.info("Reference identifier {} {}", identifier.getSystem(), identifier.getValue());
-//        logger.info("Facility identifier  system {} {}", getFacilityPatientIdentifierSystem(facility), identifier.getSystem().equals(getFacilityPatientIdentifierSystem(facility)));
-        String id = null;
+    public EhrPatient getLocalPatient(Identifier identifier, Facility facility) {
+        EhrPatient ehrPatient = null;
         if (identifier.hasType() && identifier.getType().getCoding().stream().anyMatch(coding -> coding.getCode().equals(MRN_TYPE_VALUE) && coding.getSystem().equals(MRN_TYPE_SYSTEM))) {
-            id = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue())
-                    .map(EhrPatient::getId).orElse(null);
+            ehrPatient = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue()).orElse(null);
         }
-        if (id == null) {
-            id = ehrPatientRepository.findByFacilityIdAndIdentifier(facility.getId(), StringUtils.defaultIfBlank(identifier.getSystem(), ""), identifier.getValue())
-                    .map(EhrPatient::getId).orElse(null);
+        if (ehrPatient == null) {
+            ehrPatient = ehrPatientRepository.findByFacilityIdAndIdentifier(facility.getId(), StringUtils.defaultIfBlank(identifier.getSystem(), ""), identifier.getValue())
+                    .orElse(null);
         }
-        return id;
+        return ehrPatient;
+    }
+
+    public EhrPatient getLocalPatient(org.hl7.fhir.r4.model.Identifier identifier, Facility facility) {
+        EhrPatient ehrPatient = null;
+        if (identifier.hasType() && identifier.getType().getCoding().stream().anyMatch(coding -> coding.getCode().equals(MRN_TYPE_VALUE) && coding.getSystem().equals(MRN_TYPE_SYSTEM))) {
+            ehrPatient = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), identifier.getValue()).orElse(null);
+        }
+        if (ehrPatient == null) {
+            ehrPatient = ehrPatientRepository.findByFacilityIdAndIdentifier(facility.getId(), StringUtils.defaultIfBlank(identifier.getSystem(), ""), identifier.getValue())
+                    .orElse(null);
+        }
+        return ehrPatient;
+    }
+
+    public String getLocalPatientId(Identifier identifier, Facility facility) {
+        EhrPatient ehrPatient = getLocalPatient(identifier, facility);
+        if (ehrPatient == null) {
+            return null;
+        }
+        return ehrPatient.getId();
     }
 
 
@@ -140,7 +179,7 @@ public class ResourceIdentificationService {
             IdType idType = new IdType(urn);
             if (idType.getResourceType() != null) {
                 if (idType.getResourceType().equals("Patient")) {
-                    return "Patient/" + this.getPatientLocalId(idType, immunizationRegistry);
+                    return "Patient/" + this.getLocalPatientId(idType, immunizationRegistry);
                 } else if (idType.getResourceType().equals("Immunization")) {
                     return "Immunization/" + this.getImmunizationLocalId(new IdType(urn), immunizationRegistry);
                 }
@@ -165,7 +204,7 @@ public class ResourceIdentificationService {
                 }
 
                 if (prev.equals("Patient")) {
-                    return "Patient/" + this.getPatientLocalId(identifier, facility);
+                    return "Patient/" + this.getLocalPatientId(identifier, facility);
                 } else if (prev.equals("Immunization")) {
                     return "Immunization/" + this.getImmunizationLocalId(identifier, facility);
                 }
@@ -185,11 +224,4 @@ public class ResourceIdentificationService {
             return facility.getIdentifiers().stream().findFirst().get().toR5();
         }
     }
-
-
-//    public void saveNewPatientIdentifier(Reference reference, ImmunizationRegistry immunizationRegistry) {
-////        patientIdentifierRepository.save(new PatientIdentifier(patientId,immunizationRegistry.getId(),outcome.getId().getIdPart()));
-//
-//        return;//TODO ?
-//    }
 }

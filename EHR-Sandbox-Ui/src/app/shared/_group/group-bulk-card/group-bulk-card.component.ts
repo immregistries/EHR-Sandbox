@@ -6,6 +6,7 @@ import { GroupService } from 'src/app/core/_services/group.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { JsonDialogComponent } from '../../_components/json-dialog/json-dialog.component';
 import { GroupBulkCompareComponent } from '../group-bulk-compare/group-bulk-compare.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-group-bulk-card',
@@ -39,9 +40,15 @@ export class GroupBulkCardComponent {
     }
   }
 
-  refreshStatus(openSnackbar?: boolean) {
+  refreshStatus(openSnackbar?: boolean, forceRefresh?: boolean) {
     if (this.group?.id && this.group.immunizationRegistry) {
-      this.groupService.getGroupBulkImportStatus(this.group?.id ?? -1).subscribe((res) => {
+      let requestObservable: Observable<{}>;
+      if (forceRefresh === true) {
+        requestObservable = this.groupService.groupBulkImportStatusForceRefresh(this.group?.id ?? -1)
+      } else {
+        requestObservable = this.groupService.getGroupBulkImportStatus(this.group?.id ?? -1)
+      }
+      requestObservable.subscribe((res) => {
         if (res) {
           this.importStatus = res
           if (openSnackbar) {

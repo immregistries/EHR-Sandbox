@@ -119,6 +119,18 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
       return of()
     }
   }
+  groupBulkImportStatusForceRefresh(groupId: number): Observable<{}> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
+    if (tenantId > 0 && facilityId > 0 && groupId > 0) {
+      return this.http.get<{}>(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$import-status-refresh`,
+        httpOptions);
+    } else {
+      return of()
+    }
+  }
   getGroupBulkViewResult(groupId: number, body: string): Observable<[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
