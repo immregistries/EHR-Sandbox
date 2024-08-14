@@ -1,19 +1,19 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.hl7.fhir.r5.model.Group;
-import org.hl7.fhir.r5.model.ResourceType;
+import org.hl7.fhir.r4.model.Group;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrGroup;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.logic.mapping.GroupMapperR5;
+import org.immregistries.ehr.logic.mapping.GroupMapperR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,8 @@ import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGIS
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
-public class GroupProviderR5 implements IResourceProvider, EhrFhirProviderR5<Group> {
-    private static final Logger logger = LoggerFactory.getLogger(GroupProviderR5.class);
+public class GroupProviderR4 implements IResourceProvider, EhrFhirProviderR4<Group> {
+    private static final Logger logger = LoggerFactory.getLogger(GroupProviderR4.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
 
@@ -46,7 +46,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProviderR5<Gro
     @Autowired
     EhrGroupRepository ehrGroupRepository;
     @Autowired
-    GroupMapperR5 groupMapperR5;
+    GroupMapperR4 groupMapperR4;
 
 
     /**
@@ -76,7 +76,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProviderR5<Gro
         if (old.isEmpty()) {
             return create(group, facility, immunizationRegistry);
         } else {
-            EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group, facility, immunizationRegistry);
+            EhrGroup ehrGroup = groupMapperR4.toEhrGroup(group, facility, immunizationRegistry);
             ehrGroup.setId(old.get().getId());
             ehrGroupRepository.save(ehrGroup);
             return new MethodOutcome().setResource(group);
@@ -106,7 +106,7 @@ public class GroupProviderR5 implements IResourceProvider, EhrFhirProviderR5<Gro
     }
 
     public MethodOutcome create(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
-        EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group, facility, immunizationRegistry);
+        EhrGroup ehrGroup = groupMapperR4.toEhrGroup(group, facility, immunizationRegistry);
         ehrGroupRepository.save(ehrGroup);
         return new MethodOutcome().setResource(group);
     }

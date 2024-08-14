@@ -59,6 +59,9 @@ public class EhrGroupController {
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
     private FacilityRepository facilityRepository;
+    /**
+     * TODO implement for R4 too, not urgent as Organizations are extremely similar
+     */
     @Autowired
     private GroupProviderR5 groupProviderR5;
     @Autowired

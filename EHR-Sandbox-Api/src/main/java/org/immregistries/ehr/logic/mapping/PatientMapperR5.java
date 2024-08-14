@@ -25,8 +25,7 @@ import java.util.Objects;
 /**
  * Maps the Database with FHIR for patient resources
  */
-@Service
-
+@Service("patientMapperR5")
 public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     @Autowired

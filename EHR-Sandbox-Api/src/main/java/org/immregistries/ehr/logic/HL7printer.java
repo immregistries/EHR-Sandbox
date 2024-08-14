@@ -201,7 +201,7 @@ public class HL7printer {
                     String value = vaccine.getFundingSource();
                     printObx(sb, obxSetId, obsSubId, null, loinc, loincLabel, value, codeMap, CodesetType.FINANCIAL_STATUS_CODE, valueTable, "");
                 }
-                
+
                 obsSubId++;
                 // page 24 https://www.cdc.gov/vaccines/programs/iis/technical-guidance/downloads/hl7-clarification-r6.pdf
                 if (StringUtils.isNotBlank(vaccine.getInformationStatement())) {
@@ -416,7 +416,7 @@ public class HL7printer {
         String sendingApp = "EHR Sandbox" + " v" + EhrApiApplication.VERSION;
         String sendingFacIdentifier;
         if (Objects.nonNull(facility)) {
-            Identifier identifier = resourceIdentificationService.facilityIdentifier(facility);
+            Identifier identifier = resourceIdentificationService.facilityIdentifierR5(facility);
             sendingFacIdentifier = StringUtils.defaultIfBlank(identifier.getAssigner().getReference(), "") + "^"
                     + StringUtils.defaultIfBlank(identifier.getValue(), "") + "^" +
                     StringUtils.defaultIfBlank(identifier.getType().getText(), "");

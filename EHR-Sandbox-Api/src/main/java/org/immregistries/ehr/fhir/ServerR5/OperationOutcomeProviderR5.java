@@ -14,7 +14,6 @@ import org.immregistries.ehr.api.entities.Feedback;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ import java.util.Optional;
 
 @Controller
 
-public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirProvider<OperationOutcome> {
+public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirProviderR5<OperationOutcome> {
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired

@@ -13,7 +13,6 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
 
-public class ImmunizationRecommendationProviderR5 implements IResourceProvider, EhrFhirProvider<ImmunizationRecommendation> {
+public class ImmunizationRecommendationProviderR5 implements IResourceProvider, EhrFhirProviderR5<ImmunizationRecommendation> {
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationRecommendationProviderR5.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;

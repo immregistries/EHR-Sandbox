@@ -16,7 +16,6 @@ import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGIS
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
-public class PatientProviderR5 implements IResourceProvider, EhrFhirProvider<Patient> {
+public class PatientProviderR5 implements IResourceProvider, EhrFhirProviderR5<Patient> {
     private static final Logger logger = LoggerFactory.getLogger(PatientProviderR5.class);
 
     @Autowired

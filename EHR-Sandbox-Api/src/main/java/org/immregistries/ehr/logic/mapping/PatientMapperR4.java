@@ -30,7 +30,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
     @Autowired
     CodeMapManager codeMapManager;
     @Autowired()
-    IOrganizationMapper organizationMapper;
+    OrganizationMapperR4 organizationMapper;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
 
     public Patient toFhir(EhrPatient dbPatient, String identifier_system) {

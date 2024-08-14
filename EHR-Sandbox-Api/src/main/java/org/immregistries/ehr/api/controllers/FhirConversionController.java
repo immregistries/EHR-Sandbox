@@ -11,7 +11,6 @@ import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
-import org.immregistries.ehr.logic.mapping.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +30,7 @@ public class FhirConversionController {
     Logger logger = LoggerFactory.getLogger(FhirConversionController.class);
 
     @Autowired
-    private IPatientMapper patientMapper;
-    @Autowired
-    private IImmunizationMapper immunizationMapper;
-    @Autowired
-    private IGroupMapper groupMapper;
-    @Autowired
-    private IOrganizationMapper organizationMapper;
-    @Autowired
-    private IPractitionerMapper practitionerMapper;
+    FhirComponentsService fhirComponentsService;
 
     @Autowired
     private BundleImportService bundleImportService;
@@ -57,8 +48,6 @@ public class FhirConversionController {
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
-    FhirComponentsService fhirComponentsService;
-    @Autowired
     private EhrGroupRepository ehrGroupRepository;
 
     @GetMapping(PATIENT_PREFIX + "/{patientId}/resource")
@@ -68,7 +57,7 @@ public class FhirConversionController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility found"));
-        IBaseResource patient = patientMapper.toFhir(ehrPatient, facility);
+        IBaseResource patient = fhirComponentsService.patientMapper().toFhir(ehrPatient, facility);
         IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
         String resource = parser.encodeResourceToString(patient);
         return ResponseEntity.ok(resource);
@@ -77,7 +66,7 @@ public class FhirConversionController {
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/resource")
     public ResponseEntity<String> immunizationResource(@PathVariable() String facilityId, @PathVariable() String patientId, @PathVariable() String vaccinationId) {
         IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
-        IBaseResource immunization = immunizationMapper.toFhir(vaccinationEventRepository.findById(vaccinationId).get(),
+        IBaseResource immunization = fhirComponentsService.immunizationMapper().toFhir(vaccinationEventRepository.findById(vaccinationId).get(),
                 resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facilityRepository.findById(facilityId).get()));
         String resource = parser.encodeResourceToString(immunization);
         return ResponseEntity.ok(resource);
@@ -89,7 +78,7 @@ public class FhirConversionController {
             @PathVariable() String groupId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
-        IBaseResource group = groupMapper.toFhir(ehrGroup);
+        IBaseResource group = fhirComponentsService.groupMapper().toFhir(ehrGroup);
         String resource = parser.encodeResourceToString(group);
         return ResponseEntity.ok(resource);
     }
@@ -99,7 +88,7 @@ public class FhirConversionController {
     public ResponseEntity<String> facilityResource(
             @PathVariable() String facilityId) {
         IParser parser = fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true);
-        IBaseResource organization = organizationMapper.toFhir(facilityRepository.findById(facilityId).get());
+        IBaseResource organization = fhirComponentsService.organizationMapper().toFhir(facilityRepository.findById(facilityId).get());
         String resource = parser.encodeResourceToString(organization);
         return ResponseEntity.ok(resource);
     }
@@ -119,7 +108,7 @@ public class FhirConversionController {
             }
         }
 //        for (Clinician clinician: clinicianRepository.findByTenantId(facility.getTenant().getId())) {
-//            Practitioner practitioner = (Practitioner) practitionerMapper.toFhir(clinician);
+//            Practitioner practitioner = (Practitioner) fhirComponentsService.practitionerMapper().toFhir(clinician);
 //            bundleBuilder.addTransactionCreateEntry()
 //        }
 //        for (EhrGroup ehrGroup: facility.getGroups()) {
@@ -153,7 +142,7 @@ public class FhirConversionController {
     }
 
     private Bundle.BundleEntryComponent addOrganizationEntry(Bundle bundle, Facility facility) {
-        Organization organization = (Organization) organizationMapper.toFhir(facility);
+        Organization organization = (Organization) fhirComponentsService.organizationMapper().toFhir(facility);
         return bundle.addEntry().setResource(organization)
                 .setFullUrl("urn:uuid:" + UUID.randomUUID())
                 .setRequest(new Bundle.BundleEntryRequestComponent(
@@ -162,7 +151,7 @@ public class FhirConversionController {
     }
 
     private Bundle.BundleEntryComponent addPatientEntry(Bundle bundle, String organizationUrl, EhrPatient ehrPatient) {
-        Patient patient = (Patient) patientMapper.toFhir(ehrPatient);
+        Patient patient = (Patient) fhirComponentsService.patientMapper().toFhir(ehrPatient);
         patient.setManagingOrganization(new Reference(organizationUrl));
 //            String patientRequestUrl = identifierUrl("Patient", patient.getIdentifierFirstRep());
         String patientRequestUrl = "Patient";
@@ -174,7 +163,7 @@ public class FhirConversionController {
     }
 
     private Bundle.BundleEntryComponent addVaccinationEntry(Bundle bundle, String patientUrl, VaccinationEvent vaccinationEvent) {
-        Immunization immunization = (Immunization) immunizationMapper.toFhir(vaccinationEvent,
+        Immunization immunization = (Immunization) fhirComponentsService.immunizationMapper().toFhir(vaccinationEvent,
                 resourceIdentificationService.getFacilityImmunizationIdentifierSystem(vaccinationEvent.getAdministeringFacility()));
         immunization.setPatient(new Reference(patientUrl));
         String immunizationRequestUrl = "Immunization";
@@ -193,7 +182,7 @@ public class FhirConversionController {
     private Bundle.BundleEntryComponent addClinicianEntry(Bundle bundle, Clinician clinician) {
         if (Objects.nonNull(clinician)) {
             String immunizationRequestUrl = "Practitioner";
-            Practitioner practitioner = (Practitioner) practitionerMapper.toFhir(clinician);
+            Practitioner practitioner = (Practitioner) fhirComponentsService.practitionerMapper().toFhir(clinician);
 
             return bundle.addEntry()
                     .setFullUrl("urn:uuid:" + UUID.randomUUID())

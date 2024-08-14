@@ -77,8 +77,11 @@ export class TenantFormComponent implements OnInit {
     {
       name: 'LOTTERY',
       description: '(Incoming) Use external API to verify Lot Number validity'
-    }
-
+    },
+    {
+      name: 'R4',
+      description: '(In progress, might break some functionalities) Use Fhir R4 version in client'
+    },
   ]
 }
 

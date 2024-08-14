@@ -63,7 +63,34 @@ public class ResourceIdentificationService {
         return getLocalPatientId(new IdType(remotePatient.getId()), immunizationRegistry);
     }
 
+    public String getLocalPatientId(org.hl7.fhir.r4.model.Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        String id;
+        /**
+         * first we check if the patient has known identifier for the facility system or MRN
+         */
+        for (org.hl7.fhir.r4.model.Identifier identifier : remotePatient.getIdentifier()) {
+            id = getLocalPatientId(identifier, facility);
+            if (id != null && !id.isBlank()) {
+                return id;
+            }
+        }
+        /**
+         * if not we check if ID is known is external identifier registry
+         */
+        return getLocalPatientId(new IdType(remotePatient.getId()), immunizationRegistry);
+    }
+
     public String getLocalPatientId(Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        String localId = null;
+        if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
+            localId = getLocalPatientId(reference.getIdentifier(), facility);
+        } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
+            localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
+        }
+        return localId;
+    }
+
+    public String getLocalPatientId(org.hl7.fhir.r4.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
         String localId = null;
         if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
             localId = getLocalPatientId(reference.getIdentifier(), facility);
@@ -132,6 +159,13 @@ public class ResourceIdentificationService {
         return ehrPatient.getId();
     }
 
+    public String getLocalPatientId(org.hl7.fhir.r4.model.Identifier identifier, Facility facility) {
+        EhrPatient ehrPatient = getLocalPatient(identifier, facility);
+        if (ehrPatient == null) {
+            return null;
+        }
+        return ehrPatient.getId();
+    }
 
     public String getImmunizationLocalId(Immunization remoteImmunization, ImmunizationRegistry immunizationRegistry, Facility facility) {
         String id = "";
@@ -213,15 +247,27 @@ public class ResourceIdentificationService {
         return null;
     }
 
-    public Reference facilityReference(Facility facility) {
-        return new Reference().setType("Organization").setIdentifier(facilityIdentifier(facility));
+    public Reference facilityReferenceR5(Facility facility) {
+        return new Reference().setType("Organization").setIdentifier(facilityIdentifierR5(facility));
     }
 
-    public Identifier facilityIdentifier(Facility facility) {
+    public org.hl7.fhir.r4.model.Reference facilityReferenceR4(Facility facility) {
+        return new org.hl7.fhir.r4.model.Reference().setType("Organization").setIdentifier(facilityIdentifierR4(facility));
+    }
+
+    public Identifier facilityIdentifierR5(Facility facility) {
         if (facility.getIdentifiers().isEmpty()) {
             return new Identifier().setSystem(FACILITY_SYSTEM).setValue(facility.getId());
         } else {
             return facility.getIdentifiers().stream().findFirst().get().toR5();
+        }
+    }
+
+    public org.hl7.fhir.r4.model.Identifier facilityIdentifierR4(Facility facility) {
+        if (facility.getIdentifiers().isEmpty()) {
+            return new org.hl7.fhir.r4.model.Identifier().setSystem(FACILITY_SYSTEM).setValue(facility.getId());
+        } else {
+            return facility.getIdentifiers().stream().findFirst().get().toR4();
         }
     }
 }

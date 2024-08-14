@@ -15,7 +15,7 @@ import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.RecommendationService;
-import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.immregistries.smm.tester.manager.query.QueryConverter;
@@ -52,9 +52,7 @@ public class EhrPatientController {
     @Autowired
     private HL7printer hl7printer;
     @Autowired
-    private ImmunizationRegistryController immRegistryController;
-    @Autowired
-    private IImmunizationMapper immunizationMapper;
+    private ImmunizationMapperR5 immunizationMapper;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -305,7 +303,7 @@ public class EhrPatientController {
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> qbpSend(@PathVariable() String registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

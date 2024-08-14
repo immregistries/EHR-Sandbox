@@ -1,8 +1,8 @@
 package org.immregistries.ehr.logic.mapping;
 
-import org.hl7.fhir.r5.model.Identifier;
-import org.hl7.fhir.r5.model.Organization;
-import org.hl7.fhir.r5.model.Reference;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Reference;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
 @Service
-public class OrganizationMapperR5 implements IOrganizationMapper<Organization> {
+public class OrganizationMapperR4 implements IOrganizationMapper<Organization> {
 
     public Organization toFhir(Facility facility) {
         Organization organization = new Organization();
@@ -45,3 +45,5 @@ public class OrganizationMapperR5 implements IOrganizationMapper<Organization> {
         return new Identifier().setSystem(FACILITY_SYSTEM).setValue(facility.getId());
     }
 }
+
+

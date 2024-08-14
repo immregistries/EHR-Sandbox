@@ -1,6 +1,6 @@
 package org.immregistries.ehr.logic.mapping;
 
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r4.model.*;
 import org.immregistries.ehr.api.entities.EhrGroup;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Service("groupMapperR5")
-public class GroupMapperR5 implements IGroupMapper<Group> {
+@Service("groupMapperR4")
+public class GroupMapperR4 implements IGroupMapper<Group> {
 
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
@@ -30,7 +30,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         EhrGroup ehrGroup = new EhrGroup();
         ehrGroup.setName(group.getName());
         ehrGroup.setCode(group.getCode().getText());
-        ehrGroup.setDescription(group.getDescription());
+//        ehrGroup.setDescription(group.get.getDescription());
         Set<EhrGroupCharacteristic> ehrGroupCharacteristicSet = new HashSet<>(group.getCharacteristic().size());
         ehrGroup.setEhrGroupCharacteristics(ehrGroupCharacteristicSet);
         for (Group.GroupCharacteristicComponent characteristicComponent : group.getCharacteristic()) {
@@ -74,8 +74,8 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         group.setName(ehrGroup.getName());
         group.setCode(new CodeableConcept().setText(ehrGroup.getCode()));
 
-        group.setDescription(ehrGroup.getDescription());
-        group.setManagingEntity(resourceIdentificationService.facilityReferenceR5(ehrGroup.getFacility()));
+//        group.setDescription(ehrGroup.getDescription());
+        group.setManagingEntity(resourceIdentificationService.facilityReferenceR4(ehrGroup.getFacility()));
 //        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
         if (ehrGroup.getEhrGroupCharacteristics() != null) {
             for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
@@ -92,7 +92,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
             for (EhrPatient patient : ehrGroup.getPatientList()) {
                 EhrIdentifier ehrIdentifier = patient.getMrnEhrIdentifier();
                 group.addMember().setEntity(new Reference()
-                        .setIdentifier(ehrIdentifier.toR5()));
+                        .setIdentifier(ehrIdentifier.toR4()));
             }
         }
 

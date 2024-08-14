@@ -13,7 +13,6 @@ import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.fhir.EhrFhirProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,13 +106,13 @@ public class BundleProviderR5 implements IResourceProvider {
              * First load patients, then immunization to solve references, then immunizationRecommendations
              *
              */
-            EhrFhirProvider[] providers = new EhrFhirProvider[]{
+            EhrFhirProviderR5[] providers = new EhrFhirProviderR5[]{
                     patientProvider,
                     immunizationProvider,
                     immunizationRecommendationProvider,
                     operationOutcomeProvider
             };
-            for (EhrFhirProvider provider : providers) {
+            for (EhrFhirProviderR5 provider : providers) {
                 bundle.getEntry().stream().filter((entry -> entry.getResource().getResourceType().equals(provider.getResourceName()))).iterator().forEachRemaining(entry -> {
                     switch (entry.getRequest().getMethodElement().getValue()) {
                         case POST:
