@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import com.github.javafaker.Faker;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
@@ -83,6 +84,17 @@ public class FacilityController {
         if (facility.getParentFacility() != null) {
             Facility parentFacility = facilityRepository.findByIdAndTenantId(facility.getParentFacility().getId(), tenant.getId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid parent facility, must have same tenant"));
+            /**
+             * Making sure facility is not included in prentFacility hierarchy
+             */
+            Facility parent = parentFacility;
+            while (parent != null) {
+                if (Objects.equals(parent.getId(), facility.getId())) {
+                    throw new InvalidRequestException("Impossible Parent Facility");
+                }
+                parent = parent.getParentFacility();
+            }
+
             facility.setParentFacility(parentFacility);
         }
         facility.setTenant(tenant);
