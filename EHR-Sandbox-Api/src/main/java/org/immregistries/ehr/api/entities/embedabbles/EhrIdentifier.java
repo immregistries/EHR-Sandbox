@@ -1,9 +1,17 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
 
+import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.ICompositeType;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.persistence.Embeddable;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 
+import static org.immregistries.ehr.fhir.FhirComponentsService.R4_FLAVOUR;
+import static org.immregistries.ehr.fhir.FhirComponentsService.R5_FLAVOUR;
 import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_SYSTEM;
 import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 
@@ -92,6 +100,23 @@ public class EhrIdentifier {
 //
 //        }
         return identifier;
+    }
+
+    public ICompositeType toFhir() {
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            String tenantName = (String) request.getAttribute("TENANT_NAME");
+            if (StringUtils.isBlank(tenantName)) {
+                return toR5();
+            } else if (tenantName.contains(R5_FLAVOUR)) {
+                return toR5();
+            } else if (tenantName.contains(R4_FLAVOUR)) {
+                return toR4();
+            } else return toR5();
+        } catch (IllegalStateException illegalStateException) {
+            return toR5();
+        }
+
     }
 
     public String getAssignerReference() {

@@ -3,6 +3,7 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -45,6 +46,11 @@ public class EhrGroup extends EhrEntity {
     @ElementCollection()
     @CollectionTable(name = "group_characteristics", joinColumns = @JoinColumn(name = "group_id"))
     private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
+
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "group_identifiers", joinColumns = @JoinColumn(name = "group_id"))
+    private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     public Set<EhrGroupCharacteristic> getEhrGroupCharacteristics() {
         return ehrGroupCharacteristics;
@@ -116,5 +122,13 @@ public class EhrGroup extends EhrEntity {
 
     public void setImmunizationRegistry(ImmunizationRegistry immunizationRegistry) {
         this.immunizationRegistry = immunizationRegistry;
+    }
+
+    public Set<EhrIdentifier> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(Set<EhrIdentifier> identifiers) {
+        this.identifiers = identifiers;
     }
 }

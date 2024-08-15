@@ -9,7 +9,7 @@ import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.fhir.FhirComponentsService;
-import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
+import org.immregistries.ehr.fhir.Server.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;
 
 //@RestController()
-//
 //@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups", IMM_REGISTRY_SUFFIX + "/groups"})
 public class RemoteGroupController {
     Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);

@@ -1,14 +1,14 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.OperationOutcome;
-import org.hl7.fhir.r5.model.ResourceType;
-import org.hl7.fhir.r5.model.StringType;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r4.model.ResourceType;
+import org.hl7.fhir.r4.model.StringType;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Feedback;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -30,8 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-
-public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirProviderR5<OperationOutcome> {
+public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirProviderR4<OperationOutcome> {
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
@@ -48,7 +47,7 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
 
-    private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProviderR5.class);
+    private static final Logger logger = LoggerFactory.getLogger(OperationOutcomeProviderR4.class);
 
     @Override
     public Class<OperationOutcome> getResourceType() {

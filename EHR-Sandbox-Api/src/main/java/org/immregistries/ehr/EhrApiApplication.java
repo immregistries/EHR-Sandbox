@@ -5,7 +5,8 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.hl7.fhir.r5.model.Group;
 import org.immregistries.ehr.api.entities.BulkImportStatus;
-import org.immregistries.ehr.fhir.ServerR5.EhrFhirServerR5;
+import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
+import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,29 +74,23 @@ public class EhrApiApplication extends SpringBootServletInitializer {
         };
     }
 
-//	@Bean
-//	@Conditional(OnR4Condition.class)
-//	public ServletRegistrationBean<EhrFhirServerR4> ServerR4RegistrationBean() {
-//		ServletRegistrationBean<EhrFhirServerR4>  registrationBean = new ServletRegistrationBean<>();
-//		EhrFhirServerR4 servlet = new EhrFhirServerR4(context.getBean(FhirContext.class));
-//		beanFactory.autowireBean(servlet);
-//		registrationBean.setServlet(servlet);
-//		registrationBean.addUrlMappings( "/fhir/*","/ehr-sandbox/fhir/*");
-//		registrationBean.setLoadOnStartup(1);
-//		return registrationBean;
-//	}
-
     @Bean
-    public ServletRegistrationBean<EhrFhirServerR5> ServerR5RegistrationBean() {
-        ServletRegistrationBean<EhrFhirServerR5> registrationBean = new ServletRegistrationBean<>();
-        EhrFhirServerR5 servlet = new EhrFhirServerR5((FhirContext) context.getBean("fhirContextR5"));
-        beanFactory.autowireBean(servlet);
-        registrationBean.setServlet(servlet);
-        registrationBean.addUrlMappings("/fhir/*", "/ehr/fhir/*");
+    public ServletRegistrationBean<EhrFhirServerR4> ServerR4RegistrationBean(EhrFhirServerR4 ehrFhirServerR4) {
+        ServletRegistrationBean<EhrFhirServerR4> registrationBean = new ServletRegistrationBean<>();
+        registrationBean.setServlet(ehrFhirServerR4);
+        registrationBean.addUrlMappings("/fhir/R4/*", "/ehr/fhir/R4/*");
         registrationBean.setLoadOnStartup(1);
         return registrationBean;
     }
 
+    @Bean
+    public ServletRegistrationBean<EhrFhirServerR5> ServerR5RegistrationBean(EhrFhirServerR5 ehrFhirServerR5) {
+        ServletRegistrationBean<EhrFhirServerR5> registrationBean = new ServletRegistrationBean<>();
+        registrationBean.setServlet(ehrFhirServerR5);
+        registrationBean.addUrlMappings("/fhir/R5/*", "/ehr/fhir/R5/*");
+        registrationBean.setLoadOnStartup(1);
+        return registrationBean;
+    }
 
     /**
      * Required to get access to httpRequest qnd session through spring, important to use the fhir client inside the servlets

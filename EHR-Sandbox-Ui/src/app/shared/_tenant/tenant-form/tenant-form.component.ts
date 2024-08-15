@@ -80,7 +80,7 @@ export class TenantFormComponent implements OnInit {
     },
     {
       name: 'R4',
-      description: '(In progress, might break some functionalities) Use Fhir R4 version in client'
+      description: '(In progress, might break some functionalities) Use Fhir R4 version'
     },
   ]
 }

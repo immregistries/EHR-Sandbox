@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR5;
 
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;

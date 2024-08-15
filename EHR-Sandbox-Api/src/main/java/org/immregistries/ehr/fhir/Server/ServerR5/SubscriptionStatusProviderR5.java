@@ -1,5 +1,6 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR5;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -11,10 +12,10 @@ import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.SubscriptionStatus;
 import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
-import org.immregistries.ehr.fhir.FhirComponentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
@@ -27,7 +28,8 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
     @Autowired
     OperationOutcomeProviderR5 operationOutcomeProvider;
     @Autowired
-    FhirComponentsService fhirComponentsService;
+    @Qualifier("fhirContextR5")
+    FhirContext fhirContext;
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionStatusProviderR5.class);
 
@@ -45,7 +47,7 @@ public class SubscriptionStatusProviderR5 implements IResourceProvider {
     public MethodOutcome create(@ResourceParam SubscriptionStatus status, RequestDetails theRequestDetails) {
         logger.info("facility id {} status type {}", theRequestDetails.getTenantId(), status.getType());
         MethodOutcome methodOutcome = new MethodOutcome();
-        IParser parser = fhirComponentsService.fhirContext().newJsonParser();
+        IParser parser = fhirContext.newJsonParser();
         Optional<EhrSubscription> ehrSubscription;
         if (status.getSubscription().getId() != null) {
             ehrSubscription = ehrSubscriptionRepository.findById(status.getSubscription().getId());

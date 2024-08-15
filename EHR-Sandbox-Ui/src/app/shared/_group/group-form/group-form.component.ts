@@ -21,6 +21,11 @@ export class GroupFormComponent {
         { type: FormType.text, title: 'code', attributeName: 'code' },
         // {type: FormType.text, title: 'authority', attributeName: ''},
       ]
+    },
+    {
+      title: 'Identifier', cols: 1, rows: 1, forms: [
+        { type: FormType.identifiers, title: 'Identifier', attributeName: 'identifiers' },
+      ], toolTips: "Required for operations when using R4, optional by default"
     }
   ]
 

@@ -193,6 +193,7 @@ export interface EhrGroup {
   code?: string;
   immunizationRegistry?: ImmunizationRegistry;
   patientList?: (EhrPatient)[];
+  identifiers?: EhrIdentifier[];
   ehrGroupCharacteristics?: EhrGroupCharacteristic[];
 }
 

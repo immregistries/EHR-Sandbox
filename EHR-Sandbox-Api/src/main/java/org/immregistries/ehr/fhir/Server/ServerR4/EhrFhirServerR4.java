@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR4;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
@@ -10,39 +10,35 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
-import org.immregistries.ehr.fhir.FhirAuthInterceptor;
+import org.immregistries.ehr.fhir.Server.FhirAuthInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.FrameworkServlet;
 
 import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
-//@WebServlet(urlPatterns = {"/fhir/R5/*"}, displayName = "FHIR Server for subscription endpoint")
-//
-public class EhrFhirServerR5 extends RestfulServer {
-    private static final Logger logger = LoggerFactory.getLogger(EhrFhirServerR5.class);
+@Component
+public class EhrFhirServerR4 extends RestfulServer {
+    private static final Logger logger = LoggerFactory.getLogger(EhrFhirServerR4.class);
+
 
     @Autowired
-    BundleProviderR5 bundleProvider;
+    OperationOutcomeProviderR4 operationOutcomeProvider;
     @Autowired
-    OperationOutcomeProviderR5 operationOutcomeProvider;
+    PatientProviderR4 patientProvider;
     @Autowired
-    SubscriptionStatusProviderR5 subscriptionStatusProvider;
+    ImmunizationProviderR4 immunizationProvider;
     @Autowired
-    SubscriptionProviderR5 subscriptionProvider;
-    @Autowired
-    PatientProviderR5 patientProvider;
-    @Autowired
-    ImmunizationProviderR5 immunizationProvider;
-    @Autowired
-    ImmunizationRecommendationProviderR5 immunizationRecommendationProvider;
+    ImmunizationRecommendationProviderR4 immunizationRecommendationProvider;
     @Autowired
     FhirAuthInterceptor fhirAuthInterceptor;
 
-    public EhrFhirServerR5(FhirContext ctx) {
+    public EhrFhirServerR4(@Qualifier("fhirContextR4") FhirContext ctx) {
         super(ctx);
     }
 
@@ -57,17 +53,10 @@ public class EhrFhirServerR5 extends RestfulServer {
 
     @Override
     protected void initialize() throws ServletException {
-//        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-//        try {
-//            SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, getServletContext());
-//        } catch (NoSuchBeanDefinitionException e) {
-//            WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext(), DISPATCHER_CONTEXT_ATTRIBUTE_NAME);
-////            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this, context);
-//        }
         setDefaultResponseEncoding(EncodingEnum.XML);
 
         LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
-        loggingInterceptor.setLoggerName("FHIR Server");
+        loggingInterceptor.setLoggerName("FHIR Server R4");
         registerInterceptor(loggingInterceptor);
 
         ResponseHighlighterInterceptor responseHighlighterInterceptor = new ResponseHighlighterInterceptor();
@@ -81,10 +70,7 @@ public class EhrFhirServerR5 extends RestfulServer {
         setServerAddressStrategy(ApacheProxyAddressStrategy.forHttps());
 
         List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
-        resourceProviders.add(subscriptionProvider);
-        resourceProviders.add(subscriptionStatusProvider);
         resourceProviders.add(operationOutcomeProvider);
-        resourceProviders.add(bundleProvider);
         resourceProviders.add(patientProvider);
         resourceProviders.add(immunizationProvider);
         resourceProviders.add(immunizationRecommendationProvider);

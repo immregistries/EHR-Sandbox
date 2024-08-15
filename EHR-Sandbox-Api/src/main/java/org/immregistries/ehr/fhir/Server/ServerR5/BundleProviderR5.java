@@ -1,6 +1,5 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR5;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -16,7 +15,6 @@ import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,9 +39,6 @@ public class BundleProviderR5 implements IResourceProvider {
     private SubscriptionStatusProviderR5 subscriptionStatusProvider;
     @Autowired
     EhrSubscriptionRepository ehrSubscriptionRepository;
-    @Autowired
-    @Qualifier("fhirContextR5")
-    FhirContext fhirContextR5;
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
 

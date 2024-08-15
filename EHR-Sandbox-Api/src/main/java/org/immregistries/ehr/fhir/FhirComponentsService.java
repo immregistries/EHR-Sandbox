@@ -3,16 +3,19 @@ package org.immregistries.ehr.fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.RestfulServer;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
+import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
+import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.logic.mapping.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,11 +26,11 @@ import java.util.Map;
 
 @Service
 public class FhirComponentsService {
+
+    public static String R5_FLAVOUR = "R5";
+    public static String R4_FLAVOUR = "R4";
     private final CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
     Logger logger = LoggerFactory.getLogger(FhirComponentsService.class);
-
-    //    @Autowired
-//    TenantRepository tenantRepository;
 
     @Autowired
     private PatientMapperR5 patientMapperR5;
@@ -49,17 +52,22 @@ public class FhirComponentsService {
     private OrganizationMapperR4 organizationMapperR4;
     @Autowired
     private PractitionerMapperR4 practitionerMapperR4;
+    @Autowired
+    private EhrFhirServerR4 ehrFhirServerR5;
+    @Autowired
+    private EhrFhirServerR5 ehrFhirServerR4;
 
     private FhirContext fhirContextR5;
     private FhirContext fhirContextR4;
+
     private CustomClientFactory customClientFactoryR5;
     private CustomClientFactory customClientFactoryR4;
     private Map<Class, IEhrEntityFhirMapper> mappersR4 = new HashMap<Class, IEhrEntityFhirMapper>(10);
     private Map<Class, IEhrEntityFhirMapper> mappersR5 = new HashMap<Class, IEhrEntityFhirMapper>(10);
 
     public FhirComponentsService(@Qualifier("fhirContextR5") FhirContext fhirContextR5,
-                                 @Qualifier("fhirContextR4") FhirContext fhirContextR4,
-                                 ApplicationContext context
+                                 @Qualifier("fhirContextR4") FhirContext fhirContextR4
+//                                 ,ApplicationContext context
     ) {
         this.fhirContextR5 = fhirContextR5;
         this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
@@ -86,9 +94,9 @@ public class FhirComponentsService {
     private FhirContext fhirContext(String tenantName) {
         if (StringUtils.isBlank(tenantName)) {
             return defaultContext();
-        } else if (tenantName.contains("R5")) {
+        } else if (tenantName.contains(R5_FLAVOUR)) {
             return fhirContextR5;
-        } else if (tenantName.contains("R4")) {
+        } else if (tenantName.contains(R4_FLAVOUR)) {
             return fhirContextR4;
         } else return defaultContext();
     }
@@ -108,9 +116,9 @@ public class FhirComponentsService {
         String tenantName = (String) request.getAttribute("TENANT_NAME");
         if (StringUtils.isBlank(tenantName)) {
             return customClientFactoryR5;
-        } else if (tenantName.contains("R5")) {
+        } else if (tenantName.contains(R5_FLAVOUR)) {
             return customClientFactoryR5;
-        } else if (tenantName.contains("R4")) {
+        } else if (tenantName.contains(R4_FLAVOUR)) {
             return customClientFactoryR4;
         } else return customClientFactoryR5;
     }
@@ -122,9 +130,9 @@ public class FhirComponentsService {
         String tenantName = (String) request.getAttribute("TENANT_NAME");
         if (StringUtils.isBlank(tenantName)) {
             return mappersR5.get(type);
-        } else if (tenantName.contains("R5")) {
+        } else if (tenantName.contains(R5_FLAVOUR)) {
             return mappersR5.get(type);
-        } else if (tenantName.contains("R4")) {
+        } else if (tenantName.contains(R4_FLAVOUR)) {
             return mappersR4.get(type);
         } else return mappersR5.get(type);
     }
@@ -168,5 +176,27 @@ public class FhirComponentsService {
 
     public IOrganizationMapper organizationMapper() {
         return (IOrganizationMapper) mapper(Facility.class);
+    }
+
+    public RestfulServer restfulServer() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String tenantName = (String) request.getAttribute("TENANT_NAME");
+        if (StringUtils.isBlank(tenantName)) {
+            return ehrFhirServerR5;
+        } else if (tenantName.contains(R5_FLAVOUR)) {
+            return ehrFhirServerR5;
+        } else if (tenantName.contains(R4_FLAVOUR)) {
+            return ehrFhirServerR4;
+        } else return ehrFhirServerR4;
+    }
+
+    public IResourceProvider provider(String resourceType) {
+        RestfulServer restfulServer = restfulServer();
+        return restfulServer
+                .getResourceProviders()
+                .stream()
+                .filter((p) -> p.getResourceType().getName().equals(resourceType))
+                .findAny()
+                .orElseThrow(() -> new RuntimeException("Provider not found for resourceType " + resourceType + " in server version " + restfulServer.getServerVersion()));
     }
 }

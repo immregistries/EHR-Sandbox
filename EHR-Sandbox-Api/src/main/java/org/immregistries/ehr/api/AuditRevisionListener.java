@@ -22,6 +22,7 @@ public class AuditRevisionListener implements RevisionListener {
     public static final String IMMUNIZATION_REGISTRY_ID = "immunization_registry_id";
     public static final String SUBSCRIPTION_ID = "subscription_id";
     public static final String USER_ID = "user_id";
+    public static final String TENANT_NAME = "TENANT_NAME";
     public static final String COPIED_ENTITY_ID = "copied_entity_id";
     public static final String COPIED_FACILITY_ID = "copied_facility_id";
     Logger logger = LoggerFactory.getLogger(AuditRevisionListener.class);

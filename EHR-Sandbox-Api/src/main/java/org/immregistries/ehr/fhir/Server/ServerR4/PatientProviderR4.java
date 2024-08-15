@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -7,9 +7,9 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.Patient;
-import org.hl7.fhir.r5.model.ResourceType;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -17,7 +17,7 @@ import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
-import org.immregistries.ehr.logic.mapping.PatientMapperR5;
+import org.immregistries.ehr.logic.mapping.PatientMapperR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,11 @@ import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGIS
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
-public class PatientProviderR5 implements IResourceProvider, EhrFhirProviderR5<Patient> {
-    private static final Logger logger = LoggerFactory.getLogger(PatientProviderR5.class);
+public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<Patient> {
+    private static final Logger logger = LoggerFactory.getLogger(PatientProviderR4.class);
 
     @Autowired
-    private PatientMapperR5 patientMapper;
+    private PatientMapperR4 patientMapper;
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired

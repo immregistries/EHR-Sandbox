@@ -1,14 +1,14 @@
-package org.immregistries.ehr.fhir.ServerR5;
+package org.immregistries.ehr.fhir.Server.ServerR4;
 
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.hl7.fhir.r5.model.IdType;
-import org.hl7.fhir.r5.model.ImmunizationRecommendation;
-import org.hl7.fhir.r5.model.Reference;
-import org.hl7.fhir.r5.model.ResourceType;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.ImmunizationRecommendation;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -26,9 +26,8 @@ import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGIS
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
-
-public class ImmunizationRecommendationProviderR5 implements IResourceProvider, EhrFhirProviderR5<ImmunizationRecommendation> {
-    private static final Logger logger = LoggerFactory.getLogger(ImmunizationRecommendationProviderR5.class);
+public class ImmunizationRecommendationProviderR4 implements IResourceProvider, EhrFhirProviderR4<ImmunizationRecommendation> {
+    private static final Logger logger = LoggerFactory.getLogger(ImmunizationRecommendationProviderR4.class);
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
 

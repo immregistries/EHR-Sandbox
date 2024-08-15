@@ -1,7 +1,8 @@
-package org.immregistries.ehr.fhir;
+package org.immregistries.ehr.fhir.Server;
 
 import ca.uhn.fhir.interceptor.api.Interceptor;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.auth.IAuthRule;
 import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
@@ -32,6 +33,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
+import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
+
 /**
  * Incomplete, currently used for tracking of modifying users in envers framework for history
  */
@@ -46,8 +50,6 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
     PasswordEncoder encoder;
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
-    @Autowired
-    FhirComponentsService fhirComponentsService;
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
@@ -93,6 +95,15 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
                 }
 
                 if (userDetails != null && username != null) {
+                    theRequestDetails.setAttribute(USER_ID, userDetails.getId());
+                    facilityRepository.findById(theRequestDetails.getTenantId()).orElseThrow(
+                            () -> new InvalidRequestException("TENANT ID not recognised")
+                    );
+                    request.setAttribute(TENANT_NAME, facilityRepository.findById(theRequestDetails.getTenantId()).orElseThrow(
+                            () -> new InvalidRequestException("TENANT ID not recognised")
+                    ).getTenant().getId());
+                    // TODO IMMUNIZATION REGISTRY IDENTIFICATION and set attribute IMMUNIZATION_REGISTRY_ID
+
                     /**
                      * Each 'FHIR Tenant' matches a facility, allowing operations for facility owned by user
                      */

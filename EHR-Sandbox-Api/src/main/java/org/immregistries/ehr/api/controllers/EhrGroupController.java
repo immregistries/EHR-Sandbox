@@ -6,8 +6,6 @@ import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.entities.*;
@@ -17,8 +15,9 @@ import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.fhir.FhirComponentsService;
-import org.immregistries.ehr.fhir.ServerR5.GroupProviderR5;
+import org.immregistries.ehr.fhir.Server.IGroupProvider;
 import org.immregistries.ehr.logic.BundleImportService;
+import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +46,8 @@ public class EhrGroupController {
 
     Logger logger = LoggerFactory.getLogger(EhrGroupController.class);
 
-    //    @Autowired
-//    Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
     @Autowired()
-    FhirComponentsService fhirComponentsService;
+    private FhirComponentsService fhirComponentsService;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
@@ -60,10 +57,9 @@ public class EhrGroupController {
     @Autowired
     private FacilityRepository facilityRepository;
     /**
-     * TODO implement for R4 too, not urgent as Organizations are extremely similar
+     * Used for identifier in Parameters for query
+     * not critical to be able to use R4
      */
-    @Autowired
-    private GroupProviderR5 groupProviderR5;
     @Autowired
     private OrganizationMapperR5 organizationMapperR5;
     @Autowired
@@ -74,6 +70,8 @@ public class EhrGroupController {
     private BulkImportController bulkImportController;
     @Autowired
     private BundleImportService bundleImportService;
+    @Autowired
+    private ResourceIdentificationService resourceIdentificationService;
 
     @GetMapping("/{groupId}")
     public EhrGroup get(@PathVariable() String groupId) {
@@ -129,6 +127,11 @@ public class EhrGroupController {
         ehrGroupCharacteristic.setValue(RandomStringUtils.random(1, false, true));
         ehrGroup.setEhrGroupCharacteristics(new HashSet<>(1));
         ehrGroup.getEhrGroupCharacteristics().add(ehrGroupCharacteristic);
+
+        EhrIdentifier ehrIdentifier = new EhrIdentifier();
+        ehrIdentifier.setValue(RandomStringUtils.random(15, true, true));
+        ehrIdentifier.setSystem(resourceIdentificationService.getFacilityPatientIdentifierSystem(facilityRepository.findById(facilityId).orElseThrow()));
+        ehrGroup.getIdentifiers().add(ehrIdentifier);
 
 //        Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
 //
@@ -310,7 +313,6 @@ public class EhrGroupController {
             IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
             IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
             Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
-//            groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
             /**
              * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
              */
@@ -357,7 +359,7 @@ public class EhrGroupController {
         } else {
             IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
             if (remoteGroup != null) {
-                groupProviderR5.update((Group) remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
+                ((IGroupProvider) fhirComponentsService.provider("Group")).update(remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
             }
             return ehrGroupRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), ehrGroup.getId()).get();
         }
@@ -373,18 +375,7 @@ public class EhrGroupController {
     }
 
     private IBaseResource getRemoteGroup(IGenericClient client, EhrGroup ehrGroup) {
-        Bundle bundle = client.search().forResource(Group.class).returnBundle(Bundle.class)
-                .where(Group.NAME.matchesExactly().value(ehrGroup.getName()))
-//                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
-                .execute();
-        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
-            if (entry.hasResource() && entry.getResource() instanceof Group
-//                    && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))
-            ) {
-                return entry.getResource();
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
+        return ((IGroupProvider) fhirComponentsService.provider("Group")).getRemoteGroup(client, ehrGroup);
     }
 
 
