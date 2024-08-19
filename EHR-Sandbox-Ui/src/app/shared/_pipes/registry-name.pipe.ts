@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Observable, concat, first, map, mergeMap, of, shareReplay, switchMap, tap } from 'rxjs';
 import { ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 
@@ -8,30 +7,37 @@ import { ImmunizationRegistryService } from 'src/app/core/_services/immunization
  */
 @Pipe({
   name: 'registryName',
-  // pure: false
+  pure: true
 })
 export class RegistryNamePipe implements PipeTransform {
 
-  private registriesCached$?: Observable<ImmunizationRegistry[]>;
 
   constructor(private immunizationRegistryService: ImmunizationRegistryService) {
-
   }
 
-  transform(id: number): Observable<string> {
-    if (!this.registriesCached$) {
-      this.registriesCached$ = this.immunizationRegistryService.readImmRegistries()
-        .pipe(
-          shareReplay(1)
-          // tap((res) => this.registriesCached = res),
-          // tap((res) => console.log(this.registries)),
-          // mergeMap(registries => registries.find((reg) => id == reg.id)?.name ?? 'not found')
-          // map(registries => registries?.find((reg) => id == reg.id)?.name ?? '' + id)
-        )
+  transform(registry: number | ImmunizationRegistry, list?: ImmunizationRegistry[]): string {
+    if (!registry) {
+      return "";
     }
-    return this.registriesCached$.pipe(
-      map(registries => registries?.find((reg) => id == reg.id)?.name ?? '' + id)
-    );
+    if (typeof registry === "object") {
+      return registry.name ?? ""
+    }
+    if (list) {
+      return list?.find((reg) => registry == reg.id)?.name ?? '' + registry
+    } else {
+      // if (!this.registriesCached$) {
+      //   this.registriesCached$ = this.immunizationRegistryService.readImmRegistries()
+      //     .pipe(
+      //       shareReplay(1)
+      //       // tap((res) => this.registriesCached = res),
+      //       // tap((res) => console.log(this.registries)),
+      //       // mergeMap(registries => registries.find((reg) => id == reg.id)?.name ?? 'not found')
+      //       // map(registries => registries?.find((reg) => id == reg.id)?.name ?? '' + id)
+      //     )
+      // }
+      return this.immunizationRegistryService.registriesCached?.find((reg) => registry == reg.id)?.name ?? '' + registry
+    }
+
   }
 
 

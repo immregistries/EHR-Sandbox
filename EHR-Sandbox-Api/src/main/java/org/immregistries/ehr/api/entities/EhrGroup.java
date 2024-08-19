@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -26,6 +27,7 @@ public class EhrGroup extends EhrEntity {
     @JoinColumn(name = "facility_id", nullable = false)
 //    @JsonBackReference("facility-groups")
 //    @JsonIgnore
+    @JsonIdentityReference(alwaysAsId = false)
     private Facility facility;
     @Column(name = "name", nullable = false)
     private String name;

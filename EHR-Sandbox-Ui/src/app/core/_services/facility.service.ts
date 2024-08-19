@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Facility } from '../_model/rest';
-import { BehaviorSubject, Observable, of, share } from 'rxjs';
+import { BehaviorSubject, merge, Observable, of, share, shareReplay } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
+import { TenantService } from './tenant.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,11 +19,33 @@ const httpOptions = {
  */
 export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
+  private _facilitiesCached!: Facility[];
+  public get facilitiesCached(): Facility[] {
+    return this._facilitiesCached;
+  }
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
+    private tenantService: TenantService,
   ) {
     super(new BehaviorSubject<Facility>({ id: -1 }))
+    merge(
+      this.getRefresh(),
+      tenantService.getCurrentObservable()
+    ).subscribe((tenant) => {
+      if (typeof tenant === "object") {
+        this.readFacilities(tenant.id).pipe(
+          shareReplay(1)
+        ).subscribe((facilities) => {
+          this._facilitiesCached = facilities
+        })
+      } else {
+        this.readAllFacilities().subscribe((facilities) => {
+          this._facilitiesCached = facilities
+        })
+      }
+
+    })
   }
 
   readAllFacilities(): Observable<Facility[]> {

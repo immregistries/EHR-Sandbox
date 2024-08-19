@@ -13,8 +13,20 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class ImmunizationRegistryService extends CurrentSelectedWithIdService<ImmunizationRegistry> {
+
+  private _registriesCached?: ImmunizationRegistry[] | undefined;
+  public get registriesCached(): ImmunizationRegistry[] | undefined {
+    return this._registriesCached;
+  }
+
   constructor(private http: HttpClient, private settings: SettingsService) {
     super(new BehaviorSubject<ImmunizationRegistry>({}))
+    this.getRefresh().subscribe(() => {
+      this.readImmRegistries()
+        .subscribe((facilities) => {
+          this._registriesCached = facilities
+        })
+    })
   }
 
   public readImmRegistries(): Observable<ImmunizationRegistry[]> {

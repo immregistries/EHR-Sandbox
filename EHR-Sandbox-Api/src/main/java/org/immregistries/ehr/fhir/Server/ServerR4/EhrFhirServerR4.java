@@ -36,10 +36,13 @@ public class EhrFhirServerR4 extends RestfulServer {
     @Autowired
     ImmunizationRecommendationProviderR4 immunizationRecommendationProvider;
     @Autowired
+    GroupProviderR4 groupProvider;
+    @Autowired
     FhirAuthInterceptor fhirAuthInterceptor;
 
     public EhrFhirServerR4(@Qualifier("fhirContextR4") FhirContext ctx) {
         super(ctx);
+        setServerName("EHR Sandbox FHIR R4");
     }
 
     private static final String DISPATCHER_CONTEXT_ATTRIBUTE_NAME = FrameworkServlet.SERVLET_CONTEXT_PREFIX + "EhrApiApplication";
@@ -74,6 +77,7 @@ public class EhrFhirServerR4 extends RestfulServer {
         resourceProviders.add(patientProvider);
         resourceProviders.add(immunizationProvider);
         resourceProviders.add(immunizationRecommendationProvider);
+        resourceProviders.add(groupProvider);
         setResourceProviders(resourceProviders);
 
         INarrativeGenerator narrativeGen = new DefaultThymeleafNarrativeGenerator();

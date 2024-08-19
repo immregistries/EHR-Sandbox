@@ -195,8 +195,8 @@ public class FhirComponentsService {
         return restfulServer
                 .getResourceProviders()
                 .stream()
-                .filter((p) -> p.getResourceType().getName().equals(resourceType))
+                .filter((p) -> p.getResourceType().getSimpleName().equals(resourceType))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException("Provider not found for resourceType " + resourceType + " in server version " + restfulServer.getServerVersion()));
+                .orElseThrow(() -> new RuntimeException("Provider not found for resourceType " + resourceType + " in server " + restfulServer.getServerName()));
     }
 }

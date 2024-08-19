@@ -121,6 +121,7 @@ import { PatientJsonFormComponent } from './_components/abstract-json-form/patie
 import { VaccinationJsonFormComponent } from './_components/abstract-json-form/vaccination-json-form/vaccination-json-form.component';
 import { CustomValidatorDirective } from './_directive/custom-validator.directive';
 import { ImmunizationRegistryCheckComponent } from './_immunization-registry/immunization-registry-check/immunization-registry-check.component';
+import { FacilityNamePipe } from './_pipes/facility-name.pipe';
 
 @NgModule({
   declarations: [
@@ -136,6 +137,7 @@ import { ImmunizationRegistryCheckComponent } from './_immunization-registry/imm
     SelectImmunizationRegistryComponent,
     CodeMapsPipe,
     TextShortenPipe,
+    FacilityNamePipe,
 
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
@@ -332,6 +334,7 @@ import { ImmunizationRegistryCheckComponent } from './_immunization-registry/imm
     CodeMapsPipe,
     TextShortenPipe,
     RegistryNamePipe,
+    FacilityNamePipe,
 
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,

@@ -16,11 +16,11 @@
   </ng-container>
   <ng-container matColumnDef="immunizationRegistry">
     <th mat-header-cell *matHeaderCellDef>IIS Name</th>
-    <td mat-cell *matCellDef="let element">{{element.immunizationRegistry?.name ?? ''}}</td>
+    <td mat-cell *matCellDef="let element">{{element.immunizationRegistry | registryName}}</td>
   </ng-container>
   <ng-container matColumnDef="facility">
     <th mat-header-cell *matHeaderCellDef>Managing Facility</th>
-    <td mat-cell *matCellDef="let element">{{element.facility?.nameDisplay ?? 'TODO Id: ' + element?.facility}}</td>
+    <td mat-cell *matCellDef="let element">{{element.facility | facilityName}}</td>
   </ng-container>
   <ng-container matColumnDef="date">
     <th mat-header-cell *matHeaderCellDef>Creation Date</th>
