@@ -25,12 +25,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class FhirComponentsService {
+public class FhirComponentsDispatcher {
 
     public static String R5_FLAVOUR = "R5";
     public static String R4_FLAVOUR = "R4";
     private final CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
-    Logger logger = LoggerFactory.getLogger(FhirComponentsService.class);
+    Logger logger = LoggerFactory.getLogger(FhirComponentsDispatcher.class);
 
     @Autowired
     private PatientMapperR5 patientMapperR5;
@@ -65,8 +65,8 @@ public class FhirComponentsService {
     private Map<Class, IEhrEntityFhirMapper> mappersR4 = new HashMap<Class, IEhrEntityFhirMapper>(10);
     private Map<Class, IEhrEntityFhirMapper> mappersR5 = new HashMap<Class, IEhrEntityFhirMapper>(10);
 
-    public FhirComponentsService(@Qualifier("fhirContextR5") FhirContext fhirContextR5,
-                                 @Qualifier("fhirContextR4") FhirContext fhirContextR4
+    public FhirComponentsDispatcher(@Qualifier("fhirContextR5") FhirContext fhirContextR5,
+                                    @Qualifier("fhirContextR4") FhirContext fhirContextR4
 //                                 ,ApplicationContext context
     ) {
         this.fhirContextR5 = fhirContextR5;

@@ -14,7 +14,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.FhirComponentsService;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.fhir.Server.IGroupProvider;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
@@ -47,7 +47,7 @@ public class EhrGroupController {
     Logger logger = LoggerFactory.getLogger(EhrGroupController.class);
 
     @Autowired()
-    private FhirComponentsService fhirComponentsService;
+    private FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
     private ImmunizationRegistryController immunizationRegistryController;
     @Autowired
@@ -201,7 +201,7 @@ public class EhrGroupController {
         if (immunizationRegistry == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
         }
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
         String id = getRemoteGroup(client, ehrGroup).getIdElement().getIdPart();
         IHttpResponse kickoff = bulkImportController.bulkKickOffHttpResponse(immunizationRegistry.getId(),
                 id,
@@ -310,7 +310,7 @@ public class EhrGroupController {
             }
             in.addParameter("memberId", ehrIdentifier.toR5());
             in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility()));
-            IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
+            IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
             IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
             Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
             /**
@@ -339,7 +339,7 @@ public class EhrGroupController {
              * First do match to get destination reference or identifier
              */
             IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
-            IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
+            IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
             Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-remove").withParameters(in).execute();
             return refreshOne(ehrGroup);
         }
@@ -359,7 +359,7 @@ public class EhrGroupController {
         } else {
             IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
             if (remoteGroup != null) {
-                ((IGroupProvider) fhirComponentsService.provider("Group")).update(remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
+                ((IGroupProvider) fhirComponentsDispatcher.provider("Group")).update(remoteGroup, ehrGroup.getFacility(), immunizationRegistry);
             }
             return ehrGroupRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), ehrGroup.getId()).get();
         }
@@ -370,12 +370,12 @@ public class EhrGroupController {
         if (immunizationRegistry == null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
         }
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
         return getRemoteGroup(client, ehrGroup);
     }
 
     private IBaseResource getRemoteGroup(IGenericClient client, EhrGroup ehrGroup) {
-        return ((IGroupProvider) fhirComponentsService.provider("Group")).getRemoteGroup(client, ehrGroup);
+        return ((IGroupProvider) fhirComponentsDispatcher.provider("Group")).getRemoteGroup(client, ehrGroup);
     }
 
 

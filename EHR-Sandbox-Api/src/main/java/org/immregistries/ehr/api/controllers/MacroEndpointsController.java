@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
-import org.immregistries.ehr.fhir.FhirComponentsService;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.fhir.Server.EhrFhirProvider;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class MacroEndpointsController {
 
     @Autowired
-    private FhirComponentsService fhirComponentsService;
+    private FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
     private AuthController authController;
     @Autowired
@@ -65,7 +65,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createAll(HttpServletRequest httpRequest, @RequestBody String bundleString) {
-        Bundle globalBundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle globalBundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         User user = new User();
         String authHeader = httpRequest.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Basic ")) {
@@ -92,7 +92,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/tenants/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createTenant(HttpServletRequest httpRequest, @RequestBody String bundleString) {
-        Bundle tenantBundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle tenantBundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return createTenant(httpRequest, tenantBundle);
     }
 
@@ -125,7 +125,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity createFacility(@PathVariable() String tenantId, @RequestBody String bundleString) {
-        Bundle facilityBundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle facilityBundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return createFacility(tenantRepository.findById(tenantId).get(), facilityBundle);
     }
 
@@ -153,7 +153,7 @@ public class MacroEndpointsController {
     @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
     @Transactional()
     public ResponseEntity fillFacility(@PathVariable() String tenantId, @PathVariable() String facilityId, @RequestBody String bundleString) {
-        Bundle bundle = fhirComponentsService.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
+        Bundle bundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return fillFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), bundle);
     }
 

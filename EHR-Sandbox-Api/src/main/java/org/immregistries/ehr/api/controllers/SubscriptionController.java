@@ -16,7 +16,7 @@ import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.IResourceClient;
-import org.immregistries.ehr.fhir.FhirComponentsService;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class SubscriptionController {
     @Autowired
     private EhrSubscriptionInfoRepository subscriptionInfoRepository;
     @Autowired
-    FhirComponentsService fhirComponentsService;
+    FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
     IResourceClient resourceClient;
 
@@ -66,14 +66,14 @@ public class SubscriptionController {
         Facility facility = facilityRepository.findById(facilityId).get();
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
-        return ResponseEntity.ok().body(fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
+        return ResponseEntity.ok().body(fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualCreate(@PathVariable() String registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-        Subscription sub = fhirComponentsService.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(ir);
+        Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         MethodOutcome outcome = resourceClient.create(sub, client);
         processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
@@ -82,8 +82,8 @@ public class SubscriptionController {
     @PutMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualUpdate(@PathVariable() String registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
-        Subscription sub = fhirComponentsService.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(ir);
+        Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
         processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
@@ -94,7 +94,7 @@ public class SubscriptionController {
         ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(ir);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
         processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();

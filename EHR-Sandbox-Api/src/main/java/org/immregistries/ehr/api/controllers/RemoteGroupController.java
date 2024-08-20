@@ -8,7 +8,7 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
-import org.immregistries.ehr.fhir.FhirComponentsService;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.fhir.Server.ServerR5.GroupProviderR5;
 import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY
 public class RemoteGroupController {
     Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
     @Autowired
-    FhirComponentsService fhirComponentsService;
+    FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
     Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
     @Autowired
@@ -73,12 +73,12 @@ public class RemoteGroupController {
 //                .setCode(new CodeableConcept(new Coding("http/Massachusetts.com/terminology/school-code-system","1234","Stephane Hessel Highschool")));
         group.setDescription("Group created for School example");
         group.setMembership(Group.GroupMembershipBasis.ENUMERATED);
-        return ResponseEntity.ok().body(fhirComponentsService.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(group));
+        return ResponseEntity.ok().body(fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(group));
     }
 
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() String registryId) {
-        IParser parser = fhirComponentsService.fhirContext().newJsonParser();
+        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
 //        ehrGroupRepository.findByFacilityIdAndImmunizationRegistryId(facilityId, registryId);
 
         Set<String> set = remoteGroupsStore
@@ -100,11 +100,11 @@ public class RemoteGroupController {
      */
     @GetMapping("/$fetch")
     public ResponseEntity<Set<String>> fetchFromIis(@PathVariable() String facilityId, @PathVariable() String registryId) {
-        IParser parser = fhirComponentsService.fhirContext().newJsonParser();
+        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
         ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
         servletRequestDetails.setTenantId(String.valueOf(facilityId));
         ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
-        Bundle bundle = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry).search().forResource(Group.class).returnBundle(Bundle.class)
+        Bundle bundle = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry).search().forResource(Group.class).returnBundle(Bundle.class)
 //                .where(Group.MANAGING_ENTITY.hasId(String.valueOf(facilityId)))
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
                 .execute();
@@ -141,7 +141,7 @@ public class RemoteGroupController {
             ;
         }
 
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
         Group group = remoteGroupsStore.getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(registryId, new HashMap<>(0)).get(groupId);
         Parameters out = client.operation().onInstance(group.getIdElement()).named("$member-add").withParameters(in).execute();
@@ -177,7 +177,7 @@ public class RemoteGroupController {
 
 
         logger.info("{}", in);
-        IGenericClient client = fhirComponentsService.clientFactory().newGenericClient(immunizationRegistry);
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
         Group group = remoteGroupsStore
                 .getOrDefault(facilityId, new HashMap<>(0))
                 .getOrDefault(registryId, new HashMap<>(0))

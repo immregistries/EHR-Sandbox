@@ -2,7 +2,7 @@ package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.parser.IParser;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.FhirComponentsService;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class RecommendationController {
     Logger logger = LoggerFactory.getLogger(RecommendationController.class);
     @Autowired()
-    FhirComponentsService fhirComponentsService;
+    FhirComponentsDispatcher fhirComponentsDispatcher;
 
     @Autowired
     private FacilityRepository facilityRepository;
@@ -30,7 +30,7 @@ public class RecommendationController {
 
     @GetMapping()
     public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() String patientId) {
-        IParser parser = fhirComponentsService.fhirContext().newJsonParser();
+        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
         Set<String> set = recommendationService.getPatientMap(facilityId, patientId).entrySet().stream().map(
                         entry -> parser.encodeResourceToString(entry.getValue()))
                 .collect(Collectors.toSet());

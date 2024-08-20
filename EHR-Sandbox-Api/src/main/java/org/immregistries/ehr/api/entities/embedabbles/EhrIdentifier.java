@@ -10,8 +10,8 @@ import javax.persistence.Embeddable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 
-import static org.immregistries.ehr.fhir.FhirComponentsService.R4_FLAVOUR;
-import static org.immregistries.ehr.fhir.FhirComponentsService.R5_FLAVOUR;
+import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R4_FLAVOUR;
+import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R5_FLAVOUR;
 import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_SYSTEM;
 import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 
