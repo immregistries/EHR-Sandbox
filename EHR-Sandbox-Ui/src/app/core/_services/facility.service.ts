@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Facility } from '../_model/rest';
-import { BehaviorSubject, merge, Observable, of, share, shareReplay } from 'rxjs';
+import { BehaviorSubject, merge, Observable, of, share, shareReplay, tap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
 import { TenantService } from './tenant.service';
@@ -29,36 +29,38 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
     private tenantService: TenantService,
   ) {
     super(new BehaviorSubject<Facility>({ id: -1 }))
-    merge(
-      this.getRefresh(),
-      tenantService.getCurrentObservable()
-    ).subscribe((tenant) => {
-      if (typeof tenant === "object") {
-        this.readFacilities(tenant.id).pipe(
-          shareReplay(1)
-        ).subscribe((facilities) => {
-          this._facilitiesCached = facilities
-        })
-      } else {
-        this.readAllFacilities().subscribe((facilities) => {
-          this._facilitiesCached = facilities
-        })
-      }
-
-    })
+    // merge(
+    //   this.getRefresh(),
+    //   tenantService.getCurrentObservable()
+    // ).subscribe((tenant) => {
+    //   if (typeof tenant === "object") {
+    //     this.readFacilities(tenant.id).subscribe((facilities) => {
+    //       this._facilitiesCached = facilities
+    //     })
+    //   } else {
+    //     this.readAllFacilities().subscribe((facilities) => {
+    //       this._facilitiesCached = facilities
+    //     })
+    //   }
+    // })
   }
+
 
   readAllFacilities(): Observable<Facility[]> {
     return this.http.get<Facility[]>(
       `${this.settings.getApiUrl()}/facilities`,
-      httpOptions);
+      httpOptions).pipe(tap((result) => {
+        this._facilitiesCached = result
+      }));
   }
 
   readFacilities(tenantId: number): Observable<Facility[]> {
     if (tenantId > 0) {
       return this.http.get<Facility[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
-        httpOptions).pipe(share());
+        httpOptions).pipe(tap((result) => {
+          this._facilitiesCached = result
+        }));
     }
     return of([])
   }
