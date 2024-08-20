@@ -6,6 +6,7 @@ import ca.uhn.fhir.validation.IValidatorModule;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
@@ -46,7 +47,7 @@ public class FhirConversionController {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private ImmunizationRegistryController immunizationRegistryController;
+    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private EhrGroupRepository ehrGroupRepository;
 
@@ -211,7 +212,7 @@ public class FhirConversionController {
             @PathVariable() String registryId,
             @RequestBody Bundle bundle) {
         return bundleImportService.importBundle(
-                immunizationRegistryController.getImmunizationRegistry(registryId),
+                immunizationRegistryService.getImmunizationRegistry(registryId),
                 facilityRepository.findById(facilityId).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified")
                 ), bundle);
@@ -220,7 +221,7 @@ public class FhirConversionController {
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/$loadNdJson")
     public ResponseEntity bulkResultLoad(@PathVariable() String facilityId, @PathVariable() String registryId, @RequestBody String ndjson) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         return loadNdJson(ir, facilityRepository.findById(facilityId).get(), ndjson);
     }
 

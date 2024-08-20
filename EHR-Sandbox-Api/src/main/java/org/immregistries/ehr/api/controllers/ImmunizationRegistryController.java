@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.ResourceVersionConflictException;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.CapabilityStatement;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -32,16 +33,12 @@ public class ImmunizationRegistryController {
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private FhirComponentsDispatcher fhirComponentsDispatcher;
+    @Autowired
+    private ImmunizationRegistryService immunizationRegistryService;
 
     @GetMapping({"/{id}"})
     public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String id) {
-        Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(id, userDetailsService.currentUserId());
-        if (immunizationRegistry.isPresent()) {
-            return immunizationRegistry.get();
-        } else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_ACCEPTABLE, "Invalid id");
-        }
+        return immunizationRegistryService.getImmunizationRegistry(id);
     }
 
     @GetMapping({"/{id}/metadata"})

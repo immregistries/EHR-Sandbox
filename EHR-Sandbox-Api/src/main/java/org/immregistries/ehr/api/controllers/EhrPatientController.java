@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
@@ -58,7 +59,7 @@ public class EhrPatientController {
     @Autowired
     private FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
-    private ImmunizationRegistryController immunizationRegistryController;
+    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
     @Autowired
@@ -229,7 +230,7 @@ public class EhrPatientController {
                                                                                   @PathVariable() String patientId,
                                                                                   @PathVariable() String registryId,
                                                                                   @RequestParam Optional<Long> _since) {
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
         Facility facility = facilityRepository.findById(facilityId).get();
         EhrPatient patient = ehrPatientRepository.findById(patientId).get();
@@ -303,7 +304,7 @@ public class EhrPatientController {
     @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> qbpSend(@PathVariable() String registryId, @RequestBody String message) {
         Connector connector;
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             connector.setUserid(immunizationRegistry.getIisUsername());

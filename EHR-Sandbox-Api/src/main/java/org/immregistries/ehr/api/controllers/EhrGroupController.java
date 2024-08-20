@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.BulkImportController;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -49,7 +50,7 @@ public class EhrGroupController {
     @Autowired()
     private FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
-    private ImmunizationRegistryController immunizationRegistryController;
+    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private EhrGroupRepository ehrGroupRepository;
     @Autowired

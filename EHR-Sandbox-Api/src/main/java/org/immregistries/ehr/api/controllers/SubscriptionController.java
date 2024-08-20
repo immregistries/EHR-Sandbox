@@ -7,6 +7,7 @@ import org.apache.commons.text.RandomStringGenerator;
 import org.hl7.fhir.r5.model.Coding;
 import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.Subscription;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.entities.EhrSubscriptionInfo;
 import org.immregistries.ehr.api.entities.Facility;
@@ -43,7 +44,7 @@ public class SubscriptionController {
     @Autowired
     private FacilityRepository facilityRepository;
     @Autowired
-    private ImmunizationRegistryController immunizationRegistryController;
+    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
@@ -64,14 +65,14 @@ public class SubscriptionController {
     @GetMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/sample")
     public ResponseEntity<String> getSample(@PathVariable() String facilityId, @PathVariable() String registryId) {
         Facility facility = facilityRepository.findById(facilityId).get();
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         return ResponseEntity.ok().body(fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualCreate(@PathVariable() String registryId, @RequestBody String stringBody) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         MethodOutcome outcome = resourceClient.create(sub, client);
@@ -81,7 +82,7 @@ public class SubscriptionController {
 
     @PutMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription")
     public Boolean subscribeToIISManualUpdate(@PathVariable() String registryId, @RequestBody String stringBody) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
@@ -91,7 +92,7 @@ public class SubscriptionController {
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}" + FhirClientController.IMM_REGISTRY_SUFFIX + "/subscription/data-quality-issues")
     public Boolean subscribeToIISFeedback(@PathVariable() String registryId, @PathVariable() String facilityId, @RequestParam Optional<String> groupId) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);

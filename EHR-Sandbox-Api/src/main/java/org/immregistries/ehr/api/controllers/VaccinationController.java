@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.controllers;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -47,7 +48,7 @@ public class VaccinationController {
     @Autowired
     private VaccineRepository vaccineRepository;
     @Autowired
-    private ImmunizationRegistryController immRegistryController;
+    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -166,7 +167,7 @@ public class VaccinationController {
     public ResponseEntity<String> vxuSend(@PathVariable() String registryId, @PathVariable() String vaccinationId, @RequestBody String message) {
         Connector connector;
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
-        ImmunizationRegistry immunizationRegistry = immRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
             connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
             if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {

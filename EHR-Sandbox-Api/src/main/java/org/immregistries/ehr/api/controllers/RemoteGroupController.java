@@ -4,6 +4,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
@@ -34,7 +35,7 @@ public class RemoteGroupController {
     @Autowired
     Map<Integer, Map<Integer, Map<String, Group>>> remoteGroupsStore;
     @Autowired
-    private ImmunizationRegistryController immunizationRegistryController;
+    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -103,7 +104,7 @@ public class RemoteGroupController {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
         ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
         servletRequestDetails.setTenantId(String.valueOf(facilityId));
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         Bundle bundle = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry).search().forResource(Group.class).returnBundle(Bundle.class)
 //                .where(Group.MANAGING_ENTITY.hasId(String.valueOf(facilityId)))
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
@@ -122,7 +123,7 @@ public class RemoteGroupController {
     public ResponseEntity<String> add_member(@PathVariable() String tenantId, @PathVariable() String facilityId, @PathVariable() String registryId, @PathVariable() String groupId, @RequestParam String patientId, @RequestParam Optional<Boolean> match) {
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow();
         Patient patient = patientMapperR5.toFhir(ehrPatient);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         Parameters in = new Parameters();
         /**
          * First do match to get destination reference or identifier
@@ -170,7 +171,7 @@ public class RemoteGroupController {
         identifier.ifPresent(value -> in.addParameter("memberId", value));
         reference.ifPresent(value -> in.addParameter("patientReference", new Reference(value)));
 
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         /**
          * First do match to get destination reference or identifier
          */

@@ -6,7 +6,7 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
-import org.immregistries.ehr.api.controllers.ImmunizationRegistryController;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -38,7 +38,7 @@ public class BulkImportController {
     @Autowired()
     FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
-    ImmunizationRegistryController immunizationRegistryController;
+    ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     FacilityRepository facilityRepository;
 
@@ -57,7 +57,7 @@ public class BulkImportController {
             , @RequestParam Optional<String> patient
             , @RequestParam Optional<Boolean> _mdm
     ) throws IOException {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
@@ -110,7 +110,7 @@ public class BulkImportController {
             , @RequestParam Optional<Date> _since
             , @RequestParam Optional<String> _typeFilter
             , @RequestParam Optional<Boolean> _mdm) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         // In order to get the response headers
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
@@ -136,7 +136,7 @@ public class BulkImportController {
 
     @GetMapping("/registry/{registryId}/$export-status")
     public ResponseEntity bulkCheckStatus(@PathVariable() String registryId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used is the one gotten from the kickoff, while authentication remains the same
 //        IGenericClient client = customClientBuilder.newGenericClient(contentLocationUrl,ir.getIisPassword(),ir.getIisUsername());
@@ -247,7 +247,7 @@ public class BulkImportController {
 
     @DeleteMapping("/registry/{registryId}/$export-status")
     public ResponseEntity bulkDelete(@PathVariable() String registryId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         HttpURLConnection con = null;
         URL url;
         try {
@@ -282,7 +282,7 @@ public class BulkImportController {
 
     @GetMapping("/registry/{registryId}/$export-result")
     public ResponseEntity bulkResult(@PathVariable() String registryId, @RequestParam String contentUrl, Optional<String> loadInFacility) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
         HttpURLConnection con = null;
@@ -326,7 +326,7 @@ public class BulkImportController {
 
     //    @GetMapping("/registry/{registryId}/$export-result-view")
     public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable() String registryId, @PathVariable() String facilityId, @RequestParam String contentUrl) {
-        ImmunizationRegistry ir = immunizationRegistryController.getImmunizationRegistry(registryId);
+        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
         HttpURLConnection con = null;
