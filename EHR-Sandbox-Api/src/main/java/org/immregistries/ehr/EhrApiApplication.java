@@ -38,7 +38,7 @@ public class EhrApiApplication extends SpringBootServletInitializer {
     @Autowired
     private ApplicationContext context;
 
-    public static String VERSION = "1.2.3-SNAPSHOT-4";
+    public static String VERSION = "1.2.3-SNAPSHOT-5";
 
     @Bean("fhirContextR4")
     public FhirContext fhirContextR4() {
