@@ -76,7 +76,7 @@ export class TenantFormComponent implements OnInit {
     },
     {
       name: 'LOTTERY',
-      description: '(Incoming) Use external API to verify Lot Number validity'
+      description: 'Use external API to verify Lot Number validity'
     },
     {
       name: 'R4',
