@@ -122,6 +122,7 @@ import { VaccinationJsonFormComponent } from './_components/abstract-json-form/v
 import { CustomValidatorDirective } from './_directive/custom-validator.directive';
 import { ImmunizationRegistryCheckComponent } from './_immunization-registry/immunization-registry-check/immunization-registry-check.component';
 import { FacilityNamePipe } from './_pipes/facility-name.pipe';
+import { CustomValidatorAsyncDirective } from './_directive/custom-validator-async.directive';
 
 @NgModule({
   declarations: [
@@ -220,6 +221,7 @@ import { FacilityNamePipe } from './_pipes/facility-name.pipe';
     PatientJsonFormComponent,
     VaccinationJsonFormComponent,
     CustomValidatorDirective,
+    CustomValidatorAsyncDirective,
     ImmunizationRegistryCheckComponent,
   ],
   imports: [

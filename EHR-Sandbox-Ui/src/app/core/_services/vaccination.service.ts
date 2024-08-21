@@ -152,6 +152,27 @@ export class VaccinationService extends RefreshService {
   //     httpOptions);
   // }
 
+  lotNumberValidation(lotNumber: string, cvx: string, mvx: string): Observable<HttpResponse<string>> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    // return this.http.get<boolean>(
+    //   `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}/$lotNumberValidation`,
+    //   httpOptions);
+    let params: HttpParams = new HttpParams()
+      .set("lotNumber", lotNumber)
+      .set("cvx", cvx)
+      .set("mvx", mvx)
+    return this.http.get(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/$lotNumberValidation`,
+      { ...httpOptions, params: params, responseType: 'text', observe: 'response' });
+    // return this.http.get<any>(
+    //   `https://sabbia.westus2.cloudapp.azure.com/lot`,
+    //   {
+    //     headers: new HttpHeaders({ 'accept': 'application/json', "Access-Control-Allow-Origin": "*" }),
+    //     params: params
+    //   });
+  }
+
 
 
 }

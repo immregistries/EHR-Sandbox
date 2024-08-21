@@ -4,8 +4,8 @@ import { Code, CodeReference, CodeReferenceTable, CodeReferenceTableMember } fro
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { KeyValue } from '@angular/common';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { AbstractControl, FormGroup, NgForm, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { BehaviorSubject, catchError, firstValueFrom, map, Observable, of, Subscription } from 'rxjs';
+import { AbstractControl, AsyncValidatorFn, FormGroup, NgForm, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { randexp } from 'randexp';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
@@ -13,6 +13,7 @@ import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/form-structure';
 import { TenantService } from 'src/app/core/_services/tenant.service';
+import { error } from 'console';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -188,10 +189,36 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  lotNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    if (this.tenantService.getCurrent().nameDisplay?.includes('LOTTERY')) {
-
+  lotNumberValidatorAsync: AsyncValidatorFn = (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+    if (!control.value || control.value.length == 0) {
+      return firstValueFrom(of(null))
     }
+    if (this.tenantService.getCurrent().nameDisplay?.includes('LOTTERY')) {
+      if (!this.vaccination.vaccine.vaccineCvxCode || !this.vaccination.vaccine.vaccineMvxCode) {
+        return of({ customIssue: "CVX & MVX Required to verify" })
+      } else {
+        return firstValueFrom(
+          this.vaccinationService.lotNumberValidation(control.value, this.vaccination.vaccine.vaccineCvxCode, this.vaccination.vaccine.vaccineMvxCode)
+            .pipe(map((res) => {
+              if (res.status == 200) {
+                return null
+              }
+              else if (res.status == 202) { // TODO find better distinction for when result needs to be printed
+                return { customIssue: res.body }
+              }
+              return null
+            }), catchError((err, caught) => {
+              // return of({ customIssue: "Service Unreachable" }) TODO currently dealt with by API
+              return of({ customIssue: "Error in verification Query" })
+            })))
+      }
+    } else {
+      of(this.lotNumberValidator(control))
+    }
+    return of(null)
+  }
+
+  private lotNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (!control.value || control.value.length == 0) {
       return null
     }
@@ -202,6 +229,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       }
     }
     return null;
+
   };
 
 
@@ -258,7 +286,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         { type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
         {
           type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN",
-          customValidator: this.lotNumberValidator, hintProducer: this.lotNumberHint
+          customValidatorAsync: this.lotNumberValidatorAsync, hintProducer: this.lotNumberHint
         },
         { type: FormType.date, title: "Expiration date", attributeName: "expirationDate" },
       ]

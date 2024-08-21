@@ -21,8 +21,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
+import java.io.IOException;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -197,5 +200,48 @@ public class VaccinationController {
             @PathVariable() String vaccinationId) {
         Revisions<Integer, VaccinationEvent> revisions = vaccinationEventRepository.findRevisions(vaccinationId);
         return revisions.getContent();
+    }
+
+    private static final String LOT_NUMBER_VALIDATION_URL = "https://sabbia.westus2.cloudapp.azure.com/lot";
+
+    @RequestMapping("/$lotNumberValidation")
+//    @PostMapping("/$lotNumberValidation")
+    public ResponseEntity<byte[]> vaccinationLotNumberValidation(
+            @RequestParam(name = "lotNumber") String lotNumber, @RequestParam(name = "cvx") String cvx, @RequestParam(name = "mvx") String mvx) {
+        HttpURLConnection con = null;
+        URL url;
+        try {
+            url = UriComponentsBuilder.fromUriString(LOT_NUMBER_VALIDATION_URL)
+                    .queryParam("lotNumber", URLEncoder.encode(lotNumber, StandardCharsets.UTF_8))
+                    .queryParam("cvx", URLEncoder.encode(cvx, StandardCharsets.UTF_8))
+                    .queryParam("mvx", URLEncoder.encode(mvx, StandardCharsets.UTF_8))
+                    .build(true)
+                    .toUri().toURL();
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setConnectTimeout(5000);
+            int status = con.getResponseCode();
+            if (status == 200) {
+                return ResponseEntity.ok().build();
+            } else if (status == 400) {
+                return ResponseEntity.accepted().body(con.getInputStream().readAllBytes());
+            } else if (status == 404) {
+                return ResponseEntity.accepted().body("NOT FOUND".getBytes(StandardCharsets.UTF_8));
+            } else {
+                return ResponseEntity.internalServerError().body(con.getResponseMessage().getBytes());
+            }
+        } catch (MalformedURLException | ProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.accepted().body(("Verification Service Unreachable").getBytes(StandardCharsets.UTF_8));
+//            throw new RuntimeException(e);
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
+        }
     }
 }

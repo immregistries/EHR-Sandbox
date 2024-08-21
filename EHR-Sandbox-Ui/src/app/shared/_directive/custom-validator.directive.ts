@@ -1,5 +1,5 @@
 import { Directive, Input } from '@angular/core';
-import { NG_VALIDATORS, ValidatorFn, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
+import { NG_VALIDATORS, ValidatorFn, Validator, AbstractControl, ValidationErrors, AsyncValidatorFn } from '@angular/forms';
 
 @Directive({
   selector: '[customValidator]',
@@ -8,7 +8,7 @@ import { NG_VALIDATORS, ValidatorFn, Validator, AbstractControl, ValidationError
 export class CustomValidatorDirective implements Validator {
 
   @Input()
-  public customValidator?: ValidatorFn;
+  public customValidator?: ValidatorFn | AsyncValidatorFn;
 
   public validate(control: AbstractControl): ValidationErrors | null {
     if (this.customValidator) {

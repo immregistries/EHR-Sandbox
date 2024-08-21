@@ -4,9 +4,6 @@
 #    org:
 #      hibernate:
 #        SQL: DEBUG
-hapi:
-  fhir:
-    fhir_version: R5
 spring:
   profiles.active: '@activatedProperties@'
   datasource:

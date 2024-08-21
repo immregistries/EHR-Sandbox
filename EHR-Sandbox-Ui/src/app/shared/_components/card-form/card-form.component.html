@@ -5,7 +5,8 @@
                     [matTooltip]="compareTo? 'Previously : ' + compareTo : ''">
       <mat-label>{{baseForm.title}}</mat-label>
       <input matInput name="{{baseForm.attributeName}}" type="{{baseForm.type}}" [(ngModel)]="model" [disabled]="false"
-             [required]="isRequired()" [customValidator]="baseForm.customValidator" #valueCtrl="ngModel">
+             [required]="isRequired()" [customValidator]="baseForm.customValidator"
+             [customValidatorAsync]="baseForm.customValidatorAsync" #valueCtrl="ngModel">
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
 
       <mat-hint align="start" *ngIf="baseForm.hintProducer"><strong>{{baseForm.hintProducer()}}</strong></mat-hint>
@@ -14,9 +15,9 @@
         {{valueCtrl.errors['customIssue']}}
       </mat-error>
       <ng-template #otherError>
-        <mat-error *ngIf="valueCtrl.errors && !valueCtrl.errors['required']; else requiredError">
+        <!-- <mat-error *ngIf="valueCtrl.errors && !valueCtrl.errors['required']; else requiredError">
           {{valueCtrl.errors | json}}
-        </mat-error>
+        </mat-error> -->
         <ng-template #requiredError>
           <mat-error>required</mat-error>
         </ng-template>

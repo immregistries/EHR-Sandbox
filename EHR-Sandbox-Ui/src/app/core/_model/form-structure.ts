@@ -1,6 +1,6 @@
 import { CodeSystemConcept } from "fhir/r5";
 import { Facility, Vaccine } from "./rest";
-import { ValidatorFn } from "@angular/forms";
+import { AsyncValidatorFn, ValidatorFn } from "@angular/forms";
 
 enum FormType {
   text = 'text',
@@ -55,6 +55,7 @@ export declare interface BaseFormNoDisabled {
   required?: boolean,
   defaultListEmptyValue?: string, // Set default value when used in a list type form, '{}' string will use hard coded default, undefined will add no value
   customValidator?: ValidatorFn;
+  customValidatorAsync?: AsyncValidatorFn;
   hintProducer?: (value?: string) => string;
 }
 

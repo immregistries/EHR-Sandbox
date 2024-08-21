@@ -24,12 +24,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
+
 @Service
 public class FhirComponentsDispatcher {
 
     public static String R5_FLAVOUR = "R5";
     public static String R4_FLAVOUR = "R4";
-    private final CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
     Logger logger = LoggerFactory.getLogger(FhirComponentsDispatcher.class);
 
     @Autowired
@@ -70,6 +71,7 @@ public class FhirComponentsDispatcher {
 //                                 ,ApplicationContext context
     ) {
         this.fhirContextR5 = fhirContextR5;
+        CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
         this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
         customClientFactoryR5 = new CustomClientFactory();
         customClientFactoryR5.setFhirContext(fhirContextR5);
@@ -82,23 +84,17 @@ public class FhirComponentsDispatcher {
         customClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
     }
 
-    private FhirContext defaultContext() {
-        return fhirContextR5;
-    }
 
     public FhirContext fhirContext() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return fhirContext((String) request.getAttribute("TENANT_NAME"));
-    }
-
-    private FhirContext fhirContext(String tenantName) {
-        if (StringUtils.isBlank(tenantName)) {
-            return defaultContext();
-        } else if (tenantName.contains(R5_FLAVOUR)) {
-            return fhirContextR5;
-        } else if (tenantName.contains(R4_FLAVOUR)) {
-            return fhirContextR4;
-        } else return defaultContext();
+        String tenantName = tenantName();
+        if (StringUtils.isNotBlank(tenantName)) {
+            if (tenantName.contains(R5_FLAVOUR)) {
+                return fhirContextR5;
+            } else if (tenantName.contains(R4_FLAVOUR)) {
+                return fhirContextR4;
+            }
+        }
+        return fhirContextR5;
     }
 
     public IParser parser(String message) {
@@ -112,29 +108,29 @@ public class FhirComponentsDispatcher {
     }
 
     public CustomClientFactory clientFactory() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String tenantName = (String) request.getAttribute("TENANT_NAME");
-        if (StringUtils.isBlank(tenantName)) {
-            return customClientFactoryR5;
-        } else if (tenantName.contains(R5_FLAVOUR)) {
-            return customClientFactoryR5;
-        } else if (tenantName.contains(R4_FLAVOUR)) {
-            return customClientFactoryR4;
-        } else return customClientFactoryR5;
+        String tenantName = tenantName();
+        if (StringUtils.isNotBlank(tenantName)) {
+            if (tenantName.contains(R5_FLAVOUR)) {
+                return customClientFactoryR5;
+            } else if (tenantName.contains(R4_FLAVOUR)) {
+                return customClientFactoryR4;
+            }
+        }
+        return customClientFactoryR5;
     }
 
 
     public IEhrEntityFhirMapper mapper(Class type) {
         initMappers();
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String tenantName = (String) request.getAttribute("TENANT_NAME");
-        if (StringUtils.isBlank(tenantName)) {
-            return mappersR5.get(type);
-        } else if (tenantName.contains(R5_FLAVOUR)) {
-            return mappersR5.get(type);
-        } else if (tenantName.contains(R4_FLAVOUR)) {
-            return mappersR4.get(type);
-        } else return mappersR5.get(type);
+        String tenantName = tenantName();
+        if (StringUtils.isNotBlank(tenantName)) {
+            if (tenantName.contains(R5_FLAVOUR)) {
+                return mappersR5.get(type);
+            } else if (tenantName.contains(R4_FLAVOUR)) {
+                return mappersR4.get(type);
+            }
+        }
+        return mappersR5.get(type);
     }
 
     private void initMappers() {
@@ -145,7 +141,6 @@ public class FhirComponentsDispatcher {
             mappersR5.put(Facility.class, organizationMapperR5);
             mappersR5.put(Clinician.class, practitionerMapperR5);
             logger.info("Ignited FHIR R5 mappers registry");
-
         }
         if (mappersR4.isEmpty()) {
             mappersR4.put(EhrPatient.class, patientMapperR4);
@@ -154,7 +149,6 @@ public class FhirComponentsDispatcher {
             mappersR4.put(Facility.class, organizationMapperR4);
             mappersR4.put(Clinician.class, practitionerMapperR4);
             logger.info("Ignited FHIR R4 mappers registry");
-
         }
     }
 
@@ -179,15 +173,15 @@ public class FhirComponentsDispatcher {
     }
 
     public RestfulServer restfulServer() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String tenantName = (String) request.getAttribute("TENANT_NAME");
-        if (StringUtils.isBlank(tenantName)) {
-            return ehrFhirServerR5;
-        } else if (tenantName.contains(R5_FLAVOUR)) {
-            return ehrFhirServerR5;
-        } else if (tenantName.contains(R4_FLAVOUR)) {
-            return ehrFhirServerR4;
-        } else return ehrFhirServerR4;
+        String tenantName = tenantName();
+        if (StringUtils.isNotBlank(tenantName)) {
+            if (tenantName.contains(R5_FLAVOUR)) {
+                return ehrFhirServerR5;
+            } else if (tenantName.contains(R4_FLAVOUR)) {
+                return ehrFhirServerR4;
+            }
+        }
+        return ehrFhirServerR5;
     }
 
     public IResourceProvider provider(String resourceType) {
@@ -198,5 +192,10 @@ public class FhirComponentsDispatcher {
                 .filter((p) -> p.getResourceType().getSimpleName().equals(resourceType))
                 .findAny()
                 .orElseThrow(() -> new RuntimeException("Provider not found for resourceType " + resourceType + " in server " + restfulServer.getServerName()));
+    }
+
+    private static String tenantName() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        return (String) request.getAttribute(TENANT_NAME);
     }
 }
