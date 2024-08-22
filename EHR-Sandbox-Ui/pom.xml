@@ -32,7 +32,9 @@
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.12.1</version>
-
+        <configuration>
+          <skip>${skip.process}</skip>
+        </configuration>
         <executions>
           <!-- Install node and npm -->
           <execution>
@@ -41,7 +43,7 @@
               <goal>install-node-and-npm</goal>
             </goals>
             <configuration>
-              <nodeVersion>v16.14.0</nodeVersion>
+              <nodeVersion>v18.18.0</nodeVersion>
             </configuration>
           </execution>
 
@@ -55,15 +57,16 @@
 
           <!-- build app -->
           <execution>
-            <id>npm run build</id>
+            <id>npx run build</id>
             <goals>
-              <goal>npm</goal>
+              <goal>npx</goal>
             </goals>
             <configuration>
               <arguments>${run.arguments}</arguments>
             </configuration>
           </execution>
         </executions>
+
       </plugin>
     </plugins>
 
@@ -79,6 +82,7 @@
       <id>prod</id>
       <properties>
         <run.arguments>run build --prod</run.arguments>
+        <skip.process>true</skip.process>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
@@ -87,7 +91,7 @@
     <profile>
       <id>dev</id>
       <properties>
-        <run.arguments></run.arguments>
+        <skip.process>true</skip.process>
       </properties>
       <!--      Nothing happens-->
     </profile>
