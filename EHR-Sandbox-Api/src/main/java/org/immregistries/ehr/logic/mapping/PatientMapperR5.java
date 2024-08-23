@@ -31,12 +31,14 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
     @Autowired
     CodeMapManager codeMapManager;
     @Autowired
-    OrganizationMapperR5 organizationMapperR5;
+    OrganizationMapperR5 organizationMapper;
+    @Autowired
+    PractitionerMapperR5 practitionerMapper;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
 
     public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
         Patient p = toFhir(ehrPatient);
-        p.setManagingOrganization(new Reference().setIdentifier(organizationMapperR5.toFhir(facility).getIdentifierFirstRep()));
+        p.setManagingOrganization(new Reference().setIdentifier(organizationMapper.toFhir(facility).getIdentifierFirstRep()));
         return p;
     }
 
@@ -49,7 +51,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         }
 
         if (Objects.nonNull(ehrPatient.getFacility())) {
-            p.setManagingOrganization(organizationMapperR5.facilityReference(ehrPatient.getFacility()));
+            p.setManagingOrganization(organizationMapper.facilityReference(ehrPatient.getFacility()));
         }
 
         p.addName()
@@ -156,6 +158,10 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
 
         for (NextOfKinRelationship nextOfKinRelationship : ehrPatient.getNextOfKinRelationships()) {
             p.addContact(toFhirContactComponent(nextOfKinRelationship));
+        }
+
+        if (ehrPatient.getGeneralPractitioner() != null) {
+            p.addGeneralPractitioner(new Reference().setIdentifier(practitionerMapper.toFhir(ehrPatient.getGeneralPractitioner()).getIdentifierFirstRep()));
         }
 
         return p;
