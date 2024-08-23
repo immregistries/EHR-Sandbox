@@ -55,6 +55,16 @@ export class ClinicianFormComponent implements OnInit {
       ]
     },
     {
+      title: "Contact", rows: 1, cols: 1, forms: [
+        { type: FormType.phoneNumbers, title: "Phone Number", attributeName: "phones" },
+      ]
+    },
+    {
+      title: "Addresses", rows: 1, cols: 1, forms: [
+        { type: FormType.addresses, title: "Address", attributeName: "addresses" },
+      ]
+    },
+    {
       title: "Identifiers", rows: 1, cols: 1, forms: [
         { type: FormType.identifiers, title: "Identifier", attributeName: "identifiers" },
       ]

@@ -48,6 +48,8 @@ export interface Clinician {
   namePrefix?: string;
   identifiers?: EhrIdentifier[];
   qualification?: string
+  addresses?: EhrAddress[];
+  phones?: EhrPhoneNumber[];
 }
 
 export interface Facility {

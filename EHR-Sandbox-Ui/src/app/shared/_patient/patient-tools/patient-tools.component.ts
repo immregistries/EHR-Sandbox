@@ -64,6 +64,19 @@ export class PatientToolsComponent implements OnInit {
       this.patientService.doRefresh()
     });
   }
+  openIps() {
+    const dialogRef = this.dialog.open(FhirMessagingComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-without-bar',
+      data: { patientId: this.patient.id, resourceObservable: this.fhirResourceService.quickGetPatientResource(this.patient.id ?? -1), show_hl7_tab: false },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.patientService.doRefresh()
+    });
+  }
 
   openCopy() {
     const dialogRef = this.dialog.open(LocalCopyDialogComponent, {

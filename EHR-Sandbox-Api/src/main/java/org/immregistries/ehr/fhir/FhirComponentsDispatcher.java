@@ -57,6 +57,11 @@ public class FhirComponentsDispatcher {
     private EhrFhirServerR4 ehrFhirServerR5;
     @Autowired
     private EhrFhirServerR5 ehrFhirServerR4;
+    @Autowired
+    private IpsWriterR4 ipsWriterR4;
+    @Autowired
+    private IpsWriterR5 ipsWriterR5;
+
 
     private FhirContext fhirContextR5;
     private FhirContext fhirContextR4;
@@ -117,6 +122,19 @@ public class FhirComponentsDispatcher {
             }
         }
         return customClientFactoryR5;
+    }
+
+
+    public IIpsWriter ipsWriter() {
+        String tenantName = tenantName();
+        if (StringUtils.isNotBlank(tenantName)) {
+            if (tenantName.contains(R5_FLAVOUR)) {
+                return ipsWriterR5;
+            } else if (tenantName.contains(R4_FLAVOUR)) {
+                return ipsWriterR4;
+            }
+        }
+        return ipsWriterR5;
     }
 
 

@@ -6,5 +6,5 @@ import org.immregistries.ehr.api.entities.Facility;
 
 public interface IIpsWriter {
 
-    public IBaseResource composition(EhrPatient ehrPatient, Facility facility);
+    public IBaseResource ipsBundle(EhrPatient ehrPatient, Facility facility);
 }

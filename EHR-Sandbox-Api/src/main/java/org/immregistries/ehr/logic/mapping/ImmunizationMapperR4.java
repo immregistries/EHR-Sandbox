@@ -262,7 +262,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         }
     }
 
-    private Immunization.ImmunizationPerformerComponent fhirPerformer(Clinician clinician, String function) {
+    public Immunization.ImmunizationPerformerComponent fhirPerformer(Clinician clinician, String function) {
         if (clinician != null) {
             return new Immunization.ImmunizationPerformerComponent().setActor(new Reference()
                             .setIdentifier(practitionerMapper.toFhir(clinician).getIdentifierFirstRep()))

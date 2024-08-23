@@ -1,13 +1,17 @@
 package org.immregistries.ehr.logic.mapping;
 
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.immregistries.ehr.api.entities.Clinician;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
+import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.springframework.stereotype.Service;
 
 @Service
-
 public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
+
 
     public Clinician toClinician(Practitioner practitioner) {
         Clinician clinician = new Clinician();
@@ -19,6 +23,16 @@ public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
         if (name.getGiven().size() >= 2) {
             clinician.setNameMiddle(name.getGiven().get(1).getValue());
         }
+        for (ContactPoint telecom : practitioner.getTelecom()) {
+            if (null != telecom.getSystem()) {
+                if (telecom.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)) {
+                    clinician.addPhoneNumber(MappingHelperR4.toEhrPhoneNumber(telecom));
+                }
+            }
+        }
+        for (Address address : practitioner.getAddress()) {
+            clinician.addAddress(MappingHelperR4.toEhrAddress(address));
+        }
         return clinician;
     }
 
@@ -28,6 +42,15 @@ public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
                 .addGiven(clinician.getNameFirst())
                 .addGiven(clinician.getNameMiddle())
                 .setFamily(clinician.getNameLast());
+        for (EhrAddress ehrAddress : clinician.getAddresses()
+        ) {
+            practitioner.addAddress(MappingHelperR4.toFhirAddress(ehrAddress));
+        }
+
+        for (EhrPhoneNumber phoneNumber : clinician.getPhones()) {
+            practitioner.addTelecom(MappingHelperR4.toFhirContact(phoneNumber));
+        }
+
         return practitioner;
     }
 }

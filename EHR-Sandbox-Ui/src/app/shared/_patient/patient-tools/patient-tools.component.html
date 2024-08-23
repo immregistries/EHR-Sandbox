@@ -1,22 +1,27 @@
 <span class="tool-buttons-wrap-flex">
 
-    <button mat-icon-button matTooltip="Edit" color="primary" (click)="openEdition()">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button mat-stroked-button matTooltip="Send Hl7v2 QBP Message" color="primary" (click)="openHl7()">
-      <mat-icon>send</mat-icon>
-      HL7v2
-    </button>
+  <button mat-icon-button matTooltip="Edit" color="primary" (click)="openEdition()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-stroked-button matTooltip="Send Hl7v2 QBP Message" color="primary" (click)="openHl7()">
+    <mat-icon>send</mat-icon>
+    HL7v2
+  </button>
 
   <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
     <mat-icon>send</mat-icon>
     FHIR
   </button>
+  <button mat-stroked-button matTooltip="Send FHIR IPS Bundle" color="primary" (click)="openFhir()">
+    <mat-icon>send</mat-icon>
+    IPS
+  </button>
   <button mat-stroked-button matTooltip="Copy to local facility" color="primary" (click)="openCopy()">
     Local facility
     <mat-icon fontIcon="file_copy"></mat-icon>
   </button>
-  <button mat-stroked-button matTooltip="Fetch and merge remote vaccination history" color="primary" (click)="openFetch()">
+  <button mat-stroked-button matTooltip="Fetch and merge remote vaccination history" color="primary"
+          (click)="openFetch()">
     <mat-icon>cloud_download</mat-icon>
     Remote history
   </button>
@@ -29,5 +34,3 @@
   <!-- <app-json-dialog-button mat-raised-button [content]="fhirResourceService.quickGetPatientResource(patient.id ?? -1) |async" [label]="'Resource'"></app-json-dialog-button> -->
 
 </span>
-
-

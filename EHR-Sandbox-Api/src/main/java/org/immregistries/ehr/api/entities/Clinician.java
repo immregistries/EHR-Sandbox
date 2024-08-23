@@ -1,9 +1,12 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
+import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -65,6 +68,13 @@ public class Clinician extends EhrEntity {
     @ElementCollection()
     @CollectionTable(name = "clinician_identifiers", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
+    private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "patient_address", joinColumns = @JoinColumn(name = "patient_id"))
+    private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
     public Tenant getTenant() {
         return tenant;
@@ -152,5 +162,47 @@ public class Clinician extends EhrEntity {
 
     public void setNamePrefix(String namePrefix) {
         this.namePrefix = namePrefix;
+    }
+
+    public void setPhones(Set<EhrPhoneNumber> phones) {
+        this.phones = phones;
+    }
+
+    public EhrPhoneNumber addPhoneNumber() {
+        EhrPhoneNumber phoneNumber = new EhrPhoneNumber();
+        addPhoneNumber(phoneNumber);
+        return phoneNumber;
+    }
+
+    public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
+        if (phones == null) {
+            this.phones = new HashSet<>(1);
+        }
+        this.phones.add(phoneNumber);
+    }
+
+    public Set<EhrAddress> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<EhrAddress> addresses) {
+        this.addresses = addresses;
+    }
+
+    public EhrAddress addAddress() {
+        EhrAddress ehrAddress = new EhrAddress();
+        addAddress(ehrAddress);
+        return ehrAddress;
+    }
+
+    public void addAddress(EhrAddress address) {
+        if (this.addresses == null) {
+            this.addresses = new LinkedHashSet<>(3);
+        }
+        this.addresses.add(address);
+    }
+
+    public Set<EhrPhoneNumber> getPhones() {
+        return phones;
     }
 }
