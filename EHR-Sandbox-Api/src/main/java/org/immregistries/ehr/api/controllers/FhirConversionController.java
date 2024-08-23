@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -128,6 +129,38 @@ public class FhirConversionController {
         Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patientRepository.findById(patientId).get());
         String resource = parser.encodeResourceToString(bundle);
         return ResponseEntity.ok(resource);
+    }
+
+    @GetMapping(PATIENT_PREFIX + "/{patientId}/ips")
+    @Transactional(readOnly = true, noRollbackFor = Exception.class)
+    public ResponseEntity<String> patientIPS(@PathVariable() String facilityId, @PathVariable() String patientId) {
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow();
+        EhrPatient ehrPatient = patientRepository.findById(patientId).orElseThrow();
+
+        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
+        IBaseResource iBaseResource = compositionR5(ehrPatient, facility);
+        String resource = parser.encodeResourceToString(iBaseResource);
+        return ResponseEntity.ok(resource);
+    }
+
+    private Composition compositionR5(EhrPatient ehrPatient, Facility facility) {
+        Composition composition = new Composition();
+        composition.addIdentifier(ehrPatient.getMrnEhrIdentifier().toR5());
+        composition.setType(new CodeableConcept(new Coding("http://loinc.org", "60591-5", "Patient summary Document")));
+//        composition.setSubject()
+        composition.setDate(new Date());
+        Reference facilityReference = new Reference().setIdentifier(facility.getIdentifiers().stream().findFirst().get().toR5());
+        composition.addAuthor(facilityReference);
+        composition.addAttester()
+                .setMode(new CodeableConcept(new Coding("", "personal", "")))
+                .setTime(new Date())
+                .setParty(facilityReference);
+        composition.setCustodian(facilityReference);
+        composition.addSection()
+                .setTitle("Immunization History")
+                .setCode(new CodeableConcept(new Coding("http://loinc.org", "11369-6", "History of Immunization Narrative")));
+        return composition;
+
     }
 
     @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/bundle")

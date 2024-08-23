@@ -87,6 +87,13 @@ public class EhrPatient extends EhrEntity {
     @Column(name = "financial_status", length = 50)
     private String financialStatus = "";
 
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
+    @JoinColumn(name = "clinician_id")
+    @Audited(targetAuditMode = NOT_AUDITED) //TODO maybe audit
+    private Clinician generalPractitioner;
+
+
     @OneToMany(mappedBy = "patient")
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
@@ -440,5 +447,14 @@ public class EhrPatient extends EhrEntity {
 
     public void setFinancialStatus(String financialStatus) {
         this.financialStatus = financialStatus;
+    }
+
+
+    public Clinician getGeneralPractitioner() {
+        return generalPractitioner;
+    }
+
+    public void setGeneralPractitioner(Clinician generalPractitioner) {
+        this.generalPractitioner = generalPractitioner;
     }
 }

@@ -36,14 +36,14 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
     @Autowired
     ResourceIdentificationService resourceIdentificationService;
 
-    public Immunization toFhir(VaccinationEvent dbVaccination, String identifier_system) {
-        Immunization i = toFhir(dbVaccination);
+    public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
+        Immunization i = toFhir(vaccinationEvent);
         Identifier identifier = i.addIdentifier();
-        identifier.setValue("" + dbVaccination.getId());
+        identifier.setValue("" + vaccinationEvent.getId());
         identifier.setSystem(identifier_system);
-//        i.setPatient(new Reference("Patient/" + dbVaccination.getPatient().getId())
+//        i.setPatient(new Reference("Patient/" + vaccinationEvent.getPatient().getId())
 //                .setIdentifier(new Identifier()
-//                        .setValue("" + dbVaccination.getPatient().getId())
+//                        .setValue("" + vaccinationEvent.getPatient().getId())
 //                        .setSystem(identifier_system)));
         return i;
     }

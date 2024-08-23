@@ -96,6 +96,7 @@ export class PatientFormComponent {
         { type: FormType.text, title: 'Last name', attributeName: 'nameLast' },
         { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
         { type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden' },
+        { type: FormType.clinician, title: 'General Practitioner', attributeName: 'generalPractitioner' },
       ]
     },
     {

@@ -191,6 +191,11 @@ public class EhrPatientController {
             Facility facility,
             EhrPatient patient,
             Optional<Boolean> populate) {
+        logger.info("GENERAL P {}", patient.getGeneralPractitioner());
+        if (Objects.nonNull(patient.getGeneralPractitioner())) {
+            logger.info("GENERAL P ID {}", patient.getGeneralPractitioner().getId());
+        }
+
 
         // patient data check + flavours
 

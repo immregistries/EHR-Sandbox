@@ -130,6 +130,7 @@ export interface EhrPatient extends ObjectWithID {
   feedbacks?: (Feedback)[];
   groupNames?: String[];
   financialStatus?: string;
+  generalPractitioner?: Clinician | number;
 }
 
 export interface Tenant {

@@ -51,6 +51,7 @@ public class ClinicianController {
     }
 
     public Clinician postClinicians(Tenant tenant, Clinician clinician) {
+        clinician.setTenant(tenant);
         Clinician newClinician = clinicianRepository.save(clinician);
         return newClinician;
     }
