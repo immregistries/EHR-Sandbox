@@ -57,9 +57,9 @@
 
           <!-- build app -->
           <execution>
-            <id>npx run build</id>
+            <id>npm run build</id>
             <goals>
-              <goal>npx</goal>
+              <goal>npm</goal>
             </goals>
             <configuration>
               <arguments>${run.arguments}</arguments>
@@ -82,7 +82,7 @@
       <id>prod</id>
       <properties>
         <run.arguments>run build --prod</run.arguments>
-        <skip.process>true</skip.process>
+        <skip.process>false</skip.process>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
