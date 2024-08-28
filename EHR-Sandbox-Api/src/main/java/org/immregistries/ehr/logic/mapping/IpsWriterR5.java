@@ -67,7 +67,9 @@ public class IpsWriterR5 implements IIpsWriter {
 
         Composition.SectionComponent sectionComponent = composition.addSection()
                 .setTitle("Immunization History")
-                .setCode(new CodeableConcept(new Coding("http://loinc.org", "11369-6", "History of Immunization Narrative")));
+                .setCode(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("11369-6")
+//                        .setDisplay("History of Immunization Narrative")
+                ));
         for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
             Immunization immunization = ipsImmunization(vaccinationEvent, immunizationFacilitySystem);
             immunization.setPatient(new Reference(patientEntry.getFullUrl()));
@@ -86,7 +88,9 @@ public class IpsWriterR5 implements IIpsWriter {
 
     private Composition ipsComposition() {
         Composition composition = new Composition();
-        composition.setType(new CodeableConcept(new Coding("http://loinc.org", "60591-5", "Patient summary Document")));
+        composition.setType(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("60591-5")
+//                .setDisplay( "Patient summary Document")
+        ));
         composition.setDate(new Date());
         return composition;
     }

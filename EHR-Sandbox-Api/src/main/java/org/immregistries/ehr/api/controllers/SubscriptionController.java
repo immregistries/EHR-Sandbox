@@ -153,7 +153,7 @@ public class SubscriptionController {
         sub.setContent(Subscription.SubscriptionPayloadContent.FULLRESOURCE);
         sub.setContentType("application/fhir+json");
 
-        sub.setChannelType(new Coding("http://terminology.hl7.org/CodeSystem/subscription-channel-type", RESTHOOK, RESTHOOK));
+        sub.setChannelType(new Coding().setSystem("http://terminology.hl7.org/CodeSystem/subscription-channel-type").setCode(RESTHOOK));
         sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/R5/" + facility.getId());
 
         /**

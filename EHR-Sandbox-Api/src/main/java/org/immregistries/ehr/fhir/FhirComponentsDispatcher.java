@@ -83,7 +83,7 @@ public class FhirComponentsDispatcher {
         customClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
 
         this.fhirContextR4 = fhirContextR4;
-        fhirContextR4.setNarrativeGenerator(customNarrativeGenerator);
+        fhirContextR4.setNarrativeGenerator(null);
         customClientFactoryR4 = new CustomClientFactory();
         customClientFactoryR4.setFhirContext(fhirContextR4);
         customClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);

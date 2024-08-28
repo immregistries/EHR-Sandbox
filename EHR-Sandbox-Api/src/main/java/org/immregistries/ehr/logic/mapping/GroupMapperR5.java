@@ -81,7 +81,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
             for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
                 Group.GroupCharacteristicComponent groupCharacteristicComponent = group.addCharacteristic();
                 groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))
-                        .setCode(new CodeableConcept(new Coding(ehrGroupCharacteristic.getCodeSystem(), ehrGroupCharacteristic.getCodeValue(), "")))
+                        .setCode(new CodeableConcept(new Coding().setSystem(ehrGroupCharacteristic.getCodeSystem()).setCode(ehrGroupCharacteristic.getCodeValue())))
                         .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));
                 if (Objects.nonNull(ehrGroupCharacteristic.getExclude())) {
                     groupCharacteristicComponent.setExclude(ehrGroupCharacteristic.getExclude());

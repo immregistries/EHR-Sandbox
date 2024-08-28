@@ -2,7 +2,6 @@ package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
-import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.Clinician;
@@ -35,6 +34,9 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
     PractitionerMapperR4 practitionerMapper;
     @Autowired
     ResourceIdentificationService resourceIdentificationService;
+
+    @Autowired
+    MappingHelperR4 mappingHelperR4;
 
     public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
         Immunization i = toFhir(vaccinationEvent);
@@ -98,7 +100,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                 }
             }
         }
-        i.getRoute().addCoding(toFhirCoding(CodesetType.BODY_ROUTE, vaccine.getBodyRoute()));
+        i.getRoute().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getBodyRoute(), "", CodesetType.BODY_ROUTE));
         i.setStatusReason(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_REFUSAL, vaccine.getRefusalReasonCode())));
         i.getSite().addCoding(toFhirCoding(CodesetType.BODY_SITE, vaccine.getBodySite()));
         i.getFundingSource().addCoding(toFhirCoding(CodesetType.VACCINATION_FUNDING_SOURCE, vaccine.getFundingSource()));
@@ -244,29 +246,20 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         return v;
     }
 
-    private Coding toFhirCoding(Code code) {
-        Coding coding = new Coding(code.getConceptType(), code.getValue(), code.getLabel());
-        return coding;
-    }
-
     private Coding toFhirCoding(CodesetType codesetType, String system, String value) {
-        return toFhirCoding(codesetType, value).setSystem(system);
+        return mappingHelperR4.codingFromCodeset(value, system, codesetType);
+
     }
 
     private Coding toFhirCoding(CodesetType codesetType, String value) {
-        Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
-        if (code != null) {
-            return toFhirCoding(code);
-        } else {
-            return new Coding().setCode(value);
-        }
+        return mappingHelperR4.codingFromCodeset(value, "", codesetType);
     }
 
     public Immunization.ImmunizationPerformerComponent fhirPerformer(Clinician clinician, String function) {
         if (clinician != null) {
             return new Immunization.ImmunizationPerformerComponent().setActor(new Reference()
                             .setIdentifier(practitionerMapper.toFhir(clinician).getIdentifierFirstRep()))
-                    .setFunction(new CodeableConcept(new Coding(FUNCTION, function, function)));
+                    .setFunction(new CodeableConcept(new Coding().setSystem(FUNCTION).setCode(function)));
         } else {
             return null;
         }
