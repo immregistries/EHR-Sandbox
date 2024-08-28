@@ -93,6 +93,7 @@ public class IpsWriterR5 implements IIpsWriter {
 
     private Patient ipsPatient(EhrPatient ehrPatient) {
         Patient patient = patientMapperR5.toFhir(ehrPatient);
+        patient.setExtension(new ArrayList<>(0));
         return patient;
     }
 

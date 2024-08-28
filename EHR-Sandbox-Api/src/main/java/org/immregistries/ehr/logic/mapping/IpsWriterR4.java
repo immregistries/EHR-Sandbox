@@ -93,23 +93,28 @@ public class IpsWriterR4 implements IIpsWriter {
 
     private Patient ipsPatient(EhrPatient ehrPatient) {
         Patient patient = patientMapperR4.toFhir(ehrPatient);
+        patient.setExtension(new ArrayList<>(0));
+        patient.setText(null);
         return patient;
     }
 
     private Organization ipsOrganization(Facility facility) {
         Organization organization = organizationMapperR4.toFhir(facility);
+        organization.setExtension(new ArrayList<>(0));
         return organization;
     }
 
 
     private Practitioner ipsPractitioner(Clinician clinician) {
         Practitioner practitioner = practitionerMapperR4.toFhir(clinician);
+        practitioner.setExtension(new ArrayList<>(0));
         return practitioner;
     }
 
 
     private Immunization ipsImmunization(VaccinationEvent vaccinationEvent, String facilitySystem) {
         Immunization immunization = immunizationMapperR4.toFhir(vaccinationEvent, facilitySystem);
+        immunization.setExtension(new ArrayList<>(0));
         return immunization;
     }
 

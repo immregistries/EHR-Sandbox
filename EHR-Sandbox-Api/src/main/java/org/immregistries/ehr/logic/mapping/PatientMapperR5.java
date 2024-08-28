@@ -292,7 +292,8 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     public Patient.ContactComponent toFhirContactComponent(NextOfKinRelationship nextOfKinRelationship) {
         Patient.ContactComponent contact = new Patient.ContactComponent();
-        contact.addRelationship().setText(nextOfKinRelationship.getRelationshipKind()); //TODO SYSTEM
+        //TODO SYSTEM
+        contact.addRelationship().addCoding(mappingHelperR5.codingFromCodeset(nextOfKinRelationship.getRelationshipKind(), "", CodesetType.PERSON_RELATIONSHIP));
 
         NextOfKin nextOfKin = nextOfKinRelationship.getNextOfKin();
         HumanName contactName = new HumanName();
@@ -318,7 +319,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     public NextOfKinRelationship toEhrNextOfKinRelationShip(Patient.ContactComponent contact) {
         NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship();
-        nextOfKinRelationship.setRelationshipKind(contact.getRelationshipFirstRep().getText());
+        nextOfKinRelationship.setRelationshipKind(contact.getRelationshipFirstRep().getCodingFirstRep().getCode());
 
         NextOfKin nextOfKin = new NextOfKin();
         nextOfKinRelationship.setNextOfKin(nextOfKin);
