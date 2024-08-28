@@ -130,6 +130,17 @@ public class FhirConversionController {
         return ResponseEntity.ok(resource);
     }
 
+
+    @GetMapping(CLINICIAN_PREFIX + "/{clinicianId}/resource")
+    @Transactional(readOnly = true, noRollbackFor = Exception.class)
+    public ResponseEntity<String> clinicianResource(@PathVariable() String tenantId, @PathVariable() String clinicianId) {
+        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
+        Clinician clinician = clinicianRepository.findById(clinicianId).orElseThrow();
+        IBaseResource practitioner = fhirComponentsDispatcher.practitionerMapper().toFhir(clinician);
+        String resource = parser.encodeResourceToString(practitioner);
+        return ResponseEntity.ok(resource);
+    }
+
     @GetMapping(PATIENT_PREFIX + "/{patientId}/ips")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> patientIPS(@PathVariable() String facilityId, @PathVariable() String patientId) {

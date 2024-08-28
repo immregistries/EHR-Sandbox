@@ -684,6 +684,9 @@ public class HL7printer {
         sb.append("|");
         // PD1-4
         sb.append("|");
+        if (patient.getGeneralPractitioner() != null) {
+            printXCN(patient.getGeneralPractitioner(), sb);
+        }
         // PD1-5
         sb.append("|");
         // PD1-6

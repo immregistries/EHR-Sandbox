@@ -46,7 +46,7 @@ export class ClinicianToolsComponent {
         height: 'fit-content',
         width: '100%',
         panelClass: 'dialog-with-bar',
-        data: { resource: resource, resourceType: "Clinician"},
+        data: { resource: resource, resourceType: "Practitioner" },
       });
       dialogRef.afterClosed().subscribe(result => {
         this.clinicianService.doRefresh()

@@ -183,7 +183,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             } else if (item.equals("clinicians")) {
                 if (scanner.hasNextInt()) {
                     clinicianId = scanner.next();
-//                    checkIfPotentialValidId(clinicianId);
+                    checkIfPotentialValidId(clinicianId);
                     Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId)
                             .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));
                 }

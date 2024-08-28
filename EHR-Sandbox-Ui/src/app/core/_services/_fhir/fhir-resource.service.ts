@@ -47,6 +47,18 @@ export class FhirResourceService {
     }
   }
 
+  quickGetPatientIps(patientId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId < 0 || facilityId < 0 || patientId < 0) {
+      return of('')
+    } else {
+      return this.http.get(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/ips`,
+        { responseType: 'text' });
+    }
+  }
+
   getPatientResourceIps(patientId: number): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()

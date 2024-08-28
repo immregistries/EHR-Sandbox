@@ -2,11 +2,34 @@ package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Enumerations;
+import org.immregistries.codebase.client.generated.Code;
+import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class MappingHelperR4 {
+@Service
+public class MappingHelperR4 extends MappingHelper {
+    @Autowired
+    CodeMapManager codeMapManager;
+
+
+    public Coding codingFromCodeset(String value, String system, CodesetType codesetType) {
+        Coding coding = null;
+        if (StringUtils.isNotBlank(value)) {
+            coding = new Coding().setCode(value).setSystem(system);
+            Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
+            if (code != null) {
+                coding.setDisplay(code.getLabel());
+            }
+        }
+        return coding;
+    }
 
     public static ContactPoint toFhirContact(EhrPhoneNumber phoneNumber) {
         ContactPoint contactPoint = new ContactPoint()
@@ -57,6 +80,43 @@ public class MappingHelperR4 {
         ehrAddress.setAddressCountry(address.getCountry());
         ehrAddress.setAddressCountyParish(address.getDistrict());
         return ehrAddress;
+    }
+
+    public static Enumerations.AdministrativeGender toFhirGender(String sex) {
+        switch (sex) {
+            case MALE_SEX:
+                return Enumerations.AdministrativeGender.MALE;
+            case FEMALE_SEX:
+                return Enumerations.AdministrativeGender.FEMALE;
+            default:
+                return Enumerations.AdministrativeGender.OTHER;
+        }
+    }
+
+    public static String toEhrSex(Enumerations.AdministrativeGender gender) {
+        switch (gender) {
+            case MALE:
+                return MALE_SEX;
+            case FEMALE:
+                return FEMALE_SEX;
+            case OTHER:
+            default:
+                return "";
+        }
+    }
+
+    public static org.hl7.fhir.r4.model.CodeableConcept extensionGetCodeableConcept(org.hl7.fhir.r4.model.Extension extension) {
+        if (extension != null) {
+            return extension.castToCodeableConcept(extension.getValue());
+        } else return null;
+    }
+
+    public static org.hl7.fhir.r4.model.Coding extensionGetCoding(org.hl7.fhir.r4.model.Extension extension) {
+        if (extension != null) {
+            return extension.castToCoding(extension.getValue());
+        } else {
+            return null;
+        }
     }
 
 }

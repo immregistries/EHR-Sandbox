@@ -22,9 +22,6 @@ public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntit
     String YES = "Y";
     String NO = "N";
 
-    String MALE_SEX = "M";
-    String FEMALE_SEX = "F";
-
 
     Patient toFhir(EhrPatient ehrPatient, Facility facility);
 

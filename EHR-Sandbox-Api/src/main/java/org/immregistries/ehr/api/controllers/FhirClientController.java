@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @RestController
 public class FhirClientController {
     public static final String FACILITY_PREFIX = "/tenants/{tenantId}/facilities";
+    public static final String CLINICIAN_PREFIX = "/tenants/{tenantId}/clinicians";
     public static final String PATIENT_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/patients";
     public static final String GROUPS_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/groups";
     public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";

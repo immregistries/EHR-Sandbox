@@ -3,9 +3,7 @@ package org.immregistries.ehr.logic.mapping;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
-import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
-import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.NextOfKin;
@@ -22,6 +20,9 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.Objects;
 
+import static org.immregistries.ehr.logic.mapping.MappingHelperR4.FEMALE_SEX;
+import static org.immregistries.ehr.logic.mapping.MappingHelperR4.MALE_SEX;
+
 /**
  * Maps the Database with FHIR for patient resources
  */
@@ -29,7 +30,7 @@ import java.util.Objects;
 public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     @Autowired
-    CodeMapManager codeMapManager;
+    MappingHelperR5 mappingHelperR5;
     @Autowired
     OrganizationMapperR5 organizationMapper;
     @Autowired
@@ -92,7 +93,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         } else if (ehrPatient.getBirthFlag().equals(YES)) {
             p.setMultipleBirth(new BooleanType(true));
         }
-        p.setGender(toFhirGender(ehrPatient.getSex()));
+        p.setGender(MappingHelperR5.toFhirGender(ehrPatient.getSex()));
 
         /**
          * Race
@@ -103,7 +104,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
             CodeableConcept race = new CodeableConcept();
             raceExtension.setValue(race);
             for (EhrRace ehrRace : ehrPatient.getRaces()) {
-                race.addCoding(codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
+                race.addCoding(mappingHelperR5.codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
             }
         }
 
@@ -112,7 +113,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
          * Ethnicity
          */
         if (StringUtils.isNotBlank(ehrPatient.getEthnicity())) {
-            p.addExtension(ETHNICITY_EXTENSION, codingFromCodeset(ehrPatient.getEthnicity(), ETHNICITY_SYSTEM, CodesetType.PATIENT_ETHNICITY));
+            p.addExtension(ETHNICITY_EXTENSION, mappingHelperR5.codingFromCodeset(ehrPatient.getEthnicity(), ETHNICITY_SYSTEM, CodesetType.PATIENT_ETHNICITY));
         }
 
         if (ehrPatient.getDeathDate() != null) {
@@ -288,17 +289,6 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         return ehrPatient;
     }
 
-    private Coding codingFromCodeset(String value, String system, CodesetType codesetType) {
-        Coding coding = null;
-        if (StringUtils.isNotBlank(value)) {
-            coding = new Coding().setCode(value).setSystem(system);
-            Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
-            if (code != null) {
-                coding.setDisplay(code.getLabel());
-            }
-        }
-        return coding;
-    }
 
     public Patient.ContactComponent toFhirContactComponent(NextOfKinRelationship nextOfKinRelationship) {
         Patient.ContactComponent contact = new Patient.ContactComponent();
@@ -311,7 +301,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         contactName.addGivenElement().setValue(nextOfKin.getNameFirst());
         contactName.addGivenElement().setValue(nextOfKin.getNameMiddle());
         contactName.addSuffix(nextOfKin.getNameSuffix());
-        contact.setGender(toFhirGender(nextOfKin.getSex()));
+        contact.setGender(MappingHelperR5.toFhirGender(nextOfKin.getSex()));
         for (EhrAddress ehrAddress : nextOfKin.getAddresses()) {
             contact.setAddress(toFhirAddress(ehrAddress)); //TODO extension for multiple NK1 addresses
         }
@@ -411,16 +401,6 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         return ehrAddress;
     }
 
-    private Enumerations.AdministrativeGender toFhirGender(String sex) {
-        switch (sex) {
-            case MALE_SEX:
-                return Enumerations.AdministrativeGender.MALE;
-            case FEMALE_SEX:
-                return Enumerations.AdministrativeGender.FEMALE;
-            default:
-                return Enumerations.AdministrativeGender.OTHER;
-        }
-    }
 
     private String toEhrSex(Enumerations.AdministrativeGender gender) {
         switch (gender) {

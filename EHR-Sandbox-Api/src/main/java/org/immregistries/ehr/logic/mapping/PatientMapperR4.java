@@ -2,7 +2,6 @@ package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
-import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
@@ -29,6 +28,8 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
     @Autowired
     CodeMapManager codeMapManager;
+    @Autowired
+    MappingHelperR4 mappingHelperR4;
     @Autowired()
     OrganizationMapperR4 organizationMapper;
     @Autowired()
@@ -66,7 +67,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
                 .setUrl(MOTHER_MAIDEN_NAME)
                 .setValue(new StringType(ehrPatient.getMotherMaiden()));
 
-        p.setGender(toFhirGender(ehrPatient.getSex()));
+        p.setGender(MappingHelperR4.toFhirGender(ehrPatient.getSex()));
 
         //Race and ethnicity
         if (!ehrPatient.getRaces().isEmpty()) {
@@ -75,7 +76,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             CodeableConcept race = new CodeableConcept();
             raceExtension.setValue(race);
             for (EhrRace ehrRace : ehrPatient.getRaces()) {
-                race.addCoding(codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
+                race.addCoding(mappingHelperR4.codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
             }
         }
         p.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()));
@@ -90,7 +91,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
 
         if (ehrPatient.getDeathDate() != null) {
-            p.setDeceased(new DateType(ehrPatient.getDeathDate()));
+            p.setDeceased(new DateTimeType(ehrPatient.getDeathDate()));
         } else if (ehrPatient.getDeathFlag().equals(YES)) {
             p.setDeceased(new BooleanType(true));
         } else if (ehrPatient.getDeathFlag().equals(NO)) {
@@ -169,16 +170,16 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         if (motherMaiden != null) {
             ehrPatient.setMotherMaiden(motherMaiden.getValue().toString());
         }
-        ehrPatient.setSex(toEhrSex(p.getGender()));
+        ehrPatient.setSex(MappingHelperR4.toEhrSex(p.getGender()));
 
-        CodeableConcept races = MappingHelper.extensionGetCodeableConcept(p.getExtensionByUrl(RACE));
+        CodeableConcept races = MappingHelperR4.extensionGetCodeableConcept(p.getExtensionByUrl(RACE));
         if (races != null) {
             for (Coding coding : races.getCoding()) {
                 ehrPatient.addRace(new EhrRace(coding.getCode()));
             }
         }
         if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
-            Coding ethnicity = MappingHelper.extensionGetCoding(p.getExtensionByUrl(ETHNICITY_EXTENSION));
+            Coding ethnicity = MappingHelperR4.extensionGetCoding(p.getExtensionByUrl(ETHNICITY_EXTENSION));
             ehrPatient.setEthnicity(ethnicity.getCode());
         }
 
@@ -223,7 +224,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
         Extension publicity = p.getExtensionByUrl(PUBLICITY_EXTENSION);
         if (publicity != null) {
-            Coding value = MappingHelper.extensionGetCoding(publicity);
+            Coding value = MappingHelperR4.extensionGetCoding(publicity);
             ehrPatient.setPublicityIndicator(value.getCode());
             if (value.getVersion() != null && !value.getVersion().isBlank()) {
                 try {
@@ -235,7 +236,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
         Extension protection = p.getExtensionByUrl(PROTECTION_EXTENSION);
         if (protection != null) {
-            Coding value = MappingHelper.extensionGetCoding(protection);
+            Coding value = MappingHelperR4.extensionGetCoding(protection);
             ehrPatient.setProtectionIndicator(value.getCode());
             if (value.getVersion() != null && !value.getVersion().isBlank()) {
                 try {
@@ -247,7 +248,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
         Extension registry = p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION);
         if (registry != null) {
-            Coding value = MappingHelper.extensionGetCoding(registry);
+            Coding value = MappingHelperR4.extensionGetCoding(registry);
             ehrPatient.setRegistryStatusIndicator(value.getCode());
             if (value.getVersion() != null && !value.getVersion().isBlank()) {
                 try {
@@ -265,17 +266,6 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         return ehrPatient;
     }
 
-    private Coding codingFromCodeset(String value, String system, CodesetType codesetType) {
-        Coding coding = null;
-        if (StringUtils.isNotBlank(value)) {
-            coding = new Coding().setCode(value).setSystem(system);
-            Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
-            if (code != null) {
-                coding.setDisplay(code.getLabel());
-            }
-        }
-        return coding;
-    }
 
     public Patient.ContactComponent toFhirContactComponent(NextOfKinRelationship nextOfKinRelationship) {
         Patient.ContactComponent contact = new Patient.ContactComponent();
@@ -288,7 +278,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         contactName.addGivenElement().setValue(nextOfKin.getNameFirst());
         contactName.addGivenElement().setValue(nextOfKin.getNameMiddle());
         contactName.addSuffix(nextOfKin.getNameSuffix());
-        contact.setGender(toFhirGender(nextOfKin.getSex()));
+        contact.setGender(MappingHelperR4.toFhirGender(nextOfKin.getSex()));
         for (EhrAddress ehrAddress : nextOfKin.getAddresses()) {
             contact.setAddress(MappingHelperR4.toFhirAddress(ehrAddress)); //TODO extension for multiple NK1 addresses
         }
@@ -317,7 +307,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             nextOfKin.setNameMiddle(contactName.getGiven().get(1).getValueNotNull());
         }
         nextOfKin.setNameSuffix(contactName.getSuffixAsSingleString());
-        nextOfKin.setSex(toEhrSex(contact.getGender()));
+        nextOfKin.setSex(MappingHelperR4.toEhrSex(contact.getGender()));
         nextOfKin.addAddress(MappingHelperR4.toEhrAddress(contact.getAddress()));
         for (ContactPoint telecom : contact.getTelecom()) {
             switch (telecom.getSystem()) {
@@ -337,27 +327,4 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         return nextOfKinRelationship;
     }
 
-
-    private Enumerations.AdministrativeGender toFhirGender(String sex) {
-        switch (sex) {
-            case MALE_SEX:
-                return Enumerations.AdministrativeGender.MALE;
-            case FEMALE_SEX:
-                return Enumerations.AdministrativeGender.FEMALE;
-            default:
-                return Enumerations.AdministrativeGender.OTHER;
-        }
-    }
-
-    private String toEhrSex(Enumerations.AdministrativeGender gender) {
-        switch (gender) {
-            case MALE:
-                return MALE_SEX;
-            case FEMALE:
-                return FEMALE_SEX;
-            case OTHER:
-            default:
-                return "";
-        }
-    }
 }
