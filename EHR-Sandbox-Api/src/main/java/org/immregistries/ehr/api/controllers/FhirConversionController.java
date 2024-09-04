@@ -3,12 +3,21 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.nayuki.qrcodegen.QrCode;
+import io.nayuki.qrcodegen.QrSegment;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.api.security.JwtUtils;
+import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
@@ -17,12 +26,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.zip.Deflater;
 
 import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
@@ -150,7 +162,71 @@ public class FhirConversionController {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource iBaseResource = fhirComponentsDispatcher.ipsWriter().ipsBundle(ehrPatient, facility);
         String resource = parser.encodeResourceToString(iBaseResource);
+//        CredentialSubject
         return ResponseEntity.ok(resource);
+    }
+
+    @Autowired
+    UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @PostMapping(FACILITY_PREFIX + "/{facilityId}/$qrCode")
+    @Transactional(readOnly = true, noRollbackFor = Exception.class)
+    public ResponseEntity<?> qrCode(@PathVariable() String facilityId, @RequestBody String resourceString) {
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow();
+        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
+//        IBaseResource iBaseResource = parser.parseResource(resourceString);
+
+        Map<String, Object> mapVc = new HashMap<>(2);
+        ArrayList<String> type = new ArrayList<>(3);
+        type.add("VerifiableCredential");
+        type.add("https://smarthealth.cards#health-card");
+        type.add("https://smarthealth.cards#immunization");
+        mapVc.put("type", type);
+
+        Map<String, Object> credentialSubject = new HashMap<>(2);
+        credentialSubject.put("fhirVersion", fhirComponentsDispatcher.fhirContext().getVersion().getVersion().getFhirVersionString());
+        credentialSubject.put("fhirBundle", JsonParser.parseString(resourceString).getAsJsonObject());
+        mapVc.put("credentialSubject", credentialSubject);
+
+        Claims claims = Jwts.claims()
+                .notBefore(new Date())
+                .issuer("test/ehr-sandbox")
+                .issuedAt(new Date())
+                .subject("testSubject")
+                .add("vc", mapVc)
+                .build();
+
+        Gson gson = new Gson();
+//        logger.info("gson {}", gson.toJson(claims));
+        Deflater deflater = new Deflater();
+        deflater.setInput(StringUtils.getBytes(gson.toJson(claims).strip(), StandardCharsets.UTF_8));
+        byte[] deflated = new byte[100];
+        deflater.deflate(deflated);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String compact = jwtUtils.qrCodeEncoder(authentication, claims, deflated);
+
+        Map<String, ArrayList<String>> shcMap = new HashMap<>(1);
+        ArrayList<String> arrayList = new ArrayList<>(1);
+        arrayList.add(compact);
+
+        shcMap.put("verifiableCredential", arrayList);
+        String finalString = gson.toJson(shcMap);
+
+        QrSegment shcSegment = QrSegment.makeBytes("shc:/".getBytes());
+        QrSegment segmentContent = QrSegment.makeNumeric(finalString);
+//        List<QrSegment> segs = QrSegment.makeSegments(finalString);
+//        ArrayList<String> result = new ArrayList<>(segs.size());
+//        for (QrSegment segment: segs
+//             ) {
+//                QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segment), QrCode.Ecc.MEDIUM);
+//        }
+        QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segmentContent), QrCode.Ecc.MEDIUM);
+//        qrCode.
+//        QrCode qrCode = QrCode.encodeText(sh, QrCode.Ecc.MEDIUM);
+        return ResponseEntity.ok(finalString);
     }
 
 

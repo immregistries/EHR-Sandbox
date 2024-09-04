@@ -34,7 +34,7 @@
       </div>
       <div style="width: 50%;">
         <!-- <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId"></app-hl7-post> -->
-        <app-fhir-post [resource]="''" [operation]="'$transaction'" [resource]="hl7FhirTransaction"></app-fhir-post>
+        <app-fhir-post [operation]="'$transaction'" [resource]="hl7FhirTransaction"></app-fhir-post>
       </div>
     </div>
   </mat-tab>
@@ -47,6 +47,13 @@
       <div style="width: 50%;">
         <app-fhir-get [resourceType]="'Immunization'"
                       [identifierString]="(vaccinationId > 0)? vaccinationId+'': ''"></app-fhir-get>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Qr Code">
+    <div style="display: flex; justify-content: space-between; gap: 5px 5px; padding-top: 10px;">
+      <div [style]="'width: 100%'">
+        <app-fhir-qr-code [resource]="genericResource"></app-fhir-qr-code>
       </div>
     </div>
   </mat-tab>

@@ -9,7 +9,10 @@ import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class IpsWriterR4 implements IIpsWriter {
@@ -32,18 +35,19 @@ public class IpsWriterR4 implements IIpsWriter {
         Map<String, Reference> addedClinicianReference = new HashMap<>(ehrPatient.getVaccinationEvents().size() * 3 + 1);
         String immunizationFacilitySystem = resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility);
 
+        int entryId = 0;
         Bundle bundle = new Bundle();
         bundle.setIdentifier(ehrPatient.getMrnEhrIdentifier().toR4());
         bundle.setType(Bundle.BundleType.DOCUMENT);
         bundle.setTimestamp(new Date());
         Bundle.BundleEntryComponent organizationEntry = bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setFullUrl(IIpsWriter.entryUrl(entryId++))
                 .setResource(ipsOrganization(facility));
         ;
 
         Patient patient = ipsPatient(ehrPatient);
         Bundle.BundleEntryComponent patientEntry = bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setFullUrl(IIpsWriter.entryUrl(entryId++))
                 .setResource(patient);
         patient.setManagingOrganization(new Reference(organizationEntry.getFullUrl()));
         patient.setGeneralPractitioner(new ArrayList<>(1));
@@ -54,7 +58,7 @@ public class IpsWriterR4 implements IIpsWriter {
 
         Composition composition = ipsComposition();
         Bundle.BundleEntryComponent compositionEntry = bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setFullUrl(IIpsWriter.entryUrl(entryId++))
                 .setResource(composition);
         composition.addAuthor(facilityReference);
         composition.addAttester()
@@ -74,7 +78,7 @@ public class IpsWriterR4 implements IIpsWriter {
             Immunization immunization = ipsImmunization(vaccinationEvent, immunizationFacilitySystem);
             immunization.setPatient(new Reference(patientEntry.getFullUrl()));
             Bundle.BundleEntryComponent immunizationEntry = bundle.addEntry()
-                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                    .setFullUrl(IIpsWriter.entryUrl(entryId++))
                     .setResource(immunization);
             immunization.setPerformer(new ArrayList<>(3));
             addImmunizationPerformer(bundle, immunization, vaccinationEvent.getOrderingClinician(), IImmunizationMapper.ORDERING, addedClinicianReference);
@@ -130,7 +134,7 @@ public class IpsWriterR4 implements IIpsWriter {
         if (reference == null) {
             Practitioner practitioner = ipsPractitioner(clinician);
             Bundle.BundleEntryComponent clinicianEntry = bundle.addEntry()
-                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                    .setFullUrl(IIpsWriter.entryUrl())
                     .setResource(practitioner);
             reference = new Reference(clinicianEntry.getFullUrl());
             addedClinicianReference.put(clinician.getId(), reference);

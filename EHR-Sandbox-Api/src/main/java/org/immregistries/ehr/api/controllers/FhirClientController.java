@@ -85,6 +85,10 @@ public class FhirClientController {
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));
     }
 
+    //    @GetMapping("/smart-test")
+//    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable() String keyId) {
+//
+//    }
     @GetMapping("/smart-test/{keyId}")
     public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable() String keyId) {
         ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();

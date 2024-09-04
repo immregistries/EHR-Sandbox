@@ -70,6 +70,17 @@ export class FhirResourceService {
         { responseType: 'text' });
     }
   }
+  getQrCode(resource: string): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (tenantId < 0 || facilityId < 0) {
+      return of('')
+    } else {
+      return this.http.post(
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/$qrCode`, resource,
+        { responseType: 'text' });
+    }
+  }
 
   quickGetGroupResource(groupId: number): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()

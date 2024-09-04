@@ -123,6 +123,7 @@ import { CustomValidatorDirective } from './_directive/custom-validator.directiv
 import { ImmunizationRegistryCheckComponent } from './_immunization-registry/immunization-registry-check/immunization-registry-check.component';
 import { FacilityNamePipe } from './_pipes/facility-name.pipe';
 import { CustomValidatorAsyncDirective } from './_directive/custom-validator-async.directive';
+import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component";
 
 @NgModule({
   declarations: [
@@ -223,6 +224,8 @@ import { CustomValidatorAsyncDirective } from './_directive/custom-validator-asy
     CustomValidatorDirective,
     CustomValidatorAsyncDirective,
     ImmunizationRegistryCheckComponent,
+    FhirQrCodeComponent
+
   ],
   imports: [
     CommonModule,
@@ -362,6 +365,7 @@ import { CustomValidatorAsyncDirective } from './_directive/custom-validator-asy
     GroupAllDashboardComponent,
     GroupFormComponent,
     MatTreeModule,
+    FhirQrCodeComponent,
 
   ],
 })

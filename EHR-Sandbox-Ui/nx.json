@@ -33,5 +33,10 @@
       "!{projectRoot}/**/*.spec.[jt]s",
       "!{projectRoot}/karma.conf.js"
     ]
+  },
+  "generators": {
+    "@nx/angular:component": {
+      "style": "css"
+    }
   }
 }

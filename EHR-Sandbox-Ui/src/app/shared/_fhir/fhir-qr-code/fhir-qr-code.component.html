@@ -1,0 +1,39 @@
+<form [style]="style" (submit)="send()">
+  <mat-progress-bar mode="query" *ngIf="resourceLoading"></mat-progress-bar>
+  <div class="textarea-container">
+    <mat-form-field style="width: 100%;" appearance="fill">
+      <mat-label>Fhir Resource</mat-label>
+      <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="resource" name="resource"></textarea>
+      <!-- <mat-error *ngIf="isJson()">Invalid Json</mat-error> -->
+      <mat-error>Invalid Json</mat-error>
+    </mat-form-field>
+    <button mat-stroked-button type="button" [cdkCopyToClipboard]="resource"
+            (click)="snackBarService.successMessage('Copied to clipBoard')">
+      <mat-icon>content_copy</mat-icon>
+      Copy
+    </button>
+  </div>
+
+  <div class="footer low-density">
+    <div class="footer-end">
+      <button mat-raised-button class="w3-right" type="submit" color="primary">
+        <mat-icon>send</mat-icon>
+        Convert to QR Code
+      </button>
+      <!-- <button mat-raised-button class="w3-right" (click)="send()" cdkFocusInitial>Send to IIS</button> -->
+    </div>
+  </div>
+
+  <div [style]="{width: '90%'}" class="w3-right textarea-container">
+    <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>
+    <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+    <textarea [ngClass]="resultClass()" [rows]="4" [style]="{width: '100%'}" readonly
+              name="answer">{{answer | json}}</textarea>
+    <button mat-stroked-button type="button" [cdkCopyToClipboard]="answer"
+            (click)="snackBarService.successMessage('Copied to clipBoard')">
+      <mat-icon>content_copy</mat-icon>
+      Copy
+    </button>
+  </div>
+  <!-- <qr-code> -->
+</form>
