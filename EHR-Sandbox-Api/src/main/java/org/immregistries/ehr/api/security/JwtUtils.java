@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.security;
 
+import com.google.gson.Gson;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -42,18 +45,32 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String qrCodeEncoder(Authentication authentication, Claims claims, byte[] content) {
+    public String qrCodeEncoder(Authentication authentication, byte[] content) {
         final BytesKeyGenerator generator = KeyGenerators.secureRandom(32);
         // Used as Key id
         final byte[] kidBytes = generator.generateKey(); //TODO Sandbox deploy url for key to be available at
+        final String kid = Base64.getEncoder().encodeToString(kidBytes);
         try {
+            Gson gson = new Gson();
             final KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
             kpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
             final KeyPair keyPair = kpg.generateKeyPair();
 
             final ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
             final ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
-            logger.info("Public key {}", publicKey);
+            Map<String, String> keyDisplay = new HashMap<>(5);
+            keyDisplay.put("kty", "EC");
+            keyDisplay.put("kid", kid);
+            keyDisplay.put("use", "sig");
+            keyDisplay.put("alg", privateKey.getAlgorithm());
+            keyDisplay.put("crv", privateKey.getFormat());
+            keyDisplay.put("x", String.valueOf(privateKey.getParams().getGenerator().getAffineX()));
+            keyDisplay.put("y", String.valueOf(privateKey.getParams().getGenerator().getAffineY()));
+            keyDisplay.put("d", String.valueOf(privateKey.getParams().getOrder()));
+            logger.info("Issuer key {}", keyDisplay);
+
+//            logger.info("Issuer key {}", gson.toJsonTree(publicKey));
+//            logger.info("Issuer key {}", privateKey.);
 
             UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
             JwtBuilder jwtBuilder = Jwts.builder()
@@ -62,10 +79,10 @@ public class JwtUtils {
                     .and()
                     .content(content)
                     .signWith(privateKey);
-            logger.info("JWTUTILS content {}", jwtBuilder.compact());
+//            logger.info("JWTUTILS content {}", jwtBuilder.compact());
             String compact = jwtBuilder.compact();
             Jwt parsed = Jwts.parser().verifyWith(publicKey).build().parse(compact);
-            logger.info("JWTUTILS parsed {}", parsed);
+//            logger.info("JWTUTILS parsed {}", parsed);
 //            byte[] payload = (byte[]) parsed.getPayload();
 //            Inflater decompresser = new Inflater();
 //            decompresser.setInput(payload, 0, payload.length);

@@ -124,6 +124,7 @@ import { ImmunizationRegistryCheckComponent } from './_immunization-registry/imm
 import { FacilityNamePipe } from './_pipes/facility-name.pipe';
 import { CustomValidatorAsyncDirective } from './_directive/custom-validator-async.directive';
 import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component";
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
   declarations: [
@@ -271,6 +272,7 @@ import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component
     MatSlideToggleModule,
     MatStepperModule,
     MatTreeModule,
+    QRCodeModule,
   ],
   exports: [
     ReactiveFormsModule,
@@ -366,6 +368,8 @@ import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component
     GroupFormComponent,
     MatTreeModule,
     FhirQrCodeComponent,
+    QRCodeModule,
+
 
   ],
 })

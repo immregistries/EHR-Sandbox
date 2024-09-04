@@ -26,14 +26,18 @@
 
   <div [style]="{width: '90%'}" class="w3-right textarea-container">
     <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>
-    <!-- <mat-option [value]="'Update'">Update</mat-option> -->
     <textarea [ngClass]="resultClass()" [rows]="4" [style]="{width: '100%'}" readonly
               name="answer">{{answer | json}}</textarea>
-    <button mat-stroked-button type="button" [cdkCopyToClipboard]="answer"
+    <button mat-stroked-button type="button" [cdkCopyToClipboard]="answer ?? ''"
             (click)="snackBarService.successMessage('Copied to clipBoard')">
       <mat-icon>content_copy</mat-icon>
       Copy
     </button>
+    <div *ngIf="answer">
+      <qrcode [qrdata]="answer" [width]="256" [errorCorrectionLevel]="'M'" [allowEmptyString]="true"
+              [title]="'Result translation'"></qrcode>
+    </div>
+
+
   </div>
-  <!-- <qr-code> -->
 </form>

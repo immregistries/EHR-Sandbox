@@ -16,7 +16,7 @@ export class FhirQrCodeComponent {
   @Input()
   resourceLoading: Boolean = false
   requestLoading: Boolean = false
-  answer: string = "";
+  answer?: string;
   error: boolean = false;
   style: string = 'width: 100%'
 
@@ -37,7 +37,7 @@ export class FhirQrCodeComponent {
     private feedbackService: FeedbackService) { }
 
   send() {
-    this.answer = ""
+    this.answer = undefined
     this.requestLoading = true
     this.fhirResourceService.getQrCode(this.resource)
       .subscribe({
@@ -55,7 +55,7 @@ export class FhirQrCodeComponent {
           if (err.status == 400) {
             this.answer = err.error
             console.error(err)
-            this.snackBarService.fatalFhirMessage(this.answer)
+            this.snackBarService.fatalFhirMessage(this.answer ?? "")
           } else {
             this.answer = err.error
           }
@@ -64,7 +64,7 @@ export class FhirQrCodeComponent {
   }
 
   resultClass(): string {
-    if (this.answer === "") {
+    if (this.answer === "" || !this.answer) {
       return "w3-left w3-padding"
     }
     return this.error ? 'w3-red w3-left w3-padding' : 'w3-green w3-left w3-padding'

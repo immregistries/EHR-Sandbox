@@ -1,15 +1,13 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.nayuki.qrcodegen.QrCode;
-import io.nayuki.qrcodegen.QrSegment;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
@@ -32,14 +30,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
 import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
 @RestController
 public class FhirConversionController {
+
+    private static final int MAXIMUM_DATA_SIZE = 30000;
+    private static final int SMALLEST_B64_CHAR_CODE = 45;
     Logger logger = LoggerFactory.getLogger(FhirConversionController.class);
 
     @Autowired
@@ -199,34 +200,64 @@ public class FhirConversionController {
                 .build();
 
         Gson gson = new Gson();
-//        logger.info("gson {}", gson.toJson(claims));
+        byte[] output = new byte[MAXIMUM_DATA_SIZE];
+        String notDeflated = gson.toJson(claims).strip();
+//        logger.info("notDelfated {}  ", notDeflated);
+
+        /**
+         * Compressing the content
+         */
         Deflater deflater = new Deflater();
-        deflater.setInput(StringUtils.getBytes(gson.toJson(claims).strip(), StandardCharsets.UTF_8));
-        byte[] deflated = new byte[100];
-        deflater.deflate(deflated);
+        deflater.setInput(notDeflated.getBytes());
+        deflater.finish();
+        int compressedDataSize = deflater.deflate(output);
+        if (compressedDataSize >= MAXIMUM_DATA_SIZE) {
+            throw new InternalErrorException("Resource is too large");
+        }
+        byte[] deflated = Arrays.copyOfRange(output, 0, compressedDataSize);
+
+//        logger.info("df {}", compressedDataSize);
+//        try {
+//            Inflater decompresser = new Inflater();
+//            decompresser.setInput(deflated);
+//            byte[] result = new byte[notDeflated.length() + 1];
+//            int resultLength = decompresser.inflate(result);
+//            decompresser.end();
+//            logger.info("result {} {} ", resultLength, StringUtils.toEncodedString(result, StandardCharsets.UTF_8),
+//                    Base64.getEncoder().encodeToString(result));
+//        } catch (DataFormatException e) {
+//            throw new RuntimeException(e);
+//        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String compact = jwtUtils.qrCodeEncoder(authentication, claims, deflated);
+        String compact = jwtUtils.qrCodeEncoder(authentication, deflated);
 
-        Map<String, ArrayList<String>> shcMap = new HashMap<>(1);
-        ArrayList<String> arrayList = new ArrayList<>(1);
-        arrayList.add(compact);
-
-        shcMap.put("verifiableCredential", arrayList);
-        String finalString = gson.toJson(shcMap);
-
-        QrSegment shcSegment = QrSegment.makeBytes("shc:/".getBytes());
-        QrSegment segmentContent = QrSegment.makeNumeric(finalString);
+        // for download file
+//        Map<String, ArrayList<String>> shcMap = new HashMap<>(1);
+//        ArrayList<String> arrayList = new ArrayList<>(1);
+//        arrayList.add(compact);
+//        shcMap.put("verifiableCredential", arrayList);
+//        logger.info("shcMap: {}", shcMap);
+        String finalString = compact.
+                chars().map(value -> value - SMALLEST_B64_CHAR_CODE)
+                .boxed()
+                .map(integer -> String.valueOf(integer / 10) + integer % 10)
+                .collect(Collectors.joining());
+//        QrSegment shcSegment = QrSegment.makeBytes("shc:/".getBytes());
+//        QrSegment segmentContent = QrSegment.makeNumeric(finalString);
 //        List<QrSegment> segs = QrSegment.makeSegments(finalString);
-//        ArrayList<String> result = new ArrayList<>(segs.size());
-//        for (QrSegment segment: segs
-//             ) {
-//                QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segment), QrCode.Ecc.MEDIUM);
+//        ArrayList<byte[]> result = new ArrayList<>(segs.size());
+//        for (QrSegment segment : segs
+//        ) {
+//            QrSegment shcSegment = QrSegment.makeBytes("shc:/".getBytes());
+//            QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segment), QrCode.Ecc.MEDIUM);
+////            shcSegment.getData().appendData(segment.getData());
+//            result.add(qrCode);
 //        }
-        QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segmentContent), QrCode.Ecc.MEDIUM);
-//        qrCode.
-//        QrCode qrCode = QrCode.encodeText(sh, QrCode.Ecc.MEDIUM);
-        return ResponseEntity.ok(finalString);
+//        QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segmentContent), QrCode.Ecc.MEDIUM);
+//        logger.info(qrCode);
+//        shcSegment.getData().appendData(segmentContent.getData());
+        return ResponseEntity.ok("shc:/" + finalString);
     }
 
 
