@@ -16,7 +16,8 @@ export class FhirQrCodeComponent {
   @Input()
   resourceLoading: Boolean = false
   requestLoading: Boolean = false
-  answer?: string;
+  answer?: string | undefined;
+  answerArray?: string[];
   error: boolean = false;
   style: string = 'width: 100%'
 
@@ -44,7 +45,8 @@ export class FhirQrCodeComponent {
         next: (res) => {
           this.requestLoading = false
           this.error = false
-          this.answer = res
+          this.answer = JSON.stringify(res)
+          this.answerArray = res
           this.feedbackService.doRefresh()
         },
         error: (err) => {
@@ -55,7 +57,7 @@ export class FhirQrCodeComponent {
           if (err.status == 400) {
             this.answer = err.error
             console.error(err)
-            this.snackBarService.fatalFhirMessage(this.answer ?? "")
+            this.snackBarService.fatalFhirMessage(err.error ?? "")
           } else {
             this.answer = err.error
           }

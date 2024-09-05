@@ -27,9 +27,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
@@ -38,6 +41,8 @@ import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
 @RestController
 public class FhirConversionController {
+    private static final int MAX_SINGLE_JWS_SIZE = 1195;
+    private static final int MAX_CHUNK_SIZE = 1191;
 
     private static final int MAXIMUM_DATA_SIZE = 30000;
     private static final int SMALLEST_B64_CHAR_CODE = 45;
@@ -174,11 +179,9 @@ public class FhirConversionController {
 
     @PostMapping(FACILITY_PREFIX + "/{facilityId}/$qrCode")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<?> qrCode(@PathVariable() String facilityId, @RequestBody String resourceString) {
-        Facility facility = facilityRepository.findById(facilityId).orElseThrow();
-        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
-//        IBaseResource iBaseResource = parser.parseResource(resourceString);
-
+    public ResponseEntity<List<String>> qrCode(@PathVariable() String facilityId, @RequestBody String resourceString, HttpServletRequest request) {
+//        Facility facility = facilityRepository.findById(facilityId).orElseThrow();
+//        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).setSuppressNarratives(true);
         Map<String, Object> mapVc = new HashMap<>(2);
         ArrayList<String> type = new ArrayList<>(3);
         type.add("VerifiableCredential");
@@ -191,22 +194,21 @@ public class FhirConversionController {
         credentialSubject.put("fhirBundle", JsonParser.parseString(resourceString).getAsJsonObject());
         mapVc.put("credentialSubject", credentialSubject);
 
+        String issuerUrl = request.getRequestURL().substring(0, request.getRequestURL().indexOf("/tenants"));
         Claims claims = Jwts.claims()
                 .notBefore(new Date())
-                .issuer("test/ehr-sandbox")
+                .issuer(issuerUrl)
                 .issuedAt(new Date())
-                .subject("testSubject")
+//                .subject("testSubject")
                 .add("vc", mapVc)
                 .build();
 
         Gson gson = new Gson();
-        byte[] output = new byte[MAXIMUM_DATA_SIZE];
         String notDeflated = gson.toJson(claims).strip();
-//        logger.info("notDelfated {}  ", notDeflated);
-
         /**
          * Compressing the content
          */
+        byte[] output = new byte[MAXIMUM_DATA_SIZE];
         Deflater deflater = new Deflater();
         deflater.setInput(notDeflated.getBytes());
         deflater.finish();
@@ -230,7 +232,7 @@ public class FhirConversionController {
 //        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String compact = jwtUtils.qrCodeEncoder(authentication, deflated);
+        String compact = jwtUtils.signForQrCode(authentication, deflated);
 
         // for download file
 //        Map<String, ArrayList<String>> shcMap = new HashMap<>(1);
@@ -238,26 +240,32 @@ public class FhirConversionController {
 //        arrayList.add(compact);
 //        shcMap.put("verifiableCredential", arrayList);
 //        logger.info("shcMap: {}", shcMap);
-        String finalString = compact.
+        String encodedForQrCode = compact.
                 chars().map(value -> value - SMALLEST_B64_CHAR_CODE)
                 .boxed()
                 .map(integer -> String.valueOf(integer / 10) + integer % 10)
                 .collect(Collectors.joining());
-//        QrSegment shcSegment = QrSegment.makeBytes("shc:/".getBytes());
-//        QrSegment segmentContent = QrSegment.makeNumeric(finalString);
-//        List<QrSegment> segs = QrSegment.makeSegments(finalString);
-//        ArrayList<byte[]> result = new ArrayList<>(segs.size());
-//        for (QrSegment segment : segs
-//        ) {
-//            QrSegment shcSegment = QrSegment.makeBytes("shc:/".getBytes());
-//            QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segment), QrCode.Ecc.MEDIUM);
-////            shcSegment.getData().appendData(segment.getData());
-//            result.add(qrCode);
-//        }
-//        QrCode qrCode = QrCode.encodeSegments(Arrays.asList(shcSegment, segmentContent), QrCode.Ecc.MEDIUM);
-//        logger.info(qrCode);
-//        shcSegment.getData().appendData(segmentContent.getData());
-        return ResponseEntity.ok("shc:/" + finalString);
+        int finalLength = encodedForQrCode.length();
+        List<String> result;
+        if (finalLength < MAX_SINGLE_JWS_SIZE) {
+            result = List.of("shc:/" + encodedForQrCode);
+        } else {
+            int chunkNumber;
+            chunkNumber = finalLength % MAX_CHUNK_SIZE > 0 ? finalLength / MAX_CHUNK_SIZE + 1 : finalLength / MAX_CHUNK_SIZE;
+            result = new ArrayList<>(chunkNumber);
+            int chunkSize = finalLength / chunkNumber;
+            int i = 1;
+            while (i < chunkNumber - 1) {
+                result.add("shc:/" + i + "/" + chunkNumber + "/" +
+                        encodedForQrCode.substring((i - 1) * chunkSize, i * chunkSize));
+                i++;
+            }
+            result.add("shc:/" + i + "/" + chunkNumber + "/" +
+                    encodedForQrCode.substring((i - 1) * chunkSize, finalLength - 1));
+        }
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>(1);
+        headers.add("issuerKey", jwtUtils.getUserPublicJwk(authentication).toString());
+        return new ResponseEntity<>(result, headers, HttpStatus.OK);
     }
 
 

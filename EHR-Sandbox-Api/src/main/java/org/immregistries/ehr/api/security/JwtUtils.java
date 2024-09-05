@@ -2,13 +2,13 @@ package org.immregistries.ehr.api.security;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Jwk;
+import io.jsonwebtoken.security.Jwks;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.keygen.BytesKeyGenerator;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,10 +18,10 @@ import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class JwtUtils {
@@ -34,6 +34,9 @@ public class JwtUtils {
     private final static String SIGNATURE_ALGORITHM_NAME = "HmacSha512";
     private SecretKey key;
 
+    private Map<Integer, String> userKeyIdMap = new HashMap<>(10);
+    private Map<String, KeyPair> keyPairMap = new HashMap<>(10);
+
     public String generateJwtToken(Authentication authentication) {
         init();
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -45,61 +48,18 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String qrCodeEncoder(Authentication authentication, byte[] content) {
-        final BytesKeyGenerator generator = KeyGenerators.secureRandom(32);
-        // Used as Key id
-        final byte[] kidBytes = generator.generateKey(); //TODO Sandbox deploy url for key to be available at
-        final String kid = Base64.getEncoder().encodeToString(kidBytes);
-        try {
-            Gson gson = new Gson();
-            final KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
-            kpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
-            final KeyPair keyPair = kpg.generateKeyPair();
-
-            final ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
-            final ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
-            Map<String, String> keyDisplay = new HashMap<>(5);
-            keyDisplay.put("kty", "EC");
-            keyDisplay.put("kid", kid);
-            keyDisplay.put("use", "sig");
-            keyDisplay.put("alg", privateKey.getAlgorithm());
-            keyDisplay.put("crv", privateKey.getFormat());
-            keyDisplay.put("x", String.valueOf(privateKey.getParams().getGenerator().getAffineX()));
-            keyDisplay.put("y", String.valueOf(privateKey.getParams().getGenerator().getAffineY()));
-            keyDisplay.put("d", String.valueOf(privateKey.getParams().getOrder()));
-            logger.info("Issuer key {}", keyDisplay);
-
-//            logger.info("Issuer key {}", gson.toJsonTree(publicKey));
-//            logger.info("Issuer key {}", privateKey.);
-
-            UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-            JwtBuilder jwtBuilder = Jwts.builder()
-                    .header().add("use", "SIG")
-                    .keyId(Base64.getEncoder().encodeToString(kidBytes))
-                    .and()
-                    .content(content)
-                    .signWith(privateKey);
-//            logger.info("JWTUTILS content {}", jwtBuilder.compact());
-            String compact = jwtBuilder.compact();
-            Jwt parsed = Jwts.parser().verifyWith(publicKey).build().parse(compact);
-//            logger.info("JWTUTILS parsed {}", parsed);
-//            byte[] payload = (byte[]) parsed.getPayload();
-//            Inflater decompresser = new Inflater();
-//            decompresser.setInput(payload, 0, payload.length);
-//            byte[] result = new byte[100];
-//            try {
-//                int resultLength = decompresser.inflate(result);
-//                logger.info("result {}", result);
-//
-//            } catch (DataFormatException e) {
-//                throw new RuntimeException(e);
-//            }
-//            decompresser.end();
-
-            return compact;
-        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException ex) {
-            throw new RuntimeException(ex);
-        }
+    public String signForQrCode(Authentication authentication, byte[] content) {
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal(); //TODO Sandbox deploy url for key to be available at
+        KeyPair keyPair = getUserKeyPair(authentication);
+        String kid = userKeyIdMap.get(userPrincipal.getId());
+        logger.info("Issuer key: {}", new Gson().toJson(getUserPrivateJwk(authentication)));
+        JwtBuilder jwtBuilder = Jwts.builder()
+                .header().add("use", "SIG")
+                .keyId(kid)
+                .and()
+                .content(content)
+                .signWith(keyPair.getPrivate());
+        return jwtBuilder.compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
@@ -124,6 +84,55 @@ public class JwtUtils {
             logger.error("Invalid JWT signature: {}", e.getMessage());
         }
         return false;
+    }
+
+    public Jwk getUserPublicJwk(Authentication authentication) {
+        ECPublicKey publicKey = (ECPublicKey) getUserKeyPair(authentication).getPublic();
+        String kid = getUserKid(authentication);
+        return Jwks.builder()
+                .key(publicKey)
+                .algorithm("ES256")
+                .id(kid)
+                .publicKeyUse("sig")
+                .build();
+    }
+
+    public Jwk getUserPrivateJwk(Authentication authentication) {
+        ECPrivateKey privateKey = (ECPrivateKey) getUserKeyPair(authentication).getPrivate();
+        String kid = getUserKid(authentication);
+        return Jwks.builder()
+                .key(privateKey)
+                .algorithm("ES256")
+                .id(kid).publicKeyUse("sig").build();
+    }
+
+    public String getUserKid(Authentication authentication) {
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        return userKeyIdMap.get(userPrincipal.getId());
+    }
+
+    public KeyPair getUserKeyPair(Authentication authentication) {
+        String kid = getUserKid(authentication);
+        if (kid == null) {
+            kid = createUserKeyPair(authentication);
+        }
+        return keyPairMap.get(kid);
+    }
+
+    private String createUserKeyPair(Authentication authentication) {
+        try {
+            String kid = UUID.randomUUID().toString();
+            Gson gson = new Gson();
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
+            kpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+            KeyPair keyPair = kpg.generateKeyPair();
+            UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+            userKeyIdMap.put(userPrincipal.getId(), kid);
+            keyPairMap.put(kid, keyPair);
+            return kid;
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void init() {
