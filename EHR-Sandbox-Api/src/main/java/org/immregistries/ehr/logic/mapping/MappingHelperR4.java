@@ -24,9 +24,9 @@ public class MappingHelperR4 extends MappingHelper {
         if (StringUtils.isNotBlank(value)) {
             coding = new Coding().setCode(value).setSystem(system);
             Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
-//            if (code != null) {
-//                coding.setDisplay(code.getLabel());
-//            }
+            if (code != null) {
+                coding.setDisplay(code.getLabel());
+            }
         }
         return coding;
     }

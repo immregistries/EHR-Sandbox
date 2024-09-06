@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
@@ -9,6 +10,7 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.NextOfKin;
 import org.immregistries.ehr.api.entities.NextOfKinRelationship;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 import org.slf4j.Logger;
@@ -148,6 +150,11 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
 
         return p;
+    }
+
+    public EhrIdentifier getPatientIdentifier(IBaseResource iBaseResource) {
+        Patient patient = (Patient) iBaseResource;
+        return new EhrIdentifier(patient.getIdentifierFirstRep());
     }
 
     public EhrPatient toEhrPatient(Patient p) {

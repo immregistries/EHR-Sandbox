@@ -9,10 +9,7 @@ import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class IpsWriterR5 implements IIpsWriter {
@@ -37,7 +34,7 @@ public class IpsWriterR5 implements IIpsWriter {
 
         Integer entryId = 0;
         Bundle bundle = new Bundle();
-        bundle.setIdentifier(ehrPatient.getMrnEhrIdentifier().toR5());
+        bundle.setIdentifier(new Identifier().setValue(String.valueOf(UUID.randomUUID())));
         bundle.setType(Bundle.BundleType.DOCUMENT);
         bundle.setTimestamp(new Date());
         Bundle.BundleEntryComponent organizationEntry = bundle.addEntry()

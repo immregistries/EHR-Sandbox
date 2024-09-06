@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
@@ -41,13 +42,18 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
     public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
         Immunization i = toFhir(vaccinationEvent);
         Identifier identifier = i.addIdentifier();
-        identifier.setValue("" + vaccinationEvent.getId());
+        identifier.setValue(vaccinationEvent.getId());
         identifier.setSystem(identifier_system);
 //        i.setPatient(new Reference("Patient/" + vaccinationEvent.getPatient().getId())
 //                .setIdentifier(new Identifier()
 //                        .setValue("" + vaccinationEvent.getPatient().getId())
 //                        .setSystem(identifier_system)));
         return i;
+    }
+
+    public EhrIdentifier getImmunizationIdentifier(IBaseResource iBaseResource) {
+        Immunization immunization = (Immunization) iBaseResource;
+        return new EhrIdentifier(immunization.getIdentifierFirstRep());
     }
 
     private Immunization toFhir(VaccinationEvent vaccinationEvent) {
@@ -101,15 +107,24 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
             }
         }
         i.getRoute().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getBodyRoute(), "", CodesetType.BODY_ROUTE));
-        i.setStatusReason(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_REFUSAL, vaccine.getRefusalReasonCode())));
-        i.getSite().addCoding(toFhirCoding(CodesetType.BODY_SITE, vaccine.getBodySite()));
-        i.getFundingSource().addCoding(toFhirCoding(CodesetType.VACCINATION_FUNDING_SOURCE, vaccine.getFundingSource()));
-        i.addProgramEligibility().addCoding(toFhirCoding(CodesetType.FINANCIAL_STATUS_CODE, vaccine.getFinancialStatus()));
+        String value6 = vaccine.getRefusalReasonCode();
+        i.setStatusReason(new CodeableConcept(mappingHelperR4.codingFromCodeset(value6, "", CodesetType.VACCINATION_REFUSAL)));
+        String value5 = vaccine.getBodySite();
+        i.getSite().addCoding(mappingHelperR4.codingFromCodeset(value5, "", CodesetType.BODY_SITE));
+        String value4 = vaccine.getFundingSource();
+        i.getFundingSource().addCoding(mappingHelperR4.codingFromCodeset(value4, "", CodesetType.VACCINATION_FUNDING_SOURCE));
+        String value3 = vaccine.getFinancialStatus();
+        i.addProgramEligibility().addCoding(mappingHelperR4.codingFromCodeset(value3, "", CodesetType.FINANCIAL_STATUS_CODE));
 //        i.getInformationSource().setConcept(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource())));
 
-        i.setReportOrigin(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource())));
-        i.getVaccineCode().addCoding(toFhirCoding(CodesetType.VACCINATION_CVX_CODE, CVX, vaccine.getVaccineCvxCode()));
-        i.getVaccineCode().addCoding(toFhirCoding(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, NDC, vaccine.getVaccineCvxCode()));
+        String value2 = vaccine.getInformationSource();
+        i.setReportOrigin(new CodeableConcept(mappingHelperR4.codingFromCodeset(value2, "", CodesetType.VACCINATION_INFORMATION_SOURCE)));
+        String value1 = vaccine.getVaccineCvxCode();
+
+        i.getVaccineCode().addCoding(mappingHelperR4.codingFromCodeset(value1, CVX, CodesetType.VACCINATION_CVX_CODE));
+        String value = vaccine.getVaccineCvxCode();
+
+        i.getVaccineCode().addCoding(mappingHelperR4.codingFromCodeset(value, NDC, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE));
 
         i.addPerformer(fhirPerformer(vaccinationEvent.getEnteringClinician(), ENTERING));
         i.addPerformer(fhirPerformer(vaccinationEvent.getOrderingClinician(), ORDERING));
@@ -244,15 +259,6 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         v.setFinancialStatus(i.getProgramEligibilityFirstRep().getCodingFirstRep().getCode());
 
         return v;
-    }
-
-    private Coding toFhirCoding(CodesetType codesetType, String system, String value) {
-        return mappingHelperR4.codingFromCodeset(value, system, codesetType);
-
-    }
-
-    private Coding toFhirCoding(CodesetType codesetType, String value) {
-        return mappingHelperR4.codingFromCodeset(value, "", codesetType);
     }
 
     public Immunization.ImmunizationPerformerComponent fhirPerformer(Clinician clinician, String function) {

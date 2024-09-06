@@ -2,16 +2,21 @@ package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 
-public abstract class ResourceClient<Identifier> implements IResourceClient<Identifier> {
+@Service
+public class ResourceClient implements IResourceClient {
 
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
@@ -50,5 +55,38 @@ public abstract class ResourceClient<Identifier> implements IResourceClient<Iden
         outcome = client.create().resource(resource).execute();
         return outcome;
     }
+
+    public MethodOutcome update(IBaseResource resource, String resourceId, IGenericClient client) {
+        MethodOutcome outcome = client.update().resource(resource).execute();
+        return outcome;
+    }
+
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier identifier, ImmunizationRegistry ir) {
+        return updateOrCreate(resource, type, identifier, fhirComponentsDispatcher.clientFactory().newGenericClient(ir));
+    }
+
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier identifier, IGenericClient client) {
+        MethodOutcome outcome;
+        try {
+            if (identifier != null && identifier.getValue() != null && !identifier.getValue().isEmpty()) {
+                outcome = client.update().resource(resource).conditionalByUrl(
+                        type + "?identifier=" + identifier.getSystem() + "|" + identifier.getValue()
+                                + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
+                ).execute();
+            } else {
+                outcome = client.create().resource(resource).execute();
+            }
+
+        } catch (ResourceNotFoundException | InvalidRequestException e) {
+            outcome = client.create().resource(resource).execute();
+        }
+        return outcome;
+    }
+
+    public MethodOutcome delete(String resourceType, String resourceId, IGenericClient client) {
+        MethodOutcome outcome = client.delete().resourceById(resourceType, resourceId).execute();
+        return outcome;
+    }
+
 
 }

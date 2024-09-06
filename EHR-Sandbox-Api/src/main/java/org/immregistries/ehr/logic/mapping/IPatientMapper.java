@@ -3,6 +3,7 @@ package org.immregistries.ehr.logic.mapping;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntityFhirMapper<EhrPatient> {
     String MRN_SYSTEM = "mrn";
@@ -26,6 +27,8 @@ public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntit
     Patient toFhir(EhrPatient ehrPatient, Facility facility);
 
     Patient toFhir(EhrPatient ehrPatient);
+
+    EhrIdentifier getPatientIdentifier(IBaseResource patient);
 
     EhrPatient toEhrPatient(Patient patient);
 

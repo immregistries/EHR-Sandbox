@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -41,6 +42,11 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         Patient p = toFhir(ehrPatient);
         p.setManagingOrganization(new Reference().setIdentifier(organizationMapper.toFhir(facility).getIdentifierFirstRep()));
         return p;
+    }
+
+    public EhrIdentifier getPatientIdentifier(IBaseResource iBaseResource) {
+        Patient patient = (Patient) iBaseResource;
+        return new EhrIdentifier(patient.getIdentifierFirstRep());
     }
 
     public Patient toFhir(EhrPatient ehrPatient) {

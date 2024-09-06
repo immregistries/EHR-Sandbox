@@ -61,7 +61,10 @@ public class FhirComponentsDispatcher {
     private IpsWriterR4 ipsWriterR4;
     @Autowired
     private IpsWriterR5 ipsWriterR5;
-
+    //    @Autowired
+//    private ResourceClientR4 resourceClientR4;
+//    @Autowired
+//    private ResourceClientR5 resourceClientR5;
 
     private FhirContext fhirContextR5;
     private FhirContext fhirContextR4;

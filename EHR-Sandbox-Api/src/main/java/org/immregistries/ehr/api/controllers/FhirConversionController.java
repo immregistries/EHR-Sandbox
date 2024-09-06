@@ -199,7 +199,6 @@ public class FhirConversionController {
                 .notBefore(new Date())
                 .issuer(issuerUrl)
                 .issuedAt(new Date())
-//                .subject("testSubject")
                 .add("vc", mapVc)
                 .build();
 

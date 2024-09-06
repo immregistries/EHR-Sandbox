@@ -28,6 +28,10 @@ import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY
 
 //@RestController()
 //@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups", IMM_REGISTRY_SUFFIX + "/groups"})
+
+/**
+ * DEPRECATED
+ */
 public class RemoteGroupController {
     Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
     @Autowired
@@ -129,7 +133,7 @@ public class RemoteGroupController {
          * First do match to get destination reference or identifier
          */
         if (match.isPresent() && match.get()) {
-            Bundle bundle = fhirClientController.matchPatientOperation(facilityId, registryId, patientId, null);
+            Bundle bundle = (Bundle) fhirClientController.matchPatientOperation(facilityId, registryId, patientId, null);
             if (!bundle.hasEntry()) {
                 return ResponseEntity.internalServerError().body("Patient $match failed : IIS does not know about this patient");
             }

@@ -4,6 +4,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
 public interface IImmunizationMapper<Immunization extends IBaseResource> extends IEhrEntityFhirMapper<VaccinationEvent> {
     // TODO Constants need to be harmonized with IIS Sandbox
@@ -22,6 +23,8 @@ public interface IImmunizationMapper<Immunization extends IBaseResource> extends
 //    String FUNDING_ELIGIBILITY = "fundingEligibility";
 
     Immunization toFhir(VaccinationEvent vaccination, String identifier_system);
+
+    EhrIdentifier getImmunizationIdentifier(IBaseResource immunization);
 
     VaccinationEvent toVaccinationEvent(Immunization i);
 

@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
@@ -52,6 +53,12 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
 //                    .setSystem(patient_identifier_system)));
         return i;
     }
+
+    public EhrIdentifier getImmunizationIdentifier(IBaseResource iBaseResource) {
+        Immunization immunization = (Immunization) iBaseResource;
+        return new EhrIdentifier(immunization.getIdentifierFirstRep());
+    }
+
 
     private Immunization toFhir(VaccinationEvent vaccinationEvent) {
         Vaccine vaccine = vaccinationEvent.getVaccine();

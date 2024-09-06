@@ -12,6 +12,7 @@ import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.entities.EhrSubscriptionInfo;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -85,7 +86,7 @@ public class SubscriptionController {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
-        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
+        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", new EhrIdentifier(sub.getIdentifierFirstRep()), client);
         processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
     }
@@ -96,7 +97,7 @@ public class SubscriptionController {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
-        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", sub.getIdentifierFirstRep(), client);
+        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", new EhrIdentifier(sub.getIdentifierFirstRep()), client);
         processSubscriptionOutcome(ir, outcome);
         return outcome.getCreated();
     }
