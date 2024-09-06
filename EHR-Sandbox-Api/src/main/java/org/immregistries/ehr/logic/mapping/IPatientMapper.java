@@ -28,6 +28,12 @@ public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntit
 
     Patient toFhir(EhrPatient ehrPatient);
 
+    /**
+     * Used to extract identifier for Request Parameter when resource comes from parsing another request
+     *
+     * @param patient
+     * @return
+     */
     EhrIdentifier getPatientIdentifier(IBaseResource patient);
 
     EhrPatient toEhrPatient(Patient patient);

@@ -1,17 +1,13 @@
 package org.immregistries.ehr.api.controllers;
 
-import ca.uhn.fhir.rest.api.server.RequestDetails;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
+import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
@@ -230,68 +226,19 @@ public class EhrPatientController {
         return ehrPatientRepository.save(newPatient);
     }
 
+    @Autowired
+    MatchAndEverythingService matchAndEverythingService;
+
     @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
-    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(@PathVariable() String facilityId,
-                                                                                  @PathVariable() String patientId,
-                                                                                  @PathVariable() String registryId,
-                                                                                  @RequestParam Optional<Long> _since) {
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
-        Facility facility = facilityRepository.findById(facilityId).get();
-        EhrPatient patient = ehrPatientRepository.findById(patientId).get();
-
-        // TODO switch to $match ?
-        EhrIdentifier ehrIdentifier = patient.getMrnEhrIdentifier();
-        Bundle searchBundle = client.search()
-                .forResource(Patient.class)
-                .where(Patient.IDENTIFIER.exactly().systemAndCode(ehrIdentifier.getSystem(), ehrIdentifier.getValue()))
-                .returnBundle(Bundle.class).execute();
-        String id = null;
-        for (Bundle.BundleEntryComponent entry : searchBundle.getEntry()) {
-            if (entry.getResource().getMeta().hasTag()) { // TODO better condition to check if golden record
-                id = new IdType(entry.getResource().getId()).getIdPart();
-                break;
-            }
-        }
-        if (id != null) {
-            Parameters in = new Parameters()
-                    .addParameter("_mdm", "true")
-                    .addParameter("_type", "Immunization,ImmunizationRecommendation");
-            if (_since.isPresent()) {
-                in.addParameter("_since", String.valueOf(_since.get()));
-            }
-            Bundle outBundle = client.operation()
-                    .onInstance("Patient/" + id)
-                    .named("$everything")
-                    .withParameters(in)
-                    .prettyPrint()
-                    .useHttpGet()
-                    .returnResourceType(Bundle.class).execute();
-            Set<VaccinationEvent> set = new HashSet<>(outBundle.getEntry().size());
-
-            RequestDetails requestDetails = new ServletRequestDetails();
-            requestDetails.setTenantId(facilityId);
-
-            for (Bundle.BundleEntryComponent entry : outBundle.getEntry()) {
-                if (entry.getResource().getResourceType().name().equals("Immunization")) {
-                    Immunization immunization = (Immunization) entry.getResource();
-                    if (immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) != null) {
-                        immunization.setPatient(new Reference().setReference(patient.getId()));
-                        VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent((Immunization) entry.getResource());
-                        vaccinationEvent.setPatient(patient);
-                        vaccinationEvent.setAdministeringFacility(facility);
-                        set.add(immunizationMapper.toVaccinationEvent(immunization));
-                    }
-                }
-                if (entry.getResource().getResourceType().name().equals("ImmunizationRecomendation")) {
-                    ImmunizationRecommendation recommendation = (ImmunizationRecommendation) entry.getResource();
-                    recommendationService.saveInStore(recommendation, facility, patient.getId(), immunizationRegistry);
-                }
-
-            }
-            return ResponseEntity.accepted().body(set);
-        }
-        return ResponseEntity.badRequest().body(new HashSet<>());
+    public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(
+            @PathVariable() String tenantId,
+            @PathVariable() String facilityId,
+            @PathVariable() String patientId,
+            @PathVariable() String registryId,
+            @RequestParam Optional<Long> _since) {
+        return ResponseEntity.ok(matchAndEverythingService.fetchAndLoadImmunizationsFromIIS(tenantId, facilityId, patientId, registryId, _since));
+//
+//        return ResponseEntity.badRequest().body(new HashSet<>());
     }
 
     @GetMapping("/{patientId}/qbp")

@@ -8,11 +8,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -341,7 +343,17 @@ public class FhirConversionController {
             base += identifier.getValue();
         }
         return base;
+    }
 
+    private String identifierUrl(String base, EhrIdentifier identifier) {
+        if (identifier != null) {
+            base += "?identifier=";
+            if (StringUtils.isNotBlank(identifier.getSystem())) {
+                base += identifier.getSystem() + "|";
+            }
+            base += identifier.getValue();
+        }
+        return base;
     }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")

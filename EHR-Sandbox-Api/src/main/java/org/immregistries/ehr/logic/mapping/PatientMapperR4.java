@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.codebase.client.reference.CodesetType;
-import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.NextOfKin;
@@ -25,17 +24,9 @@ import java.text.ParseException;
  * Maps the Database with FHIR for patient resources
  */
 @Service
-
 public class PatientMapperR4 implements IPatientMapper<Patient> {
-
-    @Autowired
-    CodeMapManager codeMapManager;
     @Autowired
     MappingHelperR4 mappingHelperR4;
-    @Autowired()
-    OrganizationMapperR4 organizationMapper;
-    @Autowired()
-    PractitionerMapperR4 practitionerMapper;
 
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
 
@@ -49,7 +40,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
     public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
         Patient p = toFhir(ehrPatient);
-        p.setManagingOrganization(new Reference().setIdentifier(organizationMapper.toFhir(facility).getIdentifierFirstRep()));
+        p.setManagingOrganization(new Reference().setIdentifier(IOrganizationMapper.facilityEhrIdentifier(facility).toR4()));
         return p;
     }
 
@@ -145,7 +136,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
 
         if (ehrPatient.getGeneralPractitioner() != null) {
-            p.addGeneralPractitioner(new Reference().setIdentifier(practitionerMapper.toFhir(ehrPatient.getGeneralPractitioner()).getIdentifierFirstRep()));
+            p.addGeneralPractitioner(new Reference().setIdentifier(IPractitionerMapper.clinicianEhrIdentifier(ehrPatient.getGeneralPractitioner()).toR4()));
         }
 
 

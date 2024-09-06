@@ -8,13 +8,13 @@ import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
-import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.slf4j.Logger;
@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class FhirClientController {
@@ -172,6 +171,9 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
+    @Autowired
+    MatchAndEverythingService matchAndEverythingService;
+
     @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$match")
     public ResponseEntity<List<String>> matchPatient(
             @PathVariable() String tenantId,
@@ -182,36 +184,7 @@ public class FhirClientController {
             @RequestBody String message) {
 
         Tenant tenant = tenantRepository.findById(tenantId).orElseThrow();
-        if (tenant.getNameDisplay().contains("R4")) {
-            org.hl7.fhir.r4.model.Bundle bundle = (org.hl7.fhir.r4.model.Bundle) matchPatientOperation(facilityId, registryId, patientId, message);
-            return ResponseEntity.ok(
-                    bundle.getEntry().stream().filter(org.hl7.fhir.r4.model.Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.toList()
-                    )
-            );
-        } else {
-            org.hl7.fhir.r5.model.Bundle bundle = (org.hl7.fhir.r5.model.Bundle) matchPatientOperation(facilityId, registryId, patientId, message);
-
-            return ResponseEntity.ok(
-                    bundle.getEntry().stream().filter(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> bundleEntryComponent.getResource().getIdPart()).collect(Collectors.toList()
-                    )
-            );
-        }
-
-    }
-
-    public IBaseBundle matchPatientOperation(
-            String facilityId,
-            String registryId,
-            String patientId,
-            String message) {
-        if (message == null) {
-            message = fhirConversionController.getPatientAsResource(patientId, facilityId).getBody();
-        }
-        IParser parser = fhirComponentsDispatcher.parser(message);
-        IBaseResource patient = parser.parseResource(message);
-        IBaseParameters parameters = new Parameters();
-        return fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId))
-                .operation().onType("Patient").named("match").withParameters(parameters).andParameter("resource", patient).returnResourceType(IBaseBundle.class).execute();
+        return ResponseEntity.ok(matchAndEverythingService.matchPatientIdParts(tenantId, registryId, message));
     }
 
 

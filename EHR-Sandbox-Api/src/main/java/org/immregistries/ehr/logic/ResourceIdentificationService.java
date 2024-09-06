@@ -20,6 +20,7 @@ import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 public class ResourceIdentificationService {
     Logger logger = LoggerFactory.getLogger(ResourceIdentificationService.class);
     public static final String FACILITY_SYSTEM = "ehr-sandbox/facility";
+    public static final String CLINICIAN_SYSTEM = "ehr-sandbox/clinician";
     private static final String IDENTIFIER_SYSTEM_PREFIX = FACILITY_SYSTEM + "/";
     private static final String PATIENT_IDENTIFIER_SYSTEM_SUFFIX = "/patient-system";
     private static final String IMMUNIZATION_IDENTIFIER_SYSTEM_SUFFIX = "/immunization-system";

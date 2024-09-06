@@ -24,6 +24,12 @@ public interface IImmunizationMapper<Immunization extends IBaseResource> extends
 
     Immunization toFhir(VaccinationEvent vaccination, String identifier_system);
 
+    /**
+     * Used to extract identifier for Request Parameter when resource comes from parsing another request
+     *
+     * @param immunization
+     * @return
+     */
     EhrIdentifier getImmunizationIdentifier(IBaseResource immunization);
 
     VaccinationEvent toVaccinationEvent(Immunization i);
