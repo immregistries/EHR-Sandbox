@@ -11,11 +11,19 @@ public interface IOrganizationMapper<Organization extends IBaseResource> extends
 
     Facility facilityFromFhir(Organization organization);
 
-    static EhrIdentifier facilityEhrIdentifier(Facility facility) {
+    static EhrIdentifier facilityIdToEhrIdentifier(Facility facility) {
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setSystem(FACILITY_SYSTEM);
         ehrIdentifier.setValue(facility.getId());
         return ehrIdentifier;
+    }
+
+    static EhrIdentifier facilityGetOneEhrIdentifier(Facility facility) {
+        if (facility.getIdentifiers().isEmpty()) {
+            return facilityIdToEhrIdentifier(facility);
+        } else {
+            return facility.getIdentifiers().stream().findFirst().get();
+        }
     }
 
 

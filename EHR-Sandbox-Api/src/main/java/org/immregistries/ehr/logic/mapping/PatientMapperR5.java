@@ -36,7 +36,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
         Patient p = toFhir(ehrPatient);
-        p.setManagingOrganization(new Reference().setIdentifier(IOrganizationMapper.facilityEhrIdentifier(facility).toR5()));
+        p.setManagingOrganization(new Reference().setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(facility).toR5()));
         return p;
     }
 
@@ -48,13 +48,13 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
     public Patient toFhir(EhrPatient ehrPatient) {
         Patient p = new Patient();
 //    p.setId("" + ehrPatient.getId());
-        EhrIdentifier mrnIdentifier = ehrPatient.getMrnEhrIdentifier();
-        if (mrnIdentifier != null) {
-            p.addIdentifier(mrnIdentifier.toR5());
+
+        for (EhrIdentifier ehrIdentifier : ehrPatient.getIdentifiers()) {
+            p.addIdentifier(ehrIdentifier.toR5());
         }
 
         if (Objects.nonNull(ehrPatient.getFacility())) {
-            p.setManagingOrganization(new Reference().setType("Organization").setIdentifier(IOrganizationMapper.facilityEhrIdentifier(ehrPatient.getFacility()).toR5())); // TODO include id ?
+            p.setManagingOrganization(new Reference().setType("Organization").setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(ehrPatient.getFacility()).toR5())); // TODO include id ?
         }
 
         p.addName()

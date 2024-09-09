@@ -12,6 +12,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,16 @@ import java.text.ParseException;
 public class PatientMapperR4 implements IPatientMapper<Patient> {
     @Autowired
     MappingHelperR4 mappingHelperR4;
+    @Autowired
+    ResourceIdentificationService resourceIdentificationService;
 
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR4.class);
+
+    public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
+        Patient p = toFhir(ehrPatient, resourceIdentificationService.getFacilityPatientIdentifierSystem(facility));
+        p.setManagingOrganization(new Reference().setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(facility).toR4()));
+        return p;
+    }
 
     public Patient toFhir(EhrPatient ehrPatient, String identifier_system) {
         Patient fhirPatient = toFhir(ehrPatient);
@@ -38,14 +47,13 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         return fhirPatient;
     }
 
-    public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
-        Patient p = toFhir(ehrPatient);
-        p.setManagingOrganization(new Reference().setIdentifier(IOrganizationMapper.facilityEhrIdentifier(facility).toR4()));
-        return p;
-    }
 
     public Patient toFhir(EhrPatient ehrPatient) {
         Patient p = new Patient();
+
+        for (EhrIdentifier ehrIdentifier : ehrPatient.getIdentifiers()) {
+            p.addIdentifier(ehrIdentifier.toR4());
+        }
 
         p.setBirthDate(ehrPatient.getBirthDate());
         if (p.getNameFirstRep() != null) {

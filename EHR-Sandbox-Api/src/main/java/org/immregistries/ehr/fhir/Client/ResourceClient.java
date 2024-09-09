@@ -61,16 +61,16 @@ public class ResourceClient implements IResourceClient {
         return outcome;
     }
 
-    public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier identifier, ImmunizationRegistry ir) {
-        return updateOrCreate(resource, type, identifier, fhirComponentsDispatcher.clientFactory().newGenericClient(ir));
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier ehrIdentifier, ImmunizationRegistry ir) {
+        return updateOrCreate(resource, type, ehrIdentifier, fhirComponentsDispatcher.clientFactory().newGenericClient(ir));
     }
 
-    public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier identifier, IGenericClient client) {
+    public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier ehrIdentifier, IGenericClient client) {
         MethodOutcome outcome;
         try {
-            if (identifier != null && identifier.getValue() != null && !identifier.getValue().isEmpty()) {
+            if (ehrIdentifier != null && ehrIdentifier.getValue() != null && !ehrIdentifier.getValue().isEmpty()) {
                 outcome = client.update().resource(resource).conditionalByUrl(
-                        type + "?identifier=" + identifier.getSystem() + "|" + identifier.getValue()
+                        type + "?identifier=" + ehrIdentifier.getSystem() + "|" + ehrIdentifier.getValue()
                                 + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
                 ).execute();
             } else {

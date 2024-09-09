@@ -63,6 +63,9 @@ public class GroupMapperR4 implements IGroupMapper<Group> {
         if (!patientIds.isEmpty()) {
             ehrGroup.setPatientList(new HashSet<EhrPatient>((Collection<EhrPatient>) ehrPatientRepository.findAllById(patientIds)));
         }
+        for (Identifier identifier : group.getIdentifier()) {
+            ehrGroup.getIdentifiers().add(new EhrIdentifier(identifier));
+        }
         return ehrGroup;
     }
 
@@ -74,8 +77,14 @@ public class GroupMapperR4 implements IGroupMapper<Group> {
         group.setName(ehrGroup.getName());
         group.setCode(new CodeableConcept().setText(ehrGroup.getCode()));
 
+        for (EhrIdentifier ehrIdentifier : ehrGroup.getIdentifiers()
+        ) {
+            group.addIdentifier(ehrIdentifier.toR4());
+        }
+
+
 //        group.setDescription(ehrGroup.getDescription());
-        group.setManagingEntity(resourceIdentificationService.facilityReferenceR4(ehrGroup.getFacility()));
+        group.setManagingEntity(new Reference().setType("Organization").setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR4()));
 //        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
         if (ehrGroup.getEhrGroupCharacteristics() != null) {
             for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {

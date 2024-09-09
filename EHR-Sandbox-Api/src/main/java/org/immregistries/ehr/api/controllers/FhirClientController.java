@@ -6,10 +6,11 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -76,11 +77,17 @@ public class FhirClientController {
             @PathVariable() String registryId,
             @PathVariable() String resourceType,
             @RequestBody EhrIdentifier ehrIdentifier) {
-        IBaseBundle bundle = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId)).search()
-                .forResource(resourceType)
+        IQuery iQuery = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId)).search()
+                .forResource(resourceType);
+        if (FhirComponentsDispatcher.r4Flavor()) {
+            iQuery = iQuery.where(org.hl7.fhir.r4.model.Patient.IDENTIFIER.exactly().identifier(ehrIdentifier.toR4().getValue()))
+                    .returnBundle(org.hl7.fhir.r4.model.Bundle.class);
+        } else {
+            iQuery = iQuery.where(org.hl7.fhir.r5.model.Patient.IDENTIFIER.exactly().identifier(ehrIdentifier.toR5().getValue()))
+                    .returnBundle(org.hl7.fhir.r5.model.Bundle.class);
+        }
+        IBaseBundle bundle = (IBaseBundle) iQuery.execute();
 
-                .where(org.hl7.fhir.r5.model.Patient.IDENTIFIER.exactly().identifier(ehrIdentifier.toR5().getValue()))
-                .returnBundle(IBaseBundle.class).execute();
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));
     }
 
@@ -146,9 +153,9 @@ public class FhirClientController {
                 "eqceZ+pNrtgucUV8PNrTgb4ZUBWISA==\n" +
                 "-----END PRIVATE KEY-----\n");
         immunizationRegistry.setIisFacilityId("");
-        IBaseBundle bundle = fhirComponentsDispatcher.clientFactory().smartAuthClient(immunizationRegistry).search()
+        IBaseBundle bundle = (IBaseBundle) fhirComponentsDispatcher.clientFactory().smartAuthClient(immunizationRegistry).search()
                 .forResource("Patient")
-                .returnBundle(IBaseBundle.class).execute();
+                .returnBundle(FhirComponentsDispatcher.bundleClass()).execute();
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));
     }
 
@@ -184,7 +191,7 @@ public class FhirClientController {
             @RequestBody String message) {
 
         Tenant tenant = tenantRepository.findById(tenantId).orElseThrow();
-        return ResponseEntity.ok(matchAndEverythingService.matchPatientIdParts(tenantId, registryId, message));
+        return ResponseEntity.ok(matchAndEverythingService.matchPatientIdParts(registryId, message));
     }
 
 
@@ -366,10 +373,20 @@ public class FhirClientController {
             @PathVariable() String target,
             @PathVariable() Optional<String> targetId,
             @RequestParam Map<String, String> allParams) {
-        Parameters parameters = new Parameters();
-        for (Map.Entry<String, String> entry : allParams.entrySet()) {
-            parameters.addParameter(entry.getKey(), entry.getValue());
+
+        IBaseParameters parameters;
+        if (FhirComponentsDispatcher.r4Flavor()) {
+            parameters = new org.hl7.fhir.r4.model.Parameters();
+            for (Map.Entry<String, String> entry : allParams.entrySet()) {
+                ((org.hl7.fhir.r4.model.Parameters) parameters).addParameter(entry.getKey(), entry.getValue());
+            }
+        } else {
+            parameters = new org.hl7.fhir.r5.model.Parameters();
+            for (Map.Entry<String, String> entry : allParams.entrySet()) {
+                ((org.hl7.fhir.r5.model.Parameters) parameters).addParameter(entry.getKey(), entry.getValue());
+            }
         }
+
         operationType = operationType.replaceFirst("\\$", "");
 
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId));
@@ -381,9 +398,9 @@ public class FhirClientController {
         } else {
             iOperationUnnamed = iOperation.onType(target);
         }
-        IBaseBundle bundle = iOperationUnnamed.named(operationType)
+        IBaseBundle bundle = (IBaseBundle) iOperationUnnamed.named(operationType)
                 .withParameters(parameters)
-                .prettyPrint().useHttpGet().returnResourceType(IBaseBundle.class)
+                .prettyPrint().useHttpGet().returnResourceType(fhirComponentsDispatcher.bundleClass())
                 .execute();
 
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));

@@ -91,7 +91,8 @@ export class GroupFormComponent {
     } else {
       this.groupService.postGroup(this.ehrGroup).subscribe({
         next: (res: HttpResponse<string>) => {
-          this.close(res.body ?? -1)
+          console.log("POST GROUP", +(res.body ?? -1), res.body)
+          this.close(+(res.body ?? -1))
         },
         error: (err) => {
           console.log(err.error)

@@ -36,8 +36,8 @@ export class GroupTableComponent extends AbstractDataTableComponent<EhrGroup> {
     private dialog: MatDialog) {
     super()
     this.observableRefresh = merge(facilityService.getRefresh(),
-    this.facilityService.getCurrentObservable(),
-     groupService.getRefresh())
+      this.facilityService.getCurrentObservable(),
+      groupService.getRefresh())
     this.observableSource = this.groupService.quickReadGroups();
   }
 
@@ -52,7 +52,20 @@ export class GroupTableComponent extends AbstractDataTableComponent<EhrGroup> {
       data: {},
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.ngAfterViewInit()
+      if (result) {
+        this.ngAfterViewInit()
+        if (result instanceof Object) {
+          this.selectedElement = result
+          this.selectEmitter.emit(this.selectedElement);
+        } else {
+          this.groupService.getGroup(+result).subscribe((newGroup) => {
+            this.selectedElement = newGroup
+            this.selectEmitter.emit(this.selectedElement);
+          })
+        }
+      }
+      this.groupService.doRefresh()
+      this.groupService.setCurrent(result)
     });
   }
 
@@ -66,7 +79,6 @@ export class GroupTableComponent extends AbstractDataTableComponent<EhrGroup> {
       data: { groupName: ehrGroup.name },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.groupService
       this.groupService.doRefresh()
     });
   }

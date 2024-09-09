@@ -39,7 +39,7 @@ public class OrganizationMapperR5 implements IOrganizationMapper<Organization> {
 
 
     public Identifier facilityIdentifier(Facility facility) {
-        return IOrganizationMapper.facilityEhrIdentifier(facility).toR5();
+        return IOrganizationMapper.facilityIdToEhrIdentifier(facility).toR5();
     }
 
 //    public Bundle organizationBundle() {

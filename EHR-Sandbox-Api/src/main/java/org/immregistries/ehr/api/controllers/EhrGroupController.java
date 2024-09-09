@@ -5,8 +5,8 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.Parameters;
 import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
@@ -19,6 +19,7 @@ import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.fhir.Server.IGroupProvider;
 import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.IOrganizationMapper;
 import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +132,7 @@ public class EhrGroupController {
 
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setValue(RandomStringUtils.random(15, true, true));
-        ehrIdentifier.setSystem(resourceIdentificationService.getFacilityPatientIdentifierSystem(facilityRepository.findById(facilityId).orElseThrow()));
+        ehrIdentifier.setSystem(resourceIdentificationService.getFacilityGroupIdentifierSystem(facilityRepository.findById(facilityId).orElseThrow()));
         ehrGroup.getIdentifiers().add(ehrIdentifier);
 
 //        Iterator<EhrPatient> facilityPatients = ehrPatientRepository.findByFacilityId(facility.getId()).iterator();
@@ -300,20 +301,26 @@ public class EhrGroupController {
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
             return newEntity;
         } else {
-            Parameters in = new Parameters();
             /**
              * First do match to get destination reference or identifier
              */
-
+            IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
+            IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
             EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
             if (ehrIdentifier == null) {
                 throw new RuntimeException("MRN required to add patient");
             }
-            in.addParameter("memberId", ehrIdentifier.toR5());
-            in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility()));
-            IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
-            IBaseResource remoteGroup = getRemoteGroup(client, ehrGroup);
-            Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
+            IBaseParameters in;
+            if (FhirComponentsDispatcher.r4Flavor()) {
+                in = new org.hl7.fhir.r4.model.Parameters()
+                        .addParameter("memberId", ehrIdentifier.toR4())
+                        .addParameter("providerNpi", IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR4());
+            } else {
+                in = new org.hl7.fhir.r5.model.Parameters()
+                        .addParameter("memberId", ehrIdentifier.toR5())
+                        .addParameter("providerNpi", IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR5());
+            }
+            IBaseParameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
             /**
              * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
              */
@@ -332,16 +339,23 @@ public class EhrGroupController {
             ehrGroupRepository.save(ehrGroup);
             return ehrGroup;
         } else {
-            Parameters in = new Parameters();
             EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
-            in.addParameter("memberId", ehrIdentifier.toR5());
-            in.addParameter("providerNpi", organizationMapperR5.facilityIdentifier(ehrGroup.getFacility()));
+            IBaseParameters in;
+            if (FhirComponentsDispatcher.r4Flavor()) {
+                in = new org.hl7.fhir.r4.model.Parameters()
+                        .addParameter("memberId", ehrIdentifier.toR4())
+                        .addParameter("providerNpi", IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR4());
+            } else {
+                in = new org.hl7.fhir.r5.model.Parameters()
+                        .addParameter("memberId", ehrIdentifier.toR5())
+                        .addParameter("providerNpi", IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR5());
+            }
             /**
              * First do match to get destination reference or identifier
              */
             IBaseResource remoteGroup = getRemoteGroup(ehrGroup);
             IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
-            Parameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-remove").withParameters(in).execute();
+            IBaseParameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-remove").withParameters(in).execute();
             return refreshOne(ehrGroup);
         }
     }

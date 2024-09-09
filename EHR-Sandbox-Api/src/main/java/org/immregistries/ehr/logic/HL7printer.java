@@ -2,7 +2,6 @@ package org.immregistries.ehr.logic;
 
 
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r5.model.Identifier;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
@@ -13,6 +12,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.logic.mapping.IOrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -416,10 +416,10 @@ public class HL7printer {
         String sendingApp = "EHR Sandbox" + " v" + EhrApiApplication.VERSION;
         String sendingFacIdentifier;
         if (Objects.nonNull(facility)) {
-            Identifier identifier = resourceIdentificationService.facilityIdentifierR5(facility);
-            sendingFacIdentifier = StringUtils.defaultIfBlank(identifier.getAssigner().getReference(), "") + "^"
-                    + StringUtils.defaultIfBlank(identifier.getValue(), "") + "^" +
-                    StringUtils.defaultIfBlank(identifier.getType().getText(), "");
+            EhrIdentifier ehrIdentifier = IOrganizationMapper.facilityGetOneEhrIdentifier(facility);
+            sendingFacIdentifier = StringUtils.defaultIfBlank(ehrIdentifier.getAssignerReference(), "") + "^"
+                    + StringUtils.defaultIfBlank(ehrIdentifier.getValue(), "") + "^" +
+                    StringUtils.defaultIfBlank(ehrIdentifier.getType(), "");
 //        "^" + identifier.getValue() + "^L,M,N";
         } else {
             sendingFacIdentifier = "";

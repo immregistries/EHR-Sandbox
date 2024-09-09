@@ -33,6 +33,7 @@ export class FhirMessagingComponent implements AfterViewInit {
   genericLoading: Boolean = false
   public style: string = 'width: 50%'
 
+  /** no longer used, used to be in an extra form for overriding id in resource */
   public patientFhirId = "";
 
   public show_hl7_tab: boolean = false
@@ -51,7 +52,7 @@ export class FhirMessagingComponent implements AfterViewInit {
       resourceType?: string,
       resourceLocalId?: number,
       operation?: "UpdateOrCreate" | "Create" | "Update" | "$match" | "$transaction" | "",
-      show_hl7_tab? : boolean
+      show_hl7_tab?: boolean
     }) {
     if (data) {
       if (data.show_hl7_tab) {

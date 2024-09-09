@@ -60,9 +60,9 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
     if (tenantId > 0 && facilityId > 0) {
-      return this.http.post<HttpResponse<string>>(
+      return this.http.post<string>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`, group,
-        httpOptions);
+        { ...httpOptions, observe: 'response' });
     } else {
       return of()
     }

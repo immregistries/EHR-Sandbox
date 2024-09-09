@@ -236,7 +236,7 @@ public class EhrPatientController {
             @PathVariable() String patientId,
             @PathVariable() String registryId,
             @RequestParam Optional<Long> _since) {
-        return ResponseEntity.ok(matchAndEverythingService.fetchAndLoadImmunizationsFromIIS(tenantId, facilityId, patientId, registryId, _since));
+        return ResponseEntity.ok(matchAndEverythingService.fetchAndLoadImmunizationsFromIIS(facilityId, patientId, registryId, _since));
 //
 //        return ResponseEntity.badRequest().body(new HashSet<>());
     }
