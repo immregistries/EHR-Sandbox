@@ -2,6 +2,7 @@ package org.immregistries.ehr.logic;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
@@ -25,8 +26,8 @@ import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_
 import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_SYSTEM_TAG;
 
 @Service()
-public class BundleImportService {
-    private static final Logger logger = LoggerFactory.getLogger(BundleImportService.class);
+public class BundleImportServiceR5 implements IBundleImportService {
+    private static final Logger logger = LoggerFactory.getLogger(BundleImportServiceR5.class);
 
 
     @Autowired
@@ -40,16 +41,18 @@ public class BundleImportService {
     PatientMapperR5 patientMapper;
 
     @Autowired
-    private ImmunizationIdentifierRepository immunizationIdentifierRepository;
+    ImmunizationIdentifierRepository immunizationIdentifierRepository;
     @Autowired
-    private PatientIdentifierRepository patientIdentifierRepository;
+    PatientIdentifierRepository patientIdentifierRepository;
     @Autowired
-    private EhrPatientRepository ehrPatientRepository;
+    EhrPatientRepository ehrPatientRepository;
 
     @Autowired
-    private ResourceIdentificationService resourceIdentificationService;
+    ResourceIdentificationService resourceIdentificationService;
 
-    public ResponseEntity<String> importBundle(ImmunizationRegistry immunizationRegistry, Facility facility, Bundle bundle) {
+    @Override
+    public ResponseEntity<String> importBundle(ImmunizationRegistry immunizationRegistry, Facility facility, IBaseBundle iBaseBundle) {
+        Bundle bundle = (Bundle) iBaseBundle;
         StringBuilder responseBuilder = new StringBuilder(); // todo bundle loader as service ?
         int count = 0;
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
@@ -95,7 +98,10 @@ public class BundleImportService {
     }
 
 
-    public Set<EhrEntity> viewBundleAndMatchIdentifiers(ImmunizationRegistry immunizationRegistry, Facility facility, Bundle bundle, Boolean includeOnlyGolden) {
+    @Override
+    public Set<EhrEntity> viewBundleAndMatchIdentifiers(ImmunizationRegistry immunizationRegistry, Facility facility, IBaseBundle iBaseBundle, Boolean includeOnlyGolden) {
+        Bundle bundle = (Bundle) iBaseBundle;
+
         Set<EhrEntity> entities = new HashSet<>(bundle.getEntry().size());
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             switch (entry.getResource().getResourceType()) {
@@ -124,7 +130,7 @@ public class BundleImportService {
                     if (StringUtils.isNotBlank(localPatientId)) {
                         immunization.setPatient(new Reference("Patient/" + localPatientId));
                         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
-                        vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), localPatientId).get());
+                        vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), localPatientId).orElseThrow());
                         String localVaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
                         immunizationIdentifierRepository.save(new ImmunizationIdentifier(localVaccinationId, immunizationRegistry.getId(), receivedId));
                         entities.add(vaccinationEvent);

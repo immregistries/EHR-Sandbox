@@ -34,12 +34,18 @@ import { Hl7Service } from './_services/_fhir/hl7.service';
 import { SubscriptionService } from './_services/_fhir/subscription.service';
 import { GroupStepsComponent } from './_components/group-steps/group-steps.component';
 import { firstValueFrom } from 'rxjs';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 
-const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsService) => {
-  return () => settingsService.loadEnvConfig('/runtime-config.json').then(() => firstValueFrom(codeMapsService.load()));
+const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsService, matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) => {
+  return () => settingsService.loadEnvConfig('/runtime-config.json').then(() => {
+    firstValueFrom(codeMapsService.load())
+    matIconRegistry.addSvgIcon("fhir-send", domSanitizer.bypassSecurityTrustResourceUrl("assets/fhir-send4.svg"))
+  });
 };
+
 
 
 @NgModule({
@@ -120,8 +126,9 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
       provide: APP_INITIALIZER,
       useFactory: initAppFn,
       multi: true,
-      deps: [SettingsService, CodeMapsService],
-    }
+      deps: [SettingsService, CodeMapsService, MatIconRegistry, DomSanitizer],
+    },
+
   ]
 })
 export class CoreModule { }

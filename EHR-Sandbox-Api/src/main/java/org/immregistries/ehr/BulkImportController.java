@@ -5,14 +5,15 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.client.interceptor.CapturingInterceptor;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.logic.BundleImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,6 @@ public class BulkImportController {
     @Autowired
     FacilityRepository facilityRepository;
 
-    @Autowired
-    BundleImportService bundleImportService;
-
 
     @GetMapping("/registry/{registryId}/Group/{groupId}/$export-synch")
     public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() String registryId, @PathVariable() String groupId
@@ -63,20 +61,35 @@ public class BulkImportController {
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
 
-        Parameters inParams = new Parameters();
-        _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new StringType(s)));
-        _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new StringType(s)));
-        _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new DateType(d)));
-        _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
-        _elements.ifPresent(s -> inParams.addParameter().setName("_elements").setValue(new StringType(s)));
-        patient.ifPresent(s -> inParams.addParameter().setName("patient").setValue(new StringType(s)));
-        includeAssociatedData.ifPresent(s -> inParams.addParameter().setName("includeAssociatedData").setValue(new StringType(s)));
-        _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
+        IBaseParameters inBaseParameters;
+        if (FhirComponentsDispatcher.r4Flavor()) {
+            org.hl7.fhir.r4.model.Parameters inParams = new org.hl7.fhir.r4.model.Parameters();
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r4.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _elements.ifPresent(s -> inParams.addParameter().setName("_elements").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            patient.ifPresent(s -> inParams.addParameter().setName("patient").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            includeAssociatedData.ifPresent(s -> inParams.addParameter().setName("includeAssociatedData").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r4.model.BooleanType(b)));
+            inBaseParameters = inParams;
+        } else {
+            org.hl7.fhir.r5.model.Parameters inParams = new org.hl7.fhir.r5.model.Parameters();
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r5.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _elements.ifPresent(s -> inParams.addParameter().setName("_elements").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            patient.ifPresent(s -> inParams.addParameter().setName("patient").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            includeAssociatedData.ifPresent(s -> inParams.addParameter().setName("includeAssociatedData").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r5.model.BooleanType(b)));
+            inBaseParameters = inParams;
+        }
 
-        Parameters outParams = client.operation()
-                .onInstance(new IdType("Group", groupId))
+        IBaseParameters outParams = client.operation()
+                .onInstance("Group/" + groupId)
                 .named("$export")
-                .withParameters(inParams).accept("*/*")
+                .withParameters(inBaseParameters).accept("*/*")
                 .useHttpGet()
                 .withAdditionalHeader("Prefer", "respond-sync")
                 .execute();
@@ -116,17 +129,29 @@ public class BulkImportController {
         CapturingInterceptor capturingInterceptor = new CapturingInterceptor();
         client.registerInterceptor(capturingInterceptor);
 
-        Parameters inParams = new Parameters();
-        _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new StringType(s)));
-        _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new StringType(s)));
-        _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new DateType(d)));
-        _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new StringType(s)));
-        _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new BooleanType(b)));
+        IBaseParameters inBaseParameters;
+        if (FhirComponentsDispatcher.r4Flavor()) {
+            org.hl7.fhir.r4.model.Parameters inParams = new org.hl7.fhir.r4.model.Parameters();
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r4.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r4.model.BooleanType(b)));
+            inBaseParameters = inParams;
+        } else {
+            org.hl7.fhir.r5.model.Parameters inParams = new org.hl7.fhir.r5.model.Parameters();
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r5.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r5.model.BooleanType(b)));
+            inBaseParameters = inParams;
+        }
 
-        Parameters outParams = client.operation()
-                .onInstance(new IdType("Group", groupId))
+        IBaseParameters outParams = client.operation()
+                .onInstance("Group/" + groupId)
                 .named("$export")
-                .withParameters(inParams)
+                .withParameters(inBaseParameters)
                 .useHttpGet()
                 .withAdditionalHeader("Prefer", "respond-async")
                 .execute();
@@ -153,7 +178,7 @@ public class BulkImportController {
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));
             if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
-                con.setRequestProperty("Authorization", fhirComponentsDispatcher.clientFactory().authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
             } else {
                 con.setRequestProperty("Authorization", "Basic " + encoded);
 
@@ -207,7 +232,7 @@ public class BulkImportController {
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));
             if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
-                con.setRequestProperty("Authorization", fhirComponentsDispatcher.clientFactory().authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
             } else {
                 con.setRequestProperty("Authorization", "Basic " + encoded);
 
@@ -257,7 +282,7 @@ public class BulkImportController {
             con.setRequestProperty("Accept", "application/json");
 
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", fhirComponentsDispatcher.clientFactory().authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -293,7 +318,7 @@ public class BulkImportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", fhirComponentsDispatcher.clientFactory().authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -304,8 +329,8 @@ public class BulkImportController {
                     Facility facility = facilityRepository.findById(loadInFacility.get()).orElseThrow(
                             () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified"));
                     IParser parser = fhirComponentsDispatcher.fhirContext().newNDJsonParser();
-                    Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
-                    return bundleImportService.importBundle(ir, facility, bundle);
+                    IBaseBundle bundle = (IBaseBundle) parser.parseResource(con.getInputStream());
+                    return fhirComponentsDispatcher.bundleImportService().importBundle(ir, facility, bundle);
                 }
                 return ResponseEntity.ok(con.getInputStream().readAllBytes());
             } else {
@@ -338,7 +363,7 @@ public class BulkImportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", fhirComponentsDispatcher.clientFactory().authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -346,8 +371,8 @@ public class BulkImportController {
             logger.info("RESPONSE {}", status);
             if (status == 200 || status == 202) {
                 IParser parser = fhirComponentsDispatcher.fhirContext().newNDJsonParser();
-                Bundle bundle = (Bundle) parser.parseResource(con.getInputStream());
-                return ResponseEntity.ok(bundleImportService.viewBundleAndMatchIdentifiers(ir, facility, bundle, false));
+                IBaseBundle bundle = (IBaseBundle) parser.parseResource(con.getInputStream());
+                return ResponseEntity.ok(fhirComponentsDispatcher.bundleImportService().viewBundleAndMatchIdentifiers(ir, facility, bundle, false));
             }
             return ResponseEntity.internalServerError().build();
         } catch (MalformedURLException | ProtocolException e) {

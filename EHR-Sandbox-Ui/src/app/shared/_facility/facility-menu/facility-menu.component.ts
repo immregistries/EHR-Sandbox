@@ -54,13 +54,23 @@ export class FacilityMenuComponent implements OnInit {
     });
   }
 
-  onSelection(event: Facility) {
-    if (this.facilityService.getCurrentId() == event.id) { // unselect
-      this.facilityService.setCurrent({ id: -1 })
+  onSelection(event: Facility | number) {
+    if (typeof event === "object") {
+      if (this.facilityService.getCurrentId() == event.id) { // unselect
+        this.facilityService.setCurrent({ id: -1 })
+      } else {
+        this.facilityService.setCurrent(event)
+        this.selectEmitter.emit(this.facilityService.getCurrent())
+      }
     } else {
-      this.facilityService.setCurrent(event)
-      this.selectEmitter.emit(this.facilityService.getCurrent())
+      if (this.facilityService.getCurrentId() == event) { // unselect
+        this.facilityService.setCurrent({ id: -1 })
+      } else {
+        this.facilityService.setCurrent({ id: event })
+        this.selectEmitter.emit(this.facilityService.getCurrent())
+      }
     }
+
   }
 
   selectFirstOrCreate() {

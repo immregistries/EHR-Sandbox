@@ -113,7 +113,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
         return null;
     }
 
-    public String authorisationTokenContent(ImmunizationRegistry ir) {
+    public static String authorisationTokenContent(ImmunizationRegistry ir) {
         if (ir.getIisUsername() == null || ir.getIisUsername().isBlank()) {
             /**
              * If username is blank : use token bearer auth

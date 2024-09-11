@@ -1,15 +1,19 @@
 <mat-action-list #patients>
-  <mat-list-item *ngFor="let patient of list" (click)="onSelection(patient)" >
+  <mat-list-item *ngFor="let patient of list" (click)="onSelection(patient)">
     {{patient.nameFirst + " " + patient.nameLast + " | " + (patient.birthDate | date)}}
     <button mat-icon-button color="primary" (click)="openPatient(patient); $event.stopPropagation();"
-      matTooltip="Open Dashboard">
+            matTooltip="Open Dashboard">
       <mat-icon>open_in_new</mat-icon>
+    </button>
+    <button mat-icon-button color="primary" (click)="openFhir(patient); $event.stopPropagation();"
+            matTooltip="Send Patient with FHIR">
+      <mat-icon svgIcon="fhir-send"></mat-icon>
+      <!-- <img class="icon" src="assets/fhir.png" /> -->
     </button>
     <mat-divider></mat-divider>
   </mat-list-item>
   <mat-list-item matTooltip="Add new Patient" (click)="openCreate();$event.stopPropagation();">
-    <button mat-icon-button color="primary"
-      matTooltip="Add Patient">
+    <button mat-icon-button color="primary" matTooltip="Add Patient">
       <mat-icon>add</mat-icon>
     </button>
     <mat-divider></mat-divider>

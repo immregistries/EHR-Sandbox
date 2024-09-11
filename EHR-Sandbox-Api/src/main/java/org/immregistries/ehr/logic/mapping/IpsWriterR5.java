@@ -66,10 +66,10 @@ public class IpsWriterR5 implements IIpsWriter {
         composition.addIdentifier(ehrPatient.getMrnEhrIdentifier().toR5());
         composition.addSubject(new Reference(patientEntry.getFullUrl()));
 
-        Composition.SectionComponent sectionComponent = composition.addSection()
+        Composition.SectionComponent immunizationHistory = composition.addSection()
                 .setTitle("Immunization History")
                 .setCode(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("11369-6")
-//                        .setDisplay("History of Immunization Narrative")
+//                        .setDisplay( "History of Immunization Narrative")
                 ));
         for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
             Immunization immunization = ipsImmunization(vaccinationEvent, immunizationFacilitySystem);
@@ -81,9 +81,25 @@ public class IpsWriterR5 implements IIpsWriter {
             addImmunizationPerformer(bundle, immunization, vaccinationEvent.getOrderingClinician(), IImmunizationMapper.ORDERING, addedClinicianReference);
             addImmunizationPerformer(bundle, immunization, vaccinationEvent.getEnteringClinician(), IImmunizationMapper.ENTERING, addedClinicianReference);
             addImmunizationPerformer(bundle, immunization, vaccinationEvent.getAdministeringClinician(), IImmunizationMapper.ADMINISTERING, addedClinicianReference);
-            sectionComponent.addEntry(new Reference(immunizationEntry.getFullUrl()));
+            immunizationHistory.addEntry(new Reference(immunizationEntry.getFullUrl()));
+        }
+        if (!immunizationHistory.hasEntry()) {
+            immunizationHistory.setEmptyReason(new CodeableConcept(new Coding(EMPTY_REASON_SYSTEM, "nilknown", "")));
         }
 
+        composition.addSection()
+                .setTitle("Medication Summary section")
+                .setCode(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("10160-0")
+                )).setEmptyReason(new CodeableConcept(new Coding(EMPTY_REASON_SYSTEM, "unavailable", "")));
+
+        composition.addSection()
+                .setTitle("Allergies Summary section")
+                .setCode(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("48765-2")
+                )).setEmptyReason(new CodeableConcept(new Coding(EMPTY_REASON_SYSTEM, "unavailable", "")));
+        composition.addSection()
+                .setTitle("Problems Summary section")
+                .setCode(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("11450-4")
+                )).setEmptyReason(new CodeableConcept(new Coding(EMPTY_REASON_SYSTEM, "unavailable", "")));
         return bundle;
     }
 

@@ -92,6 +92,9 @@ export class CodeMapsService {
       this.http.get<CodeSystem>(this.QUALIFICATION_SYSTEM_FILE_NAME).pipe(tap(res => {
         this._qualificationTypeCodeSystem = res;
       })),
+      this.http.get<string>("assets/test.json").pipe(tap(res => {
+        console.log("res", res)
+      })),
       this.refreshCodeMapsObservable()
     )
   }

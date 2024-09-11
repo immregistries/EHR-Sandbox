@@ -318,6 +318,7 @@ public class EhrPatient extends EhrEntity {
         return facility;
     }
 
+    @JsonIgnore
     public void setFacility(Facility facility) {
         this.facility = facility;
     }

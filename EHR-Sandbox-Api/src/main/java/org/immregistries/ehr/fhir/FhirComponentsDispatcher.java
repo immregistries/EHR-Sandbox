@@ -15,6 +15,7 @@ import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
 import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
 import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
+import org.immregistries.ehr.logic.*;
 import org.immregistries.ehr.logic.mapping.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +68,14 @@ public class FhirComponentsDispatcher {
     private IpsWriterR4 ipsWriterR4;
     @Autowired
     private IpsWriterR5 ipsWriterR5;
+    @Autowired
+    private FhirTransactionWriterR5 fhirTransactionWriterR5;
+    @Autowired
+    private BundleImportServiceR5 bundleImportServiceR5;
+    @Autowired
+    private FhirTransactionWriterR4 fhirTransactionWriterR4;
+    @Autowired
+    private BundleImportServiceR4 bundleImportServiceR4;
 
     private FhirContext fhirContextR5;
     private FhirContext fhirContextR4;
@@ -213,6 +222,24 @@ public class FhirComponentsDispatcher {
 
     public static boolean r5Flavor() {
         return StringUtils.defaultIfBlank(tenantName(), "").contains(R5_FLAVOUR);
+    }
+
+    public IFhirTransactionWriter fhirTransactionWriter() {
+        if (r5Flavor()) {
+            return fhirTransactionWriterR5;
+        } else if (r4Flavor()) {
+            return fhirTransactionWriterR4;
+        }
+        return fhirTransactionWriterR5;
+    }
+
+    public IBundleImportService bundleImportService() {
+        if (r5Flavor()) {
+            return bundleImportServiceR5;
+        } else if (r4Flavor()) {
+            return bundleImportServiceR4;
+        }
+        return bundleImportServiceR5;
     }
 
     public static IBaseParameters parametersObject() {

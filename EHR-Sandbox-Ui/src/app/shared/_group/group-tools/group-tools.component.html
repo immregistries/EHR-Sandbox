@@ -4,7 +4,7 @@
     <mat-icon>edit</mat-icon>
   </button>
   <button mat-stroked-button matTooltip="Send FHIR Resource" color="primary" (click)="openFhir()">
-    <mat-icon>send</mat-icon>
+    <mat-icon svgIcon="fhir-send"></mat-icon>
     FHIR
   </button>
   <app-json-dialog-button mat-raised-button [content]="ehrGroup"></app-json-dialog-button>
@@ -18,5 +18,3 @@
   </button>
   <ng-content></ng-content>
 </span>
-
-

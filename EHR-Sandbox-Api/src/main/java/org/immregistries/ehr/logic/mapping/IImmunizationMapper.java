@@ -30,7 +30,7 @@ public interface IImmunizationMapper<Immunization extends IBaseResource> extends
      * @param immunization
      * @return
      */
-    EhrIdentifier getImmunizationIdentifier(IBaseResource immunization);
+    EhrIdentifier extractImmunizationIdentifier(IBaseResource immunization);
 
     VaccinationEvent toVaccinationEvent(Immunization i);
 

@@ -269,7 +269,7 @@ public class FhirClientController {
         try {
             MethodOutcome outcome = resourceClient.updateOrCreate(immunization,
                     "Immunization",
-                    fhirComponentsDispatcher.immunizationMapper().getImmunizationIdentifier(immunization),
+                    fhirComponentsDispatcher.immunizationMapper().extractImmunizationIdentifier(immunization),
                     immunizationRegistry);
             /**
              * Registering received id as external id

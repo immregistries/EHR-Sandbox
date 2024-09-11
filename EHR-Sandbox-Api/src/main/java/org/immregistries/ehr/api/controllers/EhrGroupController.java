@@ -17,10 +17,8 @@ import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.fhir.Server.IGroupProvider;
-import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.IOrganizationMapper;
-import org.immregistries.ehr.logic.mapping.OrganizationMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,15 +61,11 @@ public class EhrGroupController {
      * not critical to be able to use R4
      */
     @Autowired
-    private OrganizationMapperR5 organizationMapperR5;
-    @Autowired
     private FhirClientController fhirClientController;
     @Autowired
     private FhirConversionController fhirConversionController;
     @Autowired
     private BulkImportController bulkImportController;
-    @Autowired
-    private BundleImportService bundleImportService;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
 
@@ -322,7 +316,7 @@ public class EhrGroupController {
             }
             IBaseParameters out = client.operation().onInstance(remoteGroup.getIdElement()).named("$member-add").withParameters(in).execute();
             /**
-             * update after result ? or wait for subscription to do the job, maybe better to do it for bulk testing
+             * update after result
              */
             return refreshOne(ehrGroup);
         }

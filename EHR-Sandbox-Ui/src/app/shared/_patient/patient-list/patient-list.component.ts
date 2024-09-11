@@ -7,6 +7,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
+import { FhirMessagingComponent } from '../../_fhir/fhir-messaging/fhir-messaging.component';
 
 
 const DEFAULT_SETTINGS = {
@@ -70,6 +71,20 @@ export class PatientListComponent implements OnInit {
     });
   }
 
+
+  openFhir(patient: EhrPatient) {
+    const dialogRef = this.dialog.open(FhirMessagingComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-without-bar',
+      data: { patientId: patient.id, show_hl7_tab: false },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.patientService.doRefresh()
+    });
+  }
 
   openCreate() {
     const dialogRef = this.dialog.open(PatientFormComponent, {

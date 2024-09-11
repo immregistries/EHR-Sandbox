@@ -35,7 +35,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         ehrGroup.setEhrGroupCharacteristics(ehrGroupCharacteristicSet);
         for (Group.GroupCharacteristicComponent characteristicComponent : group.getCharacteristic()) {
             EhrGroupCharacteristic ehrGroupCharacteristic = new EhrGroupCharacteristic();
-            ehrGroupCharacteristic.setValue(characteristicComponent.getValue().toString());
+            ehrGroupCharacteristic.setValue(((CodeableConcept) characteristicComponent.getValue()).getCodingFirstRep().getCode());
             if (characteristicComponent.getCode().hasCoding()) {
                 ehrGroupCharacteristic.setCodeSystem(characteristicComponent.getCode().getCodingFirstRep().getSystem());
                 ehrGroupCharacteristic.setCodeValue(characteristicComponent.getCode().getCodingFirstRep().getCode());
@@ -88,7 +88,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         if (ehrGroup.getEhrGroupCharacteristics() != null) {
             for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {
                 Group.GroupCharacteristicComponent groupCharacteristicComponent = group.addCharacteristic();
-                groupCharacteristicComponent.setValue(new CodeableConcept().setText(ehrGroupCharacteristic.getValue()))
+                groupCharacteristicComponent.setValue(new CodeableConcept(new Coding(null, ehrGroupCharacteristic.getValue(), null)).setText(ehrGroupCharacteristic.getValue()))
                         .setCode(new CodeableConcept(new Coding().setSystem(ehrGroupCharacteristic.getCodeSystem()).setCode(ehrGroupCharacteristic.getCodeValue())))
                         .setPeriod(new Period().setEnd(ehrGroupCharacteristic.getPeriodEnd()).setStart(ehrGroupCharacteristic.getPeriodStart()));
                 if (Objects.nonNull(ehrGroupCharacteristic.getExclude())) {

@@ -2,24 +2,18 @@ package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.IValidatorModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.logic.BundleImportService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +47,6 @@ public class FhirConversionController {
     @Autowired
     FhirComponentsDispatcher fhirComponentsDispatcher;
 
-    @Autowired
-    private BundleImportService bundleImportService;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
 
@@ -120,22 +112,8 @@ public class FhirConversionController {
     public ResponseEntity<String> facilityAllResourcesTransaction(@PathVariable() String facilityId) {
         Facility facility = facilityRepository.findById(facilityId).get();
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
-        Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
-        Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facility);
-        for (EhrPatient ehrPatient : patientRepository.findByFacilityId(facilityId)) {
-            Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), ehrPatient);
-            for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
-                Bundle.BundleEntryComponent immunizationEntry = addVaccinationEntry(bundle, patientEntry.getFullUrl(), vaccinationEvent);
-            }
-        }
-//        for (Clinician clinician: clinicianRepository.findByTenantId(facility.getTenant().getId())) {
-//            Practitioner practitioner = (Practitioner) fhirComponentsService.practitionerMapper().toFhir(clinician);
-//            bundleBuilder.addTransactionCreateEntry()
-//        }
-//        for (EhrGroup ehrGroup: facility.getGroups()) {
-//            Group group = groupMapper.toFhir(E)
-//        }
-        String resource = parser.encodeResourceToString(bundle);
+        IBaseBundle baseBundle = fhirComponentsDispatcher.fhirTransactionWriter().transactionBundle(facility);
+        String resource = parser.encodeResourceToString(baseBundle);
         return ResponseEntity.ok(resource);
     }
 
@@ -143,10 +121,9 @@ public class FhirConversionController {
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> qpdEquivalentTransaction(@PathVariable() String facilityId, @PathVariable() String patientId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
-        Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
-        Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facilityRepository.findById(facilityId).get());
-        Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patientRepository.findById(patientId).get());
-        String resource = parser.encodeResourceToString(bundle);
+        IBaseBundle iBaseBundle = fhirComponentsDispatcher.fhirTransactionWriter().
+                qpdBundle(facilityRepository.findById(facilityId).get(), patientRepository.findById(patientId).get());
+        String resource = parser.encodeResourceToString(iBaseBundle);
         return ResponseEntity.ok(resource);
     }
 
@@ -274,94 +251,19 @@ public class FhirConversionController {
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> vxuEquivalentTransaction(@PathVariable() String facilityId, @PathVariable() String patientId, @PathVariable() String vaccinationId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
-        Bundle bundle = new Bundle(Bundle.BundleType.TRANSACTION);
-        Bundle.BundleEntryComponent organizationEntry = addOrganizationEntry(bundle, facilityRepository.findById(facilityId).get());
-        Bundle.BundleEntryComponent patientEntry = addPatientEntry(bundle, organizationEntry.getFullUrl(), patientRepository.findById(patientId).get());
-        Bundle.BundleEntryComponent vaccinationEntry = addVaccinationEntry(bundle, patientEntry.getFullUrl(), vaccinationEventRepository.findById(vaccinationId).get());
-        String resource = parser.encodeResourceToString(bundle);
+        IBaseBundle iBaseBundle = fhirComponentsDispatcher.fhirTransactionWriter()
+                .vxuBundle(facilityRepository.findById(facilityId).get(), vaccinationEventRepository.findById(vaccinationId).get());
+        String resource = parser.encodeResourceToString(iBaseBundle);
         return ResponseEntity.ok(resource);
     }
 
-    private Bundle.BundleEntryComponent addOrganizationEntry(Bundle bundle, Facility facility) {
-        Organization organization = (Organization) fhirComponentsDispatcher.organizationMapper().toFhir(facility);
-        return bundle.addEntry().setResource(organization)
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                .setRequest(new Bundle.BundleEntryRequestComponent(
-                        Bundle.HTTPVerb.PUT,
-                        identifierUrl("Organization", organization.getIdentifierFirstRep())));
-    }
-
-    private Bundle.BundleEntryComponent addPatientEntry(Bundle bundle, String organizationUrl, EhrPatient ehrPatient) {
-        Patient patient = (Patient) fhirComponentsDispatcher.patientMapper().toFhir(ehrPatient);
-        patient.setManagingOrganization(new Reference(organizationUrl));
-//            String patientRequestUrl = identifierUrl("Patient", patient.getIdentifierFirstRep());
-        String patientRequestUrl = "Patient";
-        Bundle.BundleEntryComponent patientEntry = bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                .setResource(patient)
-                .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, patientRequestUrl));
-        return patientEntry;
-    }
-
-    private Bundle.BundleEntryComponent addVaccinationEntry(Bundle bundle, String patientUrl, VaccinationEvent vaccinationEvent) {
-        Immunization immunization = (Immunization) fhirComponentsDispatcher.immunizationMapper().toFhir(vaccinationEvent,
-                resourceIdentificationService.getFacilityImmunizationIdentifierSystem(vaccinationEvent.getAdministeringFacility()));
-        immunization.setPatient(new Reference(patientUrl));
-        String immunizationRequestUrl = "Immunization";
-//        Bundle.BundleEntryComponent clinicianEntry = addClinicianEntry(bundle, vaccinationEvent.getAdministeringClinician());
-//        if (clinicianEntry != null) {
-//            immunization.addPerformer()
-//        }
-//        Bundle.BundleEntryComponent clinicianEntry2 = addClinicianEntry(bundle, vaccinationEvent.getEnteringClinician());
-//        Bundle.BundleEntryComponent clinicianEntry3 = addClinicianEntry(bundle, vaccinationEvent.getOrderingClinician());
-        return bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                .setResource(immunization)
-                .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, immunizationRequestUrl));
-    }
-
-    private Bundle.BundleEntryComponent addClinicianEntry(Bundle bundle, Clinician clinician) {
-        if (Objects.nonNull(clinician)) {
-            String immunizationRequestUrl = "Practitioner";
-            Practitioner practitioner = (Practitioner) fhirComponentsDispatcher.practitionerMapper().toFhir(clinician);
-
-            return bundle.addEntry()
-                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
-                    .setResource(practitioner)
-                    .setRequest(new Bundle.BundleEntryRequestComponent(Bundle.HTTPVerb.POST, immunizationRequestUrl));
-        } else {
-            return null;
-        }
-    }
-
-    private String identifierUrl(String base, Identifier identifier) {
-        if (identifier != null) {
-            base += "?identifier=";
-            if (identifier.hasSystem()) {
-                base += identifier.getSystem() + "|";
-            }
-            base += identifier.getValue();
-        }
-        return base;
-    }
-
-    private String identifierUrl(String base, EhrIdentifier identifier) {
-        if (identifier != null) {
-            base += "?identifier=";
-            if (StringUtils.isNotBlank(identifier.getSystem())) {
-                base += identifier.getSystem() + "|";
-            }
-            base += identifier.getValue();
-        }
-        return base;
-    }
 
     @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$loadJson")
     public ResponseEntity<String> loadNdJsonBundle(
             @PathVariable() String facilityId,
             @PathVariable() String registryId,
-            @RequestBody Bundle bundle) {
-        return bundleImportService.importBundle(
+            @RequestBody IBaseBundle bundle) {
+        return fhirComponentsDispatcher.bundleImportService().importBundle(
                 immunizationRegistryService.getImmunizationRegistry(registryId),
                 facilityRepository.findById(facilityId).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No facility name specified")
@@ -377,14 +279,7 @@ public class FhirConversionController {
 
     private ResponseEntity<String> loadNdJson(ImmunizationRegistry immunizationRegistry, Facility facility, String ndJson) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newNDJsonParser();
-        Bundle bundle = (Bundle) parser.parseResource(ndJson);
-        return bundleImportService.importBundle(immunizationRegistry, facility, bundle);
-    }
-
-    private String validateNdJsonBundle(Bundle bundle) {
-        FhirValidator validator = fhirComponentsDispatcher.fhirContext().newValidator();
-        IValidatorModule module = new FhirInstanceValidator(fhirComponentsDispatcher.fhirContext());
-        validator.registerValidatorModule(module);
-        return "";
+        IBaseBundle bundle = (IBaseBundle) parser.parseResource(ndJson);
+        return fhirComponentsDispatcher.bundleImportService().importBundle(immunizationRegistry, facility, bundle);
     }
 }

@@ -1,14 +1,8 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 import { Facility, Feedback, EhrPatient, VaccinationEvent, ImmunizationRegistry } from 'src/app/core/_model/rest';
-import { FacilityService } from 'src/app/core/_services/facility.service';
-import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
-import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
 import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
@@ -103,7 +97,7 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
       "timestamp",
       "iis",
       "content",
-      // "remove",
+      //  "remove",
     ]
     if (this.patient) {
       this.columns = this.columns.filter((attribute => attribute != "patient"))

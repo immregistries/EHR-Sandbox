@@ -51,7 +51,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         return i;
     }
 
-    public EhrIdentifier getImmunizationIdentifier(IBaseResource iBaseResource) {
+    public EhrIdentifier extractImmunizationIdentifier(IBaseResource iBaseResource) {
         Immunization immunization = (Immunization) iBaseResource;
         return new EhrIdentifier(immunization.getIdentifierFirstRep());
     }
@@ -264,7 +264,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
     public Immunization.ImmunizationPerformerComponent fhirPerformer(Clinician clinician, String function) {
         if (clinician != null) {
             return new Immunization.ImmunizationPerformerComponent().setActor(new Reference()
-                            .setIdentifier(practitionerMapper.toFhir(clinician).getIdentifierFirstRep()))
+                            .setIdentifier(IPractitionerMapper.clinicianEhrIdentifier(clinician).toR4()))
                     .setFunction(new CodeableConcept(new Coding().setSystem(FUNCTION).setCode(function)));
         } else {
             return null;

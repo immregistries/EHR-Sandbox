@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Prototype Controller for creating entire tenants/ users from Fhir Bundles
+ */
 @RestController()
 public class MacroEndpointsController {
 

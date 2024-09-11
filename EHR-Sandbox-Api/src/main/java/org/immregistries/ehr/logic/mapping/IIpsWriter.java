@@ -9,6 +9,9 @@ import java.util.UUID;
 
 public interface IIpsWriter {
 
+    public static final String EMPTY_REASON_SYSTEM = "http://terminology.hl7.org/CodeSystem/list-empty-reason";
+
+
     public IBaseResource ipsBundle(EhrPatient ehrPatient, Facility facility);
 
     public static String entryUrl(Integer count) {
