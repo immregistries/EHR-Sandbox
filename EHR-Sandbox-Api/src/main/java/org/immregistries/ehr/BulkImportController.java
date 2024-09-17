@@ -12,7 +12,7 @@ import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
-import org.immregistries.ehr.fhir.Client.CustomClientFactory;
+import org.immregistries.ehr.fhir.Client.EhrFhirClientFactory;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +30,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static org.immregistries.ehr.api.controllers.FhirClientController.PRIMAL_IMM_REGISTRY_SUFFIX;
+
 @RestController
 public class BulkImportController {
 
@@ -44,7 +46,7 @@ public class BulkImportController {
     FacilityRepository facilityRepository;
 
 
-    @GetMapping("/registry/{registryId}/Group/{groupId}/$export-synch")
+    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/Group/{groupId}/$export-synch")
     public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() String registryId, @PathVariable() String groupId
             , @RequestParam Optional<String> _outputFormat
             , @RequestParam Optional<String> _type
@@ -101,7 +103,7 @@ public class BulkImportController {
         }
     }
 
-    @GetMapping("/registry/{registryId}/Group/{groupId}/$export-asynch")
+    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/Group/{groupId}/$export-asynch")
     public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() String registryId, @PathVariable() String groupId
             , @RequestParam Optional<String> _outputFormat
             , @RequestParam Optional<String> _type
@@ -159,7 +161,7 @@ public class BulkImportController {
 
     }
 
-    @GetMapping("/registry/{registryId}/$export-status")
+    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-status")
     public ResponseEntity bulkCheckStatus(@PathVariable() String registryId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
@@ -178,7 +180,7 @@ public class BulkImportController {
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));
             if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
-                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", EhrFhirClientFactory.authorisationTokenContent(ir));
             } else {
                 con.setRequestProperty("Authorization", "Basic " + encoded);
 
@@ -232,7 +234,7 @@ public class BulkImportController {
                     .encodeToString((ir.getIisUsername() + ":" + ir.getIisPassword())
                             .getBytes(StandardCharsets.UTF_8));
             if (!contentUrl.contains("x-amz-security-token") && StringUtils.isNotBlank(ir.getIisPassword())) {
-                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", EhrFhirClientFactory.authorisationTokenContent(ir));
             } else {
                 con.setRequestProperty("Authorization", "Basic " + encoded);
 
@@ -270,7 +272,7 @@ public class BulkImportController {
     }
 
 
-    @DeleteMapping("/registry/{registryId}/$export-status")
+    @DeleteMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-status")
     public ResponseEntity bulkDelete(@PathVariable() String registryId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         HttpURLConnection con = null;
@@ -282,7 +284,7 @@ public class BulkImportController {
             con.setRequestProperty("Accept", "application/json");
 
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", EhrFhirClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -305,7 +307,7 @@ public class BulkImportController {
         }
     }
 
-    @GetMapping("/registry/{registryId}/$export-result")
+    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-result")
     public ResponseEntity bulkResult(@PathVariable() String registryId, @RequestParam String contentUrl, Optional<String> loadInFacility) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
@@ -318,7 +320,7 @@ public class BulkImportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", EhrFhirClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 
@@ -349,7 +351,7 @@ public class BulkImportController {
         }
     }
 
-    //    @GetMapping("/registry/{registryId}/$export-result-view")
+    //    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-result-view")
     public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable() String registryId, @PathVariable() String facilityId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
@@ -363,7 +365,7 @@ public class BulkImportController {
             con.setRequestMethod("GET");
             con.setRequestProperty("Accept", "*/*");
             if (!contentUrl.contains("x-amz-security-token") && !ir.getIisPassword().isBlank()) {
-                con.setRequestProperty("Authorization", CustomClientFactory.authorisationTokenContent(ir));
+                con.setRequestProperty("Authorization", EhrFhirClientFactory.authorisationTokenContent(ir));
             }
             con.setConnectTimeout(5000);
 

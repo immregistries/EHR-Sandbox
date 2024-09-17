@@ -82,7 +82,7 @@ public class GroupProviderR4 implements IGroupProvider<Group>, EhrFhirProviderR4
             EhrGroup ehrGroup = groupMapperR4.toEhrGroup(group, facility, immunizationRegistry);
             ehrGroup.setId(old.get().getId());
             ehrGroupRepository.save(ehrGroup);
-            return new MethodOutcome().setResource(group);
+            return new MethodOutcome().setResource(groupMapperR4.toFhir(ehrGroup));
         }
     }
 

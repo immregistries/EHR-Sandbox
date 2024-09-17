@@ -1,5 +1,6 @@
 package org.immregistries.ehr.logic.mapping;
 
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrGroup;
 import org.immregistries.ehr.api.entities.EhrPatient;
@@ -105,6 +106,11 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         }
 
         return group;
+    }
+
+    public EhrIdentifier extractGroupIdentifier(IBaseResource iBaseResource) {
+        Group group = (Group) iBaseResource;
+        return new EhrIdentifier(group.getIdentifierFirstRep());
     }
 
 }

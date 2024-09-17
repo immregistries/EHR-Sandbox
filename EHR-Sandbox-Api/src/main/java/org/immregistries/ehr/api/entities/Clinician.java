@@ -70,10 +70,10 @@ public class Clinician extends EhrEntity {
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
+    @CollectionTable(name = "clinician_phone", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "patient_address", joinColumns = @JoinColumn(name = "patient_id"))
+    @CollectionTable(name = "clinician_address", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
     public Tenant getTenant() {
@@ -189,17 +189,26 @@ public class Clinician extends EhrEntity {
         this.addresses = addresses;
     }
 
+    @JsonIgnore
     public EhrAddress addAddress() {
         EhrAddress ehrAddress = new EhrAddress();
         addAddress(ehrAddress);
         return ehrAddress;
     }
 
+    @JsonIgnore
     public void addAddress(EhrAddress address) {
         if (this.addresses == null) {
             this.addresses = new LinkedHashSet<>(3);
         }
         this.addresses.add(address);
+    }
+
+    public void addIdentifier(EhrIdentifier identifier) {
+        if (this.identifiers == null) {
+            this.identifiers = new LinkedHashSet<>(3);
+        }
+        this.identifiers.add(identifier);
     }
 
     public Set<EhrPhoneNumber> getPhones() {

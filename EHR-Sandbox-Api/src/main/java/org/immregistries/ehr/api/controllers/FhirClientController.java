@@ -33,12 +33,14 @@ import java.util.Optional;
 
 @RestController
 public class FhirClientController {
-    public static final String FACILITY_PREFIX = "/tenants/{tenantId}/facilities";
-    public static final String CLINICIAN_PREFIX = "/tenants/{tenantId}/clinicians";
-    public static final String PATIENT_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/patients";
-    public static final String GROUPS_PREFIX = "/tenants/{tenantId}/facilities/{facilityId}/groups";
+    public static final String TENANT_PREFIX = "/tenants";
+    public static final String FACILITY_PREFIX = TENANT_PREFIX + "/{tenantId}/facilities";
+    public static final String CLINICIAN_PREFIX = TENANT_PREFIX + "/{tenantId}/clinicians";
+    public static final String PATIENT_PREFIX = FACILITY_PREFIX + "/{facilityId}/patients";
+    public static final String GROUPS_PREFIX = FACILITY_PREFIX + "/{facilityId}/groups";
     public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";
     public static final String IMM_REGISTRY_SUFFIX = "/registry/{registryId}";
+    public static final String PRIMAL_IMM_REGISTRY_SUFFIX = TENANT_PREFIX + "/{tenantId}/registry/{registryId}";
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
     private FhirComponentsDispatcher fhirComponentsDispatcher;
@@ -63,7 +65,7 @@ public class FhirClientController {
     @Autowired
     private TenantRepository tenantRepository;
 
-    @GetMapping(IMM_REGISTRY_SUFFIX + "/{resourceType}/{id}")
+    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/{resourceType}/{id}")
     public ResponseEntity<String> getFhirResourceFromIIS(
             @PathVariable() String registryId,
             @PathVariable() String resourceType,
@@ -72,7 +74,7 @@ public class FhirClientController {
     }
 
 
-    @PostMapping(IMM_REGISTRY_SUFFIX + "/{resourceType}/search")
+    @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/{resourceType}/search")
     public ResponseEntity<String> searchFhirResourceFromIIS(
             @PathVariable() String registryId,
             @PathVariable() String resourceType,
@@ -314,7 +316,7 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), registry));
     }
 
-    @PostMapping(IMM_REGISTRY_SUFFIX)
+    @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> postResource(
             @PathVariable() String registryId,
             @RequestParam(name = "type") String type,
@@ -330,7 +332,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-    @PutMapping(IMM_REGISTRY_SUFFIX)
+    @PutMapping(PRIMAL_IMM_REGISTRY_SUFFIX)
     public ResponseEntity<String> putResource(
             @PathVariable() String registryId,
             @RequestParam String type,
@@ -360,12 +362,12 @@ public class FhirClientController {
     }
 
     @PostMapping({
-            IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
-            IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
+            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
+            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
     })
     @PutMapping({
-            IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
-            IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
+            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
+            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
     })
     public ResponseEntity<Object> operation(
             @PathVariable() String operationType,

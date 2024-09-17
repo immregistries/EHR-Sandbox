@@ -5,6 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClinicianFormComponent } from '../clinician-form/clinician-form.component';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
+import { FacilityService } from 'src/app/core/_services/facility.service';
+import { merge } from 'rxjs';
 
 @Component({
   selector: 'app-clinician-table',
@@ -18,9 +20,14 @@ export class ClinicianTableComponent extends AbstractDataTableComponent<Clinicia
 
   constructor(private dialog: MatDialog,
     public tenantService: TenantService,
+    public facilityService: FacilityService,
     private clinicianService: ClinicianService) {
     super()
-    this.observableRefresh = tenantService.getCurrentObservable();
+    this.observableRefresh = merge(
+      tenantService.getCurrentObservable(),
+      facilityService.getCurrentObservable(),
+      clinicianService.getRefresh(),
+    );
     this.observableSource = clinicianService.quickReadClinicians()
   }
 

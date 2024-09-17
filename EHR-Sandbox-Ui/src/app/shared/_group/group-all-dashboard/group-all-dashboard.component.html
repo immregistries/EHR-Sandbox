@@ -13,7 +13,8 @@
     <mat-grid-tile [colspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
-          <app-patient-table [dataArray]="(groupService.getCurrentObservable() | async)?.patientList ?? []"
+          <app-patient-table
+            [dataArray]="((groupService.getCurrentObservable() | async)?.patientList | patientCache) ?? []"
             [title]="'Group members'" [allow_create]="false"
             [columns]='["mrn","nameLast","nameFirst","birthDate","remove"]'
             [facility]="facilityService.getCurrentObservable() | async"

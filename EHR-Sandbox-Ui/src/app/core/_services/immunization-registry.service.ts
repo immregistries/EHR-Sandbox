@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, share, tap } from 'rxjs';
 import { ImmunizationRegistry } from '../_model/rest';
 import { SettingsService } from './settings.service';
-import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
+import { CurrentSelectedWithIdService } from './_abstract/current-selected-with-id.service';
+import { SnackBarService } from './snack-bar.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,8 +20,10 @@ export class ImmunizationRegistryService extends CurrentSelectedWithIdService<Im
     return this._registriesCached;
   }
 
-  constructor(private http: HttpClient, private settings: SettingsService) {
-    super(new BehaviorSubject<ImmunizationRegistry>({}))
+  constructor(private http: HttpClient, private settings: SettingsService,
+    snackBarService: SnackBarService
+  ) {
+    super(new BehaviorSubject<ImmunizationRegistry>({}), snackBarService)
     // this.getRefresh().subscribe(() => {
     //   this.readImmRegistries()
     //     .subscribe((registries) => {

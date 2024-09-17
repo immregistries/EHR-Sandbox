@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import com.github.javafaker.Faker;
@@ -15,9 +16,11 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.fhir.Client.ResourceClient;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.fhir.Server.IGroupProvider;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.IGroupMapper;
 import org.immregistries.ehr.logic.mapping.IOrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +59,8 @@ public class EhrGroupController {
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
     private FacilityRepository facilityRepository;
-    /**
-     * Used for identifier in Parameters for query
-     * not critical to be able to use R4
-     */
+
+
     @Autowired
     private FhirClientController fhirClientController;
     @Autowired
@@ -68,6 +69,9 @@ public class EhrGroupController {
     private BulkImportController bulkImportController;
     @Autowired
     private ResourceIdentificationService resourceIdentificationService;
+
+    @Autowired
+    private ResourceClient resourceClient;
 
     @GetMapping("/{groupId}")
     public EhrGroup get(@PathVariable() String groupId) {
@@ -86,7 +90,8 @@ public class EhrGroupController {
             ehrGroup.setFacility(facility);
             EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
             if (ehrGroup.getImmunizationRegistry() != null) {
-                fhirClientController.postResource(ehrGroup.getImmunizationRegistry().getId(), "Group", fhirConversionController.groupResource(newEntity.getId()).getBody());
+                MethodOutcome methodOutcome = resourceClient.create(fhirComponentsDispatcher.groupMapper().toFhir(ehrGroup), ehrGroup.getImmunizationRegistry());
+//                fhirClientController.postResource(ehrGroup.getImmunizationRegistry().getId(), "Group", fhirConversionController.groupResource(newEntity.getId()).getBody());
             }
             return new ResponseEntity<>(newEntity.getId(), HttpStatus.CREATED);
         }
@@ -104,8 +109,27 @@ public class EhrGroupController {
                     HttpStatus.NOT_ACCEPTABLE, "Name already used by another group");
         } else {
             ehrGroup.setFacility(oldEntity.getFacility());
-            EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
-            return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
+            ehrGroup.setId(oldEntity.getId());
+            /**
+             * Set read only Json fields
+             */
+            ehrGroup.setPatientList(oldEntity.getPatientList());
+            if (ehrGroup.getImmunizationRegistry() == null) {
+                EhrGroup newEntity = ehrGroupRepository.save(ehrGroup);
+                return new ResponseEntity<>(newEntity, HttpStatus.ACCEPTED);
+            } else {
+                IGroupMapper groupMapper = fhirComponentsDispatcher.groupMapper();
+                IBaseResource group = groupMapper.toFhir(ehrGroup);
+                MethodOutcome methodOutcome = resourceClient.updateOrCreate(group, "Group", groupMapper.extractGroupIdentifier(group), ehrGroup.getImmunizationRegistry());
+                if (methodOutcome.getCreated() != null) {
+                    return new ResponseEntity<>(refreshOne(oldEntity.getId()), HttpStatus.ACCEPTED);
+                } else if (methodOutcome.getResource() != null) {
+                    ((IGroupProvider) fhirComponentsDispatcher.provider("Group")).update(methodOutcome.getResource(), ehrGroup.getFacility(), ehrGroup.getImmunizationRegistry());
+                    return new ResponseEntity<>(ehrGroupRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), ehrGroup.getId()).get(), HttpStatus.ACCEPTED);
+                } else {
+                    throw new RuntimeException("Error parsing fhir Update result");
+                }
+            }
         }
     }
 

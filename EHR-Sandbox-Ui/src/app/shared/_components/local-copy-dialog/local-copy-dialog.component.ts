@@ -52,10 +52,6 @@ export class LocalCopyDialogComponent implements OnInit {
     // })
   }
 
-  selectFacility(facility: Facility) {
-    // this.facility = facility
-  }
-
   copy(facility: Facility) {
     if (this.patient) {
       let params = new HttpParams()

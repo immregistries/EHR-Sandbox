@@ -31,6 +31,9 @@ export class VaccinationDashboardComponent implements OnInit {
         }
       })
     }
+    this._dialogRef?.afterClosed().subscribe(() => {
+      this.patientService.doRefresh()
+    })
   }
 
   ngOnInit(): void {

@@ -2,11 +2,8 @@ import { Injectable } from '@angular/core';
 import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
 import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { EhrPatient, VaccinationEvent } from '../_model/rest';
-import { FeedbackService } from './feedback.service';
-import { PatientService } from './patient.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FacilityService } from './facility.service';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -15,11 +12,7 @@ import { Router } from '@angular/router';
 export class SnackBarService {
 
   constructor(private _snackBar: MatSnackBar,
-    private patientService: PatientService,
-    private facilityService: FacilityService,
-    private feedbackService: FeedbackService,
     private dialog: MatDialog,
-    private router: Router,
   ) { }
 
   open(message: string) {
@@ -40,9 +33,9 @@ export class SnackBarService {
     })
   }
 
-  notification() {
+  notification(onAction: () => void) {
     return this._snackBar.open("Data received, refresh required", `refresh`,
-      { duration: 15000 }).onAction().subscribe(() => { this.facilityService.doRefresh(); this.patientService.doRefresh; this.feedbackService.doRefresh() })
+      { duration: 15000 }).onAction().subscribe(onAction)
   }
 
   errorMessage(message: string) {
@@ -79,7 +72,7 @@ export class SnackBarService {
       data: { patient: patient },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.patientService.doRefresh()
+      // this.patientService.doRefresh()
     });
   }
 
@@ -93,7 +86,7 @@ export class SnackBarService {
       data: { patient: patient, vaccination: vaccination },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.patientService.doRefresh()
+      // this.patientService.doRefresh()
     });
   }
 }

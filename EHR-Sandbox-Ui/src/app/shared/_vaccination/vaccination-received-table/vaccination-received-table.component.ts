@@ -9,7 +9,6 @@ import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.c
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-vaccination-received-table',

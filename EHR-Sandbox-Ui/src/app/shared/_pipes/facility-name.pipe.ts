@@ -1,8 +1,6 @@
 import { Pipe, type PipeTransform } from '@angular/core';
-import { map, merge, Observable, of, share, shareReplay } from 'rxjs';
 import { Facility } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Pipe({
   name: 'facilityName',

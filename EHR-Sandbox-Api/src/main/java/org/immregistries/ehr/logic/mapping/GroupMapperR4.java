@@ -1,5 +1,6 @@
 package org.immregistries.ehr.logic.mapping;
 
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.ehr.api.entities.EhrGroup;
 import org.immregistries.ehr.api.entities.EhrPatient;
@@ -30,7 +31,7 @@ public class GroupMapperR4 implements IGroupMapper<Group> {
         EhrGroup ehrGroup = new EhrGroup();
         ehrGroup.setName(group.getName());
         ehrGroup.setCode(group.getCode().getText());
-//        ehrGroup.setDescription(group.get.getDescription());
+//        ehrGroup.setDescription(group.getDescription());
         Set<EhrGroupCharacteristic> ehrGroupCharacteristicSet = new HashSet<>(group.getCharacteristic().size());
         ehrGroup.setEhrGroupCharacteristics(ehrGroupCharacteristicSet);
         for (Group.GroupCharacteristicComponent characteristicComponent : group.getCharacteristic()) {
@@ -107,5 +108,11 @@ public class GroupMapperR4 implements IGroupMapper<Group> {
 
         return group;
     }
+
+    public EhrIdentifier extractGroupIdentifier(IBaseResource iBaseResource) {
+        Group group = (Group) iBaseResource;
+        return new EhrIdentifier(group.getIdentifierFirstRep());
+    }
+
 
 }

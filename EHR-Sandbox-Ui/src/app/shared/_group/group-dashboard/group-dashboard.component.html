@@ -15,7 +15,10 @@
         <mat-card-content class="dashboard-card-content" #display>
           <mat-list>
             <mat-list-item>Remote IIS: {{ehrGroup.immunizationRegistry?.name ?? 'N/A' }}
-              <button type="button" mat-icon-button color="primary" (click)="openImmunizationRegistry()" *ngIf="ehrGroup.immunizationRegistry"><mat-icon>open_in_new</mat-icon></button>
+              <button type="button" mat-icon-button color="primary" (click)="openImmunizationRegistry()"
+                      *ngIf="ehrGroup.immunizationRegistry">
+                <mat-icon>open_in_new</mat-icon>
+              </button>
             </mat-list-item>
             <mat-divider></mat-divider>
             <p>Description: {{ehrGroup.description}} </p>
@@ -26,10 +29,10 @@
     <mat-grid-tile [colspan]="2">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
-          <app-patient-table [dataArray]="ehrGroup.patientList" [title]="'Group members'" [allow_create]="false"
-            [columns]='["mrn","nameLast","nameFirst","birthDate","remove"]'
-            [facility]="facilityService.getCurrentObservable() | async"
-            (removeEmitter)="removePatient($event)"></app-patient-table>
+          <app-patient-table [dataArray]="ehrGroup.patientList | patientCache" [title]="'Group members'"
+                             [allow_create]="false" [columns]='["mrn","nameLast","nameFirst","birthDate","remove"]'
+                             [facility]="facilityService.getCurrentObservable() | async"
+                             (removeEmitter)="removePatient($event)"></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

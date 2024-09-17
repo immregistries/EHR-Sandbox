@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, concat, concatMap, defer, filter, iif, merge, of, share, switchMap, take, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, concat, concatMap, defer, filter, iif, merge, of, share, switchMap, take, tap, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { EhrPatient, Revision } from '../_model/rest';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
-import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
+import { CurrentSelectedWithIdService } from './_abstract/current-selected-with-id.service';
+import { SnackBarService } from './snack-bar.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,13 +20,21 @@ const httpOptions = {
  */
 export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
 
+  private _patientsCached: EhrPatient[] | undefined;
+  public get patientsCached(): EhrPatient[] | undefined {
+    return this._patientsCached;
+  }
+
+
   if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService) {
-    super(new BehaviorSubject<EhrPatient>({ id: -1 }))
+    private tenantService: TenantService,
+    snackBarService: SnackBarService
+  ) {
+    super(new BehaviorSubject<EhrPatient>({ id: -1 }), snackBarService)
     /**
      * Making it so that changing selected globally facility unselects patient
      */
@@ -56,12 +65,17 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
    */
   quickReadPatients(): Observable<EhrPatient[]> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value) {
+      if (value === true) {
         return this.http.get<EhrPatient[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients`,
-          httpOptions)
+          httpOptions).pipe(tap((result) => {
+            this._patientsCached = result
+          }))
+
       } else {
-        return of([])
+        return of([]).pipe(tap((result) => {
+          this._patientsCached = undefined
+        }))
       }
     }))
   }
@@ -77,7 +91,9 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
     if (tenantId > 0 && facilityId > 0) {
       return this.http.get<EhrPatient[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients`,
-        httpOptions);
+        httpOptions).pipe(tap((result) => {
+          this._patientsCached = result
+        }));
     }
     return of([])
   }
@@ -91,7 +107,9 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
     if (tenantId > 0) {
       return this.http.get<EhrPatient[]>(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/patients`,
-        httpOptions);
+        httpOptions).pipe(tap((result) => {
+          this._patientsCached = result
+        }));
     }
     return of([])
   }

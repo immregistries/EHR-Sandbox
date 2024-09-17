@@ -10,6 +10,10 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { Group } from 'fhir/r5';
 import { filter } from 'rxjs';
 
+
+/**
+ * Deprecated
+ */
 @Component({
   selector: 'app-remote-group-dashboard',
   templateUrl: './remote-group-dashboard.component.html',

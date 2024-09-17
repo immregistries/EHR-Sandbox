@@ -8,6 +8,8 @@ import { ImmunizationRegistryService } from 'src/app/core/_services/immunization
 import { Identifier } from 'fhir/r5';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { SubscriptionService } from './subscription.service';
+import { IdUrlVerifyingService } from '../_abstract/id-url-verifying.service';
+import { SnackBarService } from '../snack-bar.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,14 +20,20 @@ const httpOptions = {
 /**
  * Fhir service interacting with the API to parse and serialize resources, and interact with IIS's
  */
-export class FhirClientService {
+export class FhirClientService extends IdUrlVerifyingService {
 
-  constructor(private http: HttpClient,
+  constructor(
+    snackBarService: SnackBarService,
+    private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private registryService: ImmunizationRegistryService,
-    private subscriptionService: SubscriptionService) { }
+    private subscriptionService: SubscriptionService,
+    // private service: Service
+  ) {
+    super(snackBarService)
+  }
 
   postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match" | "$transaction" | "", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<string> {
     if (operation == "$match") {
@@ -47,6 +55,8 @@ export class FhirClientService {
         break;
       }
       case "Practitionner": {
+        return this.quickPostPractitioner(
+          resourceLocalId, resource, operation);
         break;
       }
       case "Group": {
@@ -99,27 +109,40 @@ export class FhirClientService {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
+    if (this.idsNotValid(tenantId)) {
+      return of("")
+    }
     switch (operation) {
       case "Create": {
         return this.http.post<string>(
-          `${this.settings.getApiUrl()}/registry/${registryId}?type=Organization`,
+          `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}`,
           resource,
-          httpOptions);
+          {
+            ...httpOptions,
+            params: { "type": "Organization" }
+          });
       }
       case "UpdateOrCreate":
       case "Update":
       default:
         return this.http.put<string>(
-          `${this.settings.getApiUrl()}/registry/${registryId}?type=Organization`,
+          `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}`,
           resource,
-          httpOptions);
+          {
+            ...httpOptions,
+            params: { "type": "Organization" }
+          });
     }
   }
 
   postGroup(resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceId: number): Observable<string> {
     const registryId = this.registryService.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    if (this.idsNotValid(tenantId)) {
+      return of("")
+    }
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}`,
       resource,
       { ...httpOptions, params: new HttpParams().append("type", "Group") });
   }
@@ -136,6 +159,32 @@ export class FhirClientService {
       default:
         return this.putImmunization(tenantId, facilityId, patientId, vaccinationId, resource, patientFhirId)
     }
+  }
+
+  quickPostPractitioner(clinicianId: number, resource: string, operation: "Create" | "Update" | "UpdateOrCreate"): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    switch (operation) {
+      case "Create": {
+        return this.postPractitioner(tenantId, clinicianId, resource)
+      }
+      case "UpdateOrCreate":
+      case "Update":
+      default:
+        return this.putPractitioner(tenantId, clinicianId, resource)
+    }
+  }
+
+  postPractitioner(tenantId: number, clinicianId: number, resource: string): Observable<string> {
+    const registryId = this.registryService.getCurrentId()
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians/${clinicianId}/fhir-client/registry/${registryId}`,
+      resource);
+  }
+  putPractitioner(tenantId: number, clinicianId: number, resource: string): Observable<string> {
+    const registryId = this.registryService.getCurrentId()
+    return this.http.put<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians/${clinicianId}/fhir-client/registry/${registryId}`,
+      resource);
   }
 
   postImmunization(tenantId: number, facilityId: number, patientId: number, vaccinationId: number, resource: string, patientFhirId?: string): Observable<string> {
@@ -198,8 +247,12 @@ export class FhirClientService {
 
   getFromIIS(resourceType: string, identifier: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
+    const tenantId = this.tenantService.getCurrentId()
+    if (this.idsNotValid(tenantId)) {
+      return of("")
+    }
     return this.http.get(
-      `${this.settings.getApiUrl()}/registry/${registryId}/${resourceType}${identifier ? '/' + identifier : ''}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/${resourceType}${identifier ? '/' + identifier : ''}`,
       { responseType: 'text' });
   }
 

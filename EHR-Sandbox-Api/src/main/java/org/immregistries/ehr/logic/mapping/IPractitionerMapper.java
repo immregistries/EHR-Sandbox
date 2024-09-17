@@ -7,6 +7,8 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import static org.immregistries.ehr.logic.ResourceIdentificationService.CLINICIAN_SYSTEM;
 
 public interface IPractitionerMapper<Practitioner extends IBaseResource> extends IEhrEntityFhirMapper<Clinician> {
+    String QUALIFICATION_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0360";
+
     Practitioner toFhir(Clinician clinician);
 
     Clinician toClinician(Practitioner practitioner);

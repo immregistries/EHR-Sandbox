@@ -6,7 +6,8 @@ import { BehaviorSubject, Observable, of, share, switchMap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
-import { RefreshService } from './refresh.service';
+import { RefreshService } from './_abstract/refresh.service';
+import { SnackBarService } from './snack-bar.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,9 +23,11 @@ export class FeedbackService extends RefreshService {
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
-    private tenantService: TenantService ) {
-      super()
-    }
+    private tenantService: TenantService,
+    snackBarService: SnackBarService
+  ) {
+    super(snackBarService)
+  }
 
   postPatientFeedback(patientId: number, feedback: Feedback): Observable<Feedback> {
     const tenantId: number = this.tenantService.getCurrentId()
@@ -58,7 +61,7 @@ export class FeedbackService extends RefreshService {
 
   readCurrentFacilityFeedback(): Observable<Feedback[]> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value) {
+      if (value === true) {
         return this.http.get<Feedback[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/feedbacks`,
           httpOptions)

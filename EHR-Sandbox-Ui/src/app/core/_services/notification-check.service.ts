@@ -5,6 +5,8 @@ import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
 import { SnackBarService } from './snack-bar.service';
+import { PatientService } from './patient.service';
+import { FeedbackService } from './feedback.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -20,6 +22,8 @@ export class NotificationCheckService {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
+    private patientService: PatientService,
+    private feedbackService: FeedbackService,
     private snackBarService: SnackBarService) { }
 
   setNotificationJsSubscription(subscription: Subscription): void {
@@ -39,7 +43,7 @@ export class NotificationCheckService {
             //return needToRefresh TODO uncomment
             return false
           })).subscribe((notification) => {
-            this.snackBarService.notification()
+            this.snackBarService.notification(() => { this.facilityService.doRefresh(); this.patientService.doRefresh; this.feedbackService.doRefresh() })
           })
         }
       })
@@ -58,7 +62,7 @@ export class NotificationCheckService {
     const facilityId = this.facilityService.getCurrentId()
     if (tenantId > 0 && facilityId > 0) {
       return this.http.get<boolean>(
-        `${this.settings.getApiUrl()}/$notification?timestamp=${lastRefreshTime}`, httpOptions);
+        `${this.settings.getApiUrl()}/$notification`, { ...httpOptions, params: { 'timestamp': lastRefreshTime } });
       // `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/notification/${timestamp}`, httpOptions);
     } else {
       return of(false)

@@ -5,8 +5,9 @@ import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
 import { ImmunizationRegistryService } from './immunization-registry.service';
-import { CurrentSelectedService } from './current-selected.service';
+import { CurrentSelectedService } from './_abstract/current-selected.service';
 import { EhrGroup } from '../_model/rest';
+import { SnackBarService } from './snack-bar.service';
 
 
 const httpOptions = {
@@ -23,8 +24,10 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private immunizationRegistryService: ImmunizationRegistryService) {
-    super(new BehaviorSubject<EhrGroup>({}))
+    private immunizationRegistryService: ImmunizationRegistryService,
+    snackBarService: SnackBarService
+  ) {
+    super(new BehaviorSubject<EhrGroup>({}), snackBarService)
   }
 
   /**
@@ -33,7 +36,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
    */
   quickReadGroups(): Observable<EhrGroup[]> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value) {
+      if (value === true) {
         return this.http.get<EhrGroup[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/groups`,
           httpOptions).pipe(share())
@@ -158,7 +161,7 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     }
   }
 
-  getGroupFromName(name: String): Observable<EhrGroup> {
+  getGroupFromName(name: string): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // const registryId: number | undefined = this.immunizationRegistryService.getCurrentId()
@@ -168,8 +171,8 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     // };
     if (tenantId > 0 && facilityId > 0) {
       return this.http.get<EhrGroup>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups?name=${name}`,
-        httpOptions);
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`,
+        { ...httpOptions, params: { 'name': name } });
     } else {
       return of()
     }
@@ -177,13 +180,13 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
 
 
 
-  addMember(groupId: number, patientId: String): Observable<EhrGroup> {
+  addMember(groupId: number, patientId: string): Observable<EhrGroup> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     if (tenantId > 0 && facilityId > 0) {
       return this.http.post<EhrGroup>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$add?patientId=${patientId}`,
-        httpOptions);
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$add`, null,
+        { ...httpOptions, params: { 'patientId': patientId } });
     } else {
       return of()
     }
@@ -194,8 +197,8 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     const facilityId: number = this.facilityService.getCurrentId()
     if (tenantId > 0 && facilityId > 0) {
       return this.http.post<EhrGroup>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$remove?patientId=${patientId}`,
-        httpOptions);
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups/${groupId}/$remove`, null,
+        { ...httpOptions, params: { 'patientId': patientId } });
     } else {
       return of()
     }

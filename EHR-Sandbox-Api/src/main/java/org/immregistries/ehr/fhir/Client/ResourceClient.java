@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -68,7 +69,7 @@ public class ResourceClient implements IResourceClient {
     public MethodOutcome updateOrCreate(IBaseResource resource, String type, EhrIdentifier ehrIdentifier, IGenericClient client) {
         MethodOutcome outcome;
         try {
-            if (ehrIdentifier != null && ehrIdentifier.getValue() != null && !ehrIdentifier.getValue().isEmpty()) {
+            if (ehrIdentifier != null && StringUtils.isNotBlank(ehrIdentifier.getValue())) {
                 outcome = client.update().resource(resource).conditionalByUrl(
                         type + "?identifier=" + ehrIdentifier.getSystem() + "|" + ehrIdentifier.getValue()
                                 + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"

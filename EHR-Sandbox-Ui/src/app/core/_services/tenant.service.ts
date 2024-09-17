@@ -4,7 +4,8 @@ import { Tenant } from '../_model/rest';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
-import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
+import { CurrentSelectedWithIdService } from './_abstract/current-selected-with-id.service';
+import { SnackBarService } from './snack-bar.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,8 +19,10 @@ const httpOptions = {
 })
 export class TenantService extends CurrentSelectedWithIdService<Tenant> {
 
-  constructor(private http: HttpClient, private settings: SettingsService) {
-    super(new BehaviorSubject<Tenant>({ id: -1 }))
+  constructor(private http: HttpClient, private settings: SettingsService,
+    snackBarService: SnackBarService
+  ) {
+    super(new BehaviorSubject<Tenant>({ id: -1 }), snackBarService)
   }
 
   readTenants(): Observable<Tenant[]> {

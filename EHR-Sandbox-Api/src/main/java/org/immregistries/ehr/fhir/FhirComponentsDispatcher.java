@@ -11,8 +11,8 @@ import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.fhir.Client.CustomClientFactory;
 import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
+import org.immregistries.ehr.fhir.Client.EhrFhirClientFactory;
 import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
 import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
 import org.immregistries.ehr.logic.*;
@@ -80,8 +80,8 @@ public class FhirComponentsDispatcher {
     private FhirContext fhirContextR5;
     private FhirContext fhirContextR4;
 
-    private CustomClientFactory customClientFactoryR5;
-    private CustomClientFactory customClientFactoryR4;
+    private EhrFhirClientFactory ehrFhirClientFactoryR5;
+    private EhrFhirClientFactory ehrFhirClientFactoryR4;
     private Map<Class, IEhrEntityFhirMapper> mappersR4 = new HashMap<Class, IEhrEntityFhirMapper>(10);
     private Map<Class, IEhrEntityFhirMapper> mappersR5 = new HashMap<Class, IEhrEntityFhirMapper>(10);
 
@@ -92,15 +92,15 @@ public class FhirComponentsDispatcher {
         this.fhirContextR5 = fhirContextR5;
         CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
         this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
-        customClientFactoryR5 = new CustomClientFactory();
-        customClientFactoryR5.setFhirContext(fhirContextR5);
-        customClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
+        ehrFhirClientFactoryR5 = new EhrFhirClientFactory();
+        ehrFhirClientFactoryR5.setFhirContext(fhirContextR5);
+        ehrFhirClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
 
         this.fhirContextR4 = fhirContextR4;
         fhirContextR4.setNarrativeGenerator(null);
-        customClientFactoryR4 = new CustomClientFactory();
-        customClientFactoryR4.setFhirContext(fhirContextR4);
-        customClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
+        ehrFhirClientFactoryR4 = new EhrFhirClientFactory();
+        ehrFhirClientFactoryR4.setFhirContext(fhirContextR4);
+        ehrFhirClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
     }
 
 
@@ -123,13 +123,13 @@ public class FhirComponentsDispatcher {
         return parser;
     }
 
-    public CustomClientFactory clientFactory() {
+    public EhrFhirClientFactory clientFactory() {
         if (r5Flavor()) {
-            return customClientFactoryR5;
+            return ehrFhirClientFactoryR5;
         } else if (r4Flavor()) {
-            return customClientFactoryR4;
+            return ehrFhirClientFactoryR4;
         }
-        return customClientFactoryR5;
+        return ehrFhirClientFactoryR5;
     }
 
 

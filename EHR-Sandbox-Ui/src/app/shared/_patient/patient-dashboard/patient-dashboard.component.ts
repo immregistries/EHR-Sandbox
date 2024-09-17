@@ -28,6 +28,9 @@ export class PatientDashboardComponent {
         });
       }
     }
+    this._dialogRef?.afterClosed().subscribe(() => {
+      this.patientService.doRefresh()
+    })
   }
 
   vaccinationListRefreshObservable(): Observable<any> {

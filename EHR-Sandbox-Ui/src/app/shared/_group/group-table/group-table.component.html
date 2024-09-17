@@ -28,7 +28,7 @@
   </ng-container>
   <ng-container matColumnDef="member-count">
     <th mat-header-cell *matHeaderCellDef>Members</th>
-    <td mat-cell *matCellDef="let element">{{element.patientList.length}}</td>
+    <td mat-cell *matCellDef="let element">{{element.patientList?.length}}</td>
   </ng-container>
 
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->

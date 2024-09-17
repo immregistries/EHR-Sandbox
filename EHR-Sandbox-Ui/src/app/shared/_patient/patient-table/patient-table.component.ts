@@ -82,7 +82,7 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: { patient: patient.id },
+      data: { patient: patient },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()

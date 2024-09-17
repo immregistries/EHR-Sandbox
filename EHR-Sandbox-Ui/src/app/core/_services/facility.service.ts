@@ -4,8 +4,10 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Facility } from '../_model/rest';
 import { BehaviorSubject, merge, Observable, of, share, shareReplay, tap } from 'rxjs';
 import { SettingsService } from './settings.service';
-import { CurrentSelectedWithIdService } from './current-selected-with-id.service';
+import { CurrentSelectedWithIdService } from './_abstract/current-selected-with-id.service';
 import { TenantService } from './tenant.service';
+import { IdUrlVerifyingService } from './_abstract/id-url-verifying.service';
+import { SnackBarService } from './snack-bar.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -27,8 +29,9 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private tenantService: TenantService,
+    snackBarService: SnackBarService
   ) {
-    super(new BehaviorSubject<Facility>({ id: -1 }))
+    super(new BehaviorSubject<Facility>({ id: -1 }), snackBarService)
     // merge(
     //   this.getRefresh(),
     //   tenantService.getCurrentObservable()
@@ -55,14 +58,15 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   }
 
   readFacilities(tenantId: number): Observable<Facility[]> {
-    if (tenantId > 0) {
-      return this.http.get<Facility[]>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
-        httpOptions).pipe(tap((result) => {
-          this._facilitiesCached = result
-        }));
+    if (this.idsNotValid(tenantId)) {
+      return of([])
     }
-    return of([])
+    return this.http.get<Facility[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
+      httpOptions).pipe(tap((result) => {
+        this._facilitiesCached = result
+      }));
+
   }
 
   getRandom(tenantId: number): Observable<Facility> {
@@ -89,10 +93,10 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   }
 
   postFacility(tenantId: number, facility: Facility, populate?: boolean): Observable<HttpResponse<Facility>> {
+    let parameters = populate ? { 'populate': populate + "" } : undefined
     return this.http.post<Facility>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities${populate ? `?populate=${populate}` : ''
-      }`,
-      facility, { observe: 'response' })
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
+      facility, { ...httpOptions, observe: 'response', params: parameters })
   }
 
 

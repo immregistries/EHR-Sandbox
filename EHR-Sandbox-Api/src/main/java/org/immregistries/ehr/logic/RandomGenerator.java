@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
@@ -80,7 +79,6 @@ public class RandomGenerator {
         Date registryStatusIndicatorDate = between(twoYearsAgo, tenDaysAgo);
         Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
         String lastname = faker.name().lastName();
         int length = lastname.length();
         String mrn = lastname.substring(0, min(length, 4))
@@ -109,22 +107,10 @@ public class RandomGenerator {
         ehrPatient.setBirthDate(birthDate);
 
 
-        EhrAddress ehrAddress = new EhrAddress();
+        EhrAddress ehrAddress = randomAddress();
         ehrPatient.addAddress(ehrAddress);
-        ehrAddress.setAddressLine1(faker.address().streetAddress());
-        ehrAddress.setAddressCity(faker.address().city());
-        ehrAddress.setAddressCountry("USA");
-        ehrAddress.setAddressState(faker.address().stateAbbr());
-        ehrAddress.setAddressZip(faker.address().zipCode());
-        try {
-            ehrAddress.setAddressCountyParish(faker.address().countyByZipCode(ehrAddress.getAddressZip()));
-        } catch (RuntimeException e) {
 
-        }
-
-        EhrPhoneNumber phoneNumber = new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6));
-        phoneNumber.setUse("PRN");
-        phoneNumber.setType("CP");
+        EhrPhoneNumber phoneNumber = randomPhoneNumber();
         ehrPatient.addPhoneNumber(phoneNumber);
         ehrPatient.setEmail(ehrPatient.getNameFirst() + randDay + "@email.com");
 
@@ -352,7 +338,37 @@ public class RandomGenerator {
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setValue(RandomStringUtils.random(15, true, true));
         clinician.getIdentifiers().add(ehrIdentifier);
+        EhrAddress ehrAddress = randomAddress();
+        clinician.addAddress(ehrAddress);
+
+        EhrPhoneNumber ehrPhoneNumber = randomPhoneNumber();
+        clinician.addPhoneNumber(ehrPhoneNumber);
         return clinician;
+    }
+
+    private EhrPhoneNumber randomPhoneNumber() {
+        Faker faker = new Faker();
+        EhrPhoneNumber phoneNumber = new EhrPhoneNumber(faker.phoneNumber().extension() + faker.phoneNumber().subscriberNumber(6));
+        phoneNumber.setUse("PRN");
+        phoneNumber.setType("CP");
+        return phoneNumber;
+
+    }
+
+    private EhrAddress randomAddress() {
+        Faker faker = new Faker();
+        EhrAddress ehrAddress = new EhrAddress();
+        ehrAddress.setAddressLine1(faker.address().streetAddress());
+        ehrAddress.setAddressCity(faker.address().city());
+        ehrAddress.setAddressCountry("USA");
+        ehrAddress.setAddressState(faker.address().stateAbbr());
+        ehrAddress.setAddressZip(faker.address().zipCode());
+        try {
+            ehrAddress.setAddressCountyParish(faker.address().countyByZipCode(ehrAddress.getAddressZip()));
+        } catch (RuntimeException e) {
+
+        }
+        return ehrAddress;
     }
 
     private Code randomCode(Collection<Code> collection) {

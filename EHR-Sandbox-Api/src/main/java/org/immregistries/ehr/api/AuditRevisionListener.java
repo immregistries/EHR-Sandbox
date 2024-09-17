@@ -9,16 +9,16 @@ import org.immregistries.ehr.api.security.UserDetailsImpl;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Service
-public class AuditRevisionListener implements RevisionListener {
+public class AuditRevisionListener implements RevisionListener, ApplicationContextAware {
     public static final String IMMUNIZATION_REGISTRY_ID = "immunization_registry_id";
     public static final String SUBSCRIPTION_ID = "subscription_id";
     public static final String USER_ID = "user_id";
@@ -27,12 +27,17 @@ public class AuditRevisionListener implements RevisionListener {
     public static final String COPIED_FACILITY_ID = "copied_facility_id";
     Logger logger = LoggerFactory.getLogger(AuditRevisionListener.class);
 
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
     private FacilityRepository facilityRepository;
-    @Autowired
     private UserRepository userRepository;
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.userDetailsService = applicationContext.getBean(UserDetailsServiceImpl.class);
+        this.userRepository = applicationContext.getBean(UserRepository.class);
+        this.facilityRepository = applicationContext.getBean(FacilityRepository.class);
+    }
 
     @Override
     public void newRevision(Object revisionEntity) {

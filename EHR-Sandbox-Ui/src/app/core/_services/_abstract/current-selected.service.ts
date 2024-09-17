@@ -1,5 +1,6 @@
 import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { RefreshService } from './refresh.service';
+import { SnackBarService } from '../snack-bar.service';
 
 export class CurrentSelectedService<T> extends RefreshService {
   protected current!: BehaviorSubject<T>;
@@ -28,16 +29,16 @@ export class CurrentSelectedService<T> extends RefreshService {
     this.updateLastRefreshtime()
   }
 
-  public override doRefresh(): void{
+  public override doRefresh(): void {
     super.doRefresh()
     this.lastRefreshTime = new Date().getTime()
   }
 
-  constructor(subject : BehaviorSubject<T>
-    ) {
-      super()
-      this.current = subject
-      this.lastRefreshTime = new Date().getTime()
-   }
+  constructor(subject: BehaviorSubject<T>,
+    snackBarService: SnackBarService) {
+    super(snackBarService);
+    this.current = subject
+    this.lastRefreshTime = new Date().getTime()
+  }
 
 }

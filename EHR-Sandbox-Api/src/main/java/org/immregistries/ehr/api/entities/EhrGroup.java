@@ -1,9 +1,6 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
@@ -41,12 +38,15 @@ public class EhrGroup extends EhrEntity {
     @ManyToOne
     @JoinColumn(name = "immunization_registry_id")
     private ImmunizationRegistry immunizationRegistry;
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "group_members",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<EhrPatient> patientList;
-    @ElementCollection()
+
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "group_characteristics", joinColumns = @JoinColumn(name = "group_id"))
     private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
 

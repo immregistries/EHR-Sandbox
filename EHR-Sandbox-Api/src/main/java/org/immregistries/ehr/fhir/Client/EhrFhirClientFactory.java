@@ -34,8 +34,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-public class CustomClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
-    private static final Logger logger = LoggerFactory.getLogger(CustomClientFactory.class);
+public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
+    private static final Logger logger = LoggerFactory.getLogger(EhrFhirClientFactory.class);
 
     LoggingInterceptor loggingInterceptor;
 
@@ -44,7 +44,7 @@ public class CustomClientFactory extends ApacheRestfulClientFactory implements I
 //                () -> new RuntimeException("Invalid immunization registry id")
 //        ));
 //    }
-    public CustomClientFactory() {
+    public EhrFhirClientFactory() {
         super();
         loggingInterceptor = new LoggingInterceptor();
         loggingInterceptor.setLogger(logger);

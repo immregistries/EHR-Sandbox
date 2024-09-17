@@ -125,6 +125,7 @@ import { FacilityNamePipe } from './_pipes/facility-name.pipe';
 import { CustomValidatorAsyncDirective } from './_directive/custom-validator-async.directive';
 import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component";
 import { QRCodeModule } from 'angularx-qrcode';
+import { PatientCachePipe } from './_pipes/patient-cache.pipe';
 
 @NgModule({
   declarations: [
@@ -141,6 +142,7 @@ import { QRCodeModule } from 'angularx-qrcode';
     CodeMapsPipe,
     TextShortenPipe,
     FacilityNamePipe,
+    PatientCachePipe,
 
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
@@ -342,6 +344,8 @@ import { QRCodeModule } from 'angularx-qrcode';
     TextShortenPipe,
     RegistryNamePipe,
     FacilityNamePipe,
+    PatientCachePipe,
+
 
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,

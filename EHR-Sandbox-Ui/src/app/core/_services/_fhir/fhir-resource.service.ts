@@ -111,14 +111,14 @@ export class FhirResourceService {
     } else {
       return this.http.get(
         `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians/${clinicianId}/resource`,
-        { responseType: 'text' });
+        { ...httpOptions, responseType: 'text' });
     }
   }
 
   getVaccinationExportBundle(patientId: number, vaccinationId: number): Observable<string> {
     return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
       .pipe(switchMap((value) => {
-        if (value) {
+        if (value === true) {
           return this.http.get(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/vaccinations/${vaccinationId}/bundle`,
             { responseType: 'text' });
         } else {
@@ -130,7 +130,7 @@ export class FhirResourceService {
   getPatientExportBundle(patientId: number): Observable<string> {
     return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
       .pipe(switchMap((value) => {
-        if (value) {
+        if (value === true) {
           return this.http.get(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/bundle`,
             { responseType: 'text' });
         } else {
@@ -142,7 +142,7 @@ export class FhirResourceService {
   getFacilityExportBundle(facilityId: number): Observable<string> {
     return new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && facilityId > 0))
       .pipe(switchMap((value) => {
-        if (value) {
+        if (value === true) {
           return this.http.get(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${facilityId}/bundle`,
             { responseType: 'text' });
         } else {

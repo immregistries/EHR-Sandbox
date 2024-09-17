@@ -5,8 +5,9 @@ import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 import { Revision, VaccinationEvent } from '../_model/rest';
-import { RefreshService } from './refresh.service';
+import { RefreshService } from './_abstract/refresh.service';
 import { PatientService } from './patient.service';
+import { SnackBarService } from './snack-bar.service';
 
 
 const httpOptions = {
@@ -20,17 +21,17 @@ const httpOptions = {
 })
 export class VaccinationService extends RefreshService {
 
-  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0 && this.patientService.getCurrentId() > 0))
-  if_valid_tenant_facility_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
-
-
+  if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService, this.patientService);
+  if_valid_tenant_facility_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService);
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
     private tenantService: TenantService,
-    private patientService: PatientService) {
-    super()
+    private patientService: PatientService,
+    snackBarService: SnackBarService
+  ) {
+    super(snackBarService)
   }
 
   readRandom(patientId: number): Observable<VaccinationEvent> {
@@ -46,7 +47,7 @@ export class VaccinationService extends RefreshService {
    */
   quickReadVaccinations(): Observable<VaccinationEvent[]> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value) {
+      if (value === true) {
         return this.http.get<VaccinationEvent[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${this.patientService.getCurrentId()}/vaccinations`,
           httpOptions).pipe(share());
@@ -57,8 +58,8 @@ export class VaccinationService extends RefreshService {
   }
 
   readVaccinations(patientId: number): Observable<VaccinationEvent[]> {
-    return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value) {
+    return this.if_valid_tenant_facility_ids.pipe(switchMap((value) => {
+      if (value === true) {
         return this.http.get<VaccinationEvent[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/vaccinations`,
           httpOptions)
@@ -66,25 +67,25 @@ export class VaccinationService extends RefreshService {
         return of([])
       }
     }))
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-    if (tenantId > 0 && facilityId > 0 && patientId > 0) {
-      return this.http.get<VaccinationEvent[]>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
-        httpOptions);
-    } else {
-      return of([])
-    }
+    // const tenantId: number = this.tenantService.getCurrentId()
+    // const facilityId: number = this.facilityService.getCurrentId()
+    // if (tenantId > 0 && facilityId > 0 && patientId > 0) {
+    //   return this.http.get<VaccinationEvent[]>(
+    //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
+    //     httpOptions);
+    // } else {
+    //   return of([])
+    // }
   }
 
   readVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<VaccinationEvent> {
-    if (tenantId > 0 && facilityId > 0 && patientId > 0 && vaccinationId > 0) {
-      return this.http.get<VaccinationEvent>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}`,
-        httpOptions);
-    } else {
+    if (this.idsNotValid(tenantId, facilityId, patientId, vaccinationId)) {
       return of()
     }
+    return this.http.get<VaccinationEvent>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}`,
+      httpOptions);
+
   }
 
   quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent> {
@@ -94,13 +95,12 @@ export class VaccinationService extends RefreshService {
   }
 
   readVaccinationFromFacility(tenantId: number, facilityId: number, vaccinationId: number): Observable<VaccinationEvent> {
-    if (tenantId > 0 && facilityId > 0 && vaccinationId > 0) {
-      return this.http.get<VaccinationEvent>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}`,
-        httpOptions).pipe(share());
-    } else {
+    if (this.idsNotValid(tenantId, facilityId, vaccinationId)) {
       return of()
     }
+    return this.http.get<VaccinationEvent>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}`,
+      httpOptions).pipe(share());
   }
 
   quickPostVaccination(patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
@@ -110,14 +110,14 @@ export class VaccinationService extends RefreshService {
   }
 
   postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
-    if (tenantId > 0 && facilityId > 0 && patientId > 0) {
-      return this.http.post<string>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
-        vaccination,
-        { observe: 'response', params: params });
-    } else {
-      throw throwError(() => new Error("No patient selected"))
+    if (this.idsNotValid(tenantId, facilityId, patientId)) {
+      return of()
     }
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
+      vaccination,
+      { observe: 'response', params: params });
+
   }
 
   quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
@@ -127,19 +127,21 @@ export class VaccinationService extends RefreshService {
   }
 
   putVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
-    if (tenantId > 0 && facilityId > 0 && patientId > 0) {
-      return this.http.put<VaccinationEvent>(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
-        vaccination, httpOptions);
-    } else {
-      throw throwError(() => new Error("No patient selected"))
+    if (this.idsNotValid(tenantId, facilityId, patientId)) {
+      return of()
     }
+    return this.http.put<VaccinationEvent>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
+      vaccination, httpOptions);
   }
 
 
   readVaccinationHistory(vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
+    if (this.idsNotValid(tenantId, facilityId, vaccinationId)) {
+      return of()
+    }
     return this.http.get<Revision<VaccinationEvent>[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}/$history`,
       httpOptions);
@@ -162,6 +164,9 @@ export class VaccinationService extends RefreshService {
       .set("lotNumber", lotNumber)
       .set("cvx", cvx)
       .set("mvx", mvx)
+    if (this.idsNotValid(tenantId, facilityId)) {
+      return of()
+    }
     return this.http.get(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/$lotNumberValidation`,
       { ...httpOptions, params: params, responseType: 'text', observe: 'response' });

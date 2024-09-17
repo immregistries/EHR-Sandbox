@@ -60,9 +60,13 @@ export class GroupBulkCompareComponent {
            * 2 get vaccinations
            */
           this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, this.outputUrlList.find((item) => item.type == "Patient")?.url ?? "").subscribe((patients) => {
-            this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, this.outputUrlList.find((item) => item.type == "Immunization")?.url ?? "").subscribe((imm) => {
-              this.allRemoteVaccinations = imm
-            });
+            let immUrl = this.outputUrlList.find((item) => item.type == "Immunization")?.url;
+            if (immUrl) {
+              this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, immUrl).subscribe((imm) => {
+                this.allRemoteVaccinations = imm
+              });
+            }
+
           });
         }
       }
