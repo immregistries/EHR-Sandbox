@@ -71,7 +71,7 @@ export class PatientToolsComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: { resourceObservable: this.fhirResourceService.quickGetPatientIps(this.patient.id ?? -1), show_hl7_tab: false },
+      data: { resourceObservable: this.fhirResourceService.quickGetPatientIps(this.patient.id ?? -1), show_hl7_tab: false, resourceType: "Bundle" },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()

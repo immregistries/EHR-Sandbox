@@ -30,17 +30,24 @@ public class AuditRevisionListener implements RevisionListener, ApplicationConte
     private UserDetailsServiceImpl userDetailsService;
     private FacilityRepository facilityRepository;
     private UserRepository userRepository;
+    private ApplicationContext applicationContext;
 
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    private void init() {
         this.userDetailsService = applicationContext.getBean(UserDetailsServiceImpl.class);
         this.userRepository = applicationContext.getBean(UserRepository.class);
         this.facilityRepository = applicationContext.getBean(FacilityRepository.class);
     }
 
     @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
     public void newRevision(Object revisionEntity) {
+        if (facilityRepository == null) {
+            init();
+        }
         AuditRevisionEntity audit = (AuditRevisionEntity) revisionEntity;
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 //        for (Iterator<String> it = request.getAttributeNames().asIterator(); it.hasNext(); ) {
@@ -75,7 +82,6 @@ public class AuditRevisionListener implements RevisionListener, ApplicationConte
             if (StringUtils.isNotBlank(request.getParameter(COPIED_FACILITY_ID))) {
                 String copiedFacilityId = request.getParameter(COPIED_FACILITY_ID);
                 UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//                if (facilityRepository.existsById( copiedFacilityId)) { //TODO see why autowired are null
                 if (facilityRepository.existsByUserIdAndId(userDetails.getId(), copiedFacilityId)) {
                     audit.setCopiedFacilityId(copiedFacilityId);
                 }
