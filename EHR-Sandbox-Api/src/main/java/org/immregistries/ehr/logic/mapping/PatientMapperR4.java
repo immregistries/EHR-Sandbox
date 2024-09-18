@@ -65,7 +65,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
 
         Extension motherMaidenName = p.addExtension()
-                .setUrl(MOTHER_MAIDEN_NAME)
+                .setUrl(MOTHER_MAIDEN_NAME_EXTENSION)
                 .setValue(new StringType(ehrPatient.getMotherMaiden()));
 
         p.setGender(MappingHelperR4.toFhirGender(ehrPatient.getSex()));
@@ -73,14 +73,30 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         //Race and ethnicity
         if (!ehrPatient.getRaces().isEmpty()) {
             Extension raceExtension = p.addExtension();
-            raceExtension.setUrl(RACE);
-            CodeableConcept race = new CodeableConcept();
-            raceExtension.setValue(race);
+            raceExtension.setUrl(RACE_EXTENSION);
+//            Extension raceOmb = raceExtension.addExtension();
+//            raceOmb.setUrl(RACE_EXTENSION_OMB); // TODO clarify MustSupport
+            Extension raceText = raceExtension.addExtension();
+            raceText.setUrl(RACE_EXTENSION_TEXT);
+            StringBuilder textBuilder = new StringBuilder();
             for (EhrRace ehrRace : ehrPatient.getRaces()) {
-                race.addCoding(mappingHelperR4.codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
+                textBuilder.append(ehrRace.getValue()).append(" ");
+                Extension raceDetailed = raceExtension.addExtension();
+                raceDetailed.setUrl(RACE_EXTENSION_DETAILED);
+                raceDetailed.setValue(mappingHelperR4.codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
             }
+            raceText.setValue(new StringType(textBuilder.toString()));
         }
-        p.addExtension(ETHNICITY_EXTENSION, new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()));
+        if (StringUtils.isNotBlank(ehrPatient.getEthnicity())) {
+            Extension ethnicityExtension = p.addExtension();
+            ethnicityExtension.setUrl(ETHNICITY_EXTENSION);
+            Extension ethnicityText = ethnicityExtension.addExtension();
+            ethnicityText.setUrl(ETHNICITY_EXTENSION_TEXT);
+            ethnicityText.setValue(new StringType(ehrPatient.getEthnicity()));
+            Extension ethnicityOmb = ethnicityExtension.addExtension();
+            ethnicityOmb.setUrl(ETHNICITY_EXTENSION_OMB);
+            ethnicityOmb.setValue((new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()))); //TODO sort if actually part of the codeSet ?
+        }
         // telecom
         for (EhrPhoneNumber phoneNumber : ehrPatient.getPhones()) {
             p.addTelecom(MappingHelperR4.toFhirContact(phoneNumber));
@@ -172,21 +188,35 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             ehrPatient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
         }
 
-        Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME);
+        Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME_EXTENSION);
         if (motherMaiden != null) {
             ehrPatient.setMotherMaiden(motherMaiden.getValue().toString());
         }
         ehrPatient.setSex(MappingHelperR4.toEhrSex(p.getGender()));
 
-        CodeableConcept races = MappingHelperR4.extensionGetCodeableConcept(p.getExtensionByUrl(RACE));
+        Extension races = p.getExtensionByUrl(RACE_EXTENSION);
         if (races != null) {
-            for (Coding coding : races.getCoding()) {
-                ehrPatient.addRace(new EhrRace(coding.getCode()));
+            for (Extension ext : races.getExtensionsByUrl(RACE_EXTENSION_OMB)) {
+                ehrPatient.addRace(new EhrRace(MappingHelperR4.extensionGetCoding(ext).getCode()));
+            }
+            for (Extension ext : races.getExtensionsByUrl(RACE_EXTENSION_DETAILED)) {
+                ehrPatient.addRace(new EhrRace(MappingHelperR4.extensionGetCoding(ext).getCode()));
             }
         }
-        if (p.getExtensionByUrl(ETHNICITY_EXTENSION) != null) {
-            Coding ethnicity = MappingHelperR4.extensionGetCoding(p.getExtensionByUrl(ETHNICITY_EXTENSION));
-            ehrPatient.setEthnicity(ethnicity.getCode());
+        Extension ethnicityExtension = p.getExtensionByUrl(ETHNICITY_EXTENSION);
+        if (ethnicityExtension != null) {
+            Extension ethnicityDetailed = ethnicityExtension.getExtensionByUrl(ETHNICITY_EXTENSION_DETAILED);
+            Extension ethnicityOmb = ethnicityExtension.getExtensionByUrl(ETHNICITY_EXTENSION_OMB);
+            /**
+             * By default takes Omb value
+             */
+            if (ethnicityOmb != null) {
+                Coding ethnicity = MappingHelperR4.extensionGetCoding(ethnicityOmb);
+                ehrPatient.setEthnicity(ethnicity.getCode());
+            } else if (ethnicityDetailed != null) {
+                Coding ethnicity = MappingHelperR4.extensionGetCoding(ethnicityDetailed);
+                ehrPatient.setEthnicity(ethnicity.getCode());
+            }
         }
 
         for (ContactPoint telecom : p.getTelecom()) {

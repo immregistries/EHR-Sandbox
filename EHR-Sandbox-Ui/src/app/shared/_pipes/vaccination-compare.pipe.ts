@@ -9,6 +9,7 @@ export class VaccinationComparePipe implements PipeTransform {
   private fields_to_ignore: string[] = [
     'vaccinationEvents',
     'actionCode',
+    'createdDate',
     'updatedDate' // TODO change the way updated date is mapped ?
   ]
 
@@ -21,35 +22,46 @@ export class VaccinationComparePipe implements PipeTransform {
     }
   }
 
-  recursiveComparison(a: any, b: any): ComparisonResult | any | null {
-    if (a === b) return null;
-    if (a instanceof Date && b instanceof Date && (a.getTime() === b.getTime())) return null;
-    if ((a === null || a === undefined) && (b === null || b === undefined)) return null;
-    if (a === null || a === undefined || b === null || b === undefined) {
-      return a
+  /**
+   * Recursive comparision of elements,
+   * @param local
+   * @param remote
+   * @returns returns Comparison Result or null if no differences
+   */
+  recursiveComparison(local: any, remote: any): ComparisonResult | any | null {
+    if (local === remote) return null;
+    // if (local instanceof Date && remote instanceof Date && (local.getTime() - remote.getDate())) return null;
+    if (this.isIsoDate(local) && this.isIsoDate(remote)) {
+      let localDate = new Date(local).setMilliseconds(0)
+      let remoteDate = new Date(remote).setMilliseconds(0)
+      if (localDate === remoteDate) return null;
+    }
+    if ((local === null || local === undefined) && (remote === null || remote === undefined)) return null;
+    if (local === null || local === undefined || remote === null || remote === undefined) {
+      return local
     }
     // if (a.prototype !== b.prototype) return false;
-    if ((typeof a === 'string' && a === "" && !b) || (typeof b === 'string' && b === "" && !a)) {
+    if ((typeof local === 'string' && local === "" && !remote) || (typeof remote === 'string' && remote === "" && !local)) {
       return null
     }
-    if (typeof a === 'string' || typeof b === 'string') {
-      return b
+    if (typeof local === 'string' || typeof remote === 'string') {
+      return remote
     }
     let result: ComparisonResult = {};
-    for (const key in b) {
-      if (Object.prototype.hasOwnProperty.call(b, key) && !Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key)) {
-        result[key] = b
+    for (const key in remote) {
+      if (Object.prototype.hasOwnProperty.call(remote, key) && !Object.prototype.hasOwnProperty.call(local, key) && !this.fields_to_ignore.includes(key)) {
+        result[key] = remote
       }
     }
-    for (const key in a) {
-      if (Object.prototype.hasOwnProperty.call(a, key) && !this.fields_to_ignore.includes(key)) {
-        if (Object.prototype.hasOwnProperty.call(b, key)) {
-          let next: ComparisonResult | any | null = this.recursiveComparison(a[key], b[key]);
+    for (const key in local) {
+      if (Object.prototype.hasOwnProperty.call(local, key) && !this.fields_to_ignore.includes(key)) {
+        if (Object.prototype.hasOwnProperty.call(remote, key)) {
+          let next: ComparisonResult | any | null = this.recursiveComparison(local[key], remote[key]);
           if (next != null) {
             result[key] = next;
           }
         } else {
-          result[key] = a
+          result[key] = local
         }
       }
     }
@@ -60,5 +72,10 @@ export class VaccinationComparePipe implements PipeTransform {
       return result;
     }
     return null;
+  }
+
+  isIsoDate(date: any) {
+    const dateParsed = new Date(Date.parse(date))
+    return dateParsed.toUTCString() === new Date(date).toUTCString()
   }
 }

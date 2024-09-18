@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.codebase.client.reference.CodesetType;
-import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
@@ -28,14 +27,9 @@ import java.util.Objects;
 public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
 
     @Autowired
-    CodeMapManager codeMapManager;
-    @Autowired
     ClinicianRepository clinicianRepository;
     @Autowired
-    PractitionerMapperR4 practitionerMapper;
-    @Autowired
     ResourceIdentificationService resourceIdentificationService;
-
     @Autowired
     MappingHelperR4 mappingHelperR4;
 
@@ -79,7 +73,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         i.setManufacturer(new Reference()
                 .setType("Organisation")
                 .setIdentifier(new Identifier()
-                        .setSystem(MVX)
+                        .setSystem(MVX_SYSTEM)
                         .setValue(vaccine.getVaccineMvxCode())));
 
 
@@ -106,25 +100,18 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                 }
             }
         }
-        i.getRoute().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getBodyRoute(), "", CodesetType.BODY_ROUTE));
-        String value6 = vaccine.getRefusalReasonCode();
-        i.setStatusReason(new CodeableConcept(mappingHelperR4.codingFromCodeset(value6, "", CodesetType.VACCINATION_REFUSAL)));
-        String value5 = vaccine.getBodySite();
-        i.getSite().addCoding(mappingHelperR4.codingFromCodeset(value5, "", CodesetType.BODY_SITE));
-        String value4 = vaccine.getFundingSource();
-        i.getFundingSource().addCoding(mappingHelperR4.codingFromCodeset(value4, "", CodesetType.VACCINATION_FUNDING_SOURCE));
-        String value3 = vaccine.getFinancialStatus();
-        i.addProgramEligibility().addCoding(mappingHelperR4.codingFromCodeset(value3, "", CodesetType.FINANCIAL_STATUS_CODE));
+        i.getRoute().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getBodyRoute(), BODY_ROUTE_SYSTEM, CodesetType.BODY_ROUTE));
+        i.setStatusReason(new CodeableConcept(mappingHelperR4.codingFromCodeset(vaccine.getRefusalReasonCode(), REFUSAL_REASON_CODE_SYSTEM, CodesetType.VACCINATION_REFUSAL)));
+        i.getSite().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getBodySite(), BODY_SITE_SYSTEM, CodesetType.BODY_SITE));
+        i.getFundingSource().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getFundingSource(), FUNDING_SOURCE_SYSTEM, CodesetType.VACCINATION_FUNDING_SOURCE));
+        i.addProgramEligibility().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getFinancialStatus(), FUNDING_ELIGIBILITY_SYSTEM, CodesetType.FINANCIAL_STATUS_CODE));
 //        i.getInformationSource().setConcept(new CodeableConcept(toFhirCoding(CodesetType.VACCINATION_INFORMATION_SOURCE, vaccine.getInformationSource())));
 
-        String value2 = vaccine.getInformationSource();
-        i.setReportOrigin(new CodeableConcept(mappingHelperR4.codingFromCodeset(value2, "", CodesetType.VACCINATION_INFORMATION_SOURCE)));
-        String value1 = vaccine.getVaccineCvxCode();
+        i.setReportOrigin(new CodeableConcept(mappingHelperR4.codingFromCodeset(vaccine.getInformationSource(), INFORMATION_SOURCE_SYSTEM, CodesetType.VACCINATION_INFORMATION_SOURCE)));
 
-        i.getVaccineCode().addCoding(mappingHelperR4.codingFromCodeset(value1, CVX, CodesetType.VACCINATION_CVX_CODE));
-        String value = vaccine.getVaccineCvxCode();
+        i.getVaccineCode().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getVaccineCvxCode(), CVX_SYSTEM, CodesetType.VACCINATION_CVX_CODE));
 
-        i.getVaccineCode().addCoding(mappingHelperR4.codingFromCodeset(value, NDC, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE));
+        i.getVaccineCode().addCoding(mappingHelperR4.codingFromCodeset(vaccine.getVaccineNdcCode(), NDC_SYSTEM, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE));
 
         i.addPerformer(fhirPerformer(vaccinationEvent.getEnteringClinician(), ENTERING));
         i.addPerformer(fhirPerformer(vaccinationEvent.getOrderingClinician(), ORDERING));
@@ -168,7 +155,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                     }
                 }
                 if (clinician != null) {
-                    switch (performer.getFunction().getCodingFirstRep().getCode()) {
+                    switch (MappingHelperR4.codeFromSystemOrDefault(performer.getFunction(), FUNCTION_SYSTEM)) {
                         case ADMINISTERING: {
                             ve.setAdministeringClinician(clinician);
                             break;
@@ -195,9 +182,9 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         if (i.hasOccurrenceDateTimeType()) {
             v.setAdministeredDate(i.getOccurrenceDateTimeType().getValue());
         } else if (i.hasOccurrenceStringType()) {
-            SimpleDateFormat parser = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
             try {
-                v.setAdministeredDate(parser.parse(i.getOccurrenceStringType().getValueNotNull()));
+                v.setAdministeredDate(simpleDateFormat.parse(i.getOccurrenceStringType().getValueNotNull()));
             } catch (ParseException e) {
                 e.printStackTrace();
 //        throw new RuntimeException(e);
@@ -206,28 +193,30 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
 
         i.getVaccineCode().getCoding().forEach(coding -> {
             switch (coding.getSystem()) {
-                case CVX: {
+                case CVX_SYSTEM: {
                     v.setVaccineCvxCode(coding.getCode());
                     break;
                 }
-                case NDC: {
+                case NDC_SYSTEM: {
                     v.setVaccineNdcCode(coding.getCode());
                     break;
                 }
-                case MVX: {
+                case MVX_SYSTEM: {
                     v.setVaccineMvxCode(coding.getCode());
                     break;
                 }
             }
         });
 
-        v.setVaccineMvxCode(i.getManufacturer().getIdentifier().getValue());
+        if (i.getManufacturer().hasIdentifier() && MVX_SYSTEM.equals(i.getManufacturer().getIdentifier().getSystem())) {
+            v.setVaccineMvxCode(i.getManufacturer().getIdentifier().getValue());
+        }
 
         if (i.getDoseQuantity().getValue() != null) {
             v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
         }
 
-        v.setInformationSource(i.getReportOrigin().getCodingFirstRep().getCode());
+        v.setInformationSource(MappingHelperR4.codeFromSystemOrDefault(i.getReportOrigin(), INFORMATION_SOURCE_SYSTEM));
         v.setUpdatedDate(new Date());
 
         v.setLotNumber(i.getLotNumber());
@@ -252,11 +241,11 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                     break;
             }
         }
-        v.setRefusalReasonCode(i.getStatusReason().getCodingFirstRep().getCode());
-        v.setBodySite(i.getSite().getCodingFirstRep().getCode());
-        v.setBodyRoute(i.getRoute().getCodingFirstRep().getCode());
-        v.setFundingSource(i.getFundingSource().getCodingFirstRep().getCode());
-        v.setFinancialStatus(i.getProgramEligibilityFirstRep().getCodingFirstRep().getCode());
+        v.setRefusalReasonCode(MappingHelperR4.codeFromSystemOrDefault(i.getStatusReason(), REFUSAL_REASON_CODE_SYSTEM));
+        v.setBodySite(MappingHelperR4.codeFromSystemOrDefault(i.getSite(), BODY_SITE_SYSTEM));
+        v.setBodyRoute(MappingHelperR4.codeFromSystemOrDefault(i.getRoute(), BODY_ROUTE_SYSTEM));
+        v.setFundingSource(MappingHelperR4.codeFromSystemOrDefault(i.getFundingSource(), FUNDING_SOURCE_SYSTEM));
+        v.setFinancialStatus(MappingHelperR4.codeFromSystemOrDefault(i.getProgramEligibilityFirstRep(), FUNDING_ELIGIBILITY_SYSTEM));
 
         return v;
     }
@@ -265,7 +254,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         if (clinician != null) {
             return new Immunization.ImmunizationPerformerComponent().setActor(new Reference()
                             .setIdentifier(IPractitionerMapper.clinicianEhrIdentifier(clinician).toR4()))
-                    .setFunction(new CodeableConcept(new Coding().setSystem(FUNCTION).setCode(function)));
+                    .setFunction(new CodeableConcept(new Coding().setSystem(FUNCTION_SYSTEM).setCode(function)));
         } else {
             return null;
         }

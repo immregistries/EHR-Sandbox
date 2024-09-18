@@ -9,17 +9,26 @@ public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntit
     String MRN_SYSTEM = "mrn";
     String MRN_TYPE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0203";
     String MRN_TYPE_VALUE = "MR";
-    String MOTHER_MAIDEN_NAME = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
+    String MOTHER_MAIDEN_NAME_EXTENSION = "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName";
     String REGISTRY_STATUS_EXTENSION = "registryStatus";
-    String REGISTRY_STATUS_INDICATOR = "registryStatusIndicator";
-    String ETHNICITY_EXTENSION = "ethnicity";
-    String ETHNICITY_SYSTEM = "http://terminology.hl7.org/CodeSystem/v3-Ethnicity";
-    String RACE = "race";
-    String RACE_SYSTEM = "https://terminology.hl7.org/2.0.0/CodeSystem-v3-Race.html";
+    String REGISTRY_STATUS_INDICATOR = "http://terminology.hl7.org/ValueSet/v2-0441";
+    String ETHNICITY_EXTENSION = "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity";
+    String ETHNICITY_EXTENSION_DETAILED = "detailed";
+    String ETHNICITY_EXTENSION_OMB = "ombCategory";
+    String ETHNICITY_EXTENSION_TEXT = "text";
+    String ETHNICITY_SYSTEM = "urn:oid:2.16.840.1.113883.6.238";
+    String RACE_EXTENSION = "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race";
+    String RACE_EXTENSION_DETAILED = "detailed";
+    String RACE_EXTENSION_OMB = "ombCategory";
+    String RACE_EXTENSION_TEXT = "text";
+    String RACE_SYSTEM = "urn:oid:2.16.840.1.113883.6.238";
+    String RACE_SYSTEM_OMB = "http://hl7.org/fhir/us/core/ValueSet/omb-ethnicity-category";
+    String RACE_SYSTEM_DETAILED = "http://hl7.org/fhir/us/core/ValueSet/detailed-race";
+
     String PUBLICITY_EXTENSION = "publicity";
-    String PUBLICITY_SYSTEM = "publicityIndicator";
+    String PUBLICITY_SYSTEM = "http://terminology.hl7.org/ValueSet/v2-0215";
     String PROTECTION_EXTENSION = "protection";
-    String PROTECTION_SYSTEM = "protectionIndicator";
+    String PROTECTION_SYSTEM = "http://terminology.hl7.org/ValueSet/v2-0136";
     String YES = "Y";
     String NO = "N";
 

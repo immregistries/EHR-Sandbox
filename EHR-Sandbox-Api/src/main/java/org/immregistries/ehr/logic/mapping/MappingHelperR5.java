@@ -1,10 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r5.model.Address;
-import org.hl7.fhir.r5.model.Coding;
-import org.hl7.fhir.r5.model.ContactPoint;
-import org.hl7.fhir.r5.model.Enumerations;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
@@ -23,9 +20,9 @@ public class MappingHelperR5 extends MappingHelper {
         if (StringUtils.isNotBlank(value)) {
             coding = new Coding().setCode(value).setSystem(system);
             Code code = codeMapManager.getCodeMap().getCodeForCodeset(codesetType, value);
-//            if (code != null) {
-//                coding.setDisplay(code.getLabel());
-//            }
+            if (code != null) {
+                coding.setDisplay(code.getLabel());
+            }
         }
         return coding;
     }
@@ -90,6 +87,17 @@ public class MappingHelperR5 extends MappingHelper {
         ehrAddress.setAddressCountry(address.getCountry());
         ehrAddress.setAddressCountyParish(address.getDistrict());
         return ehrAddress;
+    }
+
+    public static String codeFromSystemOrDefault(CodeableConcept codeableConcept, String system) {
+        String value = null;
+        if (codeableConcept != null) {
+            value = codeableConcept.getCode(system);
+            if (value == null && codeableConcept.getCoding().size() == 1) {
+                value = codeableConcept.getCodingFirstRep().getCode();
+            }
+        }
+        return value;
     }
 
 }

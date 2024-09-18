@@ -1,10 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.*;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
@@ -118,5 +115,22 @@ public class MappingHelperR4 extends MappingHelper {
             return null;
         }
     }
+
+    public static String codeFromSystemOrDefault(CodeableConcept codeableConcept, String system) {
+        String value = null;
+        if (codeableConcept != null) {
+            for (Coding coding : codeableConcept.getCoding()) {
+                if (system.equals(coding.getSystem())) {
+                    value = coding.getCode();
+                    break;
+                }
+            }
+            if (value == null && codeableConcept.getCoding().size() == 1) {
+                value = codeableConcept.getCodingFirstRep().getCode();
+            }
+        }
+        return value;
+    }
+
 
 }
