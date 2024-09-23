@@ -4,9 +4,14 @@
   <mat-toolbar color="basic">
     <!-- <span style="flex: 1 1 auto;"></span> -->
     <app-immunization-registry-menu></app-immunization-registry-menu>
-    <button mat-raised-button  matTooltip="Fetch and merge remote vaccination history" color="basic" (click)="loadEverythingFromPatient()">
+    <button mat-raised-button matTooltip="Fetch and merge remote vaccination history" color="basic"
+            (click)="loadEverythingFromPatient()">
       <mat-icon>cloud_download</mat-icon>
       Fetch
+    </button>
+    <button mat-raised-button matTooltip="Smart health linik" color="basic" (click)="shlink()">
+      <mat-icon>cloud_download</mat-icon>
+      SHlink
     </button>
   </mat-toolbar>
 
@@ -29,28 +34,34 @@
       </mat-card>
     </mat-grid-tile> -->
 
-    <mat-grid-tile [colspan]="2" >
+    <mat-grid-tile [colspan]="2">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <!-- TODO Change argument for observable Source -->
-          <app-vaccination-table [patientId]="patientId ?? -1" [allow_create]="false" (selectEmitter)="selectVaccination($event)" [observableSource]="vaccinationService.quickReadVaccinations()" [observableRefresh]="refreshLocalHistoryObservable()"></app-vaccination-table>
+          <app-vaccination-table [patientId]="patientId ?? -1" [allow_create]="false"
+                                 (selectEmitter)="selectVaccination($event)"
+                                 [observableSource]="vaccinationService.quickReadVaccinations()"
+                                 [observableRefresh]="refreshLocalHistoryObservable()"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="2" >
+    <mat-grid-tile [colspan]="2">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
-          <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations" [patientId]="patientId" [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
+          <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations" [patientId]="patientId"
+                                          [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
   <div>
     <ul class="w3-ul">
-      <li>Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.</li>
-      <li>This functionality uses a prototype workflow with  Patient/$match & Patient/$everything?type=Immunization FHIR Operations.</li>
+      <li>Queries the IIS for Patient vaccination history and allow merge with some helping tools comparing the records.
+      </li>
+      <li>This functionality uses a prototype workflow with Patient/$match & Patient/$everything?type=Immunization FHIR
+        Operations.
+      </li>
     </ul>
   </div>
 </div>
-

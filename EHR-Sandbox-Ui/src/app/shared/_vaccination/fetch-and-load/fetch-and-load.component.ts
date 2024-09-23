@@ -29,9 +29,9 @@ export class FetchAndLoadComponent implements OnInit {
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {patientId: number}) {
-      this.patientId = data?.patientId
-     }
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number }) {
+    this.patientId = data?.patientId
+  }
 
   ngOnInit(): void {
   }
@@ -43,8 +43,13 @@ export class FetchAndLoadComponent implements OnInit {
       this.remoteVaccinations = res
     })
   }
+  shlink(url?: string) {
+    // url = "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC82QnRER0l6djFDWVdicFVxRmtyMjJwekxfcTVoYVFZTEtvUjFtNGpDY2trIiwiZXhwIjoxNzI3NDYyMzg4LjM1NSwiZmxhZyI6IiIsImtleSI6Ii1Lb2M5Q0Z4Z0dySVdubVBwbGlfWHVBQXU3RngySEwyWjB4QUNheUZVVlUiLCJsYWJlbCI6IlNITCBmcm9tIDIwMjQtMDktMjAifQ"
+    url = "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC82QnRER0l6djFDWVdicFVxRmtyMjJwekxfcTVoYVFZTEtvUjFtNGpDY2trIiwiZXhwIjoxNzI3NDYyMzg4LjM1NSwiZmxhZyI6IlAiLCJrZXkiOiItS29jOUNGeGdHcklXbm1QcGxpX1h1QUF1N0Z4MkhMMloweEFDYXlGVVZVIiwibGFiZWwiOiJTSEwgZnJvbSAyMDI0LTA5LTIwIn0"
+    this.fhirClient.shlink(url ?? "").subscribe(console.log)
+  }
 
-  selectVaccination(value: VaccinationEvent | null | undefined){
+  selectVaccination(value: VaccinationEvent | null | undefined) {
     this.selectedVaccination = value ?? null
   }
 

@@ -17,6 +17,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
+import org.immregistries.ehr.fhir.Client.SmartHealthLinksService;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.immregistries.ehr.fhir.Client.SmartHealthLinksService.SHLINK_PREFIX;
 
 @RestController
 public class FhirClientController {
@@ -64,6 +70,8 @@ public class FhirClientController {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private TenantRepository tenantRepository;
+    @Autowired
+    private SmartHealthLinksService smartHealthLinksService;
 
     @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/{resourceType}/{id}")
     public ResponseEntity<String> getFhirResourceFromIIS(
@@ -71,6 +79,21 @@ public class FhirClientController {
             @PathVariable() String resourceType,
             @PathVariable() String id) {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryService.getImmunizationRegistry(registryId)));
+    }
+
+    @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$import-shlink")
+    public ResponseEntity<List<String>> smartHealthLink(
+            @PathVariable() String registryId,
+            @RequestBody() String url) throws MalformedURLException, URISyntaxException {
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
+        List<String> body;
+        if (url.contains(SHLINK_PREFIX)) {
+            String shlink = SHLINK_PREFIX + url.split(SHLINK_PREFIX)[1];
+            body = smartHealthLinksService.importSmartHealthLink(shlink, immunizationRegistry);
+        } else {
+            body = smartHealthLinksService.importSmartHealthLinkUrl(new URL(url), immunizationRegistry);
+        }
+        return ResponseEntity.ok(body);
     }
 
 

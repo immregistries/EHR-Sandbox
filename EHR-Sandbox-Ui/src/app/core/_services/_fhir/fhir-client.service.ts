@@ -96,6 +96,15 @@ export class FhirClientService extends IdUrlVerifyingService {
     return of("");
   }
 
+  shlink(url: string): Observable<string> {
+    const registryId = this.registryService.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    return this.http.post<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/$import-shlink`,
+      url,
+      httpOptions);
+  }
+
   transaction(resource: string, facilityId: number): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()

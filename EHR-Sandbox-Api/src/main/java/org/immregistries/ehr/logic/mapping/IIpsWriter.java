@@ -5,7 +5,6 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 
 import java.util.Random;
-import java.util.UUID;
 
 public interface IIpsWriter {
 
@@ -16,8 +15,8 @@ public interface IIpsWriter {
 
     public static String entryUrl(Integer count) {
 
-//        return "resource:" + (count);
-        return "urn:" + UUID.randomUUID();
+        return "resource:" + (count);
+//        return "urn:" + UUID.randomUUID();
     }
 
     public static String entryUrl() {
