@@ -35,7 +35,10 @@ public class JwtUtils {
     private SecretKey key;
 
     private Map<Integer, String> userKeyIdMap = new HashMap<>(10);
-    private Map<String, KeyPair> keyPairMap = new HashMap<>(10);
+    private Map<String, PublicKey> publicKeyMap = new HashMap<>(10);
+    private Map<String, PrivateKey> privateKeyMap = new HashMap<>(10);
+//    private KeyStore keyStore = new KeyStore();
+
 
     public String generateJwtToken(Authentication authentication) {
         init();
@@ -50,15 +53,19 @@ public class JwtUtils {
 
     public String signForQrCode(Authentication authentication, byte[] content) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal(); //TODO Sandbox deploy url for key to be available at
-        KeyPair keyPair = getUserKeyPair(authentication);
-        String kid = userKeyIdMap.get(userPrincipal.getId());
+        String kid = getUserKidOrGenerate(authentication);
+        PrivateKey privateKey = getUserPrivateKey(authentication);
         logger.info("Issuer key: {}", new Gson().toJson(getUserPrivateJwk(authentication)));
         JwtBuilder jwtBuilder = Jwts.builder()
-                .header().add("use", "SIG")
+                .header()
+                .add("use", "SIG")
+                .add("zip", "DEF")
+                .add("test", "12345")
                 .keyId(kid)
                 .and()
                 .content(content)
-                .signWith(keyPair.getPrivate());
+//                .compressWith(Jwts.ZIP.DEF)
+                .signWith(privateKey);
         return jwtBuilder.compact();
     }
 
@@ -86,9 +93,19 @@ public class JwtUtils {
         return false;
     }
 
+    public PublicKey getUserPublicKey(Authentication authentication) {
+        String kid = getUserKidOrGenerate(authentication);
+        return publicKeyMap.get(kid);
+    }
+
+    public PrivateKey getUserPrivateKey(Authentication authentication) {
+        String kid = getUserKidOrGenerate(authentication);
+        return privateKeyMap.get(kid);
+    }
+
     public Jwk getUserPublicJwk(Authentication authentication) {
-        ECPublicKey publicKey = (ECPublicKey) getUserKeyPair(authentication).getPublic();
-        String kid = getUserKid(authentication);
+        String kid = getUserKidOrGenerate(authentication);
+        ECPublicKey publicKey = (ECPublicKey) publicKeyMap.get(kid);
         return Jwks.builder()
                 .key(publicKey)
                 .algorithm("ES256")
@@ -98,37 +115,34 @@ public class JwtUtils {
     }
 
     public Jwk getUserPrivateJwk(Authentication authentication) {
-        ECPrivateKey privateKey = (ECPrivateKey) getUserKeyPair(authentication).getPrivate();
-        String kid = getUserKid(authentication);
+        String kid = getUserKidOrGenerate(authentication);
+        ECPrivateKey privateKey = (ECPrivateKey) privateKeyMap.get(kid);
         return Jwks.builder()
                 .key(privateKey)
                 .algorithm("ES256")
                 .id(kid).publicKeyUse("sig").build();
     }
 
-    public String getUserKid(Authentication authentication) {
+    public String getUserKidOrGenerate(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        return userKeyIdMap.get(userPrincipal.getId());
-    }
-
-    public KeyPair getUserKeyPair(Authentication authentication) {
-        String kid = getUserKid(authentication);
+        String kid = userKeyIdMap.get(userPrincipal.getId());
         if (kid == null) {
-            kid = createUserKeyPair(authentication);
+            kid = createUserKeyPairEC(authentication);
         }
-        return keyPairMap.get(kid);
+        return kid;
     }
 
-    private String createUserKeyPair(Authentication authentication) {
+    private String createUserKeyPairEC(Authentication authentication) {
         try {
             String kid = UUID.randomUUID().toString();
-            Gson gson = new Gson();
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
             kpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
             KeyPair keyPair = kpg.generateKeyPair();
             UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+            ECPublicKey ecPublicKey = (ECPublicKey) keyPair.getPublic();
             userKeyIdMap.put(userPrincipal.getId(), kid);
-            keyPairMap.put(kid, keyPair);
+            publicKeyMap.put(kid, keyPair.getPublic());
+            privateKeyMap.put(kid, keyPair.getPrivate());
             return kid;
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException ex) {
             throw new RuntimeException(ex);

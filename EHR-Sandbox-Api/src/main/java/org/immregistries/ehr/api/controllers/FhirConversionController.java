@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 import static org.immregistries.ehr.api.controllers.FhirClientController.*;
 
@@ -141,9 +140,20 @@ public class FhirConversionController {
 
     @PostMapping(FACILITY_PREFIX + "/{facilityId}/$qrCode")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<List<String>> qrCode(@PathVariable() String facilityId, @RequestBody String resourceString, HttpServletRequest request) {
+    public ResponseEntity<?> qrCode(@PathVariable() String facilityId, @RequestBody String resourceString, HttpServletRequest request) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
-        return smartHealthCardService.qrCode(facility, resourceString, request);
+//        if (resourceString.startsWith(SmartHealthCardService.SHC_HEADER)) { // TODO remove
+//            return ResponseEntity.ok(qrCodeRead(facilityId, resourceString, request));
+//        }
+        return smartHealthCardService.qrCodeWrite(facility, resourceString, request);
+    }
+
+
+    @PostMapping(FACILITY_PREFIX + "/{facilityId}/$qrCodeRead")
+    @Transactional(readOnly = true, noRollbackFor = Exception.class)
+    public ResponseEntity<String> qrCodeRead(@PathVariable() String facilityId, @RequestBody String shc, HttpServletRequest request) {
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow();
+        return ResponseEntity.ok(smartHealthCardService.qrCodeRead(shc));
     }
 
 

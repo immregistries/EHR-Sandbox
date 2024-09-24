@@ -66,9 +66,7 @@ public class SmartHealthLinksService {
         if (!shlink.startsWith(SHLINK_PREFIX)) {
             throw new RuntimeException("Not prefixed with shlink");
         }
-        logger.info("shlink {}", shlink);
         String decodedFrom64 = new String(Base64.getDecoder().decode(shlink.substring(SHLINK_PREFIX.length()).getBytes()));
-        logger.info("decodedFrom64 {}", decodedFrom64);
         JsonObject payloadObject = JsonParser.parseString(decodedFrom64).getAsJsonObject();
         logger.info("shlink {}", payloadObject);
 
@@ -97,46 +95,39 @@ public class SmartHealthLinksService {
 
         byte[] encryptedPayload = null;
         String decompressed = null;
+        String recipient = "EHR-sandbox-test";
+        String password = null;
+        password = "12345";
+        byte[] encodedKey = Base64.getUrlDecoder().decode(key.getBytes());
+        SecretKey secretKey = new SecretKeySpec(encodedKey, "AES");
         /**
          * if flag contains "U"
          */
-
-        String recipient = "EHR-sandbox-test";
-        String password = "12345";
         if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U)) {
-            result.add(inflate(directFileRequest(url, ir, recipient), key));
+            String data = new String(directFileRequest(url, ir, recipient));
+            Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(data);
+            result.add(gson.toJson(jwt.getPayload()));
         } else {
-            String manifest = null;
-            try {
-                manifest = manifestReading(new URI(url), ir, recipient, password, null);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
+            String manifest = manifestReading(url, ir, recipient, password, null);
             JsonObject manifestElement = (JsonObject) JsonParser.parseString(manifest);
             JsonArray files = manifestElement.get(FILES).getAsJsonArray();
             for (JsonElement file : files) {
                 JsonObject jsonObject = (JsonObject) file;
                 switch (jsonObject.get(CONTENT_TYPE).getAsString()) {
                     case "application/smart-health-card":
-                    case "application/smart-api-access":
                     case "application/fhir+json": {
                         break;
                     }
+                    case "application/smart-api-access":
                     default: {
                         throw new RuntimeException("Manifest not supported");
                     }
                 }
                 if (jsonObject.has(EMBEDDED)) {
-                    byte[] encodedKey = Base64.getUrlDecoder().decode(key.getBytes());
-                    SecretKey secretKey = new SecretKeySpec(encodedKey, "AES");
                     Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(jsonObject.get(EMBEDDED).getAsString());
-                    logger.info("jws {}", gson.toJson(jwt));
+                    logger.info("jwt {}", gson.toJson(jwt));
                     JsonObject jwtPayload = gson.toJsonTree(jwt.getPayload()).getAsJsonObject();
-                    String verifiableCredentialFirst = jwtPayload.getAsJsonArray(VERIFIABLE_CREDENTIAL).get(0).getAsString();
-//                    int i = verifiableCredentialFirst.lastIndexOf('.');
-//                    String withoutSignature = verifiableCredentialFirst.substring(0, i + 1);
-////                    Jwt<Header, Claims> untrusted = Jwts.parser().build().parseClaimsJwt(withoutSignature);
-////                    logger.info("claims {}", untrusted);
+                    JsonArray verifiableCredentials = jwtPayload.getAsJsonArray(VERIFIABLE_CREDENTIAL);
                     String exampleKey = "{" +
                             "\"kty\": \"EC\"," +
                             "\"kid\": \"3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s\"," +
@@ -149,22 +140,15 @@ public class SmartHealthLinksService {
                             "}";
                     try {
                         PublicKey publicKey = ECKey.parse(exampleKey).toPublicKey();
-                        String[] chunks = verifiableCredentialFirst.split("\\.");
-                        Base64.Decoder decoder = Base64.getUrlDecoder();
-
-                        String header = new String(decoder.decode(chunks[0]));
-                        String payload = new String(decoder.decode(chunks[1]));
-//                        Jwt claims = Jwts.parser().verifyWith(publicKey).build().parse(verifiableCredentialFirst);
-                        logger.info("claims {} {}", header, payload);
-                        logger.info("claims {} {}", header, inflate(chunks[1].getBytes(), null));
-//                        result.add(claims.toString());
-                        result.add(payload);
-
-                    } catch (ParseException e) {
-                        throw new RuntimeException(e);
-                    } catch (JOSEException e) {
+                        for (JsonElement compact : verifiableCredentials) {
+//                            String res = smartHealthCardService.parseVerifiableCredentialFromCompactJwt(publicKey, compact.getAsString());
+                            String res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
+                            result.add(res);
+                        }
+                    } catch (ParseException | JOSEException e) {
                         throw new RuntimeException(e);
                     }
+
                 } else if (jsonObject.has(LOCATION)) {
 
                 }
@@ -184,9 +168,9 @@ public class SmartHealthLinksService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
             byte[] buffer = new byte[SmartHealthCardService.MAXIMUM_DATA_SIZE];
             while (!inflater.finished()) {
-                logger.info("test");
                 int count = inflater.inflate(buffer);
                 outputStream.write(buffer, 0, count);
+                logger.info("{}", count);
             }
             outputStream.close();
             byte[] output = outputStream.toByteArray();
@@ -273,52 +257,32 @@ public class SmartHealthLinksService {
         }
     }
 
-    public String manifestReading(URI uri, ImmunizationRegistry ir, String recipient, String passcode, Integer embeddedLengthMax) {
-        Gson gson = new Gson();
-        JsonObject bodyObject = new JsonObject();
-        bodyObject.addProperty("recipient", recipient);
-        if (StringUtils.isNotBlank(passcode)) {
-            bodyObject.addProperty("passcode", passcode);
-        }
-        if (embeddedLengthMax != null) {
-            bodyObject.addProperty("embeddedLengthMax", embeddedLengthMax);
-        }
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .header("content-type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(bodyObject)))
-                .build();
-        HttpClient client = HttpClient.newHttpClient();
+    public String manifestReading(String url, ImmunizationRegistry ir, String recipient, String passcode, Integer embeddedLengthMax) {
+        URI uri = null;
         try {
+            uri = new URI(url);
+            Gson gson = new Gson();
+            JsonObject bodyObject = new JsonObject();
+            bodyObject.addProperty("recipient", recipient);
+            if (StringUtils.isNotBlank(passcode)) {
+                bodyObject.addProperty("passcode", passcode);
+            }
+            if (embeddedLengthMax != null) {
+                bodyObject.addProperty("embeddedLengthMax", embeddedLengthMax);
+            }
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .header("content-type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(bodyObject)))
+                    .build();
+            HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
             JsonElement manifest = JsonParser.parseString(response.body());
             logger.info("manifest {} ", manifest);
             return response.body();
-        } catch (IOException | InterruptedException e) {
+        } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-//        HttpURLConnection con = null;
-//        try {
-//            URL url = uri.toURL();
-//            con = (HttpURLConnection) url.openConnection();
-//            con.setRequestMethod("POST");
-////            addAuthorizationHeader(con, ir);
-//            con.setConnectTimeout(5000);
-//
-//            int status = con.getResponseCode();
-//            return con.getInputStream().readAllBytes();
-//        } catch (MalformedURLException | URISyntaxException e) {
-//            throw new RuntimeException(e);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        } finally {
-//            if (con != null) {
-//                con.disconnect();
-//            }
-//        }
     }
 
 
