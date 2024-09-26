@@ -6,6 +6,7 @@ import { VaccinationEvent } from 'src/app/core/_model/rest';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
 import { Observable, of } from 'rxjs';
+import { SmartHealthLinkImportComponent } from '../../_fhir/smart-health-link-import/smart-health-link-import.component';
 
 @Component({
   selector: 'app-fetch-and-load',
@@ -43,12 +44,16 @@ export class FetchAndLoadComponent implements OnInit {
       this.remoteVaccinations = res
     })
   }
+
   shlink(url?: string) {
-    // url = "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC82QnRER0l6djFDWVdicFVxRmtyMjJwekxfcTVoYVFZTEtvUjFtNGpDY2trIiwiZXhwIjoxNzI3NDYyMzg4LjM1NSwiZmxhZyI6IiIsImtleSI6Ii1Lb2M5Q0Z4Z0dySVdubVBwbGlfWHVBQXU3RngySEwyWjB4QUNheUZVVlUiLCJsYWJlbCI6IlNITCBmcm9tIDIwMjQtMDktMjAifQ"
-    // url = "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC82QnRER0l6djFDWVdicFVxRmtyMjJwekxfcTVoYVFZTEtvUjFtNGpDY2trIiwiZXhwIjoxNzI3NDYyMzg4LjM1NSwiZmxhZyI6IlAiLCJrZXkiOiItS29jOUNGeGdHcklXbm1QcGxpX1h1QUF1N0Z4MkhMMloweEFDYXlGVVZVIiwibGFiZWwiOiJTSEwgZnJvbSAyMDI0LTA5LTIwIn0"
-    url = "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC9xdlJYWW1LMTkwVmlVOXNmcXJ1c1dSby1zRVhOZmFxTE8yOUJUTDFPYTRnIiwiZXhwIjoxNzI3ODA2MTg1Ljg4MiwiZmxhZyI6IlAiLCJrZXkiOiJtZ2lQam1HUEg0TXUxbGFaZ0JYMVF2VmFLdWtIcm15aUhFbFF4blRKdWVFIiwibGFiZWwiOiJ0ZXN0IDEyMzQ1Njc4OSJ9"
-    url = "https://viewer.tcpdev.org/shlink.html#shlink:/eyJ1cmwiOiJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vc2Vhbm5vL3NoYy1kZW1vLWRhdGEvbWFpbi9pcHMvSVBTX0lHLWJ1bmRsZS0wMS1lbmMudHh0IiwiZmxhZyI6IkxVIiwia2V5IjoicnhUZ1lsT2FLSlBGdGNFZDBxY2NlTjh3RVU0cDk0U3FBd0lXUWU2dVg3USIsImxhYmVsIjoiRGVtbyBTSEwgZm9yIElQU19JRy1idW5kbGUtMDEifQ"
-    this.fhirClient.shlink(url ?? "").subscribe(console.log)
+    this.dialog.open(SmartHealthLinkImportComponent, {
+      maxWidth: '95vw',
+      maxHeight: '98vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-without-bar',
+      data: { patientId: this.patientId, url: url ?? "" }
+    }).afterClosed().subscribe(console.log)
   }
 
   selectVaccination(value: VaccinationEvent | null | undefined) {

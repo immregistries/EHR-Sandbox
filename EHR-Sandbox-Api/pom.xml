@@ -113,12 +113,12 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <!--			<version>${spring.version}</version>-->
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-test</artifactId>-->
+        <!--            <scope>test</scope>-->
+        <!--            &lt;!&ndash;			<version>${spring.version}</version>&ndash;&gt;-->
+        <!--        </dependency>-->
 
         <!--		<dependency>-->
         <!--			<groupId>mysql</groupId>-->

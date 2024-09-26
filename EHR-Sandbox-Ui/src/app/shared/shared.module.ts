@@ -126,6 +126,7 @@ import { CustomValidatorAsyncDirective } from './_directive/custom-validator-asy
 import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component";
 import { QRCodeModule } from 'angularx-qrcode';
 import { PatientCachePipe } from './_pipes/patient-cache.pipe';
+import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import/smart-health-link-import.component';
 
 @NgModule({
   declarations: [
@@ -227,7 +228,8 @@ import { PatientCachePipe } from './_pipes/patient-cache.pipe';
     CustomValidatorDirective,
     CustomValidatorAsyncDirective,
     ImmunizationRegistryCheckComponent,
-    FhirQrCodeComponent
+    FhirQrCodeComponent,
+    SmartHealthLinkImportComponent,
 
   ],
   imports: [
@@ -373,8 +375,7 @@ import { PatientCachePipe } from './_pipes/patient-cache.pipe';
     MatTreeModule,
     FhirQrCodeComponent,
     QRCodeModule,
-
-
+    SmartHealthLinkImportComponent,
   ],
 })
 export class SharedModule { }

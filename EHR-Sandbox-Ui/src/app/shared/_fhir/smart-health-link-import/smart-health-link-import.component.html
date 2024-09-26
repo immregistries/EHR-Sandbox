@@ -1,0 +1,62 @@
+<form [style]="style" (submit)="readShl()">
+  <div class="textarea-container">
+    <mat-form-field style="width: 100%;" appearance="fill">
+      <mat-label>Smart Health Link</mat-label>
+      <textarea style="height: 10vh;" matInput placeholder="" [(ngModel)]="url" name="url"
+                [matAutocomplete]="auto"></textarea>
+    </mat-form-field>
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let option of exampleUrl" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-autocomplete>
+    <button mat-stroked-button type="button" [cdkCopyToClipboard]="url"
+            (click)="snackBarService.successMessage('Copied to clipBoard')">
+      <mat-icon>content_copy</mat-icon>
+      Copy
+    </button>
+  </div>
+  <mat-form-field style="width: 100%;" appearance="fill">
+    <mat-label>Password</mat-label>
+    <input matInput placeholder="" [(ngModel)]="password" name="password">
+  </mat-form-field>
+  <mat-form-field style="width: 100%;" appearance="fill">
+    <mat-label>Public Jwk</mat-label>
+    <textarea style="height: 8vh;" [matAutocomplete]="autoKey" matInput placeholder="" [(ngModel)]="jwk"
+              name="jwk"></textarea>
+  </mat-form-field>
+  <mat-autocomplete #autoKey="matAutocomplete">
+    <mat-option *ngFor="let option of exampleJwks" [value]="option">
+      {{option}}
+    </mat-option>
+  </mat-autocomplete>
+
+  <div class="footer low-density">
+    <div class="footer-end">
+      <button mat-raised-button class="w3-right" type="submit" color="primary">
+        <mat-icon>send</mat-icon>
+        Read smart Health Link
+      </button>
+      <!-- <button mat-raised-button class="w3-right" type="button" color="primary">
+        <mat-icon>send</mat-icon>
+        Import in EHR
+      </button> -->
+    </div>
+  </div>
+
+  <div class="result-container">
+    <div [style]="{width: '90%'}" class="textarea-container">
+      <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>
+      <textarea [ngClass]="resultClass()" [rows]="30" [style]="{width: '100%'}" readonly
+                name="answer">{{answer}}</textarea>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="answer ?? ''"
+              (click)="snackBarService.successMessage('Copied to clipBoard')">
+        <mat-icon>content_copy</mat-icon>
+        Copy
+      </button>
+    </div>
+
+
+  </div>
+
+</form>

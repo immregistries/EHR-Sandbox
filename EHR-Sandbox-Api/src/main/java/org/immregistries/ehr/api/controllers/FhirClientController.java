@@ -8,6 +8,9 @@ import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.ECKey;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -26,10 +29,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.security.PublicKey;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -84,15 +86,21 @@ public class FhirClientController {
     @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$import-shlink")
     public ResponseEntity<List<String>> smartHealthLink(
             @PathVariable() String registryId,
-            @RequestBody() String url) throws MalformedURLException, URISyntaxException {
+            @RequestBody() String url, @RequestParam Optional<String> password, @RequestParam Optional<String> jwk) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        List<String> body;
-        if (url.contains(SHLINK_PREFIX)) {
-            String shlink = SHLINK_PREFIX + url.split(SHLINK_PREFIX)[1];
-            body = smartHealthLinksService.importSmartHealthLink(shlink, immunizationRegistry);
-        } else {
-            body = smartHealthLinksService.importSmartHealthLinkUrl(new URL(url), immunizationRegistry);
+        if (!url.contains(SHLINK_PREFIX)) {
+            throw new RuntimeException("Invalid shlink");
         }
+        String shlink = SHLINK_PREFIX + url.split(SHLINK_PREFIX)[1];
+        PublicKey publicKey = null;
+        if (StringUtils.isNotBlank(jwk.orElse(null))) {
+            try {
+                publicKey = ECKey.parse(jwk.get()).toPublicKey();
+            } catch (JOSEException | ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        List<String> body = smartHealthLinksService.importSmartHealthLink(shlink, password.orElse(null), publicKey);
         return ResponseEntity.ok(body);
     }
 

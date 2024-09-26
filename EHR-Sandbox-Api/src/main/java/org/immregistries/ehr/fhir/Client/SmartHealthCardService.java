@@ -4,10 +4,7 @@ import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -144,8 +141,13 @@ public class SmartHealthCardService {
         return parseVCFromCompactJwt(publicKey, compact);
     }
 
-    public String parseVCFromCompactJwt(PublicKey publicKey, String compact) {
-        Jwt jwt = Jwts.parser().zip().add(Jwts.ZIP.DEF).add(Jwts.ZIP.GZIP).and().verifyWith(publicKey).build().parseSignedClaims(compact);
+    public String parseVCFromCompactJwt(PublicKey publicKey, String compact) throws CompressionException {
+        Jwt jwt;
+        if (publicKey != null) {
+            jwt = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(compact);
+        } else {
+            jwt = Jwts.parser().build().parse(compact);
+        }
         return parseVCFromJwt(jwt);
     }
 
@@ -154,13 +156,17 @@ public class SmartHealthCardService {
         Gson gson = new Gson();
         String[] chunks = compact.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
-        String header = new String(decoder.decode(chunks[0]));
-        logger.info("header {}", header);
-        String payload = new String(decoder.decode(chunks[1]));
-        logger.info("payload {}", payload);
-        String inflated = rawInflate(payload);
-        logger.info("inflated {}", inflated);
-        JsonObject jwtPayload = gson.toJsonTree(payload).getAsJsonObject();
+        JsonObject header = JsonParser.parseString(new String(decoder.decode(chunks[0]))).getAsJsonObject();
+//        logger.info("header {}", header);
+        byte[] payload = decoder.decode(chunks[1]);
+        String payloadString;
+        if (header.has("zip") && header.get("zip").getAsString().equalsIgnoreCase("DEF")) {
+            payloadString = rawInflate(payload);
+        } else {
+            payloadString = new String(payload);
+        }
+
+        JsonObject jwtPayload = JsonParser.parseString(payloadString).getAsJsonObject();
         return jwtPayload.getAsJsonObject(VC).toString();
     }
 
@@ -219,14 +225,14 @@ public class SmartHealthCardService {
         return decodedFromQrCode;
     }
 
-    public static String rawInflate(String deflated) {
+    public static String rawInflate(byte[] deflated) {
         try {
-            Inflater inflater = new Inflater();
-            inflater.setInput(deflated.getBytes());
+            Inflater inflater = new Inflater(true);
+            inflater.setInput(deflated);
             byte[] result = new byte[MAXIMUM_DATA_SIZE];
             int resultLength = inflater.inflate(result);
             inflater.end();
-            return Base64.getEncoder().encodeToString(result);
+            return new String(result).substring(0, resultLength);
         } catch (DataFormatException e) {
             throw new RuntimeException(e);
         }
