@@ -35,7 +35,12 @@
     <div class="footer-end">
       <button mat-raised-button class="w3-right" type="submit" color="primary">
         <mat-icon>send</mat-icon>
-        Read smart Health Link
+        Read Smart Health Link
+      </button>
+      <button mat-raised-button *ngIf="patientId > 0" class="w3-right" type="button" (click)="importVaccinations()"
+              color="primary">
+        <mat-icon>send</mat-icon>
+        Import vaccinations from shlink
       </button>
       <!-- <button mat-raised-button class="w3-right" type="button" color="primary">
         <mat-icon>send</mat-icon>
@@ -45,7 +50,11 @@
   </div>
 
   <div class="result-container">
-    <div [style]="{width: '90%'}" class="textarea-container">
+
+    <div [style]="{width: '50%'}">
+      <div *ngIf="sanitizedHtml" [innerHTML]="sanitizedHtml"></div>
+    </div>
+    <div [style]="{width: '50%'}" class="textarea-container">
       <mat-progress-bar mode="query" *ngIf="requestLoading"></mat-progress-bar>
       <textarea [ngClass]="resultClass()" [rows]="30" [style]="{width: '100%'}" readonly
                 name="answer">{{answer}}</textarea>

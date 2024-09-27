@@ -12,8 +12,8 @@
 
 .result-container {
   display: flex;
-  align-items: end;
-  flex-direction: column;
+  align-items: start;
+  flex-direction: row;
 }
 
 .qr-code-container {

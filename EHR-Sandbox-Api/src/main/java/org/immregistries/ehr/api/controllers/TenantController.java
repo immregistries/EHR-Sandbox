@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
-@RequestMapping(TENANTS_PATH)
+@RequestMapping(TENANT_PATH)
 public class TenantController {
 
     @Autowired

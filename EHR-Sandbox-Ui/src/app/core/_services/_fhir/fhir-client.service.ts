@@ -96,11 +96,26 @@ export class FhirClientService extends IdUrlVerifyingService {
     return of("");
   }
 
-  shlink(url: string, password?: string, jwk?: string): Observable<string> {
+  shlinkRead(url: string, password?: string, jwk?: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
+    if (this.idsNotValid(tenantId)) {
+      return of()
+    }
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/$import-shlink`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/$read-shlink`,
+      url,
+      { ...httpOptions, params: { 'password': password ?? "", 'jwk': jwk ?? "" } });
+  }
+
+  importShlinkForPatient(patientId: number, url: string, password?: string, jwk?: string): Observable<VaccinationEvent[]> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (this.idsNotValid(tenantId, facilityId, patientId)) {
+      return of()
+    }
+    return this.http.post<VaccinationEvent[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/$import-shlink`,
       url,
       { ...httpOptions, params: { 'password': password ?? "", 'jwk': jwk ?? "" } });
   }

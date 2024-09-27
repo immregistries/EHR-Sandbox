@@ -108,9 +108,9 @@ public class SmartHealthLinksService {
             Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(data);
             result.add(gson.toJson(jwt.getPayload()));
         } else { // Manifest
-            String manifest = manifestReading(url, recipient, password, null);
+            String manifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE);
+            logger.info("manifest {}", manifest);
             JsonObject manifestElement = (JsonObject) JsonParser.parseString(manifest);
-            logger.info("manifest {}", manifestElement);
             JsonArray files = manifestElement.get(FILES).getAsJsonArray();
             for (JsonElement file : files) {
                 JsonObject manifestFile = (JsonObject) file;
@@ -145,14 +145,14 @@ public class SmartHealthLinksService {
                         res = smartHealthCardService.parseVCFromCompactJwt(publicKey, compact.getAsString());
                     } catch (CompressionException compressionException) {
                         // Do unverified raw inflate if compression headers are invalid
-                        compressionException.printStackTrace();
+//                        compressionException.printStackTrace();
                         res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
                     }
                     result.add(res);
                 }
                 return result;
             }
-            case "application/fhir+json": {//TODO test
+            case "application/fhir+json": { //TODO test
                 Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.get(EMBEDDED).getAsString());
                 return List.of(gson.toJson(jwt.getPayload()));
             }

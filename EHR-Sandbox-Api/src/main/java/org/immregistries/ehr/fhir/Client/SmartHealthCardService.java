@@ -171,7 +171,8 @@ public class SmartHealthCardService {
         if (vc.has(CREDENTIAL_SUBJECT)) {
             JsonObject credentialSubject = vc.getAsJsonObject(CREDENTIAL_SUBJECT);
             String fhirVersion = credentialSubject.get(FHIR_VERSION).getAsString();
-            String fhirBundle = credentialSubject.get(FHIR_BUNDLE).getAsString();
+            String fhirBundle = credentialSubject.get(FHIR_BUNDLE).toString();
+            logger.info("fhirBundle {}", fhirBundle);
             IBundleImportService iBundleImportService;
             IImmunizationMapper immunizationMapper;
             if (fhirVersion.startsWith("4.0")) {
@@ -183,17 +184,36 @@ public class SmartHealthCardService {
             } else {
                 throw new RuntimeException("Fhir Version not supported " + fhirVersion);
             }
-            List<IDomainResource> list = iBundleImportService.domainResourcesFromBaseBundleEntries(fhirBundle);
-            List<VaccinationEvent> vaccinationEvents = new ArrayList<>(5);
-            for (IDomainResource iDomainResource : list) {
-                if (iDomainResource.fhirType().equals("Immunization")) {
-                    VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(iDomainResource);
-                    vaccinationEvents.add(vaccinationEvent);
-                }
-            }
-            return vaccinationEvents;
+            return extractVaccinationEvents(fhirBundle, iBundleImportService, immunizationMapper);
         }
         return null;
+    }
+
+    public List<VaccinationEvent> parseBundleVaccinationsUnknownVersion(String fhirBundle) {
+        IBundleImportService iBundleImportService;
+        IImmunizationMapper immunizationMapper;
+        try {
+            iBundleImportService = bundleImportServiceR4;
+            immunizationMapper = immunizationMapperR4;
+            return extractVaccinationEvents(fhirBundle, iBundleImportService, immunizationMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            iBundleImportService = bundleImportServiceR5;
+            immunizationMapper = immunizationMapperR5;
+            return extractVaccinationEvents(fhirBundle, iBundleImportService, immunizationMapper);
+        }
+    }
+
+    private static List<VaccinationEvent> extractVaccinationEvents(String fhirBundle, IBundleImportService iBundleImportService, IImmunizationMapper immunizationMapper) {
+        List<IDomainResource> list = iBundleImportService.domainResourcesFromBaseBundleEntries(fhirBundle);
+        List<VaccinationEvent> vaccinationEvents = new ArrayList<>(5);
+        for (IDomainResource iDomainResource : list) {
+            if (iDomainResource.fhirType().equals("Immunization")) {
+                VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(iDomainResource);
+                vaccinationEvents.add(vaccinationEvent);
+            }
+        }
+        return vaccinationEvents;
     }
 
 

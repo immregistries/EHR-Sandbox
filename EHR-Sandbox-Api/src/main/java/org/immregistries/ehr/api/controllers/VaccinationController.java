@@ -33,7 +33,7 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 
 @RestController
-@RequestMapping({VACCINATIONS_PATH, FACILITY_ID_PATH + VACCINATIONS_PATH_HEADER})
+@RequestMapping({VACCINATION_PATH, FACILITY_ID_PATH + VACCINATION_PATH_HEADER})
 public class VaccinationController {
     @Autowired
     HL7printer hl7printer;

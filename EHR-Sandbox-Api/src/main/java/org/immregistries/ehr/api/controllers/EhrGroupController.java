@@ -38,12 +38,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static org.immregistries.ehr.api.controllers.ControllerHelper.GROUPS_PATH;
 import static org.immregistries.ehr.api.controllers.ControllerHelper.GROUP_ID_SUFFIX;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.GROUP_PATH;
 
 
 @RestController
-@RequestMapping({GROUPS_PATH})
+@RequestMapping({GROUP_PATH})
 public class EhrGroupController {
 
     public static long DEFAULT_DELAY = 60;

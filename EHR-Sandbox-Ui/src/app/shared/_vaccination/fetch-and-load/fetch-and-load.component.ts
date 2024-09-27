@@ -53,7 +53,11 @@ export class FetchAndLoadComponent implements OnInit {
       width: '100%',
       panelClass: 'dialog-without-bar',
       data: { patientId: this.patientId, url: url ?? "" }
-    }).afterClosed().subscribe(console.log)
+    }).afterClosed().subscribe((res) => {
+      if (res) {
+        this.remoteVaccinations = res
+      }
+    })
   }
 
   selectVaccination(value: VaccinationEvent | null | undefined) {

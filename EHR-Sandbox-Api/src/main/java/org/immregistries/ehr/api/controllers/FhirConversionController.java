@@ -72,7 +72,7 @@ public class FhirConversionController {
         return ResponseEntity.ok(resource);
     }
 
-    @GetMapping(GROUPS_ID_PATH + "/resource")
+    @GetMapping(GROUP_ID_PATH + "/resource")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> groupResource(
             @PathVariable() String groupId) {

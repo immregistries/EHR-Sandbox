@@ -40,7 +40,7 @@ import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_FACILITY_ID
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
-@RequestMapping({PATIENTS_PATH, "/facilities/{facilityId}/patients"})
+@RequestMapping({PATIENT_PATH, "/facilities/{facilityId}/patients"})
 public class EhrPatientController {
     public static final String GOLDEN_SYSTEM_TAG = "http://hapifhir.io/fhir/NamingSystem/mdm-record-status";
     public static final String GOLDEN_RECORD = "GOLDEN_RECORD";
