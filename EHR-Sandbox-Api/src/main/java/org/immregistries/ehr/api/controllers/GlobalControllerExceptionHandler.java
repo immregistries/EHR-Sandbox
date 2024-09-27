@@ -12,6 +12,6 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String internalServerError(Exception exception) {
         exception.printStackTrace();
-        return "Internal Server Error: " + exception.getLocalizedMessage();
+        return exception.getLocalizedMessage();
     }
 }

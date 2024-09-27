@@ -2,7 +2,7 @@
   <div class="textarea-container">
     <mat-form-field style="width: 100%;" appearance="fill">
       <mat-label>Smart Health Link</mat-label>
-      <textarea style="height: 10vh;" matInput placeholder="" [(ngModel)]="url" name="url"
+      <textarea required style="height: 10vh;" matInput placeholder="" [(ngModel)]="url" name="url"
                 [matAutocomplete]="auto"></textarea>
     </mat-form-field>
     <mat-autocomplete #auto="matAutocomplete">

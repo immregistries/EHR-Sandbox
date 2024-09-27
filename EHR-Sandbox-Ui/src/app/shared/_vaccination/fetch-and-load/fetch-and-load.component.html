@@ -4,10 +4,12 @@
   <mat-toolbar color="basic">
     <!-- <span style="flex: 1 1 auto;"></span> -->
     <app-immunization-registry-menu></app-immunization-registry-menu>
-    <button mat-raised-button matTooltip="Fetch and merge remote vaccination history" color="basic"
+    <button mat-raised-button
+            matTooltip="Fetch and merge remote vaccination history, using $match and $everything operations"
+            color="basic"
             (click)="loadEverythingFromPatient()">
       <mat-icon>cloud_download</mat-icon>
-      Fetch
+      $match->$everything
     </button>
     <button mat-raised-button matTooltip="Smart health linik" color="basic" (click)="shlink()">
       <mat-icon>cloud_download</mat-icon>

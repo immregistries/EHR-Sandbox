@@ -100,6 +100,10 @@ public class MatchAndEverythingService {
 
         List<IDomainResource> everything = everythingResources(_since, client, id);
         Set<VaccinationEvent> set = new HashSet<>(everything.size());
+        if (set.isEmpty()) {
+            // TODO better exception
+            throw new RuntimeException("NO REMOTE IMMUNIZATION FOUND");
+        }
 
         for (IDomainResource iDomainResource : everything) {
             if (iDomainResource.fhirType().equals("Immunization")) {
@@ -219,7 +223,11 @@ public class MatchAndEverythingService {
             String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseResource patient = parser.parseResource(message);
-        return matchPatientOperation(registryId, patient);
+        try {
+            return matchPatientOperation(registryId, patient);
+        } catch (Exception exception) {
+            throw new RuntimeException("Failure when executing $match: " + exception.getMessage());
+        }
     }
 
     public IBaseBundle matchPatientOperation(

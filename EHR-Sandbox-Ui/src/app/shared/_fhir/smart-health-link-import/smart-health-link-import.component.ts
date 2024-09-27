@@ -69,11 +69,12 @@ export class SmartHealthLinkImportComponent {
 
         let jsonRes = JSON.parse(res);
         let composition;
-        if (jsonRes["credentialSubject"]['fhirBundle']['entry'][0]['resource']) {
+        try {
           composition = jsonRes["credentialSubject"]['fhirBundle']['entry'][0]['resource']
-        } else if (jsonRes['entry'][0]['resource']) {
+        } catch (exception) { }
+        try {
           composition = jsonRes['entry'][0]['resource']
-        }
+        } catch (exception) { }
         if (composition['text']['div']) {
           this.sanitizedHtml = this.sanitizer.bypassSecurityTrustHtml(composition['text']['div']);
         }

@@ -7,6 +7,8 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
 import { Observable, of } from 'rxjs';
 import { SmartHealthLinkImportComponent } from '../../_fhir/smart-health-link-import/smart-health-link-import.component';
+import { error } from 'console';
+import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 
 @Component({
   selector: 'app-fetch-and-load',
@@ -29,6 +31,7 @@ export class FetchAndLoadComponent implements OnInit {
     private fhirClient: FhirClientService,
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
+    public snackBarService: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number }) {
     this.patientId = data?.patientId
@@ -39,9 +42,16 @@ export class FetchAndLoadComponent implements OnInit {
 
   loadEverythingFromPatient() {
     this.loading = true
-    this.fhirClient.loadEverythingFromPatient(this.patientId ?? -1).subscribe((res) => {
-      this.loading = false
-      this.remoteVaccinations = res
+    this.fhirClient.loadEverythingFromPatient(this.patientId ?? -1).subscribe({
+      next: (res) => {
+        this.loading = false
+        this.remoteVaccinations = res
+      },
+      error: (error) => {
+        this.loading = false
+        console.error(error)
+        this.snackBarService.errorMessage(error.error)
+      }
     })
   }
 
