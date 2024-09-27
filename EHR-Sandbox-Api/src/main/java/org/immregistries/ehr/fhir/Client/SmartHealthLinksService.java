@@ -109,18 +109,20 @@ public class SmartHealthLinksService {
             result.add(gson.toJson(jwt.getPayload()));
         } else { // Manifest
             String manifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE);
-            logger.info("manifest {}", manifest);
-            JsonObject manifestElement = (JsonObject) JsonParser.parseString(manifest);
+//            logger.info("manifest {}", manifest);
+            JsonObject manifestElement;
+            try {
+                manifestElement = (JsonObject) JsonParser.parseString(manifest);
+            } catch (ClassCastException classCastException) {
+                throw new RuntimeException("Invalid Manifest : " + classCastException.getMessage());
+            }
             JsonArray files = manifestElement.get(FILES).getAsJsonArray();
             for (JsonElement file : files) {
                 JsonObject manifestFile = (JsonObject) file;
                 if (manifestFile.has(EMBEDDED)) {
                     result.addAll(embeddedFile(manifestFile, secretKey, publicKey));
                 } else if (manifestFile.has(LOCATION)) {//TODO
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .header(CONTENT_TYPE, APPLICATION_JOSE)
-                            .uri(URI.create(manifestFile.get(LOCATION).getAsString()))
-                            .build();
+
                 } else {
                     throw new RuntimeException("Manifest File Requires either Embedded or Location");
                 }
