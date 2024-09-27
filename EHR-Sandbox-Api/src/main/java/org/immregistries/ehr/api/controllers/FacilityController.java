@@ -21,6 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.FACILITY_ID_SUFFIX;
+
 @RestController
 @RequestMapping({"/tenants/{tenantId}/facilities"})
 public class FacilityController {
@@ -57,13 +59,13 @@ public class FacilityController {
         return randomGenerator.randomPatient(facilityRepository.findById(facilityId).get());
     }
 
-    @GetMapping("/{facilityId}")
+    @GetMapping(FACILITY_ID_SUFFIX)
     public Optional<Facility> getFacility(@PathVariable() String tenantId,
                                           @PathVariable() String facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId, tenantId);
     }
 
-    @GetMapping("/{facilityId}/$children")
+    @GetMapping(FACILITY_ID_SUFFIX + "/$children")
     public Set<Facility> getFacilityChildren(@PathVariable() String tenantId, @PathVariable() String facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId, tenantId).orElseThrow().getFacilities();
     }
@@ -122,7 +124,7 @@ public class FacilityController {
         return new ResponseEntity<>(newEntity, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{facilityId}/$populate")
+    @GetMapping(FACILITY_ID_SUFFIX + "/$populate")
     @Transactional()
     public ResponseEntity<String> populateFacility(
             @PathVariable() String tenantId,

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
+
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/clinicians", "/tenants/{tenantId}/clinicians"})
+@RequestMapping({FACILITY_ID_PATH + CLINICIAN_PATH_HEADER, ControllerHelper.CLINICIAN_PATH})
 public class ClinicianController {
     Logger logger = LoggerFactory.getLogger(ClinicianController.class);
 
@@ -34,7 +36,7 @@ public class ClinicianController {
         return clinicianRepository.findByTenantId(tenantId);
     }
 
-    @GetMapping("/{clinicianId}")
+    @GetMapping(CLINICIAN_ID_SUFFIX)
     public Optional<Clinician> clinician(@PathVariable() String clinicianId) {
         return clinicianRepository.findById(clinicianId);
     }
@@ -56,7 +58,7 @@ public class ClinicianController {
         return newClinician;
     }
 
-    @PutMapping("/{clinicianId}")
+    @PutMapping(CLINICIAN_ID_SUFFIX)
     public Clinician putClinicians(@PathVariable() String tenantId, @PathVariable() String clinicianId, @RequestBody Clinician clinician) {
         Optional<Clinician> old = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId);
         clinician.setTenant(old.get().getTenant());

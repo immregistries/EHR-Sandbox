@@ -21,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.REGISTRY_ID_SUFFIX;
+
 @RestController
 @RequestMapping("/registry")
 public class ImmunizationRegistryController {
@@ -36,14 +38,14 @@ public class ImmunizationRegistryController {
     @Autowired
     private ImmunizationRegistryService immunizationRegistryService;
 
-    @GetMapping({"/{id}"})
-    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String id) {
-        return immunizationRegistryService.getImmunizationRegistry(id);
+    @GetMapping({REGISTRY_ID_SUFFIX})
+    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String registryId) {
+        return immunizationRegistryService.getImmunizationRegistry(registryId);
     }
 
-    @GetMapping({"/{id}/metadata"})
-    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() String id) {
-        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(getImmunizationRegistry(id));
+    @GetMapping({REGISTRY_ID_SUFFIX + "/metadata"})
+    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() String registryId) {
+        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(getImmunizationRegistry(registryId));
         CapabilityStatement capabilityStatement;
         try {
             capabilityStatement = client.capabilities().ofType(CapabilityStatement.class).prettyPrint().execute();
@@ -87,13 +89,13 @@ public class ImmunizationRegistryController {
         return immunizationRegistryRepository.save(immunizationRegistry);
     }
 
-    @DeleteMapping({"/{id}"})
-    public ResponseEntity removeImmunizationRegistry(@PathVariable() String id) {
-        immunizationRegistryRepository.deleteByIdAndUserId(id, userDetailsService.currentUserId());
+    @DeleteMapping({REGISTRY_ID_SUFFIX})
+    public ResponseEntity removeImmunizationRegistry(@PathVariable() String registryId) {
+        immunizationRegistryRepository.deleteByIdAndUserId(registryId, userDetailsService.currentUserId());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{registryId}/$connectivity")
+    @GetMapping(REGISTRY_ID_SUFFIX + "/$connectivity")
     public ResponseEntity<String> checkHl7Connectivity(@PathVariable() String registryId) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = this.getImmunizationRegistry(registryId);
@@ -113,7 +115,7 @@ public class ImmunizationRegistryController {
         }
     }
 
-    @GetMapping("/{registryId}/$auth")
+    @GetMapping(REGISTRY_ID_SUFFIX + "/$auth")
     public ResponseEntity<String> checkHl7Auth(@PathVariable() String registryId) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = this.getImmunizationRegistry(registryId);

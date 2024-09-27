@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController()
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/recommendations"})
+@RequestMapping({ControllerHelper.PATIENT_ID_PATH + "/recommendations"})
 public class RecommendationController {
     Logger logger = LoggerFactory.getLogger(RecommendationController.class);
     @Autowired()

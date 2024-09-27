@@ -30,7 +30,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static org.immregistries.ehr.api.controllers.FhirClientController.PRIMAL_IMM_REGISTRY_SUFFIX;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.REGISTRY_PATH;
+
 
 @RestController
 public class BulkImportController {
@@ -46,7 +47,7 @@ public class BulkImportController {
     FacilityRepository facilityRepository;
 
 
-    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/Group/{groupId}/$export-synch")
+    @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-synch")
     public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() String registryId, @PathVariable() String groupId
             , @RequestParam Optional<String> _outputFormat
             , @RequestParam Optional<String> _type
@@ -103,7 +104,7 @@ public class BulkImportController {
         }
     }
 
-    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/Group/{groupId}/$export-asynch")
+    @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-asynch")
     public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() String registryId, @PathVariable() String groupId
             , @RequestParam Optional<String> _outputFormat
             , @RequestParam Optional<String> _type
@@ -161,7 +162,7 @@ public class BulkImportController {
 
     }
 
-    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-status")
+    @GetMapping(REGISTRY_PATH + "/$export-status")
     public ResponseEntity bulkCheckStatus(@PathVariable() String registryId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
@@ -272,7 +273,7 @@ public class BulkImportController {
     }
 
 
-    @DeleteMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-status")
+    @DeleteMapping(REGISTRY_PATH + "/$export-status")
     public ResponseEntity bulkDelete(@PathVariable() String registryId, @RequestParam String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         HttpURLConnection con = null;
@@ -307,7 +308,7 @@ public class BulkImportController {
         }
     }
 
-    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-result")
+    @GetMapping(REGISTRY_PATH + "/$export-result")
     public ResponseEntity bulkResult(@PathVariable() String registryId, @RequestParam String contentUrl, Optional<String> loadInFacility) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;

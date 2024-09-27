@@ -118,7 +118,7 @@ public class MatchAndEverythingService {
         return set;
     }
 
-    private static List<IDomainResource> everythingResources(Optional<Long> _since, IGenericClient client, String id) {
+    private List<IDomainResource> everythingResources(Optional<Long> _since, IGenericClient client, String id) {
         IBaseParameters in;
         if (FhirComponentsDispatcher.r4Flavor()) {
             in = new org.hl7.fhir.r4.model.Parameters()
@@ -142,7 +142,7 @@ public class MatchAndEverythingService {
                 .withParameters(in)
                 .useHttpGet()
                 .returnResourceType(FhirComponentsDispatcher.bundleClass()).execute();
-        return FhirComponentsDispatcher.domainResourcesFromBaseBundleEntries(iBaseBundle);
+        return fhirComponentsDispatcher.bundleImportService().domainResourcesFromBaseBundleEntries(iBaseBundle);
     }
 
 //
@@ -211,7 +211,7 @@ public class MatchAndEverythingService {
             String registryId,
             String message) {
         IBaseBundle iBaseBundle = matchPatientOperation(registryId, message);
-        return FhirComponentsDispatcher.baseResourcesFromBaseBundleEntries(iBaseBundle);
+        return fhirComponentsDispatcher.bundleImportService().baseResourcesFromBaseBundleEntries(iBaseBundle);
     }
 
     public IBaseBundle matchPatientOperation(

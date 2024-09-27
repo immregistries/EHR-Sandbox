@@ -5,10 +5,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.*;
+import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.logic.BundleImportServiceR4;
+import org.immregistries.ehr.logic.BundleImportServiceR5;
+import org.immregistries.ehr.logic.IBundleImportService;
+import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
+import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +65,14 @@ public class SmartHealthCardService {
 
     @Autowired
     private FhirComponentsDispatcher fhirComponentsDispatcher;
+    @Autowired
+    private BundleImportServiceR5 bundleImportServiceR5;
+    @Autowired
+    private BundleImportServiceR4 bundleImportServiceR4;
+    @Autowired
+    private ImmunizationMapperR5 immunizationMapperR5;
+    @Autowired
+    private ImmunizationMapperR4 immunizationMapperR4;
 
     public ResponseEntity<List<String>> qrCodeWrite(Facility facility, String resourceString, HttpServletRequest request) {
         Map<String, Object> mapVc = new HashMap<>(2);
@@ -148,7 +164,36 @@ public class SmartHealthCardService {
         } else {
             jwt = Jwts.parser().build().parse(compact);
         }
-        return parseVCFromJwt(jwt);
+        return parseVCFromJwt(jwt).getAsString();
+    }
+
+    public List<VaccinationEvent> parseBundleVaccinationsFromVC(JsonObject vc) throws CompressionException {
+        if (vc.has(CREDENTIAL_SUBJECT)) {
+            JsonObject credentialSubject = vc.getAsJsonObject(CREDENTIAL_SUBJECT);
+            String fhirVersion = credentialSubject.get(FHIR_VERSION).getAsString();
+            String fhirBundle = credentialSubject.get(FHIR_BUNDLE).getAsString();
+            IBundleImportService iBundleImportService;
+            IImmunizationMapper immunizationMapper;
+            if (fhirVersion.startsWith("4.0")) {
+                iBundleImportService = bundleImportServiceR4;
+                immunizationMapper = immunizationMapperR4;
+            } else if (fhirVersion.startsWith("5.")) {
+                iBundleImportService = bundleImportServiceR5;
+                immunizationMapper = immunizationMapperR5;
+            } else {
+                throw new RuntimeException("Fhir Version not supported " + fhirVersion);
+            }
+            List<IDomainResource> list = iBundleImportService.domainResourcesFromBaseBundleEntries(fhirBundle);
+            List<VaccinationEvent> vaccinationEvents = new ArrayList<>(5);
+            for (IDomainResource iDomainResource : list) {
+                if (iDomainResource.fhirType().equals("Immunization")) {
+                    VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(iDomainResource);
+                    vaccinationEvents.add(vaccinationEvent);
+                }
+            }
+            return vaccinationEvents;
+        }
+        return null;
     }
 
 
@@ -171,15 +216,15 @@ public class SmartHealthCardService {
     }
 
 
-    public String parseVCFromJwt(Jwt jwt) {
+    public JsonObject parseVCFromJwt(Jwt jwt) {
         Gson gson = new Gson();
         logger.info("JWT {}", gson.toJson(jwt));
         JsonObject jwtPayload = gson.toJsonTree(jwt.getPayload()).getAsJsonObject();
-        String verifiableCredentialFirst = null;
+        JsonObject vc = null;
         if (jwtPayload.has(VC)) {
-            verifiableCredentialFirst = jwtPayload.getAsJsonObject(VC).toString();
+            vc = jwtPayload.getAsJsonObject(VC);
         }
-        return verifiableCredentialFirst;
+        return vc;
     }
 
 

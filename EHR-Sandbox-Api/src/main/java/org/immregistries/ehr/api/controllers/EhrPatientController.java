@@ -37,10 +37,10 @@ import java.util.stream.StreamSupport;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_ENTITY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.COPIED_FACILITY_ID;
-import static org.immregistries.ehr.api.controllers.FhirClientController.IMM_REGISTRY_SUFFIX;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients", "/facilities/{facilityId}/patients"})
+@RequestMapping({PATIENTS_PATH, "/facilities/{facilityId}/patients"})
 public class EhrPatientController {
     public static final String GOLDEN_SYSTEM_TAG = "http://hapifhir.io/fhir/NamingSystem/mdm-record-status";
     public static final String GOLDEN_RECORD = "GOLDEN_RECORD";
@@ -76,18 +76,18 @@ public class EhrPatientController {
         return ehrPatientRepository.findByFacilityId(facilityId);
     }
 
-    @GetMapping("/{patientId}")
+    @GetMapping(PATIENT_ID_SUFFIX)
     public Optional<EhrPatient> patient(@PathVariable() String patientId) {
         return ehrPatientRepository.findById(patientId);
     }
 
-    @GetMapping("/{patientId}/$history")
+    @GetMapping(PATIENT_ID_SUFFIX + "/$history")
     public List<Revision<Integer, EhrPatient>> patientHistory(@PathVariable() String patientId) {
         Revisions<Integer, EhrPatient> revisions = ehrPatientRepository.findRevisions(patientId);
         return revisions.getContent();
     }
 
-    @GetMapping("/{patientId}/$populate")
+    @GetMapping(PATIENT_ID_SUFFIX + "/$populate")
     @Transactional()
     public ResponseEntity<String> populatePatient(
             @PathVariable() String tenantId,
@@ -229,7 +229,7 @@ public class EhrPatientController {
     @Autowired
     MatchAndEverythingService matchAndEverythingService;
 
-    @GetMapping("/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$fetchAndLoad")
+    @GetMapping(PATIENT_ID_SUFFIX + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$fetchAndLoad")
     public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(
             @PathVariable() String tenantId,
             @PathVariable() String facilityId,
@@ -241,7 +241,7 @@ public class EhrPatientController {
 //        return ResponseEntity.badRequest().body(new HashSet<>());
     }
 
-    @GetMapping("/{patientId}/qbp")
+    @GetMapping(PATIENT_ID_SUFFIX + "/qbp")
     public ResponseEntity<String> qbp(@PathVariable() String patientId) {
         QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
@@ -253,7 +253,7 @@ public class EhrPatientController {
         return ResponseEntity.ok(queryConverter.convert(vxu));
     }
 
-    @PostMapping("/{patientId}/qbp" + FhirClientController.IMM_REGISTRY_SUFFIX)
+    @PostMapping(PATIENT_ID_SUFFIX + "/qbp" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> qbpSend(@PathVariable() String registryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);

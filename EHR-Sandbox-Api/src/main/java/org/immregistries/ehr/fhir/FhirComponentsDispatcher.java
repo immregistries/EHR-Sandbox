@@ -6,10 +6,7 @@ import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
 import org.immregistries.ehr.fhir.Client.EhrFhirClientFactory;
@@ -27,9 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
 
@@ -269,23 +264,4 @@ public class FhirComponentsDispatcher {
         return org.hl7.fhir.r5.model.Bundle.class;
     }
 
-    public static List<IBaseResource> baseResourcesFromBaseBundleEntries(IBaseBundle iBaseBundle) {
-        if (r4Flavor()) {
-            org.hl7.fhir.r4.model.Bundle bundle = (org.hl7.fhir.r4.model.Bundle) iBaseBundle;
-            return bundle.getEntry().stream().filter(org.hl7.fhir.r4.model.Bundle.BundleEntryComponent::hasResource).map(org.hl7.fhir.r4.model.Bundle.BundleEntryComponent::getResource).collect(Collectors.toList());
-        } else {
-            org.hl7.fhir.r5.model.Bundle bundle = (org.hl7.fhir.r5.model.Bundle) iBaseBundle;
-            return bundle.getEntry().stream().filter(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::hasResource).map(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::getResource).collect(Collectors.toList());
-        }
-    }
-
-    public static List<IDomainResource> domainResourcesFromBaseBundleEntries(IBaseBundle iBaseBundle) {
-        if (r4Flavor()) {
-            org.hl7.fhir.r4.model.Bundle bundle = (org.hl7.fhir.r4.model.Bundle) iBaseBundle;
-            return bundle.getEntry().stream().filter(org.hl7.fhir.r4.model.Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> (IDomainResource) bundleEntryComponent.getResource()).collect(Collectors.toList());
-        } else {
-            org.hl7.fhir.r5.model.Bundle bundle = (org.hl7.fhir.r5.model.Bundle) iBaseBundle;
-            return bundle.getEntry().stream().filter(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> (IDomainResource) bundleEntryComponent.getResource()).collect(Collectors.toList());
-        }
-    }
 }

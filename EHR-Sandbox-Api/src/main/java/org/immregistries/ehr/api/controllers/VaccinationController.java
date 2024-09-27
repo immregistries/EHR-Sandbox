@@ -29,9 +29,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
+
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations", "/tenants/{tenantId}/facilities/{facilityId}/vaccinations"})
+@RequestMapping({VACCINATIONS_PATH, FACILITY_ID_PATH + VACCINATIONS_PATH_HEADER})
 public class VaccinationController {
     @Autowired
     HL7printer hl7printer;
@@ -68,7 +70,7 @@ public class VaccinationController {
         }
     }
 
-    @GetMapping("/{vaccinationId}")
+    @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX)
     public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() String vaccinationId) {
         return vaccinationEventRepository.findById(vaccinationId);
     }
@@ -154,7 +156,7 @@ public class VaccinationController {
         }
     }
 
-    @GetMapping("/{vaccinationId}/vxu")
+    @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu")
     public ResponseEntity<String> vxu(@PathVariable() String vaccinationId) {
         GsonJsonParser gson = new GsonJsonParser();
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
@@ -166,7 +168,7 @@ public class VaccinationController {
         return ResponseEntity.ok(vxu);
     }
 
-    @PostMapping("/{vaccinationId}/vxu" + FhirClientController.IMM_REGISTRY_SUFFIX)
+    @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> vxuSend(@PathVariable() String registryId, @PathVariable() String vaccinationId, @RequestBody String message) {
         Connector connector;
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
@@ -195,7 +197,7 @@ public class VaccinationController {
         }
     }
 
-    @GetMapping("/{vaccinationId}/$history")
+    @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/$history")
     public List<Revision<Integer, VaccinationEvent>> vaccinationHistory(
             @PathVariable() String vaccinationId) {
         Revisions<Integer, VaccinationEvent> revisions = vaccinationEventRepository.findRevisions(vaccinationId);

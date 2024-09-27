@@ -38,9 +38,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.GROUPS_PATH;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.GROUP_ID_SUFFIX;
+
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}/groups"})
+@RequestMapping({GROUPS_PATH})
 public class EhrGroupController {
 
     public static long DEFAULT_DELAY = 60;
@@ -73,7 +76,7 @@ public class EhrGroupController {
     @Autowired
     private ResourceClient resourceClient;
 
-    @GetMapping("/{groupId}")
+    @GetMapping(GROUP_ID_SUFFIX)
     public EhrGroup get(@PathVariable() String groupId) {
         return ehrGroupRepository.findById(groupId).get();
     }
@@ -98,7 +101,7 @@ public class EhrGroupController {
     }
 
 
-    @PutMapping({"", "/{groupId}"})
+    @PutMapping({"", GROUP_ID_SUFFIX})
     @Transactional
     public ResponseEntity<EhrGroup> put(@PathVariable() String facilityId, @RequestBody EhrGroup ehrGroup) {
         EhrGroup oldEntity = ehrGroupRepository.findByFacilityIdAndId(facilityId, ehrGroup.getId())
@@ -187,12 +190,12 @@ public class EhrGroupController {
         }
     }
 
-    @GetMapping("/{groupId}/$import-status")
+    @GetMapping(GROUP_ID_SUFFIX + "/$import-status")
     public ResponseEntity<BulkImportStatus> getImportStatus(@PathVariable() String groupId) {
         return ResponseEntity.ok(resultCacheStore.get(groupId));
     }
 
-    @GetMapping("/{groupId}/$import-status-refresh")
+    @GetMapping(GROUP_ID_SUFFIX + "/$import-status-refresh")
     public ResponseEntity<BulkImportStatus> getImportStatusWithForceRefresh(@PathVariable() String groupId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).orElseThrow();
         BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
@@ -206,15 +209,15 @@ public class EhrGroupController {
         return ResponseEntity.ok(resultCacheStore.get(groupId));
     }
 
-    @PostMapping("/{groupId}/$import-view-result")
+    @PostMapping(GROUP_ID_SUFFIX + "/$import-view-result")
     public ResponseEntity<Set<EhrEntity>> getImportStatusResult(@PathVariable() String groupId, @RequestBody String url) {
 //        BulkImportStatus bulkImportStatus = resultCacheStore.get(groupId);
         EhrGroup group = ehrGroupRepository.findById(groupId).get();
         return bulkImportController.viewBulkResult(group.getImmunizationRegistry().getId(), group.getFacility().getId(), url);
     }
 
-    @GetMapping("/{groupId}/$import")
-    @PostMapping("/{groupId}/$import")
+    @GetMapping(GROUP_ID_SUFFIX + "/$import")
+    @PostMapping(GROUP_ID_SUFFIX + "/$import")
     public ResponseEntity<?> bulkImport(@PathVariable() String groupId) throws IOException {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         ImmunizationRegistry immunizationRegistry = ehrGroup.getImmunizationRegistry();
@@ -306,7 +309,7 @@ public class EhrGroupController {
 
     }
 
-    @PostMapping("/{groupId}/$add")
+    @PostMapping(GROUP_ID_SUFFIX + "/$add")
     @Transactional()
     public EhrGroup add(@PathVariable() String groupId, @RequestParam("patientId") String patientId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
@@ -346,7 +349,7 @@ public class EhrGroupController {
         }
     }
 
-    @PostMapping("/{groupId}/$remove")
+    @PostMapping(GROUP_ID_SUFFIX + "/$remove")
     public EhrGroup remove_member(@PathVariable() String groupId, @RequestParam String patientId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(ehrGroup.getFacility().getId(), patientId)
@@ -378,7 +381,7 @@ public class EhrGroupController {
         }
     }
 
-    @GetMapping("/{groupId}/$refresh")
+    @GetMapping(GROUP_ID_SUFFIX + "/$refresh")
     public EhrGroup refreshOne(@PathVariable() String groupId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("group not found"));
         return refreshOne(ehrGroup);

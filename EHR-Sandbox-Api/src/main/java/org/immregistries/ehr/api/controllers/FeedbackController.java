@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
+
 @RestController
 //@RequestMapping({""})
 /**
@@ -22,6 +24,7 @@ import java.util.Optional;
  */
 public class FeedbackController {
 
+    public static final String FEEDBACKS_PATH_HEADER = "/feedbacks";
     @Autowired
     private EhrPatientRepository patientRepository;
     @Autowired
@@ -41,19 +44,19 @@ public class FeedbackController {
 
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
-    @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/feedbacks")
+    @GetMapping(FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER)
     public Iterable<Feedback> getPatientFeedback(@PathVariable() String tenantId,
                                                  @PathVariable() String facilityId) {
         return facilityController.getFacility(tenantId, facilityId).get().getFeedbacks();
     }
 
 
-    @GetMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/feedbacks")
+    @GetMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
     public Optional<Feedback> getPatientFeedback(@PathVariable() String patientId) {
         return feedbackRepository.findByPatientId(patientId);
     }
 
-    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/feedbacks")
+    @PostMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
     public Feedback postPatientFeedback(@PathVariable() String facilityId,
                                         @PathVariable() String patientId,
                                         @RequestBody Feedback feedback) {
@@ -67,7 +70,7 @@ public class FeedbackController {
         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Patient not found");
     }
 
-    @PostMapping("/tenants/{tenantId}/facilities/{facilityId}/patients/{patientId}/vaccinations/{vaccinationId}/feedbacks")
+    @PostMapping(VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER)
     public Feedback postVaccinationFeedback(@PathVariable() String facilityId,
                                             @PathVariable() String patientId,
                                             @PathVariable() String vaccinationId,

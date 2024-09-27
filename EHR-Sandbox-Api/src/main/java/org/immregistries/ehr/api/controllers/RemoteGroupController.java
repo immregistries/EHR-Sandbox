@@ -1,7 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 //@RestController()
-//@RequestMapping({"/tenants/{tenantId}/facilities/{facilityId}" + IMM_REGISTRY_SUFFIX + "/groups", IMM_REGISTRY_SUFFIX + "/groups"})
+//@RequestMapping({ControllerHelper.FACILITY_ID_PATH + IMM_REGISTRY_SUFFIX + "/groups", IMM_REGISTRY_SUFFIX + "/groups"})
 
 /**
  * DEPRECATED

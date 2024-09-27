@@ -1,9 +1,9 @@
 package org.immregistries.ehr.api.controllers;
 
 import com.github.javafaker.Faker;
-import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
+import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
+
 @RestController
-@RequestMapping("/tenants")
+@RequestMapping(TENANTS_PATH)
 public class TenantController {
 
     @Autowired
@@ -41,22 +43,22 @@ public class TenantController {
         return tenantRepository.findByUserId(userDetailsService.currentUserId());
     }
 
-    @GetMapping("/{tenantId}")
+    @GetMapping(TENANT_ID_SUFFIX)
     public Optional<Tenant> getTenant(@PathVariable() String tenantId) {
         return tenantRepository.findById(tenantId);
     }
 
-    @GetMapping("/{tenantId}/patients")
+    @GetMapping(TENANT_ID_SUFFIX + PATIENT_PATH_HEADER)
     public Iterable<EhrPatient> patients(@PathVariable() String tenantId) {
         return patientRepository.findByTenantId(tenantRepository.findById(tenantId).orElseThrow());
     }
 
     @PostMapping()
     public ResponseEntity<Tenant> postTenant(@RequestBody Tenant tenant) {
-        if (tenantRepository.existsByUserIdAndNameDisplay(userDetailsService.currentUserId(), tenant.getNameDisplay())){
+        if (tenantRepository.existsByUserIdAndNameDisplay(userDetailsService.currentUserId(), tenant.getNameDisplay())) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Tenant already exists");
         }
-        if (tenant.getNameDisplay().length() < 1){
+        if (tenant.getNameDisplay().length() < 1) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No tenant name specified");
         }
         tenant.setUser(userDetailsService.currentUser());

@@ -1,5 +1,6 @@
 package org.immregistries.ehr.fhir.Client;
 
+import ca.uhn.fhir.context.FhirContext;
 import com.google.gson.*;
 import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.Jwt;
@@ -9,6 +10,7 @@ import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -42,11 +44,24 @@ public class SmartHealthLinksService {
     public static final String SHLINK_PREFIX = "shlink:/";
     public static final String LOCATION = "location";
     public static final String VERIFIABLE_CREDENTIAL = "verifiableCredential";
+    public static final String APPLICATION_JOSE = "application/jose";
 
     @Autowired
     FacilityRepository facilityRepository;
     @Autowired
     SmartHealthCardService smartHealthCardService;
+    //    @Autowired
+//    EhrFhirClientFactory ehrFhirClientFactory;
+    //    @Autowired
+//    EhrFhirClientFactory ehrFhirClientFactory;
+//    @Autowired
+//    EhrFhirClientFactory ehrFhirClientFactory;
+    @Autowired()
+    @Qualifier("fhirContextR5")
+    FhirContext fhirContextR5;
+    @Autowired()
+    @Qualifier("fhirContextR4")
+    FhirContext fhirContextR4;
 
 
     public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey) {
@@ -89,49 +104,63 @@ public class SmartHealthLinksService {
          * if flag contains "U"
          */
         if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U)) {
-            String data = new String(directFileRequest(url, recipient));
+            String data = directFileRequest(url, recipient);
             Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(data);
             result.add(gson.toJson(jwt.getPayload()));
-        } else {
+        } else { // Manifest
             String manifest = manifestReading(url, recipient, password, null);
             JsonObject manifestElement = (JsonObject) JsonParser.parseString(manifest);
             logger.info("manifest {}", manifestElement);
             JsonArray files = manifestElement.get(FILES).getAsJsonArray();
             for (JsonElement file : files) {
-                JsonObject jsonObject = (JsonObject) file;
-                switch (jsonObject.get(CONTENT_TYPE).getAsString()) {
-                    case "application/smart-health-card": {
-                        break;
-                    }
-                    case "application/fhir+json": //TODO
-                    case "application/smart-api-access": //TODO
-                    default: {
-                        throw new RuntimeException("Manifest Content type not supported");
-                    }
-                }
-                if (jsonObject.has(EMBEDDED)) {
-                    Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(jsonObject.get(EMBEDDED).getAsString());
-                    JsonObject jwtPayload = gson.toJsonTree(jwt.getPayload()).getAsJsonObject();
-                    JsonArray verifiableCredentials = jwtPayload.getAsJsonArray(VERIFIABLE_CREDENTIAL);
-                    for (JsonElement compact : verifiableCredentials) {
-                        String res;
-                        try {
-                            /**
-                             * Verify Signature
-                             */
-                            res = smartHealthCardService.parseVCFromCompactJwt(publicKey, compact.getAsString());
-                        } catch (CompressionException compressionException) {
-                            compressionException.printStackTrace();
-                            res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
-                        }
-                        result.add(res);
-                    }
-                } else if (jsonObject.has(LOCATION)) {
-//TODO
+                JsonObject manifestFile = (JsonObject) file;
+                if (manifestFile.has(EMBEDDED)) {
+                    result.addAll(embeddedFile(manifestFile, secretKey, publicKey));
+                } else if (manifestFile.has(LOCATION)) {//TODO
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .header(CONTENT_TYPE, APPLICATION_JOSE)
+                            .uri(URI.create(manifestFile.get(LOCATION).getAsString()))
+                            .build();
+                } else {
+                    throw new RuntimeException("Manifest File Requires either Embedded or Location");
                 }
             }
         }
         return result;
+    }
+
+    private List<String> embeddedFile(JsonObject manifestFile, SecretKey secretKey, PublicKey publicKey) {
+        Gson gson = new Gson();
+        switch (manifestFile.get(CONTENT_TYPE).getAsString()) {
+            case "application/smart-health-card": {
+                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.get(EMBEDDED).getAsString());
+                JsonArray verifiableCredentials = gson.toJsonTree(jwt.getPayload()).getAsJsonObject().getAsJsonArray(VERIFIABLE_CREDENTIAL);
+                List<String> result = new ArrayList<>(verifiableCredentials.size());
+                for (JsonElement compact : verifiableCredentials) {
+                    String res;
+                    try {
+                        /**
+                         * Verify Signature
+                         */
+                        res = smartHealthCardService.parseVCFromCompactJwt(publicKey, compact.getAsString());
+                    } catch (CompressionException compressionException) {
+                        // Do unverified raw inflate if compression headers are invalid
+                        compressionException.printStackTrace();
+                        res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
+                    }
+                    result.add(res);
+                }
+                return result;
+            }
+            case "application/fhir+json": {//TODO test
+                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.get(EMBEDDED).getAsString());
+                return List.of(gson.toJson(jwt.getPayload()));
+            }
+            case "application/smart-api-access": //TODO
+            default: {
+                throw new RuntimeException("Manifest Content type not supported");
+            }
+        }
     }
 
     public String directFileRequest(String baseUrl, String recipient) {
@@ -149,7 +178,6 @@ public class SmartHealthLinksService {
                     .build();
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            logger.info("data {}", response.body());
             return response.body();
         } catch (MalformedURLException | InterruptedException e) {
             throw new RuntimeException(e);

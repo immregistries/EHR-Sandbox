@@ -8,9 +8,6 @@ import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.ECKey;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -20,7 +17,6 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
-import org.immregistries.ehr.fhir.Client.SmartHealthLinksService;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,26 +25,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.PublicKey;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.immregistries.ehr.fhir.Client.SmartHealthLinksService.SHLINK_PREFIX;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
 public class FhirClientController {
-    public static final String TENANT_PREFIX = "/tenants";
-    public static final String FACILITY_PREFIX = TENANT_PREFIX + "/{tenantId}/facilities";
-    public static final String CLINICIAN_PREFIX = TENANT_PREFIX + "/{tenantId}/clinicians";
-    public static final String PATIENT_PREFIX = FACILITY_PREFIX + "/{facilityId}/patients";
-    public static final String GROUPS_PREFIX = FACILITY_PREFIX + "/{facilityId}/groups";
-    public static final String IMMUNIZATION_PREFIX = PATIENT_PREFIX + "/{patientId}/vaccinations";
-    public static final String IMM_REGISTRY_SUFFIX = "/registry/{registryId}";
-    public static final String PRIMAL_IMM_REGISTRY_SUFFIX = TENANT_PREFIX + "/{tenantId}/registry/{registryId}";
+
     private static final Logger logger = LoggerFactory.getLogger(FhirClientController.class);
     @Autowired
     private FhirComponentsDispatcher fhirComponentsDispatcher;
@@ -72,10 +59,9 @@ public class FhirClientController {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private TenantRepository tenantRepository;
-    @Autowired
-    private SmartHealthLinksService smartHealthLinksService;
 
-    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/{resourceType}/{id}")
+
+    @GetMapping(REGISTRY_PATH + "/{resourceType}/{id}")
     public ResponseEntity<String> getFhirResourceFromIIS(
             @PathVariable() String registryId,
             @PathVariable() String resourceType,
@@ -83,29 +69,8 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryService.getImmunizationRegistry(registryId)));
     }
 
-    @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$import-shlink")
-    public ResponseEntity<List<String>> smartHealthLink(
-            @PathVariable() String registryId,
-            @RequestBody() String url, @RequestParam Optional<String> password, @RequestParam Optional<String> jwk) {
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        if (!url.contains(SHLINK_PREFIX)) {
-            throw new RuntimeException("Invalid shlink");
-        }
-        String shlink = SHLINK_PREFIX + url.split(SHLINK_PREFIX)[1];
-        PublicKey publicKey = null;
-        if (StringUtils.isNotBlank(jwk.orElse(null))) {
-            try {
-                publicKey = ECKey.parse(jwk.get()).toPublicKey();
-            } catch (JOSEException | ParseException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        List<String> body = smartHealthLinksService.importSmartHealthLink(shlink, password.orElse(null), publicKey);
-        return ResponseEntity.ok(body);
-    }
 
-
-    @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/{resourceType}/search")
+    @PostMapping(REGISTRY_PATH + "/{resourceType}/search")
     public ResponseEntity<String> searchFhirResourceFromIIS(
             @PathVariable() String registryId,
             @PathVariable() String resourceType,
@@ -192,7 +157,7 @@ public class FhirClientController {
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));
     }
 
-    @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @PostMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> postPatient(
             @PathVariable() String registryId,
             @PathVariable() String patientId,
@@ -214,7 +179,7 @@ public class FhirClientController {
     @Autowired
     MatchAndEverythingService matchAndEverythingService;
 
-    @PostMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$match")
+    @PostMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$match")
     public ResponseEntity<List<String>> matchPatient(
             @PathVariable() String tenantId,
 
@@ -228,7 +193,7 @@ public class FhirClientController {
     }
 
 
-    @PutMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @PutMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> updatePatient(
             @PathVariable() String registryId,
             @PathVariable() String patientId,
@@ -260,7 +225,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-    @GetMapping(PATIENT_PREFIX + "/{patientId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @GetMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> getPatient(
             @PathVariable() String registryId,
             @PathVariable() String patientId) {
@@ -268,7 +233,7 @@ public class FhirClientController {
                 immunizationRegistryService.getImmunizationRegistry(registryId)));
     }
 
-    @PostMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @PostMapping(VACCINATION_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> postImmunization(
             @PathVariable() String registryId,
             @PathVariable() String vaccinationId,
@@ -285,7 +250,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-    @PutMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @PutMapping(VACCINATION_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     @Transactional
     public ResponseEntity<String> updateImmunization(
             @PathVariable() String facilityId,
@@ -339,7 +304,7 @@ public class FhirClientController {
         }
     }
 
-    @GetMapping(IMMUNIZATION_PREFIX + "/{vaccinationId}/fhir-client" + IMM_REGISTRY_SUFFIX)
+    @GetMapping(VACCINATION_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> getImmunization(
             @PathVariable() String registryId,
             @PathVariable() int vaccinationId) {
@@ -347,7 +312,7 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), registry));
     }
 
-    @PostMapping(PRIMAL_IMM_REGISTRY_SUFFIX)
+    @PostMapping(REGISTRY_PATH)
     public ResponseEntity<String> postResource(
             @PathVariable() String registryId,
             @RequestParam(name = "type") String type,
@@ -363,7 +328,7 @@ public class FhirClientController {
         return ResponseEntity.ok(outcome.getId().getIdPart());
     }
 
-    @PutMapping(PRIMAL_IMM_REGISTRY_SUFFIX)
+    @PutMapping(REGISTRY_PATH)
     public ResponseEntity<String> putResource(
             @PathVariable() String registryId,
             @RequestParam String type,
@@ -380,7 +345,7 @@ public class FhirClientController {
     }
 
     //    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
-    @PostMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
+    @PostMapping(FACILITY_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$transaction")
     public ResponseEntity<String> transaction(
             @PathVariable() String registryId,
             @RequestBody String message) {
@@ -393,12 +358,12 @@ public class FhirClientController {
     }
 
     @PostMapping({
-            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
-            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
+            REGISTRY_PATH + "/operation/{target}/{operationType}",
+            REGISTRY_PATH + "/operation/{target}/{targetId}/{operationType}",
     })
     @PutMapping({
-            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{operationType}",
-            PRIMAL_IMM_REGISTRY_SUFFIX + "/operation/{target}/{targetId}/{operationType}",
+            REGISTRY_PATH + "/operation/{target}/{operationType}",
+            REGISTRY_PATH + "/operation/{target}/{targetId}/{operationType}",
     })
     public ResponseEntity<Object> operation(
             @PathVariable() String operationType,

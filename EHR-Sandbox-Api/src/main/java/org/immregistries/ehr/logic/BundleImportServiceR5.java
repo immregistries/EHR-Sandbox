@@ -1,8 +1,11 @@
 package org.immregistries.ehr.logic;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
@@ -15,12 +18,15 @@ import org.immregistries.ehr.logic.mapping.PatientMapperR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_RECORD;
 import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_SYSTEM_TAG;
@@ -29,6 +35,9 @@ import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_
 public class BundleImportServiceR5 implements IBundleImportService {
     private static final Logger logger = LoggerFactory.getLogger(BundleImportServiceR5.class);
 
+    @Autowired
+    @Qualifier("fhirContextR5")
+    FhirContext fhirContextR5;
 
     @Autowired
     PatientProviderR5 patientProvider;
@@ -142,5 +151,26 @@ public class BundleImportServiceR5 implements IBundleImportService {
             }
         }
         return entities;
+    }
+
+
+    public List<IBaseResource> baseResourcesFromBaseBundleEntries(String resource) {
+        Bundle bundle = fhirContextR5.newJsonParser().parseResource(Bundle.class, resource);
+        return baseResourcesFromBaseBundleEntries(bundle);
+    }
+
+    public List<IDomainResource> domainResourcesFromBaseBundleEntries(String resource) {
+        Bundle bundle = fhirContextR5.newJsonParser().parseResource(Bundle.class, resource);
+        return domainResourcesFromBaseBundleEntries(bundle);
+    }
+
+    public List<IBaseResource> baseResourcesFromBaseBundleEntries(IBaseBundle iBaseBundle) {
+        org.hl7.fhir.r5.model.Bundle bundle = (org.hl7.fhir.r5.model.Bundle) iBaseBundle;
+        return bundle.getEntry().stream().filter(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::hasResource).map(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::getResource).collect(Collectors.toList());
+    }
+
+    public List<IDomainResource> domainResourcesFromBaseBundleEntries(IBaseBundle iBaseBundle) {
+        org.hl7.fhir.r5.model.Bundle bundle = (org.hl7.fhir.r5.model.Bundle) iBaseBundle;
+        return bundle.getEntry().stream().filter(org.hl7.fhir.r5.model.Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> (IDomainResource) bundleEntryComponent.getResource()).collect(Collectors.toList());
     }
 }
