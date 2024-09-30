@@ -1,8 +1,7 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
 import jakarta.persistence.Embeddable;
-
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Embeddable()
 public class EhrPhoneNumber {

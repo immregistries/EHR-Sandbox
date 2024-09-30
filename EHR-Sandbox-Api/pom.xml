@@ -14,7 +14,7 @@
     <description>Api for EHR Sandbox</description>
     <properties>
         <java.version>1.8</java.version>
-        <hapi.version>6.8.3</hapi.version>
+        <hapi.version>7.4.0</hapi.version>
     </properties>
 
 
@@ -25,7 +25,6 @@
                 <artifactId>spring-data-bom</artifactId>
                 <version>2024.0.4</version>
                 <!--                <version>2021.2.7</version>-->
-
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -34,6 +33,19 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-properties-migrator</artifactId>
@@ -63,7 +75,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <!--			<version>4.0.0.RELEASE</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -73,32 +84,27 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-envers</artifactId>
-            <!--			<version>${spring.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!--			<version>${spring.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>${spring-boot-tomcat.scope}</scope>
-            <!--			<version>${spring.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <!--			<version>${spring.version}</version>-->
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <!--			<version>${spring.version}</version>-->
         </dependency>
 
         <dependency>
@@ -124,7 +130,6 @@
         <!--            <groupId>org.springframework.boot</groupId>-->
         <!--            <artifactId>spring-boot-starter-test</artifactId>-->
         <!--            <scope>test</scope>-->
-        <!--            &lt;!&ndash;			<version>${spring.version}</version>&ndash;&gt;-->
         <!--        </dependency>-->
 
         <!--		<dependency>-->
@@ -143,21 +148,6 @@
             <groupId>org.immregistries</groupId>
             <artifactId>codebase-client</artifactId>
             <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.4.0-b180830.0359</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -207,11 +197,6 @@
                     <artifactId>snakeyaml</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>1.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -291,7 +276,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <!--				<version>${spring.version}</version>-->
                 <configuration>
                     <mainClass>org.immregistries.ehr.EhrApiApplication</mainClass>
                     <outputDirectory>${project.build.directory}/../../target</outputDirectory>
@@ -368,46 +352,6 @@
                 </plugins>
             </build>
         </profile>
-        <!--		<profile>-->
-        <!--			<id>local</id>-->
-        <!--			<properties>-->
-        <!--				<activatedProperties>prod</activatedProperties>-->
-        <!--				<maven.test.skip>true</maven.test.skip>-->
-        <!--				<spring-boot-tomcat.scope>provided</spring-boot-tomcat.scope>-->
-        <!--			</properties>-->
-        <!--			<activation>-->
-        <!--				<activeByDefault>true</activeByDefault>-->
-        <!--			</activation>-->
-        <!--			<build>-->
-        <!--				<plugins>-->
-        <!--					<plugin>-->
-        <!--						<groupId>org.apache.maven.plugins</groupId>-->
-        <!--						<artifactId>maven-dependency-plugin</artifactId>-->
-        <!--						<version>3.1.2</version>-->
-        <!--						<executions>-->
-        <!--							<execution>-->
-        <!--								<id>merge</id>-->
-        <!--								<phase>initialize</phase>-->
-        <!--								<goals>-->
-        <!--									<goal>unpack</goal>-->
-        <!--								</goals>-->
-        <!--								<configuration>-->
-        <!--									<artifactItems>-->
-        <!--										<artifactItem>-->
-        <!--											<groupId>org.immregistries.ehr</groupId>-->
-        <!--											<artifactId>ehr-sandbox-ui</artifactId>-->
-        <!--											<type>jar</type>-->
-        <!--											<overWrite>true</overWrite>-->
-        <!--											<outputDirectory>${project.build.directory}/classes/static</outputDirectory>-->
-        <!--										</artifactItem>-->
-        <!--									</artifactItems>-->
-        <!--								</configuration>-->
-        <!--							</execution>-->
-        <!--						</executions>-->
-        <!--					</plugin>-->
-        <!--				</plugins>-->
-        <!--			</build>-->
-        <!--		</profile>-->
         <profile>
             <id>dev</id>
             <properties>

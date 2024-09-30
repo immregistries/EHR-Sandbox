@@ -10,6 +10,7 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
+import jakarta.servlet.ServletException;
 import org.immregistries.ehr.fhir.Server.FhirAuthInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.FrameworkServlet;
 
-import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 

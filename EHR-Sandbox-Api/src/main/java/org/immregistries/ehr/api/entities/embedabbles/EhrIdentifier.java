@@ -3,12 +3,11 @@ package org.immregistries.ehr.api.entities.embedabbles;
 
 import jakarta.persistence.Embeddable;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.validation.constraints.Size;
 
 import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R4_FLAVOUR;
 import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R5_FLAVOUR;

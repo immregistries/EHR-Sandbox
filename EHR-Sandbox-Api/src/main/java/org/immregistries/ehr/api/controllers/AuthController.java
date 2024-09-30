@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import jakarta.validation.Valid;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.User;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -21,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
@@ -45,8 +45,8 @@ public class AuthController {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    
-    @PostMapping( consumes = {"application/xml","application/json"})
+
+    @PostMapping(consumes = {"application/xml", "application/json"})
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         if (user.getPassword().isBlank()) {
             throw new ResponseStatusException(
@@ -76,7 +76,7 @@ public class AuthController {
 
     }
 
-    private synchronized void createUser( User user) {
+    private synchronized void createUser(User user) {
         /**
          * Checking the existence again since method is synchronised and might create duplicates with request spam
          */
@@ -148,6 +148,7 @@ public class AuthController {
 
     /**
      * Method to assert that User is still logged in
+     *
      * @return
      */
     @GetMapping("/user")
