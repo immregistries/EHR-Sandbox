@@ -1,15 +1,12 @@
 package org.immregistries.ehr.api.controllers;
 
 
-import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.smm.tester.connectors.Connector;
-import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,34 +165,34 @@ public class VaccinationController {
         return ResponseEntity.ok(vxu);
     }
 
-    @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu" + REGISTRY_COMPLETE_SUFFIX)
-    public ResponseEntity<String> vxuSend(@PathVariable() String registryId, @PathVariable() String vaccinationId, @RequestBody String message) {
-        Connector connector;
-        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        try {
-            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
-            if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
-                connector.setUserid(immunizationRegistry.getIisUsername());
-                connector.setPassword(immunizationRegistry.getIisPassword());
-                connector.setFacilityid(immunizationRegistry.getIisFacilityId());
-            }
-//            else  {
-//                connector.setUserid("nist");
-//                connector.setKeyStore(new KeyStore());
+//    @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu" + REGISTRY_COMPLETE_SUFFIX)
+//    public ResponseEntity<String> vxuSend(@PathVariable() String registryId, @PathVariable() String vaccinationId, @RequestBody String message) {
+//        Connector connector;
+//        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
+//        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
+//        try {
+//            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
+//            if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
+//                connector.setUserid(immunizationRegistry.getIisUsername());
+//                connector.setPassword(immunizationRegistry.getIisPassword());
+//                connector.setFacilityid(immunizationRegistry.getIisFacilityId());
 //            }
-
-            String result = connector.submitMessage(message, false);
-            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
-            if (vaccinationEvent.getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0) {
-
-            }
-            return ResponseEntity.ok(result);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());
-        }
-    }
+////            else  {
+////                connector.setUserid("nist");
+////                connector.setKeyStore(new KeyStore());
+////            }
+//
+//            String result = connector.submitMessage(message, false);
+//            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
+//            if (vaccinationEvent.getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0) {
+//
+//            }
+//            return ResponseEntity.ok(result);
+//        } catch (Exception e1) {
+//            e1.printStackTrace();
+//            return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());
+//        }
+//    }
 
     @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/$history")
     public List<Revision<Integer, VaccinationEvent>> vaccinationHistory(

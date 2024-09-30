@@ -14,10 +14,6 @@ import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
-import org.immregistries.smm.tester.connectors.Connector;
-import org.immregistries.smm.tester.connectors.SoapConnector;
-import org.immregistries.smm.tester.manager.query.QueryConverter;
-import org.immregistries.smm.tester.manager.query.QueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,31 +237,31 @@ public class EhrPatientController {
 //        return ResponseEntity.badRequest().body(new HashSet<>());
     }
 
-    @GetMapping(PATIENT_ID_SUFFIX + "/qbp")
-    public ResponseEntity<String> qbp(@PathVariable() String patientId) {
-        QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
-        EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-//        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientId(patientId);
-//        Vaccine vaccine = vaccinationEvent.getVaccine()
-        Facility facility = ehrPatient.getFacility();
-        String vxu = hl7printer.buildVxu(null, ehrPatient, facility);
-        return ResponseEntity.ok(queryConverter.convert(vxu));
-    }
+//    @GetMapping(PATIENT_ID_SUFFIX + "/qbp")
+//    public ResponseEntity<String> qbp(@PathVariable() String patientId) {
+//        QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
+//        EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
+////        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientId(patientId);
+////        Vaccine vaccine = vaccinationEvent.getVaccine()
+//        Facility facility = ehrPatient.getFacility();
+//        String vxu = hl7printer.buildVxu(null, ehrPatient, facility);
+//        return ResponseEntity.ok(queryConverter.convert(vxu));
+//    }
 
-    @PostMapping(PATIENT_ID_SUFFIX + "/qbp" + REGISTRY_COMPLETE_SUFFIX)
-    public ResponseEntity<String> qbpSend(@PathVariable() String registryId, @RequestBody String message) {
-        Connector connector;
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        try {
-            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
-            connector.setUserid(immunizationRegistry.getIisUsername());
-            connector.setPassword(immunizationRegistry.getIisPassword());
-            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
-            return ResponseEntity.ok(connector.submitMessage(message, false));
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PostMapping(PATIENT_ID_SUFFIX + "/qbp" + REGISTRY_COMPLETE_SUFFIX)
+//    public ResponseEntity<String> qbpSend(@PathVariable() String registryId, @RequestBody String message) {
+//        Connector connector;
+//        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
+//        try {
+//            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
+//            connector.setUserid(immunizationRegistry.getIisUsername());
+//            connector.setPassword(immunizationRegistry.getIisPassword());
+//            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
+//            return ResponseEntity.ok(connector.submitMessage(message, false));
+//        } catch (Exception e1) {
+//            e1.printStackTrace();
+//            return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }

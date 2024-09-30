@@ -40,10 +40,15 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 
     public static String VERSION = "1.2.3-SNAPSHOT-5";
 
+    private static final Logger logger = LoggerFactory.getLogger(EhrApiApplication.class);
+
+    public static void main(String[] args) {
+        SpringApplication.run(EhrApiApplication.class, args);
+    }
+
     @Bean("fhirContextR4")
     public FhirContext fhirContextR4() {
         FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
-
 //        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
         return fhirContext;
     }
@@ -56,11 +61,6 @@ public class EhrApiApplication extends SpringBootServletInitializer {
         return fhirContext;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(EhrApiApplication.class);
-
-    public static void main(String[] args) {
-        SpringApplication.run(EhrApiApplication.class, args);
-    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -116,14 +116,5 @@ public class EhrApiApplication extends SpringBootServletInitializer {
     public Map<String, BulkImportStatus> resultCacheStore() {
         return new HashMap<>(30);
     }
-
-//	@Bean
-//	/**
-//	 * MultiMapValue<GroupId, PatientId>
-//	 */
-//	public MultiValueMap<String,String> groupMemberPatientIndex() {
-//		MultiValueMap<String,String> map = new MultiValueMapAdapter<>(new HashMap<>(40));
-//		return map;
-//	}
 
 }
