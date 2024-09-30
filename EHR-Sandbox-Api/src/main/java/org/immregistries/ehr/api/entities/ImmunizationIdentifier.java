@@ -1,8 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
+import jakarta.persistence.*;
 import org.immregistries.ehr.api.entities.embedabbles.ImmunizationIdentifierKey;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "immunization_identifier", indexes = {

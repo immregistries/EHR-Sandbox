@@ -2,10 +2,10 @@ package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.*;
 
-import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -14,8 +14,8 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ehr_subscription")
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,
-        property="identifier",
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "identifier",
         scope = EhrSubscription.class)
 public class EhrSubscription extends EhrEntity {
     public EhrSubscription() {
@@ -31,7 +31,7 @@ public class EhrSubscription extends EhrEntity {
         reason = subscription.getReason();
         channelType = subscription.hasChannelType() ? subscription.getChannelType().getCode() : null;
         header = subscription.hasParameter() ? subscription.getParameter().get(0).getName() + ":" + subscription.getParameter().get(0).getValue() : "";
-        heartbeatPeriod = subscription.getHeartbeatPeriod() ;
+        heartbeatPeriod = subscription.getHeartbeatPeriod();
         timeout = subscription.getTimeout();
         contentType = subscription.getContentType();
         content = subscription.hasContent() ? subscription.getContent().toCode() : null;
@@ -39,7 +39,7 @@ public class EhrSubscription extends EhrEntity {
         maxCount = subscription.getMaxCount();
     }
 
-    public Subscription toSubscription(){
+    public Subscription toSubscription() {
         Subscription subscription = new Subscription();
         subscription.setId(externalId);
         subscription.addIdentifier(new Identifier().setValue(identifier));
@@ -58,7 +58,7 @@ public class EhrSubscription extends EhrEntity {
         subscription.setContentType(contentType);
         subscription.setEndpoint(notificationUrlLocation);
         subscription.setMaxCount(maxCount);
-        return  subscription;
+        return subscription;
     }
 
     @Id

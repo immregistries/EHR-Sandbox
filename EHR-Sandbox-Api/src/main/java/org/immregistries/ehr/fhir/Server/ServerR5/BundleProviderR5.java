@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.EhrSubscription;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -16,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.*;
 import static org.immregistries.ehr.api.controllers.SubscriptionController.SECRET_HEADER_NAME;

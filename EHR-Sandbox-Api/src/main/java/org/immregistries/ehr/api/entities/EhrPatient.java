@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
+import jakarta.persistence.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
@@ -8,7 +9,6 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
 
-import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 

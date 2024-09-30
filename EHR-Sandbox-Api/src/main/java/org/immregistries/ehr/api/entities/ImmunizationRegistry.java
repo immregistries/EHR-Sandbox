@@ -1,8 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "immunization_registry", indexes = {

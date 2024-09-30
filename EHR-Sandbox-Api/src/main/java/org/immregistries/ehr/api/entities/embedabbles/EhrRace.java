@@ -1,6 +1,6 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable()
 public class EhrRace {

@@ -1,9 +1,9 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity

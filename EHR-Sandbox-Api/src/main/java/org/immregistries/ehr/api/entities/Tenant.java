@@ -1,14 +1,16 @@
 package org.immregistries.ehr.api.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "tenant")
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = Tenant.class)
 public class Tenant extends EhrEntity {
@@ -17,7 +19,7 @@ public class Tenant extends EhrEntity {
     @Column(name = "tenant_id", nullable = false)
     private String id;
 
-    
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore

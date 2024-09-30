@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.RevisionListener;
 import org.immregistries.ehr.api.entities.AuditRevisionEntity;
@@ -15,8 +16,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class AuditRevisionListener implements RevisionListener, ApplicationContextAware {
     public static final String IMMUNIZATION_REGISTRY_ID = "immunization_registry_id";

@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import com.github.javafaker.Faker;
+import jakarta.transaction.Transactional;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;

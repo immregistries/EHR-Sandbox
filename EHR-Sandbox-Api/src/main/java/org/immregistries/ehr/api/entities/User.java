@@ -3,8 +3,8 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

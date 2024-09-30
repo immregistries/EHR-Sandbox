@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
+
 import javax.validation.constraints.Size;
 
 @Embeddable()

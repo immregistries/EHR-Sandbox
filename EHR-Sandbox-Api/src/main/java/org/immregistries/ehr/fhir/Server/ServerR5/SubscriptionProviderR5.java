@@ -6,14 +6,13 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class SubscriptionProviderR5 implements IResourceProvider {

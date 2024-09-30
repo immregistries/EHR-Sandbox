@@ -2,8 +2,7 @@ package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Used to store number of events related to a subscription, along with other information
@@ -13,7 +12,7 @@ import javax.persistence.*;
 public class EhrSubscriptionInfo {
     @Id
     @Column(name = "ehr_subscription")
-    private String  subscriptionIdentifier;
+    private String subscriptionIdentifier;
     @OneToOne
     @MapsId
     @JoinColumn(name = "ehr_subscription")

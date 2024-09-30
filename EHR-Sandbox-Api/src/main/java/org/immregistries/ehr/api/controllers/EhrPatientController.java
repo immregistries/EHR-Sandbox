@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import jakarta.transaction.Transactional;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;

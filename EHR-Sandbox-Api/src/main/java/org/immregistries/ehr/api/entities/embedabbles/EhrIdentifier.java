@@ -1,13 +1,13 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
 
+import jakarta.persistence.Embeddable;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.persistence.Embeddable;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 
 import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R4_FLAVOUR;

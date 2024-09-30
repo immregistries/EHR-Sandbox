@@ -1,10 +1,9 @@
 package org.immregistries.ehr.api.entities;
 
+import jakarta.persistence.*;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 import org.immregistries.ehr.api.AuditRevisionListener;
-
-import javax.persistence.*;
 
 /**
  * Replaces Envers default Revinfo entity to add User information and more fields

@@ -23,7 +23,9 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-bom</artifactId>
-                <version>2021.2.7</version>
+                <version>2024.0.4</version>
+                <!--                <version>2021.2.7</version>-->
+
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -32,6 +34,11 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>com.googlecode.libphonenumber</groupId>-->
         <!--            <artifactId>libphonenumber</artifactId>-->

@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.parser.IParser;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
@@ -17,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 

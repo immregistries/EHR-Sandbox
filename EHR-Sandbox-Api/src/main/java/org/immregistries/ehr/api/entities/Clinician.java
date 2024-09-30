@@ -1,11 +1,11 @@
 package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;

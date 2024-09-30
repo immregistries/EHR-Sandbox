@@ -1,8 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
+import jakarta.persistence.*;
 import org.immregistries.ehr.api.entities.embedabbles.PatientExternalIdentifierKey;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "patient_identifier", indexes = {
