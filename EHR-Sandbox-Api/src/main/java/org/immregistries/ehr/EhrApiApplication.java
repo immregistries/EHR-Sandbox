@@ -3,7 +3,6 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import org.hl7.fhir.r5.model.Group;
 import org.immregistries.ehr.api.entities.BulkImportStatus;
 import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
 import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
@@ -92,6 +91,16 @@ public class EhrApiApplication extends SpringBootServletInitializer {
         return registrationBean;
     }
 
+//    @Bean
+//    public ServletWebServerFactory servletWebServerFactory() {
+//        ServletWebServerFactory servletWebServerFactory = new ServletWebServerFactory() {
+//            @Override
+//            public WebServer getWebServer(ServletContextInitializer... initializers) {
+//                return null;
+//            }
+//        }
+//    }
+
     /**
      * Required to get access to httpRequest qnd session through spring, important to use the fhir client inside the servlets
      *
@@ -102,15 +111,6 @@ public class EhrApiApplication extends SpringBootServletInitializer {
         return new RequestContextListener();
     }
 
-
-    @Bean
-    /**
-     * Map<FacilityId, MAP<RegistryID, , MAP<GroupID, Group>>>
-     */
-    public Map<Integer, Map<Integer, Map<String, Group>>> groups() {
-        Map<Integer, Map<Integer, Map<String, Group>>> map = new HashMap<>(20);
-        return map;
-    }
 
     @Bean
     public Map<String, BulkImportStatus> resultCacheStore() {

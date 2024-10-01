@@ -1,6 +1,8 @@
 package org.immregistries.ehr.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -13,9 +15,9 @@ import java.util.Set;
 @Entity
 @Table(name = "clinician")
 //@JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "id",
-//        scope = Clinician.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Clinician.class)
 public class Clinician extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,19 +29,19 @@ public class Clinician extends EhrEntity {
     @JsonIgnore
     private Tenant tenant;
 
-    @Column(name = "name_last", nullable = false, length = 250)
+    @Column(name = "name_last", nullable = false)
     private String nameLast = "";
 
-    @Column(name = "name_middle", length = 250)
+    @Column(name = "name_middle")
     private String nameMiddle = "";
 
-    @Column(name = "name_first", nullable = false, length = 250)
+    @Column(name = "name_first", nullable = false)
     private String nameFirst = "";
 
-    @Column(name = "name_Suffix", nullable = true, length = 250)
+    @Column(name = "name_Suffix", nullable = true)
     private String nameSuffix = "";
 
-    @Column(name = "name_Prefix", nullable = true, length = 250)
+    @Column(name = "name_Prefix", nullable = true)
     private String namePrefix = "";
 
     public String getQualification() {
@@ -50,7 +52,7 @@ public class Clinician extends EhrEntity {
         this.qualification = qualification;
     }
 
-    @Column(name = "qualification", nullable = true, length = 250)
+    @Column(name = "qualification", nullable = true)
     private String qualification = "";
 
     @OneToMany(mappedBy = "enteringClinician")

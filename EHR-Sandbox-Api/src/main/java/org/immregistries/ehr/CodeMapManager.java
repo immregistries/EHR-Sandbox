@@ -8,19 +8,19 @@ import java.io.InputStream;
 
 @Service
 public class CodeMapManager {
-  CodeMapBuilder builder = CodeMapBuilder.INSTANCE;
-  CodeMap codeMap;
+    CodeMapBuilder builder = CodeMapBuilder.INSTANCE;
+    CodeMap codeMap;
 
-  public CodeMapManager() {
-    InputStream is = this.getClass().getResourceAsStream("/Compiled.xml");
-    if (is == null) {
-      System.err.println("Unable to find Compiled.xml!");
+    public CodeMapManager() {
+        InputStream is = this.getClass().getResourceAsStream("/Compiled.xml");
+        if (is == null) {
+            System.err.println("Unable to find Compiled.xml!");
+        }
+//    codeMap = builder.getCodeMap(is);
     }
-    codeMap = builder.getCodeMap(is);
-  }
 
-  public CodeMap getCodeMap() {
-    return this.codeMap;
-  }
+    public CodeMap getCodeMap() {
+        return this.codeMap;
+    }
 
 }

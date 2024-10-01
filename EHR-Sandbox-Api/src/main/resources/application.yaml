@@ -5,21 +5,25 @@
 #      hibernate:
 #        SQL: DEBUG
 spring:
+  main:
+    web-application-type: none
   profiles.active: '@activatedProperties@'
   datasource:
     #    url : "jdbc:mysql://localhost:3306/ehr"
     username: 'ehr_web'
     password: 'SharkBaitHooHaHa'
-    #    url: jdbc:h2:mem:ehr-test
-    url: jdbc:h2:file:./data-h2/ehr;
+    url: jdbc:h2:mem:ehr-test;
+    #    url: jdbc:h2:file:./data-h2/ehr;MODE=MYSQL;FILE_LOCK=FILE;AUTO_SERVER=TRUE;
     driverClassName: org.h2.Driver
   #  h2:
   #    console.enabled: true
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      use-new-id-generator-mappings: false
+      #      use-new-id-generator-mappings: false
+      #      id.new_generator_mappings: false
       ddl-auto: update
+      dialect: org.hibernate.dialect.H2Dialect
   #    properties:
   #      hibernate:
   #        show_sql: true

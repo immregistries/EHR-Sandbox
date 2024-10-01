@@ -39,18 +39,18 @@
             <version>3.1.0</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>jakarta.servlet</groupId>-->
-        <!--            <artifactId>jakarta.servlet-api</artifactId>-->
-        <!--            <version>6.1.0</version>-->
-        <!--            <scope>provided</scope>-->
-        <!--        </dependency>-->
-
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-properties-migrator</artifactId>
-            <scope>runtime</scope>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
+            <!--            <scope>provided</scope>-->
         </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-properties-migrator</artifactId>-->
+        <!--            <scope>runtime</scope>-->
+        <!--        </dependency>-->
         <!--        <dependency>-->
         <!--            <groupId>com.googlecode.libphonenumber</groupId>-->
         <!--            <artifactId>libphonenumber</artifactId>-->
@@ -158,6 +158,18 @@
             <artifactId>jaxb-impl</artifactId>
             <version>3.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.0</version>
+            <!--            <scope>provided</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
 
         <!--        <dependency>-->
         <!--            <groupId>org.immregistries</groupId>-->
@@ -170,12 +182,12 @@
         <!--                </exclusion>-->
         <!--            </exclusions>-->
         <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.immregistries</groupId>-->
-        <!--            <artifactId>smm-tester</artifactId>-->
-        <!--            <version>2.37.1</version>-->
-        <!--            <classifier>client</classifier>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.immregistries</groupId>
+            <artifactId>smm-tester</artifactId>
+            <version>2.37.1</version>
+            <classifier>client</classifier>
+        </dependency>
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
@@ -193,11 +205,11 @@
             <version>2.9.0</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.axis2</groupId>-->
-        <!--            <artifactId>axis2-transport-local</artifactId>-->
-        <!--            <version>1.6.2</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>1.6.2</version>
+        </dependency>
 
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
