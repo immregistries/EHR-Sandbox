@@ -8,10 +8,7 @@ import org.hl7.fhir.r5.model.Coding;
 import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.Subscription;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
-import org.immregistries.ehr.api.entities.EhrSubscription;
-import org.immregistries.ehr.api.entities.EhrSubscriptionInfo;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionInfoRepository;
 import org.immregistries.ehr.api.repositories.EhrSubscriptionRepository;
@@ -61,13 +58,13 @@ public class SubscriptionController {
     IResourceClient resourceClient;
 
     @GetMapping(FACILITY_ID_PATH + "/subscription")
-    public Optional<EhrSubscription> ehrSubscription(@PathVariable() String facilityId) {
-        Optional<EhrSubscription> ehrSubscription = ehrSubscriptionRepository.findByIdentifier(facilityId);
+    public Optional<EhrSubscription> ehrSubscription(@PathVariable Integer facilityId) {
+        Optional<EhrSubscription> ehrSubscription = ehrSubscriptionRepository.findByIdentifier(EhrUtils.convert(facilityId));
         return ehrSubscription;
     }
 
     @GetMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription/sample")
-    public ResponseEntity<String> getSample(@PathVariable() String facilityId, @PathVariable() String registryId) {
+    public ResponseEntity<String> getSample(@PathVariable Integer facilityId, @PathVariable() Integer registryId) {
         Facility facility = facilityRepository.findById(facilityId).get();
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
@@ -75,7 +72,7 @@ public class SubscriptionController {
     }
 
     @PostMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription")
-    public Boolean subscribeToIISManualCreate(@PathVariable() String registryId, @RequestBody String stringBody) {
+    public Boolean subscribeToIISManualCreate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
@@ -85,7 +82,7 @@ public class SubscriptionController {
     }
 
     @PutMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription")
-    public Boolean subscribeToIISManualUpdate(@PathVariable() String registryId, @RequestBody String stringBody) {
+    public Boolean subscribeToIISManualUpdate(@PathVariable() Integer registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
@@ -95,7 +92,7 @@ public class SubscriptionController {
     }
 
     @PostMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription/data-quality-issues")
-    public Boolean subscribeToIISFeedback(@PathVariable() String registryId, @PathVariable() String facilityId, @RequestParam Optional<String> groupId) {
+    public Boolean subscribeToIISFeedback(@PathVariable() Integer registryId, @PathVariable Integer facilityId, @RequestParam Optional<String> groupId) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());

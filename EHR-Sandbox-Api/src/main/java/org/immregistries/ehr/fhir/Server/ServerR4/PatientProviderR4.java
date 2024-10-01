@@ -11,6 +11,7 @@ import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
@@ -58,7 +59,7 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
     @Create
     public MethodOutcome create(@ResourceParam Patient fhirPatient, RequestDetails requestDetails) {
         return create(fhirPatient,
-                facilityRepository.findById(requestDetails.getTenantId())
+                facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id")));
     }
 
@@ -68,7 +69,7 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
         ehrPatient.setCreatedDate(new Date());
         ehrPatient.setUpdatedDate(new Date());
         ehrPatient = patientRepository.save(ehrPatient);
-        return new MethodOutcome().setId(new IdType().setValue(ehrPatient.getId())).setCreated(true);
+        return new MethodOutcome().setId(new IdType().setValue(EhrUtils.convert(ehrPatient.getId()))).setCreated(true);
     }
 
     /**
@@ -81,14 +82,14 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
     @Update
     public MethodOutcome update(@ResourceParam Patient patient, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(patient, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Patient patient, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return update(patient, facility, immunizationRegistry);
     }
@@ -99,7 +100,7 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
          *
          * if not recognised store unmatched reference ?
          */
-        String dbPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
+        Integer dbPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
         EhrPatient oldPatient = patientRepository.findByFacilityIdAndId(facility.getId(), dbPatientId).orElse(null);
 
         if (oldPatient != null) {
@@ -113,7 +114,7 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
 
             ehrPatient = patientRepository.save(ehrPatient);
             return new MethodOutcome()
-                    .setId(new IdType().setValue(ehrPatient.getId()))
+                    .setId(new IdType().setValue(EhrUtils.convert(ehrPatient.getId())))
                     .setResource(patientMapper.toFhir(ehrPatient, facility));
         } else {
             return create(patient, facility);

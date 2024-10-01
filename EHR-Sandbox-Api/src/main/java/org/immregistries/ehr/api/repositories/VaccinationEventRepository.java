@@ -6,20 +6,20 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 import java.util.Optional;
 
-public interface VaccinationEventRepository extends CrudRepository<VaccinationEvent, String>, RevisionRepository<VaccinationEvent, String, Integer> {
+public interface VaccinationEventRepository extends CrudRepository<VaccinationEvent, Integer>, RevisionRepository<VaccinationEvent, Integer, Integer> {
 
-    Optional<VaccinationEvent> findByPatientIdAndId(String patientId, String id);
+    Optional<VaccinationEvent> findByPatientIdAndId(Integer patientId, Integer id);
 
-    Optional<VaccinationEvent> findByAdministeringFacilityIdAndId(String facilityId, String id);
+    Optional<VaccinationEvent> findByAdministeringFacilityIdAndId(Integer facilityId, Integer id);
 
-    Iterable<VaccinationEvent> findByAdministeringFacilityId(String facilityId);
+    Iterable<VaccinationEvent> findByAdministeringFacilityId(Integer facilityId);
 
-    Boolean existsByAdministeringFacilityIdAndId(String facilityId, String id);
+    Boolean existsByAdministeringFacilityIdAndId(Integer facilityId, Integer id);
 
-    Boolean existsByPatientIdAndId(String patientId, String id);
+    Boolean existsByPatientIdAndId(Integer patientId, Integer id);
 
-    Iterable<VaccinationEvent> findByPatientId(String patientId);
+    Iterable<VaccinationEvent> findByPatientId(Integer patientId);
 
-    Iterable<VaccinationEvent> findOneByPatientId(String patientId);
+    Iterable<VaccinationEvent> findOneByPatientId(Integer patientId);
 
 }

@@ -39,7 +39,7 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
 
     LoggingInterceptor loggingInterceptor;
 
-    //    public IGenericClient newGenericClient(String registryId) {
+    //    public IGenericClient newGenericClient(Integer registryId) {
 //        return newGenericClient(immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsServiceImpl.currentUserId()).orElseThrow(
 //                () -> new RuntimeException("Invalid immunization registry id")
 //        ));
@@ -56,8 +56,8 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
         return newGenericClient(registry.getIisFhirUrl(), registry.getIisFacilityId(), registry.getIisUsername(), registry.getIisPassword(), registry.getHeaders());
     }
 
-    public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password, String headers) {
-        IGenericClient client = newGenericClient(serverURL, tenantId, username, password);
+    public IGenericClient newGenericClient(String serverURL, String fhirTenantId, String username, String password, String headers) {
+        IGenericClient client = newGenericClient(serverURL, fhirTenantId, username, password);
         AdditionalRequestHeadersInterceptor additionalRequestHeadersInterceptor = new AdditionalRequestHeadersInterceptor();
         for (String header : headers.split("\n")) {
             String[] headsplit = header.split(":", 1);
@@ -69,11 +69,11 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
         return client;
     }
 
-    public IGenericClient newGenericClient(String serverURL, String tenantId, String username, String password) {
+    public IGenericClient newGenericClient(String serverURL, String fhirTenantId, String username, String password) {
         IGenericClient client = newGenericClient(serverURL);
         // Register a tenancy interceptor to add /$tenantid to the url
-        if (StringUtils.isNotBlank(tenantId)) {
-            UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(tenantId);
+        if (StringUtils.isNotBlank(fhirTenantId)) {
+            UrlTenantSelectionInterceptor tenantSelection = new UrlTenantSelectionInterceptor(fhirTenantId);
             client.registerInterceptor(tenantSelection);
         }
 

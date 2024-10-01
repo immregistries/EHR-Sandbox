@@ -16,7 +16,7 @@ public class Vaccine {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "vaccine_id", nullable = false)
-    private String id;
+    private Integer id;
 
     @Column(name = "created_date", nullable = true)
     private Date createdDate;
@@ -221,11 +221,11 @@ public class Vaccine {
         this.createdDate = createdDate;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -10,6 +10,7 @@ import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.ResourceType;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
@@ -58,7 +59,7 @@ public class ImmunizationProviderR4 implements IResourceProvider, EhrFhirProvide
     @Create
     public MethodOutcome create(@ResourceParam Immunization immunization, RequestDetails requestDetails) {
         return create(immunization,
-                facilityRepository.findById(requestDetails.getTenantId())
+                facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id")));
     }
 
@@ -72,28 +73,28 @@ public class ImmunizationProviderR4 implements IResourceProvider, EhrFhirProvide
     @Update
     public MethodOutcome update(@ResourceParam Immunization immunization, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(immunization, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Immunization immunization, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         /**
          * Fixing references with ids and stored ids
          *
          *  TODO if not recognised store unmatched reference ?
          */
-        String dbPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
+        Integer dbPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
         immunization.getPatient().setId(dbPatientId + "");
         return update(immunization, immunizationRegistry, facility, dbPatientId);
     }
 
-    public MethodOutcome update(@ResourceParam Immunization immunization, ImmunizationRegistry immunizationRegistry, Facility facility, String dbPatientId) {
+    public MethodOutcome update(@ResourceParam Immunization immunization, ImmunizationRegistry immunizationRegistry, Facility facility, Integer dbPatientId) {
         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
-        String vaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
+        Integer vaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
         if (vaccinationId == null) {
             return create(immunization, facility, dbPatientId);
         } else {
@@ -108,7 +109,7 @@ public class ImmunizationProviderR4 implements IResourceProvider, EhrFhirProvide
 
             vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
             MethodOutcome methodOutcome = new MethodOutcome();
-            methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId()));
+            methodOutcome.setId(new IdType().setValue(EhrUtils.convert(vaccinationEvent.getId())));
             methodOutcome.setResource(immunizationMapper.toFhir(vaccinationEvent,
                     resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility)));
             return methodOutcome;
@@ -117,11 +118,11 @@ public class ImmunizationProviderR4 implements IResourceProvider, EhrFhirProvide
 
 
     public MethodOutcome create(Immunization immunization, Facility facility) {
-        String patientId = new IdType(immunization.getPatient().getReference()).getIdPart();
+        Integer patientId = EhrUtils.convert(new IdType(immunization.getPatient().getReference()).getIdPart());
         return create(immunization, facility, patientId);
     }
 
-    public MethodOutcome create(Immunization immunization, Facility facility, String patientId) {
+    public MethodOutcome create(Immunization immunization, Facility facility, Integer patientId) {
         MethodOutcome methodOutcome = new MethodOutcome();
         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
         vaccinationEvent.setAdministeringFacility(facility);
@@ -131,6 +132,6 @@ public class ImmunizationProviderR4 implements IResourceProvider, EhrFhirProvide
         // TODO set received information status and make sure history of patient info if already exists
         vaccineRepository.save(vaccinationEvent.getVaccine());
         vaccinationEvent = vaccinationEventRepository.save(vaccinationEvent);
-        return methodOutcome.setId(new IdType().setValue(vaccinationEvent.getId())).setCreated(true);
+        return methodOutcome.setId(new IdType().setValue(EhrUtils.convert(vaccinationEvent.getId()))).setCreated(true);
     }
 }

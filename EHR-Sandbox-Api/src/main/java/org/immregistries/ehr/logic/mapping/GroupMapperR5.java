@@ -56,9 +56,9 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         EhrGroup ehrGroup = toEhrGroup(group);
         ehrGroup.setFacility(facility);
         ehrGroup.setImmunizationRegistry(immunizationRegistry);
-        Set<String> patientIds = new HashSet<>(group.getMember().size());
+        Set<Integer> patientIds = new HashSet<>(group.getMember().size());
         for (Group.GroupMemberComponent g : group.getMember()) {
-            String id = resourceIdentificationService.getLocalPatientId(g.getEntity(), immunizationRegistry, facility);
+            Integer id = resourceIdentificationService.getLocalPatientId(g.getEntity(), immunizationRegistry, facility);
             patientIds.add(id);
         }
         if (!patientIds.isEmpty()) {

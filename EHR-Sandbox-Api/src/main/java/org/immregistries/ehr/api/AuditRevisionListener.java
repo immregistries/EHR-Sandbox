@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.RevisionListener;
 import org.immregistries.ehr.api.entities.AuditRevisionEntity;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.UserRepository;
 import org.immregistries.ehr.api.security.UserDetailsImpl;
@@ -76,10 +77,10 @@ public class AuditRevisionListener implements RevisionListener, ApplicationConte
          */
         try {
             if (StringUtils.isNotBlank(request.getParameter(COPIED_ENTITY_ID))) {
-                audit.setCopiedEntityId(request.getParameter(COPIED_ENTITY_ID));
+                audit.setCopiedEntityId(EhrUtils.convert(request.getParameter(COPIED_ENTITY_ID)));
             }
             if (StringUtils.isNotBlank(request.getParameter(COPIED_FACILITY_ID))) {
-                String copiedFacilityId = request.getParameter(COPIED_FACILITY_ID);
+                Integer copiedFacilityId = EhrUtils.convert(request.getParameter(COPIED_FACILITY_ID));
                 UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 if (facilityRepository.existsByUserIdAndId(userDetails.getId(), copiedFacilityId)) {
                     audit.setCopiedFacilityId(copiedFacilityId);

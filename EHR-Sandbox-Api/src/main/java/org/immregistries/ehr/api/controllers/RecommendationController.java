@@ -29,7 +29,7 @@ public class RecommendationController {
     private RecommendationService recommendationService;
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable() String facilityId, @PathVariable() String patientId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId, @PathVariable() Integer patientId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
         Set<String> set = recommendationService.getPatientMap(facilityId, patientId).entrySet().stream().map(
                         entry -> parser.encodeResourceToString(entry.getValue()))

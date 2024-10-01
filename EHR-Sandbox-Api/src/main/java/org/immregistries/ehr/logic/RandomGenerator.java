@@ -309,7 +309,7 @@ public class RandomGenerator {
         return vaccine;
     }
 
-    public Clinician randomClinician(String tenantId) {
+    public Clinician randomClinician(Integer tenantId) {
         return randomClinician(tenantRepository.findById(tenantId).get());
     }
 

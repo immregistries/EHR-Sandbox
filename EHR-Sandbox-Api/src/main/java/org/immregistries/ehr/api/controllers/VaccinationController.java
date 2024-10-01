@@ -62,7 +62,7 @@ public class VaccinationController {
     private TenantRepository tenantRepository;
 
     @GetMapping()
-    public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable() String facilityId, @PathVariable() Optional<String> patientId) {
+    public Iterable<VaccinationEvent> getVaccinationEvents(@PathVariable Integer facilityId, @PathVariable() Optional<Integer> patientId) {
         if (patientId.isPresent()) {
             return vaccinationEventRepository.findByPatientId(patientId.get());
         } else {
@@ -71,29 +71,29 @@ public class VaccinationController {
     }
 
     @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX)
-    public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() String vaccinationId) {
+    public Optional<VaccinationEvent> vaccinationEvent(@PathVariable() Integer vaccinationId) {
         return vaccinationEventRepository.findById(vaccinationId);
     }
 
     @GetMapping("/$random")
-    public VaccinationEvent random(@PathVariable() String tenantId,
-                                   @PathVariable() String facilityId,
-                                   @PathVariable() Optional<String> patientId) {
+    public VaccinationEvent random(@PathVariable() Integer tenantId,
+                                   @PathVariable Integer facilityId,
+                                   @PathVariable() Optional<Integer> patientId) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return randomGenerator.randomVaccinationEvent(patientRepository.findById(patientId.get()).get(), tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get());
     }
 
     @PostMapping()
-    public ResponseEntity<String> postVaccinationEvents(@PathVariable() String tenantId,
-                                                        @PathVariable() Optional<String> patientId,
-                                                        @RequestBody VaccinationEvent vaccination) {
+    public ResponseEntity<Integer> postVaccinationEvents(@PathVariable() Integer tenantId,
+                                                         @PathVariable() Optional<Integer> patientId,
+                                                         @RequestBody VaccinationEvent vaccination) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
         return postVaccinationEvents(tenantRepository.findById(tenantId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
     }
 
-    public ResponseEntity<String> postVaccinationEvents(Tenant tenant,
-                                                        EhrPatient patient,
-                                                        VaccinationEvent vaccination) {
+    public ResponseEntity<Integer> postVaccinationEvents(Tenant tenant,
+                                                         EhrPatient patient,
+                                                         VaccinationEvent vaccination) {
         VaccinationEvent newEntity = createVaccinationEvent(tenant, patient, vaccination);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -121,9 +121,9 @@ public class VaccinationController {
     }
 
     @PutMapping()
-    public VaccinationEvent putVaccinationEvents(@PathVariable() String tenantId,
-                                                 @PathVariable() String facilityId,
-                                                 @PathVariable() Optional<String> patientId,
+    public VaccinationEvent putVaccinationEvents(@PathVariable() Integer tenantId,
+                                                 @PathVariable Integer facilityId,
+                                                 @PathVariable() Optional<Integer> patientId,
                                                  @RequestBody VaccinationEvent vaccination) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient Id"));
         return putVaccinationEvents(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), patientRepository.findById(patientId.get()).get(), vaccination);
@@ -157,7 +157,7 @@ public class VaccinationController {
     }
 
     @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu")
-    public ResponseEntity<String> vxu(@PathVariable() String vaccinationId) {
+    public ResponseEntity<String> vxu(@PathVariable() Integer vaccinationId) {
         GsonJsonParser gson = new GsonJsonParser();
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
@@ -169,7 +169,7 @@ public class VaccinationController {
     }
 
     @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu" + REGISTRY_COMPLETE_SUFFIX)
-    public ResponseEntity<String> vxuSend(@PathVariable() String registryId, @PathVariable() String vaccinationId, @RequestBody String message) {
+    public ResponseEntity<String> vxuSend(@PathVariable() Integer registryId, @PathVariable() Integer vaccinationId, @RequestBody String message) {
         Connector connector;
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
@@ -199,7 +199,7 @@ public class VaccinationController {
 
     @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/$history")
     public List<Revision<Integer, VaccinationEvent>> vaccinationHistory(
-            @PathVariable() String vaccinationId) {
+            @PathVariable() Integer vaccinationId) {
         Revisions<Integer, VaccinationEvent> revisions = vaccinationEventRepository.findRevisions(vaccinationId);
         return revisions.getContent();
     }

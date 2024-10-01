@@ -45,20 +45,20 @@ public class FeedbackController {
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
     @GetMapping(FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER)
-    public Iterable<Feedback> getPatientFeedback(@PathVariable() String tenantId,
-                                                 @PathVariable() String facilityId) {
+    public Iterable<Feedback> getPatientFeedback(@PathVariable() Integer tenantId,
+                                                 @PathVariable Integer facilityId) {
         return facilityController.getFacility(tenantId, facilityId).get().getFeedbacks();
     }
 
 
     @GetMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
-    public Optional<Feedback> getPatientFeedback(@PathVariable() String patientId) {
+    public Optional<Feedback> getPatientFeedback(@PathVariable() Integer patientId) {
         return feedbackRepository.findByPatientId(patientId);
     }
 
     @PostMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
-    public Feedback postPatientFeedback(@PathVariable() String facilityId,
-                                        @PathVariable() String patientId,
+    public Feedback postPatientFeedback(@PathVariable Integer facilityId,
+                                        @PathVariable() Integer patientId,
                                         @RequestBody Feedback feedback) {
         Optional<EhrPatient> patient = patientRepository.findById(patientId);
         if (patient.isPresent()) {
@@ -71,9 +71,9 @@ public class FeedbackController {
     }
 
     @PostMapping(VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER)
-    public Feedback postVaccinationFeedback(@PathVariable() String facilityId,
-                                            @PathVariable() String patientId,
-                                            @PathVariable() String vaccinationId,
+    public Feedback postVaccinationFeedback(@PathVariable Integer facilityId,
+                                            @PathVariable() Integer patientId,
+                                            @PathVariable() Integer vaccinationId,
                                             @RequestBody Feedback feedback) {
         Optional<VaccinationEvent> vaccination = vaccinationEventRepository.findById(vaccinationId);
         if (vaccination.isPresent()) {

@@ -9,6 +9,7 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Group;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrGroup;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -62,14 +63,14 @@ public class GroupProviderR4 implements IGroupProvider<Group>, EhrFhirProviderR4
     @Update
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(group, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return update(group, facility, immunizationRegistry);
     }
@@ -96,14 +97,14 @@ public class GroupProviderR4 implements IGroupProvider<Group>, EhrFhirProviderR4
     @Update
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return create(group, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return create(group, facility, immunizationRegistry);
     }

@@ -63,14 +63,14 @@ public class ResourceIdentificationService {
     private EhrPatientRepository ehrPatientRepository;
 
 
-    public String getLocalPatientId(org.hl7.fhir.r5.model.Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        String id;
+    public Integer getLocalPatientId(org.hl7.fhir.r5.model.Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        Integer id;
         /**
          * first we check if the patient has known identifier for the facility system or MRN
          */
         for (org.hl7.fhir.r5.model.Identifier identifier : remotePatient.getIdentifier()) {
             id = getLocalPatientId(new EhrIdentifier(identifier), facility);
-            if (id != null && !id.isBlank()) {
+            if (id != null && id > 0) {
                 return id;
             }
         }
@@ -80,14 +80,14 @@ public class ResourceIdentificationService {
         return getLocalPatientId(new IdType(remotePatient.getId()), immunizationRegistry);
     }
 
-    public String getLocalPatientId(org.hl7.fhir.r4.model.Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        String id;
+    public Integer getLocalPatientId(org.hl7.fhir.r4.model.Patient remotePatient, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        Integer id;
         /**
          * first we check if the patient has known identifier for the facility system or MRN
          */
         for (org.hl7.fhir.r4.model.Identifier identifier : remotePatient.getIdentifier()) {
             id = getLocalPatientId(new EhrIdentifier(identifier), facility);
-            if (id != null && !id.isBlank()) {
+            if (id != null && id > 0) {
                 return id;
             }
         }
@@ -97,8 +97,8 @@ public class ResourceIdentificationService {
         return getLocalPatientId(new IdType(remotePatient.getId()), immunizationRegistry);
     }
 
-    public String getLocalPatientId(org.hl7.fhir.r5.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        String localId = null;
+    public Integer getLocalPatientId(org.hl7.fhir.r5.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        Integer localId = null;
         if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
             localId = getLocalPatientId(new EhrIdentifier(reference.getIdentifier()), facility);
         } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
@@ -107,8 +107,8 @@ public class ResourceIdentificationService {
         return localId;
     }
 
-    public String getLocalPatientId(org.hl7.fhir.r4.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        String localId = null;
+    public Integer getLocalPatientId(org.hl7.fhir.r4.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        Integer localId = null;
         if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
             localId = getLocalPatientId(new EhrIdentifier(reference.getIdentifier()), facility);
         } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
@@ -122,7 +122,7 @@ public class ResourceIdentificationService {
         if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
             return getLocalPatient(new EhrIdentifier(reference.getIdentifier()), facility);
         } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
-            String localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
+            Integer localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
             ehrPatient = ehrPatientRepository.findById(localId).orElse(null);
         }
         return ehrPatient;
@@ -133,13 +133,13 @@ public class ResourceIdentificationService {
         if (reference.getIdentifier() != null && StringUtils.isNotBlank(reference.getIdentifier().getValue())) {
             return getLocalPatient(new EhrIdentifier(reference.getIdentifier()), facility);
         } else if (reference.getReference() != null && !reference.getReference().isBlank() && immunizationRegistry != null) {
-            String localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
+            Integer localId = getLocalPatientId(new IdType(reference.getReference()), immunizationRegistry);
             ehrPatient = ehrPatientRepository.findById(localId).orElse(null);
         }
         return ehrPatient;
     }
 
-    public String getLocalPatientId(IdType idType, ImmunizationRegistry immunizationRegistry) {
+    public Integer getLocalPatientId(IdType idType, ImmunizationRegistry immunizationRegistry) {
         return patientIdentifierRepository.findByIdentifierAndImmunizationRegistryId(idType.getIdPart(), immunizationRegistry.getId())
                 .orElse(new PatientExternalIdentifier()).getPatientId();
     }
@@ -156,7 +156,7 @@ public class ResourceIdentificationService {
         return ehrPatient;
     }
 
-    public String getLocalPatientId(EhrIdentifier ehrIdentifier, Facility facility) {
+    public Integer getLocalPatientId(EhrIdentifier ehrIdentifier, Facility facility) {
         EhrPatient ehrPatient = getLocalPatient(ehrIdentifier, facility);
         if (ehrPatient == null) {
             return null;
@@ -164,14 +164,14 @@ public class ResourceIdentificationService {
         return ehrPatient.getId();
     }
 
-    public String getImmunizationLocalId(org.hl7.fhir.r5.model.Immunization remoteImmunization, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        String id = "";
+    public Integer getImmunizationLocalId(org.hl7.fhir.r5.model.Immunization remoteImmunization, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        Integer id = null;
         /**
          * first we check if the patient has known identifier for the facility system
          */
         for (org.hl7.fhir.r5.model.Identifier identifier : remoteImmunization.getIdentifier()) {
             id = getImmunizationLocalId(new EhrIdentifier(identifier), facility);
-            if (id != null && !id.isBlank()) {
+            if (id != null && id > 0) {
                 return id;
             }
         }
@@ -181,14 +181,14 @@ public class ResourceIdentificationService {
         return getImmunizationLocalId(new IdType(remoteImmunization.getId()), immunizationRegistry);
     }
 
-    public String getImmunizationLocalId(org.hl7.fhir.r4.model.Immunization remoteImmunization, ImmunizationRegistry immunizationRegistry, Facility facility) {
-        String id = "";
+    public Integer getImmunizationLocalId(org.hl7.fhir.r4.model.Immunization remoteImmunization, ImmunizationRegistry immunizationRegistry, Facility facility) {
+        Integer id;
         /**
          * first we check if the patient has known identifier for the facility system
          */
         for (org.hl7.fhir.r4.model.Identifier identifier : remoteImmunization.getIdentifier()) {
             id = getImmunizationLocalId(new EhrIdentifier(identifier), facility);
-            if (id != null && !id.isBlank()) {
+            if (id != null && id > 0) {
                 return id;
             }
         }
@@ -199,7 +199,7 @@ public class ResourceIdentificationService {
     }
 
 
-    public String getImmunizationLocalId(org.hl7.fhir.r5.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
+    public Integer getImmunizationLocalId(org.hl7.fhir.r5.model.Reference reference, ImmunizationRegistry immunizationRegistry, Facility facility) {
         if (reference.getReference() != null && !reference.getReference().isBlank()) {
             return getImmunizationLocalId(new IdType(reference.getReference()), immunizationRegistry);
         } else if (reference.getIdentifier() != null) {
@@ -209,14 +209,18 @@ public class ResourceIdentificationService {
         }
     }
 
-    public String getImmunizationLocalId(IdType idType, ImmunizationRegistry immunizationRegistry) {
+    public Integer getImmunizationLocalId(IdType idType, ImmunizationRegistry immunizationRegistry) {
         return immunizationIdentifierRepository.findByIdentifierAndImmunizationRegistryId(idType.getIdPart(), immunizationRegistry.getId())
                 .orElse(new ImmunizationIdentifier()).getVaccinationEventId();
     }
 
-    public String getImmunizationLocalId(EhrIdentifier ehrIdentifier, Facility facility) {
-        if (ehrIdentifier.getSystem().equals(getFacilityImmunizationIdentifierSystem(facility))) { //
-            return ehrIdentifier.getValue();
+    public Integer getImmunizationLocalId(EhrIdentifier ehrIdentifier, Facility facility) {
+        if (ehrIdentifier.getSystem().equals(getFacilityImmunizationIdentifierSystem(facility))) {
+            try {
+                return EhrUtils.convert(ehrIdentifier.getValue());
+            } catch (NumberFormatException numberFormatException) {
+                return null;
+            }
         } else {
             return null;
         }

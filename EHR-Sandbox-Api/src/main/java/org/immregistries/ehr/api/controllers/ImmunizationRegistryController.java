@@ -39,12 +39,12 @@ public class ImmunizationRegistryController {
     private ImmunizationRegistryService immunizationRegistryService;
 
     @GetMapping({REGISTRY_ID_SUFFIX})
-    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String registryId) {
+    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() Integer registryId) {
         return immunizationRegistryService.getImmunizationRegistry(registryId);
     }
 
     @GetMapping({REGISTRY_ID_SUFFIX + "/metadata"})
-    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() String registryId) {
+    public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable() Integer registryId) {
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(getImmunizationRegistry(registryId));
         CapabilityStatement capabilityStatement;
         try {
@@ -90,13 +90,13 @@ public class ImmunizationRegistryController {
     }
 
     @DeleteMapping({REGISTRY_ID_SUFFIX})
-    public ResponseEntity removeImmunizationRegistry(@PathVariable() String registryId) {
+    public ResponseEntity removeImmunizationRegistry(@PathVariable() Integer registryId) {
         immunizationRegistryRepository.deleteByIdAndUserId(registryId, userDetailsService.currentUserId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(REGISTRY_ID_SUFFIX + "/$connectivity")
-    public ResponseEntity<String> checkHl7Connectivity(@PathVariable() String registryId) {
+    public ResponseEntity<String> checkHl7Connectivity(@PathVariable() Integer registryId) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = this.getImmunizationRegistry(registryId);
         try {
@@ -116,7 +116,7 @@ public class ImmunizationRegistryController {
     }
 
     @GetMapping(REGISTRY_ID_SUFFIX + "/$auth")
-    public ResponseEntity<String> checkHl7Auth(@PathVariable() String registryId) {
+    public ResponseEntity<String> checkHl7Auth(@PathVariable() Integer registryId) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = this.getImmunizationRegistry(registryId);
         try {

@@ -32,23 +32,23 @@ public class ClinicianController {
     private RandomGenerator randomGenerator;
 
     @GetMapping()
-    public Iterable<Clinician> clinicians(@PathVariable() String tenantId) {
+    public Iterable<Clinician> clinicians(@PathVariable() Integer tenantId) {
         return clinicianRepository.findByTenantId(tenantId);
     }
 
     @GetMapping(CLINICIAN_ID_SUFFIX)
-    public Optional<Clinician> clinician(@PathVariable() String clinicianId) {
+    public Optional<Clinician> clinician(@PathVariable() Integer clinicianId) {
         return clinicianRepository.findById(clinicianId);
     }
 
     @GetMapping("/$random")
-    public Clinician random(@PathVariable() String tenantId) {
+    public Clinician random(@PathVariable() Integer tenantId) {
         return randomGenerator.randomClinician(tenantId);
     }
 
 
     @PostMapping()
-    public Clinician postClinicians(@PathVariable() String tenantId, @RequestBody Clinician clinician) {
+    public Clinician postClinicians(@PathVariable() Integer tenantId, @RequestBody Clinician clinician) {
         return postClinicians(tenantRepository.findById(tenantId).get(), clinician);
     }
 
@@ -59,7 +59,7 @@ public class ClinicianController {
     }
 
     @PutMapping(CLINICIAN_ID_SUFFIX)
-    public Clinician putClinicians(@PathVariable() String tenantId, @PathVariable() String clinicianId, @RequestBody Clinician clinician) {
+    public Clinician putClinicians(@PathVariable() Integer tenantId, @PathVariable() Integer clinicianId, @RequestBody Clinician clinician) {
         Optional<Clinician> old = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId);
         clinician.setTenant(old.get().getTenant());
         return clinicianRepository.save(clinician);

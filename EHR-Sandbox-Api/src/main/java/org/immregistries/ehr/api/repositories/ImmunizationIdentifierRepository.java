@@ -7,8 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface ImmunizationIdentifierRepository extends CrudRepository<ImmunizationIdentifier, ImmunizationIdentifierKey> {
-    Optional<ImmunizationIdentifier> findByVaccinationEventIdAndImmunizationRegistryId(String vaccinationEventId, String immunizationRegistryId);
+    Optional<ImmunizationIdentifier> findByVaccinationEventIdAndImmunizationRegistryId(Integer vaccinationEventId, Integer immunizationRegistryId);
 
-    Optional<ImmunizationIdentifier> findByIdentifierAndImmunizationRegistryId(String vaccinationEventId, String immunizationRegistryId);
+    Optional<ImmunizationIdentifier> findByIdentifierAndImmunizationRegistryId(String identifier, Integer immunizationRegistryId);
 
 }

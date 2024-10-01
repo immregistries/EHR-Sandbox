@@ -9,6 +9,7 @@ import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.hl7.fhir.r5.model.Bundle;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
@@ -96,10 +97,10 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
 
                 if (userDetails != null && username != null) {
                     theRequestDetails.setAttribute(USER_ID, userDetails.getId());
-                    facilityRepository.findById(theRequestDetails.getTenantId()).orElseThrow(
+                    facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
                             () -> new InvalidRequestException("TENANT ID not recognised")
                     );
-                    request.setAttribute(TENANT_NAME, facilityRepository.findById(theRequestDetails.getTenantId()).orElseThrow(
+                    request.setAttribute(TENANT_NAME, facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
                             () -> new InvalidRequestException("TENANT ID not recognised")
                     ).getTenant().getId());
                     // TODO IMMUNIZATION REGISTRY IDENTIFICATION and set attribute IMMUNIZATION_REGISTRY_ID

@@ -12,11 +12,11 @@ import org.immregistries.ehr.api.entities.embedabbles.ImmunizationIdentifierKey;
 public class ImmunizationIdentifier {
     @Id
     @Column(name = "vaccination_event_id", nullable = false)
-    private String vaccinationEventId;
+    private Integer vaccinationEventId;
 
     @Id
     @Column(name = "immunization_registry_id", nullable = true)
-    private String immunizationRegistryId;
+    private Integer immunizationRegistryId;
 
 //    @Id
 //    @Column(name = "system", nullable = false)
@@ -29,25 +29,25 @@ public class ImmunizationIdentifier {
     public ImmunizationIdentifier() {
     }
 
-    public ImmunizationIdentifier(String vaccinationEventId, String immunizationRegistryId, String identifier) {
+    public ImmunizationIdentifier(Integer vaccinationEventId, Integer immunizationRegistryId, String identifier) {
         this.vaccinationEventId = vaccinationEventId;
         this.immunizationRegistryId = immunizationRegistryId;
         this.identifier = identifier;
     }
 
-    public String getVaccinationEventId() {
+    public Integer getVaccinationEventId() {
         return vaccinationEventId;
     }
 
-    public void setVaccinationEventId(String vaccinationEventId) {
+    public void setVaccinationEventId(Integer vaccinationEventId) {
         this.vaccinationEventId = vaccinationEventId;
     }
 
-    public String getImmunizationRegistryId() {
+    public Integer getImmunizationRegistryId() {
         return immunizationRegistryId;
     }
 
-    public void setImmunizationRegistryId(String immunizationRegistryId) {
+    public void setImmunizationRegistryId(Integer immunizationRegistryId) {
         this.immunizationRegistryId = immunizationRegistryId;
     }
 

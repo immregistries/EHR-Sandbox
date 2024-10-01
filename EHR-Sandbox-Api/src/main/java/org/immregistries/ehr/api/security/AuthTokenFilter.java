@@ -121,13 +121,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private boolean filterUrl(HttpServletRequest request) throws InvalidRequestException {
         String url = request.getServletPath();
 //        logger.info("{}", url);
-        String tenantId = null;
-        String facilityId = null;
-        String clinicianId = null;
-        String registryId = null;
-        String patientId = null;
-        String vaccinationId = null;
-        String groupId = null;
+        Integer tenantId = null;
+        Integer facilityId = null;
+        Integer clinicianId = null;
+        Integer registryId = null;
+        Integer patientId = null;
+        Integer vaccinationId = null;
+        Integer groupId = null;
         // Parsing the URI
         String[] split = url.split("/");
         int len = split.length;
@@ -146,7 +146,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
              */
             if (item.equals(REGISTRY_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    registryId = scanner.next();
+                    registryId = scanner.nextInt();
 //                    checkIfPotentialValidId(vaccinationId);
                     ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid registry id"));
@@ -154,9 +154,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
             if (item.equals(TENANT_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    tenantId = scanner.next();
+                    tenantId = scanner.nextInt();
                     checkIfPotentialValidId(tenantId);
-                    Tenant tenant = tenantRepository.findByIdAndUserId(String.valueOf(tenantId), userDetailsService.currentUserId())
+                    Tenant tenant = tenantRepository.findByIdAndUserId(tenantId, userDetailsService.currentUserId())
                             .orElseThrow(() -> new InvalidRequestException("invalid tenant id"));
                     request.setAttribute("TENANT_ID", tenant.getId());
                     request.setAttribute("TENANT_NAME", tenant.getNameDisplay());
@@ -164,7 +164,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
             if (item.equals(FACILITY_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    facilityId = scanner.next();
+                    facilityId = scanner.nextInt();
                     checkIfPotentialValidId(facilityId);
                     Facility facility = facilityRepository.findByUserAndId(userDetailsService.currentUser(), facilityId)
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
@@ -177,14 +177,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             item = scanner.next();
             if (item.equals(FACILITY_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    facilityId = scanner.next();
+                    facilityId = scanner.nextInt();
                     checkIfPotentialValidId(facilityId);
                     Facility facility = facilityRepository.findByIdAndTenantId(facilityId, tenantId)
                             .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
                 }
             } else if (item.equals(CLINICIAN_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    clinicianId = scanner.next();
+                    clinicianId = scanner.nextInt();
                     checkIfPotentialValidId(clinicianId);
                     Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId)
                             .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));
@@ -197,7 +197,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             item = scanner.next();
             if (item.equals(PATIENT_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    patientId = scanner.next();
+                    patientId = scanner.nextInt();
                     checkIfPotentialValidId(patientId);
                     EhrPatient ehrPatient = patientRepository.findByFacilityIdAndId(facilityId, patientId)
                             .orElseThrow(() -> new InvalidRequestException("invalid patient id"));
@@ -205,7 +205,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
             if (item.equals(VACCINATION_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    vaccinationId = scanner.next();
+                    vaccinationId = scanner.nextInt();
                     checkIfPotentialValidId(vaccinationId);
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId, vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
@@ -213,7 +213,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
             if (item.equals(GROUP_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    groupId = scanner.next();
+                    groupId = scanner.nextInt();
                     checkIfPotentialValidId(groupId);
                     EhrGroup ehrGroup;
                     Optional<EhrGroup> ehrGroupOptional = ehrGroupRepository.findByFacilityIdAndId(facilityId, groupId);
@@ -235,7 +235,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             item = scanner.next();
             if (item.equals(VACCINATION_HEADER)) {
                 if (scanner.hasNextInt()) {
-                    vaccinationId = scanner.next();
+                    vaccinationId = scanner.nextInt();
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId)
                             .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
                 }
@@ -261,5 +261,21 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
 
 
+    }
+
+    /**
+     * Used to avoid unauthorized exceptions when id are -1
+     *
+     * @param id
+     * @throws InvalidRequestException
+     */
+    private void checkIfPotentialValidId(Integer id) throws InvalidRequestException {
+        try {
+            if (id == -1) {
+                throw new InvalidRequestException("Invalid id in path : -1");
+            }
+        } catch (NumberFormatException numberFormatException) {
+
+        }
     }
 }

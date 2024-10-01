@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class NextOfKinRelationshipPK implements Serializable {
 
     @Column(name = "patient_id")
-    String patientId;
+    Integer patientId;
 
     @Column(name = "next_of_kin_id")
     String nextOfKinId;
@@ -17,16 +17,16 @@ public class NextOfKinRelationshipPK implements Serializable {
     public NextOfKinRelationshipPK() {
     }
 
-    public NextOfKinRelationshipPK(String patientId, String nextOfKinId) {
+    public NextOfKinRelationshipPK(Integer patientId, String nextOfKinId) {
         this.patientId = patientId;
         this.nextOfKinId = nextOfKinId;
     }
 
-    public String getPatientId() {
+    public Integer getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(Integer patientId) {
         this.patientId = patientId;
     }
 

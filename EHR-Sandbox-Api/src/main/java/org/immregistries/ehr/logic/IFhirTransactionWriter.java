@@ -40,7 +40,7 @@ public interface IFhirTransactionWriter {
      * @param clinicianUrlMap Map of already added Clinicians Url Map(clinicianLocalId, entryUrl)
      * @return Clinician BundleEntry Url
      */
-    default String addOrGetClinicianEntry(IBaseBundle bundle, Clinician clinician, Map<String, String> clinicianUrlMap) {
+    default String addOrGetClinicianEntry(IBaseBundle bundle, Clinician clinician, Map<Integer, String> clinicianUrlMap) {
         String reference;
         if (clinician == null) {
             return null;
@@ -82,9 +82,9 @@ public interface IFhirTransactionWriter {
 
     String addOrganizationEntry(IBaseBundle bundle, Facility facility);
 
-    String addPatientEntry(IBaseBundle bundle, String organizationUrl, EhrPatient ehrPatient, Map<String, String> clinicianUrlMap);
+    String addPatientEntry(IBaseBundle bundle, String organizationUrl, EhrPatient ehrPatient, Map<Integer, String> clinicianUrlMap);
 
-    String addVaccinationEntry(IBaseBundle bundle, String patientUrl, VaccinationEvent vaccinationEvent, Map<String, String> clinicianUrlMap);
+    String addVaccinationEntry(IBaseBundle bundle, String patientUrl, VaccinationEvent vaccinationEvent, Map<Integer, String> clinicianUrlMap);
 
     String addClinicianEntry(IBaseBundle bundle, Clinician clinician);
 }

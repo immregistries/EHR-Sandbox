@@ -4,12 +4,12 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.Group;
 import org.hl7.fhir.r5.model.ResourceType;
 import org.immregistries.ehr.api.entities.EhrGroup;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -41,7 +41,6 @@ public class GroupProviderR5 implements IGroupProvider<Group>, EhrFhirProviderR5
         return Group.class;
     }
 
-    @Override
     public ResourceType getResourceName() {
         return ResourceType.Group;
     }
@@ -61,24 +60,21 @@ public class GroupProviderR5 implements IGroupProvider<Group>, EhrFhirProviderR5
      * @param requestDetails
      * @return
      */
-    @Override
     @Update
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(group, requestDetails, immunizationRegistry);
     }
 
-    @Override
     public MethodOutcome update(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return update(group, facility, immunizationRegistry);
     }
 
-    @Override
     public MethodOutcome update(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
         Optional<EhrGroup> old = ehrGroupRepository.findByFacilityIdAndImmunizationRegistryIdAndName(facility.getId(), immunizationRegistry.getId(), group.getName());
         if (old.isEmpty()) {
@@ -98,41 +94,36 @@ public class GroupProviderR5 implements IGroupProvider<Group>, EhrFhirProviderR5
      * @param requestDetails
      * @return
      */
-    @Override
     @Update
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return create(group, requestDetails, immunizationRegistry);
     }
 
-    @Override
     public MethodOutcome create(@ResourceParam Group group, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         return create(group, facility, immunizationRegistry);
     }
 
-    @Override
     public MethodOutcome create(@ResourceParam Group group, Facility facility, ImmunizationRegistry immunizationRegistry) {
         EhrGroup ehrGroup = groupMapperR5.toEhrGroup(group, facility, immunizationRegistry);
         ehrGroupRepository.save(ehrGroup);
         return new MethodOutcome().setResource(group);
     }
 
-
     public Group getRemoteGroup(IGenericClient client, EhrGroup ehrGroup) {
-        IQuery<Bundle> iQuery = client.search().forResource("Group")
-                .where(Group.NAME.matchesExactly().value(ehrGroup.getName()))
+        EhrIdentifier ehrIdentifier = ehrGroup.getIdentifiers().stream().findAny().orElseThrow(
+                () -> new RuntimeException("Group Identifier required for R5 testing")
+        );
+        Bundle bundle = client.search().forResource("Group")
+                .where(Group.IDENTIFIER.exactly().identifier(ehrIdentifier.getValue())) //TODO type and system
 //                .where(Group.MANAGING_ENTITY.hasId("Organization/"+facilityId)) // TODO set criteria
-                .returnBundle(Bundle.class);
-        Optional<EhrIdentifier> ehrIdentifier = ehrGroup.getIdentifiers().stream().findAny();
-        if (ehrIdentifier.isPresent()) {
-            iQuery = iQuery.where(Group.IDENTIFIER.exactly().identifier(ehrIdentifier.get().getValue())); //TODO type and system
-        }
-        Bundle bundle = iQuery.execute();
+                .returnBundle(Bundle.class)
+                .execute();
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.hasResource() && entry.getResource() instanceof Group
 //                    && ((Group) entry.getResource()).getManagingEntity().getIdentifier().getValue().equals(String.valueOf(facilityId))
@@ -142,4 +133,5 @@ public class GroupProviderR5 implements IGroupProvider<Group>, EhrFhirProviderR5
         }
         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Not remotely recorded");
     }
+
 }

@@ -4,10 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.immregistries.codebase.client.reference.CodesetType;
-import org.immregistries.ehr.api.entities.Clinician;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
-import org.immregistries.ehr.api.entities.Vaccine;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
@@ -36,7 +33,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
     public Immunization toFhir(VaccinationEvent vaccinationEvent, String identifier_system) {
         Immunization i = toFhir(vaccinationEvent);
         Identifier identifier = i.addIdentifier();
-        identifier.setValue(vaccinationEvent.getId());
+        identifier.setValue(String.valueOf(vaccinationEvent.getId()));
         identifier.setSystem(identifier_system);
 //    i.setPatient(new Reference()
 ////            .setReference("Patient/" + vaccinationEvent.getPatient().getId())
@@ -126,8 +123,11 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
             if (performer.getActor() != null) {
                 Clinician clinician = null;
                 if (StringUtils.isNotBlank(performer.getActor().getReference())) {
-                    String performerId = performer.getActor().getReference().split("Clinician/")[1]; // TODO
-                    clinician = clinicianRepository.findByTenantIdAndId(facility.getTenant().getId(), performerId).orElse(null);
+                    try {
+                        Integer performerId = EhrUtils.convert(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+                        clinician = clinicianRepository.findByTenantIdAndId(facility.getTenant().getId(), performerId).orElse(null);
+                    } catch (NumberFormatException numberFormatException) {
+                    }
                 }
                 if (clinician != null) {
                     if (performer.getActor().hasIdentifier()) {

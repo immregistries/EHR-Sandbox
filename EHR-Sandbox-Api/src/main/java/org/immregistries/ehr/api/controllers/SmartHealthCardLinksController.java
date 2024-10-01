@@ -52,8 +52,8 @@ public class SmartHealthCardLinksController {
 
     @PostMapping(PATIENT_ID_PATH + "/$import-shlink")
     public ResponseEntity<List<VaccinationEvent>> importSmartHealthLink(
-            @PathVariable() String facilityId,
-            @PathVariable() String patientId,
+            @PathVariable Integer facilityId,
+            @PathVariable() Integer patientId,
             @RequestBody() String url, @RequestParam Optional<String> password, @RequestParam Optional<String> jwk) {
         List<String> body = readHealthLink(url, password, jwk);
         List<VaccinationEvent> vaccinationEvents = new ArrayList<>(10);

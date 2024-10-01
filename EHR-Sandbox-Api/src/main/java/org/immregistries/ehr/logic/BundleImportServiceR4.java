@@ -2,7 +2,6 @@ package org.immregistries.ehr.logic;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
@@ -22,10 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_RECORD;
@@ -69,11 +65,11 @@ public class BundleImportServiceR4 implements IBundleImportService {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     String receivedId = new IdType(patient.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
+                    Integer localPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
 
                     MethodOutcome methodOutcome;
                     methodOutcome = patientProvider.update(patient, facility, immunizationRegistry);
-                    String dbId = methodOutcome.getId().getValue();
+                    Integer dbId = EhrUtils.convert(methodOutcome.getId().getValue());
                     if (localPatientId == null) {
                         patientIdentifierRepository.save(new PatientExternalIdentifier(dbId, immunizationRegistry.getId(), receivedId));
                     }
@@ -85,11 +81,11 @@ public class BundleImportServiceR4 implements IBundleImportService {
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
                     String receivedId = new IdType(immunization.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
-                    if (StringUtils.isNotBlank(localPatientId)) {
+                    Integer localPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
+                    if (Objects.nonNull(localPatientId)) {
                         immunization.setPatient(new Reference("Patient/" + localPatientId));
                         MethodOutcome methodOutcome = immunizationProvider.create(immunization, facility);
-                        String dbId = methodOutcome.getId().getValue();
+                        Integer dbId = EhrUtils.convert(methodOutcome.getId().getValue());
                         immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId, immunizationRegistry.getId(), receivedId));
                         responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
                         logger.info("Immunization {} loaded as Immunization {}", receivedId, dbId);
@@ -117,7 +113,7 @@ public class BundleImportServiceR4 implements IBundleImportService {
                 case Patient: {
                     Patient patient = (Patient) entry.getResource();
                     String receivedId = new IdType(patient.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
+                    Integer localPatientId = resourceIdentificationService.getLocalPatientId(patient, immunizationRegistry, facility);
                     patientIdentifierRepository.save(new PatientExternalIdentifier(localPatientId, immunizationRegistry.getId(), receivedId));
 
                     if (includeOnlyGolden && patient.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) == null) {
@@ -132,15 +128,15 @@ public class BundleImportServiceR4 implements IBundleImportService {
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
                     String receivedId = new IdType(immunization.getId()).getIdPart();
-                    String localPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
+                    Integer localPatientId = resourceIdentificationService.getLocalPatientId(immunization.getPatient(), immunizationRegistry, facility);
                     if (includeOnlyGolden && immunization.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) == null) {
                         break;
                     }
-                    if (StringUtils.isNotBlank(localPatientId)) {
+                    if (localPatientId != null) {
                         immunization.setPatient(new Reference("Patient/" + localPatientId));
                         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
                         vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), localPatientId).orElseThrow());
-                        String localVaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
+                        Integer localVaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
                         immunizationIdentifierRepository.save(new ImmunizationIdentifier(localVaccinationId, immunizationRegistry.getId(), receivedId));
                         entities.add(vaccinationEvent);
                     } else {

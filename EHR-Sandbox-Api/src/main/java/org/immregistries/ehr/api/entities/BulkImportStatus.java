@@ -5,7 +5,7 @@ import java.util.Date;
 public class BulkImportStatus {
 
     //    private String groupId;
-//    private String registryId;
+//    private Integer registryId;
     private String status;
     private int lastAttemptCount;
     private long lastAttemptTime;

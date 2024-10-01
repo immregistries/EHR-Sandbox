@@ -11,7 +11,7 @@ public class ImmunizationRegistry {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "immunization_registry_id", nullable = false)
-    private String id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -101,11 +101,11 @@ public class ImmunizationRegistry {
         this.user = user;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -20,7 +20,7 @@ public class VaccinationEvent extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "vaccination_event_id", nullable = false)
-    private String id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
@@ -34,7 +34,7 @@ public class VaccinationEvent extends EhrEntity {
      * @param id
      */
     @JsonProperty("patient")
-    public void dontUseThisMethod(String id) {
+    public void dontUseThisMethod(Integer id) {
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
@@ -134,11 +134,11 @@ public class VaccinationEvent extends EhrEntity {
         this.patient = patient;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

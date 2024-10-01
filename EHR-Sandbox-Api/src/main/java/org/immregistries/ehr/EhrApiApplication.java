@@ -111,8 +111,13 @@ public class EhrApiApplication extends SpringBootServletInitializer {
 
 
     @Bean
-    public Map<String, BulkImportStatus> resultCacheStore() {
+    public Map<Integer, BulkImportStatus> resultCacheStore() {
         return new HashMap<>(30);
     }
+
+//    @Bean
+//    public ServletWebServerFactory servletWebServerFactory() {
+//        return new TomcatServletWebServerFactory();
+//    }
 
 }

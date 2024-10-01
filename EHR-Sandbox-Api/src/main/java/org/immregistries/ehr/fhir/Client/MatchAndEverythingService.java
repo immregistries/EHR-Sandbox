@@ -47,9 +47,9 @@ public class MatchAndEverythingService {
     private RecommendationService recommendationService;
 
 
-    public Set<VaccinationEvent> fetchAndLoadImmunizationsFromIIS(String facilityId,
-                                                                  String patientId,
-                                                                  String registryId,
+    public Set<VaccinationEvent> fetchAndLoadImmunizationsFromIIS(Integer facilityId,
+                                                                  Integer patientId,
+                                                                  Integer registryId,
                                                                   Optional<Long> _since) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
@@ -205,21 +205,21 @@ public class MatchAndEverythingService {
 //    }
 
     public List<String> matchPatientIdParts(
-            String registryId,
+            Integer registryId,
             String message) {
         return matchPatient(registryId, message)
                 .stream().map(iBaseResource -> iBaseResource.getIdElement().getIdPart()).collect(Collectors.toList());
     }
 
     public List<IBaseResource> matchPatient(
-            String registryId,
+            Integer registryId,
             String message) {
         IBaseBundle iBaseBundle = matchPatientOperation(registryId, message);
         return fhirComponentsDispatcher.bundleImportService().baseResourcesFromBaseBundleEntries(iBaseBundle);
     }
 
     public IBaseBundle matchPatientOperation(
-            String registryId,
+            Integer registryId,
             String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseResource patient = parser.parseResource(message);
@@ -231,7 +231,7 @@ public class MatchAndEverythingService {
     }
 
     public IBaseBundle matchPatientOperation(
-            String registryId,
+            Integer registryId,
             IBaseResource patient) {
         return (IBaseBundle) fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId))
                 .operation().onType("Patient").named("match").withParameter(FhirComponentsDispatcher.parametersClass(), "resource", patient).returnResourceType(FhirComponentsDispatcher.bundleClass()).execute();

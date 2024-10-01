@@ -31,7 +31,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 
 
     public IBaseBundle vxuBundle(Facility facility, VaccinationEvent vaccinationEvent) {
-        Map<String, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
+        Map<Integer, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
 
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
@@ -42,7 +42,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
     }
 
     public IBaseBundle qpdBundle(Facility facility, EhrPatient ehrPatient) {
-        Map<String, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
+        Map<Integer, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
 
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
@@ -54,7 +54,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
     @Override
     public Bundle transactionBundle(Facility facility) {
         // Map<clinicianId, entryUrl>
-        Map<String, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
+        Map<Integer, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.TRANSACTION);
         String organizationEntryUrl = addOrganizationEntry(bundle, facility);
@@ -80,7 +80,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
     }
 
     @Override
-    public String addPatientEntry(IBaseBundle iBaseBundle, String organizationUrl, EhrPatient ehrPatient, Map<String, String> clinicianUrlMap) {
+    public String addPatientEntry(IBaseBundle iBaseBundle, String organizationUrl, EhrPatient ehrPatient, Map<Integer, String> clinicianUrlMap) {
         Bundle bundle = (Bundle) iBaseBundle;
         Patient patient = patientMapper.toFhir(ehrPatient);
         patient.setManagingOrganization(new Reference(organizationUrl));
@@ -96,7 +96,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
     }
 
     @Override
-    public String addVaccinationEntry(IBaseBundle iBaseBundle, String patientUrl, VaccinationEvent vaccinationEvent, Map<String, String> clinicianUrlMap) {
+    public String addVaccinationEntry(IBaseBundle iBaseBundle, String patientUrl, VaccinationEvent vaccinationEvent, Map<Integer, String> clinicianUrlMap) {
         Bundle bundle = (Bundle) iBaseBundle;
 
         Immunization immunization = immunizationMapper.toFhir(vaccinationEvent,
@@ -114,7 +114,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         return entryComponent.getFullUrl();
     }
 
-    private void addImmunizationPerformer(IBaseBundle bundle, Immunization immunization, Clinician clinician, String role, Map<String, String> clinicianUrlMap) {
+    private void addImmunizationPerformer(IBaseBundle bundle, Immunization immunization, Clinician clinician, String role, Map<Integer, String> clinicianUrlMap) {
         String clinicianEntryUrl = addOrGetClinicianEntry(bundle, clinician, clinicianUrlMap);
         Immunization.ImmunizationPerformerComponent component;
         if (StringUtils.isNotBlank(clinicianEntryUrl)) {

@@ -5,16 +5,16 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface ImmunizationRegistryRepository extends CrudRepository<ImmunizationRegistry, String> {
+public interface ImmunizationRegistryRepository extends CrudRepository<ImmunizationRegistry, Integer> {
     Iterable<ImmunizationRegistry> findByUserId(Integer userId);
 
     Optional<ImmunizationRegistry> findByUserIdAndIisFhirUrl(Integer userId, String iisFhirUrl);
 
-    Boolean existsByIdAndUserId(String id, Integer userId);
+    Boolean existsByIdAndUserId(Integer id, Integer userId);
 
-    Optional<ImmunizationRegistry> findByIdAndUserId(String id, Integer userId);
+    Optional<ImmunizationRegistry> findByIdAndUserId(Integer id, Integer userId);
 
     Boolean existsByNameAndUserId(String name, Integer userId);
 
-    void deleteByIdAndUserId(String id, Integer userId);
+    void deleteByIdAndUserId(Integer id, Integer userId);
 }

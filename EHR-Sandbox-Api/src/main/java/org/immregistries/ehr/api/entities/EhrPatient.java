@@ -27,7 +27,7 @@ public class EhrPatient extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "patient_id", nullable = false)
-    private String id;
+    private Integer id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
     @JsonBackReference("facility-patient")
@@ -323,11 +323,11 @@ public class EhrPatient extends EhrEntity {
         this.facility = facility;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

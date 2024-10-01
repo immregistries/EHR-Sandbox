@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface PatientIdentifierRepository extends CrudRepository<PatientExternalIdentifier, PatientExternalIdentifierKey> {
-    Optional<PatientExternalIdentifier> findByPatientIdAndImmunizationRegistryId(String patientId, String immunizationRegistryId);
+    Optional<PatientExternalIdentifier> findByPatientIdAndImmunizationRegistryId(Integer patientId, Integer immunizationRegistryId);
 
-    Optional<PatientExternalIdentifier> findByIdentifierAndImmunizationRegistryId(String identifier, String immunizationRegistryId);
+    Optional<PatientExternalIdentifier> findByIdentifierAndImmunizationRegistryId(String identifier, Integer immunizationRegistryId);
 }

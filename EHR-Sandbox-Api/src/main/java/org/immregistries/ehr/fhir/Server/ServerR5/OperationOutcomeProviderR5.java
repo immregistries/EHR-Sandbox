@@ -10,10 +10,7 @@ import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.OperationOutcome;
 import org.hl7.fhir.r5.model.ResourceType;
 import org.hl7.fhir.r5.model.StringType;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Feedback;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
@@ -30,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-
 public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirProviderR5<OperationOutcome> {
     @Autowired
     private FeedbackRepository feedbackRepository;
@@ -106,7 +102,7 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
             @ResourceParam OperationOutcome operationOutcome,
             ServletRequestDetails requestDetails,
             ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
@@ -131,13 +127,17 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
                 if (localUrl != null) {
                     String[] idArray = localUrl.split("/");
                     if (idArray[0].equals("Patient")) {
-                        patientRepository.findByFacilityIdAndId(facility.getId(), idArray[1])
+                        patientRepository.findByFacilityIdAndId(facility.getId(), EhrUtils.convert(idArray[1]))
                                 .ifPresent(feedback::setPatient);
                     } else if (idArray[0].equals("Immunization")) {
-                        Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), idArray[1]);
-                        if (vaccinationEvent.isPresent()) {
-                            feedback.setVaccinationEvent(vaccinationEvent.get());
-                            feedback.setPatient(vaccinationEvent.get().getPatient());
+                        try {
+                            Integer vaccinationId = EhrUtils.convert(idArray[1]);
+                            Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), vaccinationId);
+                            if (vaccinationEvent.isPresent()) {
+                                feedback.setVaccinationEvent(vaccinationEvent.get());
+                                feedback.setPatient(vaccinationEvent.get().getPatient());
+                            }
+                        } catch (NumberFormatException numberFormatException) {
                         }
                     }
                 }

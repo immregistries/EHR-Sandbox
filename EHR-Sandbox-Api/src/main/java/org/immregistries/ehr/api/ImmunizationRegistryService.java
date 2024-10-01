@@ -6,7 +6,6 @@ import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -24,7 +23,7 @@ public class ImmunizationRegistryService {
      * @param id
      * @return
      */
-    public ImmunizationRegistry getImmunizationRegistry(@PathVariable() String id) {
+    public ImmunizationRegistry getImmunizationRegistry(Integer id) {
         Optional<ImmunizationRegistry> immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(id, userDetailsService.currentUserId());
         if (immunizationRegistry.isPresent()) {
             return immunizationRegistry.get();

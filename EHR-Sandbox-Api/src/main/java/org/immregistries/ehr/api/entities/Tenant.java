@@ -17,7 +17,7 @@ public class Tenant extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "tenant_id", nullable = false)
-    private String id;
+    private Integer id;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -40,15 +40,6 @@ public class Tenant extends EhrEntity {
 
     public Tenant() {
     }
-
-    public Tenant(String id, User user, String nameDisplay, Set<Facility> facilities, Set<Clinician> clinicians) {
-        this.id = id;
-        this.user = user;
-        this.nameDisplay = nameDisplay;
-        this.facilities = facilities;
-        this.clinicians = clinicians;
-    }
-
 
     public Set<Facility> getFacilities() {
         return facilities;
@@ -74,11 +65,11 @@ public class Tenant extends EhrEntity {
         this.user = user;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

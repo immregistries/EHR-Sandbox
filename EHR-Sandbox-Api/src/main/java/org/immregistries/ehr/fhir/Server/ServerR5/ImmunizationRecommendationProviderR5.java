@@ -9,6 +9,7 @@ import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.ImmunizationRecommendation;
 import org.hl7.fhir.r5.model.Reference;
 import org.hl7.fhir.r5.model.ResourceType;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -26,7 +27,6 @@ import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGIS
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 @Controller
-
 public class ImmunizationRecommendationProviderR5 implements IResourceProvider, EhrFhirProviderR5<ImmunizationRecommendation> {
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationRecommendationProviderR5.class);
     @Autowired
@@ -59,17 +59,17 @@ public class ImmunizationRecommendationProviderR5 implements IResourceProvider, 
     @Update
     public MethodOutcome update(@ResourceParam ImmunizationRecommendation immunizationRecommendation, ServletRequestDetails requestDetails) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(
-                (String) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
+                (Integer) requestDetails.getServletRequest().getAttribute(IMMUNIZATION_REGISTRY_ID),
                 (Integer) requestDetails.getServletRequest().getAttribute(USER_ID)
         ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "unknown source"));
         return update(immunizationRecommendation, requestDetails, immunizationRegistry);
     }
 
     public MethodOutcome update(@ResourceParam ImmunizationRecommendation immunizationRecommendation, ServletRequestDetails requestDetails, ImmunizationRegistry immunizationRegistry) {
-        Facility facility = facilityRepository.findById(requestDetails.getTenantId())
+        Facility facility = facilityRepository.findById(EhrUtils.convert(requestDetails.getTenantId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
-        String patientLocalId = resourceIdentificationService.getLocalPatientId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
-        immunizationRecommendation.setPatient(new Reference(patientLocalId));
+        Integer patientLocalId = resourceIdentificationService.getLocalPatientId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
+        immunizationRecommendation.setPatient(new Reference(EhrUtils.convert(patientLocalId)));
         return new MethodOutcome().setResource(recommendationService.saveInStore(immunizationRecommendation, facility, patientLocalId, immunizationRegistry));
     }
 

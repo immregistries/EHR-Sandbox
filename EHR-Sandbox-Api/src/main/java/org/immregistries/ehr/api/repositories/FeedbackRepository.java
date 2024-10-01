@@ -6,14 +6,14 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
-    Optional<Feedback> findByPatientId(String patientId);
+    Optional<Feedback> findByPatientId(Integer patientId);
 
-    void deleteByVaccinationEventIdAndSeverity(String vaccinationEventId, String severity);
+    void deleteByVaccinationEventIdAndSeverity(Integer vaccinationEventId, String severity);
 
-    void deleteByVaccinationEventIdAndIisAndSeverity(String vaccinationEventId, String iis, String severity);
+    void deleteByVaccinationEventIdAndIisAndSeverity(Integer vaccinationEventId, String iis, String severity);
 
-    void deleteByPatientIdAndSeverityAndVaccinationEventNull(String ehrPatientId, String severity);
+    void deleteByPatientIdAndSeverityAndVaccinationEventNull(Integer ehrPatientId, String severity);
 
-    void deleteByPatientIdAndIisAndSeverityAndVaccinationEventNull(String ehrPatientId, String iis, String severity);
+    void deleteByPatientIdAndIisAndSeverityAndVaccinationEventNull(Integer ehrPatientId, String iis, String severity);
 
 }

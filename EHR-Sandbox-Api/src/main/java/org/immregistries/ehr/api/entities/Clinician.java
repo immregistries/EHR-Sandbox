@@ -23,7 +23,7 @@ public class Clinician extends EhrEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "clinician_id", nullable = false)
 //    @JdbcTypeCode(SqlTypes.INTEGER)
-    private String id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "tenant_id")
@@ -132,11 +132,11 @@ public class Clinician extends EhrEntity {
         this.nameLast = nameLast;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

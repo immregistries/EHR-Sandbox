@@ -44,12 +44,12 @@ public class TenantController {
     }
 
     @GetMapping(TENANT_ID_SUFFIX)
-    public Optional<Tenant> getTenant(@PathVariable() String tenantId) {
+    public Optional<Tenant> getTenant(@PathVariable() Integer tenantId) {
         return tenantRepository.findById(tenantId);
     }
 
     @GetMapping(TENANT_ID_SUFFIX + PATIENT_PATH_HEADER)
-    public Iterable<EhrPatient> patients(@PathVariable() String tenantId) {
+    public Iterable<EhrPatient> patients(@PathVariable() Integer tenantId) {
         return patientRepository.findByTenantId(tenantRepository.findById(tenantId).orElseThrow());
     }
 

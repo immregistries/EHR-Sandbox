@@ -127,7 +127,7 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity createFacility(@PathVariable() String tenantId, @RequestBody String bundleString) {
+    public ResponseEntity createFacility(@PathVariable() Integer tenantId, @RequestBody String bundleString) {
         Bundle facilityBundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return createFacility(tenantRepository.findById(tenantId).get(), facilityBundle);
     }
@@ -155,7 +155,7 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity fillFacility(@PathVariable() String tenantId, @PathVariable() String facilityId, @RequestBody String bundleString) {
+    public ResponseEntity fillFacility(@PathVariable() Integer tenantId, @PathVariable Integer facilityId, @RequestBody String bundleString) {
         Bundle bundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return fillFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), bundle);
     }
@@ -173,12 +173,12 @@ public class MacroEndpointsController {
         /**
          * Map<remoteId,newLocalId>
          */
-        Map<String, String> ehrPatients = new HashMap<>(bundle.getEntry().size() - 1);
+        Map<String, Integer> ehrPatients = new HashMap<>(bundle.getEntry().size() - 1);
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource() instanceof Patient) {
                 Patient patient = (Patient) entry.getResource();
                 EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
-                String localId = ehrPatientController.postPatient(tenant, facility, ehrPatient, Optional.empty()).getBody();
+                Integer localId = ehrPatientController.postPatient(tenant, facility, ehrPatient, Optional.empty()).getBody();
                 ehrPatients.put(patient.getIdElement().getIdPart(), localId);
             }
         }

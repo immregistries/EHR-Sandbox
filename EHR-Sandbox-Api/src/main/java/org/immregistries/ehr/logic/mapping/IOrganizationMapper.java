@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
@@ -14,7 +15,7 @@ public interface IOrganizationMapper<Organization extends IBaseResource> extends
     static EhrIdentifier facilityIdToEhrIdentifier(Facility facility) {
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setSystem(FACILITY_SYSTEM);
-        ehrIdentifier.setValue(facility.getId());
+        ehrIdentifier.setValue(EhrUtils.convert(facility.getId()));
         return ehrIdentifier;
     }
 

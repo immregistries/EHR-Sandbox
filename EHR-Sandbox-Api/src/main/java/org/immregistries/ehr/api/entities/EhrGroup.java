@@ -20,7 +20,7 @@ public class EhrGroup extends EhrEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "group_id", nullable = false)
-    private String id;
+    private Integer id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "facility_id", nullable = false)
 //    @JsonBackReference("facility-groups")
@@ -63,11 +63,11 @@ public class EhrGroup extends EhrEntity {
         this.ehrGroupCharacteristics = ehrGroupCharacteristics;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

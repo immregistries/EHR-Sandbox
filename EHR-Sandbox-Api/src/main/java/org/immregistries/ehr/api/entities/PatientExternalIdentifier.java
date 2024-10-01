@@ -12,11 +12,11 @@ import org.immregistries.ehr.api.entities.embedabbles.PatientExternalIdentifierK
 public class PatientExternalIdentifier {
     @Id
     @Column(name = "patient_id", nullable = false)
-    private String patientId;
+    private Integer patientId;
 
     @Id
     @Column(name = "immunization_registry_id", nullable = false)
-    private String immunizationRegistryId;
+    private Integer immunizationRegistryId;
 
 
     @Column(name = "identifier", nullable = true)
@@ -25,26 +25,26 @@ public class PatientExternalIdentifier {
     public PatientExternalIdentifier() {
     }
 
-    public PatientExternalIdentifier(String patientId, String immunizationRegistryId, String identifier) {
+    public PatientExternalIdentifier(Integer patientId, Integer immunizationRegistryId, String identifier) {
         this.patientId = patientId;
         this.immunizationRegistryId = immunizationRegistryId;
         this.identifier = identifier;
     }
 
 
-    public String getPatientId() {
+    public Integer getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(Integer patientId) {
         this.patientId = patientId;
     }
 
-    public String getImmunizationRegistryId() {
+    public Integer getImmunizationRegistryId() {
         return immunizationRegistryId;
     }
 
-    public void setImmunizationRegistryId(String immunizationRegistryId) {
+    public void setImmunizationRegistryId(Integer immunizationRegistryId) {
         this.immunizationRegistryId = immunizationRegistryId;
     }
 

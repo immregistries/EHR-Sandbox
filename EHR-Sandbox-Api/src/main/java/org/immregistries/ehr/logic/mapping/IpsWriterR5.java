@@ -29,7 +29,7 @@ public class IpsWriterR5 implements IIpsWriter {
          *
          * Map<ClinicianId, EntryUrl>
          */
-        Map<String, Reference> addedClinicianReference = new HashMap<>(ehrPatient.getVaccinationEvents().size() * 3 + 1);
+        Map<Integer, Reference> addedClinicianReference = new HashMap<>(ehrPatient.getVaccinationEvents().size() * 3 + 1);
         String immunizationFacilitySystem = resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility);
 
         Integer entryId = 0;
@@ -135,7 +135,7 @@ public class IpsWriterR5 implements IIpsWriter {
         return immunization;
     }
 
-    private Reference addClinicianEntry(Bundle bundle, Clinician clinician, Map<String, Reference> addedClinicianReference) {
+    private Reference addClinicianEntry(Bundle bundle, Clinician clinician, Map<Integer, Reference> addedClinicianReference) {
         Reference reference = null;
         if (clinician == null) {
             return null;
@@ -153,7 +153,7 @@ public class IpsWriterR5 implements IIpsWriter {
 
     }
 
-    private Immunization.ImmunizationPerformerComponent addImmunizationPerformer(Bundle bundle, Immunization immunization, Clinician clinician, String role, Map<String, Reference> addedClinicianReference) {
+    private Immunization.ImmunizationPerformerComponent addImmunizationPerformer(Bundle bundle, Immunization immunization, Clinician clinician, String role, Map<Integer, Reference> addedClinicianReference) {
         Reference reference = addClinicianEntry(bundle, clinician, addedClinicianReference);
         Immunization.ImmunizationPerformerComponent component = null;
         if (reference != null) {
