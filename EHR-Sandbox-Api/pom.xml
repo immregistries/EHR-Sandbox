@@ -9,15 +9,12 @@
         <artifactId>ehr-sandbox</artifactId>
         <version>1.2.3-SNAPSHOT-5</version>
     </parent>
-
     <name>EHR Sandbox API</name>
     <description>Api for EHR Sandbox</description>
     <properties>
         <java.version>1.8</java.version>
         <hapi.version>7.4.0</hapi.version>
     </properties>
-
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -30,22 +27,18 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-
     <dependencies>
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.1.0</version>
         </dependency>
-
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>6.1.0</version>
             <!--            <scope>provided</scope>-->
         </dependency>
-
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.boot</groupId>-->
         <!--            <artifactId>spring-boot-properties-migrator</artifactId>-->
@@ -71,41 +64,42 @@
             <artifactId>jackson-core</artifactId>
             <version>2.15.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-envers</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>${spring-boot-tomcat.scope}</scope>
+            <!--            <scope>${spring-boot-tomcat.scope}</scope>-->
+            <!--            <scope>provided</scope>-->
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -124,13 +118,11 @@
             <scope>runtime</scope>
         </dependency>
 
-
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.boot</groupId>-->
         <!--            <artifactId>spring-boot-starter-test</artifactId>-->
         <!--            <scope>test</scope>-->
         <!--        </dependency>-->
-
         <!--		<dependency>-->
         <!--			<groupId>mysql</groupId>-->
         <!--			<artifactId>mysql-connector-java</artifactId>-->
@@ -142,7 +134,6 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.immregistries</groupId>
             <artifactId>codebase-client</artifactId>
@@ -169,8 +160,6 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>4.0.0</version>
         </dependency>
-
-
         <!--        <dependency>-->
         <!--            <groupId>org.immregistries</groupId>-->
         <!--            <artifactId>mqe-hl7-utility</artifactId>-->
@@ -204,13 +193,11 @@
             <artifactId>gson</artifactId>
             <version>2.9.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
             <version>1.6.2</version>
         </dependency>
-
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-base</artifactId>
@@ -256,21 +243,17 @@
         <!--			<artifactId>hapi-fhir-jpaserver-subscription</artifactId>-->
         <!--			<version>${hapi.version}</version>-->
         <!--		</dependency>-->
-
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
             <version>2.3</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.immregistries.ehr</groupId>
             <artifactId>ehr-sandbox-ui</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
     <build>
         <finalName>ehr</finalName>
         <plugins>
@@ -279,7 +262,6 @@
             <!--                <artifactId>jetty-maven-plugin</artifactId>-->
             <!--                <version>9.0.5.v20130815</version>-->
             <!--            </plugin>-->
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -314,8 +296,6 @@
             </plugin>
         </plugins>
     </build>
-
-
     <profiles>
         <profile>
             <id>prod</id>

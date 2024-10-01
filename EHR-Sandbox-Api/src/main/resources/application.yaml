@@ -5,8 +5,7 @@
 #      hibernate:
 #        SQL: DEBUG
 spring:
-  main:
-    web-application-type: none
+  #  main.web-application-type: none
   profiles.active: '@activatedProperties@'
   datasource:
     #    url : "jdbc:mysql://localhost:3306/ehr"
