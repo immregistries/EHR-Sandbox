@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 })
 public class ImmunizationRegistry {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "immunization_registry_id", nullable = false)
     private String id;
 

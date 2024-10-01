@@ -1,9 +1,12 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable()
 public class EhrRace {
+
+    @Column(name = "race_value")
     private String value;
 
     public EhrRace() {

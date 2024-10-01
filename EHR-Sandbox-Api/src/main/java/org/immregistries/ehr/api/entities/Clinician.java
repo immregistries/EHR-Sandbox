@@ -20,8 +20,9 @@ import java.util.Set;
         scope = Clinician.class)
 public class Clinician extends EhrEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "clinician_id", nullable = false)
+//    @JdbcTypeCode(SqlTypes.INTEGER)
     private String id;
 
     @ManyToOne
@@ -44,14 +45,6 @@ public class Clinician extends EhrEntity {
     @Column(name = "name_Prefix", nullable = true)
     private String namePrefix = "";
 
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(String qualification) {
-        this.qualification = qualification;
-    }
-
     @Column(name = "qualification", nullable = true)
     private String qualification = "";
 
@@ -67,6 +60,10 @@ public class Clinician extends EhrEntity {
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "clinician_aphone", joinColumns = @JoinColumn(name = "clinician_id"))
+    private Set<EhrPhoneNumber> aphones = new LinkedHashSet<>();
+
     @ElementCollection()
     @CollectionTable(name = "clinician_identifiers", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
@@ -74,6 +71,7 @@ public class Clinician extends EhrEntity {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clinician_phone", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clinician_address", joinColumns = @JoinColumn(name = "clinician_id"))
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
@@ -142,14 +140,6 @@ public class Clinician extends EhrEntity {
         this.id = id;
     }
 
-    public Set<EhrIdentifier> getIdentifiers() {
-        return identifiers;
-    }
-
-    public void setIdentifiers(Set<EhrIdentifier> identifiers) {
-        this.identifiers = identifiers;
-    }
-
     public String getNameSuffix() {
         return nameSuffix;
     }
@@ -166,21 +156,12 @@ public class Clinician extends EhrEntity {
         this.namePrefix = namePrefix;
     }
 
+    public Set<EhrPhoneNumber> getPhones() {
+        return phones;
+    }
+
     public void setPhones(Set<EhrPhoneNumber> phones) {
         this.phones = phones;
-    }
-
-    public EhrPhoneNumber addPhoneNumber() {
-        EhrPhoneNumber phoneNumber = new EhrPhoneNumber();
-        addPhoneNumber(phoneNumber);
-        return phoneNumber;
-    }
-
-    public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
-        if (phones == null) {
-            this.phones = new HashSet<>(1);
-        }
-        this.phones.add(phoneNumber);
     }
 
     public Set<EhrAddress> getAddresses() {
@@ -189,6 +170,22 @@ public class Clinician extends EhrEntity {
 
     public void setAddresses(Set<EhrAddress> addresses) {
         this.addresses = addresses;
+    }
+
+    public Set<EhrIdentifier> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(Set<EhrIdentifier> identifiers) {
+        this.identifiers = identifiers;
+    }
+
+    @JsonIgnore
+    public void addIdentifier(EhrIdentifier identifier) {
+        if (this.identifiers == null) {
+            this.identifiers = new LinkedHashSet<>(3);
+        }
+        this.identifiers.add(identifier);
     }
 
     @JsonIgnore
@@ -206,14 +203,27 @@ public class Clinician extends EhrEntity {
         this.addresses.add(address);
     }
 
-    public void addIdentifier(EhrIdentifier identifier) {
-        if (this.identifiers == null) {
-            this.identifiers = new LinkedHashSet<>(3);
-        }
-        this.identifiers.add(identifier);
+    @JsonIgnore
+    public EhrPhoneNumber addPhoneNumber() {
+        EhrPhoneNumber phoneNumber = new EhrPhoneNumber();
+        addPhoneNumber(phoneNumber);
+        return phoneNumber;
     }
 
-    public Set<EhrPhoneNumber> getPhones() {
-        return phones;
+    @JsonIgnore
+    public void addPhoneNumber(EhrPhoneNumber phoneNumber) {
+        if (phones == null) {
+            this.phones = new HashSet<>(1);
+        }
+        this.phones.add(phoneNumber);
+    }
+
+
+    public String getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(String qualification) {
+        this.qualification = qualification;
     }
 }

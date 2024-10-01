@@ -14,7 +14,7 @@ import java.util.Set;
 @Audited
 public class Vaccine {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "vaccine_id", nullable = false)
     private String id;
 

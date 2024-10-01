@@ -25,7 +25,7 @@ import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 public class EhrPatient extends EhrEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "patient_id", nullable = false)
     private String id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

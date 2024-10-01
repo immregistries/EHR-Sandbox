@@ -21,7 +21,7 @@ import java.util.Set;
 // */
 public class Facility extends EhrEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "facility_id", nullable = false)
     private String id;
 
@@ -34,7 +34,7 @@ public class Facility extends EhrEntity {
     @Column(name = "name_display", nullable = false, length = 250)
     private String nameDisplay = "";
 
-    @Column(name = "type", nullable = false, length = 250)
+    @Column(name = "facility_type", nullable = false, length = 250)
     private String type = "";
 
     @OneToMany(mappedBy = "administeringFacility")

@@ -16,7 +16,7 @@ import java.util.Set;
 @Table(name = "next_of_kin")
 public class NextOfKin {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "next_of_kin_id", nullable = false)
     private String id;
 

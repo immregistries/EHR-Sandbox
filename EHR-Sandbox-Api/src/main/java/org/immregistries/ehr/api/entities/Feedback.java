@@ -21,7 +21,7 @@ import java.sql.Timestamp;
         scope = Feedback.class)
 public class Feedback extends EhrEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "feedback_id", nullable = false)
     private String id;
 

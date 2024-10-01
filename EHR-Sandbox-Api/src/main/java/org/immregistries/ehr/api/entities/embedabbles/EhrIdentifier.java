@@ -1,7 +1,9 @@
 package org.immregistries.ehr.api.entities.embedabbles;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -18,35 +20,38 @@ import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 public class EhrIdentifier {
 
     @Size(max = 300)
+    @Column(name = "identifier_system")
     private String system;
 
     @Size(max = 300)
+    @Column(name = "identifier_value")
     private String value;
 
     @Size(max = 300)
+    @Column(name = "identifier_type")
     private String type;
 
     @Size(max = 300)
+    @Column(name = "identifier_assigner")
     private String assignerReference;
+
+    //    @Embedded
+//    private EhrIdentifier assignerIdentifier;
 
     public EhrIdentifier() {
     }
 
-    public EhrIdentifier(org.hl7.fhir.r5.model.Identifier identifier) {
-        system = identifier.getSystem();
-        value = identifier.getValue();
-        type = identifier.getType().getCode(MRN_TYPE_SYSTEM);
+    public EhrIdentifier(org.hl7.fhir.r5.model.Identifier identifierR5) {
+        system = identifierR5.getSystem();
+        value = identifierR5.getValue();
+        type = identifierR5.getType().getCode(MRN_TYPE_SYSTEM);
     }
 
-    public EhrIdentifier(org.hl7.fhir.r4.model.Identifier identifier) {
-        system = identifier.getSystem();
-        value = identifier.getValue();
-        type = identifier.getType().getCodingFirstRep().getCode();
+    public EhrIdentifier(org.hl7.fhir.r4.model.Identifier identifierR4) {
+        system = identifierR4.getSystem();
+        value = identifierR4.getValue();
+        type = identifierR4.getType().getCodingFirstRep().getCode();
     }
-
-//    @Embedded
-//    private EhrIdentifier assignerIdentifier;
-
 
     public String getSystem() {
         return system;
@@ -72,6 +77,15 @@ public class EhrIdentifier {
         this.type = type;
     }
 
+    public String getAssignerReference() {
+        return assignerReference;
+    }
+
+    public void setAssignerReference(String assignerReference) {
+        this.assignerReference = assignerReference;
+    }
+
+    @Transient
     public org.hl7.fhir.r5.model.Identifier toR5() {
         org.hl7.fhir.r5.model.Identifier identifier = new org.hl7.fhir.r5.model.Identifier().setValue(value).setSystem(system);
         if (this.getType() != null) {
@@ -86,6 +100,7 @@ public class EhrIdentifier {
         return identifier;
     }
 
+    @Transient
     public org.hl7.fhir.r4.model.Identifier toR4() {
         org.hl7.fhir.r4.model.Identifier identifier = new org.hl7.fhir.r4.model.Identifier().setValue(value).setSystem(system);
         if (this.getType() != null) {
@@ -101,6 +116,7 @@ public class EhrIdentifier {
         return identifier;
     }
 
+    @Transient
     public ICompositeType toFhir() {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -118,11 +134,5 @@ public class EhrIdentifier {
 
     }
 
-    public String getAssignerReference() {
-        return assignerReference;
-    }
 
-    public void setAssignerReference(String assignerReference) {
-        this.assignerReference = assignerReference;
-    }
 }

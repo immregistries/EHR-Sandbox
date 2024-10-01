@@ -15,7 +15,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ehr_subscription")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "identifier",
+        property = "subscription_identifier",
         scope = EhrSubscription.class)
 public class EhrSubscription extends EhrEntity {
     public EhrSubscription() {
@@ -62,46 +62,46 @@ public class EhrSubscription extends EhrEntity {
     }
 
     @Id
-    @Column(name = "identifier", nullable = false, length = 45)
+    @Column(name = "subscription_identifier", nullable = false, length = 45)
     private String identifier;
 
     @Column(name = "external_id", nullable = false, length = 45)
     private String externalId = "";
 
-    @Column(name = "name", length = 45)
+    @Column(name = "subscription_name", length = 45)
     private String name;
 
-    @Column(name = "status", nullable = false, length = 45)
+    @Column(name = "subscription_status", nullable = false, length = 45)
     private String status;
 
-    @Column(name = "topic", nullable = false, length = 90)
+    @Column(name = "subscription_topic", nullable = false, length = 90)
     private String topic;
 
-    @Column(name = "end", length = 45)
+    @Column(name = "subscription_end", length = 45)
     private Date end;
 
-    @Column(name = "reason", length = 90)
+    @Column(name = "subscription_reason", length = 90)
     private String reason;
 
-    @Column(name = "channelType", length = 45)
+    @Column(name = "subscription_channel_type", length = 45)
     private String channelType;
 
-    @Column(name = "header", length = 612)
+    @Column(name = "subscription_header", length = 612)
     private String header;
 
-    @Column(name = "heartbeatPeriod")
+    @Column(name = "subscription_heartbeat_period")
     private Integer heartbeatPeriod;
 
-    @Column(name = "timeout", length = 45)
+    @Column(name = "subscription_timeout", length = 45)
     private Integer timeout;
 
-    @Column(name = "contentType", length = 45)
+    @Column(name = "subscription_content_type", length = 45)
     private String contentType;
 
-    @Column(name = "content", length = 45)
+    @Column(name = "subscription_content", length = 45)
     private String content;
 
-    @Column(name = "notificationUrlLocation", length = 45)
+    @Column(name = "subscription_notification_url_location", length = 45)
     private String notificationUrlLocation;
 
     @Column(name = "maxCount")

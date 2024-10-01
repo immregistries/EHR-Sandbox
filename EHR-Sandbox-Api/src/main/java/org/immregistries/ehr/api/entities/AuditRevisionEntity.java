@@ -16,7 +16,7 @@ import org.immregistries.ehr.api.AuditRevisionListener;
 })
 @RevisionEntity(AuditRevisionListener.class)
 public class AuditRevisionEntity extends DefaultRevisionEntity {
-    @Column(name = "user")
+    @Column(name = "revinfo_user")
     private Integer user;
 
     @Column(name = "immunization_registry_id")

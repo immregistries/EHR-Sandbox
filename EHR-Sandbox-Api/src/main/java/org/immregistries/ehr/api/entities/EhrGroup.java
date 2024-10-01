@@ -31,7 +31,7 @@ public class EhrGroup extends EhrEntity {
     private String name;
     @Column(name = "description")
     private String description;
-    @Column(name = "type")
+    @Column(name = "group_type")
     private String type;
     @Column(name = "code")
     private String code;

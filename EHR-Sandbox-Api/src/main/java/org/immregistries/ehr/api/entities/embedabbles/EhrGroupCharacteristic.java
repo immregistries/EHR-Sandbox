@@ -11,12 +11,16 @@ import java.util.Date;
 @Embeddable
 public class EhrGroupCharacteristic implements Serializable {
 
+    @Column(name = "characteristic_code_value")
     private String codeValue;
 
+    @Column(name = "characteristic_code_system")
     private String codeSystem;
 
+    @Column(name = "characteristic_value")
     private String value;
 
+    @Column(name = "characteristic_exclude")
     private Boolean exclude;
 
     @Temporal(TemporalType.DATE)

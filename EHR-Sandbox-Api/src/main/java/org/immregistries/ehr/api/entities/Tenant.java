@@ -15,7 +15,7 @@ import java.util.Set;
         scope = Tenant.class)
 public class Tenant extends EhrEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "tenant_id", nullable = false)
     private String id;
 
