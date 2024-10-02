@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public class PatientExternalIdentifierKey implements Serializable {
     private Integer patientId;
-    private String immunizationRegistryId;
+    private Integer immunizationRegistryId;
 }
