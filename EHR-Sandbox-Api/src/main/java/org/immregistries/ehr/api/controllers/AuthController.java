@@ -158,8 +158,6 @@ public class AuthController {
         } else {
             return ResponseEntity.noContent().build();
         }
-
-
     }
 
 }
