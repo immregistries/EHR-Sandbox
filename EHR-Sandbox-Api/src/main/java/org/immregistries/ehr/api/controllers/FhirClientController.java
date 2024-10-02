@@ -63,17 +63,17 @@ public class FhirClientController {
 
     @GetMapping(REGISTRY_PATH + "/{resourceType}/{id}")
     public ResponseEntity<String> getFhirResourceFromIIS(
-            @PathVariable() Integer registryId,
-            @PathVariable() String resourceType,
-            @PathVariable() String id) {
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable String resourceType,
+            @PathVariable String id) {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryService.getImmunizationRegistry(registryId)));
     }
 
 
     @PostMapping(REGISTRY_PATH + "/{resourceType}/search")
     public ResponseEntity<String> searchFhirResourceFromIIS(
-            @PathVariable() Integer registryId,
-            @PathVariable() String resourceType,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable String resourceType,
             @RequestBody EhrIdentifier ehrIdentifier) {
         IQuery iQuery = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId)).search()
                 .forResource(resourceType);
@@ -90,11 +90,11 @@ public class FhirClientController {
     }
 
     //    @GetMapping("/smart-test")
-//    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable() String keyId) {
+//    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable String keyId) {
 //
 //    }
     @GetMapping("/smart-test/{keyId}")
-    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable() String keyId) {
+    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable String keyId) {
         ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
         immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
         immunizationRegistry.setIisUsername(keyId);
@@ -159,8 +159,8 @@ public class FhirClientController {
 
     @PostMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> postPatient(
-            @PathVariable() Integer registryId,
-            @PathVariable() Integer patientId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(PATIENT_ID) Integer patientId,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseResource patient = parser.parseResource(message);
@@ -181,11 +181,11 @@ public class FhirClientController {
 
     @PostMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$match")
     public ResponseEntity<List<String>> matchPatient(
-            @PathVariable() Integer tenantId,
+            @PathVariable(TENANT_ID) Integer tenantId,
 
-            @PathVariable Integer facilityId,
-            @PathVariable() Integer registryId,
-            @PathVariable() Integer patientId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(PATIENT_ID) Integer patientId,
             @RequestBody String message) {
 
         Tenant tenant = tenantRepository.findById(tenantId).orElseThrow();
@@ -195,8 +195,8 @@ public class FhirClientController {
 
     @PutMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> updatePatient(
-            @PathVariable() Integer registryId,
-            @PathVariable() Integer patientId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(PATIENT_ID) Integer patientId,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseResource patient = parser.parseResource(message);
@@ -227,16 +227,16 @@ public class FhirClientController {
 
     @GetMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> getPatient(
-            @PathVariable() Integer registryId,
-            @PathVariable() Integer patientId) {
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(PATIENT_ID) Integer patientId) {
         return ResponseEntity.ok(resourceClient.read("patient", String.valueOf(patientId),
                 immunizationRegistryService.getImmunizationRegistry(registryId)));
     }
 
     @PostMapping(VACCINATION_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> postImmunization(
-            @PathVariable() Integer registryId,
-            @PathVariable() Integer vaccinationId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(VACCINATION_ID) Integer vaccinationId,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
@@ -253,10 +253,10 @@ public class FhirClientController {
     @PutMapping(VACCINATION_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     @Transactional
     public ResponseEntity<String> updateImmunization(
-            @PathVariable Integer facilityId,
-            @PathVariable() Integer patientId,
-            @PathVariable() Integer registryId,
-            @PathVariable() Integer vaccinationId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(PATIENT_ID) Integer patientId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(VACCINATION_ID) Integer vaccinationId,
             @RequestBody String message
 //            @RequestParam(required = false) String patientFhirId DEPRECATED
     ) {
@@ -306,15 +306,15 @@ public class FhirClientController {
 
     @GetMapping(VACCINATION_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX)
     public ResponseEntity<String> getImmunization(
-            @PathVariable() Integer registryId,
-            @PathVariable() int vaccinationId) {
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable(VACCINATION_ID) Integer vaccinationId) {
         ImmunizationRegistry registry = immunizationRegistryService.getImmunizationRegistry(registryId);
         return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), registry));
     }
 
     @PostMapping(REGISTRY_PATH)
     public ResponseEntity<String> postResource(
-            @PathVariable() Integer registryId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
             @RequestParam(name = "type") String type,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
@@ -330,8 +330,8 @@ public class FhirClientController {
 
     @PutMapping(REGISTRY_PATH)
     public ResponseEntity<String> putResource(
-            @PathVariable() Integer registryId,
-            @RequestParam String type,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam("type") String type,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseResource resource = parser.parseResource(message);
@@ -347,7 +347,7 @@ public class FhirClientController {
     //    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
     @PostMapping(FACILITY_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$transaction")
     public ResponseEntity<String> transaction(
-            @PathVariable() Integer registryId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseBundle bundle = (IBaseBundle) parser.parseResource(message);
@@ -366,10 +366,10 @@ public class FhirClientController {
             REGISTRY_PATH + "/operation/{target}/{targetId}/{operationType}",
     })
     public ResponseEntity<Object> operation(
-            @PathVariable() String operationType,
-            @PathVariable() Integer registryId,
-            @PathVariable() String target,
-            @PathVariable() Optional<String> targetId,
+            @PathVariable String operationType,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @PathVariable String target,
+            @PathVariable Optional<String> targetId,
             @RequestParam Map<String, String> allParams) {
 
         IBaseParameters parameters;

@@ -4,7 +4,7 @@ package org.immregistries.ehr.api.controllers;
 //@RequestMapping({ControllerHelper.FACILITY_ID_PATH + IMM_REGISTRY_SUFFIX + "/groups", IMM_REGISTRY_SUFFIX + "/groups"})
 
 /**
- * DEPRECATED
+ * DEPRECATED kept as reference for caching remote groups
  */
 public class RemoteGroupController {
 //    Logger logger = LoggerFactory.getLogger(RemoteGroupController.class);
@@ -26,7 +26,7 @@ public class RemoteGroupController {
 //    EhrGroupRepository ehrGroupRepository;
 //
 //    @GetMapping("/sample")
-//    public ResponseEntity<String> getSample(@PathVariable() Optional<Integer> facilityId) {
+//    public ResponseEntity<String> getSample(@PathVariable Optional<Integer> facilityId) {
 //        Group group = new Group();
 //        group.setType(Group.GroupType.PERSON);
 //        long randn = Math.round(Math.random());
@@ -56,7 +56,7 @@ public class RemoteGroupController {
 //    }
 //
 //    @GetMapping()
-//    public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId, @PathVariable() Integer registryId) {
+//    public ResponseEntity<Set<String>> getAll(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(REGISTRY_ID) Integer registryId) {
 //        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
 ////        ehrGroupRepository.findByFacilityIdAndImmunizationRegistryId(facilityId, registryId);
 //
@@ -78,7 +78,7 @@ public class RemoteGroupController {
 //     * @return
 //     */
 //    @GetMapping("/$fetch")
-//    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable Integer facilityId, @PathVariable() Integer registryId) {
+//    public ResponseEntity<Set<String>> fetchFromIis(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(REGISTRY_ID) Integer registryId) {
 //        IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
 //        ServletRequestDetails servletRequestDetails = new ServletRequestDetails();
 //        servletRequestDetails.setTenantId(String.valueOf(facilityId));
@@ -98,7 +98,7 @@ public class RemoteGroupController {
 //    }
 //
 //    @PostMapping("/{groupId}/$member-add")
-//    public ResponseEntity<String> add_member(@PathVariable() Integer tenantId, @PathVariable Integer facilityId, @PathVariable() Integer registryId, @PathVariable() String groupId, @RequestParam Integer patientId, @RequestParam Optional<Boolean> match) {
+//    public ResponseEntity<String> add_member(@PathVariable(TENANT_ID) Integer tenantId, @PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(REGISTRY_ID) Integer registryId, @PathVariable String groupId, @RequestParam Integer patientId, @RequestParam Optional<Boolean> match) {
 //        EhrPatient ehrPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow();
 //        Patient patient = patientMapperR5.toFhir(ehrPatient);
 //        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
@@ -134,12 +134,12 @@ public class RemoteGroupController {
 //    }
 //
 //    @PostMapping("/{groupId}/$member-remove")
-//    public ResponseEntity<String> remove_member(@PathVariable Integer facilityId,
-//                                                @PathVariable() Integer registryId,
-//                                                @PathVariable() String groupId,
-//                                                @RequestParam() Optional<String> patientId,
-//                                                @RequestParam() Optional<Identifier> identifier,
-//                                                @RequestParam() Optional<String> reference
+//    public ResponseEntity<String> remove_member(@PathVariable(FACILITY_ID) Integer facilityId,
+//                                                @PathVariable(REGISTRY_ID) Integer registryId,
+//                                                @PathVariable String groupId,
+//                                                @RequestParam Optional<String> patientId,
+//                                                @RequestParam Optional<Identifier> identifier,
+//                                                @RequestParam Optional<String> reference
 //    ) {
 //        Parameters in = new Parameters();
 //        if (patientId.isPresent()) {

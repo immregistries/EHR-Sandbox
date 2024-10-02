@@ -51,7 +51,7 @@ public class FhirConversionController {
 
     @GetMapping(PATIENT_ID_PATH + "/resource")
     public ResponseEntity<String> getPatientAsResource(
-            @PathVariable() Integer patientId, @PathVariable Integer facilityId) {
+            @PathVariable(PATIENT_ID) Integer patientId, @PathVariable(FACILITY_ID) Integer facilityId) {
         EhrPatient ehrPatient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = facilityRepository.findById(facilityId)
@@ -63,7 +63,7 @@ public class FhirConversionController {
     }
 
     @GetMapping(VACCINATION_ID_PATH + "/resource")
-    public ResponseEntity<String> immunizationResource(@PathVariable Integer facilityId, @PathVariable() Integer patientId, @PathVariable() Integer vaccinationId) {
+    public ResponseEntity<String> immunizationResource(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(PATIENT_ID) Integer patientId, @PathVariable(VACCINATION_ID) Integer vaccinationId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource immunization = fhirComponentsDispatcher.immunizationMapper().toFhir(vaccinationEventRepository.findById(vaccinationId).get(),
                 resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facilityRepository.findById(facilityId).get()));
@@ -74,7 +74,7 @@ public class FhirConversionController {
     @GetMapping(GROUP_ID_PATH + "/resource")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> groupResource(
-            @PathVariable() Integer groupId) {
+            @PathVariable(GROUP_ID) Integer groupId) {
         EhrGroup ehrGroup = ehrGroupRepository.findById(groupId).get();
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource group = fhirComponentsDispatcher.groupMapper().toFhir(ehrGroup);
@@ -85,7 +85,7 @@ public class FhirConversionController {
     @GetMapping(FACILITY_ID_PATH + "/resource")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> facilityResource(
-            @PathVariable Integer facilityId) {
+            @PathVariable(FACILITY_ID) Integer facilityId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseResource organization = fhirComponentsDispatcher.organizationMapper().toFhir(facilityRepository.findById(facilityId).get());
         String resource = parser.encodeResourceToString(organization);
@@ -95,7 +95,7 @@ public class FhirConversionController {
 
     @GetMapping(FACILITY_ID_PATH + "/bundle")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> facilityAllResourcesTransaction(@PathVariable Integer facilityId) {
+    public ResponseEntity<String> facilityAllResourcesTransaction(@PathVariable(FACILITY_ID) Integer facilityId) {
         Facility facility = facilityRepository.findById(facilityId).get();
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseBundle baseBundle = fhirComponentsDispatcher.fhirTransactionWriter().transactionBundle(facility);
@@ -105,7 +105,7 @@ public class FhirConversionController {
 
     @GetMapping(PATIENT_ID_PATH + "/bundle")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> qpdEquivalentTransaction(@PathVariable Integer facilityId, @PathVariable() Integer patientId) {
+    public ResponseEntity<String> qpdEquivalentTransaction(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(PATIENT_ID) Integer patientId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseBundle iBaseBundle = fhirComponentsDispatcher.fhirTransactionWriter().
                 qpdBundle(facilityRepository.findById(facilityId).get(), patientRepository.findById(patientId).get());
@@ -116,7 +116,7 @@ public class FhirConversionController {
 
     @GetMapping(CLINICIAN_ID_PATH + "/resource")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> clinicianResource(@PathVariable() Integer tenantId, @PathVariable() Integer clinicianId) {
+    public ResponseEntity<String> clinicianResource(@PathVariable(TENANT_ID) Integer tenantId, @PathVariable(CLINICIAN_ID) Integer clinicianId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         Clinician clinician = clinicianRepository.findById(clinicianId).orElseThrow();
         IBaseResource practitioner = fhirComponentsDispatcher.practitionerMapper().toFhir(clinician);
@@ -126,7 +126,7 @@ public class FhirConversionController {
 
     @GetMapping(PATIENT_ID_PATH + "/ips")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> patientIPS(@PathVariable Integer facilityId, @PathVariable() Integer patientId) {
+    public ResponseEntity<String> patientIPS(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(PATIENT_ID) Integer patientId) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
         EhrPatient ehrPatient = patientRepository.findById(patientId).orElseThrow();
 
@@ -139,7 +139,7 @@ public class FhirConversionController {
 
     @PostMapping(FACILITY_ID_PATH + "/$qrCode")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<?> qrCode(@PathVariable Integer facilityId, @RequestBody String resourceString, HttpServletRequest request) {
+    public ResponseEntity<?> qrCode(@PathVariable(FACILITY_ID) Integer facilityId, @RequestBody String resourceString, HttpServletRequest request) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
 //        if (resourceString.startsWith(SmartHealthCardService.SHC_HEADER)) { // TODO remove
 //            return ResponseEntity.ok(qrCodeRead(facilityId, resourceString, request));
@@ -150,7 +150,7 @@ public class FhirConversionController {
 
     @PostMapping(FACILITY_ID_PATH + "/$qrCodeRead")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> qrCodeRead(@PathVariable Integer facilityId, @RequestBody String shc, HttpServletRequest request) {
+    public ResponseEntity<String> qrCodeRead(@PathVariable(FACILITY_ID) Integer facilityId, @RequestBody String shc, HttpServletRequest request) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
         return ResponseEntity.ok(smartHealthCardService.qrCodeRead(shc));
     }
@@ -158,7 +158,7 @@ public class FhirConversionController {
 
     @GetMapping(VACCINATION_ID_PATH + "/bundle")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<String> vxuEquivalentTransaction(@PathVariable Integer facilityId, @PathVariable() Integer patientId, @PathVariable() Integer vaccinationId) {
+    public ResponseEntity<String> vxuEquivalentTransaction(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(PATIENT_ID) Integer patientId, @PathVariable(VACCINATION_ID) Integer vaccinationId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseBundle iBaseBundle = fhirComponentsDispatcher.fhirTransactionWriter()
                 .vxuBundle(facilityRepository.findById(facilityId).get(), vaccinationEventRepository.findById(vaccinationId).get());
@@ -169,8 +169,8 @@ public class FhirConversionController {
 
     @PostMapping(FACILITY_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$loadJson")
     public ResponseEntity<String> loadNdJsonBundle(
-            @PathVariable Integer facilityId,
-            @PathVariable() Integer registryId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
             @RequestBody IBaseBundle bundle) {
         return fhirComponentsDispatcher.bundleImportService().importBundle(
                 immunizationRegistryService.getImmunizationRegistry(registryId),
@@ -181,7 +181,7 @@ public class FhirConversionController {
 
 
     @PostMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/$loadNdJson")
-    public ResponseEntity bulkResultLoad(@PathVariable Integer facilityId, @PathVariable() Integer registryId, @RequestBody String ndjson) {
+    public ResponseEntity bulkResultLoad(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(REGISTRY_ID) Integer registryId, @RequestBody String ndjson) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         return loadNdJson(ir, facilityRepository.findById(facilityId).get(), ndjson);
     }

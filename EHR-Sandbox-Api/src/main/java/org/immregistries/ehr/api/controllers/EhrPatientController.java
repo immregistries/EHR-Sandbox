@@ -46,6 +46,7 @@ public class EhrPatientController {
     public static final String GOLDEN_RECORD = "GOLDEN_RECORD";
 
     private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
+    public static final String VACCINATION_NUMBER = "vaccinationNumber";
     @Autowired
     private HL7printer hl7printer;
     @Autowired
@@ -72,17 +73,17 @@ public class EhrPatientController {
 
 
     @GetMapping()
-    public Iterable<EhrPatient> patients(@PathVariable Integer facilityId) {
+    public Iterable<EhrPatient> patients(@PathVariable(FACILITY_ID) Integer facilityId) {
         return ehrPatientRepository.findByFacilityId(facilityId);
     }
 
     @GetMapping(PATIENT_ID_SUFFIX)
-    public Optional<EhrPatient> patient(@PathVariable() Integer patientId) {
+    public Optional<EhrPatient> patient(@PathVariable(PATIENT_ID) Integer patientId) {
         return ehrPatientRepository.findById(patientId);
     }
 
     @GetMapping(PATIENT_ID_SUFFIX + "/$history")
-    public List<Revision<Integer, EhrPatient>> patientHistory(@PathVariable() Integer patientId) {
+    public List<Revision<Integer, EhrPatient>> patientHistory(@PathVariable(PATIENT_ID) Integer patientId) {
         Revisions<Integer, EhrPatient> revisions = ehrPatientRepository.findRevisions(patientId);
         return revisions.getContent();
     }
@@ -90,10 +91,10 @@ public class EhrPatientController {
     @GetMapping(PATIENT_ID_SUFFIX + "/$populate")
     @Transactional()
     public ResponseEntity<String> populatePatient(
-            @PathVariable() Integer tenantId,
-            @PathVariable Integer facilityId,
-            @PathVariable() Integer patientId,
-            @RequestParam Optional<Integer> vaccinationNumber) {
+            @PathVariable(TENANT_ID) Integer tenantId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(PATIENT_ID) Integer patientId,
+            @RequestParam(VACCINATION_NUMBER) Optional<Integer> vaccinationNumber) {
         return populatePatient(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), ehrPatientRepository.findById(patientId).get(), vaccinationNumber);
     }
 
@@ -118,12 +119,12 @@ public class EhrPatientController {
     @PostMapping()
     @Transactional()
     public ResponseEntity<Integer> postPatient(
-            @PathVariable() Integer tenantId,
-            @PathVariable Integer facilityId,
+            @PathVariable(TENANT_ID) Integer tenantId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
             @RequestBody EhrPatient patient,
             @RequestParam(COPIED_ENTITY_ID) Optional<Integer> copiedEntityId,
             @RequestParam(COPIED_FACILITY_ID) Optional<Integer> copiedFacilityId,
-            @RequestParam Optional<Boolean> populate) {
+            @RequestParam("populate") Optional<Boolean> populate) {
         /**
          * If request was issued from the copy functionality, revision table is used to find out if a copy already exists to avoid duplicates
          */
@@ -215,7 +216,7 @@ public class EhrPatientController {
     }
 
     @PutMapping("")
-    public EhrPatient putPatient(@PathVariable Integer facilityId,
+    public EhrPatient putPatient(@PathVariable(FACILITY_ID) Integer facilityId,
                                  @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
 //        logger.info("facility {}", newPatient.getFacility().getNameDisplay());
@@ -231,18 +232,18 @@ public class EhrPatientController {
 
     @GetMapping(PATIENT_ID_SUFFIX + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$fetchAndLoad")
     public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(
-            @PathVariable() Integer tenantId,
-            @PathVariable Integer facilityId,
-            @PathVariable() Integer patientId,
-            @PathVariable() Integer registryId,
-            @RequestParam Optional<Long> _since) {
+            @PathVariable(TENANT_ID) Integer tenantId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(PATIENT_ID) Integer patientId,
+            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam("_since") Optional<Long> _since) {
         return ResponseEntity.ok(matchAndEverythingService.fetchAndLoadImmunizationsFromIIS(facilityId, patientId, registryId, _since));
 //
 //        return ResponseEntity.badRequest().body(new HashSet<>());
     }
 
     @GetMapping(PATIENT_ID_SUFFIX + "/qbp")
-    public ResponseEntity<String> qbp(@PathVariable() Integer patientId) {
+    public ResponseEntity<String> qbp(@PathVariable(PATIENT_ID) Integer patientId) {
         QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
@@ -254,7 +255,7 @@ public class EhrPatientController {
     }
 
     @PostMapping(PATIENT_ID_SUFFIX + "/qbp" + REGISTRY_COMPLETE_SUFFIX)
-    public ResponseEntity<String> qbpSend(@PathVariable() Integer registryId, @RequestBody String message) {
+    public ResponseEntity<String> qbpSend(@PathVariable(REGISTRY_ID) Integer registryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {

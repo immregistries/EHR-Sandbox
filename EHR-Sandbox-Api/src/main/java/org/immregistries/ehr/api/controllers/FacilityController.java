@@ -21,10 +21,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.immregistries.ehr.api.controllers.ControllerHelper.FACILITY_ID_SUFFIX;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
-@RequestMapping({"/tenants/{tenantId}/facilities"})
+@RequestMapping({FACILITY_PATH})
 public class FacilityController {
 
     @Autowired
@@ -41,12 +41,12 @@ public class FacilityController {
     private UserDetailsServiceImpl userDetailsService;
 
     @GetMapping()
-    public Iterable<Facility> getFacilities(@PathVariable() Integer tenantId) {
+    public Iterable<Facility> getFacilities(@PathVariable(TENANT_ID) Integer tenantId) {
         return facilityRepository.findByTenantId(tenantId);
     }
 
     @GetMapping("/$random")
-    public Facility getRandom(@PathVariable() Integer tenantId) {
+    public Facility getRandom(@PathVariable(TENANT_ID) Integer tenantId) {
         Faker faker = new Faker();
         Facility facility = new Facility();
         facility.setTenant(tenantRepository.findById(tenantId).get());
@@ -54,24 +54,24 @@ public class FacilityController {
         return facility;
     }
 
-    @GetMapping("/{facilityId}/$random_patient")
-    public EhrPatient getRandomPatient(@PathVariable Integer facilityId) {
+    @GetMapping(FACILITY_ID_SUFFIX + "/$random_patient")
+    public EhrPatient getRandomPatient(@PathVariable(FACILITY_ID) Integer facilityId) {
         return randomGenerator.randomPatient(facilityRepository.findById(facilityId).get());
     }
 
     @GetMapping(FACILITY_ID_SUFFIX)
-    public Optional<Facility> getFacility(@PathVariable() Integer tenantId,
-                                          @PathVariable Integer facilityId) {
+    public Optional<Facility> getFacility(@PathVariable(TENANT_ID) Integer tenantId,
+                                          @PathVariable(FACILITY_ID) Integer facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId, tenantId);
     }
 
     @GetMapping(FACILITY_ID_SUFFIX + "/$children")
-    public Set<Facility> getFacilityChildren(@PathVariable() Integer tenantId, @PathVariable Integer facilityId) {
+    public Set<Facility> getFacilityChildren(@PathVariable(TENANT_ID) Integer tenantId, @PathVariable(FACILITY_ID) Integer facilityId) {
         return facilityRepository.findByIdAndTenantId(facilityId, tenantId).orElseThrow().getFacilities();
     }
 
     @PostMapping()
-    public ResponseEntity<Facility> postFacility(@PathVariable() Integer tenantId, @RequestBody Facility facility, @RequestParam Optional<Boolean> populate) {
+    public ResponseEntity<Facility> postFacility(@PathVariable(TENANT_ID) Integer tenantId, @RequestBody Facility facility, @RequestParam("populate") Optional<Boolean> populate) {
         return postFacility(tenantRepository.findById(tenantId).get(), facility, populate);
     }
 
@@ -108,7 +108,7 @@ public class FacilityController {
     }
 
     @PutMapping()
-    public ResponseEntity<Facility> putFacility(@PathVariable() Integer tenantId, @RequestBody Facility facility) {
+    public ResponseEntity<Facility> putFacility(@PathVariable(TENANT_ID) Integer tenantId, @RequestBody Facility facility) {
         if (facility.getNameDisplay().length() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "No facility name specified");
@@ -127,9 +127,9 @@ public class FacilityController {
     @GetMapping(FACILITY_ID_SUFFIX + "/$populate")
     @Transactional()
     public ResponseEntity<String> populateFacility(
-            @PathVariable() Integer tenantId,
-            @PathVariable Integer facilityId,
-            @RequestParam Optional<Integer> patientNumber) {
+            @PathVariable(TENANT_ID) Integer tenantId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @RequestParam("patientNumber") Optional<Integer> patientNumber) {
         return populateFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), patientNumber);
     }
 
@@ -154,8 +154,8 @@ public class FacilityController {
      * @return
      */
     @GetMapping("/$notification")
-    public Boolean notificationCheck(@RequestParam Optional<Long> timestamp,
-                                     @PathVariable Integer facilityId) {
+    public Boolean notificationCheck(@RequestParam("timestamp") Optional<Long> timestamp,
+                                     @PathVariable(FACILITY_ID) Integer facilityId) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThanAndSubscriptionIdNotNull(
                 userDetailsService.currentUserId(),
                 timestamp.orElse(0L)); // TODO add facility to audit revision

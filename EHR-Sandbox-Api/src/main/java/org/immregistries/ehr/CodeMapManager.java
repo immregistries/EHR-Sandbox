@@ -16,7 +16,7 @@ public class CodeMapManager {
         if (is == null) {
             System.err.println("Unable to find Compiled.xml!");
         }
-//    codeMap = builder.getCodeMap(is);
+        codeMap = builder.getCodeMap(is);
     }
 
     public CodeMap getCodeMap() {

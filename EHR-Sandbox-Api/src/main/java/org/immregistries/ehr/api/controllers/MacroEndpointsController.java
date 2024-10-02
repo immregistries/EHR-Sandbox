@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.FACILITY_ID;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.TENANT_ID;
+
 /**
  * Prototype Controller for creating entire tenants/ users from Fhir Bundles
  */
@@ -127,7 +130,7 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity createFacility(@PathVariable() Integer tenantId, @RequestBody String bundleString) {
+    public ResponseEntity createFacility(@PathVariable(TENANT_ID) Integer tenantId, @RequestBody String bundleString) {
         Bundle facilityBundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return createFacility(tenantRepository.findById(tenantId).get(), facilityBundle);
     }
@@ -155,7 +158,7 @@ public class MacroEndpointsController {
 
     @PostMapping(value = "/tenants/{tenantId}/facilities/{facilityId}/$create", consumes = {"application/json"})
     @Transactional()
-    public ResponseEntity fillFacility(@PathVariable() Integer tenantId, @PathVariable Integer facilityId, @RequestBody String bundleString) {
+    public ResponseEntity fillFacility(@PathVariable(TENANT_ID) Integer tenantId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestBody String bundleString) {
         Bundle bundle = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Bundle.class, bundleString);
         return fillFacility(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), bundle);
     }

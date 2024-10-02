@@ -30,12 +30,22 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static org.immregistries.ehr.api.controllers.ControllerHelper.REGISTRY_PATH;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 
 @RestController
 public class BulkImportController {
 
+    public static final String OUTPUT_FORMAT = "_outputFormat";
+    public static final String TYPE = "_type";
+    public static final String SINCE = "_since";
+    public static final String TYPE_FILTER = "_typeFilter";
+    public static final String ELEMENTS = "_elements";
+    public static final String PATIENT = "patient";
+    public static final String INCLUDE_ASSOCIATED_DATA = "includeAssociatedData";
+    public static final String MDM = "_mdm";
+    public static final String CONTENT_URL = "contentUrl";
+    public static final String LOAD_IN_FACILITY = "loadInFacility";
     private Map<String, String> resultCacheStore;
 
     private static final Logger logger = LoggerFactory.getLogger(BulkImportController.class);
@@ -48,15 +58,15 @@ public class BulkImportController {
 
 
     @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-synch")
-    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable() Integer registryId, @PathVariable() String groupId
-            , @RequestParam Optional<String> _outputFormat
-            , @RequestParam Optional<String> _type
-            , @RequestParam Optional<Date> _since
-            , @RequestParam Optional<String> _typeFilter
-            , @RequestParam Optional<String> _elements
-            , @RequestParam Optional<String> includeAssociatedData
-            , @RequestParam Optional<String> patient
-            , @RequestParam Optional<Boolean> _mdm
+    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
+            , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
+            , @RequestParam(TYPE) Optional<String> _type
+            , @RequestParam(SINCE) Optional<Date> _since
+            , @RequestParam(TYPE_FILTER) Optional<String> _typeFilter
+            , @RequestParam(ELEMENTS) Optional<String> _elements
+            , @RequestParam(INCLUDE_ASSOCIATED_DATA) Optional<String> includeAssociatedData
+            , @RequestParam(PATIENT) Optional<String> patient
+            , @RequestParam(MDM) Optional<Boolean> _mdm
     ) throws IOException {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
@@ -67,25 +77,25 @@ public class BulkImportController {
         IBaseParameters inBaseParameters;
         if (FhirComponentsDispatcher.r4Flavor()) {
             org.hl7.fhir.r4.model.Parameters inParams = new org.hl7.fhir.r4.model.Parameters();
-            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r4.model.DateType(d)));
-            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _elements.ifPresent(s -> inParams.addParameter().setName("_elements").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            patient.ifPresent(s -> inParams.addParameter().setName("patient").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            includeAssociatedData.ifPresent(s -> inParams.addParameter().setName("includeAssociatedData").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r4.model.BooleanType(b)));
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName(OUTPUT_FORMAT).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName(TYPE).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName(SINCE).setValue(new org.hl7.fhir.r4.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName(TYPE_FILTER).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _elements.ifPresent(s -> inParams.addParameter().setName(ELEMENTS).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            patient.ifPresent(s -> inParams.addParameter().setName(PATIENT).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            includeAssociatedData.ifPresent(s -> inParams.addParameter().setName(INCLUDE_ASSOCIATED_DATA).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName(MDM).setValue(new org.hl7.fhir.r4.model.BooleanType(b)));
             inBaseParameters = inParams;
         } else {
             org.hl7.fhir.r5.model.Parameters inParams = new org.hl7.fhir.r5.model.Parameters();
-            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r5.model.DateType(d)));
-            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _elements.ifPresent(s -> inParams.addParameter().setName("_elements").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            patient.ifPresent(s -> inParams.addParameter().setName("patient").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            includeAssociatedData.ifPresent(s -> inParams.addParameter().setName("includeAssociatedData").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r5.model.BooleanType(b)));
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName(OUTPUT_FORMAT).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName(TYPE).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName(SINCE).setValue(new org.hl7.fhir.r5.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName(TYPE_FILTER).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _elements.ifPresent(s -> inParams.addParameter().setName(ELEMENTS).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            patient.ifPresent(s -> inParams.addParameter().setName(PATIENT).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            includeAssociatedData.ifPresent(s -> inParams.addParameter().setName(INCLUDE_ASSOCIATED_DATA).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName(MDM).setValue(new org.hl7.fhir.r5.model.BooleanType(b)));
             inBaseParameters = inParams;
         }
 
@@ -105,12 +115,12 @@ public class BulkImportController {
     }
 
     @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-asynch")
-    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable() Integer registryId, @PathVariable() String groupId
-            , @RequestParam Optional<String> _outputFormat
-            , @RequestParam Optional<String> _type
-            , @RequestParam Optional<Date> _since
-            , @RequestParam Optional<String> _typeFilter
-            , @RequestParam Optional<Boolean> _mdm
+    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable String groupId
+            , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
+            , @RequestParam(TYPE) Optional<String> _type
+            , @RequestParam(SINCE) Optional<Date> _since
+            , @RequestParam(TYPE_FILTER) Optional<String> _typeFilter
+            , @RequestParam(MDM) Optional<Boolean> _mdm
     ) {
         IHttpResponse response = bulkKickOffHttpResponse(registryId, groupId, _outputFormat, _type, _since, _typeFilter, _mdm);
         if (response.getStatus() == 202) {
@@ -120,12 +130,12 @@ public class BulkImportController {
         return ResponseEntity.internalServerError().body(response.getStatusInfo());
     }
 
-    public IHttpResponse bulkKickOffHttpResponse(@PathVariable() Integer registryId, @PathVariable() String groupId
-            , @RequestParam Optional<String> _outputFormat
-            , @RequestParam Optional<String> _type
-            , @RequestParam Optional<Date> _since
-            , @RequestParam Optional<String> _typeFilter
-            , @RequestParam Optional<Boolean> _mdm) {
+    public IHttpResponse bulkKickOffHttpResponse(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable String groupId
+            , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
+            , @RequestParam(TYPE) Optional<String> _type
+            , @RequestParam(SINCE) Optional<Date> _since
+            , @RequestParam(TYPE_FILTER) Optional<String> _typeFilter
+            , @RequestParam(MDM) Optional<Boolean> _mdm) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         // In order to get the response headers
@@ -135,19 +145,19 @@ public class BulkImportController {
         IBaseParameters inBaseParameters;
         if (FhirComponentsDispatcher.r4Flavor()) {
             org.hl7.fhir.r4.model.Parameters inParams = new org.hl7.fhir.r4.model.Parameters();
-            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r4.model.DateType(d)));
-            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r4.model.StringType(s)));
-            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r4.model.BooleanType(b)));
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName(OUTPUT_FORMAT).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName(TYPE).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName(SINCE).setValue(new org.hl7.fhir.r4.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName(TYPE_FILTER).setValue(new org.hl7.fhir.r4.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName(MDM).setValue(new org.hl7.fhir.r4.model.BooleanType(b)));
             inBaseParameters = inParams;
         } else {
             org.hl7.fhir.r5.model.Parameters inParams = new org.hl7.fhir.r5.model.Parameters();
-            _outputFormat.ifPresent(s -> inParams.addParameter().setName("_outputFormat").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _type.ifPresent(s -> inParams.addParameter().setName("_type").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _since.ifPresent(d -> inParams.addParameter().setName("_since").setValue(new org.hl7.fhir.r5.model.DateType(d)));
-            _typeFilter.ifPresent(s -> inParams.addParameter().setName("_typeFilter").setValue(new org.hl7.fhir.r5.model.StringType(s)));
-            _mdm.ifPresent(b -> inParams.addParameter().setName("_mdm").setValue(new org.hl7.fhir.r5.model.BooleanType(b)));
+            _outputFormat.ifPresent(s -> inParams.addParameter().setName(OUTPUT_FORMAT).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _type.ifPresent(s -> inParams.addParameter().setName(TYPE).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _since.ifPresent(d -> inParams.addParameter().setName(SINCE).setValue(new org.hl7.fhir.r5.model.DateType(d)));
+            _typeFilter.ifPresent(s -> inParams.addParameter().setName(TYPE_FILTER).setValue(new org.hl7.fhir.r5.model.StringType(s)));
+            _mdm.ifPresent(b -> inParams.addParameter().setName(MDM).setValue(new org.hl7.fhir.r5.model.BooleanType(b)));
             inBaseParameters = inParams;
         }
 
@@ -163,7 +173,7 @@ public class BulkImportController {
     }
 
     @GetMapping(REGISTRY_PATH + "/$export-status")
-    public ResponseEntity bulkCheckStatus(@PathVariable() Integer registryId, @RequestParam String contentUrl) {
+    public ResponseEntity bulkCheckStatus(@PathVariable(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used is the one gotten from the kickoff, while authentication remains the same
@@ -274,7 +284,7 @@ public class BulkImportController {
 
 
     @DeleteMapping(REGISTRY_PATH + "/$export-status")
-    public ResponseEntity bulkDelete(@PathVariable() Integer registryId, @RequestParam String contentUrl) {
+    public ResponseEntity bulkDelete(@PathVariable(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         HttpURLConnection con = null;
         URL url;
@@ -309,7 +319,7 @@ public class BulkImportController {
     }
 
     @GetMapping(REGISTRY_PATH + "/$export-result")
-    public ResponseEntity bulkResult(@PathVariable() Integer registryId, @RequestParam String contentUrl, @RequestParam Optional<Integer> loadInFacility) {
+    public ResponseEntity bulkResult(@PathVariable(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl, @RequestParam(LOAD_IN_FACILITY) Optional<Integer> loadInFacility) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
@@ -353,7 +363,7 @@ public class BulkImportController {
     }
 
     //    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-result-view")
-    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable() Integer registryId, @PathVariable Integer facilityId, @RequestParam String contentUrl) {
+    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(CONTENT_URL) String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check

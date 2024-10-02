@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
+
 @RestController()
-@RequestMapping({ControllerHelper.PATIENT_ID_PATH + "/recommendations"})
+@RequestMapping({PATIENT_ID_PATH + "/recommendations"})
 public class RecommendationController {
     Logger logger = LoggerFactory.getLogger(RecommendationController.class);
     @Autowired()
@@ -29,7 +31,7 @@ public class RecommendationController {
     private RecommendationService recommendationService;
 
     @GetMapping()
-    public ResponseEntity<Set<String>> getAll(@PathVariable Integer facilityId, @PathVariable() Integer patientId) {
+    public ResponseEntity<Set<String>> getAll(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(PATIENT_ID) Integer patientId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser();
         Set<String> set = recommendationService.getPatientMap(facilityId, patientId).entrySet().stream().map(
                         entry -> parser.encodeResourceToString(entry.getValue()))

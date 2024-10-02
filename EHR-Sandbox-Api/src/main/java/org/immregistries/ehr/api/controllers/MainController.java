@@ -52,7 +52,7 @@ public class MainController {
      * @return
      */
     @GetMapping("/$notification")
-    public Boolean notificationCheck(@RequestParam Optional<Long> timestamp) {
+    public Boolean notificationCheck(@RequestParam("timestamp") Optional<Long> timestamp) {
         return auditRevisionEntityRepository.existsByUserAndTimestampGreaterThan(
                 userDetailsService.currentUserId(),
                 timestamp.orElse(0L));

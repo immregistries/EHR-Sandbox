@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.immregistries.ehr.api.controllers.ControllerHelper.PATIENT_ID_PATH;
-import static org.immregistries.ehr.api.controllers.ControllerHelper.TENANT_ID_PATH;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 import static org.immregistries.ehr.fhir.Client.SmartHealthCardService.CREDENTIAL_SUBJECT;
 import static org.immregistries.ehr.fhir.Client.SmartHealthCardService.VC;
 import static org.immregistries.ehr.fhir.Client.SmartHealthLinksService.SHLINK_PREFIX;
@@ -45,16 +44,16 @@ public class SmartHealthCardLinksController {
     private SmartHealthCardService smartHealthCardService;
 
     @PostMapping(TENANT_ID_PATH + "/$read-shlink")
-    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam Optional<String> password, @RequestParam Optional<String> jwk) {
+    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) {
         List<String> body = readHealthLink(url, password, jwk);
         return ResponseEntity.ok(body);
     }
 
     @PostMapping(PATIENT_ID_PATH + "/$import-shlink")
     public ResponseEntity<List<VaccinationEvent>> importSmartHealthLink(
-            @PathVariable Integer facilityId,
-            @PathVariable() Integer patientId,
-            @RequestBody() String url, @RequestParam Optional<String> password, @RequestParam Optional<String> jwk) {
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(PATIENT_ID) Integer patientId,
+            @RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) {
         List<String> body = readHealthLink(url, password, jwk);
         List<VaccinationEvent> vaccinationEvents = new ArrayList<>(10);
         for (String str : body) {
