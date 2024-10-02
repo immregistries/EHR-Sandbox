@@ -12,12 +12,12 @@ public class NextOfKinRelationshipPK implements Serializable {
     Integer patientId;
 
     @Column(name = "next_of_kin_id")
-    String nextOfKinId;
+    Integer nextOfKinId;
 
     public NextOfKinRelationshipPK() {
     }
 
-    public NextOfKinRelationshipPK(Integer patientId, String nextOfKinId) {
+    public NextOfKinRelationshipPK(Integer patientId, Integer nextOfKinId) {
         this.patientId = patientId;
         this.nextOfKinId = nextOfKinId;
     }
@@ -30,11 +30,11 @@ public class NextOfKinRelationshipPK implements Serializable {
         this.patientId = patientId;
     }
 
-    public String getNextOfKinId() {
+    public Integer getNextOfKinId() {
         return nextOfKinId;
     }
 
-    public void setNextOfKinId(String nextOfKinId) {
+    public void setNextOfKinId(Integer nextOfKinId) {
         this.nextOfKinId = nextOfKinId;
     }
 }
