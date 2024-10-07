@@ -191,3 +191,7 @@ tr.element-row:not(.expanded-row):active {
   align-items: last baseline;
   justify-content: flex-end;
 }
+
+.matbar-spacer {
+  flex: 1 1 auto;
+}

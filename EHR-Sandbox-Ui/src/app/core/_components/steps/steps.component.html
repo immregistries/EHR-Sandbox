@@ -1,48 +1,72 @@
 <mat-stepper linear #stepper style="height: 100%; text-align: left;">
   <mat-step label="Initial Configuration">
-    <div class="menu-container">
+    <h3 style="text-align: left;">For first time user</h3>
+    <ul class="w3-ul">
+      <li>Set up tenant / Testing Environment</li>
+      <li>Set up Facility</li>
+      <li>Configure remote IIS connection for Hl7v2 Soap or FHIR Rest</li>
+    </ul>
+    <mat-toolbar class="step-toolbar" color="none">
+      <span class="matbar-spacer"></span>
       <button mat-stroked-button color="primary" (click)="end()" type="button">
         <mat-icon>skip_next</mat-icon>
         Skip
         configuration
       </button>
-      <!-- <button mat-raised-button color="primary" (click)="end()" type="button"><mat-icon>skip_next</mat-icon>Skip and use default Settings</button> -->
-      <div>
-        <button mat-raised-button color="primary" (click)="stepper.next()"
-                type="button">
-          <mat-icon>start</mat-icon>
-          Optional step by step configuration
-        </button>
-
-      </div>
-    </div>
-
-
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button color="primary" (click)="stepper.next()" type="button">
+        <mat-icon>start</mat-icon>
+        Optional step by step configuration
+      </button>
+      <span class="matbar-spacer"></span>
+    </mat-toolbar>
   </mat-step>
   <mat-step label="Create Environment">
+    <mat-toolbar class="step-toolbar">
+      Choose name for testing environment
+      <span class="matbar-spacer"></span>
+    </mat-toolbar>
     <app-tenant-form (success)="nextTenant($event)"></app-tenant-form>
-    <p>Choose name for testing environment</p>
   </mat-step>
   <mat-step label="Create Facility">
+    <mat-toolbar class="step-toolbar">
+      Choose name for testing environment
+      <span class="matbar-spacer"></span>
+    </mat-toolbar>
     <app-facility-form (success)="nextFacility($event)"></app-facility-form>
-    <p>Choose name for facility</p>
   </mat-step>
   <mat-step label="Configure Remote IIS">
+    <mat-toolbar class="step-toolbar">
+      Choose name for testing environment
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
     <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
-    <!-- <p></p> -->
-    <button mat-raised-button color="primary" (click)="end()" type="button" class="w3-right">
-      <mat-icon>skip_next</mat-icon>
-      Skip step
-    </button>
+    <mat-toolbar class="step-toolbar">
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
+
   </mat-step>
   <mat-step label="Ready">
-    <div>
+    <mat-toolbar class="step-toolbar">
+      <span class="matbar-spacer"></span>
       <button mat-raised-button color="primary" (click)="end()" type="button">
         <mat-icon>navigate_next</mat-icon>
-        USE
-        EHR Sandbox
+        USE EHR Sandbox
       </button>
-    </div>
+      <span class="matbar-spacer"></span>
+    </mat-toolbar>
+    <h3 style="text-align: left;">Other Step by step tutorial</h3>
+    <ul class="w3-ul">
+      <li><a href="/ehr/#/vxu-steps">Produce VXU Step by step</a></li>
+    </ul>
+
   </mat-step>
-  <p>skiiipp</p>
 </mat-stepper>

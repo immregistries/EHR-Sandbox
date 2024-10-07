@@ -1,10 +1,11 @@
-FROM bitnami/tomcat:9.0 as tomcat
+FROM bitnami/tomcat:10.0 as tomcat
 
-RUN rm -rf /opt/bitnami/tomcat/webapps/ROOT && \
-    rm -rf /opt/bitnami/tomcat/webapps_default/ROOT
+RUN rm -rf /opt/bitnami/tomcat/webapps/* && \
+    rm -rf /opt/bitnami/tomcat/webapps_default/*
 
 #RUN mkdir /opt/bitnami/tomcat/webapps/ROOT && \
 #    echo '<% response.sendRedirect("/ehr/#/home"); %>' > /opt/bitnami/tomcat/webapps/ROOT/index.jsp
+# Set up auto redirection from root
 RUN mkdir /opt/bitnami/tomcat/webapps_default/ROOT
 RUN echo '<% response.sendRedirect("/ehr/#/home"); %>' > /opt/bitnami/tomcat/webapps_default/ROOT/index.jsp
 

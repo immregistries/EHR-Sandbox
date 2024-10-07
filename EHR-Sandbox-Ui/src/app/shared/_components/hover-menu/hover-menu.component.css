@@ -1,0 +1,5 @@
+.panelClass .mat-mdc-menu-panel.mat-mdc-menu-panel {
+  min-width: 112px;
+  max-width: 500px;
+  overflow: visible;
+}

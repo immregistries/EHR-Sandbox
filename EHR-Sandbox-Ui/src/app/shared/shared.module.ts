@@ -127,6 +127,7 @@ import { FhirQrCodeComponent } from "./_fhir/fhir-qr-code/fhir-qr-code.component
 import { QRCodeModule } from 'angularx-qrcode';
 import { PatientCachePipe } from './_pipes/patient-cache.pipe';
 import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import/smart-health-link-import.component';
+import { CdkMenuModule } from '@angular/cdk/menu';
 
 @NgModule({
   declarations: [
@@ -277,6 +278,7 @@ import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import
     MatStepperModule,
     MatTreeModule,
     QRCodeModule,
+    CdkMenuModule,
   ],
   exports: [
     ReactiveFormsModule,

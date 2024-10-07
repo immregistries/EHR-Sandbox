@@ -3,10 +3,13 @@
     <mat-icon>arrow_drop_down</mat-icon>
   </button>
   <div content>
-    <button mat-menu-item *ngFor="let item of list" (click)="service.setCurrent(item)">
-      <!-- <mat-icon class="w3-right" (click)="$event.stopPropagation(); openDialog(item);">edit</mat-icon> -->
+    <div mat-menu-item *ngFor="let item of list" type="button" (click)="service.setCurrent(item)">
       {{item.name}}
+      <!-- <button mat-icon-button type="button"><mat-icon
+          (click)="$event.stopPropagation(); openDialog(item)">edit</mat-icon></button> -->
+    </div>
+    <button mat-menu-item (click)="openDialog(undefined)" type="button">
+      <mat-icon>add</mat-icon>
     </button>
-    <button mat-menu-item (click)="openDialog(undefined)"><mat-icon>add</mat-icon></button>
   </div>
 </app-hover-menu>

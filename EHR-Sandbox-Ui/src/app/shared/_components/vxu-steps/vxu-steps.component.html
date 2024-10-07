@@ -1,40 +1,67 @@
 <mat-stepper linear #stepper style="height: 100%;" [contentEditable]="false" [linear]="true">
   <mat-step label="Select environment" optional="false">
-    <app-tenant-menu (selectEmitter)="stepper.next()"></app-tenant-menu>
-    Name or choose a local testing environment (could also be named tenant)
-    <button *ngIf="tenantService.getCurrentId() > 0" mat-raised-button color="primary" (click)="stepper.next()"
-            type="button" class="w3-right">
-      <mat-icon>skip_next</mat-icon>
-      Skip step
-    </button>
+    <mat-toolbar class="step-toolbar">
+      Pick or create a local tenant / testing environment
+      <span class="matbar-spacer"></span>
+      <button *ngIf="tenantService.getCurrentId() > 0" style="float: right;" mat-raised-button color="primary"
+              (click)="stepper.next()" type="button">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
+    <mat-toolbar color="white">
+      <app-tenant-menu (selectEmitter)="stepper.next()"></app-tenant-menu>
+    </mat-toolbar>
   </mat-step>
   <mat-step label="Select facility">
-    <app-facility-menu (selectEmitter)="stepper.next()"></app-facility-menu>
-    Name or choose a local facility
-    <button *ngIf="facilityService.getCurrentId() > 0" mat-raised-button color="primary" (click)="stepper.next()"
-            type="button" class="w3-right">
-      <mat-icon>skip_next</mat-icon>
-      Skip step
-    </button>
+    <mat-toolbar class="step-toolbar">
+      Pick or create a local facility
+      <span class="matbar-spacer"></span>
+      <button *ngIf="facilityService.getCurrentId() > 0" mat-raised-button color="primary" (click)="stepper.next()"
+              type="button" class="w3-right">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
+    <mat-toolbar>
+      <app-facility-menu (selectEmitter)="stepper.next()"></app-facility-menu>
+    </mat-toolbar>
   </mat-step>
   <mat-step label="Configure Remote IIS">
-    Configure Remote IIS credentials, with API Urls
-    <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
-      <mat-icon>skip_next</mat-icon>
-      NEXT
-    </button>
+    <mat-toolbar class="step-toolbar">
+      Configure Remote IIS credentials, with API Urls
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
     <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
-    <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
-      <mat-icon>skip_next</mat-icon>
-      Skip step
-    </button>
   </mat-step>
   <!-- <app-first-steps [stepper]="stepper"></app-first-steps> -->
   <mat-step label="Create Patient">
+    <mat-toolbar class="step-toolbar">
+      Create Patient
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button *ngif="patientService.getCurrentId() > 0" color="primary" (click)="stepper.next()"
+              type="button" class="w3-right">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
     <app-patient-form (savedEmitter)="nextPatient($event)"></app-patient-form>
   </mat-step>
   <mat-step label="Create Vaccination Record">
-    <app-vaccination-form [patientId]="this.patientService.getCurrentId()"
+    <mat-toolbar class="step-toolbar">
+      Create Vaccination Record
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button *ngif="vaccinationId > 0" color="primary" (click)="stepper.next()" type="button"
+              class="w3-right">
+        <mat-icon>skip_next</mat-icon>
+        Skip step
+      </button>
+    </mat-toolbar>
+    <app-vaccination-form [patientId]="patientService.getCurrentId()"
                           (savedEmitter)="nextVaccination($event)"></app-vaccination-form>
   </mat-step>
   <mat-step label="Send Vxu to IIS">

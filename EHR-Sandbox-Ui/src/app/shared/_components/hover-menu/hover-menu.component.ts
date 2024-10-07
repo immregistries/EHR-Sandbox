@@ -20,7 +20,7 @@ export class HoverMenuComponent {
   constructor() { }
 
   mouseEnter(trigger: any) {
-    if(!this.disabled) {
+    if (!this.disabled) {
       if (this.timedOutCloser) {
         clearTimeout(this.timedOutCloser);
       }
