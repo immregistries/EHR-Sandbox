@@ -31,7 +31,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -188,14 +191,7 @@ public class EhrPatientController {
             Facility facility,
             EhrPatient patient,
             Optional<Boolean> populate) {
-        logger.info("GENERAL P {}", patient.getGeneralPractitioner());
-        if (Objects.nonNull(patient.getGeneralPractitioner())) {
-            logger.info("GENERAL P ID {}", patient.getGeneralPractitioner().getId());
-        }
-
-
         // patient data check + flavours
-
         patient.setId(null);
         patient.setFacility(facility);
         patient.setCreatedDate(new Date());

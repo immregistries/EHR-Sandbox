@@ -1,18 +1,13 @@
 package org.immregistries.ehr;
 
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.FhirVersionEnum;
 import org.immregistries.ehr.api.entities.BulkImportStatus;
-import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
-import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -26,6 +21,7 @@ import java.util.Map;
 
 @SpringBootApplication
 @ServletComponentScan
+//@EnableJpaRepositories()
 @Import({
         FhirConfig.class
 })
@@ -43,21 +39,6 @@ public class EhrApiApplication extends SpringBootServletInitializer {
         return application.sources(EhrApiApplication.class);
     }
 
-    @Bean("fhirContextR4")
-    public FhirContext fhirContextR4() {
-        FhirContext fhirContext = new FhirContext(FhirVersionEnum.R4);
-//        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
-        return fhirContext;
-    }
-
-    @Bean("fhirContextR5")
-    public FhirContext fhirContextR5() {
-        FhirContext fhirContext = new FhirContext(FhirVersionEnum.R5);
-//        fhirContext.setNarrativeGenerator(customNarrativeGenerator);
-//		fhirContext.setValidationSupport();
-        return fhirContext;
-    }
-
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -71,23 +52,6 @@ public class EhrApiApplication extends SpringBootServletInitializer {
         };
     }
 
-    @Bean
-    public ServletRegistrationBean<EhrFhirServerR4> ServerR4RegistrationBean(EhrFhirServerR4 ehrFhirServerR4) {
-        ServletRegistrationBean<EhrFhirServerR4> registrationBean = new ServletRegistrationBean<>();
-        registrationBean.setServlet(ehrFhirServerR4);
-        registrationBean.addUrlMappings("/fhir/R4/*", "/ehr/fhir/R4/*");
-        registrationBean.setLoadOnStartup(1);
-        return registrationBean;
-    }
-
-    @Bean
-    public ServletRegistrationBean<EhrFhirServerR5> ServerR5RegistrationBean(EhrFhirServerR5 ehrFhirServerR5) {
-        ServletRegistrationBean<EhrFhirServerR5> registrationBean = new ServletRegistrationBean<>();
-        registrationBean.setServlet(ehrFhirServerR5);
-        registrationBean.addUrlMappings("/fhir/R5/*", "/ehr/fhir/R5/*");
-        registrationBean.setLoadOnStartup(1);
-        return registrationBean;
-    }
 
 //    @Bean
 //    public ServletWebServerFactory servletWebServerFactory() {
