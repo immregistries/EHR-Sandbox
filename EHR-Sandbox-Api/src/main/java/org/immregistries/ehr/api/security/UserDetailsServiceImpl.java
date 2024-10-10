@@ -1,7 +1,7 @@
 package org.immregistries.ehr.api.security;
 
-import org.immregistries.ehr.api.repositories.UserRepository;
 import org.immregistries.ehr.api.entities.User;
+import org.immregistries.ehr.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,12 +26,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
-    public Integer currentUserId(){
+    public Integer currentUserId() {
+        if ("anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
+            return null;
+        }
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userDetails.getId() ;
+        return userDetails.getId();
     }
 
-    public User currentUser(){
-        return  userRepository.findById(currentUserId()).get();
+    public User currentUser() {
+        if ("anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
+            return null;
+        }
+        return userRepository.findById(currentUserId()).get();
     }
 }

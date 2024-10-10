@@ -153,7 +153,7 @@ public class AuthController {
      */
     @GetMapping("/user")
     public ResponseEntity<String> loggedIn() {
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getPrincipal())) {
             return ResponseEntity.ok(userDetailsService.currentUser().getUsername());
         } else {
             return ResponseEntity.noContent().build();

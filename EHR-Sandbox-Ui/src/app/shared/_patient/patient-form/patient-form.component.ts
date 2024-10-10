@@ -100,7 +100,7 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Medical Record Number', cols: 1, rows: 1, forms: [
+      title: 'Identifiers / Medical Record Number', cols: 1, rows: 1, forms: [
         // { type: FormType.text, title: 'Mrn Identifier', attributeName: 'mrn' },
         // { type: FormType.text, title: 'Mrn System', attributeName: 'mrnSystem' },
         { type: FormType.identifiers, title: 'Identifier', attributeName: 'identifiers', defaultListEmptyValue: JSON.stringify({ value: "", system: "", type: "MR" }) },

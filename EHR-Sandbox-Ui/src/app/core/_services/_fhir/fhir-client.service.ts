@@ -123,6 +123,12 @@ export class FhirClientService extends IdUrlVerifyingService {
   transaction(resource: string, facilityId: number): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
+    if (facilityId < 0) {
+      facilityId = this.facilityService.getCurrentId()
+    }
+    if (this.idsNotValid(tenantId, registryId, facilityId)) {
+      return of()
+    }
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/registry/${registryId}/$transaction`,
       resource,

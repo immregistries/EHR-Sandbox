@@ -70,7 +70,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Checking authorization if path matches "/tenants/{tenantId}/**"
                 authorized = filterUrl(request);
-
             } // TODO figure why http security configuration does not skip filter
         } catch (Exception e) {
             logger.error("Cannot set user authentication: ", e);
