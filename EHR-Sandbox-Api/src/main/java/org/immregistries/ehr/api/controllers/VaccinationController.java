@@ -186,7 +186,7 @@ public class VaccinationController {
 //            }
 
             String result = connector.submitMessage(message, false);
-            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
+//            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
             if (vaccinationEvent.getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0) {
 
             }
