@@ -135,6 +135,22 @@ export class FhirClientService extends IdUrlVerifyingService {
       httpOptions);
   }
 
+
+  immdsForecast(facilityId: number, patientId: number): Observable<string> {
+    const registryId = this.registryService.getCurrentId()
+    const tenantId: number = this.tenantService.getCurrentId()
+    if (facilityId < 0) {
+      facilityId = this.facilityService.getCurrentId()
+    }
+    if (this.idsNotValid(tenantId, registryId, facilityId, patientId)) {
+      return of()
+    }
+    return this.http.get<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client/registry/${registryId}/$immds-forecast`,
+      httpOptions);
+  }
+
+
   sendOrganization(resource: string, operation: "Create" | "Update" | "UpdateOrCreate"): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
