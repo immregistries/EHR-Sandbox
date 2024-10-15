@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,6 +27,8 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     private JwtUtils jwtUtils;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private PasswordEncoder encoder;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationTokenFilter.class);
 
@@ -41,6 +44,16 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            if (parseBasic(request) != null) {
+                User user = parseBasic(request);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+                if (encoder.matches(user.getPassword(), userDetails.getPassword())) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: ", e);
@@ -63,17 +76,18 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
      * @return
      */
     private User parseBasic(HttpServletRequest request) {
+        User user = null;
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Basic ")) {
             String base64 = headerAuth.substring("Basic ".length());
             String base64decoded = new String(Base64.decodeBase64(base64));
             String[] parts = base64decoded.split(":");
-            User user = new User();
+            user = new User();
             user.setUsername(parts[0]);
             user.setPassword(parts[1]);
             return user;
         }
-        return null;
+        return user;
     }
 
 }
