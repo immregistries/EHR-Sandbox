@@ -154,8 +154,7 @@ export class FhirClientService extends IdUrlVerifyingService {
   sendOrganization(resource: string, operation: "Create" | "Update" | "UpdateOrCreate"): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-    if (this.idsNotValid(tenantId)) {
+    if (this.idsNotValid(tenantId, registryId)) {
       return of("")
     }
     switch (operation) {

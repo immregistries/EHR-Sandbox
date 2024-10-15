@@ -5,17 +5,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.codec.binary.Base64;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,12 +18,8 @@ import java.util.Scanner;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
-/**
- * Filter checking for user authorization on each request
- */
-public class AuthTokenFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtUtils jwtUtils;
+public class AuthorizationPathFilter extends OncePerRequestFilter {
+    Logger logger = LoggerFactory.getLogger(AuthorizationPathFilter.class);
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
@@ -48,66 +38,21 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private EhrGroupRepository ehrGroupRepository;
 
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         boolean authorized = false;
         try {
-            String jwt = parseJwt(request);
-            if (request.getServletPath().split("/").length == 2 &&
-                    (request.getServletPath().endsWith(".js") || request.getServletPath().endsWith(".ico") || request.getServletPath().endsWith(".css"))) {
-                authorized = true;
-            } else if (request.getServletPath().startsWith("/code_maps") || request.getServletPath().startsWith("/auth") || request.getServletPath().startsWith("/$create") || request.getServletPath().startsWith("/fhir") || request.getServletPath().startsWith("/healthy") || request.getServletPath().startsWith("/assets") || request.getServletPath().startsWith("/styles") || request.getServletPath().equals("/")) { // for registration no authorization needed
-                authorized = true;
-            } else if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                // Checking authorization if path matches "/tenants/{tenantId}/**"
-                authorized = filterUrl(request);
-            } // TODO figure why http security configuration does not skip filter
+            authorized = filterUrl(request);
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: ", e);
+            logger.error("Cannot set check authorization: ", e);
         }
         if (authorized) {
             filterChain.doFilter(request, response);
         } else {
-            logger.error("Unauthorized request path: '{}'", request.getServletPath());
+            logger.error("Unauthorized request path: {}", request.getServletPath());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
         }
-    }
-
-    private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
-        }
-        return null;
-    }
-
-    /**
-     * Currently not used, for future functionality
-     *
-     * @param request
-     * @return
-     */
-    private User parseBasic(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Basic ")) {
-            String base64 = headerAuth.substring("Basic ".length());
-            String base64decoded = new String(Base64.decodeBase64(base64));
-            String[] parts = base64decoded.split(":");
-            User user = new User();
-            user.setUsername(parts[0]);
-            user.setPassword(parts[1]);
-            return user;
-        }
-        return null;
     }
 
     /**
@@ -118,6 +63,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
      * @throws InvalidRequestException
      */
     private boolean filterUrl(HttpServletRequest request) throws InvalidRequestException {
+        Integer userId = userDetailsService.currentUserId();
+
         String url = request.getServletPath();
 //        logger.info("{}", url);
         Integer tenantId = null;
@@ -147,16 +94,16 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 if (scanner.hasNextInt()) {
                     registryId = scanner.nextInt();
 //                    checkIfPotentialValidId(vaccinationId);
-                    ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId, userDetailsService.currentUserId())
-                            .orElseThrow(() -> new InvalidRequestException("invalid registry id"));
+                    ImmunizationRegistry immunizationRegistry = immunizationRegistryRepository.findByIdAndUserId(registryId, userId)
+                            .orElseThrow(() -> new InvalidRequestException("Invalid registry id"));
                 }
             }
             if (item.equals(TENANT_HEADER)) {
                 if (scanner.hasNextInt()) {
                     tenantId = scanner.nextInt();
                     checkIfPotentialValidId(tenantId);
-                    Tenant tenant = tenantRepository.findByIdAndUserId(tenantId, userDetailsService.currentUserId())
-                            .orElseThrow(() -> new InvalidRequestException("invalid tenant id"));
+                    Tenant tenant = tenantRepository.findByIdAndUserId(tenantId, userId)
+                            .orElseThrow(() -> new InvalidRequestException("Invalid tenant id"));
                     request.setAttribute("TENANT_ID", tenant.getId());
                     request.setAttribute("TENANT_NAME", tenant.getNameDisplay());
                 }
@@ -166,7 +113,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     facilityId = scanner.nextInt();
                     checkIfPotentialValidId(facilityId);
                     Facility facility = facilityRepository.findByUserAndId(userDetailsService.currentUser(), facilityId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
+                            .orElseThrow(() -> new InvalidRequestException("Invalid facility id"));
                 }
             }
         }
@@ -179,14 +126,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     facilityId = scanner.nextInt();
                     checkIfPotentialValidId(facilityId);
                     Facility facility = facilityRepository.findByIdAndTenantId(facilityId, tenantId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid facility id"));
+                            .orElseThrow(() -> new InvalidRequestException("Invalid facility id"));
                 }
             } else if (item.equals(CLINICIAN_HEADER)) {
                 if (scanner.hasNextInt()) {
                     clinicianId = scanner.nextInt();
                     checkIfPotentialValidId(clinicianId);
                     Clinician clinician = clinicianRepository.findByTenantIdAndId(tenantId, clinicianId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid clinician id"));
+                            .orElseThrow(() -> new InvalidRequestException("Invalid clinician id"));
                 }
             }
         }
@@ -199,7 +146,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     patientId = scanner.nextInt();
                     checkIfPotentialValidId(patientId);
                     EhrPatient ehrPatient = patientRepository.findByFacilityIdAndId(facilityId, patientId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid patient id"));
+                            .orElseThrow(() -> new InvalidRequestException("Invalid patient id"));
                 }
             }
             if (item.equals(VACCINATION_HEADER)) {
@@ -207,7 +154,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     vaccinationId = scanner.nextInt();
                     checkIfPotentialValidId(vaccinationId);
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facilityId, vaccinationId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
+                            .orElseThrow(() -> new InvalidRequestException("Invalid vaccination id"));
                 }
             }
             if (item.equals(GROUP_HEADER)) {
@@ -223,7 +170,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                          * Groups related to children facilities are accessible , TODO improve consistency
                          */
                         ehrGroup = ehrGroupRepository.findByTenantIdAndId(tenantId, groupId)
-                                .orElseThrow(() -> new InvalidRequestException("invalid group id"));
+                                .orElseThrow(() -> new InvalidRequestException("Invalid group id"));
                     }
                 }
             }
@@ -236,30 +183,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 if (scanner.hasNextInt()) {
                     vaccinationId = scanner.nextInt();
                     VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId)
-                            .orElseThrow(() -> new InvalidRequestException("invalid vaccination id"));
+                            .orElseThrow(() -> new InvalidRequestException("Invalid vaccination id"));
                 }
             }
         }
         return true;
-    }
-
-
-    /**
-     * Used to avoid unauthorized exceptions when id are -1
-     *
-     * @param id
-     * @throws InvalidRequestException
-     */
-    private void checkIfPotentialValidId(String id) throws InvalidRequestException {
-        try {
-            if (Integer.parseInt(id) == -1) {
-                throw new InvalidRequestException("Invalid id in path : -1");
-            }
-        } catch (NumberFormatException numberFormatException) {
-
-        }
-
-
     }
 
     /**
@@ -271,10 +199,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private void checkIfPotentialValidId(Integer id) throws InvalidRequestException {
         try {
             if (id == -1) {
-                throw new InvalidRequestException("Invalid id in path : -1");
+                throw new InvalidRequestException("Invalid id as path variable: -1");
             }
         } catch (NumberFormatException numberFormatException) {
 
         }
     }
+
 }

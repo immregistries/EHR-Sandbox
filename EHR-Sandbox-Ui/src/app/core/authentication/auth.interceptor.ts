@@ -32,7 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private handleError(error: HttpErrorResponse): Observable<any> {
-    if (error.status === 401) {
+    if (error.status === 401 && !error.url?.endsWith("/user")) {
       this.authService.checkLoggedUser().subscribe({
         next: (res) => {
           if (!res) {

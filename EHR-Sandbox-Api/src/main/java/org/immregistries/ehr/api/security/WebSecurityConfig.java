@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -13,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -29,8 +31,13 @@ public class WebSecurityConfig {
 //    }
 
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+    public AuthenticationTokenFilter authenticationJwtTokenFilter() {
+        return new AuthenticationTokenFilter();
+    }
+
+    @Bean
+    public AuthorizationPathFilter authorizationPathFilter() {
+        return new AuthorizationPathFilter();
     }
 
     @Bean
@@ -56,11 +63,17 @@ public class WebSecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                        .requestMatchers("/$create", "/auth/**", "/$create", "/healthy", "/styles/**", "/", "/*.css", "/*.js", "/*.ico", "/fhir/**", "/smart-test/*", "/h2-console/**", "/assets/**", "/code_maps")
+                        .requestMatchers(HttpMethod.GET, "/", "/*.html", "/*.css", "/*.js", "/*.ico", "/assets/**", "/styles/**") // UI authorizations
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/healthy", "/code_maps")
+                        .permitAll()
+                        .requestMatchers("/auth/**", "/$create", "/fhir/**", "/smart-test/*", "/h2-console/**")
                         .permitAll()
                         .anyRequest().authenticated()
                 );
+//        http.securityMatcher("/tenants")
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(authorizationPathFilter(), FilterSecurityInterceptor.class);
         // ... other configuration
         return http.build();
     }

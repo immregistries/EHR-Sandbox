@@ -28,7 +28,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./data-h2:/usr/root/data-h2
-    #      - ./runtime-config.json:/opt/bitnami/tomcat/webapps_default/ROOT/runtime-config.json
     ports:
       #     Default port is 9091, can be changed here
       - "9091:8080"
