@@ -1,6 +1,6 @@
 {
   "name": "ehr-sandbox-ui",
-  "version": "1.2.3-SNAPSHOT-5",
+  "version": "1.2.3-SNAPSHOT-6",
   "scripts": {
     "ng": "ng",
     "start": "nx serve",

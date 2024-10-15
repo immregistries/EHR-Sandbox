@@ -26,7 +26,7 @@ import java.util.Map;
         FhirConfig.class
 })
 public class EhrApiApplication extends SpringBootServletInitializer {
-    public static String VERSION = "1.2.3-SNAPSHOT-5";
+    public static String VERSION = "1.2.3-SNAPSHOT-6";
 
     private static final Logger logger = LoggerFactory.getLogger(EhrApiApplication.class);
 
