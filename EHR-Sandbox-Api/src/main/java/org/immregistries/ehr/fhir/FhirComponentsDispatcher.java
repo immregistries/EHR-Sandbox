@@ -5,9 +5,8 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
-import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.fhir.Client.CustomNarrativeGenerator;
 import org.immregistries.ehr.fhir.Client.EhrFhirClientFactory;
@@ -20,19 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
-
 @Service
 public class FhirComponentsDispatcher {
-
-    public static String R5_FLAVOUR = "R5";
-    public static String R4_FLAVOUR = "R4";
     Logger logger = LoggerFactory.getLogger(FhirComponentsDispatcher.class);
 
     @Autowired
@@ -100,9 +92,9 @@ public class FhirComponentsDispatcher {
 
 
     public FhirContext fhirContext() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return fhirContextR5;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return fhirContextR4;
         }
         return fhirContextR5;
@@ -119,9 +111,9 @@ public class FhirComponentsDispatcher {
     }
 
     public EhrFhirClientFactory clientFactory() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return ehrFhirClientFactoryR5;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return ehrFhirClientFactoryR4;
         }
         return ehrFhirClientFactoryR5;
@@ -129,9 +121,9 @@ public class FhirComponentsDispatcher {
 
 
     public IIpsWriter ipsWriter() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return ipsWriterR5;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return ipsWriterR4;
         }
         return ipsWriterR5;
@@ -140,9 +132,9 @@ public class FhirComponentsDispatcher {
 
     public IEhrEntityFhirMapper mapper(Class type) {
         initMappers();
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return mappersR5.get(type);
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return mappersR4.get(type);
         }
         return mappersR5.get(type);
@@ -188,9 +180,9 @@ public class FhirComponentsDispatcher {
     }
 
     public RestfulServer restfulServer() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return ehrFhirServerR5;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return ehrFhirServerR4;
         }
         return ehrFhirServerR5;
@@ -206,59 +198,46 @@ public class FhirComponentsDispatcher {
                 .orElseThrow(() -> new RuntimeException("Provider not found for resourceType " + resourceType + " in server " + restfulServer.getServerName()));
     }
 
-    private static String tenantName() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return (String) request.getAttribute(TENANT_NAME);
-    }
-
-    public static boolean r4Flavor() {
-        return StringUtils.defaultIfBlank(tenantName(), "").contains(R4_FLAVOUR);
-    }
-
-    public static boolean r5Flavor() {
-        return StringUtils.defaultIfBlank(tenantName(), "").contains(R5_FLAVOUR);
-    }
-
     public IFhirTransactionWriter fhirTransactionWriter() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return fhirTransactionWriterR5;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return fhirTransactionWriterR4;
         }
         return fhirTransactionWriterR5;
     }
 
     public IBundleImportService bundleImportService() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return bundleImportServiceR5;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return bundleImportServiceR4;
         }
         return bundleImportServiceR5;
     }
 
     public static IBaseParameters parametersObject() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return new org.hl7.fhir.r5.model.Parameters();
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return new org.hl7.fhir.r4.model.Parameters();
         }
         return new org.hl7.fhir.r5.model.Parameters();
     }
 
     public static Class parametersClass() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return org.hl7.fhir.r5.model.Parameters.class;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return org.hl7.fhir.r4.model.Parameters.class;
         }
         return org.hl7.fhir.r5.model.Parameters.class;
     }
 
     public static Class bundleClass() {
-        if (r5Flavor()) {
+        if (ProcessingFlavor.R5.isActive()) {
             return org.hl7.fhir.r5.model.Bundle.class;
-        } else if (r4Flavor()) {
+        } else if (ProcessingFlavor.R4.isActive()) {
             return org.hl7.fhir.r4.model.Bundle.class;
         }
         return org.hl7.fhir.r5.model.Bundle.class;

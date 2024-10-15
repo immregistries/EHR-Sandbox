@@ -4,15 +4,10 @@ package org.immregistries.ehr.api.entities.embedabbles;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.ICompositeType;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.immregistries.ehr.api.ProcessingFlavor;
 
-import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R4_FLAVOUR;
-import static org.immregistries.ehr.fhir.FhirComponentsDispatcher.R5_FLAVOUR;
 import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_SYSTEM;
 import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
 
@@ -119,13 +114,9 @@ public class EhrIdentifier {
     @Transient
     public ICompositeType toFhir() {
         try {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            String tenantName = (String) request.getAttribute("TENANT_NAME");
-            if (StringUtils.isBlank(tenantName)) {
+            if (ProcessingFlavor.R5.isActive()) {
                 return toR5();
-            } else if (tenantName.contains(R5_FLAVOUR)) {
-                return toR5();
-            } else if (tenantName.contains(R4_FLAVOUR)) {
+            } else if (ProcessingFlavor.R4.isActive()) {
                 return toR4();
             } else return toR5();
         } catch (IllegalStateException illegalStateException) {

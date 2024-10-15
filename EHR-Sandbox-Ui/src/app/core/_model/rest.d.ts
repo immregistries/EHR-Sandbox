@@ -225,6 +225,14 @@ export interface EhrPhoneNumber extends Serializable {
 export interface EhrRace extends Serializable {
   value?: string
 }
+export interface EhrName extends Serializable {
+  namePrefix?: string,
+  nameFirst?: string,
+  nameLast?: string,
+  nameMiddle?: string,
+  nameSuffix?: string,
+  nameType?: string,
+}
 export interface EhrAddress extends Serializable {
   addressLine1?: string;
   addressLine2?: string;

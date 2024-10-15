@@ -7,11 +7,9 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.EhrApiApplication;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
-import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
-import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.api.entities.embedabbles.*;
 import org.immregistries.ehr.logic.mapping.IOrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -291,20 +289,14 @@ public class HL7printer {
         // PID-4
         sb.append("|");
         // PID-5
-        String firstName = patient.getNameFirst();
-        String middleName = patient.getNameMiddle();
-        String lastName = patient.getNameLast();
 
-        String dateOfBirth = patient.getBirthDate() == null ? "" : formatDate(patient.getBirthDate());
-
-
-        sb.append("|").append(lastName).append("^").append(firstName).append("^").append(middleName).append("^^^^L");
+        sb.append("|");
+        printName(sb, patient.getNameFirst(), patient.getNameMiddle(), patient.getNameLast());
 
         // PID-6
-        sb.append("|");
-        sb.append(patient.getMotherMaiden() == null ? ""
-                : patient.getMotherMaiden() + "^^^^^^M");
+        sb.append("|").append(patient.getMotherMaiden() == null ? "" : patient.getMotherMaiden()).append("^^^^^^M");
         // PID-7
+        String dateOfBirth = patient.getBirthDate() == null ? "" : formatDate(patient.getBirthDate());
         sb.append("|").append(dateOfBirth);
         // PID-8
         {
@@ -393,6 +385,7 @@ public class HL7printer {
         sb.append(StringUtils.defaultIfBlank(patient.getBirthOrder(), ""));
         sb.append("\r");
     }
+
 
     public void createMSH(StringBuilder sb, String messageType, String profileId, Facility facility) {
         // TODO Check that this is accurate as previous implementation did not fit the MSH doc
@@ -783,6 +776,24 @@ public class HL7printer {
             } else {
                 sb.append(value).append("^^").append(StringUtils.defaultIfBlank(tableName, ""));
             }
+        }
+    }
+
+    private static void printName(StringBuilder sb, String firstName, String middleName, String lastName) {
+        sb.append(lastName).append("^").append(firstName).append("^").append(middleName).append("^^^^L");
+    }
+
+    private static void printName(StringBuilder sb, EhrHumanName ehrHumanName) {
+        sb.append(ehrHumanName.getNameLast()).append("^")
+                .append(ehrHumanName.getNameFirst()).append("^")
+                .append(ehrHumanName.getNameMiddle()).append("^")
+                .append(ehrHumanName.getNameSuffix()).append("^")
+                .append(ehrHumanName.getNamePrefix()).append("^")
+                .append("^");
+        if (!ProcessingFlavor.LIGUAL.isActive()) {
+            sb.append(ehrHumanName.getNameType());
+        } else {
+            sb.append("L");
         }
     }
 
