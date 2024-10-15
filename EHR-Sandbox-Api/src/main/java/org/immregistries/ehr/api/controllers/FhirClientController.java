@@ -16,6 +16,7 @@ import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Patient;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
@@ -81,7 +82,7 @@ public class FhirClientController {
             @RequestBody EhrIdentifier ehrIdentifier) {
         IQuery iQuery = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId)).search()
                 .forResource(resourceType);
-        if (FhirComponentsDispatcher.r4Flavor()) {
+        if (ProcessingFlavor.R4.isActive()) {
             iQuery = iQuery.where(org.hl7.fhir.r4.model.Patient.IDENTIFIER.exactly().identifier(ehrIdentifier.toR4().getValue()))
                     .returnBundle(org.hl7.fhir.r4.model.Bundle.class);
         } else {
@@ -377,7 +378,7 @@ public class FhirClientController {
             @RequestParam Map<String, String> allParams) {
 
         IBaseParameters parameters;
-        if (FhirComponentsDispatcher.r4Flavor()) {
+        if (ProcessingFlavor.R4.isActive()) {
             parameters = new org.hl7.fhir.r4.model.Parameters();
             for (Map.Entry<String, String> entry : allParams.entrySet()) {
                 ((org.hl7.fhir.r4.model.Parameters) parameters).addParameter(entry.getKey(), entry.getValue());

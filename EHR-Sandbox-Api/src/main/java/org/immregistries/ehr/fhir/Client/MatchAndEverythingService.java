@@ -8,6 +8,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.hl7.fhir.r5.model.ImmunizationRecommendation;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -124,7 +125,7 @@ public class MatchAndEverythingService {
 
     private List<IDomainResource> everythingResources(Optional<Long> _since, IGenericClient client, String id) {
         IBaseParameters in;
-        if (FhirComponentsDispatcher.r4Flavor()) {
+        if (ProcessingFlavor.R4.isActive()) {
             in = new org.hl7.fhir.r4.model.Parameters()
                     .addParameter("_mdm", "true")
                     .addParameter("_type", "Immunization,ImmunizationRecommendation");

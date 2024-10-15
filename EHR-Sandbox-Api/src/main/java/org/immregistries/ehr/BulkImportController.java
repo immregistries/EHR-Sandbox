@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.EhrEntity;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
@@ -75,7 +76,7 @@ public class BulkImportController {
         client.registerInterceptor(capturingInterceptor);
 
         IBaseParameters inBaseParameters;
-        if (FhirComponentsDispatcher.r4Flavor()) {
+        if (ProcessingFlavor.R4.isActive()) {
             org.hl7.fhir.r4.model.Parameters inParams = new org.hl7.fhir.r4.model.Parameters();
             _outputFormat.ifPresent(s -> inParams.addParameter().setName(OUTPUT_FORMAT).setValue(new org.hl7.fhir.r4.model.StringType(s)));
             _type.ifPresent(s -> inParams.addParameter().setName(TYPE).setValue(new org.hl7.fhir.r4.model.StringType(s)));
@@ -143,7 +144,7 @@ public class BulkImportController {
         client.registerInterceptor(capturingInterceptor);
 
         IBaseParameters inBaseParameters;
-        if (FhirComponentsDispatcher.r4Flavor()) {
+        if (ProcessingFlavor.R4.isActive()) {
             org.hl7.fhir.r4.model.Parameters inParams = new org.hl7.fhir.r4.model.Parameters();
             _outputFormat.ifPresent(s -> inParams.addParameter().setName(OUTPUT_FORMAT).setValue(new org.hl7.fhir.r4.model.StringType(s)));
             _type.ifPresent(s -> inParams.addParameter().setName(TYPE).setValue(new org.hl7.fhir.r4.model.StringType(s)));

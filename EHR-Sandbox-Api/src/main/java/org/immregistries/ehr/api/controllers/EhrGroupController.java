@@ -10,6 +10,7 @@ import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.BulkImportController;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
@@ -331,7 +332,7 @@ public class EhrGroupController {
                 throw new RuntimeException("MRN required to add patient");
             }
             IBaseParameters in;
-            if (FhirComponentsDispatcher.r4Flavor()) {
+            if (ProcessingFlavor.R4.isActive()) {
                 in = new org.hl7.fhir.r4.model.Parameters()
                         .addParameter("memberId", ehrIdentifier.toR4())
                         .addParameter("providerNpi", IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR4());
@@ -361,7 +362,7 @@ public class EhrGroupController {
         } else {
             EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
             IBaseParameters in;
-            if (FhirComponentsDispatcher.r4Flavor()) {
+            if (ProcessingFlavor.R4.isActive()) {
                 in = new org.hl7.fhir.r4.model.Parameters()
                         .addParameter("memberId", ehrIdentifier.toR4())
                         .addParameter("providerNpi", IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR4());
