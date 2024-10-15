@@ -100,10 +100,6 @@ public class MatchAndEverythingService {
 
         List<IDomainResource> everything = everythingResources(_since, client, id);
         Set<VaccinationEvent> set = new HashSet<>(everything.size());
-        if (set.isEmpty()) {
-            // TODO better exception
-            throw new RuntimeException("NO REMOTE IMMUNIZATION FOUND");
-        }
 
         for (IDomainResource iDomainResource : everything) {
             if (iDomainResource.fhirType().equals("Immunization")) {
@@ -118,6 +114,10 @@ public class MatchAndEverythingService {
                 ImmunizationRecommendation recommendation = (ImmunizationRecommendation) iDomainResource;
                 recommendationService.saveInStore(iDomainResource, facility, ehrPatient.getId(), immunizationRegistry);
             }
+        }
+        if (set.isEmpty()) {
+            // TODO better exception
+            throw new RuntimeException("NO REMOTE IMMUNIZATION FOUND");
         }
         return set;
     }
