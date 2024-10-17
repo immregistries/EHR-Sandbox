@@ -125,6 +125,11 @@
                            [overrideNoFieldsRequired]="overrideNoFieldsRequired"
                            [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-address-list-form>
   </div>
+  <div *ngSwitchCase="'names'">
+    <app-name-list-form [baseForm]="baseForm" [model]="model ?? []" (modelChange)="model = $event"
+                        [overrideNoFieldsRequired]="overrideNoFieldsRequired"
+                        [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-name-list-form>
+  </div>
 
   <div *ngSwitchDefault></div>
 

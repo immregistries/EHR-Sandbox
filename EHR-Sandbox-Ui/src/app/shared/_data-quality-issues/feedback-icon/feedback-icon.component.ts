@@ -20,14 +20,14 @@ export class FeedbackIconComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openFeedback(element: EhrPatient) {
+  openFeedback(element: EhrPatient | VaccinationEvent) {
     const dialogRef = this.dialog.open(FeedbackTableComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {patient: element},
+      data: { patient: element },
     });
   }
 

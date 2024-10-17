@@ -9,10 +9,7 @@ import org.immregistries.codebase.client.generated.LinkTo;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
-import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
-import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
-import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.api.entities.embedabbles.*;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,9 +91,13 @@ public class RandomGenerator {
         EhrPatient ehrPatient = new EhrPatient();
         ehrPatient.setFacility(facility);
 
-        ehrPatient.setNameFirst(faker.name().firstName());
-        ehrPatient.setNameLast(lastname);
-        ehrPatient.setNameMiddle(faker.name().firstName());
+
+        EhrHumanName ehrHumanName = new EhrHumanName();
+        ehrHumanName.setNameFirst(faker.name().firstName());
+        ehrHumanName.setNameLast(lastname);
+        ehrHumanName.setNameMiddle(faker.name().firstName());
+        ehrHumanName.setNameType("L");
+        ehrPatient.addName(ehrHumanName);
 
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setType("MR");
@@ -112,7 +113,7 @@ public class RandomGenerator {
 
         EhrPhoneNumber phoneNumber = randomPhoneNumber();
         ehrPatient.addPhoneNumber(phoneNumber);
-        ehrPatient.setEmail(ehrPatient.getNameFirst() + randDay + "@email.com");
+        ehrPatient.setEmail(ehrHumanName.getNameFirst() + randDay + "@email.com");
 
         ehrPatient.setBirthFlag("");
         ehrPatient.setBirthOrder("");

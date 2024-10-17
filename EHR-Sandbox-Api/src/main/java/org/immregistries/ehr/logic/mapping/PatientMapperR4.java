@@ -8,10 +8,7 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.NextOfKin;
 import org.immregistries.ehr.api.entities.NextOfKinRelationship;
-import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
-import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
-import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.api.entities.embedabbles.*;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,13 +53,10 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
 
         p.setBirthDate(ehrPatient.getBirthDate());
-        if (p.getNameFirstRep() != null) {
-            HumanName name = p.addName()
-                    .setFamily(ehrPatient.getNameLast())
-                    .addGiven(ehrPatient.getNameFirst())
-                    .addGiven(ehrPatient.getNameMiddle());
-//			   .setUse(HumanName.NameUse.USUAL);
+        for (EhrHumanName name : ehrPatient.getNames()) {
+            p.addName(MappingHelperR4.toFhirName(name));
         }
+
 
         Extension motherMaidenName = p.addExtension()
                 .setUrl(MOTHER_MAIDEN_NAME_EXTENSION)
@@ -179,14 +173,10 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
         ehrPatient.setBirthDate(p.getBirthDate());
         // Name
-        HumanName name = p.getNameFirstRep();
-        ehrPatient.setNameLast(name.getFamily());
-        if (name.getGiven().size() > 0) {
-            ehrPatient.setNameFirst(name.getGiven().get(0).getValueNotNull());
+        for (HumanName humanName : p.getName()) {
+            ehrPatient.addName(MappingHelperR4.toEhrName(humanName));
         }
-        if (name.getGiven().size() > 1) {
-            ehrPatient.setNameMiddle(name.getGiven().get(1).getValueNotNull());
-        }
+
 
         Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME_EXTENSION);
         if (motherMaiden != null) {

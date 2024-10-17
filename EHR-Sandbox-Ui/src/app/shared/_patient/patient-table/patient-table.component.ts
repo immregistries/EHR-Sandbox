@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Facility, EhrPatient } from 'src/app/core/_model/rest';
+import { Facility, EhrPatient, EhrHumanName } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -21,7 +21,7 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   @Input()
   facility!: Facility | null;
   @Input()
-  columns: (keyof EhrPatient | "alerts" | "remove" | "mrn")[] = [
+  columns: (keyof EhrPatient | keyof EhrHumanName | "alerts" | "remove" | "mrn")[] = [
     "mrn",
     "nameLast",
     "nameFirst",

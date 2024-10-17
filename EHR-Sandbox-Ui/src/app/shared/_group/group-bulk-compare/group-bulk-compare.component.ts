@@ -74,7 +74,7 @@ export class GroupBulkCompareComponent {
   }
 
   patientSelected(value?: EhrPatient) {
-    this.patientService.setCurrent(value ?? { id: -1 })
+    this.patientService.setCurrent(value ?? { id: -1, names: [] })
     this.selectedPatient = value
     this.remoteVaccinations = JSON.parse(JSON.stringify(this.allRemoteVaccinations
       .filter((vac) => {

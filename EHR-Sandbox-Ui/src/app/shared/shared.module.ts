@@ -35,7 +35,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PatientDashboardComponent } from './_patient/patient-dashboard/patient-dashboard.component';
 import { PatientToolsComponent } from './_patient/patient-tools/patient-tools.component';
 import { PatientFormComponent } from './_patient/patient-form/patient-form.component';
-import { PatientFreeFormComponent } from './_patient/patient-form/patient-free-form/patient-free-form.component';
 import { PatientHistoryComponent } from './_patient/patient-history/patient-history.component';
 import { PatientListComponent } from './_patient/patient-list/patient-list.component';
 import { PatientMenuComponent } from './_patient/patient-menu/patient-menu.component';
@@ -128,6 +127,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { PatientCachePipe } from './_pipes/patient-cache.pipe';
 import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import/smart-health-link-import.component';
 import { CdkMenuModule } from '@angular/cdk/menu';
+import { NameListFormComponent } from './_components/card-form/generic-list-form/name-list-form/name-list-form.component';
 
 @NgModule({
   declarations: [
@@ -164,7 +164,6 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 
     PatientFormComponent,
     PatientListComponent,
-    PatientFreeFormComponent,
     PatientTableComponent,
     PatientToolsComponent,
     PatientDashboardComponent,
@@ -232,6 +231,7 @@ import { CdkMenuModule } from '@angular/cdk/menu';
     FhirQrCodeComponent,
     SmartHealthLinkImportComponent,
 
+    NameListFormComponent,
   ],
   imports: [
     CommonModule,
@@ -336,7 +336,6 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 
     PatientFormComponent,
     PatientListComponent,
-    PatientFreeFormComponent,
     PatientTableComponent,
     PatientToolsComponent,
     PatientDashboardComponent,
@@ -378,6 +377,7 @@ import { CdkMenuModule } from '@angular/cdk/menu';
     FhirQrCodeComponent,
     QRCodeModule,
     SmartHealthLinkImportComponent,
+    NameListFormComponent,
   ],
 })
 export class SharedModule { }

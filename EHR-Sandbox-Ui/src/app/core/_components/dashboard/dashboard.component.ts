@@ -3,7 +3,7 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { Observable, merge } from 'rxjs';
-import { EhrPatient, VaccinationEvent } from '../../_model/rest';
+import { EhrPatient, Feedback, VaccinationEvent } from '../../_model/rest';
 import { VaccinationService } from '../../_services/vaccination.service';
 import { FeedbackService } from '../../_services/feedback.service';
 
@@ -39,7 +39,7 @@ export class DashboardComponent {
     return this.patientService.quickReadPatients()
   }
 
-  feedbackListObservable(): Observable<EhrPatient[]> {
+  feedbackListObservable(): Observable<Feedback[]> {
     return this.feedbackService.readCurrentFacilityFeedback()
   }
 

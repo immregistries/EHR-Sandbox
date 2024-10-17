@@ -1,6 +1,7 @@
 <div class="grid-container">
   <h1 class="mat-h1" *ngIf="patient">
-    {{'Patient: ' + (patient.nameFirst ?? '') + ' ' + (patient.nameMiddle ?? '') + ' ' + (patient.nameLast ?? '')}}
+    {{'Patient: ' + (patient.names[0].nameFirst ?? '') + ' ' + (patient.names[0].nameMiddle ?? '') + ' ' +
+    (patient.names[0].nameLast ?? '')}}
   </h1>
   <mat-grid-list cols="4" rowHeight="330px">
     <mat-grid-tile [colspan]="1" [rowspan]="1">
@@ -30,7 +31,7 @@
     <mat-grid-tile *ngIf="patient && patient.id" [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-vaccination-table [allow_populate]="true" [patientId]="patient.id" ></app-vaccination-table>
+          <app-vaccination-table [allow_populate]="true" [patientId]="patient.id"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

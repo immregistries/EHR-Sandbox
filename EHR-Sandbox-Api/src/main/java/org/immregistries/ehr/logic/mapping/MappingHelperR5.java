@@ -6,6 +6,7 @@ import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
+import org.immregistries.ehr.api.entities.embedabbles.EhrHumanName;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,6 +99,46 @@ public class MappingHelperR5 extends MappingHelper {
             }
         }
         return value;
+    }
+
+    public static EhrHumanName toEhrName(HumanName name) {
+        EhrHumanName ehrHumanName = new EhrHumanName();
+        ehrHumanName.setNameLast(name.getFamily());
+        if (name.getGiven().size() > 0) {
+            ehrHumanName.setNameFirst(name.getGiven().get(0).getValueNotNull());
+        }
+        if (name.getGiven().size() > 1) {
+            ehrHumanName.setNameMiddle(name.getGiven().get(1).getValueNotNull());
+        }
+        ehrHumanName.setNameSuffix(name.getSuffixAsSingleString());
+        ehrHumanName.setNamePrefix(name.getPrefixAsSingleString());
+        return ehrHumanName;
+    }
+
+    public static String toEhrSex(Enumerations.AdministrativeGender gender) {
+        switch (gender) {
+            case MALE:
+                return MALE_SEX;
+            case FEMALE:
+                return FEMALE_SEX;
+            case OTHER:
+            default:
+                return "";
+        }
+    }
+
+
+    public static HumanName toFhirName(EhrHumanName name) {
+        HumanName humanName = new HumanName()
+                .setFamily(name.getNameLast())
+                .addGiven(name.getNameFirst())
+                .addGiven(name.getNameMiddle())
+                .addSuffix(name.getNameSuffix())
+                .addPrefix(name.getNamePrefix());
+        if (StringUtils.isNotBlank(name.getNameType())) {
+            humanName.setUse(HumanName.NameUse.OFFICIAL); // TODO MAPPING
+        }
+        return humanName;
     }
 
 }

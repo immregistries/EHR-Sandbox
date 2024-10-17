@@ -18,6 +18,7 @@ enum FormType {
   nextOfKinRelationships = 'nextOfKinRelationships',
   races = 'races',
   addresses = 'addresses',
+  names = 'names',
 }
 
 export default FormType;

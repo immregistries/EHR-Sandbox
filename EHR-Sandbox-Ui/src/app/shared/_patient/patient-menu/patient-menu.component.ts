@@ -27,7 +27,7 @@ export class PatientMenuComponent implements OnInit {
 
   onSelection(event: EhrPatient) {
     if (this.patientService.getCurrentId() == event.id) { // unselect
-      this.patientService.setCurrent({})
+      this.patientService.setCurrent({ names: [] })
     } else {
       this.patientService.setCurrent(event)
     }

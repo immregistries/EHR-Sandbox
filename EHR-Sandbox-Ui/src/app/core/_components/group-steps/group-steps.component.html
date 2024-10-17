@@ -21,7 +21,7 @@
   <mat-step label="Send Patients to IIS">
     <app-fhir-post [resource]="bundleResource" [resourceLoading]="false" [resourceType]="''"
                    [operation]="'$transaction'"></app-fhir-post>
-    <app-patient-table (selectEmitter)="patientService.setCurrent($event ?? {})"
+    <app-patient-table (selectEmitter)="patientService.setCurrent($event ?? {names: []})"
                        [observableRefresh]="stepper.selectionChange"
                        [observableSource]="patientService.quickReadPatients()"
                        [facility]="facilityService.getCurrentObservable() | async"

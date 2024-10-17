@@ -18,7 +18,7 @@
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
   <ng-container matColumnDef="nameFirst">
     <th mat-header-cell *matHeaderCellDef> First name</th>
-    <td mat-cell *matCellDef="let element">{{element.nameFirst}}</td>
+    <td mat-cell *matCellDef="let element">{{element.names[0].nameFirst}}</td>
   </ng-container>
   <ng-container matColumnDef="mrn">
     <th mat-header-cell *matHeaderCellDef> Identifier</th>
@@ -26,11 +26,11 @@
   </ng-container>
   <ng-container matColumnDef="nameMiddle">
     <th mat-header-cell *matHeaderCellDef> Middle name</th>
-    <td mat-cell *matCellDef="let element">{{element.nameMiddle}}</td>
+    <td mat-cell *matCellDef="let element">{{element.names[0].nameMiddle}}</td>
   </ng-container>
   <ng-container matColumnDef="nameLast">
     <th mat-header-cell *matHeaderCellDef> Last name</th>
-    <td mat-cell *matCellDef="let element">{{element.nameLast}}</td>
+    <td mat-cell *matCellDef="let element">{{element.names[0].nameLast}}</td>
   </ng-container>
   <ng-container matColumnDef="birthDate">
     <th mat-header-cell *matHeaderCellDef> Birth date</th>

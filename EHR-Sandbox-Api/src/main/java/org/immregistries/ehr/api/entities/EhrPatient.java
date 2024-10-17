@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
-import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
-import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
-import org.immregistries.ehr.api.entities.embedabbles.EhrRace;
+import org.immregistries.ehr.api.entities.embedabbles.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,14 +36,9 @@ public class EhrPatient extends EhrEntity {
     private Date updatedDate;
     @Column(name = "birth_date", nullable = false)
     private Date birthDate;
-    @Column(name = "name_last", length = 250)
-    private String nameLast = "";
-    @Column(name = "name_first", length = 250)
-    private String nameFirst = "";
-    @Column(name = "name_middle", length = 250)
-    private String nameMiddle = "";
-    @Column(name = "name_suffix", length = 250)
-    private String nameSuffix = "";
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "patient_names", joinColumns = @JoinColumn(name = "patient_name"))
+    private Set<EhrHumanName> names;
     @Column(name = "mother_maiden", length = 250)
     private String motherMaiden = "";
     @Column(name = "sex", length = 250)
@@ -266,30 +258,6 @@ public class EhrPatient extends EhrEntity {
         this.motherMaiden = motherMaiden;
     }
 
-    public String getNameMiddle() {
-        return nameMiddle;
-    }
-
-    public void setNameMiddle(String nameMiddle) {
-        this.nameMiddle = nameMiddle;
-    }
-
-    public String getNameFirst() {
-        return nameFirst;
-    }
-
-    public void setNameFirst(String nameFirst) {
-        this.nameFirst = nameFirst;
-    }
-
-    public String getNameLast() {
-        return nameLast;
-    }
-
-    public void setNameLast(String nameLast) {
-        this.nameLast = nameLast;
-    }
-
     public Date getBirthDate() {
         return birthDate;
     }
@@ -347,14 +315,6 @@ public class EhrPatient extends EhrEntity {
     @Transient
     public EhrIdentifier getMrnEhrIdentifier() {
         return identifiers.stream().filter((identifier) -> identifier.getType().equals(MRN_TYPE_VALUE)).findFirst().orElse(null);
-    }
-
-    public String getNameSuffix() {
-        return nameSuffix;
-    }
-
-    public void setNameSuffix(String nameSuffix) {
-        this.nameSuffix = nameSuffix;
     }
 
     public Set<EhrPhoneNumber> getPhones() {
@@ -457,5 +417,30 @@ public class EhrPatient extends EhrEntity {
 
     public void setGeneralPractitioner(Clinician generalPractitioner) {
         this.generalPractitioner = generalPractitioner;
+    }
+
+    public Set<EhrHumanName> getNames() {
+        return names;
+    }
+
+    public void setNames(Set<EhrHumanName> names) {
+        this.names = names;
+    }
+
+    public void addName(EhrHumanName name) {
+        if (this.names == null) {
+            this.names = new HashSet<>(1);
+        }
+        this.names.add(name);
+    }
+
+//    // TODO verify
+//    public void setNames(EhrHumanName name) {
+//        this.addName(name);
+//    }
+
+    @JsonIgnore
+    public EhrHumanName getNameFirst() {
+        return names.stream().findFirst().orElse(null);
     }
 }

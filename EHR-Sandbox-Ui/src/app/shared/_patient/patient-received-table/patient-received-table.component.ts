@@ -104,9 +104,9 @@ export class PatientReceivedTableComponent implements OnInit {
       if (ehrPatient) {
         member.id = ehrPatient ? ehrPatient.id + '' : undefined
         if (!member.entity.display) {
-          member.entity.display = (ehrPatient.nameFirst ?? '') + " " + (ehrPatient.nameMiddle ?? '') + " " + (ehrPatient.nameLast ?? '')
+          member.entity.display = (ehrPatient.names[0].nameMiddle ?? '') + " " + (ehrPatient.names[0].nameMiddle ?? '') + " " + (ehrPatient.names[0].nameLast ?? '')
         }
-        member.extension?.push({ url: 'ehrPatient', valueHumanName: { family: ehrPatient.nameLast, given: [ehrPatient.nameFirst ?? '', ehrPatient.nameMiddle ?? ''] } })
+        member.extension?.push({ url: 'ehrPatient', valueHumanName: { family: ehrPatient.names[0].nameLast, given: [ehrPatient.names[0].nameFirst ?? '', ehrPatient.names[0].nameMiddle ?? ''] } })
       }
 
     }

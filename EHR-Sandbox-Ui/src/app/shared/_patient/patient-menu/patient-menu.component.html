@@ -1,15 +1,20 @@
 <app-hover-menu>
-  <button trigger mat-raised-button style="" (click)="$event.stopPropagation()" *ngIf="facilityService.getCurrentId() > 0" [color]="patientService.getCurrentId() > 0 ? 'primary' : 'basic'">
+  <button trigger mat-raised-button style="" (click)="$event.stopPropagation()"
+          *ngIf="facilityService.getCurrentId() > 0" [color]="patientService.getCurrentId() > 0 ? 'primary' : 'basic'">
     {{
-      (patientService.getCurrentId() > 0 ) ?
-        ("Patient: " + (patientService.getCurrent().nameFirst ?? "") + " " + (patientService.getCurrent().nameLast ?? ""))
-        : "Select Patient"
+    (patientService.getCurrentId() > 0 ) ?
+    ("Patient: " + (patientService.getCurrent().names[0].nameFirst ?? "") + " " +
+    (patientService.getCurrent().names[0].nameLast
+    ?? ""))
+    : "Select Patient"
     }}
   </button>
   <div content>
     <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)">
-      {{(item.nameFirst ?? "") + " " + (item.nameLast ?? "")}}
+      {{(item.names[0].nameFirst ?? "") + " " + (item.names[0].nameLast ?? "")}}
     </button>
-    <button mat-menu-item (click)="openDialog()"><mat-icon>add</mat-icon></button>
+    <button mat-menu-item (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </app-hover-menu>

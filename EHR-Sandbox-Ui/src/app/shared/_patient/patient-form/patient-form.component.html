@@ -13,7 +13,7 @@
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
                   <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
-                                 (modelChange)="patient[form.attributeName] = $event"></app-card-form>
+                                 (modelChange)="change(form, $event)"></app-card-form>
                 </ng-container>
               </mat-card-content>
               <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
@@ -35,8 +35,7 @@
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
                   <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
-                                 (modelChange)="patient[form.attributeName] = $event"
-                                 [overrideNoFieldsRequired]="true"></app-card-form>
+                                 (modelChange)="change(form, $event)" [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>
               <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
@@ -46,9 +45,7 @@
           </div>
         </div>
       </mat-tab>
-      <!-- <mat-tab label="Patient free form">
-        <app-patient-free-form [(patient)]="patient" [formCards]="formCards"></app-patient-free-form>
-      </mat-tab> -->
+
       <!-- <mat-tab label="Patient display">
         <app-patient-display [patient]="patient" [formCards]="PATIENT_FORM_CARDS"></app-patient-display>
       </mat-tab> -->

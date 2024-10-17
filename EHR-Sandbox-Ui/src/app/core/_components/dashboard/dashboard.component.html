@@ -3,7 +3,7 @@
     <mat-grid-tile [colspan]="4">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
-          <app-patient-table (selectEmitter)="this.patientService.setCurrent($event ?? {})"
+          <app-patient-table (selectEmitter)="this.patientService.setCurrent($event ?? {names: []})"
                              [observableRefresh]="patientListRefreshObservable()"
                              [observableSource]="patientListObservable()"
                              [facility]="facilityService.getCurrentObservable() | async"

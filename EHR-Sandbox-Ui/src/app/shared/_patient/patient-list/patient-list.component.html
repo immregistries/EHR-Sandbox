@@ -1,6 +1,6 @@
 <mat-action-list #patients>
   <mat-list-item *ngFor="let patient of list" (click)="onSelection(patient)">
-    {{patient.nameFirst + " " + patient.nameLast + " | " + (patient.birthDate | date)}}
+    {{patient.names[0].nameFirst + " " + patient.names[0].nameLast + " | " + (patient.birthDate | date)}}
     <button mat-icon-button color="primary" (click)="openPatient(patient); $event.stopPropagation();"
             matTooltip="Open Dashboard">
       <mat-icon>open_in_new</mat-icon>

@@ -100,10 +100,11 @@ export interface EhrPatient extends ObjectWithID {
   createdDate?: Date;
   updatedDate?: Date;
   birthDate?: Date;
-  nameLast?: string;
-  nameFirst?: string;
-  nameMiddle?: string;
-  nameSuffix?: string;
+  names: EhrHumanName[]
+  // nameLast?: string;
+  // nameFirst?: string;
+  // nameMiddle?: string;
+  // nameSuffix?: string;
   motherMaiden?: string;
   sex?: string;
   races?: EhrRace[];
@@ -225,7 +226,7 @@ export interface EhrPhoneNumber extends Serializable {
 export interface EhrRace extends Serializable {
   value?: string
 }
-export interface EhrName extends Serializable {
+export interface EhrHumanName extends Serializable {
   namePrefix?: string,
   nameFirst?: string,
   nameLast?: string,

@@ -7,7 +7,7 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import FormType, { FormCardGeneric } from 'src/app/core/_model/form-structure';
+import FormType, { FormCardGeneric, GenericForm } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-patient-form',
@@ -19,7 +19,7 @@ export class PatientFormComponent {
   private _patientId: number = -1;
 
   @Input()
-  public patient: EhrPatient = { id: -1 };
+  public patient: EhrPatient = { id: -1, names: [] };
   @Output()
   patientChange = new EventEmitter<EhrPatient>();
   @Output()
@@ -87,14 +87,29 @@ export class PatientFormComponent {
     }
   }
 
+  change(form: GenericForm<EhrPatient>, event: any) {
+    //@ts-ignore
+    this.patient[form.attributeName] = event
+  }
+
 
   readonly PATIENT_FORM_CARDS: FormCardGeneric<EhrPatient>[] = [
     {
       title: 'Name', cols: 3, rows: 1, forms: [
-        { type: FormType.text, title: 'First name', attributeName: 'nameFirst' },
-        { type: FormType.text, title: 'Middle name', attributeName: 'nameMiddle' },
-        { type: FormType.text, title: 'Last name', attributeName: 'nameLast' },
-        { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
+        // { type: FormType.text, title: 'First name', attributeName: 'nameFirst' },
+        // { type: FormType.text, title: 'Middle name', attributeName: 'nameMiddle' },
+        // { type: FormType.text, title: 'Last name', attributeName: 'nameLast' },
+        // { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
+        {
+          type: FormType.names, title: 'Name', attributeName: 'names', defaultListEmptyValue: JSON.stringify({
+            namePrefix: "",
+            nameFirst: "",
+            nameLast: "",
+            nameMiddle: "",
+            nameSuffix: "",
+            nameType: "L"
+          })
+        },
         { type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden' },
         { type: FormType.clinician, title: 'General Practitioner', attributeName: 'generalPractitioner' },
       ]

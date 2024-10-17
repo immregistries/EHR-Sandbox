@@ -291,7 +291,8 @@ public class HL7printer {
         // PID-5
 
         sb.append("|");
-        printName(sb, patient.getNameFirst(), patient.getNameMiddle(), patient.getNameLast());
+        EhrHumanName ehrHumanName = patient.getNameFirst();
+        printName(sb, ehrHumanName);
 
         // PID-6
         sb.append("|").append(patient.getMotherMaiden() == null ? "" : patient.getMotherMaiden()).append("^^^^^^M");
@@ -784,16 +785,18 @@ public class HL7printer {
     }
 
     private static void printName(StringBuilder sb, EhrHumanName ehrHumanName) {
-        sb.append(ehrHumanName.getNameLast()).append("^")
-                .append(ehrHumanName.getNameFirst()).append("^")
-                .append(ehrHumanName.getNameMiddle()).append("^")
-                .append(ehrHumanName.getNameSuffix()).append("^")
-                .append(ehrHumanName.getNamePrefix()).append("^")
-                .append("^");
-        if (!ProcessingFlavor.LIGUAL.isActive()) {
-            sb.append(ehrHumanName.getNameType());
-        } else {
-            sb.append("L");
+        if (ehrHumanName != null) {
+            sb.append(ehrHumanName.getNameLast()).append("^")
+                    .append(ehrHumanName.getNameFirst()).append("^")
+                    .append(ehrHumanName.getNameMiddle()).append("^")
+                    .append(ehrHumanName.getNameSuffix()).append("^")
+                    .append(ehrHumanName.getNamePrefix()).append("^")
+                    .append("^");
+            if (!ProcessingFlavor.LIGUAL.isActive()) {
+                sb.append(ehrHumanName.getNameType());
+            } else {
+                sb.append("L");
+            }
         }
     }
 

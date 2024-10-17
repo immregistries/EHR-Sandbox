@@ -34,12 +34,12 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
     private tenantService: TenantService,
     snackBarService: SnackBarService
   ) {
-    super(new BehaviorSubject<EhrPatient>({ id: -1 }), snackBarService)
+    super(new BehaviorSubject<EhrPatient>({ id: -1, names: [] }), snackBarService)
     /**
      * Making it so that changing selected globally facility unselects patient
      */
     this.facilityService.getCurrentObservable().subscribe((facility) => {
-      this.setCurrent({})
+      this.setCurrent({ names: [] })
     })
   }
 
