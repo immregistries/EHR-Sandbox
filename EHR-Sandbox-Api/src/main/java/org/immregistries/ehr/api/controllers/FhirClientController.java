@@ -11,10 +11,6 @@ import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.DateType;
-import org.hl7.fhir.r4.model.Immunization;
-import org.hl7.fhir.r4.model.Parameters;
-import org.hl7.fhir.r4.model.Patient;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
@@ -407,30 +403,6 @@ public class FhirClientController {
                 .execute();
 
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));
-    }
-
-    @GetMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$immds-forecast")
-    public String immdsForecast(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable(PATIENT_ID) Integer patientId) {
-        logger.info("TESTTTT");
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
-        EhrPatient ehrPatient = ehrPatientRepository.findById(patientId).get();
-        Patient patient = (Patient) fhirComponentsDispatcher.patientMapper().toFhir(ehrPatient);
-        Parameters in = new Parameters();
-
-        in.addParameter().setName("assessmentDate").setValue(new DateType(new Date()));
-        in.addParameter().setName("patient").setResource(patient);
-        for (VaccinationEvent vaccinationEvent : vaccinationEventRepository.findByPatientId(patientId)) {
-            Immunization immunization = (Immunization) fhirComponentsDispatcher.immunizationMapper().toFhir(vaccinationEvent, "");
-            in.addParameter().setName("immunization").setResource(immunization);
-        }
-        logger.info("param {}", in.hasParameter("assessmentDate"));
-        logger.info("param {}", in.hasParameter("patient"));
-        logger.info("param {}", in.getParameter("assessmentDate").getValue());
-        Parameters out = client.operation().onServer().named("$immds-forecast").withParameters(in).execute();
-        logger.info("param out {}", in.hasParameter("recommendation"));
-
-        return fhirComponentsDispatcher.fhirContext().newJsonParser().encodeResourceToString(out);
     }
 
 }

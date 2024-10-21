@@ -113,7 +113,7 @@ public class MatchAndEverythingService {
             }
             if (iDomainResource.fhirType().equals("ImmunizationRecommendation")) { // TODO extract this part
                 ImmunizationRecommendation recommendation = (ImmunizationRecommendation) iDomainResource;
-                recommendationService.saveInStore(iDomainResource, facility, ehrPatient.getId(), immunizationRegistry);
+                recommendationService.saveInStore(iDomainResource, facility.getId(), ehrPatient.getId(), immunizationRegistry);
             }
         }
         if (set.isEmpty()) {

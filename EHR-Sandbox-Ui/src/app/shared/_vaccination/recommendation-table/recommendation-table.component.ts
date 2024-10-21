@@ -59,6 +59,11 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
 
 
   openFetch() {
-    this.dialog.open(RecommendationDownloadComponent, { data: { 'patientId': this.patientId } });
+    this.dialog.open(RecommendationDownloadComponent, { data: { 'patientId': this.patientId } }).afterClosed().subscribe((res) => {
+      if (res) {
+        this.patientService.doRefresh();
+        this.patientId = this.patientId
+      }
+    });
   }
 }

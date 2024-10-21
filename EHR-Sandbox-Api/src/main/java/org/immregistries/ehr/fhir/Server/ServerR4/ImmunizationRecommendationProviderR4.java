@@ -70,7 +70,7 @@ public class ImmunizationRecommendationProviderR4 implements IResourceProvider, 
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         Integer patientLocalId = resourceIdentificationService.getLocalPatientId(immunizationRecommendation.getPatient(), immunizationRegistry, facility);
         immunizationRecommendation.setPatient(new Reference(EhrUtils.convert(patientLocalId)));
-        return new MethodOutcome().setResource(recommendationService.saveInStore(immunizationRecommendation, facility, patientLocalId, immunizationRegistry));
+        return new MethodOutcome().setResource(recommendationService.saveInStore(immunizationRecommendation, facility.getId(), patientLocalId, immunizationRegistry));
     }
 
 

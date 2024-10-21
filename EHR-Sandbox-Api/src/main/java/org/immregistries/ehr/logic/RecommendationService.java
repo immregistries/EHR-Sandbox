@@ -34,11 +34,11 @@ public class RecommendationService {
         return immunizationRecommendation;
     }
 
-    public IDomainResource saveInStore(IDomainResource iDomainResource, Facility facility, Integer patientId, ImmunizationRegistry immunizationRegistry) {
+    public IDomainResource saveInStore(IDomainResource iDomainResource, Integer facilityId, Integer patientId, ImmunizationRegistry immunizationRegistry) {
 //        immunizationRecommendation.setPatient(new org.hl7.fhir.r4.model.Reference(patientId)); // TODO
-        immunizationRecommendationsStore.putIfAbsent(Integer.valueOf(facility.getId()), new HashMap<>(5));
-        immunizationRecommendationsStore.get(facility.getId()).putIfAbsent(patientId, new HashMap<>(1));
-        immunizationRecommendationsStore.get(facility.getId()).get(patientId).put(immunizationRegistry.getId(), iDomainResource);
+        immunizationRecommendationsStore.putIfAbsent(Integer.valueOf(facilityId), new HashMap<>(5));
+        immunizationRecommendationsStore.get(facilityId).putIfAbsent(patientId, new HashMap<>(1));
+        immunizationRecommendationsStore.get(facilityId).get(patientId).put(immunizationRegistry.getId(), iDomainResource);
         return iDomainResource;
     }
 

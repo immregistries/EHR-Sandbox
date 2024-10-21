@@ -29,6 +29,8 @@ export class RecommendationDownloadComponent {
   }
 
   fetch() {
-    this.fhirClient.immdsForecast(this.facilityService.getCurrentId(), this.patientId).subscribe(console.log)
+    this.fhirClient.immdsForecast(this.facilityService.getCurrentId(), this.patientId).subscribe((res) => {
+      this._dialogRef.close(res)
+    })
   }
 }

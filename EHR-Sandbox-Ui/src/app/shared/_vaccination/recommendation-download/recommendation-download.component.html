@@ -1,12 +1,15 @@
-<mat-card style="display: flex;">
-  In progress
-  <div>
+<mat-card>
+  <mat-toolbar>
+    Get Immunization Recommendations through FHIR $immds-forecast operation
+  </mat-toolbar>
+  <mat-toolbar>
     <app-immunization-registry-menu></app-immunization-registry-menu>
-  </div>
-  <div>
+    <span class="matbar-spacer" style="max-width: 300px; min-width: 400px"></span>
     <button mat-raised-button type="button" (click)="fetch()">
       <mat-icon>download</mat-icon>
       Get Recommendations from IIS
     </button>
-  </div>
+  </mat-toolbar>
+
+
 </mat-card>
