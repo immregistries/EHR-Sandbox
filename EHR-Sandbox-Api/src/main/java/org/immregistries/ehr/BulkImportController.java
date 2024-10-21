@@ -116,7 +116,7 @@ public class BulkImportController {
     }
 
     @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-asynch")
-    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable String groupId
+    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
             , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
             , @RequestParam(TYPE) Optional<String> _type
             , @RequestParam(SINCE) Optional<Date> _since
@@ -131,7 +131,7 @@ public class BulkImportController {
         return ResponseEntity.internalServerError().body(response.getStatusInfo());
     }
 
-    public IHttpResponse bulkKickOffHttpResponse(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable String groupId
+    public IHttpResponse bulkKickOffHttpResponse(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
             , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
             , @RequestParam(TYPE) Optional<String> _type
             , @RequestParam(SINCE) Optional<Date> _since

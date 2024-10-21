@@ -69,8 +69,8 @@ public class FhirClientController {
     @GetMapping(REGISTRY_PATH + "/{resourceType}/{id}")
     public ResponseEntity<String> getFhirResourceFromIIS(
             @PathVariable(REGISTRY_ID) Integer registryId,
-            @PathVariable String resourceType,
-            @PathVariable String id) {
+            @PathVariable("resourceType") String resourceType,
+            @PathVariable("id") String id) {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryService.getImmunizationRegistry(registryId)));
     }
 
@@ -78,7 +78,7 @@ public class FhirClientController {
     @PostMapping(REGISTRY_PATH + "/{resourceType}/search")
     public ResponseEntity<String> searchFhirResourceFromIIS(
             @PathVariable(REGISTRY_ID) Integer registryId,
-            @PathVariable String resourceType,
+            @PathVariable("resourceType") String resourceType,
             @RequestBody EhrIdentifier ehrIdentifier) {
         IQuery iQuery = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId)).search()
                 .forResource(resourceType);
@@ -99,7 +99,7 @@ public class FhirClientController {
 //
 //    }
     @GetMapping("/smart-test/{keyId}")
-    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable String keyId) {
+    public ResponseEntity<String> searchFhirResourceFromIIS(@PathVariable("keyId") String keyId) {
         ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
         immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
         immunizationRegistry.setIisUsername(keyId);
@@ -371,10 +371,10 @@ public class FhirClientController {
             REGISTRY_PATH + "/operation/{target}/{targetId}/{operationType}",
     })
     public ResponseEntity<Object> operation(
-            @PathVariable String operationType,
+            @PathVariable("operationType") String operationType,
             @PathVariable(REGISTRY_ID) Integer registryId,
-            @PathVariable String target,
-            @PathVariable Optional<String> targetId,
+            @PathVariable("target") String target,
+            @PathVariable("targetId") Optional<String> targetId,
             @RequestParam Map<String, String> allParams) {
 
         IBaseParameters parameters;
