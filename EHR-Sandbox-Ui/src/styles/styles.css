@@ -179,6 +179,12 @@ tr.element-row:not(.expanded-row):active {
   box-sizing: border-box;
 }
 
+.textarea-container pre {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .textarea-container button {
   position: absolute;
   top: 0;
