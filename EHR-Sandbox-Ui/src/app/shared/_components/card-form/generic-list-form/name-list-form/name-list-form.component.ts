@@ -16,6 +16,11 @@ export class NameListFormComponent extends GenericListFormComponent<EhrHumanName
     { type: FormType.text, title: 'Last Name', attributeName: 'nameLast' },
     { type: FormType.text, title: 'Prefix', attributeName: 'namePrefix' },
     { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
-    { type: FormType.code, title: 'Type', attributeName: 'nameType', codeMapLabel: "PERSON_NAME_TYPE" },
+    {
+      type: FormType.code, title: 'Type', attributeName: 'nameType', codeMapLabel: "PERSON_NAME_TYPE", options: [
+        { code: "NB", display: 'Newborn Name' },
+        { code: "TEST", display: 'Test' }
+      ]
+    },
   ]
 }

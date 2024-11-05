@@ -25,6 +25,7 @@ import java.util.Optional;
 @Service
 public class HL7printer {
 
+    public static final String NEWBORN = "NB";
     Logger logger = LoggerFactory.getLogger(HL7printer.class);
 
     @Autowired
@@ -785,18 +786,25 @@ public class HL7printer {
     }
 
     private static void printName(StringBuilder sb, EhrHumanName ehrHumanName) {
+
         if (ehrHumanName != null) {
+            String nameType = ehrHumanName.getNameType();
+            if (ProcessingFlavor.LIGUAL.isActive()) {
+                nameType = "L";
+            } else if (ProcessingFlavor.BABYNAME.isActive()) {
+                if (ehrHumanName.getNameFirst().toUpperCase().contains("BABY BOY") ||
+                        ehrHumanName.getNameFirst().toUpperCase().contains("BABY GIRL") || ehrHumanName.getNameFirst().toUpperCase().equals("BABY")) {
+                    nameType = NEWBORN;
+                } else if (ehrHumanName.getNameFirst().toUpperCase().contains("TEST")) {
+                    nameType = "TEST";
+                }
+            }
             sb.append(ehrHumanName.getNameLast()).append("^")
                     .append(ehrHumanName.getNameFirst()).append("^")
                     .append(ehrHumanName.getNameMiddle()).append("^")
                     .append(ehrHumanName.getNameSuffix()).append("^")
                     .append(ehrHumanName.getNamePrefix()).append("^")
-                    .append("^");
-            if (!ProcessingFlavor.LIGUAL.isActive()) {
-                sb.append(ehrHumanName.getNameType());
-            } else {
-                sb.append("L");
-            }
+                    .append("^").append(nameType);
         }
     }
 

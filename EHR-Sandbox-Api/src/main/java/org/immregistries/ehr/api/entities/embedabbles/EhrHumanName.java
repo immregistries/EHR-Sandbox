@@ -5,6 +5,10 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class EhrHumanName {
+//    Flavor, locks model as legal name,
+//     for messaging :
+//    BABY BOY or GIRLS  set up as newborn name type
+//    TEST as TestName type
 
     @Column(name = "name_prefix", length = 250)
     private String namePrefix = "";

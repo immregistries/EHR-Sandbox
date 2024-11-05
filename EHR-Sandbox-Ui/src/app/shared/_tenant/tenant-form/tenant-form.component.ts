@@ -86,6 +86,10 @@ export class TenantFormComponent implements OnInit {
       name: 'BIZNESS',
       description: '(Incoming) Uses local id in mappings instead of business identifier'
     },
+    {
+      name: 'BABYNAME',
+      description: "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"
+    },
   ]
 }
 
