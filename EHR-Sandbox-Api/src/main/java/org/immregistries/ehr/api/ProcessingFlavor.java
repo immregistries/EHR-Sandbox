@@ -13,7 +13,7 @@ import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
 public enum ProcessingFlavor {
     NO_DEPRECATED("NO_DEPRECATED", "Excludes deprecated fields from codesets in forms and tables"),
     LOTTERY("LOTTERY", "Use external API to verify Lot Number validity in forms"),
-    LIGUAL("LIGUAL", "Sets all name types as legal"),
+    //    LIGUAL("LIGUAL", "Sets all name types as legal"),
     BIZNESS("BIZNESS", "(Incoming) Uses local id in FHIR references instead of business identifier"),
     R5("R5", "Missing non-critical required fields", true),
     R4("R4", "(In progress, might break some functionalities) Use Fhir R4 version"),
@@ -64,6 +64,8 @@ public enum ProcessingFlavor {
                 } else if (label.startsWith(key + "_")
                         || label.endsWith("_" + key)
                         || label.indexOf("_" + key + "_") > 0) {
+                    processingFlavorSet.add(ps);
+                } else if (label.equals(key)) {
                     processingFlavorSet.add(ps);
                 }
             }
