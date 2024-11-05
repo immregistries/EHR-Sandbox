@@ -1,19 +1,34 @@
-<div class="generic-list-form-content" *ngFor="let item of model; let i = index">
-  {{baseForm.title + (i + 1) + ':'}}
-  <span *ngFor="let formItem of FORMS">
-    <!-- When overriding, All fields required only applied to first value -->
-    <app-card-form class="card-form high-density" [baseForm]="formItem" [model]="item[formItem.attributeName]"
-                   (modelChange)="item[formItem.attributeName] = $event; modelChange.emit(model)"
-                   [overrideNoFieldsRequired]="overrideNoFieldsRequired"
-                   [overrideAllFieldsRequired]="i === 0 ? overrideAllFieldsRequired : false"></app-card-form>
-  </span>
-  <button mat-stroked-button type="button" (click)="removeItem(i)" color="primary">
-    <mat-icon>remove</mat-icon>
-    Remove {{baseForm.title + (i + 1)}}
-  </button>
+<span *ngIf="!single_mode;else single">
 
-</div>
-<button mat-stroked-button type="button" (click)="addItem()" color="primary">
-  <mat-icon>add</mat-icon>
-  Add {{baseForm.title}}
-</button>
+  <div class="generic-list-form-content" *ngFor="let item of model; let i = index">
+    {{baseForm.title + (i + 1) + ':'}}
+    <span *ngFor="let formItem of FORMS">
+      <!-- When overriding, All fields required only applied to first value -->
+      <app-card-form class="card-form high-density" [baseForm]="formItem" [model]="item[formItem.attributeName]"
+                     (modelChange)="item[formItem.attributeName] = $event; modelChange.emit(model)"
+                     [overrideNoFieldsRequired]="overrideNoFieldsRequired"
+                     [overrideAllFieldsRequired]="i === 0 ? overrideAllFieldsRequired : false"></app-card-form>
+    </span>
+    <button mat-stroked-button type="button" (click)="removeItem(i)" color="primary">
+      <mat-icon>remove</mat-icon>
+      Remove {{baseForm.title + (i + 1)}}
+    </button>
+  </div>
+  <button mat-stroked-button type="button" (click)="addItem()" color="primary">
+    <mat-icon>add</mat-icon>
+    Add {{baseForm.title}}
+  </button>
+</span>
+
+<ng-template #single>
+  <div class="generic-list-form-content">
+    <span *ngFor="let formItem of FORMS">
+      <!-- When overriding, All fields required only applied to first value -->
+      <app-card-form class="card-form high-density" [baseForm]="formItem"
+                     [model]="model? model[0][formItem.attributeName] : ''"
+                     (modelChange)="model ? (model[0][formItem.attributeName] = $event) : ''; modelChange.emit(model)"
+                     [overrideNoFieldsRequired]="overrideNoFieldsRequired"
+                     [overrideAllFieldsRequired]="overrideAllFieldsRequired"></app-card-form>
+    </span>
+  </div>
+</ng-template>

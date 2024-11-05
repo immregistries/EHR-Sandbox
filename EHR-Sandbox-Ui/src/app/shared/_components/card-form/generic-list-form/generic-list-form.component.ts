@@ -72,6 +72,9 @@ export class GenericListFormComponent<T> extends AbstractBaseFormComponent imple
     }
   }
 
+  @Input()
+  public single_mode: boolean = false
+
   FORMS!: GenericForm<T>[];
   /** example of an empty object used to prevent adding new item when last is still empty */
   EMPTY_VALUE: string = '{}';

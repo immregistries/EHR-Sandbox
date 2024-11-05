@@ -17,7 +17,8 @@ public enum ProcessingFlavor {
     BIZNESS("BIZNESS", "(Incoming) Uses local id in FHIR references instead of business identifier"),
     R5("R5", "Missing non-critical required fields", true),
     R4("R4", "(In progress, might break some functionalities) Use Fhir R4 version"),
-    BABYNAME("BABYNAME", "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages");
+    BABYNAME("BABYNAME", "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"),
+    SINGLENAME("SINGLENAME", "Only allow single Name for patients in forms, Name type set to Legal by default");
 
     private String key;
     private String description;

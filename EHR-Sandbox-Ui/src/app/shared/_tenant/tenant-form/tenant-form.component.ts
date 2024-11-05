@@ -90,6 +90,10 @@ export class TenantFormComponent implements OnInit {
       name: 'BABYNAME',
       description: "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"
     },
+    {
+      name: 'SINGLENAME',
+      description: "Only allow single Name for patients in forms, Name type set to Legal by default"
+    },
   ]
 }
 
