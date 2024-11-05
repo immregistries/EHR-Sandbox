@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Tenant } from 'src/app/core/_model/rest';
+import { Flavor, Tenant } from 'src/app/core/_model/rest';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 
@@ -28,6 +28,10 @@ export class TenantFormComponent implements OnInit {
     } else {
       this.tenant = { id: -1 }
     }
+
+    this.tenantService.readAllFlavors().subscribe((flavors) => {
+      this.flavorList = flavors
+    })
   }
 
   ngOnInit(): void {
@@ -69,32 +73,33 @@ export class TenantFormComponent implements OnInit {
     }
   }
 
-  readonly FLAVORS = [
-    {
-      name: 'NO_DEPRECATED',
-      description: 'excludes deprecated fields from codesets in forms and tables'
-    },
-    {
-      name: 'LOTTERY',
-      description: 'Use external API to verify Lot Number validity in forms'
-    },
-    {
-      name: 'R4',
-      description: '(In progress, might break some functionalities) Use Fhir R4 version'
-    },
-    {
-      name: 'BIZNESS',
-      description: '(Incoming) Uses local id in mappings instead of business identifier'
-    },
-    {
-      name: 'BABYNAME',
-      description: "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"
-    },
-    {
-      name: 'SINGLENAME',
-      description: "Only allow single Name for patients in forms, Name type set to Legal by default"
-    },
-  ]
+  flavorList!: Flavor[];
+  // = [
+  //   {
+  //     key: 'NO_DEPRECATED',
+  //     description: 'excludes deprecated fields from codesets in forms and tables'
+  //   },
+  //   {
+  //     key: 'LOTTERY',
+  //     description: 'Use external API to verify Lot Number validity in forms'
+  //   },
+  //   {
+  //     key: 'R4',
+  //     description: '(In progress, might break some functionalities) Use Fhir R4 version'
+  //   },
+  //   {
+  //     key: 'BIZNESS',
+  //     description: '(Incoming) Uses local id in mappings instead of business identifier'
+  //   },
+  //   {
+  //     key: 'BABYNAME',
+  //     description: "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"
+  //   },
+  //   {
+  //     key: 'SINGLENAME',
+  //     description: "Only allow single Name for patients in forms, Name type set to Legal by default"
+  //   },
+  // ]
 }
 
 

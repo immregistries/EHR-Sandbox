@@ -23,11 +23,11 @@
         <mat-list-item>
           Flavors: activate options by including keywords in name
         </mat-list-item>
-        <mat-list-item *ngFor="let flavor of FLAVORS">
-          <span matListItemTitle>{{flavor.name}}</span>
+        <mat-list-item *ngFor="let flavor of flavorList">
+          <span matListItemTitle>{{flavor.key}}</span>
           <span matListItemLine>{{flavor.description}}</span>
           <span matListItemMeta><button mat-stroked-button type="button"
-                                        (click)="append(flavor.name)">Append</button></span>
+                                        (click)="append(flavor.key)">Append</button></span>
         </mat-list-item>
       </mat-list>
     </mat-card-content>

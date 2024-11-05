@@ -284,3 +284,9 @@ export interface Revisions<T> {
   latestRevision: Revision<T>,
   empty: boolean
 }
+
+
+export interface Flavor {
+  key: string,
+  description: string,
+}

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Tenant } from '../_model/rest';
+import { Flavor, Tenant } from '../_model/rest';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
@@ -46,4 +46,10 @@ export class TenantService extends CurrentSelectedWithIdService<Tenant> {
       + '/tenants',
       tenant, { observe: 'response' });
   }
+
+  readAllFlavors(): Observable<Flavor[]> {
+    return this.http.get<Flavor[]>(
+      this.settings.getApiUrl() + '/flavors', httpOptions);
+  }
+
 }

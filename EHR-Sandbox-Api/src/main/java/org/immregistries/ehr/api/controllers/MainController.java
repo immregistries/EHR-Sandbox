@@ -2,8 +2,11 @@ package org.immregistries.ehr.api.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.ehr.CodeMapManager;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
@@ -93,5 +96,18 @@ public class MainController {
     @GetMapping("/healthy")
     public boolean healthy() {
         return true;
+    }
+
+
+    @GetMapping("/flavors")
+    public String flavors() {
+        JsonArray jsonArray = new JsonArray();
+        for (ProcessingFlavor flavor : ProcessingFlavor.values()) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("key", flavor.getKey());
+            jsonObject.addProperty("description", flavor.getDescription());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray.toString();
     }
 }
