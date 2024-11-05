@@ -789,9 +789,10 @@ public class HL7printer {
 
         if (ehrHumanName != null) {
             String nameType = ehrHumanName.getNameType();
-            if (ProcessingFlavor.LIGUAL.isActive()) {
-                nameType = "L";
-            } else if (ProcessingFlavor.BABYNAME.isActive()) {
+//            if (ProcessingFlavor.LIGUAL.isActive()) {
+//                nameType = "L";
+//            } else
+            if (ProcessingFlavor.BABYNAME.isActive()) {
                 if (ehrHumanName.getNameFirst().toUpperCase().contains("BABY BOY") ||
                         ehrHumanName.getNameFirst().toUpperCase().contains("BABY GIRL") || ehrHumanName.getNameFirst().toUpperCase().equals("BABY")) {
                     nameType = NEWBORN;
