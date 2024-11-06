@@ -292,8 +292,15 @@ public class HL7printer {
         // PID-5
 
         sb.append("|");
-        EhrHumanName ehrHumanName = patient.getNameFirst();
-        printName(sb, ehrHumanName);
+        {
+            Iterator<EhrHumanName> iterator = patient.getNames().iterator();
+            while (iterator.hasNext()) {
+                printName(sb, iterator.next());
+                if (iterator.hasNext()) {
+                    sb.append("~");
+                }
+            }
+        }
 
         // PID-6
         sb.append("|").append(patient.getMotherMaiden() == null ? "" : patient.getMotherMaiden()).append("^^^^^^M");
@@ -314,24 +321,23 @@ public class HL7printer {
         sb.append("|");
         {
             Iterator<EhrRace> iterator = patient.getRaces().iterator();
-            if (iterator.hasNext()) {
-                printCode(sb, iterator.next().getValue(), CodesetType.PATIENT_RACE, "0005");
-            }
+
             while (iterator.hasNext()) {
-                sb.append("~");
                 printCode(sb, iterator.next().getValue(), CodesetType.PATIENT_RACE, "0005");
+                if (iterator.hasNext()) {
+                    sb.append("~");
+                }
             }
         }
         // PID-11
         sb.append("|");
         {
             Iterator<EhrAddress> iterator = patient.getAddresses().iterator();
-            if (iterator.hasNext()) {
-                printXAD(sb, iterator.next());
-            }
             while (iterator.hasNext()) {
-                sb.append("~");
                 printXAD(sb, iterator.next());
+                if (iterator.hasNext()) {
+                    sb.append("~");
+                }
             }
         }
         // PID-12
@@ -340,12 +346,11 @@ public class HL7printer {
         sb.append("|");
         {
             Iterator<EhrPhoneNumber> iterator = patient.getPhones().iterator();
-            if (iterator.hasNext()) {
-                printXTN(sb, iterator.next());
-            }
             while (iterator.hasNext()) {
-                sb.append("~");
                 printXTN(sb, iterator.next());
+                if (iterator.hasNext()) {
+                    sb.append("~");
+                }
             }
             if (StringUtils.isNotBlank(patient.getEmail())) {
                 if (!patient.getPhones().isEmpty()) {
