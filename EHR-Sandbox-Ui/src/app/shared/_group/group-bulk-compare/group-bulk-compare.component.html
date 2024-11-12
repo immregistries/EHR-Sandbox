@@ -11,18 +11,21 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <!-- TODO Change argument for observable Source -->
-          <app-patient-table (selectEmitter)="patientSelected($event)"
-            [dataArray]="ehrGroup.patientList ?? []" [allow_create]="false"></app-patient-table>
+          <app-patient-table (selectEmitter)="patientSelected($event)" [dataArray]="ehrGroup.patientList ?? []"
+                             [allow_create]="false"></app-patient-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
-    <mat-grid-tile></mat-grid-tile>
+    <mat-grid-tile>
+      <app-patient-received-table []></app-patient-received-table>
+    </mat-grid-tile>
     <mat-grid-tile>
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <!-- TODO Change argument for observable Source -->
           <app-vaccination-table [patientId]="selectedPatient?.id ?? -1" [allow_create]="false"
-            (selectEmitter)="selectVaccination($event)" [dataArray]="localVaccinations"></app-vaccination-table>
+                                 (selectEmitter)="selectVaccination($event)"
+                                 [dataArray]="localVaccinations"></app-vaccination-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
@@ -31,8 +34,8 @@
         <mat-card-content class="dashboard-card-content">
           <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
           <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations" [patientId]="selectedPatient?.id"
-            [vaccinationToCompare]="selectedVaccination"
-            [localVaccinations]="localVaccinations"></app-vaccination-received-table>
+                                          [vaccinationToCompare]="selectedVaccination"
+                                          [localVaccinations]="localVaccinations"></app-vaccination-received-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

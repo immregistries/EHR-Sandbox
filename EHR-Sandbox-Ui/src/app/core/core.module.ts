@@ -24,7 +24,6 @@ import { AppRoutingModule } from '../app-routing.module';
 import { RefreshNotificationComponent } from './_components/refresh-notification/refresh-notification.component';
 import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pipe';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { RemoteGroupDashboardComponent } from './_components/remote-group-dashboard/remote-group-dashboard.component';
 import { JsonDialogService } from './_services/json-dialog.service';
 import { StepsComponent } from './_components/steps/steps.component';
 import { FhirBulkService } from './_services/_fhir/fhir-bulk.service';
@@ -54,7 +53,6 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     HomeComponent,
     DashboardComponent,
     RefreshNotificationComponent,
-    RemoteGroupDashboardComponent,
     StepsComponent,
     GroupStepsComponent,
   ],

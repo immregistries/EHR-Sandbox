@@ -58,7 +58,6 @@ import { RegistryNamePipe } from './_pipes/registry-name.pipe';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ClinicianSelectComponent } from './_components/card-form/clinician-select/clinician-select.component';
 import { ClinicianFormComponent } from './_clinician/clinician-form/clinician-form.component';
-import { RemoteGroupTableComponent } from './_components/remote-group-table/remote-group-table.component';
 import { PatientMatchComponent } from './_patient/patient-match/patient-match.component';
 import { PatientReceivedTableComponent } from './_patient/patient-received-table/patient-received-table.component';
 import { JsonDialogComponent } from './_components/json-dialog/json-dialog.component';
@@ -174,7 +173,6 @@ import { NameListFormComponent } from './_components/card-form/generic-list-form
     RegistryNamePipe,
     ClinicianSelectComponent,
     ClinicianFormComponent,
-    RemoteGroupTableComponent,
     PatientMatchComponent,
     PatientReceivedTableComponent,
     JsonDialogComponent,
@@ -357,7 +355,6 @@ import { NameListFormComponent } from './_components/card-form/generic-list-form
     CardFormComponent,
     ClinicianSelectComponent,
     ClinicianFormComponent,
-    RemoteGroupTableComponent,
     TabWithMenuComponent,
     ImmunizationRegistryDashboardComponent,
     Hl7MessagingComponent,

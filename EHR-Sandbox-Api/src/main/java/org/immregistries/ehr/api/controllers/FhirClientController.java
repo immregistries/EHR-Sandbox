@@ -184,7 +184,6 @@ public class FhirClientController {
     @PostMapping(PATIENT_ID_PATH + FHIR_CLIENT + "/$match")
     public ResponseEntity<List<String>> matchPatient(
             @PathVariable(TENANT_ID) Integer tenantId,
-
             @PathVariable(FACILITY_ID) Integer facilityId,
             @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable(PATIENT_ID) Integer patientId,

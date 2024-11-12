@@ -7,7 +7,6 @@ import { EhrPatient } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
-import { RemoteGroupService } from 'src/app/core/_services/remote-group.service';
 
 @Component({
   selector: 'app-patient-received-table',
@@ -22,7 +21,7 @@ import { RemoteGroupService } from 'src/app/core/_services/remote-group.service'
   ],
 })
 export class PatientReceivedTableComponent implements OnInit {
-  constructor(private remoteGroupService: RemoteGroupService,
+  constructor(
     private patientService: PatientService,
     private facilityService: FacilityService,
     private dialog: MatDialog,
@@ -126,17 +125,6 @@ export class PatientReceivedTableComponent implements OnInit {
     });
   }
 
-  public remove(element: GroupMember) {
-    if (element.id && this.group?.id) {
-      this.remoteGroupService.removeMember(this.group.id, element.id).subscribe(() => {
-        this.remoteGroupService.doRefresh()
-      })
-    } else if (this.group?.id) {
-      this.remoteGroupService.removeMember(this.group.id, undefined, element.entity.reference, element.entity.identifier).subscribe(() => {
-        this.remoteGroupService.doRefresh()
-      })
-    }
-  }
 
   extractMrn(element: EhrPatient): string {
     return element.identifiers?.find((identifier) => {
