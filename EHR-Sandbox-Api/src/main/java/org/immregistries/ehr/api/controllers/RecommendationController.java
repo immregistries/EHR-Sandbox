@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -55,8 +56,8 @@ public class RecommendationController {
         return ResponseEntity.ok(set);
     }
 
-    @GetMapping(PATIENT_ID_PATH + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$immds-forecast")
-    public String immdsForecastOperation(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable(PATIENT_ID) Integer patientId, @PathVariable(FACILITY_ID) Integer facilityId) {
+    @GetMapping(PATIENT_ID_PATH + FHIR_CLIENT + "/$immds-forecast")
+    public String immdsForecastOperation(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(PATIENT_ID) Integer patientId, @PathVariable(FACILITY_ID) Integer facilityId) {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistry);
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId).get();

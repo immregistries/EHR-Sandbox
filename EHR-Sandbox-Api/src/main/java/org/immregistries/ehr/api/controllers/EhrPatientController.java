@@ -234,12 +234,12 @@ public class EhrPatientController {
     @Autowired
     MatchAndEverythingService matchAndEverythingService;
 
-    @GetMapping(PATIENT_ID_SUFFIX + "/fhir-client" + REGISTRY_COMPLETE_SUFFIX + "/$fetchAndLoad")
+    @GetMapping(PATIENT_ID_SUFFIX + FHIR_CLIENT + "/$fetchAndLoad")
     public ResponseEntity<Set<VaccinationEvent>> fetchAndLoadImmunizationsFromIIS(
             @PathVariable(TENANT_ID) Integer tenantId,
             @PathVariable(FACILITY_ID) Integer facilityId,
             @PathVariable(PATIENT_ID) Integer patientId,
-            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam(REGISTRY_ID) Integer registryId,
             @RequestParam("_since") Optional<Long> _since) {
         return ResponseEntity.ok(matchAndEverythingService.fetchAndLoadImmunizationsFromIIS(facilityId, patientId, registryId, _since));
 //
@@ -258,8 +258,8 @@ public class EhrPatientController {
         return ResponseEntity.ok(queryConverter.convert(vxu));
     }
 
-    @PostMapping(PATIENT_ID_SUFFIX + "/qbp" + REGISTRY_COMPLETE_SUFFIX)
-    public ResponseEntity<String> qbpSend(@PathVariable(REGISTRY_ID) Integer registryId, @RequestBody String message) {
+    @PostMapping(PATIENT_ID_SUFFIX + "/qbp")
+    public ResponseEntity<String> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId, @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {

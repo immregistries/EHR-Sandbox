@@ -58,8 +58,8 @@ public class BulkImportController {
     FacilityRepository facilityRepository;
 
 
-    @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-synch")
-    public ResponseEntity<byte[]> bulkKickOffSynch(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
+    @GetMapping(FHIR_CLIENT_PATH + "/Group/{groupId}/$export-synch")
+    public ResponseEntity<byte[]> bulkKickOffSynch(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
             , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
             , @RequestParam(TYPE) Optional<String> _type
             , @RequestParam(SINCE) Optional<Date> _since
@@ -115,8 +115,8 @@ public class BulkImportController {
         }
     }
 
-    @GetMapping(REGISTRY_PATH + "/Group/{groupId}/$export-asynch")
-    public ResponseEntity<String> bulkKickOffAsynch(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
+    @GetMapping(FHIR_CLIENT_PATH + "/Group/{groupId}/$export-asynch")
+    public ResponseEntity<String> bulkKickOffAsynch(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
             , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
             , @RequestParam(TYPE) Optional<String> _type
             , @RequestParam(SINCE) Optional<Date> _since
@@ -131,7 +131,7 @@ public class BulkImportController {
         return ResponseEntity.internalServerError().body(response.getStatusInfo());
     }
 
-    public IHttpResponse bulkKickOffHttpResponse(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
+    public IHttpResponse bulkKickOffHttpResponse(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable("groupId") String groupId
             , @RequestParam(OUTPUT_FORMAT) Optional<String> _outputFormat
             , @RequestParam(TYPE) Optional<String> _type
             , @RequestParam(SINCE) Optional<Date> _since
@@ -173,8 +173,8 @@ public class BulkImportController {
 
     }
 
-    @GetMapping(REGISTRY_PATH + "/$export-status")
-    public ResponseEntity bulkCheckStatus(@PathVariable(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl) {
+    @GetMapping(FHIR_CLIENT_PATH + "/$export-status")
+    public ResponseEntity bulkCheckStatus(@RequestParam(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used is the one gotten from the kickoff, while authentication remains the same
@@ -284,8 +284,8 @@ public class BulkImportController {
     }
 
 
-    @DeleteMapping(REGISTRY_PATH + "/$export-status")
-    public ResponseEntity bulkDelete(@PathVariable(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl) {
+    @DeleteMapping(FHIR_CLIENT_PATH + "/$export-status")
+    public ResponseEntity bulkDelete(@RequestParam(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         HttpURLConnection con = null;
         URL url;
@@ -319,8 +319,8 @@ public class BulkImportController {
         }
     }
 
-    @GetMapping(REGISTRY_PATH + "/$export-result")
-    public ResponseEntity bulkResult(@PathVariable(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl, @RequestParam(LOAD_IN_FACILITY) Optional<Integer> loadInFacility) {
+    @GetMapping(FHIR_CLIENT_PATH + "/$export-result")
+    public ResponseEntity bulkResult(@RequestParam(REGISTRY_ID) Integer registryId, @RequestParam(CONTENT_URL) String contentUrl, @RequestParam(LOAD_IN_FACILITY) Optional<Integer> loadInFacility) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check
@@ -364,7 +364,7 @@ public class BulkImportController {
     }
 
     //    @GetMapping(PRIMAL_IMM_REGISTRY_SUFFIX + "/$export-result-view")
-    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(CONTENT_URL) String contentUrl) {
+    public ResponseEntity<Set<EhrEntity>> viewBulkResult(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(CONTENT_URL) String contentUrl) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<String>> result;
         // URL used obtain form the content check

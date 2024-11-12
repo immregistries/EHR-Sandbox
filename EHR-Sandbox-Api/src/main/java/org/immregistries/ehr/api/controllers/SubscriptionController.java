@@ -61,16 +61,16 @@ public class SubscriptionController {
         return ehrSubscription;
     }
 
-    @GetMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription/sample")
-    public ResponseEntity<String> getSample(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(REGISTRY_ID) Integer registryId) {
+    @GetMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription/sample")
+    public ResponseEntity<String> getSample(@PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(REGISTRY_ID) Integer registryId) {
         Facility facility = facilityRepository.findById(facilityId).get();
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
         return ResponseEntity.ok().body(fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
-    @PostMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription")
-    public Boolean subscribeToIISManualCreate(@PathVariable(REGISTRY_ID) Integer registryId, @RequestBody String stringBody) {
+    @PostMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription")
+    public Boolean subscribeToIISManualCreate(@RequestParam(REGISTRY_ID) Integer registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
@@ -79,8 +79,8 @@ public class SubscriptionController {
         return outcome.getCreated();
     }
 
-    @PutMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription")
-    public Boolean subscribeToIISManualUpdate(@PathVariable(REGISTRY_ID) Integer registryId, @RequestBody String stringBody) {
+    @PutMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription")
+    public Boolean subscribeToIISManualUpdate(@RequestParam(REGISTRY_ID) Integer registryId, @RequestBody String stringBody) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
@@ -89,8 +89,8 @@ public class SubscriptionController {
         return outcome.getCreated();
     }
 
-    @PostMapping(FACILITY_ID_PATH + REGISTRY_COMPLETE_SUFFIX + "/subscription/data-quality-issues")
-    public Boolean subscribeToIISFeedback(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam("groupId") Optional<String> groupId) {
+    @PostMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription/data-quality-issues")
+    public Boolean subscribeToIISFeedback(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam("groupId") Optional<String> groupId) {
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());

@@ -21,11 +21,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static org.immregistries.ehr.api.controllers.ControllerHelper.REGISTRY_ID;
-import static org.immregistries.ehr.api.controllers.ControllerHelper.REGISTRY_ID_SUFFIX;
+import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
-@RequestMapping("/registry")
+@RequestMapping(REGISTRY_PATH_HEADER)
 public class ImmunizationRegistryController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImmunizationRegistryController.class);

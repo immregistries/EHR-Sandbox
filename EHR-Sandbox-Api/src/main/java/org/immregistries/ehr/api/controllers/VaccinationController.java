@@ -168,8 +168,8 @@ public class VaccinationController {
         return ResponseEntity.ok(vxu);
     }
 
-    @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu" + REGISTRY_COMPLETE_SUFFIX)
-    public ResponseEntity<String> vxuSend(@PathVariable(REGISTRY_ID) Integer registryId, @PathVariable(VACCINATION_ID) Integer vaccinationId, @RequestBody String message) {
+    @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu")
+    public ResponseEntity<String> vxuSend(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(VACCINATION_ID) Integer vaccinationId, @RequestBody String message) {
         Connector connector;
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);

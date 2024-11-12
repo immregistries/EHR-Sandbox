@@ -47,7 +47,10 @@ public class ControllerHelper {
     public static final String REGISTRY_PATH_HEADER = "/" + REGISTRY_HEADER;
     public static final String REGISTRY_ID = "registryId";
     public static final String REGISTRY_ID_SUFFIX = "/{" + REGISTRY_ID + "}";
-    public static final String REGISTRY_COMPLETE_SUFFIX = REGISTRY_PATH_HEADER + REGISTRY_ID_SUFFIX;
-    public static final String REGISTRY_PATH = TENANT_ID_PATH + REGISTRY_COMPLETE_SUFFIX;
+
+    public static final String FHIR_CLIENT = "/" + "fhir-client";
+
+    public static final String FHIR_CLIENT_PATH = TENANT_ID_PATH + FHIR_CLIENT;
+
 
 }
