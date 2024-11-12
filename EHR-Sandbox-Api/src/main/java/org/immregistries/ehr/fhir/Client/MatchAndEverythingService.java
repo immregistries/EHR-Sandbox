@@ -19,6 +19,7 @@ import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
 import org.immregistries.ehr.logic.mapping.IPatientMapper;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,7 @@ public class MatchAndEverythingService {
 //        EhrIdentifier ehrIdentifier = ehrPatient.getMrnEhrIdentifier();
 
 //        IBaseBundle searchBaseBundle = client.search()
-//                .forResource("Patient")
+//                .forResource(MappingHelper.PATIENT)
 //                .where(Patient.IDENTIFIER.exactly().systemAndCode(ehrIdentifier.getSystem(), ehrIdentifier.getValue()))
 //                .returnBundle(IBaseBundle.class).execute();
 //        if (r4Flavor()) {
@@ -103,7 +104,7 @@ public class MatchAndEverythingService {
         Set<VaccinationEvent> set = new HashSet<>(everything.size());
 
         for (IDomainResource iDomainResource : everything) {
-            if (iDomainResource.fhirType().equals("Immunization")) {
+            if (iDomainResource.fhirType().equals(MappingHelper.IMMUNIZATION)) {
                 if (iDomainResource.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) != null) {
                     VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(iDomainResource);
                     vaccinationEvent.setPatient(ehrPatient);
@@ -235,6 +236,6 @@ public class MatchAndEverythingService {
             Integer registryId,
             IBaseResource patient) {
         return (IBaseBundle) fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId))
-                .operation().onType("Patient").named("match").withParameter(FhirComponentsDispatcher.parametersClass(), "resource", patient).returnResourceType(FhirComponentsDispatcher.bundleClass()).execute();
+                .operation().onType(MappingHelper.PATIENT).named("match").withParameter(FhirComponentsDispatcher.parametersClass(), "resource", patient).returnResourceType(FhirComponentsDispatcher.bundleClass()).execute();
     }
 }

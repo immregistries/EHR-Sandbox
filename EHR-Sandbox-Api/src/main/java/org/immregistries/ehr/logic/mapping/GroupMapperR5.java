@@ -84,7 +84,7 @@ public class GroupMapperR5 implements IGroupMapper<Group> {
         }
 
         group.setDescription(ehrGroup.getDescription());
-        group.setManagingEntity(new Reference().setType("Organization").setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR5()));
+        group.setManagingEntity(new Reference().setType(MappingHelper.ORGANIZATION).setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(ehrGroup.getFacility()).toR5()));
 //        Hibernate.initialize(ehrGroup.getEhrGroupCharacteristics());
         if (ehrGroup.getEhrGroupCharacteristics() != null) {
             for (EhrGroupCharacteristic ehrGroupCharacteristic : ehrGroup.getEhrGroupCharacteristics()) {

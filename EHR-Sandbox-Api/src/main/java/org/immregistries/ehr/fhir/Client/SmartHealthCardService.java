@@ -18,6 +18,7 @@ import org.immregistries.ehr.logic.IBundleImportService;
 import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR4;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,7 +209,7 @@ public class SmartHealthCardService {
         List<IDomainResource> list = iBundleImportService.domainResourcesFromBaseBundleEntries(fhirBundle);
         List<VaccinationEvent> vaccinationEvents = new ArrayList<>(5);
         for (IDomainResource iDomainResource : list) {
-            if (iDomainResource.fhirType().equals("Immunization")) {
+            if (iDomainResource.fhirType().equals(MappingHelper.IMMUNIZATION)) {
                 VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(iDomainResource);
                 vaccinationEvents.add(vaccinationEvent);
             }

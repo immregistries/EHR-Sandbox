@@ -48,7 +48,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         }
 
         if (Objects.nonNull(ehrPatient.getFacility())) {
-            p.setManagingOrganization(new Reference().setType("Organization").setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(ehrPatient.getFacility()).toR5())); // TODO include id ?
+            p.setManagingOrganization(new Reference().setType(MappingHelper.ORGANIZATION).setIdentifier(IOrganizationMapper.facilityIdToEhrIdentifier(ehrPatient.getFacility()).toR5())); // TODO include id ?
         }
 
         for (EhrHumanName name : ehrPatient.getNames()

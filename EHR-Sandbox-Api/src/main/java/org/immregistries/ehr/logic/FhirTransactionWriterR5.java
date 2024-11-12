@@ -75,7 +75,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
                 .setFullUrl("urn:uuid:" + UUID.randomUUID())
                 .setRequest(new Bundle.BundleEntryRequestComponent()
                         .setMethod(Bundle.HTTPVerb.PUT)
-                        .setUrl(IFhirTransactionWriter.identifierUrl("Organization", new EhrIdentifier(organization.getIdentifierFirstRep())))
+                        .setUrl(IFhirTransactionWriter.identifierUrl(MappingHelper.ORGANIZATION, new EhrIdentifier(organization.getIdentifierFirstRep())))
                 ).getFullUrl();
     }
 
@@ -84,8 +84,8 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         Bundle bundle = (Bundle) iBaseBundle;
         Patient patient = patientMapper.toFhir(ehrPatient);
         patient.setManagingOrganization(new Reference(organizationUrl));
-//            String patientRequestUrl = identifierUrl("Patient", patient.getIdentifierFirstRep());
-        String patientRequestUrl = "Patient";
+//            String patientRequestUrl = identifierUrl(MappingHelper.PATIENT, patient.getIdentifierFirstRep());
+        String patientRequestUrl = MappingHelper.PATIENT;
         Bundle.BundleEntryComponent patientEntry = bundle.addEntry()
                 .setFullUrl("urn:uuid:" + UUID.randomUUID())
                 .setResource(patient)
@@ -102,7 +102,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         Immunization immunization = immunizationMapper.toFhir(vaccinationEvent,
                 resourceIdentificationService.getFacilityImmunizationIdentifierSystem(vaccinationEvent.getAdministeringFacility()));
         immunization.setPatient(new Reference(patientUrl));
-        String immunizationRequestUrl = "Immunization";
+        String immunizationRequestUrl = MappingHelper.IMMUNIZATION;
         Bundle.BundleEntryComponent entryComponent = bundle.addEntry()
                 .setFullUrl("urn:uuid:" + UUID.randomUUID())
                 .setResource(immunization)
@@ -128,7 +128,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         Bundle bundle = (Bundle) iBaseBundle;
 
         if (Objects.nonNull(clinician)) {
-            String practitionerRequestUrl = "Practitioner";
+            String practitionerRequestUrl = MappingHelper.PRACTITIONER;
             Practitioner practitioner = practitionerMapper.toFhir(clinician);
 
             return bundle.addEntry()

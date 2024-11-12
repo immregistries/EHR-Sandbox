@@ -68,7 +68,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
         i.setExpirationDate(vaccine.getExpirationDate());
 
         i.setManufacturer(new Reference()
-                .setType("Organisation")
+                .setType(MappingHelper.ORGANIZATION)
                 .setIdentifier(new Identifier()
                         .setSystem(MVX_SYSTEM)
                         .setValue(vaccine.getVaccineMvxCode())));

@@ -13,6 +13,7 @@ import org.hl7.fhir.r5.model.StringType;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,10 +127,10 @@ public class OperationOutcomeProviderR5 implements IResourceProvider, EhrFhirPro
                 String localUrl = resourceIdentificationService.getLocalUrnFromUrn(location.getValueNotNull(), immunizationRegistry, facility);
                 if (localUrl != null) {
                     String[] idArray = localUrl.split("/");
-                    if (idArray[0].equals("Patient")) {
+                    if (idArray[0].equals(MappingHelper.PATIENT)) {
                         patientRepository.findByFacilityIdAndId(facility.getId(), EhrUtils.convert(idArray[1]))
                                 .ifPresent(feedback::setPatient);
-                    } else if (idArray[0].equals("Immunization")) {
+                    } else if (idArray[0].equals(MappingHelper.IMMUNIZATION)) {
                         try {
                             Integer vaccinationId = EhrUtils.convert(idArray[1]);
                             Optional<VaccinationEvent> vaccinationEvent = vaccinationEventRepository.findByAdministeringFacilityIdAndId(facility.getId(), vaccinationId);

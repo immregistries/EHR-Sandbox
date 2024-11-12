@@ -7,6 +7,7 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationIdentifierRepository;
 import org.immregistries.ehr.api.repositories.PatientIdentifierRepository;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,9 +231,9 @@ public class ResourceIdentificationService {
         try {
             IdType idType = new IdType(urn);
             if (idType.getResourceType() != null) {
-                if (idType.getResourceType().equals("Patient")) {
+                if (idType.getResourceType().equals(MappingHelper.PATIENT)) {
                     return "Patient/" + this.getLocalPatientId(idType, immunizationRegistry);
-                } else if (idType.getResourceType().equals("Immunization")) {
+                } else if (idType.getResourceType().equals(MappingHelper.IMMUNIZATION)) {
                     return "Immunization/" + this.getImmunizationLocalId(new IdType(urn), immunizationRegistry);
                 }
             }
@@ -255,9 +256,9 @@ public class ResourceIdentificationService {
                     ehrIdentifier.setValue(identifierFirstPart);
                 }
 
-                if (prev.equals("Patient")) {
+                if (prev.equals(MappingHelper.PATIENT)) {
                     return "Patient/" + this.getLocalPatientId(ehrIdentifier, facility);
-                } else if (prev.equals("Immunization")) {
+                } else if (prev.equals(MappingHelper.IMMUNIZATION)) {
                     return "Immunization/" + this.getImmunizationLocalId(ehrIdentifier, facility);
                 }
             }

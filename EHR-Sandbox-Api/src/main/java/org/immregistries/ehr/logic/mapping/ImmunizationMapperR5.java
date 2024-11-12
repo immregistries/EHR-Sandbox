@@ -103,7 +103,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                         vaccine.getVaccineNdcCode(), NDC_SYSTEM, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE));
 
         i.setManufacturer(new CodeableReference(new Reference()
-                .setType("Organisation")
+                .setType(MappingHelper.ORGANIZATION)
                 .setIdentifier(new Identifier()
                         .setSystem(MVX_SYSTEM)
                         .setValue(vaccine.getVaccineMvxCode()))));

@@ -39,7 +39,7 @@ public class OrganizationMapperR4 implements IOrganizationMapper<Organization> {
     }
 
     public Reference facilityReference(Facility facility) {
-        return new Reference().setType("Organization").setIdentifier(new Identifier().setSystem(FACILITY_SYSTEM).setValue(EhrUtils.convert(facility.getId())));
+        return new Reference().setType(MappingHelper.ORGANIZATION).setIdentifier(new Identifier().setSystem(FACILITY_SYSTEM).setValue(EhrUtils.convert(facility.getId())));
     }
 
     public Identifier facilityIdentifier(Facility facility) {

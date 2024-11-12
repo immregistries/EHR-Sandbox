@@ -19,6 +19,7 @@ import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +154,7 @@ public class FhirClientController {
                 "-----END PRIVATE KEY-----\n");
         immunizationRegistry.setIisFacilityId("");
         IBaseBundle bundle = (IBaseBundle) fhirComponentsDispatcher.clientFactory().smartAuthClient(immunizationRegistry).search()
-                .forResource("Patient")
+                .forResource(MappingHelper.PATIENT)
                 .returnBundle(FhirComponentsDispatcher.bundleClass()).execute();
         return ResponseEntity.ok(fhirComponentsDispatcher.parser("").encodeResourceToString(bundle));
     }
@@ -203,7 +204,7 @@ public class FhirClientController {
         IBaseResource patient = parser.parseResource(message);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.updateOrCreate(patient,
-                "Patient",
+                MappingHelper.PATIENT,
                 fhirComponentsDispatcher.patientMapper().getPatientIdentifier(patient),
                 immunizationRegistry);
         /**
@@ -267,7 +268,7 @@ public class FhirClientController {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
             MethodOutcome outcome = resourceClient.updateOrCreate(immunization,
-                    "Immunization",
+                    MappingHelper.IMMUNIZATION,
                     fhirComponentsDispatcher.immunizationMapper().extractImmunizationIdentifier(immunization),
                     immunizationRegistry);
             /**
