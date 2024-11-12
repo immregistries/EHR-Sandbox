@@ -298,8 +298,8 @@ public class HL7printer {
                     if (!"L".equals(a.getNameType()) && !"L".equals(b.getNameType())) {
                         return 0;
                     } else if ("L".equals(a.getNameType()) || !"L".equals(b.getNameType())) {
-                        return 1;
-                    } else return -1;
+                        return -1;
+                    } else return 1;
                 }).iterator();
             }
 
