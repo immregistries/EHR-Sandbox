@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.security;
 
+import org.immregistries.ehr.logic.SpecialCharacterHandlerFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -36,6 +37,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public SpecialCharacterHandlerFilter specialCharacterHandlerFilter() {
+        return new SpecialCharacterHandlerFilter();
+    }
+
+    @Bean
     public AuthorizationPathFilter authorizationPathFilter() {
         return new AuthorizationPathFilter();
     }
@@ -54,7 +60,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthEntryPointJwt unauthorizedHandler, AuthenticationProvider authenticationProvider) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthEntryPointJwt unauthorizedHandler, AuthenticationProvider authenticationProvider, AuthenticationTokenFilter authenticationTokenFilter, AuthorizationPathFilter authorizationPathFilter, SpecialCharacterHandlerFilter specialCharacterHandlerFilter) throws Exception {
         http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider)
@@ -72,8 +78,9 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 );
 //        http.securityMatcher("/tenants")
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(authorizationPathFilter(), FilterSecurityInterceptor.class);
+        http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(authorizationPathFilter, FilterSecurityInterceptor.class);
+        http.addFilterAfter(specialCharacterHandlerFilter, FilterSecurityInterceptor.class);
         // ... other configuration
         return http.build();
     }
