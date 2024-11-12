@@ -19,6 +19,7 @@ public enum ProcessingFlavor {
     R4("R4", "(In progress, might break some functionalities) Use Fhir R4 version"),
     BABYNAME("BABYNAME", "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"),
     GLOTTOPHOBIA("GLOTTOPHOBIA", "Accents adn special characters like ñéë are converted to ASCII"),
+    UPPERCASE("UPPERCASE", "Converts all names to uppercase before sending to demonstrate incompatibility with case sensitivity in some systems."),
     SINGLENAME("SINGLENAME", "Only allow single Name for patients in forms, Name type set to Legal by default"),
     LEGALFIRST("LEGALFIRST", "Legal name is first in segment for Hl7v2");
 

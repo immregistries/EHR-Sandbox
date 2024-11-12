@@ -200,6 +200,14 @@ public class EhrPatientController {
             nextOfKinRelationship.setNextOfKinRelationshipPK(new NextOfKinRelationshipPK());
             nextOfKinRelationship.getNextOfKin().setId(null);
         }
+        if (true) {
+            patient.getNames().stream().map(ehrHumanName -> {
+                ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());
+                ehrHumanName.setNameFirst(ehrHumanName.getNameFirst().toUpperCase());
+                ehrHumanName.setNameMiddle(ehrHumanName.getNameMiddle().toUpperCase());
+                return ehrHumanName;
+            });
+        }
         EhrPatient newEntity = ehrPatientRepository.save(patient);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

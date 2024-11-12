@@ -803,7 +803,13 @@ public class HL7printer {
 
     private static void printName(StringBuilder sb, EhrHumanName ehrHumanName) {
 
+
         if (ehrHumanName != null) {
+            if (ProcessingFlavor.UPPERCASE.isActive()) {
+                ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());
+                ehrHumanName.setNameFirst(ehrHumanName.getNameFirst().toUpperCase());
+                ehrHumanName.setNameMiddle(ehrHumanName.getNameMiddle().toUpperCase());
+            }
             String nameType = ehrHumanName.getNameType();
 //            if (ProcessingFlavor.LIGUAL.isActive()) {
 //                nameType = "L";

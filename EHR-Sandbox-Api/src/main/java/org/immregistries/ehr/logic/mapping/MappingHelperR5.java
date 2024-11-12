@@ -5,6 +5,7 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrHumanName;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
@@ -128,14 +129,19 @@ public class MappingHelperR5 extends MappingHelper {
     }
 
 
-    public static HumanName toFhirName(EhrHumanName name) {
+    public static HumanName toFhirName(EhrHumanName ehrHumanName) {
+        if (ProcessingFlavor.UPPERCASE.isActive()) {
+            ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());
+            ehrHumanName.setNameFirst(ehrHumanName.getNameFirst().toUpperCase());
+            ehrHumanName.setNameMiddle(ehrHumanName.getNameMiddle().toUpperCase());
+        }
         HumanName humanName = new HumanName()
-                .setFamily(name.getNameLast())
-                .addGiven(name.getNameFirst())
-                .addGiven(name.getNameMiddle())
-                .addSuffix(name.getNameSuffix())
-                .addPrefix(name.getNamePrefix());
-        if (StringUtils.isNotBlank(name.getNameType())) {
+                .setFamily(ehrHumanName.getNameLast())
+                .addGiven(ehrHumanName.getNameFirst())
+                .addGiven(ehrHumanName.getNameMiddle())
+                .addSuffix(ehrHumanName.getNameSuffix())
+                .addPrefix(ehrHumanName.getNamePrefix());
+        if (StringUtils.isNotBlank(ehrHumanName.getNameType())) {
             humanName.setUse(HumanName.NameUse.OFFICIAL); // TODO MAPPING
         }
         return humanName;
