@@ -290,12 +290,23 @@ public class HL7printer {
         // PID-4
         sb.append("|");
         // PID-5
-
         sb.append("|");
         {
             Iterator<EhrHumanName> iterator = patient.getNames().iterator();
+            if (ProcessingFlavor.LEGALFIRST.isActive()) {
+                iterator = patient.getNames().stream().sorted((a, b) -> {
+                    if (!"L".equals(a.getNameType()) && !"L".equals(b.getNameType())) {
+                        return 0;
+                    } else if ("L".equals(a.getNameType()) || !"L".equals(b.getNameType())) {
+                        return 1;
+                    } else return -1;
+                }).iterator();
+            }
+
+
             while (iterator.hasNext()) {
-                printName(sb, iterator.next());
+                EhrHumanName ehrHumanName = iterator.next();
+                printName(sb, ehrHumanName);
                 if (iterator.hasNext()) {
                     sb.append("~");
                 }
