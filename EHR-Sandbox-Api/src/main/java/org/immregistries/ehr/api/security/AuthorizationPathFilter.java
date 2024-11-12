@@ -19,6 +19,8 @@ import java.util.Scanner;
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 public class AuthorizationPathFilter extends OncePerRequestFilter {
+    public static final String TENANT_NAME_REQUEST_ATTRIBUTE = "TENANT_NAME";
+    public static final String TENANT_ID_REQUEST_ATTRIBUTE = "TENANT_ID";
     Logger logger = LoggerFactory.getLogger(AuthorizationPathFilter.class);
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -104,8 +106,8 @@ public class AuthorizationPathFilter extends OncePerRequestFilter {
                     checkIfPotentialValidId(tenantId);
                     Tenant tenant = tenantRepository.findByIdAndUserId(tenantId, userId)
                             .orElseThrow(() -> new InvalidRequestException("Invalid tenant id"));
-                    request.setAttribute("TENANT_ID", tenant.getId());
-                    request.setAttribute("TENANT_NAME", tenant.getNameDisplay());
+                    request.setAttribute(TENANT_ID_REQUEST_ATTRIBUTE, tenant.getId());
+                    request.setAttribute(TENANT_NAME_REQUEST_ATTRIBUTE, tenant.getNameDisplay());
                 }
             }
             if (item.equals(FACILITY_HEADER)) {
