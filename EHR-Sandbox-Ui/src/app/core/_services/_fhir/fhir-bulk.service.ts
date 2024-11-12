@@ -39,7 +39,7 @@ export class FhirBulkService extends IdUrlVerifyingService {
       return of("")
     }
     return this.http.get(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/Group/${groupId}/$export-synch?${paramsString}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/fhir-client/Group/${groupId}/$export-synch?${paramsString}&registryId=${registryId}`,
       {
         ...httpOptions,
         responseType: 'text',
@@ -54,7 +54,7 @@ export class FhirBulkService extends IdUrlVerifyingService {
       return of("")
     }
     return this.http.get(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/Group/${groupId}/$export-asynch?${paramsString}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/fhir-client/Group/${groupId}/$export-asynch?${paramsString}&registryId=${registryId}`,
       {
         ...httpOptions,
         responseType: 'text',
@@ -70,10 +70,13 @@ export class FhirBulkService extends IdUrlVerifyingService {
       return of("")
     }
     return this.http.get(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/$export-status`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/fhir-client/$export-status`,
       {
         ...httpOptions,
         responseType: 'text',
+        params: {
+          registryId: registryId
+        }
       });
 
 
@@ -86,12 +89,13 @@ export class FhirBulkService extends IdUrlVerifyingService {
       return of("")
     }
     return this.http.delete(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/$export-status`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/fhir-client/$export-status`,
       {
         ...httpOptions,
         responseType: 'text',
         params: {
-          contentUrl: contentUrl
+          contentUrl: contentUrl,
+          registryId: registryId
         }
       });
   }
@@ -108,23 +112,25 @@ export class FhirBulkService extends IdUrlVerifyingService {
         return of("")
       }
       return this.http.get(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/$export-result`,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/fhir-client/$export-result`,
         {
           ...httpOptions,
           responseType: 'text',
           params: {
             contentUrl: contentUrl,
-            loadInFacility: facilityId
+            loadInFacility: facilityId,
+            registryId: registryId
           }
         });
     } else {
       return this.http.get(
-        `${this.settings.getApiUrl()}/tenants/${tenantId}/registry/${registryId}/$export-result`,
+        `${this.settings.getApiUrl()}/tenants/${tenantId}/fhir-client/$export-result`,
         {
           ...httpOptions,
           responseType: 'text',
           params: {
-            contentUrl: contentUrl
+            contentUrl: contentUrl,
+            registryId: registryId
           }
         });
     }
@@ -136,7 +142,12 @@ export class FhirBulkService extends IdUrlVerifyingService {
     const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, body, httpOptions);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/$loadNdJson`, body, {
+      ...httpOptions,
+      params: {
+        registryId: registryId
+      }
+    });
   }
 
   // viewResult(url: string): Observable<string> {
@@ -145,7 +156,7 @@ export class FhirBulkService extends IdUrlVerifyingService {
   //   const facilityId: number = this.facilityService.getCurrentId()
 
   //   return this.http.post<string>(
-  //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadNdJson`, url);
+  //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/$loadNdJson`, url);
   // }
 
   loadJson(body: string): Observable<string> {
@@ -154,6 +165,10 @@ export class FhirBulkService extends IdUrlVerifyingService {
     const facilityId: number = this.facilityService.getCurrentId()
 
     return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/$loadJson`, body);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/$loadJson`, body, {
+      params: {
+        registryId: registryId
+      }
+    });
   }
 }

@@ -316,7 +316,7 @@ public class FhirClientController {
 
     @PostMapping(FHIR_CLIENT_PATH)
     public ResponseEntity<String> postResource(
-            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam(REGISTRY_ID) Integer registryId,
             @RequestParam(name = "type") String type,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
@@ -332,7 +332,7 @@ public class FhirClientController {
 
     @PutMapping(FHIR_CLIENT_PATH)
     public ResponseEntity<String> putResource(
-            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam(REGISTRY_ID) Integer registryId,
             @RequestParam("type") String type,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
@@ -349,7 +349,7 @@ public class FhirClientController {
     //    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")
     @PostMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/$transaction")
     public ResponseEntity<String> transaction(
-            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam(REGISTRY_ID) Integer registryId,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseBundle bundle = (IBaseBundle) parser.parseResource(message);
@@ -369,7 +369,7 @@ public class FhirClientController {
     })
     public ResponseEntity<Object> operation(
             @PathVariable("operationType") String operationType,
-            @PathVariable(REGISTRY_ID) Integer registryId,
+            @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable("target") String target,
             @PathVariable("targetId") Optional<String> targetId,
             @RequestParam Map<String, String> allParams) {

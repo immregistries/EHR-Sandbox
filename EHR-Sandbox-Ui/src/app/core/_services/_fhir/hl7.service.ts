@@ -67,9 +67,13 @@ export class Hl7Service {
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId = this.registryService.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu/registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
       vxu,
-      { ...httpOptions, responseType: 'text' });
+      {
+        ...httpOptions,
+        responseType: 'text',
+        params: { registryId: registryId }
+      });
   }
 
   /**
@@ -84,9 +88,13 @@ export class Hl7Service {
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId = this.registryService.getCurrentId()
     return this.http.post(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp/registry/${registryId}`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp`,
       qbp,
-      { ...httpOptions, responseType: 'text' });
+      {
+        ...httpOptions,
+        responseType: 'text',
+        params: { registryId: registryId }
+      });
   }
 
 }

@@ -22,7 +22,7 @@ export class SubscriptionService {
     return this.refresh.asObservable();
   }
 
-  public doRefresh(): void{
+  public doRefresh(): void {
     this.refresh.next(!this.refresh.value)
   }
 
@@ -31,7 +31,7 @@ export class SubscriptionService {
     private facilityService: FacilityService,
     private tenantService: TenantService,
     private registryService: ImmunizationRegistryService) {
-      this.refresh = new BehaviorSubject<boolean>(false)
+    this.refresh = new BehaviorSubject<boolean>(false)
   }
 
   createSubscription(): Observable<boolean | null> {
@@ -39,8 +39,11 @@ export class SubscriptionService {
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.registryService.getCurrentId()
     return this.http.post<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/subscription/data-quality-issues`,
-      httpOptions);
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription/data-quality-issues`,
+      {
+        ...httpOptions,
+        params: { registryId: registryId }
+      });
   }
 
   postSubscription(subscription: string): Observable<string> {
@@ -48,18 +51,24 @@ export class SubscriptionService {
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.registryService.getCurrentId()
     return this.http.post<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/subscription`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription`,
       subscription,
-      httpOptions);
+      {
+        ...httpOptions,
+        params: { registryId: registryId }
+      });
   }
   putSubscription(subscription: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.registryService.getCurrentId()
     return this.http.put<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/subscription`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription`,
       subscription,
-      httpOptions);
+      {
+        ...httpOptions,
+        params: { registryId: registryId }
+      });
   }
 
   readSubscription(): Observable<EhrSubscription> {
@@ -81,8 +90,11 @@ export class SubscriptionService {
       return of()
     }
     return this.http.get<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/registry/${registryId}/subscription/sample`,
-      httpOptions).pipe(share());
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription/sample`,
+      {
+        ...httpOptions,
+        params: { registryId: registryId }
+      }).pipe(share());
   }
 
 }
