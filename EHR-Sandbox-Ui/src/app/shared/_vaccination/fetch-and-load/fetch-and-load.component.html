@@ -4,10 +4,8 @@
   <mat-toolbar color="basic">
     <!-- <span style="flex: 1 1 auto;"></span> -->
     <app-immunization-registry-menu></app-immunization-registry-menu>
-    <button mat-raised-button
-            matTooltip="Fetch and merge remote vaccination history, using $match and $everything operations"
-            color="basic"
-            (click)="loadEverythingFromPatient()">
+    <button mat-raised-button matTooltip="Fetch remote vaccination history, using $match and $everything operations"
+            color="basic" (click)="loadEverythingFromPatient()">
       <mat-icon>cloud_download</mat-icon>
       $match->$everything
     </button>

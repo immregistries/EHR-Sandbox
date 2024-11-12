@@ -63,7 +63,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
     private vaccinationService: VaccinationService,
     vaccineComparePipe: VaccinationComparePipe,
     @Optional() public _dialogRef: MatDialogRef<VaccinationFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent, changePrimarySourceToFalse?: Boolean }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccination?: VaccinationEvent, comparedVaccination?: VaccinationEvent }) {
     if (data) {
       this.patientId = data.patientId;
       if (data.vaccination) {
@@ -73,9 +73,6 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
         this.isEditionMode = true
         if (data.comparedVaccination) {
           this.compareTo = vaccineComparePipe.transform(this.vaccination, data.comparedVaccination)
-        }
-        if (data.changePrimarySourceToFalse === true) {
-          this.vaccination.primarySource = false;
         }
       }
     }

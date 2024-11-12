@@ -158,16 +158,18 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
   }
 
 
-  openMerge(element: VaccinationEvent) {
+  openMerge(remote: VaccinationEvent) {
+    let element = JSON.parse(JSON.stringify(remote))
     element.id = this.vaccinationToCompare ? this.vaccinationToCompare.id : undefined
-    // element.primarySource = falset TODO talk about it in a meeting
+    element.primarySource = false
+    // TODO Information source
     const dialogRef = this.dialog.open(VaccinationFormComponent, {
       maxWidth: '98vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: { patientId: this.patientId, vaccination: element, comparedVaccination: this.vaccinationToCompare, changePrimarySourceToFalse: true },
+      data: { patientId: this.patientId, vaccination: element, comparedVaccination: this.vaccinationToCompare },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
