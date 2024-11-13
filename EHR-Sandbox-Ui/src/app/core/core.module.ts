@@ -35,6 +35,7 @@ import { GroupStepsComponent } from './_components/group-steps/group-steps.compo
 import { firstValueFrom } from 'rxjs';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PatientComparePipe } from '../shared/_pipes/patient-compare.pipe';
 
 
 
@@ -98,6 +99,7 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     DashboardComponent,
   ],
   providers: [
+    PatientComparePipe,
     VaccinationComparePipe,
     SettingsService,
     PatientService,

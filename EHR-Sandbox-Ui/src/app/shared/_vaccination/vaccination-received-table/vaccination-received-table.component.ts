@@ -22,7 +22,7 @@ import { MatTableDataSource } from '@angular/material/table';
     ]),
   ],
 })
-export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit {
+export class VaccinationReceivedTableComponent implements AfterViewInit {
   private codeBaseMap!: CodeBaseMap;
 
   columns: (keyof VaccinationEvent | keyof Vaccine | "alerts" | "index" | "match")[] = [
@@ -39,9 +39,7 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
 
   expandedElement: VaccinationEvent | null = null;
   dataSource = new MatTableDataSource<VaccinationEvent>([]);
-  // matchingMatrix: {[index: string]: string[]} = {}
   matchingMatrix: {}[][] = []
-
 
   private _localVaccinations!: VaccinationEvent[];
   @Input()
@@ -89,14 +87,6 @@ export class VaccinationReceivedTableComponent implements OnInit, AfterViewInit 
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
     public vaccinationComparePipe: VaccinationComparePipe) { }
-
-  ngOnInit(): void {
-    // this.patientService.getCurrentObservable().subscribe(patient => {
-    //   this.vaccinationService.readVaccinations(patient?.id ?? -1).subscribe(res => {
-    //     this.localVaccinations = res
-    //   })
-    // })
-  }
 
   ngAfterViewInit(): void {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {

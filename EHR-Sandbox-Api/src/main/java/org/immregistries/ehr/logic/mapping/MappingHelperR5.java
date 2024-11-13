@@ -117,6 +117,9 @@ public class MappingHelperR5 extends MappingHelper {
     }
 
     public static String toEhrSex(Enumerations.AdministrativeGender gender) {
+        if (gender == null) {
+            return "";
+        }
         switch (gender) {
             case MALE:
                 return MALE_SEX;
