@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.controllers;
 
 import jakarta.transaction.Transactional;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
@@ -248,7 +249,12 @@ public class EhrPatientController {
 
     @GetMapping(PATIENT_ID_SUFFIX + "/qbp")
     public ResponseEntity<String> qbp(@PathVariable(PATIENT_ID) Integer patientId) {
-        QueryConverter queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
+        QueryConverter queryConverter;
+        if (ProcessingFlavor.Z44.isActive()) {
+            queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z44);
+        } else {
+            queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
+        }
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
 //        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientId(patientId);

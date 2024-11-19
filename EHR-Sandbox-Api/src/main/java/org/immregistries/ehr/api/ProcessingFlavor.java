@@ -17,6 +17,7 @@ public enum ProcessingFlavor {
     BIZNESS("BIZNESS", "(Incoming) Uses local id in FHIR references instead of business identifier"),
     R5("R5", "Missing non-critical required fields", true),
     R4("R4", "(In progress, might break some functionalities) Use Fhir R4 version"),
+    Z44("Z44", "Use Z44 profile for QBP instead of default Z34"),
     BABYNAME("BABYNAME", "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"),
     GLOTTOPHOBIA("GLOTTOPHOBIA", "Accents adn special characters like ñéë are converted to ASCII"),
     UPPERCASE("UPPERCASE", "Converts all names to uppercase before sending to demonstrate incompatibility with case sensitivity in some systems."),
