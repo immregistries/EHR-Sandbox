@@ -127,6 +127,8 @@ import { PatientCachePipe } from './_pipes/patient-cache.pipe';
 import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import/smart-health-link-import.component';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { NameListFormComponent } from './_components/card-form/generic-list-form/name-list-form/name-list-form.component';
+import { AckDisplayComponent } from './_fhir/ack-display/ack-display.component';
+import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
 
 @NgModule({
   declarations: [
@@ -230,6 +232,7 @@ import { NameListFormComponent } from './_components/card-form/generic-list-form
     SmartHealthLinkImportComponent,
 
     NameListFormComponent,
+    AckDisplayComponent,
   ],
   imports: [
     CommonModule,
@@ -375,6 +378,7 @@ import { NameListFormComponent } from './_components/card-form/generic-list-form
     QRCodeModule,
     SmartHealthLinkImportComponent,
     NameListFormComponent,
+    AckDisplayComponent,
   ],
 })
 export class SharedModule { }

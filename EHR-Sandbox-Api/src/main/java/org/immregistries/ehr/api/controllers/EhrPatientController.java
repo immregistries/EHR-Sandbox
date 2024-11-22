@@ -17,6 +17,7 @@ import org.immregistries.ehr.logic.RecommendationService;
 import org.immregistries.ehr.logic.mapping.ImmunizationMapperR5;
 import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
+import org.immregistries.smm.tester.manager.HL7Reader;
 import org.immregistries.smm.tester.manager.query.QueryConverter;
 import org.immregistries.smm.tester.manager.query.QueryType;
 import org.slf4j.Logger;
@@ -32,10 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -261,11 +259,15 @@ public class EhrPatientController {
 //        Vaccine vaccine = vaccinationEvent.getVaccine()
         Facility facility = ehrPatient.getFacility();
         String vxu = hl7printer.buildVxu(null, ehrPatient, facility);
-        return ResponseEntity.ok(queryConverter.convert(vxu));
+        String qbp = queryConverter.convert(vxu);
+        return ResponseEntity.ok(qbp);
     }
 
     @PostMapping(PATIENT_ID_SUFFIX + "/qbp")
-    public ResponseEntity<String> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId, @RequestBody String message) {
+    public ResponseEntity<?> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId,
+                                     @PathVariable(FACILITY_ID) Integer facilityId,
+                                     @PathVariable(PATIENT_ID) Integer patientId,
+                                     @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
@@ -273,7 +275,51 @@ public class EhrPatientController {
             connector.setUserid(immunizationRegistry.getIisUsername());
             connector.setPassword(immunizationRegistry.getIisPassword());
             connector.setFacilityid(immunizationRegistry.getIisFacilityId());
-            return ResponseEntity.ok(connector.submitMessage(message, false));
+            String ack = connector.submitMessage(message, false);
+            HL7Reader hl7Reader = new HL7Reader(ack);
+
+            Map<String, Map<String, ?>> map = new HashMap<>(4);
+            Map<String, Feedback> errors = new HashMap<>(4);
+            Map<String, Feedback> warnings = new HashMap<>(4);
+            Map<String, Feedback> notices = new HashMap<>(4);
+            Map<String, Feedback> infos = new HashMap<>(4);
+            Map<String, String> original = new HashMap<>(1);
+            original.put("code", ack);
+            map.put("ALL", original);
+            map.put("E", errors);
+            map.put("W", warnings);
+            map.put("N", notices);
+            map.put("I", infos);
+            while (hl7Reader.advanceToSegment("ERR")) {
+                String severity = hl7Reader.getValue(4);
+                Feedback feedback = new Feedback();
+                feedback.setIis(immunizationRegistry.getName());
+                feedback.setFacility(facilityRepository.findById(facilityId).orElse(null));
+                feedback.setPatient(ehrPatientRepository.findById(patientId).orElse(null));
+                feedback.setSeverity(severity);
+                feedback.setContent(hl7Reader.getOriginalSegment());
+                switch (severity) {
+                    case "E": {
+                        errors.put("code", feedback);
+                        break;
+                    }
+                    case "W": {
+                        warnings.put("code", feedback);
+                        break;
+                    }
+                    case "N": {
+                        notices.put("code", feedback);
+                        break;
+                    }
+                    case "I": {
+                        infos.put("code", feedback);
+                        break;
+                    }
+                }
+            }
+
+//            return ResponseEntity.ok(map);
+            return ResponseEntity.ok(ack);
         } catch (Exception e1) {
             e1.printStackTrace();
             return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

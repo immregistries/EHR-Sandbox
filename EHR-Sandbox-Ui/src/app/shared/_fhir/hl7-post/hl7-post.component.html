@@ -28,6 +28,11 @@
     </div>
   </div>
 
+  <div [style]="{width: '90%'}" class="w3-right">
+    <app-ack-display [loading]="resultLoading" [ack]="answer">
+    </app-ack-display>
+  </div>
+
   <div [style]="{width: '90%'}" class="w3-right textarea-container">
     <mat-progress-bar mode="query" *ngIf="resultLoading"></mat-progress-bar>
     <!-- <mat-option [value]="'Update'">Update</mat-option> -->
@@ -41,4 +46,3 @@
   </div>
 
 </form>
-

@@ -22,6 +22,8 @@
     "@angular/router": "^15.2.8",
     "@ngneat/reactive-forms": "^4.1.0",
     "@nx/angular": "19.0.8",
+    "@redoxengine/redox-hl7-v2": "^1.0.1",
+    "@rethinkhealth/hl7v2": "^0.0.14",
     "@types/fhir": "^0.0.36",
     "angular": "^1.8.3",
     "angularx-qrcode": "^15.0.1",
