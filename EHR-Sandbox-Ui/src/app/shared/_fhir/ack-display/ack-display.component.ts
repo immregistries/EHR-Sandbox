@@ -17,11 +17,10 @@ export class AckDisplayComponent {
   @Input()
   public set ack(value: string) {
     this._ack = value;
-    // this.message = new Message(value);
-    for (const segment of value.replace("\n", "\r").split("\r")) {
-      console.log(segment)
-      if (segment[0] === "ERR") {
-        switch (segment[5]) {
+    for (const segment of value.split("\n")) {
+      const values = segment.split("|")
+      if (values[0] === "ERR") {
+        switch (values[4]) {
           case "E": {
             this.errors.push(segment);
             break;
@@ -47,7 +46,6 @@ export class AckDisplayComponent {
       notices: this.notices,
       infos: this.infos
     }
-    console.log(this.errSegments)
   }
 
   @Input()
