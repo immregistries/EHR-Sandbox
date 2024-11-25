@@ -24,8 +24,18 @@ export class NextOfKinRelationshipListFormComponent extends GenericListFormCompo
   }
 
   override readonly FORMS: GenericForm<NextOfKinRelationship>[] = [
-    { type: FormType.code, title: 'Relationship', attributeName: 'relationshipKind', codeMapLabel: "PERSON_RELATIONSHIP", segmentRef: "NK1-3" },
-    { type: FormType.nextOfKin, title: 'Next of kin', attributeName: 'nextOfKin', segmentRef: "NK1" },
+    {
+      type: FormType.code, title: 'Relationship', attributeName: 'relationshipKind', codeMapLabel: "PERSON_RELATIONSHIP", hl7Location: {
+        segmentId: "NK1",
+        fieldPosition: 3
+      }
+    },
+    {
+      type: FormType.nextOfKin, title: 'Next of kin', attributeName: 'nextOfKin',
+      hl7Location: {
+        segmentId: "NK1",
+      }
+    },
   ]
 
 }

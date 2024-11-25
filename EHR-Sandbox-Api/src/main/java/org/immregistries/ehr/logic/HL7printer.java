@@ -26,6 +26,11 @@ import java.util.Optional;
 public class HL7printer {
 
     public static final String NEWBORN = "NB";
+    public static final String BABY_BOY = "BABY BOY";
+    public static final String BABY_GIRL = "BABY GIRL";
+    public static final String BABY = "BABY";
+    public static final String TEST = "TEST";
+    public static final String IMMIGRANT = "IMMIGRANT";
     Logger logger = LoggerFactory.getLogger(HL7printer.class);
 
     @Autowired
@@ -356,18 +361,18 @@ public class HL7printer {
         // PID-13
         sb.append("|");
         {
+//            if (StringUtils.isNotBlank(patient.getEmail())) {
+//                if (!patient.getPhones().isEmpty()) {
+//                    sb.append('~');
+//                }
+            printXtnEmail(sb, patient.getEmail());
+//            }
             Iterator<EhrPhoneNumber> iterator = patient.getPhones().iterator();
             while (iterator.hasNext()) {
                 printXTN(sb, iterator.next());
                 if (iterator.hasNext()) {
                     sb.append("~");
                 }
-            }
-            if (StringUtils.isNotBlank(patient.getEmail())) {
-                if (!patient.getPhones().isEmpty()) {
-                    sb.append('~');
-                }
-                printXtnEmail(sb, patient.getEmail());
             }
         }
         // PID-14
@@ -813,11 +818,13 @@ public class HL7printer {
 //                nameType = "L";
 //            } else
             if (ProcessingFlavor.BABYNAME.isActive()) {
-                if (ehrHumanName.getNameFirst().toUpperCase().contains("BABY BOY") ||
-                        ehrHumanName.getNameFirst().toUpperCase().contains("BABY GIRL") || ehrHumanName.getNameFirst().toUpperCase().equals("BABY")) {
+                if (ehrHumanName.getNameFirst().toUpperCase().contains(BABY_BOY) ||
+                        ehrHumanName.getNameFirst().toUpperCase().contains(BABY_GIRL) || ehrHumanName.getNameFirst().toUpperCase().equals(BABY)) {
                     nameType = NEWBORN;
-                } else if (ehrHumanName.getNameFirst().toUpperCase().contains("TEST")) {
-                    nameType = "TEST";
+                } else if (ehrHumanName.getNameFirst().toUpperCase().contains(TEST)) {
+                    nameType = TEST;
+                } else if (ehrHumanName.getNameFirst().toUpperCase().contains(IMMIGRANT)) {
+                    nameType = IMMIGRANT;
                 }
             }
             sb.append(ehrHumanName.getNameLast()).append("^")

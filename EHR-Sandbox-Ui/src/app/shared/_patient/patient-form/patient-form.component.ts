@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import { CodeReferenceTable } from "src/app/core/_model/code-base-map";
 import { PatientService } from 'src/app/core/_services/patient.service';
-import { BehaviorSubject } from 'rxjs';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -109,48 +107,127 @@ export class PatientFormComponent {
             nameSuffix: "",
             nameType: "L"
           }),
-          segmentRef: "PID-5"
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 5
+          }
         },
-        { type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden', segmentRef: "PID-6" },
-        { type: FormType.clinician, title: 'General Practitioner', attributeName: 'generalPractitioner', segmentRef: "PD1-4" },
+        {
+          type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 6
+          }
+        },
+        {
+          type: FormType.clinician, title: 'General Practitioner', attributeName: 'generalPractitioner',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 4
+          }
+        },
       ],
-      // segmentRef: "PID-5"
+      // hl7Location: "PID^5"
     },
     {
       title: 'Identifiers / Medical Record Number', cols: 1, rows: 1, forms: [
         // { type: FormType.text, title: 'Mrn Identifier', attributeName: 'mrn' },
         // { type: FormType.text, title: 'Mrn System', attributeName: 'mrnSystem' },
-        { type: FormType.identifiers, title: 'Identifier', attributeName: 'identifiers', defaultListEmptyValue: JSON.stringify({ value: "", system: "", type: "MR" }) },
-      ]
+        {
+          type: FormType.identifiers, title: 'Identifier', attributeName: 'identifiers', defaultListEmptyValue: JSON.stringify({ value: "", system: "", type: "MR" }),
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 3
+          }
+        },
+      ],
     },
     {
       title: 'Birth', cols: 1, rows: 1, forms: [
-        { type: FormType.date, title: 'Birth date', attributeName: 'birthDate', required: true, segmentRef: "PID-7" },
-        { type: FormType.yesNo, title: 'Multiple birth', attributeName: 'birthFlag', segmentRef: "PID-24" },
-        { type: FormType.short, title: 'Order', attributeName: 'birthOrder', segmentRef: "PID-25" },
+        {
+          type: FormType.date, title: 'Birth date', attributeName: 'birthDate', required: true,
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 7
+          }
+        },
+        {
+          type: FormType.yesNo, title: 'Multiple birth', attributeName: 'birthFlag',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 24
+          }
+        },
+        {
+          type: FormType.short, title: 'Order', attributeName: 'birthOrder',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 25
+          }
+        },
       ]
     },
     {
       title: 'Identity', cols: 1, rows: 1, forms: [
-        { type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX", segmentRef: "PID-8" },
+        {
+          type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX",
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 8
+          }
+        },
         {
           type: FormType.code, title: 'Ethnicity', attributeName: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY",
-          segmentRef: "PID-22"
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 22
+          }
         },
-        { type: FormType.races, title: 'Race', attributeName: 'races', defaultListEmptyValue: '{}', segmentRef: "PID-10" },
-      ], segmentRef: "PID-3"
+        {
+          type: FormType.races, title: 'Race', attributeName: 'races', defaultListEmptyValue: '{}',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 10
+          }
+        },
+      ], hl7Location: {
+        segmentId: "PID",
+        componentNumber: 3,
+      }
     },
     {
       title: 'Address', cols: 1, rows: 2, forms: [
-        { type: FormType.addresses, title: 'Address', attributeName: 'addresses', defaultListEmptyValue: '{}', segmentRef: "PID-11" },
+        {
+          type: FormType.addresses, title: 'Address', attributeName: 'addresses', defaultListEmptyValue: '{}',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 11
+          }
+        },
       ]
     },
     {
       title: 'Contact', cols: 1, rows: 1, forms: [
-        { type: FormType.text, title: 'Email', attributeName: 'email' },
-        { type: FormType.phoneNumbers, title: 'Phone', attributeName: 'phones', defaultListEmptyValue: '{}' },
+        {
+          type: FormType.text, title: 'Email', attributeName: 'email',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 10,
+            segmentSequence: 1
+          }
+        },
+        {
+          type: FormType.phoneNumbers, title: 'Phone', attributeName: 'phones', defaultListEmptyValue: '{}',
+          hl7Location: {
+            segmentId: "PID",
+            componentNumber: 10,
+          }
+        },
       ],
-      segmentRef: "PID-10"
+      hl7Location: {
+        segmentId: "PID",
+        componentNumber: 10,
+      }
     },
     {
       title: 'Death', cols: 1, rows: 1, forms: [
@@ -162,24 +239,60 @@ export class PatientFormComponent {
       title: 'Publicity', cols: 1, rows: 1,
       toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
       forms: [
-        { type: FormType.code, title: 'Indicator', attributeName: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY', segmentRef: "PD1-11" },
-        { type: FormType.date, title: 'Date', attributeName: 'publicityIndicatorDate', segmentRef: "PD1-18" },
+        {
+          type: FormType.code, title: 'Indicator', attributeName: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 11
+          }
+        },
+        {
+          type: FormType.date, title: 'Date', attributeName: 'publicityIndicatorDate',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 18
+          }
+        },
       ]
     },
     {
       title: 'Protection', cols: 1, rows: 1,
       toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
       forms: [
-        { type: FormType.yesNo, title: 'Indicator', attributeName: 'protectionIndicator', segmentRef: "PD1-12" },
-        { type: FormType.date, title: 'Date', attributeName: 'protectionIndicatorDate', segmentRef: "PD1-13" },
+        {
+          type: FormType.yesNo, title: 'Indicator', attributeName: 'protectionIndicator',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 12
+          }
+        },
+        {
+          type: FormType.date, title: 'Date', attributeName: 'protectionIndicatorDate',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 13
+          }
+        },
       ]
     },
     {
       title: 'Registry', cols: 1, rows: 1,
       toolTips: 'Current status of the patient in relation to the sending provider organization',
       forms: [
-        { type: FormType.code, title: 'Indicator', attributeName: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS', segmentRef: "PD1-16" },
-        { type: FormType.date, title: 'Date', attributeName: 'registryStatusIndicatorDate', segmentRef: "PD1-17" },
+        {
+          type: FormType.code, title: 'Indicator', attributeName: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 16
+          }
+        },
+        {
+          type: FormType.date, title: 'Date', attributeName: 'registryStatusIndicatorDate',
+          hl7Location: {
+            segmentId: "PD1",
+            componentNumber: 17
+          }
+        },
       ]
     },
 
@@ -191,7 +304,9 @@ export class PatientFormComponent {
     {
       title: 'Next of Kin', cols: 3, rows: 1, forms: [
         { type: FormType.nextOfKinRelationships, title: 'Next of kin', attributeName: 'nextOfKinRelationships' },
-      ], segmentRef: "NK1"
+      ], hl7Location: {
+        segmentId: "NK1"
+      }
     },
   ]
 }

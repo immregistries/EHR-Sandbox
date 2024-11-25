@@ -43,7 +43,7 @@ export declare interface FormCard {
   forms?: BaseForm[],
   vaccinationForms?: VaccinationForm[],
   vaccineForms?: VaccineForm[],
-  segmentRef?: string,
+  hl7Location?: Hl7Location,
 }
 
 
@@ -59,7 +59,19 @@ export declare interface BaseFormNoDisabled {
   customValidator?: ValidatorFn;
   customValidatorAsync?: AsyncValidatorFn;
   hintProducer?: (value?: string) => string;
-  segmentRef?: string,
+  hl7Location?: Hl7Location,
+}
+
+/**
+ * Structure will overflow from parent to child, consider segment id to be "default" when on atomic form definition
+ */
+export declare interface Hl7Location {
+  "segmentId": "PID" | "PD1" | "NK1" | "RXR" | "OBX" | "RXA" | "ORC",
+  "fieldPosition"?: number,
+  "componentNumber"?: number,
+  "subComponentNumber"?: number,
+  "segmentSequence"?: number,
+  "fieldRepetition"?: number,
 }
 
 

@@ -13,11 +13,43 @@ export class NameListFormComponent extends GenericListFormComponent<EhrHumanName
   constructor(private tenantService: TenantService) {
     super()
     this.FORMS = [
-      { type: FormType.text, title: 'First Name', attributeName: 'nameFirst', segmentRef: "PID-5.2" },
-      { type: FormType.text, title: 'Middle Name', attributeName: 'nameMiddle', segmentRef: "PID-5.3" },
-      { type: FormType.text, title: 'Last Name', attributeName: 'nameLast', segmentRef: "PID-5.1" },
-      { type: FormType.text, title: 'Prefix', attributeName: 'namePrefix', segmentRef: "PID-5.5" },
-      { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix', segmentRef: "PID-5.4" },
+      {
+        type: FormType.text, title: 'First Name', attributeName: 'nameFirst',
+        hl7Location: {
+          segmentId: "PID",
+          fieldPosition: 5,
+          componentNumber: 2
+        }
+      },
+      {
+        type: FormType.text, title: 'Middle Name', attributeName: 'nameMiddle',
+        hl7Location: {
+          segmentId: "PID",
+          fieldPosition: 5,
+          componentNumber: 3
+        }
+      },
+      {
+        type: FormType.text, title: 'Last Name', attributeName: 'nameLast', hl7Location: {
+          segmentId: "PID",
+          fieldPosition: 5,
+          componentNumber: 1
+        }
+      },
+      {
+        type: FormType.text, title: 'Prefix', attributeName: 'namePrefix', hl7Location: {
+          segmentId: "PID",
+          fieldPosition: 5,
+          componentNumber: 5
+        }
+      },
+      {
+        type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix', hl7Location: {
+          segmentId: "PID",
+          fieldPosition: 5,
+          componentNumber: 4
+        }
+      },
     ]
     tenantService.getCurrentObservable().subscribe((tenant) => {
       if (tenant.nameDisplay?.includes("SINGLENAME")) {
@@ -39,7 +71,12 @@ export class NameListFormComponent extends GenericListFormComponent<EhrHumanName
   readonly NAME_TYPE_FORM: GenericForm<EhrHumanName> = {
     type: FormType.code, title: 'Type', attributeName: 'nameType', codeMapLabel: "PERSON_NAME_TYPE", options: [
       { code: "NB", display: 'Newborn Name' },
-      { code: "TEST", display: 'Test' }
-    ]
+      { code: "TEST", display: 'Test' },
+      { code: "IMMIGRANT", display: 'Immigrant' }
+    ], hl7Location: {
+      segmentId: "PID",
+      fieldPosition: 5,
+      componentNumber: 7
+    }
   }
 }
