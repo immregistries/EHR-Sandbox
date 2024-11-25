@@ -108,11 +108,13 @@ export class PatientFormComponent {
             nameMiddle: "",
             nameSuffix: "",
             nameType: "L"
-          })
+          }),
+          segmentRef: "PID-5"
         },
-        { type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden' },
-        { type: FormType.clinician, title: 'General Practitioner', attributeName: 'generalPractitioner' },
-      ]
+        { type: FormType.text, title: 'Mother maiden name', attributeName: 'motherMaiden', segmentRef: "PID-6" },
+        { type: FormType.clinician, title: 'General Practitioner', attributeName: 'generalPractitioner', segmentRef: "PD1-4" },
+      ],
+      // segmentRef: "PID-5"
     },
     {
       title: 'Identifiers / Medical Record Number', cols: 1, rows: 1, forms: [
@@ -123,28 +125,32 @@ export class PatientFormComponent {
     },
     {
       title: 'Birth', cols: 1, rows: 1, forms: [
-        { type: FormType.date, title: 'Birth date', attributeName: 'birthDate', required: true },
-        { type: FormType.yesNo, title: 'Multiple birth', attributeName: 'birthFlag' },
-        { type: FormType.short, title: 'Order', attributeName: 'birthOrder' },
+        { type: FormType.date, title: 'Birth date', attributeName: 'birthDate', required: true, segmentRef: "PID-7" },
+        { type: FormType.yesNo, title: 'Multiple birth', attributeName: 'birthFlag', segmentRef: "PID-24" },
+        { type: FormType.short, title: 'Order', attributeName: 'birthOrder', segmentRef: "PID-25" },
       ]
     },
     {
       title: 'Identity', cols: 1, rows: 1, forms: [
-        { type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX" },
-        { type: FormType.code, title: 'Ethnicity', attributeName: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY" },
-        { type: FormType.races, title: 'Race', attributeName: 'races', defaultListEmptyValue: '{}' },
-      ]
+        { type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX", segmentRef: "PID-8" },
+        {
+          type: FormType.code, title: 'Ethnicity', attributeName: 'ethnicity', codeMapLabel: "PATIENT_ETHNICITY",
+          segmentRef: "PID-22"
+        },
+        { type: FormType.races, title: 'Race', attributeName: 'races', defaultListEmptyValue: '{}', segmentRef: "PID-10" },
+      ], segmentRef: "PID-3"
     },
     {
       title: 'Address', cols: 1, rows: 2, forms: [
-        { type: FormType.addresses, title: 'Address', attributeName: 'addresses', defaultListEmptyValue: '{}' },
+        { type: FormType.addresses, title: 'Address', attributeName: 'addresses', defaultListEmptyValue: '{}', segmentRef: "PID-11" },
       ]
     },
     {
       title: 'Contact', cols: 1, rows: 1, forms: [
         { type: FormType.text, title: 'Email', attributeName: 'email' },
         { type: FormType.phoneNumbers, title: 'Phone', attributeName: 'phones', defaultListEmptyValue: '{}' },
-      ]
+      ],
+      segmentRef: "PID-10"
     },
     {
       title: 'Death', cols: 1, rows: 1, forms: [
@@ -156,25 +162,24 @@ export class PatientFormComponent {
       title: 'Publicity', cols: 1, rows: 1,
       toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
       forms: [
-
-        { type: FormType.code, title: 'Indicator', attributeName: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY' },
-        { type: FormType.date, title: 'Date', attributeName: 'publicityIndicatorDate' },
+        { type: FormType.code, title: 'Indicator', attributeName: 'publicityIndicator', codeMapLabel: 'PATIENT_PUBLICITY', segmentRef: "PD1-11" },
+        { type: FormType.date, title: 'Date', attributeName: 'publicityIndicatorDate', segmentRef: "PD1-18" },
       ]
     },
     {
       title: 'Protection', cols: 1, rows: 1,
       toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
       forms: [
-        { type: FormType.yesNo, title: 'Indicator', attributeName: 'protectionIndicator' },
-        { type: FormType.date, title: 'Date', attributeName: 'protectionIndicatorDate' },
+        { type: FormType.yesNo, title: 'Indicator', attributeName: 'protectionIndicator', segmentRef: "PD1-12" },
+        { type: FormType.date, title: 'Date', attributeName: 'protectionIndicatorDate', segmentRef: "PD1-13" },
       ]
     },
     {
       title: 'Registry', cols: 1, rows: 1,
       toolTips: 'Current status of the patient in relation to the sending provider organization',
       forms: [
-        { type: FormType.code, title: 'Indicator', attributeName: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS' },
-        { type: FormType.date, title: 'Date', attributeName: 'registryStatusIndicatorDate' },
+        { type: FormType.code, title: 'Indicator', attributeName: 'registryStatusIndicator', codeMapLabel: 'REGISTRY_STATUS', segmentRef: "PD1-16" },
+        { type: FormType.date, title: 'Date', attributeName: 'registryStatusIndicatorDate', segmentRef: "PD1-17" },
       ]
     },
 
@@ -186,7 +191,7 @@ export class PatientFormComponent {
     {
       title: 'Next of Kin', cols: 3, rows: 1, forms: [
         { type: FormType.nextOfKinRelationships, title: 'Next of kin', attributeName: 'nextOfKinRelationships' },
-      ]
+      ], segmentRef: "NK1"
     },
   ]
 }

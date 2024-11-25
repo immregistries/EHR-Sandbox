@@ -802,8 +802,6 @@ public class HL7printer {
     }
 
     private static void printName(StringBuilder sb, EhrHumanName ehrHumanName) {
-
-
         if (ehrHumanName != null) {
             if (ProcessingFlavor.UPPERCASE.isActive()) {
                 ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());

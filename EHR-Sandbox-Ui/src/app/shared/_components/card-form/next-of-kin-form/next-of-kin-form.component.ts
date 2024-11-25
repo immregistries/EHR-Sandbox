@@ -18,16 +18,16 @@ export class NextOfKinFormComponent extends AbstractBaseFormComponent {
   modelChange: EventEmitter<NextOfKin> = new EventEmitter<NextOfKin>()
 
   readonly FORMS: GenericForm<NextOfKin>[] = [
-    { type: FormType.text, title: 'First name', attributeName: 'nameFirst' },
-    { type: FormType.text, title: 'Middle name', attributeName: 'nameMiddle' },
-    { type: FormType.text, title: 'Last name', attributeName: 'nameLast' },
-    { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
-    { type: FormType.text, title: 'Maiden Name', attributeName: 'motherMaiden' },
-    { type: FormType.date, title: 'Birth Date', attributeName: 'birthDate' },
-    { type: FormType.text, title: 'Email', attributeName: 'email' },
-    { type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX" },
-    { type: FormType.phoneNumbers, title: 'Phone', attributeName: 'phones' },
-    { type: FormType.addresses, title: 'Address', attributeName: 'addresses' },
+    { type: FormType.text, title: 'First name', attributeName: 'nameFirst', segmentRef: "NK1-2.2" },
+    { type: FormType.text, title: 'Middle name', attributeName: 'nameMiddle', segmentRef: "NK1-2.3" },
+    { type: FormType.text, title: 'Last name', attributeName: 'nameLast', segmentRef: "NK1-2.1" },
+    { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix', segmentRef: "NK1-2.4" },
+    { type: FormType.text, title: 'Maiden Name', attributeName: 'motherMaiden', segmentRef: "NK1-2.2" },
+    // { type: FormType.date, title: 'Birth Date', attributeName: 'birthDate' },
+    { type: FormType.text, title: 'Email', attributeName: 'email', segmentRef: "NK1-5[2]" },
+    // { type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX" },
+    { type: FormType.phoneNumbers, title: 'Phone', attributeName: 'phones', segmentRef: "NK1-5" },
+    { type: FormType.addresses, title: 'Address', attributeName: 'addresses', segmentRef: "NK1-4" },
     // Maiden name ---------- TODO
   ]
 

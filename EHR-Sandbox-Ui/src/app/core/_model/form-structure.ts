@@ -43,6 +43,7 @@ export declare interface FormCard {
   forms?: BaseForm[],
   vaccinationForms?: VaccinationForm[],
   vaccineForms?: VaccineForm[],
+  segmentRef?: string,
 }
 
 
@@ -58,6 +59,7 @@ export declare interface BaseFormNoDisabled {
   customValidator?: ValidatorFn;
   customValidatorAsync?: AsyncValidatorFn;
   hintProducer?: (value?: string) => string;
+  segmentRef?: string,
 }
 
 
