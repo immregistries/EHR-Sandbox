@@ -72,6 +72,14 @@ export declare interface Hl7Location {
   "fieldRepetition"?: number,
 }
 
+export declare interface AckSortedResults<T> {
+  errors: T[],
+  warnings: T[],
+  notices: T[],
+  infos: T[]
+}
+
+
 
 export declare interface BaseForm extends BaseFormNoDisabled {
   disabled?: boolean,

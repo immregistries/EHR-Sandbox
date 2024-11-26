@@ -12,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
@@ -91,11 +89,11 @@ public class FeedbackController {
     }
 
     @PostMapping({
-            FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER + "/extract-ack",
-            PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + "/extract-ack",
-            VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + "/extract-ack",
+            FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER + "/$extract-ack",
+            PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + "/$extract-ack",
+            VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + "/$extract-ack",
     })
-    public Map<String, Map<String, Feedback>> extractAckInfo(
+    public Map<String, List<Feedback>> extractAckInfo(
             @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable(FACILITY_ID) Integer facilityId,
             @PathVariable(PATIENT_ID) Optional<Integer> patientId,
@@ -103,15 +101,15 @@ public class FeedbackController {
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        Map<String, Map<String, Feedback>> map = new HashMap<>(4);
-        Map<String, Feedback> errors = new HashMap<>(4);
-        Map<String, Feedback> warnings = new HashMap<>(4);
-        Map<String, Feedback> notices = new HashMap<>(4);
-        Map<String, Feedback> infos = new HashMap<>(4);
-        map.put("E", errors);
-        map.put("W", warnings);
-        map.put("N", notices);
-        map.put("I", infos);
+        Map<String, List<Feedback>> map = new HashMap<>(4);
+        List<Feedback> errors = new ArrayList<>(4);
+        List<Feedback> warnings = new ArrayList<>(4);
+        List<Feedback> notices = new ArrayList<>(4);
+        List<Feedback> infos = new ArrayList<>(4);
+        map.put("errors", errors);
+        map.put("warnings", warnings);
+        map.put("notices", notices);
+        map.put("infos", infos);
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
@@ -124,19 +122,19 @@ public class FeedbackController {
 
             switch (severity) {
                 case "E": {
-                    errors.put("code", feedback);
+                    errors.add(feedback);
                     break;
                 }
                 case "W": {
-                    warnings.put("code", feedback);
+                    warnings.add(feedback);
                     break;
                 }
                 case "N": {
-                    notices.put("code", feedback);
+                    notices.add(feedback);
                     break;
                 }
                 case "I": {
-                    infos.put("code", feedback);
+                    infos.add(feedback);
                     break;
                 }
             }

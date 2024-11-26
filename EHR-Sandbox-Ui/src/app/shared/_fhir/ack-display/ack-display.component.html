@@ -13,33 +13,11 @@
   </mat-tab>
   <mat-tab *ngFor="let item of errSegments | keyvalue">
     <ng-template mat-tab-label>
-
       {{item.key | titlecase}}
       <mat-chip color='warn' [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
     </ng-template>
-    <p>{{item.value | json}}</p>
-    <!-- <app-feedback-table [patient]="patient" [vaccination]="vaccination" [dataArray]="item.value"></app-feedback-table> -->
+    <app-feedback-table [patient]="patient" [vaccination]="vaccination"
+                        [dataArray]="errFeedbacks[item.key]"></app-feedback-table>
+    <!-- <pre>{{item.value | json}}</pre> -->
   </mat-tab>
-  <!-- <mat-tab>
-    <ng-template mat-tab-label>
-
-      Warning
-      <mat-chip>0</mat-chip>
-    </ng-template>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-
-      Notice
-      <mat-chip>0</mat-chip>
-    </ng-template>
-
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-
-      Info
-      <mat-chip>0</mat-chip>
-    </ng-template>
-  </mat-tab> -->
 </mat-tab-group>

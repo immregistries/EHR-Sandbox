@@ -29,7 +29,8 @@
   </div>
 
   <div [style]="{width: '90%'}" class="w3-right">
-    <app-ack-display [loading]="resultLoading" [ack]="answer" [isError]="error">
+    <app-ack-display [loading]="resultLoading" [ack]="answer" [isError]="error"
+                     [registryId]="immunizationRegistryService.getCurrentId()">
     </app-ack-display>
   </div>
   <!--

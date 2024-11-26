@@ -8,6 +8,7 @@ import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 import { RefreshService } from './_abstract/refresh.service';
 import { SnackBarService } from './snack-bar.service';
+import { AckSortedResults } from '../_model/form-structure';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -67,6 +68,27 @@ export class FeedbackService extends RefreshService {
           httpOptions)
       } else {
         return of([])
+      }
+    }))
+  }
+
+  convertAck(ack: String, registryId: number): Observable<AckSortedResults<Feedback>> {
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      if (value === true) {
+        return this.http.post<AckSortedResults<Feedback>>(
+          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/feedbacks/$extract-ack`,
+          ack,
+          {
+            ...httpOptions,
+            params: { registryId: registryId }
+          })
+      } else {
+        return of({
+          errors: [],
+          warnings: [],
+          notices: [],
+          infos: []
+        })
       }
     }))
   }
