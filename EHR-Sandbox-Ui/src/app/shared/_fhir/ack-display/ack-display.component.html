@@ -16,7 +16,7 @@
       {{item.key | titlecase}}
       <mat-chip color='warn' [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
     </ng-template>
-    <app-feedback-table [patient]="patient" [vaccination]="vaccination"
+    <app-feedback-table [patient]="patient" [vaccination]="vaccination" [removeRefColumns]="true"
                         [dataArray]="errFeedbacks[item.key]"></app-feedback-table>
     <!-- <pre>{{item.value | json}}</pre> -->
   </mat-tab>

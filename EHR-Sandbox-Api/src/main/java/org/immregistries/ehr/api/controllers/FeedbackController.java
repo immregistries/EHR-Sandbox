@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
@@ -119,7 +120,8 @@ public class FeedbackController {
             vaccinationId.ifPresent(id -> feedback.setVaccinationEvent(vaccinationEventRepository.findById(id).orElse(null)));
             feedback.setSeverity(severity);
             feedback.setContent(hl7Reader.getOriginalSegment());
-
+            feedback.setCode(hl7Reader.getValue(5));
+            feedback.setTimestamp(new Timestamp(new Date().getTime()));
             switch (severity) {
                 case "E": {
                     errors.add(feedback);

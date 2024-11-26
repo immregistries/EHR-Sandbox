@@ -21,6 +21,7 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
 })
 export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements OnInit, AfterViewInit {
   // dataSource = new MatTableDataSource<Feedback>([]);
+  @Input() removeRefColumns: boolean = false;
 
   @Input() facility: Facility | null = null;
   private _patient?: EhrPatient | undefined;
@@ -99,10 +100,10 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
       "content",
       //  "remove",
     ]
-    if (this.patient) {
+    if (this.patient || this.removeRefColumns) {
       this.columns = this.columns.filter((attribute => attribute != "patient"))
     }
-    if (this.vaccination) {
+    if (this.vaccination || this.removeRefColumns) {
       this.columns = this.columns.filter((attribute => attribute != "vaccinationEvent"))
     }
   }
