@@ -31,11 +31,13 @@ public class Tenant extends EhrEntity {
     @OneToMany(mappedBy = "tenant")
 //    @JsonManagedReference("tenant-facility")
     @JsonIgnore()
+    @OrderBy("facility_id")
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "tenant")
 //    @JsonManagedReference("tenant-facility")
     @JsonIgnore()
+    @OrderBy("clinician_id")
     private Set<Clinician> clinicians = new LinkedHashSet<>();
 
     public Tenant() {

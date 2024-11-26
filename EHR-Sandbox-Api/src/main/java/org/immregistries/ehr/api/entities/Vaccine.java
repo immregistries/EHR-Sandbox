@@ -83,6 +83,7 @@ public class Vaccine {
 
 
     @OneToMany(mappedBy = "vaccine")
+    @OrderBy("vaccination_event_id")
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     public Set<VaccinationEvent> getVaccinationEvents() {

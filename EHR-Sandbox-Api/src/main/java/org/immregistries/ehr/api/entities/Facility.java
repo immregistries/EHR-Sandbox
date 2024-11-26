@@ -39,6 +39,7 @@ public class Facility extends EhrEntity {
 
     @OneToMany(mappedBy = "administeringFacility")
     @JsonIgnore()
+    @OrderBy("vaccination_event_id")
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,25 +52,30 @@ public class Facility extends EhrEntity {
 //    @JsonManagedReference("parent")
 //    @JsonIgnore()
 //    @JsonIdentityReference(alwaysAsId = true)
+    @OrderBy("facility_id")
     private Set<Facility> facilities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
 //    @JsonManagedReference("facility-patient")
     @JsonIgnore
+    @OrderBy("patient_id")
     private Set<EhrPatient> patients = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
 //    @JsonManagedReference( value = "facility-feedback")
     @JsonIgnore
+    @OrderBy("feedback_id")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "facility")
 //    @JsonManagedReference( value = "facility-feedback")
     @JsonIgnore
+    @OrderBy("group_id")
     private Set<EhrGroup> groups = new LinkedHashSet<>();
 
     @ElementCollection()
     @CollectionTable(name = "facility_identifiers", joinColumns = @JoinColumn(name = "facility_id"))
+    @OrderBy("identifier_type")
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     @JsonInclude()
@@ -80,6 +86,7 @@ public class Facility extends EhrEntity {
 
     @ElementCollection()
     @CollectionTable(name = "facility_addresses", joinColumns = @JoinColumn(name = "facility_id"))
+    @OrderBy("addressZip")
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
     public Set<EhrGroup> getGroups() {

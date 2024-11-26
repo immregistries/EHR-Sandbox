@@ -27,6 +27,7 @@ public class NextOfKinRelationship implements Serializable {
     @JoinColumn(name = "next_of_kin_id")
     private NextOfKin nextOfKin;
 
+    @Column(name = "relationship_kind")
     private String relationshipKind;
 
     public NextOfKinRelationship() {

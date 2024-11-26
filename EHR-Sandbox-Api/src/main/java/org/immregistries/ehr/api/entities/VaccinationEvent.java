@@ -67,6 +67,7 @@ public class VaccinationEvent extends EhrEntity {
     @OneToMany(mappedBy = "vaccinationEvent")
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     @NotAudited
+    @OrderBy("feedback_id")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Set<Feedback> getFeedbacks() {

@@ -25,10 +25,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
+    @OrderBy("immunization_registry_id")
     private Set<ImmunizationRegistry> immunizationRegistries = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
+    @OrderBy("tenant_id")
     private Set<Tenant> tenants = new LinkedHashSet<>();
 
     public Set<Tenant> getTenants() {

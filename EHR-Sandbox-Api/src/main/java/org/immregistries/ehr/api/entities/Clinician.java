@@ -50,30 +50,37 @@ public class Clinician extends EhrEntity {
 
     @OneToMany(mappedBy = "enteringClinician")
     @JsonIgnore
+    @OrderBy("immunization_registry_id")
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "orderingClinician")
     @JsonIgnore
+    @OrderBy("vaccination_event_id")
     private Set<VaccinationEvent> vaccinationEventsOrdering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "administeringClinician")
     @JsonIgnore
+    @OrderBy("vaccination_event_id")
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clinician_aphone", joinColumns = @JoinColumn(name = "clinician_id"))
+    @OrderBy("type")
     private Set<EhrPhoneNumber> aphones = new LinkedHashSet<>();
 
     @ElementCollection()
     @CollectionTable(name = "clinician_identifiers", joinColumns = @JoinColumn(name = "clinician_id"))
+    @OrderBy("identifier_type")
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clinician_phone", joinColumns = @JoinColumn(name = "clinician_id"))
+    @OrderBy("type")
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clinician_address", joinColumns = @JoinColumn(name = "clinician_id"))
+    @OrderBy("addressZip")
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
     public Tenant getTenant() {

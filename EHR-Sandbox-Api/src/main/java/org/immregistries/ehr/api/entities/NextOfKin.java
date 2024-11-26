@@ -57,6 +57,7 @@ public class NextOfKin {
 
     @ElementCollection()
     @CollectionTable(name = "next_of_kin_address", joinColumns = @JoinColumn(name = "next_of_kin_id"))
+    @OrderBy("addressZip")
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
 
     @Column(name = "email", length = 250)
@@ -67,6 +68,7 @@ public class NextOfKin {
 
     @ElementCollection()
     @CollectionTable(name = "next_of_kin_phone", joinColumns = @JoinColumn(name = "next_of_kin_id"))
+    @OrderBy("type")
     private Set<EhrPhoneNumber> phoneNumbers = new LinkedHashSet<>();
 
     public Set<EhrPhoneNumber> getPhoneNumbers() {

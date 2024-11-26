@@ -44,15 +44,18 @@ public class EhrGroup extends EhrEntity {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "patient_id"))
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @OrderBy("patient_id")
     private Set<EhrPatient> patientList;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "group_characteristics", joinColumns = @JoinColumn(name = "group_id"))
+    @OrderBy("characteristic_code_value")
     private Set<EhrGroupCharacteristic> ehrGroupCharacteristics = new LinkedHashSet<>();
 
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "group_identifiers", joinColumns = @JoinColumn(name = "group_id"))
+    @OrderBy("identifier_type")
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     public Set<EhrGroupCharacteristic> getEhrGroupCharacteristics() {

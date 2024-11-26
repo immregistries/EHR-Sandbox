@@ -38,6 +38,7 @@ public class EhrPatient extends EhrEntity {
     private Date birthDate;
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_names", joinColumns = @JoinColumn(name = "patient_name"))
+    @OrderBy("name_type")
     private Set<EhrHumanName> names;
     @Column(name = "mother_maiden", length = 250)
     private String motherMaiden = "";
@@ -45,12 +46,15 @@ public class EhrPatient extends EhrEntity {
     private String sex = "";
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_race", joinColumns = @JoinColumn(name = "patient_id"))
+    @OrderBy("race_value")
     private Set<EhrRace> races = new HashSet<EhrRace>();
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_address", joinColumns = @JoinColumn(name = "patient_id"))
+    @OrderBy("addressZip")
     private Set<EhrAddress> addresses = new LinkedHashSet<>();
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_phone", joinColumns = @JoinColumn(name = "patient_id"))
+    @OrderBy("patient_id")
     private Set<EhrPhoneNumber> phones = new LinkedHashSet<>();
     @Column(name = "email", length = 250)
     private String email = "";
@@ -88,6 +92,7 @@ public class EhrPatient extends EhrEntity {
 
     @OneToMany(mappedBy = "patient")
     @JsonIgnore
+    @OrderBy("vaccination_event_id")
     private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "ehrPatient", cascade = {CascadeType.ALL, CascadeType.MERGE}, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -98,10 +103,12 @@ public class EhrPatient extends EhrEntity {
 
     @OneToMany(mappedBy = "patient")
     @NotAudited
+    @OrderBy("feedback_id")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "patient_identifiers", joinColumns = @JoinColumn(name = "patient_id"))
+    @OrderBy("identifier_type")
     private Set<EhrIdentifier> identifiers = new LinkedHashSet<>();
 
     @NotAudited
@@ -110,6 +117,7 @@ public class EhrPatient extends EhrEntity {
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     @JsonIgnore
+    @OrderBy("group_id")
     private Set<EhrGroup> ehrGroups = new LinkedHashSet<>();
 
     @JsonInclude()
