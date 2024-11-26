@@ -258,67 +258,206 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
   readonly VACCINATION_FORM_CARDS: FormCard[] = [
     {
       title: "Vaccine", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.date, title: "Administered", attributeName: "administeredDate", required: true },
-        { type: FormType.text, title: "Amount Admininistered (mL)", attributeName: "administeredAmount" },
+        {
+          type: FormType.date, title: "Administered", attributeName: "administeredDate", required: true,
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 3
+          }
+        },
+        {
+          type: FormType.text, title: "Amount Admininistered (mL)", attributeName: "administeredAmount",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 6
+          }
+        },
       ], vaccinationForms: [
         {
-          type: FormType.select, title: "Record Nature", attributeName: "primarySource", options: [{ code: true, display: 'New Administration' }, { code: false, display: 'Historical' },]
+          type: FormType.select, title: "Record Nature", attributeName: "primarySource",
+          options: [
+            { code: true, display: 'New Administration' },
+            { code: false, display: 'Historical' },
+          ],
+          // hl7Location: {
+          //   segmentId: "",
+          //   componentNumber: 5
+          // }
         },
       ]
     },
     {
       title: "Codes", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Vaccine type (CVX)", attributeName: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true },
-        { type: FormType.code, title: "Unit of Use (NDC)", attributeName: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE" },
+        {
+          type: FormType.code, title: "Vaccine type (CVX)", attributeName: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true,
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 5
+          }
+        },
+        {
+          type: FormType.code, title: "Unit of Use (NDC)", attributeName: "vaccineNdcCode", codeMapLabel: "VACCINATION_NDC_CODE_UNIT_OF_USE",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 5
+          }
+        },
       ]
     },
     {
       title: "Request", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Information source", attributeName: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", required: true },
-        { type: FormType.code, title: "Action code", attributeName: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE" },
+        {
+          type: FormType.code, title: "Information source", attributeName: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", required: true,
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 9
+          }
+        },
+        {
+          type: FormType.code, title: "Action code", attributeName: "actionCode", codeMapLabel: "VACCINATION_ACTION_CODE",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 21
+          }
+        },
       ]
     },
     {
       title: "Lot", rows: 1, cols: 2, vaccineForms: [
-        { type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE" },
+        {
+          type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 17
+          }
+        },
         {
           type: FormType.text, title: "Lot number", attributeName: "lotNumber", codeMapLabel: "VACCINATION_LOT_NUMBER_PATTERN",
-          customValidatorAsync: this.lotNumberValidatorAsync, hintProducer: this.lotNumberHint
+          customValidatorAsync: this.lotNumberValidatorAsync,
+          hintProducer: this.lotNumberHint,
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 15
+          }
         },
-        { type: FormType.date, title: "Expiration date", attributeName: "expirationDate" },
+        {
+          type: FormType.date, title: "Expiration date", attributeName: "expirationDate",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 16
+          }
+        },
       ]
     },
     {
       title: "Funding", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Source", attributeName: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE" },
-        { type: FormType.code, title: "Financial status (Dose level accountability)", attributeName: "financialStatus", codeMapLabel: "FINANCIAL_STATUS_CODE" },
+        {
+          type: FormType.code, title: "Source", attributeName: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE",
+          hl7Location: {
+            segmentId: "OBX",
+            componentNumber: 5
+          }
+        },
+        {
+          type: FormType.code, title: "Financial status (Dose level accountability)", attributeName: "financialStatus", codeMapLabel: "FINANCIAL_STATUS_CODE",
+          hl7Location: {
+            segmentId: "OBX",
+            componentNumber: 5
+          }
+        },
       ]
     },
     {
       title: "Information Statement (VIS)", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Information Statement Document", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE" },
-        { type: FormType.date, title: "Presented date", attributeName: "informationStatementPresentedDate" },
-        { type: FormType.code, title: "Information Statement Cvx", attributeName: "informationStatementCvx", codeMapLabel: "VACCINATION_VIS_CVX_CODE" },
-        { type: FormType.date, title: "Published date", attributeName: "informationStatementPublishedDate" },
+        {
+          type: FormType.code, title: "Information Statement Document", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE",
+          hl7Location: {
+            segmentId: "OBX",
+            componentNumber: 5
+          }
+        },
+        {
+          type: FormType.date, title: "Presented date", attributeName: "informationStatementPresentedDate",
+          hl7Location: {
+            segmentId: "OBX",
+            componentNumber: 5
+          }
+        },
+        {
+          type: FormType.code, title: "Information Statement Cvx", attributeName: "informationStatementCvx", codeMapLabel: "VACCINATION_VIS_CVX_CODE",
+          hl7Location: {
+            segmentId: "OBX",
+            componentNumber: 5
+          }
+        },
+        {
+          type: FormType.date, title: "Published date", attributeName: "informationStatementPublishedDate",
+          hl7Location: {
+            segmentId: "OBX",
+            componentNumber: 5
+          }
+        },
       ], toolTips: "Preferred method for VXU reporting includes Document type and Presented Date, supporting deprecated method with CVX alongside Published and Presented Date"
     },
     {
       title: "Injection route", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Route", attributeName: "bodyRoute", codeMapLabel: "BODY_ROUTE" },
-        { type: FormType.code, title: "Site", attributeName: "bodySite", codeMapLabel: "BODY_SITE" },
+        {
+          type: FormType.code, title: "Route", attributeName: "bodyRoute", codeMapLabel: "BODY_ROUTE",
+          hl7Location: {
+            segmentId: "RXR",
+            componentNumber: 1
+          }
+        },
+        {
+          type: FormType.code, title: "Site", attributeName: "bodySite", codeMapLabel: "BODY_SITE",
+          hl7Location: {
+            segmentId: "RXR",
+            componentNumber: 2
+          }
+        },
       ]
     },
     {
       title: "Injection status", rows: 1, cols: 1, vaccineForms: [
-        { type: FormType.code, title: "Completion status", attributeName: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION" },
-        { type: FormType.code, title: "Refusal reason", attributeName: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL" },
+        {
+          type: FormType.code, title: "Completion status", attributeName: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 20
+          }
+        },
+        {
+          type: FormType.code, title: "Refusal reason", attributeName: "refusalReasonCode", codeMapLabel: "VACCINATION_REFUSAL",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 18
+          }
+        },
       ]
     },
     {
       title: "Clinicians", rows: 1, cols: 1, vaccinationForms: [
-        { type: FormType.clinician, title: "Entering", attributeName: "enteringClinician" },
-        { type: FormType.clinician, title: "Ordering", attributeName: "orderingClinician" },
-        { type: FormType.clinician, title: "Administering", attributeName: "administeringClinician" }
+        {
+          type: FormType.clinician, title: "Entering", attributeName: "enteringClinician",
+          hl7Location: {
+            segmentId: "ORC",
+            componentNumber: 10
+          }
+        },
+        {
+          type: FormType.clinician, title: "Ordering", attributeName: "orderingClinician",
+          hl7Location: {
+            segmentId: "ORC",
+            componentNumber: 12
+          }
+        },
+        {
+          type: FormType.clinician, title: "Administering", attributeName: "administeringClinician",
+          hl7Location: {
+            segmentId: "RXA",
+            componentNumber: 10
+          }
+        }
       ]
     },
     {

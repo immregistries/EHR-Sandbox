@@ -90,7 +90,7 @@ public class HL7printer {
                 sb.append(StringUtils.defaultIfBlank(vaccine.getAdministeredAmount(), ""));
                 // RXA-7
                 sb.append("|");
-                if (StringUtils.isNotBlank(vaccine.getInformationStatement())) {
+                if (StringUtils.isNotBlank(vaccine.getAdministeredAmount())) {
                     sb.append("mL^milliliters^UCUM");
                 }
             }
@@ -163,8 +163,6 @@ public class HL7printer {
                 printCode(sb, vaccine.getBodySite(), CodesetType.BODY_SITE, "HL70163");
                 sb.append("\r");
             }
-
-            codeMap.getCodesForTable(CodesetType.OBSERVATION_IDENTIFIER);
 
             obsSubId++;
             {
