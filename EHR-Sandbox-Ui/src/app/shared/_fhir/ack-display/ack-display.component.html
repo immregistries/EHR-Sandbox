@@ -1,9 +1,21 @@
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  <mat-tab label="Raw ACK">
+    <div class="textarea-container">
+      <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+      <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+      <textarea [ngClass]="resultClass()" [rows]="6" [style]="{width: '100%'}" readonly name="answer">{{ack}}</textarea>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="ack"
+              (click)="snackBarService.successMessage('Copied to clipBoard')">
+        <mat-icon>content_copy</mat-icon>
+        Copy
+      </button>
+    </div>
+  </mat-tab>
   <mat-tab *ngFor="let item of errSegments | keyvalue">
     <ng-template mat-tab-label>
 
       {{item.key | titlecase}}
-      <mat-chip>{{item.value.length}}</mat-chip>
+      <mat-chip color='warn' [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
     </ng-template>
     <p>{{item.value | json}}</p>
     <!-- <app-feedback-table [patient]="patient" [vaccination]="vaccination" [dataArray]="item.value"></app-feedback-table> -->

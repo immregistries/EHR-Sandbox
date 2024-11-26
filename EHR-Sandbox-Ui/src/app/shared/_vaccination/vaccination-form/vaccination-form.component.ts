@@ -13,7 +13,6 @@ import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import FormType, { ComparisonResult, FormCard } from 'src/app/core/_model/form-structure';
 import { TenantService } from 'src/app/core/_services/tenant.service';
-import { error } from 'console';
 
 @Component({
   selector: 'app-vaccination-form',
@@ -281,7 +280,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
           ],
           // hl7Location: {
           //   segmentId: "",
-          //   componentNumber: 5
+          //   componentNumber:
           // }
         },
       ]

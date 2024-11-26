@@ -29,13 +29,12 @@
   </div>
 
   <div [style]="{width: '90%'}" class="w3-right">
-    <app-ack-display [loading]="resultLoading" [ack]="answer">
+    <app-ack-display [loading]="resultLoading" [ack]="answer" [isError]="error">
     </app-ack-display>
   </div>
-
+  <!--
   <div [style]="{width: '90%'}" class="w3-right textarea-container">
     <mat-progress-bar mode="query" *ngIf="resultLoading"></mat-progress-bar>
-    <!-- <mat-option [value]="'Update'">Update</mat-option> -->
     <textarea [ngClass]="resultClass()" [rows]="6" [style]="{width: '100%'}" readonly
               name="answer">{{answer}}</textarea>
     <button mat-stroked-button type="button" [cdkCopyToClipboard]="answer"
@@ -43,6 +42,6 @@
       <mat-icon>content_copy</mat-icon>
       Copy
     </button>
-  </div>
+  </div> -->
 
 </form>

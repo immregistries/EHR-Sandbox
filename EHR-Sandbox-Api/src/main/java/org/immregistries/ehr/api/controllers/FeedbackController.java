@@ -1,11 +1,10 @@
 package org.immregistries.ehr.api.controllers;
 
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Feedback;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.ImmunizationRegistryService;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.smm.tester.manager.HL7Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
@@ -26,7 +27,7 @@ public class FeedbackController {
 
     public static final String FEEDBACKS_PATH_HEADER = "/feedbacks";
     @Autowired
-    private EhrPatientRepository patientRepository;
+    private EhrPatientRepository ehrPatientRepository;
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
@@ -41,6 +42,8 @@ public class FeedbackController {
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private FacilityController facilityController;
+    @Autowired
+    private ImmunizationRegistryService immunizationRegistryService;
 
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
@@ -60,7 +63,7 @@ public class FeedbackController {
     public Feedback postPatientFeedback(@PathVariable(FACILITY_ID) Integer facilityId,
                                         @PathVariable(PATIENT_ID) Integer patientId,
                                         @RequestBody Feedback feedback) {
-        Optional<EhrPatient> patient = patientRepository.findById(patientId);
+        Optional<EhrPatient> patient = ehrPatientRepository.findById(patientId);
         if (patient.isPresent()) {
             Facility facility = patient.get().getFacility();
             feedback.setPatient(patient.get());
@@ -85,6 +88,60 @@ public class FeedbackController {
             return feedbackRepository.save(feedback);
         }
         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "vaccination not found");
+    }
+
+    @PostMapping({
+            FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER + "/extract-ack",
+            PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + "/extract-ack",
+            VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + "/extract-ack",
+    })
+    public Map<String, Map<String, Feedback>> extractAckInfo(
+            @RequestParam(REGISTRY_ID) Integer registryId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @PathVariable(PATIENT_ID) Optional<Integer> patientId,
+            @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
+            @RequestBody String ack) {
+        HL7Reader hl7Reader = new HL7Reader(ack);
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
+        Map<String, Map<String, Feedback>> map = new HashMap<>(4);
+        Map<String, Feedback> errors = new HashMap<>(4);
+        Map<String, Feedback> warnings = new HashMap<>(4);
+        Map<String, Feedback> notices = new HashMap<>(4);
+        Map<String, Feedback> infos = new HashMap<>(4);
+        map.put("E", errors);
+        map.put("W", warnings);
+        map.put("N", notices);
+        map.put("I", infos);
+        while (hl7Reader.advanceToSegment("ERR")) {
+            String severity = hl7Reader.getValue(4);
+            Feedback feedback = new Feedback();
+            feedback.setIis(String.valueOf(immunizationRegistry.getId()));
+            feedback.setFacility(facilityRepository.findById(facilityId).orElse(null));
+            patientId.ifPresent(id -> feedback.setPatient(ehrPatientRepository.findById(id).orElse(null)));
+            vaccinationId.ifPresent(id -> feedback.setVaccinationEvent(vaccinationEventRepository.findById(id).orElse(null)));
+            feedback.setSeverity(severity);
+            feedback.setContent(hl7Reader.getOriginalSegment());
+
+            switch (severity) {
+                case "E": {
+                    errors.put("code", feedback);
+                    break;
+                }
+                case "W": {
+                    warnings.put("code", feedback);
+                    break;
+                }
+                case "N": {
+                    notices.put("code", feedback);
+                    break;
+                }
+                case "I": {
+                    infos.put("code", feedback);
+                    break;
+                }
+            }
+        }
+        return map;
     }
 
 

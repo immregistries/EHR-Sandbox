@@ -2,6 +2,8 @@
 /* eslint-disable */
 // Generated using typescript-generator version 2.35.1025 on 2022-03-11 10:41:27.
 
+import { Hl7Location } from "./form-structure";
+
 export interface ObjectWithID {
   id?: number;
 }
@@ -35,6 +37,7 @@ export interface Feedback {
   code?: string;
   severity?: string;
   timestamp?: number;
+  hl7Locations?: Hl7Location[];
 }
 
 

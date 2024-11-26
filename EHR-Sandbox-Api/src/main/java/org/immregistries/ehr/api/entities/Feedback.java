@@ -5,8 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "feedback"
@@ -43,6 +46,11 @@ public class Feedback extends EhrEntity {
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("vaccinationEvent")
     private VaccinationEvent vaccinationEvent;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "feedback_locations", joinColumns = @JoinColumn(name = "feedback_id"))
+    @OrderBy("addressZip")
+    private Set<Hl7Location> hl7Locations = new HashSet<>();
 
 //    @JsonProperty("patient")
 //    public void setPatient(int id) {
@@ -145,5 +153,13 @@ public class Feedback extends EhrEntity {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Set<Hl7Location> getHl7Locations() {
+        return hl7Locations;
+    }
+
+    public void setHl7Locations(Set<Hl7Location> hl7Locations) {
+        this.hl7Locations = hl7Locations;
     }
 }
