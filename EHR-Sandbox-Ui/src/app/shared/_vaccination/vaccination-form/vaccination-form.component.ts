@@ -257,7 +257,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
 
   readonly VACCINATION_FORM_CARDS: FormCard[] = [
     {
-      title: "Vaccine", rows: 1, cols: 1, vaccineForms: [
+      title: "Vaccine", vaccineForms: [
         {
           type: FormType.date, title: "Administered", attributeName: "administeredDate", required: true,
           hl7Location: {
@@ -287,7 +287,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Codes", rows: 1, cols: 2, vaccineForms: [
+      title: "Codes", vaccineForms: [
         {
           type: FormType.code, title: "Vaccine type (CVX)", attributeName: "vaccineCvxCode", codeMapLabel: "VACCINATION_CVX_CODE", required: true,
           hl7Location: {
@@ -305,7 +305,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Request", rows: 1, cols: 2, vaccineForms: [
+      title: "Request", vaccineForms: [
         {
           type: FormType.code, title: "Information source", attributeName: "informationSource", codeMapLabel: "VACCINATION_INFORMATION_SOURCE", required: true,
           hl7Location: {
@@ -323,7 +323,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Lot", rows: 1, cols: 2, vaccineForms: [
+      title: "Lot", vaccineForms: [
         {
           type: FormType.code, title: "Manifacturer (MVX)", attributeName: "vaccineMvxCode", codeMapLabel: "VACCINATION_MANUFACTURER_CODE",
           hl7Location: {
@@ -350,7 +350,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Funding", rows: 1, cols: 1, vaccineForms: [
+      title: "Funding", vaccineForms: [
         {
           type: FormType.code, title: "Source", attributeName: "fundingSource", codeMapLabel: "VACCINATION_FUNDING_SOURCE",
           hl7Location: {
@@ -368,7 +368,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Information Statement (VIS)", rows: 1, cols: 1, vaccineForms: [
+      title: "Information Statement (VIS)", vaccineForms: [
         {
           type: FormType.code, title: "Information Statement Document", attributeName: "informationStatement", codeMapLabel: "VACCINATION_VIS_DOC_TYPE",
           hl7Location: {
@@ -400,7 +400,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ], toolTips: "Preferred method for VXU reporting includes Document type and Presented Date, supporting deprecated method with CVX alongside Published and Presented Date"
     },
     {
-      title: "Injection route", rows: 1, cols: 1, vaccineForms: [
+      title: "Injection route", vaccineForms: [
         {
           type: FormType.code, title: "Route", attributeName: "bodyRoute", codeMapLabel: "BODY_ROUTE",
           hl7Location: {
@@ -418,7 +418,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Injection status", rows: 1, cols: 1, vaccineForms: [
+      title: "Injection status", vaccineForms: [
         {
           type: FormType.code, title: "Completion status", attributeName: "completionStatus", codeMapLabel: "VACCINATION_COMPLETION",
           hl7Location: {
@@ -436,7 +436,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Clinicians", rows: 1, cols: 1, vaccinationForms: [
+      title: "Clinicians", vaccinationForms: [
         {
           type: FormType.clinician, title: "Entering", attributeName: "enteringClinician",
           hl7Location: {
@@ -461,7 +461,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       ]
     },
     {
-      title: "Update dates", rows: 1, cols: 1, vaccineForms: [
+      title: "Update dates", vaccineForms: [
         { type: FormType.date, title: "Creation date", attributeName: "createdDate", disabled: true },
         { type: FormType.date, title: "Updated date", attributeName: "updatedDate", disabled: true },
       ]

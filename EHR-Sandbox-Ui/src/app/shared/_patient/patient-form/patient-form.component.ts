@@ -93,11 +93,8 @@ export class PatientFormComponent {
 
   readonly PATIENT_FORM_CARDS: FormCardGeneric<EhrPatient>[] = [
     {
-      title: 'Name', cols: 3, rows: 1, forms: [
-        // { type: FormType.text, title: 'First name', attributeName: 'nameFirst' },
-        // { type: FormType.text, title: 'Middle name', attributeName: 'nameMiddle' },
-        // { type: FormType.text, title: 'Last name', attributeName: 'nameLast' },
-        // { type: FormType.text, title: 'Suffix', attributeName: 'nameSuffix' },
+      title: 'Name',
+      forms: [
         {
           type: FormType.names, title: 'Name', attributeName: 'names', defaultListEmptyValue: JSON.stringify({
             namePrefix: "",
@@ -130,7 +127,7 @@ export class PatientFormComponent {
       // hl7Location: "PID^5"
     },
     {
-      title: 'Identifiers / Medical Record Number', cols: 1, rows: 1, forms: [
+      title: 'Identifiers / Medical Record Number', forms: [
         // { type: FormType.text, title: 'Mrn Identifier', attributeName: 'mrn' },
         // { type: FormType.text, title: 'Mrn System', attributeName: 'mrnSystem' },
         {
@@ -143,7 +140,7 @@ export class PatientFormComponent {
       ],
     },
     {
-      title: 'Birth', cols: 1, rows: 1, forms: [
+      title: 'Birth', forms: [
         {
           type: FormType.date, title: 'Birth date', attributeName: 'birthDate', required: true,
           hl7Location: {
@@ -168,7 +165,7 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Identity', cols: 1, rows: 1, forms: [
+      title: 'Identity', forms: [
         {
           type: FormType.code, title: 'Sex', attributeName: 'sex', codeMapLabel: "PATIENT_SEX",
           hl7Location: {
@@ -196,7 +193,7 @@ export class PatientFormComponent {
       }
     },
     {
-      title: 'Address', cols: 1, rows: 2, forms: [
+      title: 'Address', forms: [
         {
           type: FormType.addresses, title: 'Address', attributeName: 'addresses', defaultListEmptyValue: '{}',
           hl7Location: {
@@ -207,7 +204,7 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Contact', cols: 1, rows: 1, forms: [
+      title: 'Contact', forms: [
         {
           type: FormType.text, title: 'Email', attributeName: 'email',
           hl7Location: {
@@ -230,13 +227,13 @@ export class PatientFormComponent {
       }
     },
     {
-      title: 'Death', cols: 1, rows: 1, forms: [
+      title: 'Death', forms: [
         { type: FormType.yesNo, title: 'Death flag', attributeName: 'deathFlag' },
         { type: FormType.date, title: 'Death date', attributeName: 'deathDate' },
       ]
     },
     {
-      title: 'Publicity', cols: 1, rows: 1,
+      title: 'Publicity',
       toolTips: "Indicates reminder/recall intentions. A blank value will default to ‘Y’ in CAIR.",
       forms: [
         {
@@ -256,7 +253,7 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Protection', cols: 1, rows: 1,
+      title: 'Protection',
       toolTips: "’Y’, ‘N’. Indicates whether patient data should be ‘locked’ from view of CAIR2 providers outside of the facility that locked the record.",
       forms: [
         {
@@ -276,7 +273,7 @@ export class PatientFormComponent {
       ]
     },
     {
-      title: 'Registry', cols: 1, rows: 1,
+      title: 'Registry',
       toolTips: 'Current status of the patient in relation to the sending provider organization',
       forms: [
         {
@@ -297,12 +294,12 @@ export class PatientFormComponent {
     },
 
     {
-      title: 'Immunization Financial Status', cols: 1, rows: 1, forms: [
+      title: 'Immunization Financial Status', forms: [
         { type: FormType.code, title: 'Financial status', attributeName: 'financialStatus', codeMapLabel: "FINANCIAL_STATUS_CODE" },
       ]
     },
     {
-      title: 'Next of Kin', cols: 3, rows: 1, forms: [
+      title: 'Next of Kin', forms: [
         { type: FormType.nextOfKinRelationships, title: 'Next of kin', attributeName: 'nextOfKinRelationships' },
       ], hl7Location: {
         segmentId: "NK1"

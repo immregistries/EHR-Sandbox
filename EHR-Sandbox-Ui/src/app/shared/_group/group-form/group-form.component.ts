@@ -14,7 +14,7 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 export class GroupFormComponent {
   readonly formCards: FormCardGeneric<EhrGroup>[] = [
     {
-      title: 'Name', cols: 1, rows: 1, forms: [
+      title: 'Name', forms: [
         { type: FormType.text, title: 'name', attributeName: 'name' },
         { type: FormType.text, title: 'description', attributeName: 'description' },
         { type: FormType.text, title: 'type', attributeName: 'type' },
@@ -23,7 +23,7 @@ export class GroupFormComponent {
       ]
     },
     {
-      title: 'Identifier', cols: 1, rows: 1, forms: [
+      title: 'Identifier', forms: [
         { type: FormType.identifiers, title: 'Identifier', attributeName: 'identifiers' },
       ], toolTips: "Required for operations when using R4, optional by default"
     }

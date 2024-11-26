@@ -37,8 +37,6 @@ export declare interface GenericFormNoDisabled<X> extends BaseFormNoDisabled {
 
 export declare interface FormCard {
   title: string,
-  cols?: number, // dimensions of the card not used anymore
-  rows?: number,
   toolTips?: string,
   forms?: BaseForm[],
   vaccinationForms?: VaccinationForm[],

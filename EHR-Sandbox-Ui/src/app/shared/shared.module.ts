@@ -28,7 +28,6 @@ import { RecommendationComponentTableComponent } from './_vaccination/recommenda
 import { RecommendationTableComponent } from './_vaccination/recommendation-table/recommendation-table.component';
 import { VaccinationDashboardComponent } from './_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { VaccinationToolsComponent } from './_vaccination/vaccination-tools/vaccination-tools.component';
-import { VaccinationFreeFormComponent } from './_vaccination/vaccination-form/vaccination-free-form/vaccination-free-form.component';
 import { VaccinationHistoryComponent } from './_vaccination/vaccination-history/vaccination-history.component';
 import { VaccinationTableComponent } from './_vaccination/vaccination-table/vaccination-table.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -155,7 +154,6 @@ import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
 
     VaccinationFormComponent,
     VaccinationTableComponent,
-    VaccinationFreeFormComponent,
     VaccinationDashboardComponent,
     VaccinationToolsComponent,
     VaccinationHistoryComponent,
@@ -327,7 +325,6 @@ import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
 
     VaccinationFormComponent,
     VaccinationTableComponent,
-    VaccinationFreeFormComponent,
     VaccinationDashboardComponent,
     VaccinationToolsComponent,
     VaccinationHistoryComponent,

@@ -39,7 +39,7 @@ export class ClinicianFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.formCards = [{
-      title: "Clinician Name", rows: 1, cols: 1, forms: [
+      title: "Clinician Name", forms: [
         { type: FormType.text, title: "Prefix", attributeName: "namePrefix" },
 
         { type: FormType.text, title: "First name", attributeName: "nameFirst" },
@@ -50,22 +50,22 @@ export class ClinicianFormComponent implements OnInit {
       ]
     },
     {
-      title: "Qualification", rows: 1, cols: 1, forms: [
+      title: "Qualification", forms: [
         { type: FormType.code, title: "Qualification", attributeName: "qualification", options: this.codeMapsService.qualificationTypeCodeSystem.concept },
       ]
     },
     {
-      title: "Contact", rows: 1, cols: 1, forms: [
+      title: "Contact", forms: [
         { type: FormType.phoneNumbers, title: "Phone Number", attributeName: "phones" },
       ]
     },
     {
-      title: "Addresses", rows: 1, cols: 1, forms: [
+      title: "Addresses", forms: [
         { type: FormType.addresses, title: "Address", attributeName: "addresses" },
       ]
     },
     {
-      title: "Identifiers", rows: 1, cols: 1, forms: [
+      title: "Identifiers", forms: [
         { type: FormType.identifiers, title: "Identifier", attributeName: "identifiers" },
       ]
     }]
