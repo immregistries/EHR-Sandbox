@@ -70,6 +70,7 @@ export declare interface Hl7Location {
   "subComponentNumber"?: number,
   "segmentSequence"?: number,
   "fieldRepetition"?: number,
+  "abbreviated"?: string
 }
 
 export declare interface AckSortedResults<T> {

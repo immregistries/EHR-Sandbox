@@ -36,7 +36,7 @@ export class ImmunizationRegistryService extends CurrentSelectedWithIdService<Im
     return this.http.get<ImmunizationRegistry[]>(
       this.settings.getApiUrl() + `/registry`, httpOptions).pipe(tap((result) => {
         this._registriesCached = result
-      }));
+      }), share());
   }
 
   public checkConnectivity(registryId: number | undefined): Observable<string> {

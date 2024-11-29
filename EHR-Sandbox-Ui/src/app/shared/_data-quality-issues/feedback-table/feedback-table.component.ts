@@ -6,6 +6,7 @@ import { ImmunizationRegistryService } from 'src/app/core/_services/immunization
 import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
 import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
+import { Hl7Location } from 'src/app/core/_model/form-structure';
 
 @Component({
   selector: 'app-feedback-table',
@@ -93,6 +94,7 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     this.columns = [
       "severity",
       "code",
+      "hl7Locations",
       "patient",
       "vaccinationEvent",
       "timestamp",
@@ -150,6 +152,24 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
 
   remove(element: Feedback) {
 
+  }
+
+  locationDisplay(hl7Locations: Hl7Location[]): string {
+    let disp = ""
+    hl7Locations.forEach(element => {
+      if (element.abbreviated) {
+        disp += element.abbreviated + " "
+      } else {
+        disp += element.segmentId
+        disp += element.segmentSequence ? "[" + element.segmentSequence + "]" : ""
+        disp += element.fieldPosition ? "-" + element.fieldPosition : ""
+        disp += element.fieldRepetition && element.fieldRepetition > 1 ? "[" + element.fieldRepetition + "]" : ""
+        disp += element.componentNumber ? "." + element.componentNumber : ""
+        disp += element.subComponentNumber ? "." + element.subComponentNumber + "" : ""
+        disp += " "
+      }
+    });
+    return disp;
   }
 
 }

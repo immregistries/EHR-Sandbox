@@ -14,6 +14,10 @@
         <th mat-header-cell *matHeaderCellDef>Code</th>
         <td mat-cell *matCellDef="let element"> {{element.code | textShorten: 12 | uppercase}}</td>
       </ng-container>
+      <ng-container matColumnDef="hl7Locations">
+        <th mat-header-cell *matHeaderCellDef>Location</th>
+        <td mat-cell *matCellDef="let element"> {{locationDisplay(element.hl7Locations)}}</td>
+      </ng-container>
       <ng-container matColumnDef="patient">
         <th mat-header-cell *matHeaderCellDef>Patient</th>
         <td mat-cell *matCellDef="let element">

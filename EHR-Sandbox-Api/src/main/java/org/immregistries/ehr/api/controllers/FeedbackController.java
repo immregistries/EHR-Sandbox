@@ -1,7 +1,9 @@
 package org.immregistries.ehr.api.controllers;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.smm.tester.manager.HL7Reader;
@@ -139,6 +141,18 @@ public class FeedbackController {
                     infos.add(feedback);
                     break;
                 }
+            }
+            int locationsNumbers = hl7Reader.getComponentCount(2);
+            for (int i = 0; i < locationsNumbers; i++) {
+                Hl7Location hl7Location = new Hl7Location();
+                hl7Location.setSegmentId(hl7Reader.getValueRepeat(2, 0, i));
+                hl7Location.setSegmentSequence(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 1, i), 0));
+                hl7Location.setFieldPosition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 2, i), 0));
+                hl7Location.setFieldRepetition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 3, i), 0));
+                hl7Location.setComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 4, i), 0));
+                hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
+                logger.info("{} {} ", hl7Location.getAbbreviated(), hl7Location);
+                feedback.getHl7Locations().add(hl7Location);
             }
         }
         return map;
