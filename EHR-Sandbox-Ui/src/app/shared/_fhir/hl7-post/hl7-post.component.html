@@ -30,7 +30,8 @@
 
   <div [style]="{width: '98%'}" class="w3-right">
     <app-ack-display [loading]="resultLoading" [ack]="answer" [isError]="error"
-                     [registryId]="immunizationRegistryService.getCurrentId()">
+                     [registryId]="immunizationRegistryService.getCurrentId()" [patientId]="patientId"
+                     [vaccinationId]="vaccinationId">
     </app-ack-display>
   </div>
   <!--

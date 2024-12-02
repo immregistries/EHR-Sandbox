@@ -128,6 +128,7 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 import { NameListFormComponent } from './_components/card-form/generic-list-form/name-list-form/name-list-form.component';
 import { AckDisplayComponent } from './_fhir/ack-display/ack-display.component';
 import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
+import { PatientMrnPipe } from './_pipes/patient-mrn.pipe';
 
 @NgModule({
   declarations: [
@@ -145,6 +146,7 @@ import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
     TextShortenPipe,
     FacilityNamePipe,
     PatientCachePipe,
+    PatientMrnPipe,
 
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
@@ -346,6 +348,8 @@ import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
     RegistryNamePipe,
     FacilityNamePipe,
     PatientCachePipe,
+    PatientMrnPipe,
+
 
 
     ImmunizationRegistryMenuComponent,

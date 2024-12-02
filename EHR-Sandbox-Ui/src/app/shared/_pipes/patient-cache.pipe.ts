@@ -26,7 +26,7 @@ export class PatientCachePipe implements PipeTransform {
     }
   })
 
-  transform(patients: (number | EhrPatient)[] | undefined, list?: EhrPatient[]): (EhrPatient)[] | undefined {
+  transform(patients: (number | EhrPatient)[] | undefined, list?: EhrPatient[]): EhrPatient[] | undefined {
     if (this.facilityService.getCurrentId() > -1 && !this.patientService.patientsCached) {
       this.patientService.quickReadPatients().subscribe()
     }

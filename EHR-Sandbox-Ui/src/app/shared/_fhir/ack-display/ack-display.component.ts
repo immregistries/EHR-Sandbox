@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Message } from '@rethinkhealth/hl7v2/global';
 import { AckSortedResults } from 'src/app/core/_model/form-structure';
 import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
@@ -24,44 +23,44 @@ export class AckDisplayComponent {
   @Input()
   public set ack(value: string) {
     this._ack = value;
-    this.feedbackService.convertAck(value, this.registryId).subscribe(result => {
+    this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
       this.errFeedbacks = result
     })
-    this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
+    // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
     for (const segment of value.split("\n")) {
       const values = segment.split("|")
       if (values[0] === "MSA") {
         this.msa_2 = values[1];
       }
-      if (values[0] === "ERR") {
-        switch (values[4]) {
-          case "E": {
-            this.errSegments.errors.push(segment);
-            break;
-          }
-          case "W": {
-            this.errSegments.warnings.push(segment);
-            break;
-          }
-          case "N": {
-            this.errSegments.notices.push(segment);
-            break;
-          }
-          case "I": {
-            this.errSegments.infos.push(segment);
-            break;
-          }
-        }
-      }
+      //   if (values[0] === "ERR") {
+      //     switch (values[4]) {
+      //       case "E": {
+      //         this.errSegments.errors.push(segment);
+      //         break;
+      //       }
+      //       case "W": {
+      //         this.errSegments.warnings.push(segment);
+      //         break;
+      //       }
+      //       case "N": {
+      //         this.errSegments.notices.push(segment);
+      //         break;
+      //       }
+      //       case "I": {
+      //         this.errSegments.infos.push(segment);
+      //         break;
+      //       }
+      //     }
+      //   }
     }
   }
 
   @Input()
   registryId!: number;
   @Input()
-  patient?: EhrPatient;
+  patientId?: number;
   @Input()
-  vaccination?: VaccinationEvent;
+  vaccinationId?: number;
   @Input()
   loading: Boolean = false;
   @Input()
@@ -69,7 +68,7 @@ export class AckDisplayComponent {
 
   msa_2: string = ""
 
-  errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
+  // errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
   errFeedbacks: AckSortedResults<Feedback> = { errors: [], warnings: [], notices: [], infos: [] }
 
   resultClass(): string {

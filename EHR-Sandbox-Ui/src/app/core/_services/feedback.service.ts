@@ -72,11 +72,18 @@ export class FeedbackService extends RefreshService {
     }))
   }
 
-  convertAck(ack: String, registryId: number): Observable<AckSortedResults<Feedback>> {
+  convertAck(ack: String, registryId: number, patientId?: number, vaccinationId?: number): Observable<AckSortedResults<Feedback>> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
       if (value === true) {
+        let baseUri = `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}`
+        if (patientId && patientId > 0) {
+          baseUri += `/patients/${patientId}`
+          if (vaccinationId && vaccinationId > 0) {
+            baseUri += `/vaccinations/${vaccinationId}`
+          }
+        }
         return this.http.post<AckSortedResults<Feedback>>(
-          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/feedbacks/$extract-ack`,
+          `${baseUri}/feedbacks/$extract-ack`,
           ack,
           {
             ...httpOptions,

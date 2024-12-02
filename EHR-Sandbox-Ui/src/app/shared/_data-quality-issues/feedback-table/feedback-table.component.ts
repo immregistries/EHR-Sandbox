@@ -7,6 +7,8 @@ import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashb
 import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { Hl7Location } from 'src/app/core/_model/form-structure';
+import { FacilityService } from 'src/app/core/_services/facility.service';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
 @Component({
   selector: 'app-feedback-table',
@@ -62,8 +64,8 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   constructor(
     private dialog: MatDialog,
     // private tenantService: TenantService,
-    // private facilityService: FacilityService,
-    // private feedbackService: FeedbackService,
+    private facilityService: FacilityService,
+    private feedbackService: FeedbackService,
     // private patientService: PatientService,
     // private snackBarService: SnackBarService,
     private immunizationRegistryService: ImmunizationRegistryService,
@@ -88,6 +90,11 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
         this.registries = res
       })
     })
+
+    if (!this._data_set_input && !this.observableSource) {
+      this.observableRefresh = this.facilityService.getRefresh();
+      this.observableSource = this.feedbackService.readCurrentFacilityFeedback()
+    }
   }
 
   refreshColumns(): void {

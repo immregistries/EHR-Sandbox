@@ -151,9 +151,10 @@ public class FeedbackController {
                 hl7Location.setFieldRepetition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 3, i), 0));
                 hl7Location.setComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 4, i), 0));
                 hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
-                logger.info("{} {} ", hl7Location.getAbbreviated(), hl7Location);
                 feedback.getHl7Locations().add(hl7Location);
             }
+
+            feedbackRepository.save(feedback);
         }
         return map;
     }

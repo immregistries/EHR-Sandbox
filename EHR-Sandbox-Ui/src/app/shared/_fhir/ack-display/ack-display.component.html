@@ -11,13 +11,12 @@
       </button>
     </div>
   </mat-tab>
-  <mat-tab *ngFor="let item of errSegments | keyvalue">
+  <mat-tab *ngFor="let item of errFeedbacks | keyvalue">
     <ng-template mat-tab-label>
       {{item.key | titlecase}}
       <mat-chip color='warn' [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
     </ng-template>
-    <app-feedback-table [patient]="patient" [vaccination]="vaccination" [removeRefColumns]="true"
-                        [dataArray]="errFeedbacks[item.key]"></app-feedback-table>
+    <app-feedback-table [removeRefColumns]="true" [dataArray]="errFeedbacks[item.key]"></app-feedback-table>
     <!-- <pre>{{item.value | json}}</pre> -->
   </mat-tab>
 </mat-tab-group>

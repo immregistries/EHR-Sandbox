@@ -49,7 +49,7 @@ public class Feedback extends EhrEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "feedback_locations", joinColumns = @JoinColumn(name = "feedback_id"))
-    @OrderBy("addressZip")
+    @OrderBy("segmentId")
     private Set<Hl7Location> hl7Locations = new HashSet<>();
 
 //    @JsonProperty("patient")
@@ -68,7 +68,7 @@ public class Feedback extends EhrEntity {
 //        // is currently taken care of in the controller
 //    }
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "iis", length = 45)
