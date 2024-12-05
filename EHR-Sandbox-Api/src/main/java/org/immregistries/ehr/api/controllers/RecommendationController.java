@@ -86,6 +86,7 @@ public class RecommendationController {
             recommendationService.saveInStore((IDomainResource) ((org.hl7.fhir.r5.model.Parameters) out).getParameter("recommendation").getResource(), facilityId, patientId, immunizationRegistry);
         }
 
+        logger.info("{} {}");
         return fhirComponentsDispatcher.fhirContext().newJsonParser().encodeResourceToString(out);
     }
 

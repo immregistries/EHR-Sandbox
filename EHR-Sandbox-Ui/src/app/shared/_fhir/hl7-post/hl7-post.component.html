@@ -1,40 +1,44 @@
-<form [style]="'width: 100%'" (submit)="send()">
-  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+<span style="display: flex; width: 100%">
+  <form [style]="'width: 50%'" (submit)="send()">
+    <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
 
-  <div class="textarea-container">
-    <mat-form-field style="width: 100%;" appearance="fill">
-      <mat-label>HL7v2 message</mat-label>
-      <textarea matInput style="height: 64vh;" placeholder="" [(ngModel)]="hl7Message" name="message"></textarea>
-    </mat-form-field>
-    <button mat-stroked-button type="button" [cdkCopyToClipboard]="hl7Message"
-            (click)="snackBarService.successMessage('Copied to clipBoard')">
-      <mat-icon>content_copy</mat-icon>
-      Copy
-    </button>
-  </div>
-  <div class="footer low-density">
-    <div>
-      <!-- <mat-form-field appearance="fill">
+    <div class="textarea-container">
+      <mat-form-field style="width: 100%;" appearance="fill">
+        <mat-label>HL7v2 message</mat-label>
+        <textarea matInput style="height: 77vh;" placeholder="" [(ngModel)]="hl7Message" name="message"></textarea>
+      </mat-form-field>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="hl7Message"
+              (click)="snackBarService.successMessage('Copied to clipBoard')">
+        <mat-icon>content_copy</mat-icon>
+        Copy
+      </button>
+    </div>
+    <div class="footer low-density">
+      <div>
+        <!-- <mat-form-field appearance="fill">
         <mat-label></mat-label>
         <input matInput>
       </mat-form-field> -->
 
+      </div>
+      <div class="footer-end">
+        <button mat-raised-button class="w3-right" type="submit" color="primary">
+          <mat-icon>send</mat-icon>
+          Send to IIS
+        </button>
+      </div>
     </div>
-    <div class="footer-end">
-      <button mat-raised-button class="w3-right" type="submit" color="primary">
-        <mat-icon>send</mat-icon>
-        Send to IIS
-      </button>
-    </div>
-  </div>
+  </form>
 
-  <div [style]="{width: '98%'}" class="w3-right">
+  <span [style]="{width: '50%'}">
     <app-ack-display [loading]="resultLoading" [ack]="answer" [isError]="error"
                      [registryId]="immunizationRegistryService.getCurrentId()" [patientId]="patientId"
                      [vaccinationId]="vaccinationId">
     </app-ack-display>
-  </div>
-  <!--
+  </span>
+</span>
+
+<!--
   <div [style]="{width: '90%'}" class="w3-right textarea-container">
     <mat-progress-bar mode="query" *ngIf="resultLoading"></mat-progress-bar>
     <textarea [ngClass]="resultClass()" [rows]="6" [style]="{width: '100%'}" readonly
@@ -45,5 +49,3 @@
       Copy
     </button>
   </div> -->
-
-</form>

@@ -22,11 +22,8 @@ export class AckDisplayComponent {
   }
   @Input()
   public set ack(value: string) {
+    this.plain = ""
     this._ack = value;
-    this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
-      this.errFeedbacks = result
-    })
-    // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
     for (const segment of value.split("\n")) {
       const values = segment.split("|")
       if (values[0] === "MSA") {
@@ -53,6 +50,13 @@ export class AckDisplayComponent {
       //     }
       //   }
     }
+    this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
+      this.errFeedbacks = result
+      this.plain = this.plainText(value, result)
+    })
+    // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
+
+
   }
 
   @Input()
@@ -88,6 +92,62 @@ export class AckDisplayComponent {
       return 'w3-light-green w3-left w3-padding'
     }
     return 'w3-light-green w3-left w3-padding'
+  }
+
+  plain: string = ""
+
+  plainText(msg: string, feedbacks: AckSortedResults<Feedback>): string {
+    let actionRequired: string = ""
+    let messageStatus: string = ""
+    switch (this.msa_2) {
+      case "AA":
+      case "AI": {
+        actionRequired = ""
+        messageStatus = "Accepted"
+        break;
+      }
+      case "AE": {
+        actionRequired = "Correct problems and resubmit mandatory"
+        messageStatus = "Error"
+        break;
+      }
+      case "AW": {
+        actionRequired = "Correct problems and resubmit"
+        messageStatus = "Warning"
+        break;
+      }
+      case "AN": {
+        actionRequired = "Correct problems"
+        messageStatus = "Notices"
+        break;
+      }
+    }
+    let txt =
+      `Message Origin: ${this.msa_2}
+Message Status ${messageStatus}
+Actions Required: ${actionRequired}
+Number of Errors: ${feedbacks.errors.length}
+Number of Warnings: ${feedbacks.warnings.length}
+Number of Notices: ${feedbacks.notices.length}
+Number of Infos: ${feedbacks.infos.length}
+Errors:
+${this.feedbackPlain(feedbacks.errors)}
+Warnings:
+${this.feedbackPlain(feedbacks.warnings)}
+Notices:
+${this.feedbackPlain(feedbacks.notices)}
+Infos:
+${this.feedbackPlain(feedbacks.infos)}
+     `
+    return txt
+  }
+
+  feedbackPlain(feedbackArray: Feedback[]): string {
+    let txt = ""
+    feedbackArray.forEach(element => {
+      txt += element.code + " " + element.content + "\n"
+    });
+    return txt
   }
 
 

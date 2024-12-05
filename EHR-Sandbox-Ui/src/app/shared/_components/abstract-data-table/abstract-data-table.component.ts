@@ -1,5 +1,7 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 
@@ -19,6 +21,10 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   constructor() { }
 
   public dataSource = new MatTableDataSource<T>();
+
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort?: MatSort;
+
 
   @Input()
   public allow_create: boolean = true
@@ -64,6 +70,12 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
           }
         })
       })
+    }
+    if (this.sort) {
+      this.dataSource.sort = this.sort
+    }
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator
     }
   }
 

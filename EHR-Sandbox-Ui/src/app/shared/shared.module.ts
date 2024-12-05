@@ -127,8 +127,8 @@ import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { NameListFormComponent } from './_components/card-form/generic-list-form/name-list-form/name-list-form.component';
 import { AckDisplayComponent } from './_fhir/ack-display/ack-display.component';
-import { HL7v2Schema } from '@rethinkhealth/hl7v2/global';
 import { PatientMrnPipe } from './_pipes/patient-mrn.pipe';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -278,6 +278,7 @@ import { PatientMrnPipe } from './_pipes/patient-mrn.pipe';
     MatSlideToggleModule,
     MatStepperModule,
     MatTreeModule,
+    MatPaginatorModule,
     QRCodeModule,
     CdkMenuModule,
   ],
@@ -312,6 +313,7 @@ import { PatientMrnPipe } from './_pipes/patient-mrn.pipe';
     MatBadgeModule,
     MatButtonToggleModule,
     MatStepperModule,
+    MatPaginatorModule,
 
 
     SelectCodebaseComponent,

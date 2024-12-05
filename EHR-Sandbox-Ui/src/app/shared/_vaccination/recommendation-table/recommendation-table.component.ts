@@ -35,7 +35,7 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
   }
 
   columns: (keyof ImmunizationRecommendation)[] = [
-    "identifier",
+    // "identifier",
     "date",
     "authority",
     "recommendation"

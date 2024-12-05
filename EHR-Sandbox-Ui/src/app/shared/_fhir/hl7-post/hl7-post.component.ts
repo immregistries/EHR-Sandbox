@@ -73,7 +73,7 @@ export class Hl7PostComponent {
           console.error(err)
         }
       })
-    } else {
+    } else if (this.patientId > 0) {
       this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).subscribe({
         next: (res) => {
           this.resultLoading = false
@@ -94,6 +94,9 @@ export class Hl7PostComponent {
           console.error(err)
         }
       })
+    } else {
+      this.answer = this.hl7Message
+      this.resultLoading = false
     }
 
   }

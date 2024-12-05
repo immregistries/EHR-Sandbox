@@ -2,7 +2,10 @@ package org.immregistries.ehr.api.controllers;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
-import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.Feedback;
+import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -27,6 +30,7 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 public class FeedbackController {
 
     public static final String FEEDBACKS_PATH_HEADER = "/feedbacks";
+    public static final String $_EXTRACT_ACK = "/$extract-ack";
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -92,18 +96,18 @@ public class FeedbackController {
     }
 
     @PostMapping({
-            FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER + "/$extract-ack",
-            PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + "/$extract-ack",
-            VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + "/$extract-ack",
+            FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK,
+            FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK,
+            PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK,
+            VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK,
     })
     public Map<String, List<Feedback>> extractAckInfo(
-            @RequestParam(REGISTRY_ID) Integer registryId,
-            @PathVariable(FACILITY_ID) Integer facilityId,
+            @RequestParam(REGISTRY_ID) Optional<Integer> registryId,
+            @PathVariable(FACILITY_ID) Optional<Integer> facilityId,
             @PathVariable(PATIENT_ID) Optional<Integer> patientId,
             @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         Map<String, List<Feedback>> map = new HashMap<>(4);
         List<Feedback> errors = new ArrayList<>(4);
         List<Feedback> warnings = new ArrayList<>(4);
@@ -116,8 +120,8 @@ public class FeedbackController {
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
-            feedback.setIis(String.valueOf(immunizationRegistry.getId()));
-            feedback.setFacility(facilityRepository.findById(facilityId).orElse(null));
+            registryId.ifPresent(id -> feedback.setIis(String.valueOf(registryId)));
+            facilityId.ifPresent(id -> feedback.setFacility(facilityRepository.findById(id).orElse(null)));
             patientId.ifPresent(id -> feedback.setPatient(ehrPatientRepository.findById(id).orElse(null)));
             vaccinationId.ifPresent(id -> feedback.setVaccinationEvent(vaccinationEventRepository.findById(id).orElse(null)));
             feedback.setSeverity(severity);
@@ -153,7 +157,6 @@ public class FeedbackController {
                 hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
                 feedback.getHl7Locations().add(hl7Location);
             }
-
             feedbackRepository.save(feedback);
         }
         return map;

@@ -74,29 +74,30 @@ export class FeedbackService extends RefreshService {
 
   convertAck(ack: String, registryId: number, patientId?: number, vaccinationId?: number): Observable<AckSortedResults<Feedback>> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      let baseUri = `${this.settings.getApiUrl()}`;
       if (value === true) {
-        let baseUri = `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}`
+        baseUri += `/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}`
         if (patientId && patientId > 0) {
           baseUri += `/patients/${patientId}`
           if (vaccinationId && vaccinationId > 0) {
             baseUri += `/vaccinations/${vaccinationId}`
           }
         }
-        return this.http.post<AckSortedResults<Feedback>>(
-          `${baseUri}/feedbacks/$extract-ack`,
-          ack,
-          {
-            ...httpOptions,
-            params: { registryId: registryId }
-          })
       } else {
-        return of({
-          errors: [],
-          warnings: [],
-          notices: [],
-          infos: []
-        })
+        // return of({
+        //   errors: [],
+        //   warnings: [],
+        //   notices: [],
+        //   infos: []
+        // })
       }
+      return this.http.post<AckSortedResults<Feedback>>(
+        `${baseUri}/feedbacks/$extract-ack`,
+        ack,
+        {
+          ...httpOptions,
+          params: registryId && registryId > 0 ? { registryId: registryId } : {}
+        })
     }))
   }
 

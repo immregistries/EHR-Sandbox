@@ -18,6 +18,8 @@ import { GroupStepsComponent } from './core/_components/group-steps/group-steps.
 import { VxuStepsComponent } from './shared/_components/vxu-steps/vxu-steps.component';
 import { JsonFormComponent } from './shared/_components/abstract-json-form/abstract-json-form.component';
 import { PatientJsonFormComponent } from './shared/_components/abstract-json-form/patient-json-form/patient-json-form.component';
+import { AckDisplayComponent } from './shared/_fhir/ack-display/ack-display.component';
+import { Hl7PostComponent } from './shared/_fhir/hl7-post/hl7-post.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -40,6 +42,8 @@ const routes: Routes = [
   { path: 'group-steps', component: GroupStepsComponent },
   { path: 'vxu-steps', component: VxuStepsComponent },
   { path: 'json-form', component: PatientJsonFormComponent },
+  { path: 'ack', component: Hl7PostComponent },
+
 ];
 
 @NgModule({
