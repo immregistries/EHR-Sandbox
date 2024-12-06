@@ -73,7 +73,7 @@ export class AckDisplayComponent {
   msa_2: string = ""
 
   // errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
-  errFeedbacks: AckSortedResults<Feedback> = { errors: [], warnings: [], notices: [], infos: [] }
+  errFeedbacks: AckSortedResults<Feedback> = { sortedResults: { errors: [], warnings: [], notices: [], infos: [] } }
 
   resultClass(): string {
     if (this.ack === "") {
@@ -126,18 +126,20 @@ export class AckDisplayComponent {
       `Message Origin: ${this.msa_2}
 Message Status ${messageStatus}
 Actions Required: ${actionRequired}
-Number of Errors: ${feedbacks.errors.length}
-Number of Warnings: ${feedbacks.warnings.length}
-Number of Notices: ${feedbacks.notices.length}
-Number of Infos: ${feedbacks.infos.length}
-Errors:
-${this.feedbackPlain(feedbacks.errors)}
-Warnings:
-${this.feedbackPlain(feedbacks.warnings)}
-Notices:
-${this.feedbackPlain(feedbacks.notices)}
-Infos:
-${this.feedbackPlain(feedbacks.infos)}
+Number of Errors: ${feedbacks.sortedResults.errors.length}
+Number of Warnings: ${feedbacks.sortedResults.warnings.length}
+Number of Notices: ${feedbacks.sortedResults.notices.length}
+Number of Infos: ${feedbacks.sortedResults.infos.length}
+------
+Errors: ${this.feedbackPlain(feedbacks.sortedResults.errors)}
+------
+Warnings: ${this.feedbackPlain(feedbacks.sortedResults.warnings)}
+------
+Notices: ${this.feedbackPlain(feedbacks.sortedResults.notices)}
+------
+Infos: ${this.feedbackPlain(feedbacks.sortedResults.infos)}
+------
+
      `
     return txt
   }
@@ -145,8 +147,11 @@ ${this.feedbackPlain(feedbacks.infos)}
   feedbackPlain(feedbackArray: Feedback[]): string {
     let txt = ""
     feedbackArray.forEach(element => {
-      txt += element.code + " " + element.content + "\n"
+      txt += "\n" + element.code + " " + element.content
     });
+    if (txt === "") {
+      txt = "N/A"
+    }
     return txt
   }
 

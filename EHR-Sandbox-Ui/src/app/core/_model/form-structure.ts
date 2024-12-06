@@ -74,10 +74,13 @@ export declare interface Hl7Location {
 }
 
 export declare interface AckSortedResults<T> {
-  errors: T[],
-  warnings: T[],
-  notices: T[],
-  infos: T[]
+  msa_2?: string,
+  sortedResults: {
+    errors: T[],
+    warnings: T[],
+    notices: T[],
+    infos: T[]
+  }
 }
 
 

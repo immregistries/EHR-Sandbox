@@ -14,6 +14,35 @@ tr.detail-row {
   border-bottom-width: 0;
 }
 
+.mat-mdc-row.error {
+  background-color: orangered;
+}
+
+.mat-mdc-row.error:hover {
+  background-color: red;
+}
+
+.mat-mdc-row.warning {
+  background-color: orange;
+}
+
+.mat-mdc-row.warning:hover {
+  background-color: darkorange;
+}
+
+.mat-mdc-row.notice {
+  background-color: yellow;
+}
+
+.mat-mdc-row.notice:hover {
+  background-color: darkkhaki;
+}
+
+/*
+.mat-mdc-row.info {
+  background-color: white;
+} */
+
 td {
   /* min-width: 70px;
   width: max-content; */
@@ -32,6 +61,8 @@ td {
   font-size: 12px;
 }
 
-.mdc-data-table__cell, .mdc-data-table__header-cell {
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
   padding: 0 8px 0 8px;
+  background-color: inherit;
 }

@@ -2,10 +2,7 @@ package org.immregistries.ehr.api.controllers;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.Feedback;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
@@ -18,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
@@ -101,22 +101,18 @@ public class FeedbackController {
             PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK,
             VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK,
     })
-    public Map<String, List<Feedback>> extractAckInfo(
+    public AcknowledgmentObject extractAckInfo(
             @RequestParam(REGISTRY_ID) Optional<Integer> registryId,
             @PathVariable(FACILITY_ID) Optional<Integer> facilityId,
             @PathVariable(PATIENT_ID) Optional<Integer> patientId,
             @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
-        Map<String, List<Feedback>> map = new HashMap<>(4);
+        AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
         List<Feedback> errors = new ArrayList<>(4);
         List<Feedback> warnings = new ArrayList<>(4);
         List<Feedback> notices = new ArrayList<>(4);
         List<Feedback> infos = new ArrayList<>(4);
-        map.put("errors", errors);
-        map.put("warnings", warnings);
-        map.put("notices", notices);
-        map.put("infos", infos);
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
@@ -130,19 +126,19 @@ public class FeedbackController {
             feedback.setTimestamp(new Timestamp(new Date().getTime()));
             switch (severity) {
                 case "E": {
-                    errors.add(feedback);
+                    acknowledgmentObject.getErrors().add(feedback);
                     break;
                 }
                 case "W": {
-                    warnings.add(feedback);
+                    acknowledgmentObject.getWarnings().add(feedback);
                     break;
                 }
                 case "N": {
-                    notices.add(feedback);
+                    acknowledgmentObject.getNotices().add(feedback);
                     break;
                 }
                 case "I": {
-                    infos.add(feedback);
+                    acknowledgmentObject.getInfos().add(feedback);
                     break;
                 }
             }
@@ -159,7 +155,7 @@ public class FeedbackController {
             }
             feedbackRepository.save(feedback);
         }
-        return map;
+        return acknowledgmentObject;
     }
 
 

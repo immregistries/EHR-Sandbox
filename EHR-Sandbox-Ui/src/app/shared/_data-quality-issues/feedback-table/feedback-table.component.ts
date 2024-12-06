@@ -179,4 +179,19 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     return disp;
   }
 
+  rowClass(element: Feedback): string {
+    switch (element.severity) {
+      case "E":
+        return 'error'
+      case "W":
+        return 'warning'
+      case "N":
+        return 'notice'
+      case "I":
+        return 'info'
+      default:
+        return ""
+    }
+  }
+
 }

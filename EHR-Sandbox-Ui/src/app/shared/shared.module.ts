@@ -129,6 +129,7 @@ import { NameListFormComponent } from './_components/card-form/generic-list-form
 import { AckDisplayComponent } from './_fhir/ack-display/ack-display.component';
 import { PatientMrnPipe } from './_pipes/patient-mrn.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
 
 @NgModule({
   declarations: [
@@ -233,6 +234,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 
     NameListFormComponent,
     AckDisplayComponent,
+    AckTableComponent,
   ],
   imports: [
     CommonModule,
@@ -382,6 +384,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     SmartHealthLinkImportComponent,
     NameListFormComponent,
     AckDisplayComponent,
+    AckTableComponent,
+
   ],
 })
 export class SharedModule { }
