@@ -195,19 +195,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   }
 
   actualRowClass(element: Feedback) {
-    if (element === this.selectedElement) {
-      return this.rowClass(element) + " element-row expanded-row"
-    } else {
-      return this.rowClass(element) + " element-row"
-    }
+    return this.rowClass(element) + " element-row"
   }
-
-  readonly COLOR_THEME_CLASS = {
-    "errors": 'error-mode',
-    "warnings": 'warning-mode',
-    "notices": 'notice-mode',
-    "infos": 'info-mode'
-  }
-
-
 }

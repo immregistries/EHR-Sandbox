@@ -79,7 +79,7 @@
 
 
       <tr mat-header-row *matHeaderRowDef="columns;"></tr>
-      <tr [ngClass]="actualRowClass(element)" mat-row *matRowDef="let element; columns: columns;"
+      <tr [ngClass]="actualRowClass(element)" mat-row *matRowDef="let element; columns: columns;" class="element-row"
           [class.expanded-row]="selectedElement === element" (click)="onSelection(element)">
       </tr>
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>

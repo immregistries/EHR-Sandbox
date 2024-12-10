@@ -11,7 +11,7 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
 @Component({
   selector: 'app-patient-table',
   templateUrl: './patient-table.component.html',
-  styleUrls: ['./patient-table.component.css'],
+  styleUrls: ['./patient-table.component.scss'],
 })
 export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient> implements AfterViewInit {
 

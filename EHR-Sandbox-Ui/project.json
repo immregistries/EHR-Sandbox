@@ -102,7 +102,7 @@
         ],
         "styles": [
           "src/theme.scss",
-          "src/styles.css"
+          "src/styles/styles.css"
         ],
         "scripts": []
       }
