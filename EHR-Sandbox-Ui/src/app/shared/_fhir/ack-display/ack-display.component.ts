@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AckSortedResults } from 'src/app/core/_model/form-structure';
+import { AcknowledgementObject, SortedResult } from 'src/app/core/_model/form-structure';
 import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
@@ -73,7 +73,7 @@ export class AckDisplayComponent {
   msa_2: string = ""
 
   // errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
-  errFeedbacks: AckSortedResults<Feedback> = { sortedResults: { errors: [], warnings: [], notices: [], infos: [] } }
+  errFeedbacks: AcknowledgementObject<Feedback> = { sortedResult: { errors: [], warnings: [], notices: [], infos: [] } }
 
   resultClass(): string {
     if (this.ack === "") {
@@ -96,7 +96,7 @@ export class AckDisplayComponent {
 
   plain: string = ""
 
-  plainText(msg: string, feedbacks: AckSortedResults<Feedback>): string {
+  plainText(msg: string, feedbacks: AcknowledgementObject<Feedback>): string {
     let actionRequired: string = ""
     let messageStatus: string = ""
     switch (this.msa_2) {
@@ -126,18 +126,18 @@ export class AckDisplayComponent {
       `Message Origin: ${this.msa_2}
 Message Status ${messageStatus}
 Actions Required: ${actionRequired}
-Number of Errors: ${feedbacks.sortedResults.errors.length}
-Number of Warnings: ${feedbacks.sortedResults.warnings.length}
-Number of Notices: ${feedbacks.sortedResults.notices.length}
-Number of Infos: ${feedbacks.sortedResults.infos.length}
+Number of Errors: ${feedbacks.sortedResult.errors.length}
+Number of Warnings: ${feedbacks.sortedResult.warnings.length}
+Number of Notices: ${feedbacks.sortedResult.notices.length}
+Number of Infos: ${feedbacks.sortedResult.infos.length}
 ------
-Errors: ${this.feedbackPlain(feedbacks.sortedResults.errors)}
+Errors: ${this.feedbackPlain(feedbacks.sortedResult.errors)}
 ------
-Warnings: ${this.feedbackPlain(feedbacks.sortedResults.warnings)}
+Warnings: ${this.feedbackPlain(feedbacks.sortedResult.warnings)}
 ------
-Notices: ${this.feedbackPlain(feedbacks.sortedResults.notices)}
+Notices: ${this.feedbackPlain(feedbacks.sortedResult.notices)}
 ------
-Infos: ${this.feedbackPlain(feedbacks.sortedResults.infos)}
+Infos: ${this.feedbackPlain(feedbacks.sortedResult.infos)}
 ------
 
      `
@@ -153,6 +153,28 @@ Infos: ${this.feedbackPlain(feedbacks.sortedResults.infos)}
       txt = "N/A"
     }
     return txt
+  }
+
+  readonly COLOR_THEME_CLASS = {
+    "errors": 'error-mode',
+    "warnings": 'warning-mode',
+    "notices": 'notice-mode',
+    "infos": 'info-mode'
+  }
+
+  colorThemeClass(elementKey: string): string {
+    switch (elementKey) {
+      case "errors":
+        return 'error-mode'
+      case "warnings":
+        return 'warning-mode'
+      case "notices":
+        return 'notice-mode'
+      case "infos":
+        return 'info-mode'
+      default:
+        return ""
+    }
   }
 
 

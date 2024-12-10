@@ -23,10 +23,12 @@
       </button>
     </div>
   </mat-tab>
-  <mat-tab *ngFor="let item of errFeedbacks.sortedResults | keyvalue">
+  <mat-tab *ngFor="let item of errFeedbacks.sortedResult | keyvalue">
     <ng-template mat-tab-label>
       {{item.key | titlecase}}
-      <mat-chip color='warn' [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
+      <span [ngClass]="COLOR_THEME_CLASS[item.key]">
+        <mat-chip color="warn" [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
+      </span>
     </ng-template>
     <app-feedback-table [removeRefColumns]="true" [dataArray]="item.value"></app-feedback-table>
     <!-- <pre>{{item.value | json}}</pre> -->

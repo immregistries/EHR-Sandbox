@@ -73,17 +73,17 @@ export declare interface Hl7Location {
   "abbreviated"?: string
 }
 
-export declare interface AckSortedResults<T> {
+export declare interface AcknowledgementObject<T> {
   msa_2?: string,
-  sortedResults: {
-    errors: T[],
-    warnings: T[],
-    notices: T[],
-    infos: T[]
-  }
+  sortedResult: SortedResult<T>
 }
 
-
+export declare interface SortedResult<T> {
+  errors: T[],
+  warnings: T[],
+  notices: T[],
+  infos: T[]
+}
 
 export declare interface BaseForm extends BaseFormNoDisabled {
   disabled?: boolean,

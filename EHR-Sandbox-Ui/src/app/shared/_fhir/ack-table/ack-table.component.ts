@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
-import { AckSortedResults } from 'src/app/core/_model/form-structure';
+import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
 import { Feedback } from 'src/app/core/_model/rest';
 
 @Component({
@@ -8,13 +8,13 @@ import { Feedback } from 'src/app/core/_model/rest';
   templateUrl: './ack-table.component.html',
   styleUrls: ['./ack-table.component.css']
 })
-export class AckTableComponent extends AbstractDataTableComponent<AckSortedResults<Feedback>> {
+export class AckTableComponent extends AbstractDataTableComponent<AcknowledgementObject<Feedback>> {
 
   columns = [
 
   ]
 
-  rowClass(element: AckSortedResults<Feedback>): string {
+  rowClass(element: AcknowledgementObject<Feedback>): string {
     switch (element.msa_2) {
       case "E":
         return 'error'

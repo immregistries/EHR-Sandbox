@@ -13,7 +13,7 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
 @Component({
   selector: 'app-feedback-table',
   templateUrl: './feedback-table.component.html',
-  styleUrls: ['./feedback-table.component.css'],
+  styleUrls: ['./feedback-table.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),
@@ -182,16 +182,32 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   rowClass(element: Feedback): string {
     switch (element.severity) {
       case "E":
-        return 'error'
+        return 'errors'
       case "W":
-        return 'warning'
+        return 'warnings'
       case "N":
-        return 'notice'
+        return 'notices'
       case "I":
-        return 'info'
+        return 'infos'
       default:
         return ""
     }
   }
+
+  actualRowClass(element: Feedback) {
+    if (element === this.selectedElement) {
+      return this.rowClass(element) + " element-row expanded-row"
+    } else {
+      return this.rowClass(element) + " element-row"
+    }
+  }
+
+  readonly COLOR_THEME_CLASS = {
+    "errors": 'error-mode',
+    "warnings": 'warning-mode',
+    "notices": 'notice-mode',
+    "infos": 'info-mode'
+  }
+
 
 }

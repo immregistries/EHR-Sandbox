@@ -1,0 +1,71 @@
+@use "sass:map" as map;
+@import 'src/theme';
+table {
+  width: 100%;
+}
+
+tr {
+  text-align: left;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+// TODO config directly with theme, temporary solution for demo
+.mat-mdc-row.errors {
+  background-color:  map.get($ehr-warn, "default");
+}
+
+.mat-mdc-row.errors:hover {
+  background-color: map.get($ehr-warn, "darker");
+}
+
+.mat-mdc-row.warnings {
+  background-color: map.get($warning-warn, "default");
+}
+
+.mat-mdc-row.warnings:hover {
+  background-color: map.get($notice-warn, "darker");
+}
+
+.mat-mdc-row.notices {
+  background-color: map.get($notice-warn, "default");
+}
+
+.mat-mdc-row.notices:hover {
+  background-color: map.get($notice-warn, "darker");
+}
+
+/*
+.mat-mdc-row.info {
+  background-color: white;
+} */
+
+td {
+  /* min-width: 70px;
+  width: max-content; */
+  /* padding-left: 5px; */
+}
+
+.button-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  height: 25px;
+}
+
+.button-label {
+  font-size: 12px;
+}
+
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
+  padding: 0 8px 0 8px;
+  background-color: inherit;
+}

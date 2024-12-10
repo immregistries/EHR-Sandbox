@@ -8,7 +8,7 @@ import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
 import { RefreshService } from './_abstract/refresh.service';
 import { SnackBarService } from './snack-bar.service';
-import { AckSortedResults } from '../_model/form-structure';
+import { AcknowledgementObject } from '../_model/form-structure';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -72,7 +72,7 @@ export class FeedbackService extends RefreshService {
     }))
   }
 
-  convertAck(ack: String, registryId: number, patientId?: number, vaccinationId?: number): Observable<AckSortedResults<Feedback>> {
+  convertAck(ack: String, registryId: number, patientId?: number, vaccinationId?: number): Observable<AcknowledgementObject<Feedback>> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
       let baseUri = `${this.settings.getApiUrl()}`;
       if (value === true) {
@@ -91,7 +91,7 @@ export class FeedbackService extends RefreshService {
         //   infos: []
         // })
       }
-      return this.http.post<AckSortedResults<Feedback>>(
+      return this.http.post<AcknowledgementObject<Feedback>>(
         `${baseUri}/feedbacks/$extract-ack`,
         ack,
         {

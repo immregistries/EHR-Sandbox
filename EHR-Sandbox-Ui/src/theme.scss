@@ -30,6 +30,30 @@ $ehr-theme: mat.define-light-theme((
   'density': -3,
   ));
 
+$warning-warn: mat.define-palette(mat.$orange-palette);
+$warning-colors: ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $warning-warn);
+$warning-theme: mat.define-light-theme((
+  'color':  $warning-colors,
+  'typography': mat.define-typography-config(),
+  'density': -3,
+  ));
+
+.warning-mode {
+  @include mat.all-component-colors($warning-theme);
+}
+
+
+$notice-warn: mat.define-palette(mat.$teal-palette);
+$notice-colors: ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $notice-warn);
+$notice-theme: mat.define-light-theme((
+  'color':  $notice-colors,
+  'typography': mat.define-typography-config(),
+  'density': -3,
+  ));
+.notices-mode {
+  @include mat.all-component-colors($notice-theme);
+}
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
