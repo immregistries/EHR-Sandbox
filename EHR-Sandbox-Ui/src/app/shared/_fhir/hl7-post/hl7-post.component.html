@@ -31,7 +31,7 @@
   </form>
 
   <span [style]="{width: '50%'}">
-    <app-ack-display [loading]="resultLoading" [ack]="answer" [isError]="error"
+    <app-ack-display [loading]="resultLoading" [rawAck]="answer" [isError]="error"
                      [registryId]="immunizationRegistryService.getCurrentId()" [patientId]="patientId"
                      [vaccinationId]="vaccinationId">
     </app-ack-display>

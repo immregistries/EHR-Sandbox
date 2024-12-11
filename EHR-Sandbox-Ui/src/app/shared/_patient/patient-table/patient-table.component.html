@@ -16,22 +16,22 @@
 </div>
 <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
-  <ng-container matColumnDef="nameFirst">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
-    <td mat-cell *matCellDef="let element">{{element.names[0].nameFirst}}</td>
+  <ng-container matColumnDef="names">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <td mat-cell *matCellDef="let element">{{element | patientResume: ["name"]:dataSource.data}}</td>
   </ng-container>
   <ng-container matColumnDef="mrn">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Identifier</th>
-    <td mat-cell *matCellDef="let element">{{element | patientMrn: dataSource.data }}</td>
+    <td mat-cell *matCellDef="let element">{{element | patientResume: ["mrn"]:dataSource.data }}</td>
   </ng-container>
-  <ng-container matColumnDef="nameMiddle">
+  <!-- <ng-container matColumnDef="nameMiddle">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Middle name</th>
     <td mat-cell *matCellDef="let element">{{element.names[0].nameMiddle}}</td>
   </ng-container>
   <ng-container matColumnDef="nameLast">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
     <td mat-cell *matCellDef="let element">{{element.names[0].nameLast}}</td>
-  </ng-container>
+  </ng-container> -->
   <ng-container matColumnDef="birthDate">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Birth date</th>
     <td mat-cell *matCellDef="let element">{{element.birthDate | date: 'yyyy-MM-dd'}}</td>

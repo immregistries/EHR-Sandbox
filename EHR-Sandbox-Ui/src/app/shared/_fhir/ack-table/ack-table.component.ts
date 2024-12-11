@@ -11,7 +11,13 @@ import { Feedback } from 'src/app/core/_model/rest';
 export class AckTableComponent extends AbstractDataTableComponent<AcknowledgementObject<Feedback>> {
 
   columns = [
-
+    "messageId",
+    "patient",
+    "msa_2",
+    "timestamp",
+    "iis",
+    "senderId",
+    "receiverId",
   ]
 
   rowClass(element: AcknowledgementObject<Feedback>): string {

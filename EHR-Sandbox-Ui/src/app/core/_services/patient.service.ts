@@ -24,6 +24,9 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
   public get patientsCached(): EhrPatient[] | undefined {
     return this._patientsCached;
   }
+  public set patientsCached(value: EhrPatient[] | undefined) {
+    this._patientsCached = value;
+  }
 
 
   if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
@@ -74,7 +77,7 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
 
       } else {
         return of([]).pipe(tap((result) => {
-          this._patientsCached = undefined
+          // this._patientsCached = undefined
         }))
       }
     }))

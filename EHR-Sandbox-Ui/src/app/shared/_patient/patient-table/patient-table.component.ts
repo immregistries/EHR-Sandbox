@@ -21,10 +21,9 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   @Input()
   facility!: Facility | null;
   @Input()
-  columns: (keyof EhrPatient | keyof EhrHumanName | "alerts" | "remove" | "mrn")[] = [
+  columns: (keyof EhrPatient | "alerts" | "remove" | "mrn")[] = [
     "mrn",
-    "nameLast",
-    "nameFirst",
+    "names",
     "birthDate",
     "alerts"
   ]

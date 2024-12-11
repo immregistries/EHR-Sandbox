@@ -15,15 +15,15 @@
     <div class="textarea-container">
       <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
       <!-- <mat-option [value]="'Update'">Update</mat-option> -->
-      <textarea [ngClass]="resultClass()" [style]="{ height: '77vh'}" readonly name="answer">{{ack}}</textarea>
-      <button mat-stroked-button type="button" [cdkCopyToClipboard]="ack"
+      <textarea [ngClass]="resultClass()" [style]="{ height: '77vh'}" readonly name="answer">{{rawAck}}</textarea>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="rawAck"
               (click)="snackBarService.successMessage('Copied to clipBoard')">
         <mat-icon>content_copy</mat-icon>
         Copy
       </button>
     </div>
   </mat-tab>
-  <mat-tab *ngFor="let item of errFeedbacks.sortedResult | keyvalue">
+  <mat-tab *ngFor="let item of acknowledgementObject.sortedResult | keyvalue">
     <ng-template mat-tab-label>
       {{item.key | titlecase}}
       <span [ngClass]="COLOR_THEME_CLASS[item.key]">

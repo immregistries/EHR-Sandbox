@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { SelectCodebaseComponent } from './_components/select-codebase/select-codebase.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -127,7 +127,7 @@ import { SmartHealthLinkImportComponent } from './_fhir/smart-health-link-import
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { NameListFormComponent } from './_components/card-form/generic-list-form/name-list-form/name-list-form.component';
 import { AckDisplayComponent } from './_fhir/ack-display/ack-display.component';
-import { PatientMrnPipe } from './_pipes/patient-mrn.pipe';
+import { PatientResumePipe } from './_pipes/patient-resume.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
 
@@ -147,7 +147,7 @@ import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
     TextShortenPipe,
     FacilityNamePipe,
     PatientCachePipe,
-    PatientMrnPipe,
+    PatientResumePipe,
 
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
@@ -237,6 +237,7 @@ import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
     AckTableComponent,
   ],
   imports: [
+    DatePipe,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -352,7 +353,7 @@ import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
     RegistryNamePipe,
     FacilityNamePipe,
     PatientCachePipe,
-    PatientMrnPipe,
+    PatientResumePipe,
 
 
 
@@ -386,6 +387,6 @@ import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
     AckDisplayComponent,
     AckTableComponent,
 
-  ],
+  ]
 })
 export class SharedModule { }

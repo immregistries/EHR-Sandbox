@@ -1,5 +1,5 @@
 import { CodeSystemConcept } from "fhir/r5";
-import { Facility, Vaccine } from "./rest";
+import { EhrPatient, Facility, Vaccine } from "./rest";
 import { AsyncValidatorFn, ValidatorFn } from "@angular/forms";
 
 enum FormType {
@@ -64,26 +64,16 @@ export declare interface BaseFormNoDisabled {
  * Structure will overflow from parent to child, consider segment id to be "default" when on atomic form definition
  */
 export declare interface Hl7Location {
-  "segmentId": "PID" | "PD1" | "NK1" | "RXR" | "OBX" | "RXA" | "ORC",
-  "fieldPosition"?: number,
-  "componentNumber"?: number,
-  "subComponentNumber"?: number,
-  "segmentSequence"?: number,
-  "fieldRepetition"?: number,
-  "abbreviated"?: string
+  segmentId: "PID" | "PD1" | "NK1" | "RXR" | "OBX" | "RXA" | "ORC",
+  fieldPosition?: number,
+  componentNumber?: number,
+  subComponentNumber?: number,
+  segmentSequence?: number,
+  fieldRepetition?: number,
+  abbreviated?: string
 }
 
-export declare interface AcknowledgementObject<T> {
-  msa_2?: string,
-  sortedResult: SortedResult<T>
-}
 
-export declare interface SortedResult<T> {
-  errors: T[],
-  warnings: T[],
-  notices: T[],
-  infos: T[]
-}
 
 export declare interface BaseForm extends BaseFormNoDisabled {
   disabled?: boolean,
@@ -117,4 +107,20 @@ export declare interface BulkImportStatus {
   lastAttemptCount?: number,
   lastAttemptTime?: number,
   result?: string,
+}
+
+export declare interface AcknowledgementObject<T> {
+  rawAck?: string,
+  msa_2?: string,
+  timestamp?: Date,
+  iis?: number | string,
+  sortedResult: SortedResult<T>,
+  patient?: EhrPatient | number
+}
+
+export declare interface SortedResult<T> {
+  errors: T[],
+  warnings: T[],
+  notices: T[],
+  infos: T[]
 }

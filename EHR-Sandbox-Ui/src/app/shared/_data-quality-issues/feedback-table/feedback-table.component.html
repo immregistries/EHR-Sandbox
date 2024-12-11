@@ -21,10 +21,10 @@
       <ng-container matColumnDef="patient">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient</th>
         <td mat-cell *matCellDef="let element">
-          <span *ngIf="element.patient" (click)="openPatient(element.patient); $event.stopPropagation();"
-                class="button-wrapper">
-            <span class="button-label">{{element.patient | patientMrn}}</span>
-            <button mat-icon-button color="primary" matTooltip="Open Patient Dashboard">
+          <span *ngIf="element.patient" class="button-wrapper">
+            <span class="button-label">{{element.patient | patientResume: ['name','birthDate','mrn']}}</span>
+            <button mat-icon-button color="primary" matTooltip="Open Patient Dashboard"
+                    (click)="openPatient(element.patient); $event.stopPropagation();">
               <mat-icon>open_in_new</mat-icon>
             </button>
           </span>
@@ -33,13 +33,13 @@
       <ng-container matColumnDef="vaccinationEvent">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Vaccination</th>
         <td mat-cell *matCellDef="let element">
-          <span *ngIf="element.vaccinationEvent"
-                (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();" class="button-wrapper">
+          <span *ngIf="element.vaccinationEvent" class="button-wrapper">
             <span class="button-label">
               {{element.vaccinationEvent.vaccine ? element.vaccinationEvent.vaccine.vaccineCvxCode :
               element.vaccinationEvent}}
             </span>
-            <button mat-icon-button color="primary" matTooltip="Open Vaccination Dashboard">
+            <button mat-icon-button color="primary" matTooltip="Open Vaccination Dashboard"
+                    (click)="openVaccination(element.vaccinationEvent); $event.stopPropagation();">
               <mat-icon>open_in_new</mat-icon>
             </button>
           </span>

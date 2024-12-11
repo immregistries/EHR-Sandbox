@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { SharedModule } from '../shared/shared.module';
 
@@ -36,6 +36,8 @@ import { firstValueFrom } from 'rxjs';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PatientComparePipe } from '../shared/_pipes/patient-compare.pipe';
+import { PatientResumePipe } from '../shared/_pipes/patient-resume.pipe';
+import { PatientCachePipe } from '../shared/_pipes/patient-cache.pipe';
 
 
 
@@ -99,7 +101,10 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     DashboardComponent,
   ],
   providers: [
+    DatePipe,
     PatientComparePipe,
+    PatientResumePipe,
+    PatientCachePipe,
     VaccinationComparePipe,
     SettingsService,
     PatientService,

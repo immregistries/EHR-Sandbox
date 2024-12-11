@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { AcknowledgementObject, SortedResult } from 'src/app/core/_model/form-structure';
-import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
+import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
+import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 
@@ -11,19 +11,30 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 })
 export class AckDisplayComponent {
 
+  private _acknowledgementObject: AcknowledgementObject<Feedback> = { sortedResult: { errors: [], warnings: [], notices: [], infos: [] } };
+  public get acknowledgementObject(): AcknowledgementObject<Feedback> {
+    return this._acknowledgementObject;
+  }
+  @Input()
+  public set acknowledgementObject(value: AcknowledgementObject<Feedback>) {
+    this._acknowledgementObject = value;
+    this._rawAck = value.rawAck ?? ""
+  }
+
+
   constructor(
     public snackBarService: SnackBarService,
     public feedbackService: FeedbackService,
   ) { }
 
-  private _ack: string = "";
-  public get ack(): string {
-    return this._ack;
+  private _rawAck: string = "";
+  public get rawAck(): string {
+    return this._rawAck;
   }
   @Input()
-  public set ack(value: string) {
+  public set rawAck(value: string) {
     this.plain = ""
-    this._ack = value;
+    this._rawAck = value;
     for (const segment of value.split("\n")) {
       const values = segment.split("|")
       if (values[0] === "MSA") {
@@ -51,7 +62,7 @@ export class AckDisplayComponent {
       //   }
     }
     this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
-      this.errFeedbacks = result
+      this.acknowledgementObject = result
       this.plain = this.plainText(value, result)
     })
     // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
@@ -73,10 +84,9 @@ export class AckDisplayComponent {
   msa_2: string = ""
 
   // errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
-  errFeedbacks: AcknowledgementObject<Feedback> = { sortedResult: { errors: [], warnings: [], notices: [], infos: [] } }
 
   resultClass(): string {
-    if (this.ack === "") {
+    if (this.rawAck === "") {
       return "w3-left w3-padding"
     }
     if (this.isError) {
@@ -139,7 +149,6 @@ Notices: ${this.feedbackPlain(feedbacks.sortedResult.notices)}
 ------
 Infos: ${this.feedbackPlain(feedbacks.sortedResult.infos)}
 ------
-
      `
     return txt
   }
