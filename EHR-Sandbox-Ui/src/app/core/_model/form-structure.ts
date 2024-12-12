@@ -110,6 +110,7 @@ export declare interface BulkImportStatus {
 }
 
 export declare interface AcknowledgementObject<T> {
+  id?: number,
   rawAck?: string,
   msa_2?: string,
   timestamp?: Date,

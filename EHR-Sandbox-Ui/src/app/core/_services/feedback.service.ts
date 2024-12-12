@@ -72,7 +72,7 @@ export class FeedbackService extends RefreshService {
     }))
   }
 
-  convertAck(ack: String, registryId: number, patientId?: number, vaccinationId?: number): Observable<AcknowledgementObject<Feedback>> {
+  convertAck(ack: String, registryId?: number, patientId?: number, vaccinationId?: number): Observable<AcknowledgementObject<Feedback>> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
       let baseUri = `${this.settings.getApiUrl()}`;
       if (value === true) {

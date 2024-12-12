@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
@@ -109,10 +107,17 @@ public class FeedbackController {
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
-        List<Feedback> errors = new ArrayList<>(4);
-        List<Feedback> warnings = new ArrayList<>(4);
-        List<Feedback> notices = new ArrayList<>(4);
-        List<Feedback> infos = new ArrayList<>(4);
+        acknowledgmentObject.setRawAck(ack);
+        if (hl7Reader.advanceToSegment("MSH")) {
+            acknowledgmentObject.setMessageId(hl7Reader.getValue(9));
+            acknowledgmentObject.setTimestamp(new Timestamp(NumberUtils.createLong(hl7Reader.getValue(3))));
+
+        }
+        if (hl7Reader.advanceToSegment("MSA")) {
+            acknowledgmentObject.setMsa_2(hl7Reader.getValue(1));
+            acknowledgmentObject.setMessageId(hl7Reader.getValue(2)); // TODO choose which control Id
+
+        }
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
@@ -153,7 +158,7 @@ public class FeedbackController {
                 hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
                 feedback.getHl7Locations().add(hl7Location);
             }
-            feedbackRepository.save(feedback);
+//            feedbackRepository.save(feedback);
         }
         return acknowledgmentObject;
     }

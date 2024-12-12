@@ -1,34 +1,50 @@
 package org.immregistries.ehr.api.entities;
 
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
+import org.hibernate.annotations.Filter;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity()
-@Table(name = "ehr_group")
+//@Entity()
+//@Table(name = "acknowledgment_object")
 public class AcknowledgmentObject extends EhrEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ack_id", nullable = false)
+    private Integer id;
+
+    @Column(name = "message_id")
     private String messageId = "";
+    @Column(name = "status")
     private String status = "";
+    @Column(name = "status", columnDefinition = "TEXT")
+    private String rawAck = "";
+    @ManyToOne(fetch = FetchType.LAZY)
     private EhrPatient ehrPatient;
-    private SortedResult<Feedback> sortedResult = new SortedResult<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private VaccinationEvent vaccinationEvent;
+
+    @Embedded
+    private SortedResult sortedResult = new SortedResult();
+
+    @Column(name = "iis")
     private String iis = "";
+    @JoinColumn(name = "timestamp", nullable = false)
     private Timestamp timestamp;
 
 
-    public SortedResult<Feedback> getSortedResult() {
+    public SortedResult getSortedResult() {
         return sortedResult;
     }
 
     @JsonIgnore
-    public void setSortedResult(SortedResult<Feedback> sortedResult) {
+    public void setSortedResult(SortedResult sortedResult) {
         this.sortedResult = sortedResult;
     }
 
@@ -42,41 +58,46 @@ public class AcknowledgmentObject extends EhrEntity {
 
 
     public AcknowledgmentObject() {
+//        this.timestamp = new Timestamp(new Date().getTime());
+    }
+
+    public AcknowledgmentObject(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     @JsonIgnore
-    public List<Feedback> getErrors() {
+    public Set<Feedback> getErrors() {
         return getSortedResult().getErrors();
     }
 
-    public void setErrors(List<Feedback> errors) {
+    public void setErrors(Set<Feedback> errors) {
         this.getSortedResult().setErrors(errors);
     }
 
     @JsonIgnore
-    public List<Feedback> getWarnings() {
+    public Set<Feedback> getWarnings() {
         return getSortedResult().getWarnings();
     }
 
-    public void setWarnings(List<Feedback> warnings) {
+    public void setWarnings(Set<Feedback> warnings) {
         this.getSortedResult().setWarnings(warnings);
     }
 
     @JsonIgnore
-    public List<Feedback> getNotices() {
+    public Set<Feedback> getNotices() {
         return getSortedResult().getNotices();
     }
 
-    public void setNotices(List<Feedback> notices) {
+    public void setNotices(Set<Feedback> notices) {
         this.getSortedResult().setNotices(notices);
     }
 
     @JsonIgnore
-    public List<Feedback> getInfos() {
+    public Set<Feedback> getInfos() {
         return getSortedResult().getInfos();
     }
 
-    public void setInfos(List<Feedback> infos) {
+    public void setInfos(Set<Feedback> infos) {
         this.getSortedResult().setInfos(infos);
     }
 
@@ -120,43 +141,74 @@ public class AcknowledgmentObject extends EhrEntity {
         this.timestamp = timestamp;
     }
 
+    public String getRawAck() {
+        return rawAck;
+    }
+
+    public void setRawAck(String rawAck) {
+        this.rawAck = rawAck;
+    }
+
+    public VaccinationEvent getVaccinationEvent() {
+        return vaccinationEvent;
+    }
+
+    public void setVaccinationEvent(VaccinationEvent vaccinationEvent) {
+        this.vaccinationEvent = vaccinationEvent;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Embeddable
-    public static class SortedResult<T> implements Serializable {
+    public static class SortedResult implements Serializable {
 
-        List<T> errors = new ArrayList<>(4);
-        List<T> warnings = new ArrayList<>(4);
-        List<T> notices = new ArrayList<>(4);
-        List<T> infos = new ArrayList<>(4);
+        @OneToMany
+//        @JoinTable
+        //filter on the target entity table
+        @Filter(name = "severityError", condition = ":severity = 'E'")
+        Set<Feedback> errors = new HashSet<>(4);
+        @Filter(name = "severityW", condition = ":warning = 'W'")
+        Set<Feedback> warnings = new HashSet<>(4);
+        @Filter(name = "severityN", condition = ":warning = 'N'")
+        Set<Feedback> notices = new HashSet<>(4);
+        @Filter(name = "severityI", condition = ":warning = 'I'")
+        Set<Feedback> infos = new HashSet<>(4);
 
-        public List<T> getErrors() {
+        public Set<Feedback> getErrors() {
             return errors;
         }
 
-        public void setErrors(List<T> errors) {
+        public void setErrors(Set<Feedback> errors) {
             this.errors = errors;
         }
 
-        public List<T> getWarnings() {
+        public Set<Feedback> getWarnings() {
             return warnings;
         }
 
-        public void setWarnings(List<T> warnings) {
+        public void setWarnings(Set<Feedback> warnings) {
             this.warnings = warnings;
         }
 
-        public List<T> getNotices() {
+        public Set<Feedback> getNotices() {
             return notices;
         }
 
-        public void setNotices(List<T> notices) {
+        public void setNotices(Set<Feedback> notices) {
             this.notices = notices;
         }
 
-        public List<T> getInfos() {
+        public Set<Feedback> getInfos() {
             return infos;
         }
 
-        public void setInfos(List<T> infos) {
+        public void setInfos(Set<Feedback> infos) {
             this.infos = infos;
         }
     }
