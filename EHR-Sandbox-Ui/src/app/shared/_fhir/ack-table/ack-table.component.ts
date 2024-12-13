@@ -5,6 +5,9 @@ import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Sort } from '@angular/material/sort';
+import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
+import { RegistryNamePipe } from '../../_pipes/registry-name.pipe';
 
 @Component({
   selector: 'app-ack-table',
@@ -23,6 +26,8 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
   constructor(
     public snackBarService: SnackBarService,
     public feedbackService: FeedbackService,
+    private patientResumePipe: PatientResumePipe,
+    private registryNamePipe: RegistryNamePipe
   ) {
     super();
   }
@@ -59,4 +64,20 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
     }
   }
 
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.dataSource.sortingDataAccessor = (data: AcknowledgementObject<Feedback>, sortHeaderId: string) => {
+      if (sortHeaderId === "names") {
+        return this.patientResumePipe.transform(data.patient, ["name"])
+      }
+      if (sortHeaderId === "mrn") {
+        return this.patientResumePipe.transform(data.patient, ["mrn"])
+      }
+      if (sortHeaderId === "iis") {
+        return this.registryNamePipe.transform(+(data.iis ?? 0))
+      }
+      //@ts-ignore
+      return data[sortHeaderId]
+    }
+  }
 }

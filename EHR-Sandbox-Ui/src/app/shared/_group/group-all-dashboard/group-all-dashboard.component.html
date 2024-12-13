@@ -15,7 +15,7 @@
         <mat-card-content class="dashboard-card-content" #patients>
           <app-patient-table
             [dataArray]="((groupService.getCurrentObservable() | async)?.patientList | patientCache) ?? []"
-            [title]="'Group members'" [allow_create]="false" [columns]='["mrn","names.nameLast","birthDate","remove"]'
+            [title]="'Group members'" [allow_create]="false" [columns]='["mrn","names","birthDate","remove"]'
             [facility]="facilityService.getCurrentObservable() | async"
             (removeEmitter)="removePatient($event)"></app-patient-table>
         </mat-card-content>

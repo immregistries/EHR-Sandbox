@@ -8,6 +8,8 @@ import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboar
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { MatTableDataSource } from '@angular/material/table';
+import { Sort } from '@angular/material/sort';
+import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
 
 @Component({
   selector: 'app-patient-table',
@@ -35,7 +37,8 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
     public patientService: PatientService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private patientResumePipe: PatientResumePipe) {
     super()
     // this.observableRefresh = merge(
     //   this.facilityService.getCurrentObservable()
@@ -108,10 +111,26 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
     super.ngAfterViewInit();
     this.dataSource.sortingDataAccessor = (data: EhrPatient, sortHeaderId: string) => {
       if (sortHeaderId === "names") {
-        // return this.defaultSortAccessor.sortingDataAccessor(data, "names.nameLast")
+        return this.patientResumePipe.transform(data, ["name"])
       }
-      return this.defaultSortAccessor.sortingDataAccessor(data, sortHeaderId)
+      if (sortHeaderId === "mrn") {
+        return this.patientResumePipe.transform(data, ["mrn"])
+      }
+      //@ts-ignore
+      return data[sortHeaderId]
     }
+  }
+
+  onSortChange(event: Sort) {
+    //   if (event.active === "patient") {
+    //     this.dataSource.sortingDataAccessor.data.sort((a, b) => {
+    //       return (this.patientResumePipe.transform(a, ["name"]) ?? "").localeCompare((this.patientResumePipe.transform(b, ["name"]) ?? ""))
+    //     })
+    //   } else if (event.active === "patient") {
+    //     this.dataSource.data.sort((a, b) => {
+    //       return (this.patientResumePipe.transform(a, ["name"]) ?? "").localeCompare((this.patientResumePipe.transform(b, ["name"]) ?? ""))
+    //     })
+    //   }
   }
 
 }
