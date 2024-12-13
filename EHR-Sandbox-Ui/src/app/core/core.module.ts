@@ -38,6 +38,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { PatientComparePipe } from '../shared/_pipes/patient-compare.pipe';
 import { PatientResumePipe } from '../shared/_pipes/patient-resume.pipe';
 import { PatientCachePipe } from '../shared/_pipes/patient-cache.pipe';
+import { RegistryNamePipe } from '../shared/_pipes/registry-name.pipe';
 
 
 
@@ -105,6 +106,7 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     PatientComparePipe,
     PatientResumePipe,
     PatientCachePipe,
+    RegistryNamePipe,
     VaccinationComparePipe,
     SettingsService,
     PatientService,

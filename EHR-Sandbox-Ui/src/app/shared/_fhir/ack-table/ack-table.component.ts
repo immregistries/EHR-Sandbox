@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
-import { Feedback } from 'src/app/core/_model/rest';
+import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -33,9 +33,24 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
   }
 
   @Input()
+  patient?: EhrPatient
+  @Input()
+  vaccination?: VaccinationEvent;
+  @Input()
+  registryId?: number
+
+  @Input()
   public set singleAck(value: string) {
+    // if (!this.dataSource.data) {
+    //   this.dataArray = []
+    // }
+    // console.log(this.dataSource.data)
     this.feedbackService.convertAck(value).subscribe(result => {
-      this.dataArray = [result];
+      this.dataArray = [result]
+      // this.dataSource.data.push(result);
+      // console.log(this.dataSource.data)
+      // this.dataArray = []
+
     })
   }
 
@@ -66,6 +81,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
+    // this.dataArray = []
     this.dataSource.sortingDataAccessor = (data: AcknowledgementObject<Feedback>, sortHeaderId: string) => {
       if (sortHeaderId === "names") {
         return this.patientResumePipe.transform(data.patient, ["name"])

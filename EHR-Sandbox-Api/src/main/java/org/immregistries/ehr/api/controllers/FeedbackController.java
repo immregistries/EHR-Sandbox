@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
@@ -134,7 +135,16 @@ public class FeedbackController {
             patientId.ifPresent(id -> feedback.setPatient(ehrPatientRepository.findById(id).orElse(null)));
             vaccinationId.ifPresent(id -> feedback.setVaccinationEvent(vaccinationEventRepository.findById(id).orElse(null)));
             feedback.setSeverity(severity);
-            feedback.setContent(hl7Reader.getOriginalSegment());
+            if (StringUtils.isNotBlank(hl7Reader.getValue(8, 2))) {
+                feedback.setContent(hl7Reader.getValue(8, 2));
+                feedback.setCode(hl7Reader.getValue(8));
+
+
+            } else if (StringUtils.isNotBlank(hl7Reader.getValue(5, 2))) {
+                feedback.setContent(hl7Reader.getValue(5, 2));
+                feedback.setCode(hl7Reader.getValue(5));
+
+            }
             feedback.setCode(hl7Reader.getValue(5));
             feedback.setTimestamp(new Timestamp(new Date().getTime()));
             switch (severity) {
