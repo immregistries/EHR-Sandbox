@@ -130,6 +130,7 @@ import { AckDisplayComponent } from './_fhir/ack-display/ack-display.component';
 import { PatientResumePipe } from './_pipes/patient-resume.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -277,11 +278,12 @@ import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
     MatBadgeModule,
     MatToolbarModule,
     MatChipsModule,
-    ClipboardModule,
     MatSlideToggleModule,
     MatStepperModule,
     MatTreeModule,
     MatPaginatorModule,
+    MatSortModule,
+    ClipboardModule,
     QRCodeModule,
     CdkMenuModule,
   ],

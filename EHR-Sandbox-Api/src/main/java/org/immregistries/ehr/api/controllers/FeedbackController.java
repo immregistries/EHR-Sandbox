@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -110,9 +112,15 @@ public class FeedbackController {
         acknowledgmentObject.setRawAck(ack);
         if (hl7Reader.advanceToSegment("MSH")) {
             acknowledgmentObject.setMessageId(hl7Reader.getValue(9));
-            acknowledgmentObject.setTimestamp(new Timestamp(NumberUtils.createLong(hl7Reader.getValue(3))));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddhhmmssZ");
+            String timestamp = hl7Reader.getValue(6);
+            try {
+                acknowledgmentObject.setTimestamp(new Timestamp(simpleDateFormat.parse(timestamp).getTime()));
+            } catch (ParseException e) {
+            }
 
         }
+
         if (hl7Reader.advanceToSegment("MSA")) {
             acknowledgmentObject.setMsa_2(hl7Reader.getValue(1));
             acknowledgmentObject.setMessageId(hl7Reader.getValue(2)); // TODO choose which control Id

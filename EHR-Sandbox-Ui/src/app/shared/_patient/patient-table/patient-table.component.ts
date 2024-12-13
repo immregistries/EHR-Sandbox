@@ -7,6 +7,7 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-patient-table',
@@ -100,6 +101,17 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
     return element.identifiers?.find((identifier) => {
       return identifier.type == 'MR'
     })?.value ?? ''
+  }
+
+  private defaultSortAccessor = new MatTableDataSource<EhrPatient>()
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.dataSource.sortingDataAccessor = (data: EhrPatient, sortHeaderId: string) => {
+      if (sortHeaderId === "names") {
+        // return this.defaultSortAccessor.sortingDataAccessor(data, "names.nameLast")
+      }
+      return this.defaultSortAccessor.sortingDataAccessor(data, sortHeaderId)
+    }
   }
 
 }

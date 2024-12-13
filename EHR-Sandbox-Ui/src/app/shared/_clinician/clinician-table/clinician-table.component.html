@@ -9,17 +9,17 @@
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>
 <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
   <ng-container matColumnDef="nameFirst">
-    <th mat-header-cell *matHeaderCellDef> First name</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> First name</th>
     <td mat-cell *matCellDef="let element">{{element.nameFirst}}</td>
   </ng-container>
   <ng-container matColumnDef="nameMiddle">
-    <th mat-header-cell *matHeaderCellDef> Middle name</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Middle name</th>
     <td mat-cell *matCellDef="let element">{{element.nameMiddle}}</td>
   </ng-container>
   <ng-container matColumnDef="nameLast">
-    <th mat-header-cell *matHeaderCellDef> Last name</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Last name</th>
     <td mat-cell *matCellDef="let element">{{element.nameLast}}</td>
   </ng-container>
 

@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Facility, Feedback, EhrPatient, VaccinationEvent, ImmunizationRegistry } from 'src/app/core/_model/rest';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
@@ -9,18 +9,19 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
 import { Hl7Location } from 'src/app/core/_model/form-structure';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-feedback-table',
   templateUrl: './feedback-table.component.html',
   styleUrls: ['./feedback-table.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  // animations: [
+  //   trigger('detailExpand', [
+  //     state('collapsed', style({ height: '0px', minHeight: '0' })),
+  //     state('expanded', style({ height: '*' })),
+  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+  //   ]),
+  // ],
 })
 export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements OnInit, AfterViewInit {
   // dataSource = new MatTableDataSource<Feedback>([]);
@@ -70,7 +71,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     // private snackBarService: SnackBarService,
     private immunizationRegistryService: ImmunizationRegistryService,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
-
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent }
   ) {
     super()
@@ -197,4 +197,10 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   actualRowClass(element: Feedback) {
     return this.rowClass(element) + " element-row"
   }
+
+  // @ViewChild(MatSort) sort!: MatSort;
+  // override ngAfterViewInit(): void {
+  //   super.ngAfterViewInit()
+  //   this.dataSource.sort = this.sort;
+  // }
 }
