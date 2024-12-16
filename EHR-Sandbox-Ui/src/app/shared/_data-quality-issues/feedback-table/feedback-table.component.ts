@@ -1,4 +1,3 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Facility, Feedback, EhrPatient, VaccinationEvent, ImmunizationRegistry } from 'src/app/core/_model/rest';
@@ -9,7 +8,6 @@ import { AbstractDataTableComponent } from '../../_components/abstract-data-tabl
 import { Hl7Location } from 'src/app/core/_model/form-structure';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-feedback-table',
@@ -117,24 +115,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     }
   }
 
-  // refreshData(){
-  //   if (this.vaccination && this.vaccination.id && this.vaccination.id > 0){
-  //     this.dataSource.data = this.vaccination.feedbacks ?? []
-  //   } else if (this.patient && this.patient.id && this.patient.id > 0) {
-  //     this.dataSource.data = this.patient.feedbacks ?? []
-  //   } else if (this.facility && this.facility.id > -1) {
-  //     this.feedbackService.readFacilityFeedback(this.facility.id).subscribe((res) => {
-  //       this.dataSource.data = res
-  //       this.loading = false
-  //     })
-  //   } else {
-  //     this.dataSource.data = []
-  //     this.loading = false
-  //   }
-  // }
-
-
-
   openPatient(patient: EhrPatient | number) {
     const dialogRef = this.dialog.open(PatientDashboardComponent, {
       maxWidth: '95vw',
@@ -155,10 +135,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
       panelClass: 'dialog-with-bar',
       data: { vaccination: vaccination },
     });
-  }
-
-  remove(element: Feedback) {
-
   }
 
   locationDisplay(hl7Locations: Hl7Location[]): string {

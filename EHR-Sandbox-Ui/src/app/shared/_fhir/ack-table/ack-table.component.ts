@@ -12,14 +12,14 @@ import { RegistryNamePipe } from '../../_pipes/registry-name.pipe';
 @Component({
   selector: 'app-ack-table',
   templateUrl: './ack-table.component.html',
-  styleUrls: ['./ack-table.component.css'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  styleUrls: ['./ack-table.component.scss'],
+  // animations: [
+  //   trigger('detailExpand', [
+  //     state('collapsed', style({ height: '0px', minHeight: '0' })),
+  //     state('expanded', style({ height: '*' })),
+  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+  //   ]),
+  // ],
 })
 export class AckTableComponent extends AbstractDataTableComponent<AcknowledgementObject<Feedback>> {
 
@@ -33,25 +33,50 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
   }
 
   @Input()
-  patient?: EhrPatient
+  patientId?: number
   @Input()
-  vaccination?: VaccinationEvent;
+  vaccinationId?: number;
   @Input()
   registryId?: number
 
   @Input()
   public set singleAck(value: string) {
-    // if (!this.dataSource.data) {
-    //   this.dataArray = []
-    // }
+    if (this.dataSource.data.length < 1) {
+      this.dataArray = []
+    }
     // console.log(this.dataSource.data)
-    this.feedbackService.convertAck(value).subscribe(result => {
-      this.dataArray = [result]
-      // this.dataSource.data.push(result);
-      // console.log(this.dataSource.data)
-      // this.dataArray = []
+    if (value && value.length > 1) {
+      this.feedbackService.convertAck(value).subscribe(result => {
+        let array = JSON.parse(JSON.stringify(this.dataSource.data))
+        result.id = array.push(result)
+        // console.log(this.dataSource.data)
+        this.dataArray = array
+        // this.dataArray = [result]
+        // console.log(this.dataSource.data)
+        // this.dataArray = []
+      })
+    }
+  }
 
-    })
+
+
+  rowClass(element: AcknowledgementObject<Feedback>): string {
+    switch (element.msa_2) {
+      case "E":
+        return 'errors'
+      case "W":
+        return 'warnings'
+      case "N":
+        return 'notices'
+      case "I":
+        return 'infos'
+      default:
+        return ""
+    }
+  }
+
+  actualRowClass(element: AcknowledgementObject<Feedback>) {
+    return this.rowClass(element) + " element-row"
   }
 
   columns = [
@@ -59,25 +84,10 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
     "patient",
     "msa_2",
     "timestamp",
-    "iis",
-    "senderId",
-    "receiverId",
+    // "iis",
+    "sender",
+    "destination",
   ]
-
-  rowClass(element: AcknowledgementObject<Feedback>): string {
-    switch (element.msa_2) {
-      case "E":
-        return 'error'
-      case "W":
-        return 'warning'
-      case "N":
-        return 'notice'
-      case "I":
-        return 'info'
-      default:
-        return ""
-    }
-  }
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
@@ -88,6 +98,9 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
       }
       if (sortHeaderId === "mrn") {
         return this.patientResumePipe.transform(data.patient, ["mrn"])
+      }
+      if (sortHeaderId === "iis") {
+        return this.registryNamePipe.transform(+(data.iis ?? 0))
       }
       if (sortHeaderId === "iis") {
         return this.registryNamePipe.transform(+(data.iis ?? 0))

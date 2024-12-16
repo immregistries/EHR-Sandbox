@@ -113,6 +113,10 @@ public class FeedbackController {
         acknowledgmentObject.setRawAck(ack);
         if (hl7Reader.advanceToSegment("MSH")) {
             acknowledgmentObject.setMessageId(hl7Reader.getValue(9));
+            acknowledgmentObject.setSenderSoftware(hl7Reader.getValue(3));
+            acknowledgmentObject.setSender(hl7Reader.getValue(4));
+            acknowledgmentObject.setDestinationSoftware(hl7Reader.getValue(5));
+            acknowledgmentObject.setDestination(hl7Reader.getValue(6));
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddhhmmssZ");
             String timestamp = hl7Reader.getValue(6);
             try {
@@ -130,20 +134,23 @@ public class FeedbackController {
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
+            feedback.setRaw(hl7Reader.getOriginalSegment());
+            feedback.setSeverity(severity);
             registryId.ifPresent(id -> feedback.setIis(String.valueOf(registryId)));
             facilityId.ifPresent(id -> feedback.setFacility(facilityRepository.findById(id).orElse(null)));
             patientId.ifPresent(id -> feedback.setPatient(ehrPatientRepository.findById(id).orElse(null)));
             vaccinationId.ifPresent(id -> feedback.setVaccinationEvent(vaccinationEventRepository.findById(id).orElse(null)));
-            feedback.setSeverity(severity);
-            if (StringUtils.isNotBlank(hl7Reader.getValue(8, 2))) {
-                feedback.setContent(hl7Reader.getValue(8, 2));
-                feedback.setCode(hl7Reader.getValue(8));
 
-
+            if (StringUtils.isNotBlank(hl7Reader.getValue(8))) {
+                if (StringUtils.isNotBlank(hl7Reader.getValue(8, 2))) {
+                    feedback.setContent(hl7Reader.getValue(8, 2));
+                    feedback.setCode(hl7Reader.getValue(8));
+                } else {
+                    feedback.setContent(hl7Reader.getValue(8, 1));
+                }
             } else if (StringUtils.isNotBlank(hl7Reader.getValue(5, 2))) {
                 feedback.setContent(hl7Reader.getValue(5, 2));
                 feedback.setCode(hl7Reader.getValue(5));
-
             }
             feedback.setCode(hl7Reader.getValue(5));
             feedback.setTimestamp(new Timestamp(new Date().getTime()));

@@ -36,6 +36,7 @@ export interface Feedback {
   content?: string;
   code?: string;
   severity?: string;
+  raw?: string;
   timestamp?: number;
   hl7Locations?: Hl7Location[];
 }

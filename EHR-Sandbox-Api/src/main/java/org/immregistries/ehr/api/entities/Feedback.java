@@ -83,6 +83,10 @@ public class Feedback extends EhrEntity {
     @JoinColumn(name = "timestamp", nullable = false)
     private Timestamp timestamp;
 
+
+    @JoinColumn(name = "raw", columnDefinition = "TEXT")
+    private String raw;
+
     public String getIis() {
         return iis;
     }
@@ -161,5 +165,13 @@ public class Feedback extends EhrEntity {
 
     public void setHl7Locations(Set<Hl7Location> hl7Locations) {
         this.hl7Locations = hl7Locations;
+    }
+
+    public String getRaw() {
+        return raw;
+    }
+
+    public void setRaw(String raw) {
+        this.raw = raw;
     }
 }

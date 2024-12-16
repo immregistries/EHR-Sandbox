@@ -18,13 +18,23 @@ public class AcknowledgmentObject extends EhrEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ack_id", nullable = false)
     private Integer id;
+    @Column(name = "status", columnDefinition = "TEXT")
+    private String rawAck = "";
 
     @Column(name = "message_id")
     private String messageId = "";
     @Column(name = "status")
     private String status = "";
-    @Column(name = "status", columnDefinition = "TEXT")
-    private String rawAck = "";
+    @Column(name = "sender")
+    private String sender = "";
+    @Column(name = "destination")
+    private String destination = "";
+    @Column(name = "sender_software")
+    private String senderSoftware = "";
+    @Column(name = "destination_software")
+    private String destinationSoftware = "";
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     private EhrPatient ehrPatient;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -163,6 +173,38 @@ public class AcknowledgmentObject extends EhrEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getSenderSoftware() {
+        return senderSoftware;
+    }
+
+    public void setSenderSoftware(String senderSoftware) {
+        this.senderSoftware = senderSoftware;
+    }
+
+    public String getDestinationSoftware() {
+        return destinationSoftware;
+    }
+
+    public void setDestinationSoftware(String destinationSoftware) {
+        this.destinationSoftware = destinationSoftware;
     }
 
     @Embeddable

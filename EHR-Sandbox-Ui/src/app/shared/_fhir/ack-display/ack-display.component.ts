@@ -19,6 +19,8 @@ export class AckDisplayComponent {
   public set acknowledgementObject(value: AcknowledgementObject<Feedback>) {
     this._acknowledgementObject = value;
     this._rawAck = value.rawAck ?? ""
+    this.msa_2 = value.msa_2 ?? ""
+    this.plain = this.plainText(value)
   }
 
 
@@ -63,7 +65,7 @@ export class AckDisplayComponent {
     }
     this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
       this.acknowledgementObject = result
-      this.plain = this.plainText(value, result)
+      this.plain = this.plainText(result)
     })
     // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
 
@@ -106,10 +108,10 @@ export class AckDisplayComponent {
 
   plain: string = ""
 
-  plainText(msg: string, feedbacks: AcknowledgementObject<Feedback>): string {
+  plainText(ack: AcknowledgementObject<Feedback>): string {
     let actionRequired: string = ""
     let messageStatus: string = ""
-    switch (this.msa_2) {
+    switch (ack.msa_2) {
       case "AA":
       case "AI": {
         actionRequired = ""
@@ -133,30 +135,30 @@ export class AckDisplayComponent {
       }
     }
     let txt =
-      `Message Origin: ${this.msa_2}
-Message Status ${messageStatus}
+      `Message Id: ${ack.messageId}
+Origin: ${ack.sender} ${ack.senderSoftware}
+Destination: ${ack.destination} ${ack.destinationSoftware}
+Status: ${ack.msa_2}-${messageStatus}
 Actions Required: ${actionRequired}
-Number of Errors: ${feedbacks.sortedResult.errors.length}
-Number of Warnings: ${feedbacks.sortedResult.warnings.length}
-Number of Notices: ${feedbacks.sortedResult.notices.length}
-Number of Infos: ${feedbacks.sortedResult.infos.length}
-------
-Errors: ${this.feedbackPlain(feedbacks.sortedResult.errors)}
-------
-Warnings: ${this.feedbackPlain(feedbacks.sortedResult.warnings)}
-------
-Notices: ${this.feedbackPlain(feedbacks.sortedResult.notices)}
-------
-Infos: ${this.feedbackPlain(feedbacks.sortedResult.infos)}
-------
+----------------- Result List ------------------
+Number of Errors: ${ack.sortedResult.errors.length}
+Number of Warnings: ${ack.sortedResult.warnings.length}
+Number of Notices: ${ack.sortedResult.notices.length}
+Number of Infos: ${ack.sortedResult.infos.length}
+------ Errors ------ ${this.feedbackPlain(ack.sortedResult.errors, "E")}
+------ Warnings ------ ${this.feedbackPlain(ack.sortedResult.warnings, "W")}
+------ Notices ----- ${this.feedbackPlain(ack.sortedResult.notices, "N")}
+------ Infos ----- ${this.feedbackPlain(ack.sortedResult.infos, "I")}
+
      `
     return txt
   }
 
-  feedbackPlain(feedbackArray: Feedback[]): string {
+  feedbackPlain(feedbackArray: Feedback[], prefix?: string): string {
     let txt = ""
+    let index = 1
     feedbackArray.forEach(element => {
-      txt += "\n" + element.code + " " + element.content
+      txt += "\n" + (prefix ?? "") + "-" + index++ + ": " + element.code + "\n" + element.content + "\n"
     });
     if (txt === "") {
       txt = "N/A"

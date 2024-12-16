@@ -31,13 +31,14 @@
   </form>
 
   <span [style]="{width: '50%'}">
-    <app-ack-display [loading]="resultLoading" [rawAck]="answer" [isError]="error"
-                     [registryId]="immunizationRegistryService.getCurrentId()" [patientId]="patientId"
-                     [vaccinationId]="vaccinationId">
-    </app-ack-display>
+    <!-- <app-ack-display [loading]="resultLoading" [rawAck]="answer" [isError]="error"
+      [registryId]="immunizationRegistryService.getCurrentId()" [patientId]="patientId" [vaccinationId]="vaccinationId">
+    </app-ack-display> -->
+    <app-ack-table [singleAck]="answer" [registryId]="immunizationRegistryService.getCurrentId()"
+                   [patientId]="patientId" [vaccinationId]="vaccinationId"></app-ack-table>
+
   </span>
 </span>
-<app-ack-table [singleAck]="answer"></app-ack-table>
 <!--
   <div [style]="{width: '90%'}" class="w3-right textarea-container">
     <mat-progress-bar mode="query" *ngIf="resultLoading"></mat-progress-bar>

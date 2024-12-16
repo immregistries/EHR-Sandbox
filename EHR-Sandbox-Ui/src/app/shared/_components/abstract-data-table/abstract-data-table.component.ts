@@ -85,6 +85,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   }
 
   onSelection(event: T | undefined, index?: number) {
+    console.log(event, this.selectedElement)
     if (event && this.selectedElement && this.hasIdElement(this.selectedElement) && this.hasIdElement(event)) {
       // @ts-ignore
       if (event && this.selectedElement?.id == event.id) {
