@@ -39,6 +39,9 @@ import { PatientComparePipe } from '../shared/_pipes/patient-compare.pipe';
 import { PatientResumePipe } from '../shared/_pipes/patient-resume.pipe';
 import { PatientCachePipe } from '../shared/_pipes/patient-cache.pipe';
 import { RegistryNamePipe } from '../shared/_pipes/registry-name.pipe';
+import { VaccinationCachePipe } from '../shared/_pipes/vaccination-cache.pipe';
+import { CodeMapsPipe } from '../shared/_pipes/code-maps.pipe';
+import { AckStatusPipe } from '../shared/_pipes/ack-status.pipe';
 
 
 
@@ -108,6 +111,10 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     PatientCachePipe,
     RegistryNamePipe,
     VaccinationComparePipe,
+    VaccinationCachePipe,
+    CodeMapsPipe,
+    AckStatusPipe,
+
     SettingsService,
     PatientService,
     FeedbackService,

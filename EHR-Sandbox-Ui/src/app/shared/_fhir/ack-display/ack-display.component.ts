@@ -1,8 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
-import { Feedback } from 'src/app/core/_model/rest';
+import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+import { PatientCachePipe } from '../../_pipes/patient-cache.pipe';
+import { PatientService } from 'src/app/core/_services/patient.service';
+import { DatePipe } from '@angular/common';
+import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
+import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
+import { VaccinationCachePipe } from '../../_pipes/vaccination-cache.pipe';
+import { CodeMapsPipe } from '../../_pipes/code-maps.pipe';
 
 @Component({
   selector: 'app-ack-display',
@@ -27,6 +34,12 @@ export class AckDisplayComponent {
   constructor(
     public snackBarService: SnackBarService,
     public feedbackService: FeedbackService,
+    public patientCachePipe: PatientCachePipe,
+    public vaccinationCachePipe: VaccinationCachePipe,
+    public patientResumePipe: PatientResumePipe,
+    public patientService: PatientService,
+    public codeMapsPipe: CodeMapsPipe,
+    public datePipe: DatePipe,
   ) { }
 
   private _rawAck: string = "";
@@ -78,7 +91,7 @@ export class AckDisplayComponent {
   @Input()
   vaccinationId?: number;
   @Input()
-  loading: Boolean = false;
+  loading: boolean = false;
   @Input()
   isError: boolean = false;
 
@@ -107,61 +120,87 @@ export class AckDisplayComponent {
 
   plain: string = ""
 
+  plainTextPatient(ack: AcknowledgementObject<Feedback>): string {
+    let ehrPatient: EhrPatient | undefined;
+    let vaccinationEvent: VaccinationEvent | undefined;
+    if (ack.patient) {
+      ehrPatient = (this.patientCachePipe.transform([ack.patient]) ?? [undefined])[0]
+    }
+    let txt = ""
+    if (ehrPatient) {
+      txt += `----------------- PATIENT SUBMITTED -----------------
+Name:\t${ehrPatient?.names[0].nameLast}, ${ehrPatient?.names[0].nameFirst ?? ""} ${ehrPatient?.names[0].nameMiddle ?? ""}
+DOB:\t${this.patientResumePipe.transform(ehrPatient, ["birthDate"])}
+MRN:\t${this.patientResumePipe.extractMrn(ehrPatient)}
+`
+      if (ack.vaccination) {
+        vaccinationEvent = (this.vaccinationCachePipe.transform([ack.vaccination]) ?? [undefined])[0]
+      }
+      if (vaccinationEvent) {
+        txt += `Imms:
+\t${this.datePipe.transform(vaccinationEvent.vaccine.administeredDate, "shortDate")} ${this.codeMapsPipe.transform(vaccinationEvent.vaccine.vaccineCvxCode ?? "", "VACCINATION_CVX_CODE").label} (${vaccinationEvent.vaccine.vaccineCvxCode})\n\n`
+      }
+    }
+    return txt
+
+  }
+
   plainText(ack: AcknowledgementObject<Feedback>): string {
     let actionRequired: string = ""
     let messageStatus: string = ""
     switch (ack.msa_2) {
       case "AA":
       case "AI": {
-        actionRequired = ""
-        messageStatus = "Accepted"
+        actionRequired = "Data was accepted by CHIRP"
+        messageStatus = "ACCEPTED"
         break;
       }
       case "AE": {
-        actionRequired = "Correct problems and resubmit mandatory"
-        messageStatus = "Error"
+        actionRequired = "Data was not accepted by CHIRP. You must correct and resubmit. "
+        messageStatus = "NOT ACCEPTED"
         break;
       }
       case "AW": {
-        actionRequired = "Correct problems and resubmit"
+        actionRequired = "Data was not accepted by CHIRP. You should correct and resubmit."
         messageStatus = "Warning"
         break;
       }
       case "AN": {
-        actionRequired = "Correct problems"
+        actionRequired = "Data was accepted by CHIRP. Issues detected, you should correct and resubmit."
         messageStatus = "Notices"
         break;
       }
     }
-    let txt =
-      `Message Id: ${ack.messageId}
-Origin: ${ack.sender} ${ack.senderSoftware}
-Destination: ${ack.destination} ${ack.destinationSoftware}
-Status: ${ack.msa_2}-${messageStatus}
-Actions Required: ${actionRequired}
------------------ Result List ------------------
-Number of Errors: ${ack.sortedResult.errors.length}
-Number of Warnings: ${ack.sortedResult.warnings.length}
-Number of Notices: ${ack.sortedResult.notices.length}
-Number of Infos: ${ack.sortedResult.infos.length}
------- Errors ------ ${this.feedbackPlain(ack.sortedResult.errors, "E")}
------- Warnings ------ ${this.feedbackPlain(ack.sortedResult.warnings, "W")}
------- Notices ----- ${this.feedbackPlain(ack.sortedResult.notices, "N")}
------- Infos ----- ${this.feedbackPlain(ack.sortedResult.infos, "I")}
+    let txt = this.plainTextPatient(ack);
+    txt += `----------------- ${messageStatus} -------------------
+Message Id:\t${ack.messageId}
+Origin:\t${ack.sender}\t${ack.senderSoftware}
+Destination:\t${ack.destination}\t${ack.destinationSoftware}
+Submitted:\t${this.datePipe.transform(ack.timestamp, "short")}
 
-     `
+${actionRequired}
+Errors:\t${ack.sortedResult.errors.length}
+Warnings:\t${ack.sortedResult.warnings.length}
+Notices:\t${ack.sortedResult.notices.length}
+Inform:\t${ack.sortedResult.infos.length}
+${this.feedbackPlain("Errors", "The message could not be accepted because:", ack.sortedResult.errors, "E")}
+${this.feedbackPlain("Warnings", "There are issues with your message or data quality that should be corrected:", ack.sortedResult.warnings, "W")}
+${this.feedbackPlain("Notices", "", ack.sortedResult.notices, "N")}
+${this.feedbackPlain("Infos", "", ack.sortedResult.infos, "I")}`
     return txt
   }
 
-  feedbackPlain(feedbackArray: Feedback[], prefix?: string): string {
-    let txt = ""
+  feedbackPlain(title: string, message: string, feedbackArray: Feedback[], prefix?: string): string {
+    if (feedbackArray.length < 1) {
+      return ``
+    }
+    let txt = `
+${title}: ${message}`
     let index = 1
     feedbackArray.forEach(element => {
-      txt += "\n" + (prefix ?? "") + "-" + index++ + ": " + element.code + "\n" + element.content + "\n"
+      txt += `\n\t${(prefix ?? "")}-${index++}\t${element.content}`
+      // txt += `\n\t-${(prefix ?? "")}-${index++}\t${element.code}\n${element.content}`
     });
-    if (txt === "") {
-      txt = "N/A"
-    }
     return txt
   }
 

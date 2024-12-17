@@ -1,5 +1,6 @@
 @use "sass:map" as map;
 @import 'src/variables';
+
 table {
   width: 100%;
 }
@@ -17,27 +18,27 @@ tr.detail-row {
 }
 
 // TODO config directly with theme, temporary solution for demo
-.mat-mdc-row.errors {
-  background-color:  map.get($ehr-warn, "default");
+.mat-mdc-row.error {
+  background-color: map.get($ehr-warn, "default");
 }
 
-.mat-mdc-row.errors:hover {
+.mat-mdc-row.error:hover {
   background-color: map.get($ehr-warn, "darker");
 }
 
-.mat-mdc-row.warnings {
+.mat-mdc-row.warning {
   background-color: map.get($warning-warn, "default");
 }
 
-.mat-mdc-row.warnings:hover {
+.mat-mdc-row.warning:hover {
   background-color: map.get($notice-warn, "darker");
 }
 
-.mat-mdc-row.notices {
+.mat-mdc-row.notice {
   background-color: map.get($notice-warn, "default");
 }
 
-.mat-mdc-row.notices:hover {
+.mat-mdc-row.notice:hover {
   background-color: map.get($notice-warn, "darker");
 }
 

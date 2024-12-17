@@ -6,18 +6,13 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
 import { RegistryNamePipe } from '../../_pipes/registry-name.pipe';
+import Chart from 'chart.js/auto';
+
 
 @Component({
   selector: 'app-ack-table',
   templateUrl: './ack-table.component.html',
   styleUrls: ['./ack-table.component.scss'],
-  // animations: [
-  //   trigger('detailExpand', [
-  //     state('collapsed', style({ height: '0px', minHeight: '0' })),
-  //     state('expanded', style({ height: '*' })),
-  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-  //   ]),
-  // ],
 })
 export class AckTableComponent extends AbstractDataTableComponent<AcknowledgementObject<Feedback>> {
 
@@ -44,7 +39,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
     }
     // console.log(this.dataSource.data)
     if (value && value.length > 1) {
-      this.feedbackService.convertAck(value).subscribe(result => {
+      this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
         let array = JSON.parse(JSON.stringify(this.dataSource.data))
         result.id = array.push(result)
         // console.log(this.dataSource.data)
@@ -52,6 +47,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
         // this.dataArray = [result]
         // console.log(this.dataSource.data)
         // this.dataArray = []
+        this.updateChart()
       })
     }
   }
@@ -60,13 +56,13 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
   rowClass(element: AcknowledgementObject<Feedback>): string {
     switch (element.msa_2) {
-      case "E":
+      case "AE":
         return 'errors'
-      case "W":
+      case "AW":
         return 'warnings'
-      case "N":
+      case "AN":
         return 'notices'
-      case "I":
+      case "AI":
         return 'infos'
       default:
         return ""
@@ -107,4 +103,86 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
       return data[sortHeaderId]
     }
   }
+
+  public messagesChart: any;
+  public errChart: any;
+
+  updateChart() {
+    let messageData = [0, 0, 0, 0]
+    let errData = [0, 0, 0, 0]
+    this.dataSource.data.forEach(element => {
+      if (element.msa_2 === "AE") {
+        messageData[0]++
+      } else if (element.msa_2 === "AW") {
+        messageData[1]++
+      } else if (element.msa_2 === "AN") {
+        messageData[2]++
+      } else {
+        messageData[3]++
+      }
+      errData[0] += element.sortedResult.errors.length
+      errData[1] += element.sortedResult.warnings.length
+      errData[2] += element.sortedResult.notices.length
+      errData[3] += element.sortedResult.infos.length
+    });
+
+    this.messagesChart = new Chart("MessagesStatusChart", {
+      type: 'pie', //this denotes tha type of chart
+      data: {// values on X-Axis
+        labels: ['Rejected', 'Rejected with Warnings', 'Accepted with Notices', 'Accepted'],
+        datasets: [{
+          label: 'Status',
+          data: messageData,
+          backgroundColor: [
+            'red',
+            'orange',
+            'yellow',
+            'green',
+          ],
+          hoverOffset: 4
+        }],
+      },
+      options: {
+        aspectRatio: 5,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Status of processed acknowledgments'
+          }
+        }
+      }
+
+    });
+
+    this.errChart = new Chart("ErrChart", {
+      type: 'pie', //this denotes tha type of chart
+
+      data: {// values on X-Axis
+        labels: ['Error', 'Warnings', 'Notices', 'Informational'],
+        datasets: [{
+          label: 'Severity',
+          data: errData,
+          backgroundColor: [
+            'red',
+            'orange',
+            'yellow',
+            'grey',
+          ],
+          hoverOffset: 4
+        }],
+      },
+      options: {
+        aspectRatio: 5,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Severity of messages'
+          }
+        }
+      }
+
+    });
+  }
+
+
 }

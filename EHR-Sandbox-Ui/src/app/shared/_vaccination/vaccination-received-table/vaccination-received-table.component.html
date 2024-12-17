@@ -16,7 +16,7 @@
   </ng-container>
   <ng-container matColumnDef="administeredDate">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Administration Date</th>
-    <td mat-cell *matCellDef="let element"> {{element.vaccine.administeredDate | date: 'yyyy-MM-dd'}}</td>
+    <td mat-cell *matCellDef="let element"> {{element.vaccine.administeredDate | date: 'shortDate'}}</td>
   </ng-container>
   <ng-container matColumnDef="lotNumber">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Lot number</th>

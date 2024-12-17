@@ -19,7 +19,7 @@
   </ng-container>
   <ng-container matColumnDef="date">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated Date</th>
-    <td mat-cell *matCellDef="let element"> {{element.date | date: 'yyyy-MM-dd'}}</td>
+    <td mat-cell *matCellDef="let element"> {{element.date | date: 'shortDate'}}</td>
   </ng-container>
   *matHeaderCellDef mat-sort-header>
   <ng-container matColumnDef="authority">

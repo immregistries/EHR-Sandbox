@@ -76,9 +76,7 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
           }))
 
       } else {
-        return of([]).pipe(tap((result) => {
-          // this._patientsCached = undefined
-        }))
+        return of([])
       }
     }))
   }

@@ -131,6 +131,7 @@ import { PatientResumePipe } from './_pipes/patient-resume.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
 import { MatSortModule } from '@angular/material/sort';
+import { AckStatusPipe } from './_pipes/ack-status.pipe';
 
 @NgModule({
   declarations: [
@@ -153,6 +154,7 @@ import { MatSortModule } from '@angular/material/sort';
     ImmunizationRegistryMenuComponent,
     LocalCopyDialogComponent,
     KeysPipe,
+    AckStatusPipe,
     FeedbackIconComponent,
     VaccinationComparePipe,
 

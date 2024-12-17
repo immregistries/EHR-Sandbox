@@ -18,8 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
@@ -30,7 +29,10 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
  */
 public class FeedbackController {
 
+    private Map<Integer, List<AcknowledgmentObject>> cacheAck = new HashMap<>(5);
+
     public static final String FEEDBACKS_PATH_HEADER = "/feedbacks";
+    public static final String ACKS_PATH_HEADER = "/acks";
     public static final String $_EXTRACT_ACK = "/$extract-ack";
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
@@ -57,6 +59,11 @@ public class FeedbackController {
     public Iterable<Feedback> getPatientFeedback(@PathVariable(TENANT_ID) Integer tenantId,
                                                  @PathVariable(FACILITY_ID) Integer facilityId) {
         return facilityController.getFacility(tenantId, facilityId).get().getFeedbacks();
+    }
+
+    @GetMapping(FACILITY_ID_PATH + ACKS_PATH_HEADER)
+    public List<AcknowledgmentObject> getFacilityAcks(@PathVariable(FACILITY_ID) Integer facilityId) {
+        return cacheAck.get(facilityId);
     }
 
 
@@ -111,12 +118,32 @@ public class FeedbackController {
         HL7Reader hl7Reader = new HL7Reader(ack);
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
         acknowledgmentObject.setRawAck(ack);
+        Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
+        if (registryId.isPresent()) {
+            immunizationRegistry = Optional.of(immunizationRegistryService.getImmunizationRegistry(registryId.get()));
+        }
+        Optional<Facility> facility = Optional.empty();
+        if (facilityId.isPresent()) {
+            facility = facilityRepository.findById(facilityId.get());
+        }
+
+        Optional<EhrPatient> patient = Optional.empty();
+        if (patientId.isPresent()) {
+            patient = ehrPatientRepository.findById(patientId.get());
+        }
+        Optional<VaccinationEvent> vaccinationEvent = Optional.empty();
+        if (vaccinationId.isPresent()) {
+            vaccinationEvent = vaccinationEventRepository.findById(vaccinationId.get());
+        }
         if (hl7Reader.advanceToSegment("MSH")) {
             acknowledgmentObject.setMessageId(hl7Reader.getValue(9));
             acknowledgmentObject.setSenderSoftware(hl7Reader.getValue(3));
             acknowledgmentObject.setSender(hl7Reader.getValue(4));
             acknowledgmentObject.setDestinationSoftware(hl7Reader.getValue(5));
             acknowledgmentObject.setDestination(hl7Reader.getValue(6));
+            facility.ifPresent(acknowledgmentObject::setFacility);
+            patient.ifPresent(acknowledgmentObject::setPatient);
+            vaccinationEvent.ifPresent(acknowledgmentObject::setVaccination);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddhhmmssZ");
             String timestamp = hl7Reader.getValue(7);
             try {
@@ -136,10 +163,10 @@ public class FeedbackController {
             Feedback feedback = new Feedback();
             feedback.setRaw(hl7Reader.getOriginalSegment());
             feedback.setSeverity(severity);
-            registryId.ifPresent(id -> feedback.setIis(String.valueOf(registryId)));
-            facilityId.ifPresent(id -> feedback.setFacility(facilityRepository.findById(id).orElse(null)));
-            patientId.ifPresent(id -> feedback.setPatient(ehrPatientRepository.findById(id).orElse(null)));
-            vaccinationId.ifPresent(id -> feedback.setVaccinationEvent(vaccinationEventRepository.findById(id).orElse(null)));
+            immunizationRegistry.ifPresent(obj -> feedback.setIis(String.valueOf(obj.getId())));
+            facility.ifPresent(feedback::setFacility);
+            patient.ifPresent(feedback::setPatient);
+            vaccinationEvent.ifPresent(feedback::setVaccinationEvent);
 
             if (StringUtils.isNotBlank(hl7Reader.getValue(8))) {
                 if (StringUtils.isNotBlank(hl7Reader.getValue(8, 2))) {
@@ -184,6 +211,10 @@ public class FeedbackController {
                 feedback.getHl7Locations().add(hl7Location);
             }
 //            feedbackRepository.save(feedback);
+            if (facilityId.isPresent()) {
+                cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
+                cacheAck.get(facilityId.get()).add(acknowledgmentObject);
+            }
         }
         return acknowledgmentObject;
     }

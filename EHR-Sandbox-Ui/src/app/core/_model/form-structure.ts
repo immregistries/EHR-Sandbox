@@ -1,5 +1,5 @@
 import { CodeSystemConcept } from "fhir/r5";
-import { EhrPatient, Facility, Vaccine } from "./rest";
+import { EhrPatient, Facility, VaccinationEvent, Vaccine } from "./rest";
 import { AsyncValidatorFn, ValidatorFn } from "@angular/forms";
 
 enum FormType {
@@ -113,6 +113,7 @@ export declare interface AcknowledgementObject<T> {
   id?: number,
   messageId?: string,
   rawAck?: string,
+  rawVxu?: string,
   sender?: string,
   destination?: string,
   senderSoftware?: string,
@@ -122,6 +123,7 @@ export declare interface AcknowledgementObject<T> {
   iis?: number | string,
   sortedResult: SortedResult<T>,
   patient?: EhrPatient | number
+  vaccination?: VaccinationEvent | number
 }
 
 export declare interface SortedResult<T> {

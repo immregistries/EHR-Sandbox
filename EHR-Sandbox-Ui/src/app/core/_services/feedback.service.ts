@@ -96,7 +96,7 @@ export class FeedbackService extends RefreshService {
         ack,
         {
           ...httpOptions,
-          params: registryId && registryId > 0 ? { registryId: registryId } : {}
+          params: (registryId && registryId > 0) ? { registryId: registryId } : {}
         })
     }))
   }

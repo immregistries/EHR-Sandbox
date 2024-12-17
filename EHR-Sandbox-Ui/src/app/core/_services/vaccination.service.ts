@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, share, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, share, switchMap, tap, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
@@ -20,6 +20,13 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class VaccinationService extends RefreshService {
+  private _cached: VaccinationEvent[] | undefined;
+  public get vaccinationsCached(): VaccinationEvent[] | undefined {
+    return this._cached;
+  }
+  public set vaccinationsCached(value: VaccinationEvent[] | undefined) {
+    this._cached = value;
+  }
 
   if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService, this.patientService);
   if_valid_tenant_facility_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService);
@@ -50,7 +57,9 @@ export class VaccinationService extends RefreshService {
       if (value === true) {
         return this.http.get<VaccinationEvent[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${this.patientService.getCurrentId()}/vaccinations`,
-          httpOptions).pipe(share());
+          httpOptions).pipe(share()).pipe(tap((result) => {
+            this._cached = result
+          }));
       } else {
         return of([])
       }
@@ -62,7 +71,9 @@ export class VaccinationService extends RefreshService {
       if (value === true) {
         return this.http.get<VaccinationEvent[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/patients/${patientId}/vaccinations`,
-          httpOptions)
+          httpOptions).pipe(tap((result) => {
+            this._cached = result
+          }))
       } else {
         return of([])
       }

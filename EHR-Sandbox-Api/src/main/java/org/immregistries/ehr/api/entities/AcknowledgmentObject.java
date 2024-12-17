@@ -18,8 +18,10 @@ public class AcknowledgmentObject extends EhrEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ack_id", nullable = false)
     private Integer id;
-    @Column(name = "status", columnDefinition = "TEXT")
+    @Column(name = "raw", columnDefinition = "TEXT")
     private String rawAck = "";
+    @Column(name = "rawVxu", columnDefinition = "TEXT")
+    private String vxu = "";
 
     @Column(name = "message_id")
     private String messageId = "";
@@ -36,9 +38,11 @@ public class AcknowledgmentObject extends EhrEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private EhrPatient ehrPatient;
+    private Facility facility;
     @ManyToOne(fetch = FetchType.LAZY)
-    private VaccinationEvent vaccinationEvent;
+    private EhrPatient patient;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private VaccinationEvent vaccination;
 
     @Embedded
     private SortedResult sortedResult = new SortedResult();
@@ -120,11 +124,11 @@ public class AcknowledgmentObject extends EhrEntity {
     }
 
     public EhrPatient getEhrPatient() {
-        return ehrPatient;
+        return patient;
     }
 
     public void setEhrPatient(EhrPatient ehrPatient) {
-        this.ehrPatient = ehrPatient;
+        this.patient = ehrPatient;
     }
 
     public String getStatus() {
@@ -159,12 +163,12 @@ public class AcknowledgmentObject extends EhrEntity {
         this.rawAck = rawAck;
     }
 
-    public VaccinationEvent getVaccinationEvent() {
-        return vaccinationEvent;
+    public VaccinationEvent getVaccination() {
+        return vaccination;
     }
 
-    public void setVaccinationEvent(VaccinationEvent vaccinationEvent) {
-        this.vaccinationEvent = vaccinationEvent;
+    public void setVaccination(VaccinationEvent vaccinationEvent) {
+        this.vaccination = vaccinationEvent;
     }
 
     public Integer getId() {
@@ -205,6 +209,30 @@ public class AcknowledgmentObject extends EhrEntity {
 
     public void setDestinationSoftware(String destinationSoftware) {
         this.destinationSoftware = destinationSoftware;
+    }
+
+    public String getVxu() {
+        return vxu;
+    }
+
+    public void setVxu(String vxu) {
+        this.vxu = vxu;
+    }
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+
+    public EhrPatient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(EhrPatient patient) {
+        this.patient = patient;
     }
 
     @Embeddable

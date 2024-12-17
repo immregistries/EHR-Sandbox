@@ -31,17 +31,21 @@ export class PatientResumePipe implements PipeTransform {
     }
     mode?.forEach(element => {
       if (element === "birthDate") {
-        result += this.datePipe.transform(obj?.birthDate, "YYYY-MM-dd")
+        result += this.datePipe.transform(obj?.birthDate, "shortDate")
       } else if (element === 'mrn') {
-        result += (obj?.identifiers?.find((identifier) => {
-          return identifier.type == 'MR'
-        })?.value ?? '')
+        result += this.extractMrn(obj)
       } else if (element === 'name') {
         result += obj?.names[0].nameLast + ", " + (obj?.names[0].nameFirst ?? '')
       }
       result += " "
     });
     return result
+  }
+
+  extractMrn(obj: EhrPatient | undefined) {
+    return (obj?.identifiers?.find((identifier) => {
+      return identifier.type == 'MR'
+    })?.value ?? '')
 
   }
 }

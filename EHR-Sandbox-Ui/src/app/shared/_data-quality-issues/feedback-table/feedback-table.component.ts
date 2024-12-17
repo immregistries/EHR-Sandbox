@@ -155,25 +155,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     return disp;
   }
 
-  rowClass(element: Feedback): string {
-    switch (element.severity) {
-      case "E":
-        return 'errors'
-      case "W":
-        return 'warnings'
-      case "N":
-        return 'notices'
-      case "I":
-        return 'infos'
-      default:
-        return ""
-    }
-  }
-
-  actualRowClass(element: Feedback) {
-    return this.rowClass(element) + " element-row"
-  }
-
   // @ViewChild(MatSort) sort!: MatSort;
   // override ngAfterViewInit(): void {
   //   super.ngAfterViewInit()

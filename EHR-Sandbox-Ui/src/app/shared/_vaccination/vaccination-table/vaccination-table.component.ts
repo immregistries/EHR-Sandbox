@@ -6,7 +6,6 @@ import { CodeBaseMap } from "src/app/core/_model/code-base-map";
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
-import { FeedbackTableComponent } from 'src/app/shared/_data-quality-issues/feedback-table/feedback-table.component';
 import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { PatientService } from 'src/app/core/_services/patient.service';
@@ -62,6 +61,18 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
 
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
+    this.dataSource.sortingDataAccessor = (data: VaccinationEvent, sortHeaderId: string) => {
+      if (sortHeaderId === "administeredDate") {
+        return data.vaccine.administeredDate
+      }
+      //@ts-ignore
+      if (!data[sortHeaderId]) {
+        //@ts-ignore
+        return data.vaccine[sortHeaderId]
+      }
+      //@ts-ignore
+      return data[sortHeaderId]
+    }
   }
 
   openCreation() {

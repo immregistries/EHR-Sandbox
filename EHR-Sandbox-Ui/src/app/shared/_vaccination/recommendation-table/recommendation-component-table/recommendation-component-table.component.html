@@ -21,7 +21,7 @@
       <div *ngFor="let dateCriterion of element.dateCriterion">
         {{dateCriterion.code.coding[0].display
         + " "
-        + (dateCriterion.value | date: 'yyyy-MM-dd')}}
+        + (dateCriterion.value | date: 'shortDate')}}
       </div>
     </td>
   </ng-container>
