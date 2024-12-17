@@ -36,36 +36,35 @@ export class AckDisplayComponent {
   @Input()
   public set rawAck(value: string) {
     this.plain = ""
-    this._rawAck = value;
-    for (const segment of value.split("\n")) {
-      const values = segment.split("|")
-      if (values[0] === "MSA") {
-        this.msa_2 = values[1];
-      }
-      //   if (values[0] === "ERR") {
-      //     switch (values[4]) {
-      //       case "E": {
-      //         this.errSegments.errors.push(segment);
-      //         break;
-      //       }
-      //       case "W": {
-      //         this.errSegments.warnings.push(segment);
-      //         break;
-      //       }
-      //       case "N": {
-      //         this.errSegments.notices.push(segment);
-      //         break;
-      //       }
-      //       case "I": {
-      //         this.errSegments.infos.push(segment);
-      //         break;
-      //       }
-      //     }
-      //   }
-    }
+    // this._rawAck = value;
+    // for (const segment of value.split("\n")) {
+    //   const values = segment.split("|")
+    //   if (values[0] === "MSA") {
+    //     this.msa_2 = values[1];
+    //   }
+    //   if (values[0] === "ERR") {
+    //     switch (values[4]) {
+    //       case "E": {
+    //         this.errSegments.errors.push(segment);
+    //         break;
+    //       }
+    //       case "W": {
+    //         this.errSegments.warnings.push(segment);
+    //         break;
+    //       }
+    //       case "N": {
+    //         this.errSegments.notices.push(segment);
+    //         break;
+    //       }
+    //       case "I": {
+    //         this.errSegments.infos.push(segment);
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
     this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
       this.acknowledgementObject = result
-      this.plain = this.plainText(result)
     })
     // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
 

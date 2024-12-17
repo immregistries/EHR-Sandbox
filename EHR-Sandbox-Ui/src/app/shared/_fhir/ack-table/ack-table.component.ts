@@ -4,8 +4,6 @@ import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
 import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Sort } from '@angular/material/sort';
 import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
 import { RegistryNamePipe } from '../../_pipes/registry-name.pipe';
 

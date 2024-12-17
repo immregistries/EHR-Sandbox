@@ -118,7 +118,7 @@ public class FeedbackController {
             acknowledgmentObject.setDestinationSoftware(hl7Reader.getValue(5));
             acknowledgmentObject.setDestination(hl7Reader.getValue(6));
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddhhmmssZ");
-            String timestamp = hl7Reader.getValue(6);
+            String timestamp = hl7Reader.getValue(7);
             try {
                 acknowledgmentObject.setTimestamp(new Timestamp(simpleDateFormat.parse(timestamp).getTime()));
             } catch (ParseException e) {

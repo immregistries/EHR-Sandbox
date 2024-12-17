@@ -23,14 +23,51 @@
       </button>
     </div>
   </mat-tab>
-  <mat-tab *ngFor="let item of acknowledgementObject.sortedResult | keyvalue">
+
+  <mat-tab>
     <ng-template mat-tab-label>
-      {{item.key | titlecase}}
-      <span [ngClass]="COLOR_THEME_CLASS[item.key]">
-        <mat-chip color="warn" [highlighted]="item.value.length > 0">{{item.value.length}}</mat-chip>
+      Errors
+      <span [ngClass]="COLOR_THEME_CLASS['errors']">
+        <mat-chip color="warn"
+                  [highlighted]="acknowledgementObject.sortedResult.errors.length > 0">{{acknowledgementObject.sortedResult.errors.length}}</mat-chip>
       </span>
     </ng-template>
-    <app-feedback-table [removeRefColumns]="true" [dataArray]="item.value"></app-feedback-table>
-    <!-- <pre>{{item.value | json}}</pre> -->
+    <app-feedback-table [removeRefColumns]="true"
+                        [dataArray]="acknowledgementObject.sortedResult.errors"></app-feedback-table>
   </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Warnings
+      <span [ngClass]="COLOR_THEME_CLASS['warnings']">
+        <mat-chip color="warn"
+                  [highlighted]="acknowledgementObject.sortedResult.warnings.length > 0">{{acknowledgementObject.sortedResult.warnings.length}}</mat-chip>
+      </span>
+    </ng-template>
+    <app-feedback-table [removeRefColumns]="true"
+                        [dataArray]="acknowledgementObject.sortedResult.warnings"></app-feedback-table>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Notices
+      <span [ngClass]="COLOR_THEME_CLASS['notices']">
+        <mat-chip color="warn"
+                  [highlighted]="acknowledgementObject.sortedResult.notices.length > 0">{{acknowledgementObject.sortedResult.notices.length}}</mat-chip>
+      </span>
+    </ng-template>
+    <app-feedback-table [removeRefColumns]="true"
+                        [dataArray]="acknowledgementObject.sortedResult.notices"></app-feedback-table>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Infos
+      <span [ngClass]="COLOR_THEME_CLASS['infos']">
+        <mat-chip color="warn"
+                  [highlighted]="acknowledgementObject.sortedResult.infos.length > 0">{{acknowledgementObject.sortedResult.infos.length}}</mat-chip>
+      </span>
+    </ng-template>
+    <app-feedback-table [removeRefColumns]="true"
+                        [dataArray]="acknowledgementObject.sortedResult.infos"></app-feedback-table>
+  </mat-tab>
+
+
 </mat-tab-group>
