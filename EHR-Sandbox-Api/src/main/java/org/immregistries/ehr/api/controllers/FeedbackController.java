@@ -211,10 +211,10 @@ public class FeedbackController {
                 feedback.getHl7Locations().add(hl7Location);
             }
 //            feedbackRepository.save(feedback);
-            if (facilityId.isPresent()) {
-                cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
-                cacheAck.get(facilityId.get()).add(acknowledgmentObject);
-            }
+        }
+        if (facilityId.isPresent()) {
+            cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
+            cacheAck.get(facilityId.get()).add(acknowledgmentObject);
         }
         return acknowledgmentObject;
     }

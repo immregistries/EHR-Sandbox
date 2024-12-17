@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Optional, Output } from '@angular/core';
-import { EhrPatient } from 'src/app/core/_model/rest';
+import { EhrPatient, Feedback } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
@@ -23,6 +23,9 @@ export class PatientFormComponent {
   @Output()
   savedEmitter = new EventEmitter<EhrPatient | number | string>();
 
+  @Input()
+  public issues?: Feedback[];
+
   isEditionMode: boolean = false;
   populate = false
 
@@ -30,11 +33,12 @@ export class PatientFormComponent {
     private facilityService: FacilityService,
     private snackBarService: SnackBarService,
     @Optional() public _dialogRef?: MatDialogRef<PatientFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient, issues?: Feedback[] }) {
     if (data && data.patient) {
       this.patient = data.patient;
       this._patientId = data.patient.id ?? -1
       this.isEditionMode = true
+      this.issues = data.issues
     }
   }
 

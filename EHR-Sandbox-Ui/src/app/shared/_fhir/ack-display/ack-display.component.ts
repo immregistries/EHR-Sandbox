@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Inject, Input, Optional } from '@angular/core';
 import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
 import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
@@ -10,6 +10,7 @@ import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { VaccinationCachePipe } from '../../_pipes/vaccination-cache.pipe';
 import { CodeMapsPipe } from '../../_pipes/code-maps.pipe';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-ack-display',
@@ -25,7 +26,6 @@ export class AckDisplayComponent {
   @Input()
   public set acknowledgementObject(value: AcknowledgementObject<Feedback>) {
     this._acknowledgementObject = value;
-    this._rawAck = value.rawAck ?? ""
     this.msa_2 = value.msa_2 ?? ""
     this.plain = this.plainText(value)
   }
@@ -40,56 +40,14 @@ export class AckDisplayComponent {
     public patientService: PatientService,
     public codeMapsPipe: CodeMapsPipe,
     public datePipe: DatePipe,
-  ) { }
-
-  private _rawAck: string = "";
-  public get rawAck(): string {
-    return this._rawAck;
-  }
-  @Input()
-  public set rawAck(value: string) {
-    this.plain = ""
-    // this._rawAck = value;
-    // for (const segment of value.split("\n")) {
-    //   const values = segment.split("|")
-    //   if (values[0] === "MSA") {
-    //     this.msa_2 = values[1];
-    //   }
-    //   if (values[0] === "ERR") {
-    //     switch (values[4]) {
-    //       case "E": {
-    //         this.errSegments.errors.push(segment);
-    //         break;
-    //       }
-    //       case "W": {
-    //         this.errSegments.warnings.push(segment);
-    //         break;
-    //       }
-    //       case "N": {
-    //         this.errSegments.notices.push(segment);
-    //         break;
-    //       }
-    //       case "I": {
-    //         this.errSegments.infos.push(segment);
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
-    this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
-      this.acknowledgementObject = result
-    })
-    // this.errSegments = { errors: [], warnings: [], notices: [], infos: [] }
-
-
+    @Optional() public _dialogRef?: MatDialogRef<AckDisplayComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { ack: AcknowledgementObject<Feedback> }
+  ) {
+    if (data?.ack) {
+      this.acknowledgementObject = data.ack
+    }
   }
 
-  @Input()
-  registryId!: number;
-  @Input()
-  patientId?: number;
-  @Input()
-  vaccinationId?: number;
   @Input()
   loading: boolean = false;
   @Input()
@@ -100,7 +58,7 @@ export class AckDisplayComponent {
   // errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
 
   resultClass(): string {
-    if (this.rawAck === "") {
+    if (this.acknowledgementObject?.rawAck === "") {
       return "w3-left w3-padding"
     }
     if (this.isError) {
@@ -182,11 +140,11 @@ ${actionRequired}
 Errors:\t${ack.sortedResult.errors.length}
 Warnings:\t${ack.sortedResult.warnings.length}
 Notices:\t${ack.sortedResult.notices.length}
-Inform:\t${ack.sortedResult.infos.length}
+Informs:\t${ack.sortedResult.infos.length}
 ${this.feedbackPlain("Errors", "The message could not be accepted because:", ack.sortedResult.errors, "E")}
 ${this.feedbackPlain("Warnings", "There are issues with your message or data quality that should be corrected:", ack.sortedResult.warnings, "W")}
 ${this.feedbackPlain("Notices", "", ack.sortedResult.notices, "N")}
-${this.feedbackPlain("Infos", "", ack.sortedResult.infos, "I")}`
+${this.feedbackPlain("Informs", "", ack.sortedResult.infos, "I")}`
     return txt
   }
 

@@ -7,6 +7,9 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
 import { RegistryNamePipe } from '../../_pipes/registry-name.pipe';
 import Chart from 'chart.js/auto';
+import { FacilityService } from 'src/app/core/_services/facility.service';
+import { AckDisplayComponent } from '../ack-display/ack-display.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -20,9 +23,20 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
     public snackBarService: SnackBarService,
     public feedbackService: FeedbackService,
     private patientResumePipe: PatientResumePipe,
-    private registryNamePipe: RegistryNamePipe
+    private registryNamePipe: RegistryNamePipe,
+    private facilityService: FacilityService,
+    private dialog: MatDialog,
   ) {
     super();
+    if (!this.observableRefresh) {
+      this.observableRefresh = this.facilityService.getRefresh()
+      this.observableRefresh?.subscribe(() => this.updateChart())
+
+    }
+    if (!this.observableSource) {
+      this.observableSource = this.feedbackService.readAcks()
+    }
+
   }
 
   @Input()
@@ -34,43 +48,23 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
   @Input()
   public set singleAck(value: string) {
-    if (this.dataSource.data.length < 1) {
-      this.dataArray = []
-    }
+    // if (this.dataSource.data.length < 1) {
+    //   this.dataArray = []
+    // }
     // console.log(this.dataSource.data)
     if (value && value.length > 1) {
       this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
-        let array = JSON.parse(JSON.stringify(this.dataSource.data))
-        result.id = array.push(result)
-        // console.log(this.dataSource.data)
-        this.dataArray = array
-        // this.dataArray = [result]
-        // console.log(this.dataSource.data)
-        // this.dataArray = []
+        // let array = JSON.parse(JSON.stringify(this.dataSource.data))
+        // result.id = array.push(result)
+        // // console.log(this.dataSource.data)
+        // this.dataArray = array
+        // // this.dataArray = [result]
+        // // console.log(this.dataSource.data)
+        // // this.dataArray = []
+        this.facilityService.doRefresh()
         this.updateChart()
       })
     }
-  }
-
-
-
-  rowClass(element: AcknowledgementObject<Feedback>): string {
-    switch (element.msa_2) {
-      case "AE":
-        return 'errors'
-      case "AW":
-        return 'warnings'
-      case "AN":
-        return 'notices'
-      case "AI":
-        return 'infos'
-      default:
-        return ""
-    }
-  }
-
-  actualRowClass(element: AcknowledgementObject<Feedback>) {
-    return this.rowClass(element) + " element-row"
   }
 
   columns = [
@@ -85,7 +79,8 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    // this.dataArray = []
+    this.observableRefresh?.subscribe(() => this.updateChart())
+
     this.dataSource.sortingDataAccessor = (data: AcknowledgementObject<Feedback>, sortHeaderId: string) => {
       if (sortHeaderId === "names") {
         return this.patientResumePipe.transform(data.patient, ["name"])
@@ -131,7 +126,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
       data: {// values on X-Axis
         labels: ['Rejected', 'Rejected with Warnings', 'Accepted with Notices', 'Accepted'],
         datasets: [{
-          label: 'Status',
+          // label: 'Status',
           data: messageData,
           backgroundColor: [
             'red',
@@ -160,7 +155,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
       data: {// values on X-Axis
         labels: ['Error', 'Warnings', 'Notices', 'Informational'],
         datasets: [{
-          label: 'Severity',
+          // label: 'Severity',
           data: errData,
           backgroundColor: [
             'red',
@@ -181,6 +176,17 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
         }
       }
 
+    });
+  }
+
+  openDisplay(element: AcknowledgementObject<Feedback>) {
+    const dialogRef = this.dialog.open(AckDisplayComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: { ack: element },
     });
   }
 

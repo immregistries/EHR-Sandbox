@@ -12,10 +12,28 @@ $ehr-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
 // $ehr-theme: mat-light-theme($ehr-primary, $ehr-accent, $ehr-warn);
-$ehr-colors: ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $ehr-warn);
+$ehr-colors: (
+  'primary': $ehr-primary,
+  "accent": $ehr-accent,
+  "warn": $ehr-warn
+);
 
 $warning-warn: mat.define-palette(mat.$orange-palette);
-$warning-colors: ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $warning-warn);
+$warning-colors: (
+  'primary': $ehr-primary,
+  "accent": $ehr-accent,
+  "warn": $warning-warn
+);
 
 $notice-warn: mat.define-palette(mat.$teal-palette);
-$notice-colors: ('primary': $ehr-primary, "accent": $ehr-accent, "warn": $notice-warn);
+$notice-colors: (
+  'primary': $ehr-primary,
+  "accent": $ehr-accent,
+  "warn": $notice-warn
+);
+$info-warn: mat.define-palette(mat.$grey-palette);
+$info-colors: (
+  'primary': $ehr-primary,
+  "accent": $ehr-accent,
+  "warn": $info-warn
+);

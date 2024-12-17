@@ -15,8 +15,9 @@
     <div class="textarea-container">
       <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
       <!-- <mat-option [value]="'Update'">Update</mat-option> -->
-      <textarea [ngClass]="resultClass()" [style]="{ height: '77vh'}" readonly name="answer">{{rawAck}}</textarea>
-      <button mat-stroked-button type="button" [cdkCopyToClipboard]="rawAck"
+      <textarea [ngClass]="resultClass()" [style]="{ height: '77vh'}" readonly
+                name="answer">{{acknowledgementObject.rawAck}}</textarea>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="acknowledgementObject.rawAck ?? ''"
               (click)="snackBarService.successMessage('Copied to clipBoard')">
         <mat-icon>content_copy</mat-icon>
         Copy

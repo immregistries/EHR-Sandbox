@@ -42,7 +42,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   @Input()
   observableRefresh?: Observable<any>;
   @Input()
-  observableSource!: Observable<T[]>;
+  observableSource?: Observable<T[]>;
 
   public _data_set_input: boolean = false
   @Input()
@@ -61,7 +61,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
     if (!this._data_set_input) {
       this.observableRefresh?.subscribe(() => {
         this.loading = true
-        this.observableSource.subscribe((list) => {
+        this.observableSource?.subscribe((list) => {
           this.loading = false
           this.dataSource.data = list
           if (this.hasIdElement(this.selectedElement)) {

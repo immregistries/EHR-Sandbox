@@ -62,7 +62,7 @@
       </ng-container>
       <ng-container matColumnDef="iis">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>IIS</th>
-        <td mat-cell *matCellDef="let element"> {{registryName(element.iis)}}</td>
+        <td mat-cell *matCellDef="let element"> {{element.iis | registryName}}</td>
       </ng-container>
       <ng-container matColumnDef="content">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Content</th>

@@ -23,7 +23,6 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.min;
 import static java.lang.Math.random;
 import static org.immregistries.codebase.client.reference.CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE;
 import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
@@ -78,8 +77,7 @@ public class RandomGenerator {
 
         String lastname = faker.name().lastName();
         int length = lastname.length();
-        String mrn = lastname.substring(0, min(length, 4))
-                + RandomStringUtils.random(11, true, true);
+        String mrn = RandomStringUtils.random(11, true, true);
         String mrnSystem;
         if (facility != null) {
             mrnSystem = resourceIdentificationService.getFacilityPatientIdentifierSystem(facility);

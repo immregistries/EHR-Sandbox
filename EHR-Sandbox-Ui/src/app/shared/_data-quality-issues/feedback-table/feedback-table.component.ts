@@ -13,13 +13,7 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
   selector: 'app-feedback-table',
   templateUrl: './feedback-table.component.html',
   styleUrls: ['./feedback-table.component.scss'],
-  // animations: [
-  //   trigger('detailExpand', [
-  //     state('collapsed', style({ height: '0px', minHeight: '0' })),
-  //     state('expanded', style({ height: '*' })),
-  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-  //   ]),
-  // ],
+
 })
 export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements OnInit, AfterViewInit {
   // dataSource = new MatTableDataSource<Feedback>([]);
@@ -55,11 +49,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
 
   columns!: (keyof Feedback | 'remove')[]
 
-  registries!: ImmunizationRegistry[];
-  public registryName(id: string | undefined): string {
-    return this.registries?.find((reg) => id == reg.id)?.name ?? '' + id
-  }
-
   constructor(
     private dialog: MatDialog,
     // private tenantService: TenantService,
@@ -83,12 +72,6 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
 
   ngOnInit(): void {
     this.refreshColumns()
-    this.immunizationRegistryService.getRefresh().subscribe(() => {
-      this.immunizationRegistryService.readImmRegistries().subscribe((res) => {
-        this.registries = res
-      })
-    })
-
     if (!this._data_set_input && !this.observableSource) {
       this.observableRefresh = this.facilityService.getRefresh();
       this.observableSource = this.feedbackService.readCurrentFacilityFeedback()

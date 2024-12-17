@@ -72,6 +72,22 @@ export class FeedbackService extends RefreshService {
     }))
   }
 
+  readAcks(): Observable<AcknowledgementObject<Feedback>[]> {
+    return this.if_valid_parent_ids.pipe(switchMap((value) => {
+      let baseUri = `${this.settings.getApiUrl()}`;
+      if (value === true) {
+        baseUri += `/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}`
+        return this.http.get<AcknowledgementObject<Feedback>[]>(
+          `${baseUri}/acks`,
+          {
+            ...httpOptions
+          })
+      } else {
+        return of([])
+      }
+    }))
+  }
+
   convertAck(ack: String, registryId?: number, patientId?: number, vaccinationId?: number): Observable<AcknowledgementObject<Feedback>> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
       let baseUri = `${this.settings.getApiUrl()}`;
@@ -83,13 +99,6 @@ export class FeedbackService extends RefreshService {
             baseUri += `/vaccinations/${vaccinationId}`
           }
         }
-      } else {
-        // return of({
-        //   errors: [],
-        //   warnings: [],
-        //   notices: [],
-        //   infos: []
-        // })
       }
       return this.http.post<AcknowledgementObject<Feedback>>(
         `${baseUri}/feedbacks/$extract-ack`,
