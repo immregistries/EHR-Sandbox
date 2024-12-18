@@ -5,6 +5,9 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { Hl7Service } from '../../../core/_services/_fhir/hl7.service';
 import { Hl7MessagingComponent } from '../hl7-messaging/hl7-messaging.component';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
+import { Feedback } from 'src/app/core/_model/rest';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { FacilityService } from 'src/app/core/_services/facility.service';
 
 @Component({
   selector: 'app-hl7-post',
@@ -24,6 +27,8 @@ export class Hl7PostComponent {
   public error: boolean = false;
 
   constructor(private vaccinationService: VaccinationService,
+    private feedbackService: FeedbackService,
+    private facilityService: FacilityService,
     private hl7Service: Hl7Service,
     public snackBarService: SnackBarService,
     public immunizationRegistryService: ImmunizationRegistryService,
@@ -59,6 +64,9 @@ export class Hl7PostComponent {
           this.resultLoading = false
           this.error = false
           this.answer = res
+          this.feedbackService.convertAck(res, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
+            this.feedbackService.doRefresh()
+          })
         },
         error: (err) => {
           this.error = true
@@ -79,6 +87,9 @@ export class Hl7PostComponent {
           this.resultLoading = false
           this.error = false
           this.answer = res
+          this.feedbackService.convertAck(res, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
+            this.feedbackService.doRefresh()
+          })
         },
         error: (err) => {
 
@@ -96,6 +107,9 @@ export class Hl7PostComponent {
       })
     } else {
       this.answer = this.hl7Message
+      this.feedbackService.convertAck(this.answer, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
+        this.feedbackService.doRefresh()
+      })
       this.resultLoading = false
     }
 

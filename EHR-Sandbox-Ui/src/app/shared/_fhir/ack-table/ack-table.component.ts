@@ -10,6 +10,10 @@ import Chart from 'chart.js/auto';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { AckDisplayComponent } from '../ack-display/ack-display.component';
 import { MatDialog } from '@angular/material/dialog';
+import { merge, tap } from 'rxjs';
+import { PatientDashboardComponent } from '../../_patient/patient-dashboard/patient-dashboard.component';
+import { VaccinationDashboardComponent } from '../../_vaccination/vaccination-dashboard/vaccination-dashboard.component';
+import { VaccinationResumePipe } from '../../_pipes/vaccination-resume.pipe';
 
 
 @Component({
@@ -18,69 +22,74 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./ack-table.component.scss'],
 })
 export class AckTableComponent extends AbstractDataTableComponent<AcknowledgementObject<Feedback>> {
-
+  columns = [
+    "messageId",
+    "msa_2",
+    "patient",
+    "vaccination",
+    "timestamp",
+    // "iis",
+    "sender",
+    "destination",
+  ]
   constructor(
     public snackBarService: SnackBarService,
     public feedbackService: FeedbackService,
     private patientResumePipe: PatientResumePipe,
+    private vaccinationResumePipe: VaccinationResumePipe,
     private registryNamePipe: RegistryNamePipe,
     private facilityService: FacilityService,
     private dialog: MatDialog,
   ) {
     super();
     if (!this.observableRefresh) {
-      this.observableRefresh = this.facilityService.getRefresh()
-      this.observableRefresh?.subscribe(() => this.updateChart())
+      this.observableRefresh = merge(this.facilityService.getCurrentObservable(), this.feedbackService.getRefresh())
+      // this.observableRefresh?.subscribe(() => this.updateChart())
 
     }
     if (!this.observableSource) {
       this.observableSource = this.feedbackService.readAcks()
+        .pipe(tap((values) => this.updateChart(values)))
     }
 
   }
 
   @Input()
-  patientId?: number
-  @Input()
-  vaccinationId?: number;
-  @Input()
-  registryId?: number
+  charts: boolean = false
 
-  @Input()
-  public set singleAck(value: string) {
-    // if (this.dataSource.data.length < 1) {
-    //   this.dataArray = []
-    // }
-    // console.log(this.dataSource.data)
-    if (value && value.length > 1) {
-      this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
-        // let array = JSON.parse(JSON.stringify(this.dataSource.data))
-        // result.id = array.push(result)
-        // // console.log(this.dataSource.data)
-        // this.dataArray = array
-        // // this.dataArray = [result]
-        // // console.log(this.dataSource.data)
-        // // this.dataArray = []
-        this.facilityService.doRefresh()
-        this.updateChart()
-      })
-    }
-  }
+  // @Input()
+  // patientId?: number
+  // @Input()
+  // vaccinationId?: number;
+  // @Input()
+  // registryId?: number
 
-  columns = [
-    "messageId",
-    "patient",
-    "msa_2",
-    "timestamp",
-    // "iis",
-    "sender",
-    "destination",
-  ]
+  // @Input()
+  // public set singleAck(value: string) {
+  // if (this.dataSource.data.length < 1) {
+  //   this.dataArray = []
+  // }
+  // console.log(this.dataSource.data)
+  // if (value && value.length > 1) {
+  // this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
+  // let array = JSON.parse(JSON.stringify(this.dataSource.data))
+  // result.id = array.push(result)
+  // // console.log(this.dataSource.data)
+  // this.dataArray = array
+  // // this.dataArray = [result]
+  // // console.log(this.dataSource.data)
+  // // this.dataArray = []
+  // this.facilityService.doRefresh()
+  // })
+  // }
+  // }
+
+
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.observableRefresh?.subscribe(() => this.updateChart())
-
+    this.dataSource.filterPredicate = this.ackFilterPredicate
+    // this.observableRefresh?.subscribe(() => this.updateChart())
     this.dataSource.sortingDataAccessor = (data: AcknowledgementObject<Feedback>, sortHeaderId: string) => {
       if (sortHeaderId === "names") {
         return this.patientResumePipe.transform(data.patient, ["name"])
@@ -89,94 +98,112 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
         return this.patientResumePipe.transform(data.patient, ["mrn"])
       }
       if (sortHeaderId === "iis") {
-        return this.registryNamePipe.transform(+(data.iis ?? 0))
+        return this.registryNamePipe.transform(data.iis)
       }
-      if (sortHeaderId === "iis") {
-        return this.registryNamePipe.transform(+(data.iis ?? 0))
+      if (sortHeaderId === "vaccination") {
+        return this.vaccinationResumePipe.transform(data.vaccination, ['cvx', 'administeredDate'])
       }
       //@ts-ignore
       return data[sortHeaderId]
     }
   }
 
+  ackFilterPredicate = (data: AcknowledgementObject<Feedback>, filter: string) => {
+    if (JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1) {
+      return true
+    }
+    if (JSON.stringify([
+      this.patientResumePipe.transform(data.patient, ["mrn"]),
+      this.registryNamePipe.transform(data.iis),
+      this.vaccinationResumePipe.transform(data.vaccination, ['cvx', 'administeredDate'])
+    ]).toLowerCase().indexOf(filter) !== -1) {
+      return true
+    }
+    return false
+  }
+
   public messagesChart: any;
   public errChart: any;
 
-  updateChart() {
-    let messageData = [0, 0, 0, 0]
-    let errData = [0, 0, 0, 0]
-    this.dataSource.data.forEach(element => {
-      if (element.msa_2 === "AE") {
-        messageData[0]++
-      } else if (element.msa_2 === "AW") {
-        messageData[1]++
-      } else if (element.msa_2 === "AN") {
-        messageData[2]++
-      } else {
-        messageData[3]++
-      }
-      errData[0] += element.sortedResult.errors.length
-      errData[1] += element.sortedResult.warnings.length
-      errData[2] += element.sortedResult.notices.length
-      errData[3] += element.sortedResult.infos.length
-    });
+  updateChart(values?: AcknowledgementObject<Feedback>[]) {
+    this.messagesChart?.destroy()
+    this.errChart?.destroy()
+    if (this.charts) {
+      let messageData = [0, 0, 0, 0]
+      let errData = [0, 0, 0, 0];
+      (values ? values : this.dataSource.data).forEach(element => {
+        if (element.msa_2 === "AE") {
+          messageData[0]++
+        } else if (element.msa_2 === "AW") {
+          messageData[1]++
+        } else if (element.msa_2 === "AN") {
+          messageData[2]++
+        } else {
+          messageData[3]++
+        }
+        errData[0] += element.sortedResult.errors.length
+        errData[1] += element.sortedResult.warnings.length
+        errData[2] += element.sortedResult.notices.length
+        errData[3] += element.sortedResult.infos.length
+      });
 
-    this.messagesChart = new Chart("MessagesStatusChart", {
-      type: 'pie', //this denotes tha type of chart
-      data: {// values on X-Axis
-        labels: ['Rejected', 'Rejected with Warnings', 'Accepted with Notices', 'Accepted'],
-        datasets: [{
-          // label: 'Status',
-          data: messageData,
-          backgroundColor: [
-            'red',
-            'orange',
-            'yellow',
-            'green',
-          ],
-          hoverOffset: 4
-        }],
-      },
-      options: {
-        aspectRatio: 5,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Status of processed acknowledgments'
+      this.messagesChart = new Chart("MessagesStatusChart", {
+        type: 'pie', //this denotes tha type of chart
+        data: {// values on X-Axis
+          labels: ['Rejected', 'Rejected with Warnings', 'Accepted with Notices', 'Accepted'],
+          datasets: [{
+            // label: 'Status',
+            data: messageData,
+            backgroundColor: [
+              'red',
+              'orange',
+              'yellow',
+              'green',
+            ],
+            hoverOffset: 4
+          }],
+        },
+        options: {
+          aspectRatio: 5,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Status of processed acknowledgments'
+            }
           }
         }
-      }
 
-    });
+      });
 
-    this.errChart = new Chart("ErrChart", {
-      type: 'pie', //this denotes tha type of chart
+      this.errChart = new Chart("ErrChart", {
+        type: 'pie', //this denotes tha type of chart
 
-      data: {// values on X-Axis
-        labels: ['Error', 'Warnings', 'Notices', 'Informational'],
-        datasets: [{
-          // label: 'Severity',
-          data: errData,
-          backgroundColor: [
-            'red',
-            'orange',
-            'yellow',
-            'grey',
-          ],
-          hoverOffset: 4
-        }],
-      },
-      options: {
-        aspectRatio: 5,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Severity of messages'
+        data: {// values on X-Axis
+          labels: ['Error', 'Warnings', 'Notices', 'Informational'],
+          datasets: [{
+            // label: 'Severity',
+            data: errData,
+            backgroundColor: [
+              'red',
+              'orange',
+              'yellow',
+              'grey',
+            ],
+            hoverOffset: 4
+          }],
+        },
+        options: {
+          aspectRatio: 5,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Severity of messages'
+            }
           }
         }
-      }
 
-    });
+      });
+    }
   }
 
   openDisplay(element: AcknowledgementObject<Feedback>) {
@@ -187,6 +214,28 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
       width: '100%',
       panelClass: 'dialog-with-bar',
       data: { ack: element },
+    });
+  }
+
+  openPatient(patient: EhrPatient | number) {
+    const dialogRef = this.dialog.open(PatientDashboardComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: { patient: patient },
+    });
+  }
+
+  openVaccination(vaccination: VaccinationEvent | number) {
+    const dialogRef = this.dialog.open(VaccinationDashboardComponent, {
+      maxWidth: '95vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: { vaccination: vaccination },
     });
   }
 

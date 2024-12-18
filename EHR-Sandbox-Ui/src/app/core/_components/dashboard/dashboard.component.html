@@ -14,9 +14,10 @@
     <mat-grid-tile [colspan]="3">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #feedback>
-          <app-feedback-table [facility]="facilityService.getCurrentObservable() | async"
+          <!-- <app-feedback-table [facility]="facilityService.getCurrentObservable() | async"
                               [observableRefresh]="patientListRefreshObservable()"
-                              [observableSource]="feedbackListObservable()"></app-feedback-table>
+                              [observableSource]="feedbackListObservable()"></app-feedback-table> -->
+          <app-ack-table [charts]="true"></app-ack-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

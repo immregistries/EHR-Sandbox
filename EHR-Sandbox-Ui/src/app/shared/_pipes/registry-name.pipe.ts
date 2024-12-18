@@ -15,7 +15,7 @@ export class RegistryNamePipe implements PipeTransform {
   constructor(private immunizationRegistryService: ImmunizationRegistryService) {
   }
 
-  transform(registry: number | ImmunizationRegistry, list?: ImmunizationRegistry[]): string {
+  transform(registry?: number | ImmunizationRegistry | string, list?: ImmunizationRegistry[]): string {
     if (!registry) {
       return "";
     }

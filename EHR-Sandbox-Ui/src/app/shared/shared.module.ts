@@ -132,6 +132,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
 import { MatSortModule } from '@angular/material/sort';
 import { AckStatusPipe } from './_pipes/ack-status.pipe';
+import { VaccinationResumePipe } from './_pipes/vaccination-resume.pipe';
 
 @NgModule({
   declarations: [
@@ -157,6 +158,7 @@ import { AckStatusPipe } from './_pipes/ack-status.pipe';
     AckStatusPipe,
     FeedbackIconComponent,
     VaccinationComparePipe,
+    VaccinationResumePipe,
 
     VaccinationFormComponent,
     VaccinationTableComponent,

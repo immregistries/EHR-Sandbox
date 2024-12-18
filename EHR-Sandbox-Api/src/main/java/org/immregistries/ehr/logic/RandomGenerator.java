@@ -76,7 +76,6 @@ public class RandomGenerator {
         Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
 
         String lastname = faker.name().lastName();
-        int length = lastname.length();
         String mrn = RandomStringUtils.random(11, true, true);
         String mrnSystem;
         if (facility != null) {
