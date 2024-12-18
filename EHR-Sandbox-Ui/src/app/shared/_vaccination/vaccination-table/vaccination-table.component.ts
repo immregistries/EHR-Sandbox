@@ -9,6 +9,8 @@ import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.c
 import { VaccinationDashboardComponent } from '../vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { PatientService } from 'src/app/core/_services/patient.service';
+import { CodeMapsPipe } from '../../_pipes/code-maps.pipe';
+import { VaccinationResumePipe } from '../../_pipes/vaccination-resume.pipe';
 
 @Component({
   selector: 'app-vaccination-table',
@@ -35,7 +37,9 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
     private vaccinationService: VaccinationService,
-    private patientService: PatientService) {
+    private patientService: PatientService,
+    private codeMapsPipe: CodeMapsPipe,
+    private vaccinationResumePipe: VaccinationResumePipe) {
     super()
   }
 
@@ -44,9 +48,7 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
       if (JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1) {
         return true
       }
-      if (data.vaccine["vaccineCvxCode"] &&
-        JSON.stringify(this.codeBaseMap["VACCINATION_CVX_CODE"][data.vaccine["vaccineCvxCode"]])
-          .trim().toLowerCase().indexOf(filter) !== -1) {
+      if (JSON.stringify(this.codeMapsPipe.transform(data.vaccine.vaccineCvxCode, "VACCINATION_CVX_CODE")).trim().toLowerCase().indexOf(filter) !== -1) {
         return true
       }
       return false

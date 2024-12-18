@@ -210,7 +210,7 @@ public class FeedbackController {
                 hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
                 feedback.getHl7Locations().add(hl7Location);
             }
-//            feedbackRepository.save(feedback);
+            feedbackRepository.save(feedback);
         }
         if (facilityId.isPresent()) {
             cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
