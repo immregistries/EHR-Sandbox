@@ -383,6 +383,9 @@ export class FhirClientService extends IdUrlVerifyingService {
   getFromIIS(resourceType: string, identifier: string): Observable<string> {
     const registryId = this.registryService.getCurrentId()
     const tenantId = this.tenantService.getCurrentId()
+    if (resourceType === 'metadata') {
+      return this.registryService.fhirMetadata(registryId)
+    }
     if (this.idsNotValid(tenantId)) {
       return of("")
     }
@@ -394,7 +397,6 @@ export class FhirClientService extends IdUrlVerifyingService {
         params: { registryId: registryId }
       });
   }
-
 
   search(resourceType: string, identifier: Identifier): Observable<string> {
     const registryId = this.registryService.getCurrentId()

@@ -72,7 +72,7 @@ public class FhirClientController {
     }
 
 
-    @PostMapping(FHIR_CLIENT_PATH + "/{resourceType}/search")
+    @PostMapping({FHIR_CLIENT_PATH + "/{resourceType}/search", FHIR_CLIENT + "/{resourceType}/search"})
     public ResponseEntity<String> searchFhirResourceFromIIS(
             @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable("resourceType") String resourceType,

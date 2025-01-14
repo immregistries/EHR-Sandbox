@@ -44,6 +44,13 @@ export class ImmunizationRegistryService extends CurrentSelectedWithIdService<Im
       this.settings.getApiUrl() + `/registry/${registryId}/$connectivity`,
       { ...httpOptions, responseType: 'text' });
   }
+
+  public fhirMetadata(registryId: number | undefined): Observable<string> {
+    return this.http.get(
+      this.settings.getApiUrl() + `/registry/${registryId}/metadata`,
+      { ...httpOptions, responseType: 'text' });
+  }
+
   public checkConnectivityAuth(registryId: number | undefined): Observable<string> {
     return this.http.get(
       this.settings.getApiUrl() + `/registry/${registryId}/$auth`,
