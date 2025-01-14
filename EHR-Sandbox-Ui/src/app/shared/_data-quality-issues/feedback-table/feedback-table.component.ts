@@ -122,7 +122,7 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
 
   locationDisplay(hl7Locations: Hl7Location[]): string {
     let disp = ""
-    hl7Locations.forEach(element => {
+    hl7Locations?.forEach(element => {
       if (element.abbreviated) {
         disp += element.abbreviated + " "
       } else {

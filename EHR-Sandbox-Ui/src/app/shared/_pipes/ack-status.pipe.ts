@@ -7,6 +7,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class AckStatusPipe implements PipeTransform {
 
   transform(value: string): any {
+    if (!value) {
+      return "";
+    }
     switch (value.toUpperCase()) {
       case "AE":
       case "E":

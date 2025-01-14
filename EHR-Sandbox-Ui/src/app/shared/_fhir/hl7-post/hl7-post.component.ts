@@ -5,7 +5,6 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { Hl7Service } from '../../../core/_services/_fhir/hl7.service';
 import { Hl7MessagingComponent } from '../hl7-messaging/hl7-messaging.component';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { Feedback } from 'src/app/core/_model/rest';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 
