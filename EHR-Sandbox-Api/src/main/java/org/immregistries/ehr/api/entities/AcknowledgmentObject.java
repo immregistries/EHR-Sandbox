@@ -19,7 +19,7 @@ public class AcknowledgmentObject extends EhrEntity {
     @Column(name = "ack_id", nullable = false)
     private Integer id;
     @Column(name = "raw", columnDefinition = "TEXT")
-    private String rawAck = "";
+    private String raw = "";
     @Column(name = "rawVxu", columnDefinition = "TEXT")
     private String vxu = "";
 
@@ -155,12 +155,12 @@ public class AcknowledgmentObject extends EhrEntity {
         this.timestamp = timestamp;
     }
 
-    public String getRawAck() {
-        return rawAck;
+    public String getRaw() {
+        return raw;
     }
 
-    public void setRawAck(String rawAck) {
-        this.rawAck = rawAck;
+    public void setRaw(String raw) {
+        this.raw = raw;
     }
 
     public VaccinationEvent getVaccination() {

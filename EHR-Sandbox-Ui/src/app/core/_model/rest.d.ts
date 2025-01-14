@@ -294,3 +294,9 @@ export interface Flavor {
   key: string,
   description: string,
 }
+
+export interface EhrFhirOutcome {
+  id?: string,
+  operationOutcome?: string,
+  errorMessage?: string,
+}

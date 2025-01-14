@@ -7,11 +7,11 @@
   <ng-container *ngFor="let column of columns" matColumnDef={{column}}>
     <span *ngIf="column != 'event_since_start';then normal else events"></span>
     <ng-template #normal>
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
+      <th mat-header-cell *matHeaderCellDef>{{column}}</th>
       <td mat-cell *matCellDef="let element">{{element[column]}}</td>
     </ng-template>
     <ng-template #events>
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Events since start</th>
+      <th mat-header-cell *matHeaderCellDef>Events since start</th>
       <td mat-cell *matCellDef="let element">
         {{element["subscriptionInfo"] ? element["subscriptionInfo"]["eventsSinceSubscriptionStart"] : ""}}
       </td>

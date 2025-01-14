@@ -1,12 +1,17 @@
 package org.immregistries.ehr.api.controllers;
 
+import ca.uhn.fhir.parser.DataFormatException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
+import org.hl7.fhir.r4.model.OperationOutcome;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.fhir.Server.ServerR4.OperationOutcomeProviderR4;
 import org.immregistries.smm.tester.manager.HL7Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +28,6 @@ import java.util.*;
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
 @RestController
-//@RequestMapping({""})
-/**
- * Deprecated, formerly used to test
- */
 public class FeedbackController {
 
     private Map<Integer, List<AcknowledgmentObject>> cacheAck = new HashMap<>(5);
@@ -34,6 +35,7 @@ public class FeedbackController {
     public static final String FEEDBACKS_PATH_HEADER = "/feedbacks";
     public static final String ACKS_PATH_HEADER = "/acks";
     public static final String $_EXTRACT_ACK = "/$extract-ack";
+    public static final String $_EXTRACT_ACK_FHIR = "/$extract-operationOutcome";
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -52,6 +54,8 @@ public class FeedbackController {
     private FacilityController facilityController;
     @Autowired
     private ImmunizationRegistryService immunizationRegistryService;
+    @Autowired
+    private FhirComponentsDispatcher fhirComponentsDispatcher;
 
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
@@ -117,7 +121,7 @@ public class FeedbackController {
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
-        acknowledgmentObject.setRawAck(ack);
+        acknowledgmentObject.setRaw(ack);
         Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
         if (registryId.isPresent()) {
             immunizationRegistry = Optional.of(immunizationRegistryService.getImmunizationRegistry(registryId.get()));
@@ -212,6 +216,47 @@ public class FeedbackController {
             }
             feedbackRepository.save(feedback);
         }
+        if (facilityId.isPresent()) {
+            cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
+            cacheAck.get(facilityId.get()).add(acknowledgmentObject);
+        }
+        return acknowledgmentObject;
+    }
+
+    @PostMapping({
+            FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK_FHIR,
+            FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK_FHIR,
+            PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK_FHIR,
+            VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER + $_EXTRACT_ACK_FHIR,
+    })
+    public AcknowledgmentObject extractAckInfoFHIR(
+            @RequestParam(REGISTRY_ID) Optional<Integer> registryId,
+            @PathVariable(FACILITY_ID) Optional<Integer> facilityId,
+            @PathVariable(PATIENT_ID) Optional<Integer> patientId,
+            @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
+            @RequestBody String resource) {
+        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId.get());
+        Facility facility = null;
+        if (facilityId.isPresent()) {
+            facility = facilityRepository.findById(facilityId.get()).orElse(null);
+        }
+        EhrPatient patient = null;
+        if (patientId.isPresent()) {
+            patient = ehrPatientRepository.findById(patientId.get()).orElse(null);
+        }
+
+        VaccinationEvent vaccinationEvent = null;
+        if (vaccinationId.isPresent()) {
+            vaccinationEvent = vaccinationEventRepository.findById(vaccinationId.get()).orElse(null);
+        }
+        IBaseOperationOutcome iBaseOperationOutcome = null;
+        AcknowledgmentObject acknowledgmentObject = null;
+        try {
+            iBaseOperationOutcome = (IBaseOperationOutcome) fhirComponentsDispatcher.parser(resource).parseResource(resource);
+            acknowledgmentObject = OperationOutcomeProviderR4.acknowledgmentObject((OperationOutcome) iBaseOperationOutcome, immunizationRegistry, facility, patient, vaccinationEvent);
+        } catch (DataFormatException dataFormatException) {
+        }
+//            feedbackRepository.save(feedback);
         if (facilityId.isPresent()) {
             cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
             cacheAck.get(facilityId.get()).add(acknowledgmentObject);

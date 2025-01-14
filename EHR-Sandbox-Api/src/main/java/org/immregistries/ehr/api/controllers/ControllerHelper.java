@@ -51,6 +51,7 @@ public class ControllerHelper {
     public static final String FHIR_CLIENT = "/" + "fhir-client";
 
     public static final String FHIR_CLIENT_PATH = TENANT_ID_PATH + FHIR_CLIENT;
+    public static final String FHIR_CLIENT_FACILITY_PATH = FACILITY_ID_PATH + FHIR_CLIENT;
 
 
 }

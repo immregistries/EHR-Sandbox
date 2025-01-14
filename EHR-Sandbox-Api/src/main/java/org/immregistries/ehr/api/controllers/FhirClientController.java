@@ -13,11 +13,15 @@ import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.ProcessingFlavor;
-import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.ImmunizationIdentifier;
+import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.PatientExternalIdentifier;
+import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
 import org.immregistries.ehr.fhir.Client.ResourceClient;
+import org.immregistries.ehr.fhir.EhrFhirOutcome;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.slf4j.Logger;
@@ -27,8 +31,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,6 +63,8 @@ public class FhirClientController {
     private VaccinationEventRepository vaccinationEventRepository;
     @Autowired
     private TenantRepository tenantRepository;
+    @Autowired
+    private FeedbackController feedbackController;
 
 
     @GetMapping(FHIR_CLIENT_PATH + "/{resourceType}/{id}")
@@ -160,7 +164,7 @@ public class FhirClientController {
     }
 
     @PostMapping(PATIENT_ID_PATH + FHIR_CLIENT)
-    public ResponseEntity<String> postPatient(
+    public ResponseEntity<EhrFhirOutcome> postPatient(
             @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable(PATIENT_ID) Integer patientId,
             @RequestBody String message) {
@@ -168,6 +172,7 @@ public class FhirClientController {
         IBaseResource patient = parser.parseResource(message);
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.create(patient, ir);
+
         /**
          * Registering received id as external id
          */
@@ -175,7 +180,7 @@ public class FhirClientController {
         if (outcome.getOperationOutcome() != null) {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
-        return ResponseEntity.ok(outcome.getId().getIdPart());
+        return ResponseEntity.ok(EhrFhirOutcome.fromMethodOutcome(outcome, parser));
     }
 
     @Autowired
@@ -195,7 +200,7 @@ public class FhirClientController {
 
 
     @PutMapping(PATIENT_ID_PATH + FHIR_CLIENT)
-    public ResponseEntity<String> updatePatient(
+    public ResponseEntity<EhrFhirOutcome> updatePatient(
             @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable(PATIENT_ID) Integer patientId,
             @RequestBody String message) {
@@ -223,7 +228,7 @@ public class FhirClientController {
                 immunizationRegistry.getId().toString(),
                 "fatal");
         logger.info(String.valueOf(outcome.getResponseHeaders()));
-        return ResponseEntity.ok(outcome.getId().getIdPart());
+        return ResponseEntity.ok(EhrFhirOutcome.fromMethodOutcome(outcome, parser));
     }
 
     @GetMapping(PATIENT_ID_PATH + FHIR_CLIENT)
@@ -235,7 +240,7 @@ public class FhirClientController {
     }
 
     @PostMapping(VACCINATION_ID_PATH + FHIR_CLIENT)
-    public ResponseEntity<String> postImmunization(
+    public ResponseEntity<EhrFhirOutcome> postImmunization(
             @RequestParam(REGISTRY_ID) Integer registryId,
             @PathVariable(VACCINATION_ID) Integer vaccinationId,
             @RequestBody String message) {
@@ -248,12 +253,12 @@ public class FhirClientController {
          */
         immunizationIdentifierRepository.save(new ImmunizationIdentifier(
                 vaccinationId, immunizationRegistry.getId(), outcome.getId().getIdPart()));
-        return ResponseEntity.ok(outcome.getId().getIdPart());
+        return ResponseEntity.ok(EhrFhirOutcome.fromMethodOutcome(outcome, parser));
     }
 
     @PutMapping(VACCINATION_ID_PATH + FHIR_CLIENT)
     @Transactional
-    public ResponseEntity<String> updateImmunization(
+    public ResponseEntity<EhrFhirOutcome> updateImmunization(
             @PathVariable(FACILITY_ID) Integer facilityId,
             @PathVariable(PATIENT_ID) Integer patientId,
             @RequestParam(REGISTRY_ID) Integer registryId,
@@ -284,23 +289,22 @@ public class FhirClientController {
                     vaccinationId,
                     immunizationRegistry.getId().toString(),
                     "fatal");
-            return ResponseEntity.ok(outcome.getId().getIdPart());
-
+            return ResponseEntity.ok(EhrFhirOutcome.fromMethodOutcome(outcome, parser));
         } catch (FhirClientConnectionException f) {
             f.printStackTrace();
-            return ResponseEntity.badRequest().body(f.getMessage());
+            return ResponseEntity.badRequest().body(EhrFhirOutcome.error(f.getMessage()));
         } catch (BaseServerResponseException baseServerResponseException) {
-            Feedback feedback = new Feedback();
-            feedback.setFacility(facilityRepository.findById(facilityId).orElseThrow());
-            feedback.setPatient(ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow());
-            feedback.setVaccinationEvent(vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId).orElseThrow());
-            feedback.setCode("invalid");
-            feedback.setSeverity("fatal");
-            feedback.setIis(String.valueOf(immunizationRegistry.getId()));
-            feedback.setTimestamp(new Timestamp(new Date().getTime()));
-            feedback.setContent(baseServerResponseException.getMessage());
-            feedbackRepository.save(feedback);
-            return ResponseEntity.badRequest().body(baseServerResponseException.getMessage());
+//            Feedback feedback = new Feedback();
+//            feedback.setFacility(facilityRepository.findById(facilityId).orElseThrow());
+//            feedback.setPatient(ehrPatientRepository.findByFacilityIdAndId(facilityId, patientId).orElseThrow());
+//            feedback.setVaccinationEvent(vaccinationEventRepository.findByPatientIdAndId(patientId, vaccinationId).orElseThrow());
+//            feedback.setCode("invalid");
+//            feedback.setSeverity("fatal");
+//            feedback.setIis(String.valueOf(immunizationRegistry.getId()));
+//            feedback.setTimestamp(new Timestamp(new Date().getTime()));
+//            feedback.setContent(baseServerResponseException.getMessage());
+//            feedbackRepository.save(feedback);
+            return ResponseEntity.badRequest().body(EhrFhirOutcome.error(baseServerResponseException.getMessage()));
 //            throw baseServerResponseException;
         }
     }
@@ -313,9 +317,10 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read("immunization", String.valueOf(vaccinationId), registry));
     }
 
-    @PostMapping(FHIR_CLIENT_PATH)
-    public ResponseEntity<String> postResource(
+    @PostMapping({FHIR_CLIENT_PATH, FHIR_CLIENT_FACILITY_PATH})
+    public ResponseEntity<EhrFhirOutcome> postResource(
             @RequestParam(REGISTRY_ID) Integer registryId,
+            @PathVariable(FACILITY_ID) Optional<Integer> facilityId,
             @RequestParam(name = "type") String type,
             @RequestBody String message) {
         IParser parser = fhirComponentsDispatcher.parser(message);
@@ -323,10 +328,11 @@ public class FhirClientController {
         ImmunizationRegistry registry = immunizationRegistryService.getImmunizationRegistry(registryId);
         MethodOutcome outcome = resourceClient.create(resource, registry);
         if (outcome.getOperationOutcome() != null) {
+            feedbackController.extractAckInfoFHIR(Optional.of(registryId), facilityId, Optional.empty(), Optional.empty(), parser.encodeResourceToString(outcome.getOperationOutcome()));
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
         logger.info(String.valueOf(outcome.getResponseHeaders()));
-        return ResponseEntity.ok(outcome.getId().getIdPart());
+        return ResponseEntity.ok(EhrFhirOutcome.fromMethodOutcome(outcome, parser));
     }
 
     @PutMapping(FHIR_CLIENT_PATH)
@@ -342,7 +348,7 @@ public class FhirClientController {
             logger.info(parser.encodeResourceToString(outcome.getOperationOutcome()));
         }
         logger.info(String.valueOf(outcome.getResponseHeaders()));
-        return ResponseEntity.ok(outcome.getId().getIdPart());
+        return ResponseEntity.ok(outcome.toString());
     }
 
     //    @PutMapping(FACILITY_PREFIX + "/{facilityId}/fhir-client" + IMM_REGISTRY_SUFFIX + "/$transaction")

@@ -59,7 +59,7 @@ export class FhirPostComponent {
         next: (res) => {
           this.requestLoading = false
           this.error = false
-          this.answer = res
+          this.answer = JSON.stringify(res)
           this.feedbackService.doRefresh()
         },
         error: (err) => {

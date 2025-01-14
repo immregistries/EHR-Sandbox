@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -91,11 +92,11 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
             ServletRequestDetails theRequestDetails
     ) {
         HttpServletRequest request = theRequestDetails.getServletRequest();
-        Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
-        if (request != null && request.getRemoteAddr() != null) {
-            immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()), request.getRemoteAddr()); //TODO change this and do smtg similar to immunizationprovider
+        ImmunizationRegistry immunizationRegistry = null;
+        if (request != null && StringUtils.isNotBlank(request.getRemoteAddr())) {
+            immunizationRegistry = immunizationRegistryRepository.findByUserIdAndIisFhirUrl(Integer.parseInt(theRequestDetails.getTenantId()), request.getRemoteAddr()).orElse(null); //TODO change this and do smtg similar to immunizationprovider
         }
-        return update(operationOutcome, theRequestDetails, immunizationRegistry.orElse(null));
+        return update(operationOutcome, theRequestDetails, immunizationRegistry);
     }
 
 
@@ -107,19 +108,9 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid facility id"));
         List<Feedback> feedbackList = new ArrayList<Feedback>();
         String next;
-
+        AcknowledgmentObject acknowledgmentObject = acknowledgmentObject(operationOutcome, immunizationRegistry, facility, null, null);
         for (OperationOutcome.OperationOutcomeIssueComponent issue : operationOutcome.getIssue()) {
-            Feedback feedback = new Feedback();
-            feedback.setContent(issue.getDetails().getText());
-            feedback.setFacility(facility);
-            feedback.setSeverity(issue.getSeverity().toCode());
-            feedback.setCode(issue.getCode().toCode());
-            feedback.setTimestamp(new Timestamp(new Date().getTime()));
-            if (immunizationRegistry != null) {
-                feedback.setIis(immunizationRegistry.getName());
-            } else {
-                feedback.setIis(requestDetails.getServletRequest().getRemoteAddr());
-            }
+            Feedback feedback = getFeedback(issue, immunizationRegistry, facility, requestDetails);
             /**
              * Using deprecated field "Location to refer to the right resource for the issue"
              */
@@ -147,5 +138,68 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
         }
         feedbackRepository.saveAll(feedbackList);
         return new MethodOutcome().setCreated(true).setResource(operationOutcome);
+    }
+
+    private static Feedback getFeedback(OperationOutcome.OperationOutcomeIssueComponent issue, ImmunizationRegistry immunizationRegistry, Facility facility, ServletRequestDetails requestDetails) {
+        Feedback feedback = new Feedback();
+        feedback.setRaw(issue.toString()); // TODO parser
+        feedback.setContent(issue.getDetails().getText());
+        feedback.setFacility(facility);
+        feedback.setSeverity(issue.getSeverity().toCode());
+        feedback.setCode(issue.getCode().toCode());
+        feedback.setTimestamp(new Timestamp(new Date().getTime()));
+        if (immunizationRegistry != null) {
+            feedback.setIis(immunizationRegistry.getName());
+        } else if (requestDetails != null) {
+            feedback.setIis(requestDetails.getServletRequest().getRemoteAddr());
+        }
+        return feedback;
+    }
+
+    public static AcknowledgmentObject acknowledgmentObject(OperationOutcome operationOutcome, ImmunizationRegistry immunizationRegistry, Facility facility, EhrPatient ehrPatient, VaccinationEvent vaccinationEvent) {
+        AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
+        acknowledgmentObject.setRaw(operationOutcome.toString()); // TODO parser
+        acknowledgmentObject.setMessageId(operationOutcome.getId());
+//        acknowledgmentObject.setSenderSoftware(operationOutcome.get); TODO extract from metadata ?
+//        acknowledgmentObject.setSender(hl7Reader.getValue(4));
+//        acknowledgmentObject.setDestinationSoftware(hl7Reader.getValue(5));
+//        acknowledgmentObject.setDestination(hl7Reader.getValue(6));
+        acknowledgmentObject.setFacility(facility);
+        acknowledgmentObject.setPatient(ehrPatient);
+        acknowledgmentObject.setVaccination(vaccinationEvent);
+        Timestamp timestamp = null;
+        if (operationOutcome.getMeta().getLastUpdated() != null) {
+            timestamp = new Timestamp(operationOutcome.getMeta().getLastUpdated().getTime());
+        }
+        acknowledgmentObject.setTimestamp(timestamp);
+
+        for (OperationOutcome.OperationOutcomeIssueComponent issue : operationOutcome.getIssue()) {
+            Feedback feedback = getFeedback(issue, immunizationRegistry, facility, null);
+            feedback.setPatient(ehrPatient);
+            feedback.setVaccinationEvent(vaccinationEvent);
+            feedback.setTimestamp(timestamp);
+            switch (issue.getSeverity()) {
+                case FATAL:
+                case ERROR: {
+                    acknowledgmentObject.setMsa_2("AE");
+                    feedback.setSeverity("E");
+                    acknowledgmentObject.getErrors().add(feedback);
+                    break;
+                }
+                case WARNING: {
+                    acknowledgmentObject.setMsa_2("AW");
+                    feedback.setSeverity("W");
+                    acknowledgmentObject.getWarnings().add(feedback);
+                    break;
+                }
+                case INFORMATION:
+                case NULL: {
+                    feedback.setSeverity("I");
+                    acknowledgmentObject.getInfos().add(feedback);
+                    break;
+                }
+            }
+        }
+        return acknowledgmentObject;
     }
 }

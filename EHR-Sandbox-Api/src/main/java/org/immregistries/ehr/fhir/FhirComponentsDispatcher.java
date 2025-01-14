@@ -64,11 +64,11 @@ public class FhirComponentsDispatcher {
     @Autowired
     private BundleImportServiceR4 bundleImportServiceR4;
 
-    private FhirContext fhirContextR5;
-    private FhirContext fhirContextR4;
+    private final FhirContext fhirContextR5;
+    private final FhirContext fhirContextR4;
 
-    private EhrFhirClientFactory ehrFhirClientFactoryR5;
-    private EhrFhirClientFactory ehrFhirClientFactoryR4;
+    private final EhrFhirClientFactory ehrFhirClientFactoryR5;
+    private final EhrFhirClientFactory ehrFhirClientFactoryR4;
     private Map<Class, IEhrEntityFhirMapper> mappersR4 = new HashMap<Class, IEhrEntityFhirMapper>(10);
     private Map<Class, IEhrEntityFhirMapper> mappersR5 = new HashMap<Class, IEhrEntityFhirMapper>(10);
 
