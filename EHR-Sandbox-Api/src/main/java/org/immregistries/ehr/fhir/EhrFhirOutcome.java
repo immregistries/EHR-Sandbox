@@ -4,6 +4,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 
 public class EhrFhirOutcome {
+    private Boolean created = false;
     private String id = "";
     private String operationOutcome = "";
     private String errorMessage = "";
@@ -17,8 +18,13 @@ public class EhrFhirOutcome {
 
     public static EhrFhirOutcome fromMethodOutcome(MethodOutcome methodOutcome, IParser parser) {
         EhrFhirOutcome ehrFhirOutcome = new EhrFhirOutcome();
-        ehrFhirOutcome.setId(methodOutcome.getId().getValue());
-        ehrFhirOutcome.setOperationOutcome(parser.encodeResourceToString(methodOutcome.getOperationOutcome()));
+        if (methodOutcome.getId() != null) {
+            ehrFhirOutcome.setId(methodOutcome.getId().getValue());
+        }
+        if (methodOutcome.getOperationOutcome() != null) {
+            ehrFhirOutcome.setOperationOutcome(parser.encodeResourceToString(methodOutcome.getOperationOutcome()));
+        }
+        ehrFhirOutcome.setCreated(methodOutcome.getCreated());
         return ehrFhirOutcome;
     }
 
@@ -48,5 +54,13 @@ public class EhrFhirOutcome {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public Boolean isCreated() {
+        return created;
+    }
+
+    public void setCreated(Boolean created) {
+        this.created = created;
     }
 }

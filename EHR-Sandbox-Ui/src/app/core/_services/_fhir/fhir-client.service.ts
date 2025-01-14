@@ -35,14 +35,19 @@ export class FhirClientService extends IdUrlVerifyingService {
     super(snackBarService)
   }
 
-  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate" | "$match" | "$transaction" | "", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<EhrFhirOutcome | string> {
+  postOperation(type: string, resource: string, operation: "$match" | "$transaction" | "", resourceLocalId: number, parentId: number): Observable<string> {
     if (operation == "$match") {
       return this.matchResource(type, resource, resourceLocalId, parentId);
     } else if (operation == "$transaction") {
       return this.transaction(resource, resourceLocalId);
     } else if (operation == "") {
       return this.transaction(resource, resourceLocalId);
+    } else {
+      return of("");
     }
+  }
+
+  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<EhrFhirOutcome> {
     switch (type) {
       case "Patient": {
         return this.quickPostPatient(resourceLocalId, resource, operation);

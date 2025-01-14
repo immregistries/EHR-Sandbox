@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, share } from 'rxjs';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { EhrSubscription } from '../../_model/rest';
+import { EhrFhirOutcome, EhrSubscription } from '../../_model/rest';
 import { FacilityService } from '../facility.service';
 import { SettingsService } from '../settings.service';
 import { TenantService } from '../tenant.service';
@@ -46,7 +46,7 @@ export class SubscriptionService {
       });
   }
 
-  postSubscription(subscription: string): Observable<string> {
+  postSubscription(subscription: string): Observable<EhrFhirOutcome> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.registryService.getCurrentId()
@@ -58,7 +58,7 @@ export class SubscriptionService {
         params: { registryId: registryId }
       });
   }
-  putSubscription(subscription: string): Observable<string> {
+  putSubscription(subscription: string): Observable<EhrFhirOutcome> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.registryService.getCurrentId()

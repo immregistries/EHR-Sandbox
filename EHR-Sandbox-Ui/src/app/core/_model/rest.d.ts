@@ -296,6 +296,7 @@ export interface Flavor {
 }
 
 export interface EhrFhirOutcome {
+  created?: boolean,
   id?: string,
   operationOutcome?: string,
   errorMessage?: string,

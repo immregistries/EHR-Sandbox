@@ -11,6 +11,8 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class ResourceClient implements IResourceClient {
+    private Logger logger = LoggerFactory.getLogger(ResourceClient.class);
 
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
