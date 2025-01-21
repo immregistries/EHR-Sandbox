@@ -364,8 +364,12 @@ public class HL7printer {
 //                    sb.append('~');
 //                }
             printXtnEmail(sb, patient.getEmail());
+
 //            }
             Iterator<EhrPhoneNumber> iterator = patient.getPhones().iterator();
+            if (iterator.hasNext()) {
+                sb.append("~");
+            }
             while (iterator.hasNext()) {
                 printXTN(sb, iterator.next());
                 if (iterator.hasNext()) {

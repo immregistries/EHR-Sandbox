@@ -80,11 +80,10 @@ public class Feedback extends EhrEntity {
     @Column(name = "code", length = 45)
     private String code;
 
-    @JoinColumn(name = "timestamp", nullable = false)
+    @Column(name = "timestamp", nullable = false)
     private Timestamp timestamp;
 
-
-    @JoinColumn(name = "raw", columnDefinition = "TEXT")
+    @Column(name = "raw", columnDefinition = "TEXT")
     private String raw;
 
     public String getIis() {

@@ -165,7 +165,7 @@ public class FeedbackController {
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
-            feedback.setRaw(hl7Reader.getOriginalSegment());
+//            feedback.setRaw(hl7Reader.getOriginalSegment());
             feedback.setSeverity(severity);
             immunizationRegistry.ifPresent(obj -> feedback.setIis(String.valueOf(obj.getId())));
             facility.ifPresent(feedback::setFacility);

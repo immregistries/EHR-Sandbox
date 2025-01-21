@@ -78,6 +78,7 @@ export class Hl7PostComponent {
             this.answer = err.error
           }
           console.error(err)
+          this.snackBarService.errorMessage(this.answer)
         }
       })
     } else if (this.patientId > 0) {
