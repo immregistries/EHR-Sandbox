@@ -15,6 +15,12 @@
         <java.version>1.8</java.version>
         <hapi.version>7.4.0</hapi.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>hit-nexus</id>
+            <url>https://hit-nexus.nist.gov/repository/releases</url>
+        </repository>
+    </repositories>
     <dependencyManagement>
         <dependencies>
             <dependency>
