@@ -56,7 +56,19 @@ export class FhirPostComponent {
     this.answer = ""
     this.requestLoading = true
     if ((this.operation == "$match" || this.operation == "$transaction" || this.operation == "")) {
-
+      this.fhirClient.postOperation(this.resourceType, this.resource, this.operation, this.resourceLocalId, this.parentId)
+        .pipe(
+          tap({ next: () => this.requestLoading = false, error: () => this.requestLoading = false }),
+          // catchError((err, caught) => {
+          //   this.requestLoading = false
+          //   return err;
+          // }),
+          map((res) => JSON.stringify(res) ?? "")
+        )
+        .subscribe({
+          next: this.successHandler,
+          error: this.errorHandler
+        })
     } else if (this.operation == "UpdateOrCreate" || this.operation == "Update" || this.operation == "Create") {
       this.fhirClient.postResource(this.resourceType, this.resource, this.operation, this.resourceLocalId, this.parentId, this.overridingReferences)
         .pipe(

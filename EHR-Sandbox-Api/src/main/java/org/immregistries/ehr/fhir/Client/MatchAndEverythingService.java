@@ -62,7 +62,7 @@ public class MatchAndEverythingService {
 
         String message = parser.encodeResourceToString(patientMapper.toFhir(ehrPatient));
         String id = null;
-        List<IBaseResource> matches = matchPatient(registryId, message);
+        List<IBaseResource> matches = matchResource(registryId, message, MappingHelper.PATIENT);
         for (IBaseResource iBaseResource : matches) {
             if (iBaseResource.getMeta().getTag(GOLDEN_SYSTEM_TAG, GOLDEN_RECORD) != null) {
                 id = iBaseResource.getIdElement().getIdPart();
@@ -199,43 +199,43 @@ public class MatchAndEverythingService {
 //        org.hl7.fhir.r4.model.Bundle outBundle = client.operation()
 //                .onInstance("Patient/" + id)
 //                .named("$everything")
-////                .withParameters(in)
+
+    /// /                .withParameters(in)
 //                .withParameter()
 //                .useHttpGet()
 //                .returnResourceType(org.hl7.fhir.r4.model.Bundle.class).execute();
 //        return outBundle;
 //    }
-
-    public List<String> matchPatientIdParts(
+    public List<String> matchOperationResourceGetIds(
             Integer registryId,
-            String message) {
-        return matchPatient(registryId, message)
+            String message, String resourceType) {
+        return matchResource(registryId, message, resourceType)
                 .stream().map(iBaseResource -> iBaseResource.getIdElement().getIdPart()).collect(Collectors.toList());
     }
 
-    public List<IBaseResource> matchPatient(
+    public List<IBaseResource> matchResource(
             Integer registryId,
-            String message) {
-        IBaseBundle iBaseBundle = matchPatientOperation(registryId, message);
+            String message, String resourceType) {
+        IBaseBundle iBaseBundle = matchOperation(registryId, message, resourceType);
         return fhirComponentsDispatcher.bundleImportService().baseResourcesFromBaseBundleEntries(iBaseBundle);
     }
 
-    public IBaseBundle matchPatientOperation(
+    public IBaseBundle matchOperation(
             Integer registryId,
-            String message) {
+            String message, String resourceType) {
         IParser parser = fhirComponentsDispatcher.parser(message);
         IBaseResource patient = parser.parseResource(message);
         try {
-            return matchPatientOperation(registryId, patient);
+            return matchOperation(registryId, patient, resourceType);
         } catch (Exception exception) {
             throw new RuntimeException("Failure when executing $match: " + exception.getMessage());
         }
     }
 
-    public IBaseBundle matchPatientOperation(
+    public IBaseBundle matchOperation(
             Integer registryId,
-            IBaseResource patient) {
+            IBaseResource patient, String resourceType) {
         return (IBaseBundle) fhirComponentsDispatcher.clientFactory().newGenericClient(immunizationRegistryService.getImmunizationRegistry(registryId))
-                .operation().onType(MappingHelper.PATIENT).named("match").withParameter(FhirComponentsDispatcher.parametersClass(), "resource", patient).returnResourceType(FhirComponentsDispatcher.bundleClass()).execute();
+                .operation().onType(resourceType).named("match").withParameter(FhirComponentsDispatcher.parametersClass(), "resource", patient).returnResourceType(FhirComponentsDispatcher.bundleClass()).execute();
     }
 }

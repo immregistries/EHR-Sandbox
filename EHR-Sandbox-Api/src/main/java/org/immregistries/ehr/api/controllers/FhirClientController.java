@@ -195,7 +195,19 @@ public class FhirClientController {
             @RequestBody String message) {
 
         Tenant tenant = tenantRepository.findById(tenantId).orElseThrow();
-        return ResponseEntity.ok(matchAndEverythingService.matchPatientIdParts(registryId, message));
+        return ResponseEntity.ok(matchAndEverythingService.matchOperationResourceGetIds(registryId, message, MappingHelper.PATIENT));
+    }
+
+    @PostMapping(VACCINATION_ID_PATH + FHIR_CLIENT + "/$match")
+    public ResponseEntity<List<String>> matchImmunization(
+            @PathVariable(TENANT_ID) Integer tenantId,
+            @PathVariable(FACILITY_ID) Integer facilityId,
+            @RequestParam(REGISTRY_ID) Integer registryId,
+            @PathVariable(VACCINATION_ID) Integer vaccinationId,
+            @RequestBody String message) {
+
+        Tenant tenant = tenantRepository.findById(tenantId).orElseThrow();
+        return ResponseEntity.ok(matchAndEverythingService.matchOperationResourceGetIds(registryId, message, MappingHelper.IMMUNIZATION));
     }
 
 

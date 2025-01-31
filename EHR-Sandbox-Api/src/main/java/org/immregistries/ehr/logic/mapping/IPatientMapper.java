@@ -5,6 +5,9 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
+/**
+ * Maps the Database with FHIR for patient resources
+ */
 public interface IPatientMapper<Patient extends IBaseResource> extends IEhrEntityFhirMapper<EhrPatient> {
     String MRN_SYSTEM = "mrn";
     String MRN_TYPE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0203";

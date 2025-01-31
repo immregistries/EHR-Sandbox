@@ -4,7 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.*;
 import org.hl7.fhir.r5.model.ContactPoint.ContactPointSystem;
+import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
+import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.NextOfKin;
@@ -18,14 +20,14 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.Objects;
 
-/**
- * Maps the Database with FHIR for patient resources
- */
+
 @Service("patientMapperR5")
 public class PatientMapperR5 implements IPatientMapper<Patient> {
 
     @Autowired
     MappingHelperR5 mappingHelperR5;
+    @Autowired
+    CodeMapManager codeMapManager;
     private static Logger logger = LoggerFactory.getLogger(PatientMapperR5.class);
 
     public Patient toFhir(EhrPatient ehrPatient, Facility facility) {
@@ -77,37 +79,45 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         }
         p.setGender(MappingHelperR5.toFhirGender(ehrPatient.getSex()));
 
-        /**
+        /*
          * Race
          */
         if (!ehrPatient.getRaces().isEmpty()) {
             Extension raceExtension = p.addExtension();
             raceExtension.setUrl(RACE_EXTENSION);
-//            Extension raceOmb = raceExtension.addExtension();
-//            raceOmb.setUrl(RACE_EXTENSION_OMB); // TODO clarify MustSupport
-            Extension raceText = raceExtension.addExtension();
-            raceText.setUrl(RACE_EXTENSION_TEXT);
             StringBuilder textBuilder = new StringBuilder();
             for (EhrRace ehrRace : ehrPatient.getRaces()) {
+                String value = ehrRace.getValue();
                 textBuilder.append(ehrRace.getValue()).append(" ");
-                Extension raceDetailed = raceExtension.addExtension();
-                raceDetailed.setUrl(RACE_EXTENSION_DETAILED);
-                raceDetailed.setValue(mappingHelperR5.codingFromCodeset(ehrRace.getValue(), RACE_SYSTEM, CodesetType.PATIENT_RACE));
+                Coding coding = new Coding().setCode(value).setSystem(RACE_SYSTEM);
+                Code code = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_RACE, value);
+                /*
+                 * if Code is recognised, gets added to OMB extension, else detailed extension
+                 */
+                if (code != null) {
+                    coding.setDisplay(code.getLabel());
+                    raceExtension.addExtension(RACE_EXTENSION_OMB, coding);
+                } else {
+                    raceExtension.addExtension(RACE_EXTENSION_DETAILED, coding);
+                }
             }
-            raceText.setValue(new StringType(textBuilder.toString()));
+            raceExtension.addExtension(RACE_EXTENSION_TEXT, new StringType(textBuilder.toString()));
         }
-        /**
+        /*
          * Ethnicity
          */
         if (StringUtils.isNotBlank(ehrPatient.getEthnicity())) {
             Extension ethnicityExtension = p.addExtension();
             ethnicityExtension.setUrl(ETHNICITY_EXTENSION);
-            Extension ethnicityText = ethnicityExtension.addExtension();
-            ethnicityText.setUrl(ETHNICITY_EXTENSION_TEXT);
-            ethnicityText.setValue(new StringType(ehrPatient.getEthnicity()));
-            Extension ethnicityOmb = ethnicityExtension.addExtension();
-            ethnicityOmb.setUrl(ETHNICITY_EXTENSION_OMB);
-            ethnicityOmb.setValue((new Coding().setSystem(ETHNICITY_SYSTEM).setCode(ehrPatient.getEthnicity()))); //TODO sort if actually part of the codeSet ?
+            Coding coding = new Coding().setCode(ehrPatient.getEthnicity()).setSystem(ETHNICITY_SYSTEM);
+            Code code = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, ehrPatient.getEthnicity());
+            if (code != null) {
+                coding.setDisplay(code.getLabel());
+                ethnicityExtension.addExtension(ETHNICITY_EXTENSION_OMB, coding);
+            } else {
+                ethnicityExtension.addExtension(ETHNICITY_EXTENSION_DETAILED, coding);
+            }
+            ethnicityExtension.addExtension(ETHNICITY_EXTENSION_TEXT, new StringType(ehrPatient.getEthnicity()));
         }
 
         if (ehrPatient.getDeathDate() != null) {
@@ -198,7 +208,7 @@ public class PatientMapperR5 implements IPatientMapper<Patient> {
         if (ethnicityExtension != null) {
             Extension ethnicityDetailed = ethnicityExtension.getExtensionByUrl(ETHNICITY_EXTENSION_DETAILED);
             Extension ethnicityOmb = ethnicityExtension.getExtensionByUrl(ETHNICITY_EXTENSION_OMB);
-            /**
+            /*
              * By default takes Omb value
              */
             if (ethnicityOmb != null) {
