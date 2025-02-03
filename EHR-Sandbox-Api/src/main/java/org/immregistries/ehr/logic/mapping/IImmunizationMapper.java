@@ -13,7 +13,7 @@ public interface IImmunizationMapper<Immunization extends IBaseResource> extends
     String NDC_SYSTEM = "http://hl7.org/fhir/sid/ndc";
     String FUNCTION_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-function";
     String ORDERING = "OP";
-    String ENTERING = "entering";
+    String ENTERING = "EP"; // https://terminology.hl7.org/6.1.0/CodeSystem-v2-0443 
     String ADMINISTERING = "AP";
 
     String INFORMATION_SOURCE_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-origin";
@@ -22,7 +22,7 @@ public interface IImmunizationMapper<Immunization extends IBaseResource> extends
     String BODY_ROUTE_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-route";
     String FUNDING_SOURCE_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-funding-source";
     String FUNDING_ELIGIBILITY_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-program-eligibility";
-//    String FUNDING_PROGRAMM_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-vaccine-funding-program";
+//    String FUNDING_PROGRAM_SYSTEM = "http://hl7.org/fhir/ValueSet/immunization-vaccine-funding-program";
 
     Immunization toFhir(VaccinationEvent vaccination, String identifier_system);
 
