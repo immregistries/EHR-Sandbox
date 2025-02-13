@@ -461,21 +461,36 @@ public class HL7printer {
 //      MSH.9
         sb.append(messageType);
         sb.append("|");
+//      MSH.10
         sb.append(uniqueId);
         sb.append("|");
+//      MSH.11
         sb.append(production);
         sb.append("2.5.1|");
+//      MSH.12
         sb.append("|");
+//      MSH.13
         sb.append("|");
+//      MSH.14
         sb.append("ER|");
+//      MSH.15
         sb.append("AL|");
+//      MSH.16
         sb.append("|");
+//      MSH.17
         sb.append("|");
+//      MSH.18
         sb.append("|");
+//      MSH.19
         sb.append("|");
+//      MSH.20
+        sb.append("|");
+//      MSH.21
         sb.append(profileId).append("^CDCPHINVS");
         if (Objects.nonNull(facility)) {
-            sb.append("|").append(StringUtils.defaultIfBlank(facility.getNameDisplay(), ""));
+            sb.append("|");
+//      MSH.22
+            sb.append(StringUtils.defaultIfBlank(facility.getNameDisplay(), ""));
         }
         sb.append("\r");
     }
