@@ -31,10 +31,9 @@
   </form>
 
   <span [style]="{width: '50%'}">
-    <!-- <app-ack-display [loading]="resultLoading" [rawAck]="answer" [isError]="error"
-      [registryId]="immunizationRegistryService.getCurrentId()" [patientId]="patientId" [vaccinationId]="vaccinationId">
-    </app-ack-display> -->
-    <app-ack-table></app-ack-table>
+    <app-ack-display [loading]="resultLoading" [acknowledgementObject]="resultObject"
+                     [isError]="error"></app-ack-display>
+    <!-- <app-ack-table></app-ack-table> -->
 
   </span>
 </span>

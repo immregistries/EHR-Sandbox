@@ -7,6 +7,8 @@ import { Hl7MessagingComponent } from '../hl7-messaging/hl7-messaging.component'
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
+import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
+import { Feedback } from 'src/app/core/_model/rest';
 
 @Component({
   selector: 'app-hl7-post',
@@ -24,6 +26,8 @@ export class Hl7PostComponent {
   public hl7Message: string = "";
   public answer: string = "";
   public error: boolean = false;
+
+  public resultObject?: AcknowledgementObject<Feedback>
 
   constructor(private vaccinationService: VaccinationService,
     private feedbackService: FeedbackService,
@@ -64,6 +68,7 @@ export class Hl7PostComponent {
           this.error = false
           this.answer = res
           this.feedbackService.convertAck(res, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
+            this.resultObject = result
             this.feedbackService.doRefresh()
           })
         },
@@ -88,6 +93,7 @@ export class Hl7PostComponent {
           this.error = false
           this.answer = res
           this.feedbackService.convertAck(res, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
+            this.resultObject = result
             this.feedbackService.doRefresh()
           })
         },
@@ -108,6 +114,7 @@ export class Hl7PostComponent {
     } else {
       this.answer = this.hl7Message
       this.feedbackService.convertAck(this.answer, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
+        this.resultObject = result
         this.feedbackService.doRefresh()
       })
       this.resultLoading = false

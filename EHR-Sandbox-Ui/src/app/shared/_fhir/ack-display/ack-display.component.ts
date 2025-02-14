@@ -24,10 +24,17 @@ export class AckDisplayComponent {
     return this._acknowledgementObject;
   }
   @Input()
-  public set acknowledgementObject(value: AcknowledgementObject<Feedback>) {
-    this._acknowledgementObject = value;
-    this.msa_2 = value.msa_2 ?? ""
-    this.plain = this.plainText(value)
+  public set acknowledgementObject(value: AcknowledgementObject<Feedback> | undefined) {
+    if (!value) {
+      this._acknowledgementObject = { sortedResult: { errors: [], warnings: [], notices: [], infos: [] } };
+      this.msa_2 = ""
+      this.plain = ""
+    } else {
+      this._acknowledgementObject = value;
+      this.msa_2 = value.msa_2 ?? ""
+      this.plain = this.plainText(value)
+    }
+
   }
 
 
