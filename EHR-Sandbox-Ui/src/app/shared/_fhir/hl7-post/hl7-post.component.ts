@@ -63,63 +63,51 @@ export class Hl7PostComponent {
     this.resultLoading = true
     if (this.vaccinationId > 0) {
       this.hl7Service.quickPostVXU(this.patientId, this.vaccinationId, this.hl7Message).subscribe({
-        next: (res) => {
-          this.resultLoading = false
-          this.error = false
-          this.answer = res
-          this.feedbackService.convertAck(res, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
-            this.resultObject = result
-            this.feedbackService.doRefresh()
-          })
-        },
-        error: (err) => {
-          this.error = true
-          this.resultLoading = false
-          if (err.text) {
-            this.answer = err.text
-          } else if (err.error.text) {
-            this.answer = err.error.text
-          } else {
-            this.answer = err.error
-          }
-          console.error(err)
-          this.snackBarService.errorMessage(this.answer)
-        }
+        next: this.successProcessing,
+        error: this.errorProcessing
       })
     } else if (this.patientId > 0) {
       this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).subscribe({
-        next: (res) => {
-          this.resultLoading = false
-          this.error = false
-          this.answer = res
-          this.feedbackService.convertAck(res, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
-            this.resultObject = result
-            this.feedbackService.doRefresh()
-          })
-        },
-        error: (err) => {
-
-          this.error = true
-          this.resultLoading = false
-          if (err.text) {
-            this.answer = err.text
-          } else if (err.error.text) {
-            this.answer = err.error.text
-          } else {
-            this.answer = err.error
-          }
-          console.error(err)
-        }
+        next: this.successProcessing,
+        error: this.errorProcessing
       })
     } else {
       this.answer = this.hl7Message
-      this.feedbackService.convertAck(this.answer, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId).subscribe(result => {
-        this.resultObject = result
-        this.feedbackService.doRefresh()
-      })
+      this.feedbackService.convertAck(this.answer, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId)
+        .subscribe(this.ackObjectProcessing);
       this.resultLoading = false
     }
 
+  }
+
+
+  private successProcessing = (ack: string) => {
+    this.resultLoading = false
+    this.error = false
+    this.answer = ack
+    this.feedbackService.convertAck(ack, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId)
+      .subscribe(this.ackObjectProcessing)
+  }
+
+  private errorProcessing = (err: any) => {
+    this.error = true
+    this.resultLoading = false
+    if (err.text) {
+      this.answer = err.text
+    } else if (err.error.text) {
+      this.answer = err.error.text
+    } else {
+      this.answer = err.error
+    }
+    console.error(err)
+    this.resultObject = { rawAck: this.answer, sortedResult: { errors: [], warnings: [], infos: [], notices: [] } }
+    this.snackBarService.errorMessage(this.answer)
+  }
+
+  private ackObjectProcessing = (acknowledgementObject: AcknowledgementObject<Feedback>) => {
+    acknowledgementObject.rawAck = this.answer
+    this.resultObject = acknowledgementObject
+    this.feedbackService.doRefresh()
   }
 
   resultClass(): string {

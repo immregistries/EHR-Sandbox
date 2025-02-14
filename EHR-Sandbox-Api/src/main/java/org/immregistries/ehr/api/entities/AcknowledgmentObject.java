@@ -12,6 +12,7 @@ import java.util.Set;
 
 //@Entity()
 //@Table(name = "acknowledgment_object")
+//TODO Persist
 public class AcknowledgmentObject extends EhrEntity {
 
     @Id
