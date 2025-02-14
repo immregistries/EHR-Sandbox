@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.random;
 import static org.immregistries.codebase.client.reference.CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE;
-import static org.immregistries.ehr.logic.mapping.PatientMapperR5.MRN_SYSTEM;
+import static org.immregistries.ehr.logic.mapping.forR5.PatientMapperR5.MRN_SYSTEM;
 
 @Service
 public class RandomGenerator {

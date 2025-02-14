@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.forR4;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.*;
@@ -9,6 +9,7 @@ import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrHumanName;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

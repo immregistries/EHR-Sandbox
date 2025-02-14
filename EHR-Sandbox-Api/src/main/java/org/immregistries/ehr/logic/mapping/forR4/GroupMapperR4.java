@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.forR4;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
@@ -10,6 +10,9 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrGroupCharacteristic;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
+import org.immregistries.ehr.logic.mapping.interfaces.IGroupMapper;
+import org.immregistries.ehr.logic.mapping.interfaces.IOrganizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

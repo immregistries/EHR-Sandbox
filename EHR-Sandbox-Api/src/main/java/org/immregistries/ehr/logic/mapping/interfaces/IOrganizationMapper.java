@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.interfaces;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.immregistries.ehr.api.entities.EhrUtils;

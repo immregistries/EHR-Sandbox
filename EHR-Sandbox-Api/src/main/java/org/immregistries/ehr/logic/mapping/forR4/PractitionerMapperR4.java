@@ -1,10 +1,11 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.forR4;
 
 import org.hl7.fhir.r4.model.*;
 import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
+import org.immregistries.ehr.logic.mapping.interfaces.IPractitionerMapper;
 import org.springframework.stereotype.Service;
 
 @Service

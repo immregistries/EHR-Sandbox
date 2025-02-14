@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Size;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.immregistries.ehr.api.ProcessingFlavor;
 
-import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_SYSTEM;
-import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
+import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_TYPE_SYSTEM;
+import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_TYPE_VALUE;
 
 @Embeddable()
 public class EhrIdentifier {

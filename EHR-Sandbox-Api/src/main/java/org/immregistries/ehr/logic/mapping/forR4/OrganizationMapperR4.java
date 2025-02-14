@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.forR4;
 
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
@@ -6,6 +6,8 @@ import org.hl7.fhir.r4.model.Reference;
 import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
+import org.immregistries.ehr.logic.mapping.interfaces.IOrganizationMapper;
 import org.springframework.stereotype.Service;
 
 import static org.immregistries.ehr.logic.ResourceIdentificationService.FACILITY_SYSTEM;

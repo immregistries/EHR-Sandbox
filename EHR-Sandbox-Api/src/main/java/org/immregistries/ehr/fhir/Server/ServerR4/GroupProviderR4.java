@@ -17,7 +17,7 @@ import org.immregistries.ehr.api.repositories.EhrGroupRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.fhir.Server.IGroupProvider;
-import org.immregistries.ehr.logic.mapping.GroupMapperR4;
+import org.immregistries.ehr.logic.mapping.forR4.GroupMapperR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

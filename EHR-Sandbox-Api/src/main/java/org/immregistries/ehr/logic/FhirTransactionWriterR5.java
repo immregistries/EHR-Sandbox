@@ -8,7 +8,12 @@ import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
-import org.immregistries.ehr.logic.mapping.*;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
+import org.immregistries.ehr.logic.mapping.forR5.ImmunizationMapperR5;
+import org.immregistries.ehr.logic.mapping.forR5.OrganizationMapperR5;
+import org.immregistries.ehr.logic.mapping.forR5.PatientMapperR5;
+import org.immregistries.ehr.logic.mapping.forR5.PractitionerMapperR5;
+import org.immregistries.ehr.logic.mapping.interfaces.IImmunizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

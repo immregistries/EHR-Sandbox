@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.forR5;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -8,6 +8,10 @@ import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.MappingHelper;
+import org.immregistries.ehr.logic.mapping.MappingHelperR5;
+import org.immregistries.ehr.logic.mapping.interfaces.IImmunizationMapper;
+import org.immregistries.ehr.logic.mapping.interfaces.IPractitionerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

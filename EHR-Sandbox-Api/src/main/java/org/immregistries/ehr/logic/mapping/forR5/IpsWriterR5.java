@@ -1,26 +1,28 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.forR5;
 
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.Clinician;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.logic.mapping.interfaces.IImmunizationMapper;
+import org.immregistries.ehr.logic.mapping.interfaces.IIpsWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class IpsWriterR4 implements IIpsWriter {
+public class IpsWriterR5 implements IIpsWriter {
     @Autowired
-    OrganizationMapperR4 organizationMapperR4;
+    OrganizationMapperR5 organizationMapperR5;
     @Autowired
-    PatientMapperR4 patientMapperR4;
+    PatientMapperR5 patientMapperR5;
     @Autowired
-    ImmunizationMapperR4 immunizationMapperR4;
+    ImmunizationMapperR5 immunizationMapperR5;
     @Autowired
-    PractitionerMapperR4 practitionerMapperR4;
+    PractitionerMapperR5 practitionerMapperR5;
     @Autowired
     ResourceIdentificationService resourceIdentificationService;
 
@@ -32,9 +34,8 @@ public class IpsWriterR4 implements IIpsWriter {
         Map<Integer, Reference> addedClinicianReference = new HashMap<>(ehrPatient.getVaccinationEvents().size() * 3 + 1);
         String immunizationFacilitySystem = resourceIdentificationService.getFacilityImmunizationIdentifierSystem(facility);
 
-        int entryId = 0;
+        Integer entryId = 0;
         Bundle bundle = new Bundle();
-        bundle.setIdentifier(ehrPatient.getMrnEhrIdentifier().toR4());
         bundle.setIdentifier(new Identifier().setValue(String.valueOf(UUID.randomUUID())));
         bundle.setType(Bundle.BundleType.DOCUMENT);
         bundle.setTimestamp(new Date());
@@ -60,12 +61,12 @@ public class IpsWriterR4 implements IIpsWriter {
                 .setResource(composition);
         composition.addAuthor(facilityReference);
         composition.addAttester()
-                .setMode(Composition.CompositionAttestationMode.PERSONAL)
+//                .setMode(Composition.CompositionAttestationMode.PERSONAL)
                 .setTime(new Date())
                 .setParty(facilityReference);
         composition.setCustodian(facilityReference);
-        composition.setIdentifier(ehrPatient.getMrnEhrIdentifier().toR4());
-        composition.setSubject(new Reference(patientEntry.getFullUrl()));
+        composition.addIdentifier(ehrPatient.getMrnEhrIdentifier().toR5());
+        composition.addSubject(new Reference(patientEntry.getFullUrl()));
 
         Composition.SectionComponent immunizationHistory = composition.addSection()
                 .setTitle("Immunization History")
@@ -107,35 +108,32 @@ public class IpsWriterR4 implements IIpsWriter {
     private Composition ipsComposition() {
         Composition composition = new Composition();
         composition.setType(new CodeableConcept(new Coding().setSystem("http://loinc.org").setCode("60591-5")
-//                .setDisplay("Patient summary Document")
+//                .setDisplay( "Patient summary Document")
         ));
         composition.setDate(new Date());
         return composition;
     }
 
     private Patient ipsPatient(EhrPatient ehrPatient) {
-        Patient patient = patientMapperR4.toFhir(ehrPatient);
+        Patient patient = patientMapperR5.toFhir(ehrPatient);
         patient.setExtension(new ArrayList<>(0));
         return patient;
     }
 
     private Organization ipsOrganization(Facility facility) {
-        Organization organization = organizationMapperR4.toFhir(facility);
-        organization.setExtension(new ArrayList<>(0));
+        Organization organization = organizationMapperR5.toFhir(facility);
         return organization;
     }
 
 
     private Practitioner ipsPractitioner(Clinician clinician) {
-        Practitioner practitioner = practitionerMapperR4.toFhir(clinician);
-        practitioner.setExtension(new ArrayList<>(0));
+        Practitioner practitioner = practitionerMapperR5.toFhir(clinician);
         return practitioner;
     }
 
 
     private Immunization ipsImmunization(VaccinationEvent vaccinationEvent, String facilitySystem) {
-        Immunization immunization = immunizationMapperR4.toFhir(vaccinationEvent, facilitySystem);
-        immunization.setExtension(new ArrayList<>(0));
+        Immunization immunization = immunizationMapperR5.toFhir(vaccinationEvent, facilitySystem);
         return immunization;
     }
 
@@ -154,13 +152,14 @@ public class IpsWriterR4 implements IIpsWriter {
             addedClinicianReference.put(clinician.getId(), reference);
         }
         return reference;
+
     }
 
     private Immunization.ImmunizationPerformerComponent addImmunizationPerformer(Bundle bundle, Immunization immunization, Clinician clinician, String role, Map<Integer, Reference> addedClinicianReference) {
         Reference reference = addClinicianEntry(bundle, clinician, addedClinicianReference);
         Immunization.ImmunizationPerformerComponent component = null;
         if (reference != null) {
-            component = immunizationMapperR4.fhirPerformer(clinician, role);
+            component = immunizationMapperR5.fhirPerformer(clinician, role);
             component.setActor(reference);
             immunization.addPerformer(component);
         }

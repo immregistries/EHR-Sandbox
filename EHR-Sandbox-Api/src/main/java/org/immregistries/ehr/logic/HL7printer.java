@@ -10,7 +10,7 @@ import org.immregistries.ehr.EhrApiApplication;
 import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.*;
-import org.immregistries.ehr.logic.mapping.IOrganizationMapper;
+import org.immregistries.ehr.logic.mapping.interfaces.IOrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

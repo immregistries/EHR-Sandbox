@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.mapping;
+package org.immregistries.ehr.logic.mapping.interfaces;
 
 import org.immregistries.ehr.api.entities.EhrEntity;
 

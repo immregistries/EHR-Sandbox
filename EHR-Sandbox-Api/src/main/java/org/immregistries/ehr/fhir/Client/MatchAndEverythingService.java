@@ -17,9 +17,9 @@ import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
 import org.immregistries.ehr.logic.RecommendationService;
-import org.immregistries.ehr.logic.mapping.IImmunizationMapper;
-import org.immregistries.ehr.logic.mapping.IPatientMapper;
 import org.immregistries.ehr.logic.mapping.MappingHelper;
+import org.immregistries.ehr.logic.mapping.interfaces.IImmunizationMapper;
+import org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

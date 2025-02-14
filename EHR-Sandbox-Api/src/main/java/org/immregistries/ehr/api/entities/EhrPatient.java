@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
-import static org.immregistries.ehr.logic.mapping.IPatientMapper.MRN_TYPE_VALUE;
+import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_TYPE_VALUE;
 
 @Entity
 @Table(name = "patient")
