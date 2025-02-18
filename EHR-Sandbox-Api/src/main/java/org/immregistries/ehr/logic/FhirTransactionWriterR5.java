@@ -235,10 +235,11 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
             }
 
             Organization organization = xonToOrganization(reader, 22);
-            if (organization)
+//            if (organization)
 
 
         }
+        return bundle;
 
 
     }
