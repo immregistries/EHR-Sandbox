@@ -15,10 +15,12 @@ import java.util.Map;
  * Interface for Service Writing different kinds of FHIR Transaction Bundles
  */
 public interface IFhirTransactionWriter {
-    int SENDING_FACILITY = 4;
-    int SENDING_APP = 3;
-    int RECEIVING_APPLICATION = 5;
-    int RECEIVING_FACILITY = 6;
+    int MSH_SENDING_FACILITY = 4;
+    int MSH_SENDING_APP = 3;
+    int MSH_RECEIVING_APPLICATION = 5;
+    int MSH_RECEIVING_FACILITY = 6;
+    int MSH_PROCESSING_ID = 11;
+    int MSH_PROFILE_ID = 21;
 
     default SimpleDateFormat generateSimpleDateFormat() {
         return new SimpleDateFormat("yyyyMMddhhmmssZ");
