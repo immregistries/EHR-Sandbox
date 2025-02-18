@@ -18,6 +18,7 @@ import org.immregistries.smm.tester.manager.HL7Reader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.*;
 
 import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.IDENTIFIER_TYPE_SYSTEM;
@@ -55,18 +56,21 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
     public IBaseBundle vxuBundleSingleVaccination(Facility facility, VaccinationEvent vaccinationEvent) {
         Map<Integer, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
         String msh = "";
+        Bundle bundle = new Bundle();
+        bundle.setType(Bundle.BundleType.TRANSACTION);
         {
             StringBuilder sb = new StringBuilder();
             hl7printer.createMSH(sb, "VXU^V04^VXU_V04", "Z22", facility);
             msh = sb.toString();
         }
 
+
         MessageHeader messageHeader = messageHeaderFromMSH(msh);
         Provenance provenance = provenanceFromMsh(msh);
 
+        String messageHeaderEntryUrl = bundle.addEntry().setResource(messageHeader).setFullUrl("urn:uuid:" + UUID.randomUUID()).getFullUrl();
+        String provenanceEntryUrl = bundle.addEntry().setResource(provenance).setFullUrl("urn:uuid:" + UUID.randomUUID()).getFullUrl();
 
-        Bundle bundle = new Bundle();
-        bundle.setType(Bundle.BundleType.TRANSACTION);
         String organizationEntryUrl = addOrganizationEntry(bundle, facility);
         String patientEntryUrl = addPatientEntry(bundle, organizationEntryUrl, vaccinationEvent.getPatient(), clinicianUrlMap);
         String vaccinationEntryUrl = addVaccinationEntry(bundle, patientEntryUrl, vaccinationEvent, clinicianUrlMap);
@@ -202,6 +206,28 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         Provenance provenance = null;
         if (reader.advanceToSegment("MSH")) {
             provenance = new Provenance();
+            provenance.setActivity(new CodeableConcept().addCoding(new Coding("", "v2-FHIR transformation", "")));
+            provenance.setRecorded(new Date());
+            // TODO keep implementing as https://build.fhir.org/ig/HL7/v2-to-fhir/ConceptMap-segment-msh-transformation-to-provenance.html
+            Provenance.ProvenanceEntityComponent entityComponent = provenance.addEntity().setRole(Provenance.ProvenanceEntityRole.SOURCE);
+
+            if (StringUtils.isNotBlank(reader.getValue(MSH_SENDING_APP)) && StringUtils.isNotBlank(reader.getValue(MSH_SENDING_NETWORK_ADDRESS))) {
+                Identifier identifier = hdToIdentifier(reader, MSH_SENDING_FACILITY);
+                entityComponent.setWhat(new Reference().setIdentifier(identifier));
+            }
+
+            if (StringUtils.isBlank(reader.getValue(MSH_SENDING_RESPONSIBLE_ORGANIZATION))) { // TODO better condition as here is only checking first field
+                Identifier identifier = hdToIdentifier(reader, MSH_SENDING_FACILITY);
+                provenance.addAgent().setWho(new Reference().setType("Organization").setIdentifier(identifier)).getType().addCoding(PROVENANCE_PARTICIPANT_TYPE_SYSTEM, PROVENANCE_AUTHOR_CODE, PROVENANCE_AUTHOR_CODE);
+            }
+            if (StringUtils.isNotBlank(reader.getValue(MSH_DATE_TIME_OF_MESSAGE))) {
+                try {
+                    Date date = generateSimpleDateFormat().parse(reader.getValue(MSH_DATE_TIME_OF_MESSAGE));
+                    provenance.setRecorded(date);
+                    provenance.setOccurred(new DateType(date));
+                } catch (ParseException ignored) {
+                }
+            }
         }
         return provenance;
     }
@@ -243,9 +269,9 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
                         .setReceiver(new Reference().setType("Organization").setIdentifier(identifier));
             }
 
-//            if (!reader.getValue(7).isBlank()) {
+//            if (!reader.getValue(MSH_DATE_TIME_OF_MESSAGE).isBlank()) {
 //                try {
-//                    bundle.setTimestamp(generateSimpleDateFormat().parse(reader.getValue(7)));
+//                    bundle.setTimestamp(generateSimpleDateFormat().parse(reader.getValue(MSH_DATE_TIME_OF_MESSAGE)));
 //                } catch (ParseException ignored) {
 //                }
 //            }
@@ -276,7 +302,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
                 }
             }
 
-//            Organization organization = xonToOrganization(reader, 22);
+//            Organization organization = xonToOrganization(reader, MSH_SENDING_RESPONSIBLE_ORGANIZATION);
 //            String organizationUrn = bundle
 //                    .addEntry()
 //                    .setResource(organization)

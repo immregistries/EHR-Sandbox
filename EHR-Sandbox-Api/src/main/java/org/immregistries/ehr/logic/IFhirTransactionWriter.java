@@ -19,14 +19,17 @@ public interface IFhirTransactionWriter {
     int MSH_SENDING_APP = 3;
     int MSH_RECEIVING_APPLICATION = 5;
     int MSH_RECEIVING_FACILITY = 6;
+    int MSH_DATE_TIME_OF_MESSAGE = 7;
     int MSH_PROCESSING_ID = 11;
     int MSH_PROFILE_ID = 21;
+    int MSH_SENDING_RESPONSIBLE_ORGANIZATION = 22;
+    int MSH_SENDING_NETWORK_ADDRESS = 24;
+
 
     default SimpleDateFormat generateSimpleDateFormat() {
         return new SimpleDateFormat("yyyyMMddhhmmssZ");
     }
 
-    int SENDING_NETWORK_ADDRESS = 24;
 
     /**
      * Helping method to build Fhir String Urls with Identifier parameter
