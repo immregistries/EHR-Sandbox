@@ -35,7 +35,7 @@ public class FhirTransactionWriterR4 implements IFhirTransactionWriter {
     ResourceIdentificationService resourceIdentificationService;
 
 
-    public IBaseBundle vxuBundle(Facility facility, VaccinationEvent vaccinationEvent) {
+    public IBaseBundle vxuBundleSingleVaccination(Facility facility, VaccinationEvent vaccinationEvent) {
         Map<Integer, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
 
         Bundle bundle = new Bundle();
@@ -43,6 +43,20 @@ public class FhirTransactionWriterR4 implements IFhirTransactionWriter {
         String organizationEntryUrl = addOrganizationEntry(bundle, facility);
         String patientEntryUrl = addPatientEntry(bundle, organizationEntryUrl, vaccinationEvent.getPatient(), clinicianUrlMap);
         String vaccinationEntryUrl = addVaccinationEntry(bundle, patientEntryUrl, vaccinationEvent, clinicianUrlMap);
+        return bundle;
+    }
+
+    public IBaseBundle vxuBundleAll(Facility facility, EhrPatient ehrPatient) {
+        Map<Integer, String> clinicianUrlMap = new HashMap<>(facility.getTenant().getClinicians().size());
+
+        Bundle bundle = new Bundle();
+        bundle.setType(Bundle.BundleType.TRANSACTION);
+        String organizationEntryUrl = addOrganizationEntry(bundle, facility);
+        String patientEntryUrl = addPatientEntry(bundle, organizationEntryUrl, ehrPatient, clinicianUrlMap);
+
+        for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
+            String vaccinationEntryUrl = addVaccinationEntry(bundle, patientEntryUrl, vaccinationEvent, clinicianUrlMap);
+        }
         return bundle;
     }
 
@@ -72,6 +86,7 @@ public class FhirTransactionWriterR4 implements IFhirTransactionWriter {
         }
         return bundle;
     }
+
 
     @Override
     public String addOrganizationEntry(IBaseBundle iBaseBundle, Facility facility) {

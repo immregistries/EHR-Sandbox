@@ -8,12 +8,24 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 /**
  * Interface for Service Writing different kinds of FHIR Transaction Bundles
  */
 public interface IFhirTransactionWriter {
+    int SENDING_FACILITY = 4;
+    int SENDING_APP = 3;
+    int RECEIVING_APPLICATION = 5;
+    int RECEIVING_FACILITY = 6;
+
+    default SimpleDateFormat generateSimpleDateFormat() {
+        return new SimpleDateFormat("yyyyMMddhhmmssZ");
+    }
+
+    int SENDING_NETWORK_ADDRESS = 24;
+
     /**
      * Helping method to build Fhir String Urls with Identifier parameter
      *
@@ -70,7 +82,17 @@ public interface IFhirTransactionWriter {
      * @param vaccinationEvent Vaccination
      * @return Transaction bundle
      */
-    IBaseBundle vxuBundle(Facility facility, VaccinationEvent vaccinationEvent);
+    IBaseBundle vxuBundleSingleVaccination(Facility facility, VaccinationEvent vaccinationEvent);
+
+    /**
+     * Prototype for a Bundle equivalent to HL7v2 VXU with a patients vaccination history
+     *
+     * @param facility   Facility/ organization writing the message
+     * @param ehrPatient Patient
+     * @return Transaction bundle
+     */
+    IBaseBundle vxuBundleAll(Facility facility, EhrPatient ehrPatient);
+
 
     /**
      * Bundle transaction for quick testing, including every patient related to a facility, and their iz history, and clinicians
