@@ -161,7 +161,7 @@ public class FhirConversionController {
     public ResponseEntity<String> vxuEquivalentTransaction(@PathVariable(FACILITY_ID) Integer facilityId, @PathVariable(PATIENT_ID) Integer patientId, @PathVariable(VACCINATION_ID) Integer vaccinationId) {
         IParser parser = fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true);
         IBaseBundle iBaseBundle = fhirComponentsDispatcher.fhirTransactionWriter()
-                .vxuBundle(facilityRepository.findById(facilityId).get(), vaccinationEventRepository.findById(vaccinationId).get());
+                .vxuBundleSingleVaccination(facilityRepository.findById(facilityId).get(), vaccinationEventRepository.findById(vaccinationId).get());
         String resource = parser.encodeResourceToString(iBaseBundle);
         return ResponseEntity.ok(resource);
     }
