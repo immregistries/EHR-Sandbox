@@ -594,40 +594,45 @@ public class HL7printer {
 
     public void printORC(StringBuilder sb, Facility facility, VaccinationEvent vaccinationEvent) {
         sb.append("ORC");
-        // ORC-1
-        sb.append("|RE");
-        // ORC-2
         sb.append("|");
+        // ORC-1
+        sb.append("RE");
+        sb.append("|");
+        // ORC-2
         sb.append(vaccinationEvent.getId()).append("^IIS");
-        // ORC-3
         sb.append("|"); // TODO verify
+        // ORC-3
+
         if (facility != null) {
             sb.append(facility.getId()).append("^").append(facility.getNameDisplay());
         }
+        sb.append("|");
         // ORC-4
+
         sb.append("|");
         // ORC-5
+
         sb.append("|");
         // ORC-6
+
         sb.append("|");
         // ORC-7
+
         sb.append("|");
         // ORC-8
+
         sb.append("|");
         // ORC-9
+
         sb.append("|");
         // ORC-10
+        printXCN(sb, vaccinationEvent.getEnteringClinician());
         sb.append("|");
-        if (vaccinationEvent.getEnteringClinician() != null) {
-            printXCN(sb, vaccinationEvent.getEnteringClinician());
-        }
         // ORC-11
+
         sb.append("|");
         // ORC-12
-        sb.append("|");
-        if (vaccinationEvent.getOrderingClinician() != null) {
-            printXCN(sb, vaccinationEvent.getOrderingClinician());
-        }
+        printXCN(sb, vaccinationEvent.getOrderingClinician());
         sb.append("\r");
     }
 

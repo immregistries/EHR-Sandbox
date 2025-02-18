@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
+import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.IDENTIFIER_TYPE_SYSTEM;
+
 /**
  * Maps the Database with FHIR for the immunization resources
  */
@@ -39,6 +41,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
         Identifier identifier = i.addIdentifier();
         identifier.setValue(String.valueOf(vaccinationEvent.getId()));
         identifier.setSystem(identifier_system);
+        identifier.setType(new CodeableConcept(new Coding(IDENTIFIER_TYPE_SYSTEM, "FILL", "")));
 //    i.setPatient(new Reference()
 ////            .setReference("Patient/" + vaccinationEvent.getPatient().getId())
 //            .setIdentifier(new Identifier()
