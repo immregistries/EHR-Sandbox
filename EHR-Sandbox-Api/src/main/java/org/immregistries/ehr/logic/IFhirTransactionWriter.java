@@ -24,6 +24,28 @@ public interface IFhirTransactionWriter {
     int MSH_PROFILE_ID = 21;
     int MSH_SENDING_RESPONSIBLE_ORGANIZATION = 22;
     int MSH_SENDING_NETWORK_ADDRESS = 24;
+    int MSH_RECEIVING_NETWORK_ADDRESS = 25;
+
+    String PROCESSING_ID_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0103";
+    String PROCESSING_MODE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0207";
+    String PROVENANCE_PARTICIPANT_TYPE_SYSTEM = "http://terminology.hl7.org/CodeSystem/provenance-participant-type";
+    String PROVENANCE_AUTHOR_CODE = "author";
+    String DATA_ABSENT_REASON_EXTENSION = "http://hl7.org/fhir/R4/extension-data-absent-reason.html";
+    String UNKNOWN = "unknown";
+    String IDENTIFIER_CHECK_DIGIT_SYSTEM = "http://hl7.org/fhir/StructureDefinition/identifier-checkDigit";
+    String NAMING_SYSTEM_CHECK_DIGIT_SYSTEM = "http://hl7.org/fhir/StructureDefinition/namingsystem-checkDigit";
+    String PROFILE_ID_EXTENSION = "profileIdExtension";
+    String EVENT_TYPE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0003";
+    String MSH_10_EXTENSION = "msh10";
+
+    String TYPE_ISO = "ISO";
+    String TYPE_UUID = "UUID";
+    String TYPE_DNS = "DNS";
+    String TYPE_URI = "URI";
+    String URN_OID = "urn:oid:";
+    String URN_UUID = "urn:uuid:";
+    String URN_DNS = "urn:dns:";
+    String URN_URI = "urn:uri:";
 
 
     default SimpleDateFormat generateSimpleDateFormat() {

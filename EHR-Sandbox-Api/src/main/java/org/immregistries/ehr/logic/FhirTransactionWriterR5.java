@@ -27,10 +27,6 @@ import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.IDEN
 public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 
 
-    public static final String PROCESSING_ID_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0103";
-    public static final String PROCESSING_MODE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0207";
-    public static final String PROVENANCE_PARTICIPANT_TYPE_SYSTEM = "http://terminology.hl7.org/CodeSystem/provenance-participant-type";
-    public static final String PROVENANCE_AUTHOR_CODE = "author";
     @Autowired
     OrganizationMapperR5 organizationMapper;
     @Autowired
@@ -68,8 +64,20 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         MessageHeader messageHeader = messageHeaderFromMSH(msh);
         Provenance provenance = provenanceFromMsh(msh);
 
-        String messageHeaderEntryUrl = bundle.addEntry().setResource(messageHeader).setFullUrl("urn:uuid:" + UUID.randomUUID()).getFullUrl();
-        String provenanceEntryUrl = bundle.addEntry().setResource(provenance).setFullUrl("urn:uuid:" + UUID.randomUUID()).getFullUrl();
+        String messageHeaderEntryUrl = bundle.addEntry()
+                .setResource(messageHeader)
+                .setFullUrl(URN_UUID + java.util.UUID.randomUUID())
+                .setRequest(new Bundle.BundleEntryRequestComponent()
+                        .setMethod(Bundle.HTTPVerb.POST)
+                        .setUrl("MessageHeader"))
+                .getFullUrl();
+        String provenanceEntryUrl = bundle.addEntry()
+                .setResource(provenance)
+                .setFullUrl(URN_UUID + java.util.UUID.randomUUID())
+                .setRequest(new Bundle.BundleEntryRequestComponent()
+                        .setMethod(Bundle.HTTPVerb.POST)
+                        .setUrl("Provenance"))
+                .getFullUrl();
 
         String organizationEntryUrl = addOrganizationEntry(bundle, facility);
         String patientEntryUrl = addPatientEntry(bundle, organizationEntryUrl, vaccinationEvent.getPatient(), clinicianUrlMap);
@@ -127,7 +135,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         Bundle bundle = (Bundle) iBaseBundle;
         Organization organization = organizationMapper.toFhir(facility);
         return bundle.addEntry().setResource(organization)
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setFullUrl(URN_UUID + java.util.UUID.randomUUID())
                 .setRequest(new Bundle.BundleEntryRequestComponent()
                         .setMethod(Bundle.HTTPVerb.PUT)
                         .setUrl(IFhirTransactionWriter.identifierUrl(MappingHelper.ORGANIZATION, new EhrIdentifier(organization.getIdentifierFirstRep())))
@@ -142,7 +150,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 //            String patientRequestUrl = identifierUrl(MappingHelper.PATIENT, patient.getIdentifierFirstRep());
         String patientRequestUrl = MappingHelper.PATIENT;
         Bundle.BundleEntryComponent patientEntry = bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setFullUrl(URN_UUID + java.util.UUID.randomUUID())
                 .setResource(patient)
                 .setRequest(new Bundle.BundleEntryRequestComponent().setMethod(Bundle.HTTPVerb.POST).setUrl(patientRequestUrl));
         String clinicianUrl = addOrGetClinicianEntry(bundle, ehrPatient.getGeneralPractitioner(), clinicianUrlMap);
@@ -159,7 +167,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         immunization.setPatient(new Reference(patientUrl));
         String immunizationRequestUrl = MappingHelper.IMMUNIZATION;
         Bundle.BundleEntryComponent entryComponent = bundle.addEntry()
-                .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                .setFullUrl(URN_UUID + java.util.UUID.randomUUID())
                 .setResource(immunization)
                 .setRequest(new Bundle.BundleEntryRequestComponent().setMethod(Bundle.HTTPVerb.POST).setUrl(immunizationRequestUrl));
         addImmunizationPerformer(bundle, immunization, vaccinationEvent.getOrderingClinician(), IImmunizationMapper.ORDERING, clinicianUrlMap);
@@ -187,7 +195,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
             Practitioner practitioner = practitionerMapper.toFhir(clinician);
 
             return bundle.addEntry()
-                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
+                    .setFullUrl(URN_UUID + java.util.UUID.randomUUID())
                     .setResource(practitioner)
                     .setRequest(new Bundle.BundleEntryRequestComponent().setMethod(Bundle.HTTPVerb.POST).setUrl(practitionerRequestUrl)).getFullUrl();
         } else {
@@ -206,10 +214,11 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         Provenance provenance = null;
         if (reader.advanceToSegment("MSH")) {
             provenance = new Provenance();
-            provenance.setActivity(new CodeableConcept().addCoding(new Coding("", "v2-FHIR transformation", "")));
-            provenance.setRecorded(new Date());
+//            provenance.setActivity(new CodeableConcept().addCoding(new Coding("", "v2-FHIR transformation", "")));
+//            provenance.setRecorded(new Date());
             // TODO keep implementing as https://build.fhir.org/ig/HL7/v2-to-fhir/ConceptMap-segment-msh-transformation-to-provenance.html
             Provenance.ProvenanceEntityComponent entityComponent = provenance.addEntity().setRole(Provenance.ProvenanceEntityRole.SOURCE);
+//            entityComponent.setWhat(new Reference()) reference to V2 message
 
             if (StringUtils.isNotBlank(reader.getValue(MSH_SENDING_APP)) && StringUtils.isNotBlank(reader.getValue(MSH_SENDING_NETWORK_ADDRESS))) {
                 Identifier identifier = hdToIdentifier(reader, MSH_SENDING_FACILITY);
@@ -218,13 +227,13 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 
             if (StringUtils.isBlank(reader.getValue(MSH_SENDING_RESPONSIBLE_ORGANIZATION))) { // TODO better condition as here is only checking first field
                 Identifier identifier = hdToIdentifier(reader, MSH_SENDING_FACILITY);
-                provenance.addAgent().setWho(new Reference().setType("Organization").setIdentifier(identifier)).getType().addCoding(PROVENANCE_PARTICIPANT_TYPE_SYSTEM, PROVENANCE_AUTHOR_CODE, PROVENANCE_AUTHOR_CODE);
+                provenance.addAgent().setWho(new Reference().setType("Organization").setIdentifier(identifier)).getType().addCoding(new Coding(PROVENANCE_PARTICIPANT_TYPE_SYSTEM, PROVENANCE_AUTHOR_CODE, PROVENANCE_AUTHOR_CODE));
             }
             if (StringUtils.isNotBlank(reader.getValue(MSH_DATE_TIME_OF_MESSAGE))) {
                 try {
                     Date date = generateSimpleDateFormat().parse(reader.getValue(MSH_DATE_TIME_OF_MESSAGE));
                     provenance.setRecorded(date);
-                    provenance.setOccurred(new DateType(date));
+                    provenance.setOccurred(new DateTimeType(date));
                 } catch (ParseException ignored) {
                 }
             }
@@ -243,24 +252,48 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         MessageHeader messageHeader = null;
         if (reader.advanceToSegment("MSH")) {
             messageHeader = new MessageHeader();
-            messageHeader.getSource()
-                    .setName(reader.getValue(MSH_SENDING_APP, 1))
-                    .setSoftware(reader.getValue(MSH_SENDING_APP, 2));
+//            MSH 3 && 24
+            if (StringUtils.isBlank(reader.getValue(MSH_SENDING_NETWORK_ADDRESS))) {
+                messageHeader.setSource(hdToHeaderSource(reader, MSH_SENDING_APP));
+            } else {
+                messageHeader.setSource(hdToHeaderSource(reader, MSH_SENDING_NETWORK_ADDRESS));
+            }
+
             // MSH 4
 //            if (reader.getValue(SENDING_NETWORK_ADDRESS).isBlank()) {
 //
 //            }
-            {
+            { // MSH-4
                 Identifier identifier = hdToIdentifier(reader, MSH_SENDING_FACILITY);
-                messageHeader.getSender().setType("Organization").setIdentifier(identifier);
+                messageHeader.setSender(new Reference().setType("Organization").setIdentifier(identifier));
+//            Organization organization = xonToOrganization(reader, MSH_SENDING_RESPONSIBLE_ORGANIZATION);
+//            String organizationUrn = bundle
+//                    .addEntry()
+//                    .setResource(organization)
+//                    .setFullUrl(URN_UUID + UUID.randomUUID())
+//                    .setRequest(new Bundle.BundleEntryRequestComponent()
+//                            .setMethod(Bundle.HTTPVerb.PUT)
+//                            .setUrl(IFhirTransactionWriter.identifierUrl(MappingHelper.ORGANIZATION, new EhrIdentifier(organization.getIdentifierFirstRep())))
+//                    ).getFullUrl();
+//            messageHeader.setResponsible(new Reference(organizationUrn));
             }
 
-            Provenance provenance = new Provenance();
+            { // MSH-5 & 25
+                MessageHeader.MessageDestinationComponent destinationComponent = messageHeader.addDestination();
 
-            {
                 Identifier identifier = hdToIdentifier(reader, MSH_RECEIVING_APPLICATION);
-                messageHeader.getDestinationFirstRep()
-                        .setTarget(new Reference().setType("Device").setIdentifier(identifier));
+                if (identifier.hasValue()) {
+                    destinationComponent
+                            .setTarget(new Reference().setType("Device").setIdentifier(identifier));
+                } else if (StringUtils.isNotBlank(reader.getValue(MSH_RECEIVING_NETWORK_ADDRESS))) {
+                    for (int i = 1; i <= reader.getRepeatCount(MSH_PROFILE_ID); i++) {
+                        messageHeader.addExtension("profileIdExtension", new StringType(reader.getValueRepeat(21, 1, i)));
+                    }
+                } else {
+                    messageHeader.addExtension().setUrl(DATA_ABSENT_REASON_EXTENSION).setValue(new Coding().setCode(UNKNOWN));
+                }
+
+
             }
 
             {
@@ -276,9 +309,9 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 //                }
 //            }
 
-            messageHeader.setEvent(msgToCoding(reader, 9, "http://terminology.hl7.org/CodeSystem/v2-0003"));
+            messageHeader.setEvent(msgToCoding(reader, 9, EVENT_TYPE_SYSTEM));
             messageHeader.addExtension()
-                    .setUrl("msh10")
+                    .setUrl(MSH_10_EXTENSION)
                     .setValue(new StringType(reader.getValue(10)));
 //            reader.getValue(9)
 
@@ -298,43 +331,78 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 
             if (StringUtils.isNotBlank(reader.getValue(MSH_PROFILE_ID))) {
                 for (int i = 1; i <= reader.getRepeatCount(MSH_PROFILE_ID); i++) {
-                    messageHeader.addExtension("profileIdExtension", new StringType(reader.getValueRepeat(21, 1, i)));
+                    messageHeader.addExtension(PROFILE_ID_EXTENSION, new StringType(reader.getValueRepeat(21, 1, i)));
                 }
             }
 
-//            Organization organization = xonToOrganization(reader, MSH_SENDING_RESPONSIBLE_ORGANIZATION);
-//            String organizationUrn = bundle
-//                    .addEntry()
-//                    .setResource(organization)
-//                    .setFullUrl("urn:uuid:" + UUID.randomUUID())
-//                    .setRequest(new Bundle.BundleEntryRequestComponent()
-//                            .setMethod(Bundle.HTTPVerb.PUT)
-//                            .setUrl(IFhirTransactionWriter.identifierUrl(MappingHelper.ORGANIZATION, new EhrIdentifier(organization.getIdentifierFirstRep())))
-//                    ).getFullUrl();
-//            messageHeader.setResponsible(new Reference(organizationUrn));
 
         }
         return messageHeader;
     }
 
-    private Identifier hdToIdentifier(HL7Reader reader, int index) {
-        if (reader.getValue(index, 1).isBlank() && StringUtils.isNotBlank(reader.getValue(index, 2))) {
-            Identifier identifier = new Identifier().setValue(reader.getValue(index, 2));
-            if (StringUtils.isNotBlank(reader.getValue(index, 3))) {
-                identifier.setType(new CodeableConcept().addCoding(new Coding().setCode(reader.getValue(index, 3))));
+    private static MessageHeader.MessageSourceComponent hdToHeaderSource(HL7Reader reader, int index) {
+        MessageHeader.MessageSourceComponent source = new MessageHeader.MessageSourceComponent();
+        String hdNamespaceId = reader.getValue(index, 1);
+        String hdUid = reader.getValue(index, 2);
+        String hdType = reader.getValue(index, 3);
+        switch (hdType) {
+            case TYPE_ISO: {
+                source.setEndpoint(new UriType(URN_OID + hdUid));
+                break;
             }
-            return identifier;
+            case TYPE_UUID: {
+                source.setEndpoint(new UriType(URN_UUID + hdUid));
+                break;
+            }
+            case TYPE_DNS: {
+                source.setEndpoint(new UriType(URN_DNS + hdUid));
+                break;
+            }
+            case TYPE_URI: {
+                source.setEndpoint(new UriType(URN_URI + hdUid));
+                break;
+            }
+            default: {
+                if (StringUtils.isBlank(hdUid)) {
+                    source.setName(hdNamespaceId);
+                } else {
+                    source.setName(hdNamespaceId + " - " + hdType + ':' + hdUid);
+                }
+                source.setSoftware(hdUid);
+                source.setEndpoint(new StringType()).addExtension().setUrl(DATA_ABSENT_REASON_EXTENSION).setValue(new Coding().setCode(UNKNOWN));
+                break;
+            }
         }
-        return new Identifier();
+        return source;
+    }
+
+    private Identifier hdToIdentifier(HL7Reader reader, int index) {
+        String hdNamespaceId = reader.getValue(index, 1);
+        String hdUid = reader.getValue(index, 2);
+        String hdType = reader.getValue(index, 3);
+        return hdToIdentifier(hdNamespaceId, hdUid, hdType);
     }
 
     private Identifier hdToIdentifier(HL7Reader reader, int index, int componentNum) {
-        if (reader.getValue(index, componentNum, 1).isBlank() && StringUtils.isNotBlank(reader.getValue(index, componentNum, 2))) {
-            Identifier identifier = new Identifier().setValue(reader.getValue(index, componentNum, 2));
-            if (StringUtils.isNotBlank(reader.getValue(index, componentNum, 3))) {
-                identifier.setType(new CodeableConcept().addCoding(new Coding().setCode(reader.getValue(index, componentNum, 3))));
-            }
-            return identifier;
+        String hdNamespaceId = reader.getValue(index, componentNum, 1);
+        String hdUid = reader.getValue(index, componentNum, 2);
+        String hdType = reader.getValue(index, componentNum, 3);
+        return hdToIdentifier(hdNamespaceId, hdUid, hdType);
+    }
+
+    private static Identifier hdToIdentifier(String hdNamespaceId, String hdUid, String hdType) { // TODO improve, system is unsatisfying
+        Identifier identifier = new Identifier();
+        if (hdNamespaceId.isBlank() && StringUtils.isNotBlank(hdUid)) {
+            identifier.setValue(hdUid);
+        } else {
+            identifier.setValue(hdNamespaceId);
+        }
+        if (StringUtils.isNotBlank(hdType)) {
+            identifier.setType(new CodeableConcept().addCoding(new Coding().setCode(hdType).setSystem(IDENTIFIER_TYPE_SYSTEM)));
+            identifier.setSystem(switch (hdType) {
+                case TYPE_ISO, TYPE_UUID -> "urn:ietf:rfc:3986";
+                default -> null;
+            });
         }
         return new Identifier();
     }
@@ -347,8 +415,8 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         uri = reader.getValue(index, componentNum, 2);
         if (StringUtils.isNotBlank(uri)) {
             return switch (reader.getValue(index, componentNum, 3)) {
-                case "ISO" -> "urn:oid:" + uri;
-                case "UUID" -> "urn:uuid:" + uri;
+                case TYPE_ISO -> URN_OID + uri;
+                case TYPE_UUID -> URN_UUID + uri;
                 default -> uri;
             };
         }
@@ -363,7 +431,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
             system = reader.getValue(index, 2);
         }
         coding.setSystem(system);
-        String display = value + "^" + system + "^" + reader.getValue(index, 3);
+        String display = value + '^' + system + '^' + reader.getValue(index, 3);
         coding.setDisplay(display);
         return coding;
     }
@@ -380,11 +448,11 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 
         if (StringUtils.isNotBlank(reader.getValue(index, 4))) {
             identifier.addExtension().setValue(new StringType(reader.getValue(index, 4)))
-                    .setUrl("http://hl7.org/fhir/StructureDefinition/identifier-checkDigit");
+                    .setUrl(IDENTIFIER_CHECK_DIGIT_SYSTEM);
         }
         if (StringUtils.isNotBlank(reader.getValue(index, 5))) {
             identifier.addExtension().setValue(new StringType(reader.getValue(index, 5)))
-                    .setUrl("http://hl7.org/fhir/StructureDefinition/namingsystem-checkDigit");
+                    .setUrl(NAMING_SYSTEM_CHECK_DIGIT_SYSTEM);
         }
         if (true) {
             identifier.setSystem(hdToUri(reader, index, 6));
