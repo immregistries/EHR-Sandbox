@@ -369,7 +369,7 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
                     source.setName(hdNamespaceId + " - " + hdType + ':' + hdUid);
                 }
                 source.setSoftware(hdUid);
-                source.setEndpoint(new StringType()).addExtension().setUrl(DATA_ABSENT_REASON_EXTENSION).setValue(new Coding().setCode(UNKNOWN));
+//                source.setEndpoint(new StringType()).addExtension().setUrl(DATA_ABSENT_REASON_EXTENSION).setValue(new Coding().setCode(UNKNOWN));
                 break;
             }
         }
