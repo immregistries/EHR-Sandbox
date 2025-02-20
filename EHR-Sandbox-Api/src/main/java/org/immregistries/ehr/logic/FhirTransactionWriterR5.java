@@ -328,11 +328,17 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
 
             }
             // MSH 14 and 15 not mapped
-
             if (StringUtils.isNotBlank(reader.getValue(MSH_PROFILE_ID))) {
                 for (int i = 1; i <= reader.getRepeatCount(MSH_PROFILE_ID); i++) {
                     messageHeader.addExtension(PROFILE_ID_EXTENSION, new StringType(reader.getValueRepeat(21, 1, i)));
                 }
+            }
+
+            if (StringUtils.isNotBlank(reader.getValue(MSH_SECURITY_CLASSIFICATION_TAG))) {
+                messageHeader.getMeta().addSecurity(cweToCoding(reader, MSH_SECURITY_CLASSIFICATION_TAG, CONFIDENTIALITY_CLASSIFICATION_SYSTEM));
+            }
+            if (StringUtils.isNotBlank(reader.getValue(MSH_SECURITY_HANDLING_INSTRUCTIONS))) {
+                messageHeader.getMeta().addSecurity(cweToCoding(reader, MSH_SECURITY_HANDLING_INSTRUCTIONS, SECURITY_LABEL_HANDLING_INSTRUCTIONS_SYSTEM));
             }
 
 
@@ -433,6 +439,18 @@ public class FhirTransactionWriterR5 implements IFhirTransactionWriter {
         coding.setSystem(system);
         String display = value + '^' + system + '^' + reader.getValue(index, 3);
         coding.setDisplay(display);
+        return coding;
+    }
+
+    private Coding cweToCoding(HL7Reader reader, int index, String system) {
+        Coding coding = new Coding();
+        coding.setCode(reader.getValue(index, 1));
+        if (system == null) {
+            system = reader.getValue(index, 3);
+        }
+        coding.setSystem(system);
+        coding.setDisplay(reader.getValue(index, 2));
+        coding.setVersion(reader.getValue(index, 7));
         return coding;
     }
 

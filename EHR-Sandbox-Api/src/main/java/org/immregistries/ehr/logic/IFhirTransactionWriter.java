@@ -25,6 +25,8 @@ public interface IFhirTransactionWriter {
     int MSH_SENDING_RESPONSIBLE_ORGANIZATION = 22;
     int MSH_SENDING_NETWORK_ADDRESS = 24;
     int MSH_RECEIVING_NETWORK_ADDRESS = 25;
+    int MSH_SECURITY_CLASSIFICATION_TAG = 26;
+    int MSH_SECURITY_HANDLING_INSTRUCTIONS = 27;
 
     String PROCESSING_ID_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0103";
     String PROCESSING_MODE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0207";
@@ -37,6 +39,8 @@ public interface IFhirTransactionWriter {
     String PROFILE_ID_EXTENSION = "profileIdExtension";
     String EVENT_TYPE_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0003";
     String MSH_10_EXTENSION = "msh10";
+    String CONFIDENTIALITY_CLASSIFICATION_SYSTEM = "ConfidentialityClassification";
+    String SECURITY_LABEL_HANDLING_INSTRUCTIONS_SYSTEM = "SecurityLabelHandlingInstructions";
 
     String TYPE_ISO = "ISO";
     String TYPE_UUID = "UUID";
