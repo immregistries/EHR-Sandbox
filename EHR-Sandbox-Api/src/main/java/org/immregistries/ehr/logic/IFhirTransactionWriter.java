@@ -15,8 +15,8 @@ import java.util.Map;
  * Interface for Service Writing different kinds of FHIR Transaction Bundles
  */
 public interface IFhirTransactionWriter {
-    int MSH_SENDING_FACILITY = 4;
     int MSH_SENDING_APP = 3;
+    int MSH_SENDING_FACILITY = 4;
     int MSH_RECEIVING_APPLICATION = 5;
     int MSH_RECEIVING_FACILITY = 6;
     int MSH_DATE_TIME_OF_MESSAGE = 7;
