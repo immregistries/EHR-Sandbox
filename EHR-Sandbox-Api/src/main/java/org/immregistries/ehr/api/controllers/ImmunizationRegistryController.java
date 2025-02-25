@@ -63,7 +63,7 @@ public class ImmunizationRegistryController {
 
     @GetMapping()
     public Iterable<ImmunizationRegistry> getImmRegistries() {
-        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(), Sort.by(Sort.Order.desc("isDefault")));
+        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(), Sort.by(Sort.Order.desc("isDefault"), Sort.Order.desc("name")));
     }
 
     @PutMapping()
