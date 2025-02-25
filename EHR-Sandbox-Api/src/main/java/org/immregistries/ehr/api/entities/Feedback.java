@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 
 import java.sql.Timestamp;
@@ -19,6 +21,15 @@ import java.util.Set;
 //        @Index(name = "patient_id_idx", columnList = "patient_id")
 //}
 )
+@FilterDef(name = "severityFilter",
+        parameters = {
+                @ParamDef(name = "severity", type = String.class),
+        })
+@FilterDef(name = "severityError", defaultCondition = "severity = 'E'")
+@FilterDef(name = "severityWarning", defaultCondition = "severity = 'W'")
+@FilterDef(name = "severityNotice", defaultCondition = "severity = 'N'")
+@FilterDef(name = "severityInfo", defaultCondition = "severity = 'I'")
+
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",

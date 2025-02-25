@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
-import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -212,22 +212,21 @@ public class AcknowledgmentObject extends EhrEntity {
     }
 
     @Embeddable
-    public static class SortedResult implements Serializable { // Implement Serializable
+    public static class SortedResult implements Serializable {
         @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
-        // Link to Feedback
-        @Filter(name = "severityError", condition = ":severity = 'E'")
+        @SQLRestriction("severity = 'E'")
         Set<Feedback> errors = new HashSet<>(4);
+
         @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
-        // Link to Feedback
-        @Filter(name = "severityWarning", condition = ":severity = 'W'")
+        @SQLRestriction("severity = 'W'")
         Set<Feedback> warnings = new HashSet<>(4);
+
         @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
-        // Link to Feedback
-        @Filter(name = "severityN", condition = ":severity = 'N'")
+        @SQLRestriction("severity = 'N'")
         Set<Feedback> notices = new HashSet<>(4);
+
         @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
-        // Link to Feedback
-        @Filter(name = "severityI", condition = ":severity = 'I'")
+        @SQLRestriction("severity = 'I'")
         Set<Feedback> infos = new HashSet<>(4);
 
         public Set<Feedback> getErrors() {
