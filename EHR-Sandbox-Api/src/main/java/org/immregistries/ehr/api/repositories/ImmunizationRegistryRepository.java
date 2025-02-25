@@ -1,12 +1,17 @@
 package org.immregistries.ehr.api.repositories;
 
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
 public interface ImmunizationRegistryRepository extends CrudRepository<ImmunizationRegistry, Integer> {
     Iterable<ImmunizationRegistry> findByUserId(Integer userId);
+
+    Iterable<ImmunizationRegistry> findByUserId(Integer userId, Sort sort);
+
+    Optional<ImmunizationRegistry> findByUserIdAndIsDefaultTrue(Integer userId);
 
     Optional<ImmunizationRegistry> findByUserIdAndIisFhirUrl(Integer userId, String iisFhirUrl);
 

@@ -14,6 +14,7 @@ import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +63,7 @@ public class ImmunizationRegistryController {
 
     @GetMapping()
     public Iterable<ImmunizationRegistry> getImmRegistries() {
-        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId());
+        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(), Sort.by(Sort.Order.desc("isDefault")));
     }
 
     @PutMapping()
@@ -70,6 +71,7 @@ public class ImmunizationRegistryController {
         Optional<ImmunizationRegistry> old = immunizationRegistryRepository.findByIdAndUserId(immunizationRegistry.getId(), userDetailsService.currentUserId());
         if (old.isPresent()) {
             immunizationRegistry.setUser(userDetailsService.currentUser());
+            checkSelectedDefault(immunizationRegistry);
             return immunizationRegistryRepository.save(immunizationRegistry);
         } else {
             return postImmunizationRegistry(immunizationRegistry);
@@ -86,7 +88,18 @@ public class ImmunizationRegistryController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_ACCEPTABLE, "Name already used");
         }
+        checkSelectedDefault(immunizationRegistry);
         return immunizationRegistryRepository.save(immunizationRegistry);
+    }
+
+    private void checkSelectedDefault(ImmunizationRegistry immunizationRegistry) {
+        if (immunizationRegistry.getDefault()) {
+            Optional<ImmunizationRegistry> previousDefault = immunizationRegistryRepository.findByUserIdAndIsDefaultTrue(userDetailsService.currentUserId());
+            if (previousDefault.isPresent() && !previousDefault.get().getId().equals(immunizationRegistry.getId())) {
+                previousDefault.get().setDefault(false);
+                immunizationRegistryRepository.save(previousDefault.get());
+            }
+        }
     }
 
     @DeleteMapping({REGISTRY_ID_SUFFIX})
