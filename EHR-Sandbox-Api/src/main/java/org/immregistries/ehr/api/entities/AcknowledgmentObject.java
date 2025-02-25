@@ -1,7 +1,9 @@
 package org.immregistries.ehr.api.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.Filter;
@@ -13,6 +15,10 @@ import java.util.Set;
 
 @Entity()
 @Table(name = "acknowledgment_object")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = AcknowledgmentObject.class)
 //TODO Persist
 public class AcknowledgmentObject extends EhrEntity {
     @Id
@@ -96,6 +102,7 @@ public class AcknowledgmentObject extends EhrEntity {
     public String getMessageId() {
         return messageId;
     }
+
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
@@ -206,16 +213,20 @@ public class AcknowledgmentObject extends EhrEntity {
 
     @Embeddable
     public static class SortedResult implements Serializable { // Implement Serializable
-        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
+        // Link to Feedback
         @Filter(name = "severityError", condition = ":severity = 'E'")
         Set<Feedback> errors = new HashSet<>(4);
-        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
+        // Link to Feedback
         @Filter(name = "severityWarning", condition = ":severity = 'W'")
         Set<Feedback> warnings = new HashSet<>(4);
-        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
+        // Link to Feedback
         @Filter(name = "severityN", condition = ":severity = 'N'")
         Set<Feedback> notices = new HashSet<>(4);
-        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true)
+        // Link to Feedback
         @Filter(name = "severityI", condition = ":severity = 'I'")
         Set<Feedback> infos = new HashSet<>(4);
 

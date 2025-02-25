@@ -23,7 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
@@ -167,7 +169,7 @@ public class FeedbackController {
         while (hl7Reader.advanceToSegment("ERR")) {
             String severity = hl7Reader.getValue(4);
             Feedback feedback = new Feedback();
-//            feedback.setRaw(hl7Reader.getOriginalSegment());
+            feedback.setRaw(hl7Reader.getOriginalSegment());
             feedback.setSeverity(severity);
             immunizationRegistry.ifPresent(obj -> feedback.setIis(String.valueOf(obj.getId())));
             facility.ifPresent(feedback::setFacility);

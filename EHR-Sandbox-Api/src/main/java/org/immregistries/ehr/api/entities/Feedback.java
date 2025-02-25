@@ -19,7 +19,8 @@ import java.util.Set;
 //        @Index(name = "patient_id_idx", columnList = "patient_id")
 //}
 )
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
         scope = Feedback.class)
 public class Feedback extends EhrEntity {
@@ -55,6 +56,7 @@ public class Feedback extends EhrEntity {
     @ManyToOne
     @JoinColumn(name = "acknowledgment_object_id") // Foreign key column
     @JsonIdentityReference(alwaysAsId = true)
+//    @JsonIgnore
     private AcknowledgmentObject acknowledgmentObject;
 
 //    @JsonProperty("patient")
@@ -179,6 +181,8 @@ public class Feedback extends EhrEntity {
         this.raw = raw;
     }
 
+    //    @JsonProperty("acknowledgment_object_id")
+//    @JsonIdentityReference(alwaysAsId = true)
     public AcknowledgmentObject getAcknowledgmentObject() {
         return acknowledgmentObject;
     }
