@@ -23,10 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirProviderR4<OperationOutcome> {
@@ -183,19 +180,19 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
                 case ERROR: {
                     acknowledgmentObject.setMsa_2("AE");
                     feedback.setSeverity("E");
-                    acknowledgmentObject.getErrors().add(feedback);
+                    acknowledgmentObject.getSortedResult().getErrors().add(feedback);
                     break;
                 }
                 case WARNING: {
                     acknowledgmentObject.setMsa_2("AW");
                     feedback.setSeverity("W");
-                    acknowledgmentObject.getWarnings().add(feedback);
+                    acknowledgmentObject.getSortedResult().getWarnings().add(feedback);
                     break;
                 }
                 case INFORMATION:
                 case NULL: {
                     feedback.setSeverity("I");
-                    acknowledgmentObject.getInfos().add(feedback);
+                    acknowledgmentObject.getSortedResult().getInfos().add(feedback);
                     break;
                 }
             }

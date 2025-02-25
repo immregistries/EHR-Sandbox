@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.Filter;
@@ -10,50 +11,63 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-//@Entity()
-//@Table(name = "acknowledgment_object")
+@Entity()
+@Table(name = "acknowledgment_object")
 //TODO Persist
 public class AcknowledgmentObject extends EhrEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ack_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // Explicitly annotate the ID column
     private Integer id;
-    @Column(name = "raw", columnDefinition = "TEXT")
+
+    @Column(columnDefinition = "TEXT", name = "raw")
     private String raw = "";
-    @Column(name = "rawVxu", columnDefinition = "TEXT")
+
+    @Column(columnDefinition = "TEXT", name = "vxu")
     private String vxu = "";
 
     @Column(name = "message_id")
     private String messageId = "";
-    @Column(name = "status")
+
+    @Column(name = "status") // Added @Column
     private String status = "";
-    @Column(name = "sender")
+
+    @Column(name = "sender") // Added @Column
     private String sender = "";
-    @Column(name = "destination")
+
+    @Column(name = "destination") // Added @Column
     private String destination = "";
+
     @Column(name = "sender_software")
     private String senderSoftware = "";
+
     @Column(name = "destination_software")
     private String destinationSoftware = "";
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "facility_id")
     private Facility facility;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private EhrPatient patient;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne
+    @JoinColumn(name = "vaccination_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private VaccinationEvent vaccination;
 
     @Embedded
     private SortedResult sortedResult = new SortedResult();
 
-    @Column(name = "iis")
+    @Column(name = "iis") // Added @Column
     private String iis = "";
-    @JoinColumn(name = "timestamp", nullable = false)
+
+    @Column(name = "timestamp") // Added @Column
     private Timestamp timestamp;
 
-
+    @Embedded
     public SortedResult getSortedResult() {
         return sortedResult;
     }
@@ -71,7 +85,6 @@ public class AcknowledgmentObject extends EhrEntity {
         this.status = msa_2;
     }
 
-
     public AcknowledgmentObject() {
 //        this.timestamp = new Timestamp(new Date().getTime());
     }
@@ -80,56 +93,11 @@ public class AcknowledgmentObject extends EhrEntity {
         this.timestamp = timestamp;
     }
 
-    @JsonIgnore
-    public Set<Feedback> getErrors() {
-        return getSortedResult().getErrors();
-    }
-
-    public void setErrors(Set<Feedback> errors) {
-        this.getSortedResult().setErrors(errors);
-    }
-
-    @JsonIgnore
-    public Set<Feedback> getWarnings() {
-        return getSortedResult().getWarnings();
-    }
-
-    public void setWarnings(Set<Feedback> warnings) {
-        this.getSortedResult().setWarnings(warnings);
-    }
-
-    @JsonIgnore
-    public Set<Feedback> getNotices() {
-        return getSortedResult().getNotices();
-    }
-
-    public void setNotices(Set<Feedback> notices) {
-        this.getSortedResult().setNotices(notices);
-    }
-
-    @JsonIgnore
-    public Set<Feedback> getInfos() {
-        return getSortedResult().getInfos();
-    }
-
-    public void setInfos(Set<Feedback> infos) {
-        this.getSortedResult().setInfos(infos);
-    }
-
     public String getMessageId() {
         return messageId;
     }
-
     public void setMessageId(String messageId) {
         this.messageId = messageId;
-    }
-
-    public EhrPatient getEhrPatient() {
-        return patient;
-    }
-
-    public void setEhrPatient(EhrPatient ehrPatient) {
-        this.patient = ehrPatient;
     }
 
     public String getStatus() {
@@ -237,18 +205,18 @@ public class AcknowledgmentObject extends EhrEntity {
     }
 
     @Embeddable
-    public static class SortedResult implements Serializable {
-
-        @OneToMany
-//        @JoinTable
-        //filter on the target entity table
+    public static class SortedResult implements Serializable { // Implement Serializable
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
         @Filter(name = "severityError", condition = ":severity = 'E'")
         Set<Feedback> errors = new HashSet<>(4);
-        @Filter(name = "severityW", condition = ":warning = 'W'")
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @Filter(name = "severityWarning", condition = ":severity = 'W'")
         Set<Feedback> warnings = new HashSet<>(4);
-        @Filter(name = "severityN", condition = ":warning = 'N'")
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @Filter(name = "severityN", condition = ":severity = 'N'")
         Set<Feedback> notices = new HashSet<>(4);
-        @Filter(name = "severityI", condition = ":warning = 'I'")
+        @OneToMany(mappedBy = "acknowledgmentObject", cascade = CascadeType.ALL, orphanRemoval = true) // Link to Feedback
+        @Filter(name = "severityI", condition = ":severity = 'I'")
         Set<Feedback> infos = new HashSet<>(4);
 
         public Set<Feedback> getErrors() {

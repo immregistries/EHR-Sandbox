@@ -30,7 +30,7 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 @RestController
 public class FeedbackController {
 
-    private Map<Integer, List<AcknowledgmentObject>> cacheAck = new HashMap<>(5);
+//    private Map<Integer, List<AcknowledgmentObject>> cacheAck = new HashMap<>(5);
 
     public static final String FEEDBACKS_PATH_HEADER = "/feedbacks";
     public static final String ACKS_PATH_HEADER = "/acks";
@@ -44,6 +44,8 @@ public class FeedbackController {
     private FacilityRepository facilityRepository;
     @Autowired
     private TenantRepository tenantRepository;
+    @Autowired
+    private AcknowledgmentObjectRepository acknowledgmentObjectRepository;
     @Autowired
     private ImmunizationRegistryRepository immunizationRegistryRepository;
     @Autowired
@@ -67,7 +69,7 @@ public class FeedbackController {
 
     @GetMapping(FACILITY_ID_PATH + ACKS_PATH_HEADER)
     public List<AcknowledgmentObject> getFacilityAcks(@PathVariable(FACILITY_ID) Integer facilityId) {
-        return cacheAck.get(facilityId);
+        return acknowledgmentObjectRepository.findByFacilityId(facilityId);
     }
 
 
@@ -187,19 +189,19 @@ public class FeedbackController {
             feedback.setTimestamp(new Timestamp(new Date().getTime()));
             switch (severity) {
                 case "E": {
-                    acknowledgmentObject.getErrors().add(feedback);
+                    acknowledgmentObject.getSortedResult().getErrors().add(feedback);
                     break;
                 }
                 case "W": {
-                    acknowledgmentObject.getWarnings().add(feedback);
+                    acknowledgmentObject.getSortedResult().getWarnings().add(feedback);
                     break;
                 }
                 case "N": {
-                    acknowledgmentObject.getNotices().add(feedback);
+                    acknowledgmentObject.getSortedResult().getNotices().add(feedback);
                     break;
                 }
                 case "I": {
-                    acknowledgmentObject.getInfos().add(feedback);
+                    acknowledgmentObject.getSortedResult().getInfos().add(feedback);
                     break;
                 }
             }
@@ -214,11 +216,17 @@ public class FeedbackController {
                 hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
                 feedback.getHl7Locations().add(hl7Location);
             }
+            feedback.setAcknowledgmentObject(acknowledgmentObject);
 //            feedbackRepository.save(feedback);
         }
         if (facilityId.isPresent()) {
-            cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
-            cacheAck.get(facilityId.get()).add(acknowledgmentObject);
+            acknowledgmentObjectRepository.save(acknowledgmentObject);
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
+//            cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
+//            cacheAck.get(facilityId.get()).add(acknowledgmentObject);
         }
         return acknowledgmentObject;
     }
@@ -258,8 +266,7 @@ public class FeedbackController {
         }
 //            feedbackRepository.save(feedback);
         if (facilityId.isPresent()) {
-            cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
-            cacheAck.get(facilityId.get()).add(acknowledgmentObject);
+            acknowledgmentObjectRepository.save(acknowledgmentObject);
         }
         return acknowledgmentObject;
     }

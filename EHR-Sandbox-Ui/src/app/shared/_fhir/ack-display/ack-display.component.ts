@@ -101,7 +101,7 @@ MRN:\t${this.patientResumePipe.extractMrn(ehrPatient)}
       if (ack.vaccination) {
         vaccinationEvent = (this.vaccinationCachePipe.transform([ack.vaccination]) ?? [undefined])[0]
       }
-      if (vaccinationEvent) {
+      if (vaccinationEvent && vaccinationEvent.vaccine) {
         txt += `Imms:
 \t${this.datePipe.transform(vaccinationEvent.vaccine.administeredDate, "shortDate")} ${this.codeMapsPipe.transform(vaccinationEvent.vaccine.vaccineCvxCode ?? "", "VACCINATION_CVX_CODE").label} (${vaccinationEvent.vaccine.vaccineCvxCode})\n\n`
       }

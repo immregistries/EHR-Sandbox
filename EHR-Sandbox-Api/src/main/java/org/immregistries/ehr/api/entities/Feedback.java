@@ -52,6 +52,11 @@ public class Feedback extends EhrEntity {
     @OrderBy("segmentId")
     private Set<Hl7Location> hl7Locations = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "acknowledgment_object_id") // Foreign key column
+    @JsonIdentityReference(alwaysAsId = true)
+    private AcknowledgmentObject acknowledgmentObject;
+
 //    @JsonProperty("patient")
 //    public void setPatient(int id) {
 //        // is currently taken care of in the controller
@@ -172,5 +177,13 @@ public class Feedback extends EhrEntity {
 
     public void setRaw(String raw) {
         this.raw = raw;
+    }
+
+    public AcknowledgmentObject getAcknowledgmentObject() {
+        return acknowledgmentObject;
+    }
+
+    public void setAcknowledgmentObject(AcknowledgmentObject acknowledgmentObject) {
+        this.acknowledgmentObject = acknowledgmentObject;
     }
 }
