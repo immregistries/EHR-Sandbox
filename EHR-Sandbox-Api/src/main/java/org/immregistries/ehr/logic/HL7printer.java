@@ -472,11 +472,11 @@ public class HL7printer {
 //      MSH.13
         sb.append("|");
 //      MSH.14
-        sb.append("ER|");
-//      MSH.15
-        sb.append("AL|");
-//      MSH.16
         sb.append("|");
+//      MSH.15
+        sb.append("ER|");
+//      MSH.16
+        sb.append("AL|");
 //      MSH.17
         sb.append("|");
 //      MSH.18
