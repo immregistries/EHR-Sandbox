@@ -25,6 +25,8 @@ import java.util.Optional;
 @Service
 public class HL7printer {
 
+    public static final String STATIC_SUB_SUB_SEPARATOR = "&";
+
     public static final String NEWBORN = "NB";
     public static final String BABY_BOY = "BABY BOY";
     public static final String BABY_GIRL = "BABY GIRL";
@@ -54,7 +56,7 @@ public class HL7printer {
         CodeMap codeMap = codeMapManager.getCodeMap();
         createMSH(sb, "VXU^V04^VXU_V04", "Z22", facility);
         printQueryPID(sb, patient, 1);
-        printPD1(sb, patient);
+        printPD1(sb, patient, facility);
         printQueryNK1(sb, patient);
 
         int obxSetId = 0;
@@ -84,15 +86,13 @@ public class HL7printer {
                     printCode(sb, ndcCode, "NDC");
                 }
             }
-            {
-                // RXA-6
-                sb.append("|");
-                sb.append(StringUtils.defaultIfBlank(vaccine.getAdministeredAmount(), ""));
-                // RXA-7
-                sb.append("|");
-                if (StringUtils.isNotBlank(vaccine.getAdministeredAmount())) {
-                    sb.append("mL^milliliters^UCUM");
-                }
+            // RXA-6
+            sb.append("|");
+            sb.append(StringUtils.defaultIfBlank(vaccine.getAdministeredAmount(), ""));
+            // RXA-7
+            sb.append("|");
+            if (StringUtils.isNotBlank(vaccine.getAdministeredAmount())) {
+                sb.append("mL^milliliters^UCUM");
             }
             // RXA-8
             sb.append("|");
@@ -109,7 +109,7 @@ public class HL7printer {
             }
             // RXA-10
             sb.append("|");
-            printXCN(sb, vaccinationEvent.getAdministeringClinician());
+            printXCN(sb, vaccinationEvent.getAdministeringClinician(), facility);
             // RXA-11
             sb.append("|");
             sb.append("^^^");
@@ -466,9 +466,9 @@ public class HL7printer {
         sb.append("|");
 //      MSH.11
         sb.append(production);
-        sb.append("2.5.1|");
-//      MSH.12
         sb.append("|");
+//      MSH.12
+        sb.append("2.5.1|");
 //      MSH.13
         sb.append("|");
 //      MSH.14
@@ -626,13 +626,13 @@ public class HL7printer {
 
         sb.append("|");
         // ORC-10
-        printXCN(sb, vaccinationEvent.getEnteringClinician());
+        printXCN(sb, vaccinationEvent.getEnteringClinician(), facility);
         sb.append("|");
         // ORC-11
 
         sb.append("|");
         // ORC-12
-        printXCN(sb, vaccinationEvent.getOrderingClinician());
+        printXCN(sb, vaccinationEvent.getOrderingClinician(), facility);
         sb.append("\r");
     }
 
@@ -700,7 +700,7 @@ public class HL7printer {
     }
 
 
-    public void printPD1(StringBuilder sb, EhrPatient patient) {
+    public void printPD1(StringBuilder sb, EhrPatient patient, Facility facility) {
         sb.append("PD1");
         // PD1-1
         sb.append("|");
@@ -711,7 +711,7 @@ public class HL7printer {
         // PD1-4
         sb.append("|");
         if (patient.getGeneralPractitioner() != null) {
-            printXCN(sb, patient.getGeneralPractitioner());
+            printXCN(sb, patient.getGeneralPractitioner(), facility);
         }
         // PD1-5
         sb.append("|");
@@ -792,7 +792,7 @@ public class HL7printer {
 
 
     // Extended Clinician
-    private void printXCN(StringBuilder sb, Clinician clinician) {
+    private void printXCN(StringBuilder sb, Clinician clinician, Facility defaultAssigner) {
         if (clinician != null) {
             EhrIdentifier ehrIdentifier = clinician.getIdentifiers().stream().findFirst().orElse(new EhrIdentifier());
             sb.append(StringUtils.defaultIfBlank(ehrIdentifier.getValue(), "")).append("^");
@@ -802,6 +802,13 @@ public class HL7printer {
             sb.append(StringUtils.defaultIfBlank(clinician.getNameSuffix(), "")).append("^");
             sb.append(StringUtils.defaultIfBlank(clinician.getNamePrefix(), "")).append("^");
             sb.append(StringUtils.defaultIfBlank(clinician.getQualification(), "")).append("^");
+            if (StringUtils.isNotBlank(ehrIdentifier.getAssignerReference())) {
+                sb.append(ehrIdentifier.getAssignerReference());
+            } else if (StringUtils.isNotBlank(ehrIdentifier.getSystem())) {
+                sb.append(ehrIdentifier.getSystem());
+            } else if (defaultAssigner != null) {
+                sb.append(IOrganizationMapper.facilityGetOneEhrIdentifier(defaultAssigner).toV2HD(STATIC_SUB_SUB_SEPARATOR));
+            }
         }
     }
 

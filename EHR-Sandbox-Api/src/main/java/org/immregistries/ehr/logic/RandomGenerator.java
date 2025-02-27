@@ -335,6 +335,7 @@ public class RandomGenerator {
         }
         EhrIdentifier ehrIdentifier = new EhrIdentifier();
         ehrIdentifier.setValue(RandomStringUtils.random(15, true, true));
+        ehrIdentifier.setAssignerReference("test");
         clinician.getIdentifiers().add(ehrIdentifier);
         EhrAddress ehrAddress = randomAddress();
         clinician.addAddress(ehrAddress);

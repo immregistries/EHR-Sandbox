@@ -30,13 +30,38 @@ public class MappingHelperR5 extends MappingHelper {
     }
 
     public static Enumerations.AdministrativeGender toFhirGender(String sex) {
+        if (sex == null) {
+            return null;
+        }
         switch (sex) {
             case MALE_SEX:
                 return Enumerations.AdministrativeGender.MALE;
             case FEMALE_SEX:
                 return Enumerations.AdministrativeGender.FEMALE;
-            default:
+            case OTHER_SEX:
                 return Enumerations.AdministrativeGender.OTHER;
+            case UNKNOWN_SEX:
+                return Enumerations.AdministrativeGender.UNKNOWN;
+            default:
+                return Enumerations.AdministrativeGender.NULL;
+        }
+    }
+
+    public static String toEhrSex(Enumerations.AdministrativeGender gender) {
+        if (gender == null) {
+            return "";
+        }
+        switch (gender) {
+            case MALE:
+                return MALE_SEX;
+            case FEMALE:
+                return FEMALE_SEX;
+            case OTHER:
+                return OTHER_SEX;
+            case UNKNOWN:
+                return UNKNOWN_SEX;
+            default:
+                return "";
         }
     }
 
@@ -115,22 +140,6 @@ public class MappingHelperR5 extends MappingHelper {
         ehrHumanName.setNamePrefix(name.getPrefixAsSingleString());
         return ehrHumanName;
     }
-
-    public static String toEhrSex(Enumerations.AdministrativeGender gender) {
-        if (gender == null) {
-            return "";
-        }
-        switch (gender) {
-            case MALE:
-                return MALE_SEX;
-            case FEMALE:
-                return FEMALE_SEX;
-            case OTHER:
-            default:
-                return "";
-        }
-    }
-
 
     public static HumanName toFhirName(EhrHumanName ehrHumanName) {
         if (ProcessingFlavor.UPPERCASE.isActive()) {

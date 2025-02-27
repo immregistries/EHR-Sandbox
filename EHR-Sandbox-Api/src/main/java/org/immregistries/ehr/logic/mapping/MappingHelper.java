@@ -7,6 +7,8 @@ public class MappingHelper {
 
     public static final String MALE_SEX = "M";
     public static final String FEMALE_SEX = "F";
+    public static final String UNKNOWN_SEX = "U";
+    public static final String OTHER_SEX = "O";
 
     public static final String PATIENT = "Patient";
     public static final String IMMUNIZATION = "Immunization";

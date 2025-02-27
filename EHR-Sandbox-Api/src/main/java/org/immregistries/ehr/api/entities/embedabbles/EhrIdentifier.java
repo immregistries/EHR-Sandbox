@@ -5,9 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.immregistries.ehr.api.ProcessingFlavor;
 
+import static org.immregistries.ehr.logic.IFhirTransactionWriter.TYPE_ISO;
+import static org.immregistries.ehr.logic.IFhirTransactionWriter.TYPE_UUID;
 import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.IDENTIFIER_TYPE_SYSTEM;
 import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_TYPE_VALUE;
 
@@ -123,6 +126,21 @@ public class EhrIdentifier {
             return toR5();
         }
 
+    }
+
+    @Transient
+    public String toV2HD(String separator) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getValue()).append(separator);
+        sb.append(this.getValue()).append(separator);
+        if (StringUtils.isBlank(this.getType())) {
+            sb.append(this.getSystem());
+        } else if (TYPE_UUID.equals(this.getType()) || TYPE_ISO.equals(this.getType())) {
+            sb.append("urn:ietf:rfc:3986");
+        } else {
+            sb.append(this.getType());
+        }
+        return sb.toString();
     }
 
 
