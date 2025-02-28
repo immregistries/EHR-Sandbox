@@ -168,12 +168,15 @@ public class RandomGenerator {
                 }
             }
         }
-//        ehrPatient.setMotherMaiden(faker.name().lastName());
 
-        Collection<Code> codeListGuardian = codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP);
-        NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship(ehrPatient, randomNextOfKin());
-        nextOfKinRelationship.setRelationshipKind("MTH");
-        ehrPatient.addNextOfKinRelationship(nextOfKinRelationship);
+        ehrPatient.setMotherMaiden(faker.name().lastName());
+
+        Optional<Code> kind = codeMap.getCodesForTable(CodesetType.PERSON_RELATIONSHIP).stream().filter(code -> rand.nextBoolean()).findAny();
+        if (kind.isPresent()) {
+            NextOfKinRelationship nextOfKinRelationship = new NextOfKinRelationship(ehrPatient, randomNextOfKin());
+            nextOfKinRelationship.setRelationshipKind(kind.get().getValue());
+            ehrPatient.addNextOfKinRelationship(nextOfKinRelationship);
+        }
 //        int count = 0;
 
 //        for(Code code : codeListGuardian) {

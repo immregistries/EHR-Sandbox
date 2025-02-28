@@ -337,7 +337,7 @@ public class HL7printer {
             Iterator<EhrRace> iterator = patient.getRaces().iterator();
 
             while (iterator.hasNext()) {
-                printCode(sb, iterator.next().getValue(), CodesetType.PATIENT_RACE, "0005");
+                printCode(sb, iterator.next().getValue(), CodesetType.PATIENT_RACE, "CDCREC");
                 if (iterator.hasNext()) {
                     sb.append("~");
                 }
@@ -397,7 +397,6 @@ public class HL7printer {
         sb.append("|");
         Code ethnicityCode = codeMapManager.getCodeMap().getCodeForCodeset(CodesetType.PATIENT_ETHNICITY, patient.getEthnicity());
         if (ethnicityCode != null) {
-            sb.append("^");
             printCode(sb, ethnicityCode, "CDCREC");
         }
         // PID-23
@@ -623,7 +622,6 @@ public class HL7printer {
 
         sb.append("|");
         // ORC-9
-
         sb.append("|");
         // ORC-10
         printXCN(sb, vaccinationEvent.getEnteringClinician(), facility);
@@ -821,6 +819,11 @@ public class HL7printer {
 
     public void printCode(StringBuilder sb, String value, CodesetType codesetType, String tableName) {
         CodeMap codeMap = codeMapManager.getCodeMap();
+        //TODO FLAVOR  for Profile
+//        if (StringUtils.startsWith(tableName, "HL7")) {
+//            tableName += "_IZ";
+//        }
+
         if (StringUtils.isNotBlank(value)) {
             Code code = codeMap.getCodeForCodeset(codesetType, value);
             if (code != null) {
