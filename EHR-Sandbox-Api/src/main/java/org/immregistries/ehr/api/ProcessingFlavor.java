@@ -11,7 +11,7 @@ import java.util.Set;
 import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
 
 public enum ProcessingFlavor {
-    NO_DEPRECATED("NO_DEPRECATED", "Excludes deprecated fields from codesets in forms and tables"),
+    PAIN_PERDU("PERDU", "Includes fieldscmarked as deprecated from codesets in forms and tables"),
     LOTTERY("LOTTERY", "Use external API to verify Lot Number validity in forms"),
     //    LIGUAL("LIGUAL", "Sets all name types as legal"),
     BIZNESS("BIZNESS", "(Incoming) Uses local id in FHIR references instead of business identifier"),

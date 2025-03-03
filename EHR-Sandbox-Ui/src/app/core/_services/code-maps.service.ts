@@ -62,7 +62,7 @@ export class CodeMapsService {
     if (!this.codeBaseMap) {
       return undefined
     }
-    if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.toUpperCase().includes('NO_DEPRECATED')) {
+    if (this.tenantService.getCurrentId() > 0 && !this.tenantService.getCurrent().nameDisplay?.toUpperCase().includes('PAIN_PERDU')) { //TODO proper flavor functionality reading consistent with backend
       return Object.fromEntries(Object.entries<Code>(this.codeBaseMap.value[label]).filter((entry) => entry[1].codeStatus?.status?.toLowerCase() != "deprecated"))
     } else {
       return this.codeBaseMap.value[label];
@@ -71,7 +71,7 @@ export class CodeMapsService {
 
   refreshCodeMapsObservable(): Observable<CodeMap> {
     return this.http.get<CodeMap>(this.settings.getApiUrl() + '/code_maps', httpOptions).pipe(tap((codeMap) => {
-      // if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.includes('NO_DEPRECATED')) {
+      // if (this.tenantService.getCurrentId() > 0 && this.tenantService.getCurrent().nameDisplay?.includes('PAIN_PERDU')) {
       //   Object.values(codeMap.codeBaseMap).forEach((codeSet) => {
       //     codeSet = Object.fromEntries(Object.entries<Code>(codeSet).filter((entry) => entry[1].codeStatus?.status != "Deprecated"))
       //   })

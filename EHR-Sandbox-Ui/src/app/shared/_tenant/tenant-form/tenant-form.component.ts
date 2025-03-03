@@ -74,32 +74,6 @@ export class TenantFormComponent implements OnInit {
   }
 
   flavorList!: Flavor[];
-  // = [
-  //   {
-  //     key: 'NO_DEPRECATED',
-  //     description: 'excludes deprecated fields from codesets in forms and tables'
-  //   },
-  //   {
-  //     key: 'LOTTERY',
-  //     description: 'Use external API to verify Lot Number validity in forms'
-  //   },
-  //   {
-  //     key: 'R4',
-  //     description: '(In progress, might break some functionalities) Use Fhir R4 version'
-  //   },
-  //   {
-  //     key: 'BIZNESS',
-  //     description: '(Incoming) Uses local id in mappings instead of business identifier'
-  //   },
-  //   {
-  //     key: 'BABYNAME',
-  //     description: "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"
-  //   },
-  //   {
-  //     key: 'SINGLENAME',
-  //     description: "Only allow single Name for patients in forms, Name type set to Legal by default"
-  //   },
-  // ]
 }
 
 
