@@ -143,7 +143,7 @@ public class HL7printer {
             if (StringUtils.isBlank(completionStatus)) {
                 completionStatus = "CP";
             }
-            printCode(sb, completionStatus, CodesetType.VACCINATION_COMPLETION, null);
+            printCode(sb, completionStatus, CodesetType.VACCINATION_COMPLETION, "HL70322");
 
             // RXA-21
             String actionCode = vaccine.getActionCode();
