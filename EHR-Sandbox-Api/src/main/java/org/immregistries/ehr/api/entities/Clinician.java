@@ -50,7 +50,7 @@ public class Clinician extends EhrEntity {
 
     @OneToMany(mappedBy = "enteringClinician")
     @JsonIgnore
-    @OrderBy("immunization_registry_id")
+    @OrderBy("vaccination_event_id")
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "orderingClinician")
@@ -61,7 +61,7 @@ public class Clinician extends EhrEntity {
     @OneToMany(mappedBy = "administeringClinician")
     @JsonIgnore
     @OrderBy("vaccination_event_id")
-    private Set<VaccinationEvent> vaccinationEvents = new LinkedHashSet<>();
+    private Set<VaccinationEvent> vaccinationEventAdministering = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clinician_aphone", joinColumns = @JoinColumn(name = "clinician_id"))
@@ -92,11 +92,11 @@ public class Clinician extends EhrEntity {
     }
 
     public Set<VaccinationEvent> getVaccinationEvents() {
-        return vaccinationEvents;
+        return vaccinationEventAdministering;
     }
 
     public void setVaccinationEvents(Set<VaccinationEvent> vaccinationEvents) {
-        this.vaccinationEvents = vaccinationEvents;
+        this.vaccinationEventAdministering = vaccinationEvents;
     }
 
     public Set<VaccinationEvent> getVaccinationEventsOrdering() {

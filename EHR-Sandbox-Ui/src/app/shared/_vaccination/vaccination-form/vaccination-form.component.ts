@@ -32,15 +32,15 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       if (!this._vaccination.vaccine) {
         this._vaccination.vaccine = { updatedDate: new Date() };
       }
-      if (!this._vaccination.enteringClinician) {
-        this._vaccination.enteringClinician = {};
-      }
-      if (!this._vaccination.administeringClinician) {
-        this._vaccination.administeringClinician = {};
-      }
-      if (!this._vaccination.orderingClinician) {
-        this._vaccination.orderingClinician = {};
-      }
+      // if (!this._vaccination.enteringClinician) {
+      //   this._vaccination.enteringClinician = undefined;
+      // }
+      // if (!this._vaccination.administeringClinician) {
+      //   this._vaccination.administeringClinician = undefined;
+      // }
+      // if (!this._vaccination.orderingClinician) {
+      //   this._vaccination.orderingClinician = undefined;
+      // }
     }
   }
   public get vaccination(): VaccinationEvent {

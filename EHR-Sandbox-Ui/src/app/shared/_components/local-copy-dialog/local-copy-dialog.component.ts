@@ -81,9 +81,9 @@ export class LocalCopyDialogComponent implements OnInit {
             /**
              * TODO copy clinicians ?
              */
-            vaccinationCopy.administeringClinician = {}
-            vaccinationCopy.enteringClinician = {}
-            vaccinationCopy.orderingClinician = {}
+            vaccinationCopy.administeringClinician = undefined
+            vaccinationCopy.enteringClinician = undefined
+            vaccinationCopy.orderingClinician = undefined
             /**
              * vaccination set as historical
              *

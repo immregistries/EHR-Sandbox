@@ -165,7 +165,7 @@ public class HL7printer {
             }
 
             obsSubId++;
-            {
+            if (!StringUtils.isAllBlank(vaccine.getFinancialStatus(), patient.getFinancialStatus())) {
                 obxSetId++;
                 String loinc = "64994-7";
                 String loincLabel = "Eligibility Status";
@@ -819,10 +819,6 @@ public class HL7printer {
 
     public void printCode(StringBuilder sb, String value, CodesetType codesetType, String tableName) {
         CodeMap codeMap = codeMapManager.getCodeMap();
-        //TODO FLAVOR  for Profile
-//        if (StringUtils.startsWith(tableName, "HL7")) {
-//            tableName += "_IZ";
-//        }
 
         if (StringUtils.isNotBlank(value)) {
             Code code = codeMap.getCodeForCodeset(codesetType, value);
