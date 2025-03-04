@@ -126,7 +126,7 @@ export class VaccinationService extends RefreshService {
     }
     return this.http.post<string>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
-      vaccination,
+      this.solveClinicianRedundancy(vaccination),
       { observe: 'response', params: params });
 
   }
@@ -143,7 +143,8 @@ export class VaccinationService extends RefreshService {
     }
     return this.http.put<VaccinationEvent>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
-      vaccination, httpOptions);
+      this.solveClinicianRedundancy(vaccination),
+      httpOptions);
   }
 
 
@@ -189,6 +190,32 @@ export class VaccinationService extends RefreshService {
     //   });
   }
 
+  /**
+   * IN PROGRESS
+   * @param vaccination
+   * @returns
+   */
+  private solveClinicianRedundancy(vaccination: VaccinationEvent): VaccinationEvent {
+    let administeringId = vaccination.administeringClinician?.id
+    let enteringId = vaccination.enteringClinician?.id
+    let orderingId = vaccination.orderingClinician?.id
+    let serializingVaccination = JSON.parse(JSON.stringify(vaccination));
+    if (administeringId && administeringId === enteringId) {
+      // @ts-ignore
+      serializingVaccination.enteringClinician = enteringId
+    }
+    if (enteringId && enteringId === orderingId) {
+      // @ts-ignore
+      serializingVaccination.orderingClinician = orderingId
+    }
+    if (administeringId && administeringId === orderingId) {
+      // @ts-ignore
+      serializingVaccination.orderingClinician = orderingId
+    }
+
+    // if vaccination
+    return serializingVaccination;
+  }
 
 
 }
