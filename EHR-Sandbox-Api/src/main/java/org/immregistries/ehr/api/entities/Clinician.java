@@ -63,11 +63,6 @@ public class Clinician extends EhrEntity {
     @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventAdministering = new LinkedHashSet<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "clinician_aphone", joinColumns = @JoinColumn(name = "clinician_id"))
-    @OrderBy("type")
-    private Set<EhrPhoneNumber> aphones = new LinkedHashSet<>();
-
     @ElementCollection()
     @CollectionTable(name = "clinician_identifiers", joinColumns = @JoinColumn(name = "clinician_id"))
     @OrderBy("identifier_type")

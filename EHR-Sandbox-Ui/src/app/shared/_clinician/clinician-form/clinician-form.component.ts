@@ -30,8 +30,18 @@ export class ClinicianFormComponent implements OnInit {
    */
   public references: BehaviorSubject<CodeReferenceTable> = new BehaviorSubject<CodeReferenceTable>({});
 
+  private _model: Clinician = {};
+  public get model(): Clinician {
+    return this._model;
+  }
   @Input()
-  model: Clinician = {}
+  public set model(value: Clinician) {
+    if (!value) {
+      this._model = {}
+    } else {
+      this._model = value;
+    }
+  }
 
   @Output() modelChange = new EventEmitter<Clinician>();
 
