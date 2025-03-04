@@ -140,7 +140,7 @@ public class VaccinationController {
         } else {
             oldVaccination = old.get();
             vaccination.getVaccine().setCreatedDate(oldVaccination.getVaccine().getCreatedDate());
-            if (vaccination.getAdministeringClinician() != null && vaccination.getAdministeringClinician().getId() == null) {
+            if (vaccination.getAdministeringClinician() != null && vaccination.getAdministeringClinician().getId() == null && StringUtils.isNotBlank(vaccination.getAdministeringClinician().getNameLast())) {
                 vaccination.setAdministeringClinician(clinicianController.postClinicians(tenant, vaccination.getAdministeringClinician()));
             }
             if (vaccination.getEnteringClinician() != null && vaccination.getEnteringClinician().getId() == null) {

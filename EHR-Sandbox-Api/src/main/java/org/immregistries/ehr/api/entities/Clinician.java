@@ -49,18 +49,18 @@ public class Clinician extends EhrEntity {
     private String qualification = "";
 
     @OneToMany(mappedBy = "enteringClinician")
-    @JsonIgnore
     @OrderBy("vaccination_event_id")
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsEntering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "orderingClinician")
-    @JsonIgnore
     @OrderBy("vaccination_event_id")
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventsOrdering = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "administeringClinician")
-    @JsonIgnore
     @OrderBy("vaccination_event_id")
+    @JsonIgnore
     private Set<VaccinationEvent> vaccinationEventAdministering = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -91,14 +91,16 @@ public class Clinician extends EhrEntity {
         this.tenant = tenant;
     }
 
-    public Set<VaccinationEvent> getVaccinationEvents() {
+    @JsonIgnore
+    public Set<VaccinationEvent> getVaccinationEventsAdministering() {
         return vaccinationEventAdministering;
     }
 
-    public void setVaccinationEvents(Set<VaccinationEvent> vaccinationEvents) {
+    public void setVaccinationEventsAdministering(Set<VaccinationEvent> vaccinationEvents) {
         this.vaccinationEventAdministering = vaccinationEvents;
     }
 
+    @JsonIgnore
     public Set<VaccinationEvent> getVaccinationEventsOrdering() {
         return vaccinationEventsOrdering;
     }
@@ -107,6 +109,7 @@ public class Clinician extends EhrEntity {
         this.vaccinationEventsOrdering = vaccinationEventsOrdering;
     }
 
+    @JsonIgnore
     public Set<VaccinationEvent> getVaccinationEventsEntering() {
         return vaccinationEventsEntering;
     }
