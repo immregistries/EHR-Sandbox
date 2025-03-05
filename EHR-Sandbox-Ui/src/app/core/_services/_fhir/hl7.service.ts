@@ -5,6 +5,8 @@ import { SettingsService } from '../settings.service';
 import { FacilityService } from '../facility.service';
 import { TenantService } from '../tenant.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
+import { AcknowledgementObject } from '../../_model/form-structure';
+import { Feedback } from '../../_model/rest';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -72,16 +74,16 @@ export class Hl7Service {
    * @param vxu
    * @returns IIS answer
    */
-  quickPostVXU(patientId: number, vaccinationId: number, vxu: string): Observable<string> {
+  quickPostVXU(patientId: number, vaccinationId: number, vxu: string): Observable<AcknowledgementObject<Feedback>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId = this.registryService.getCurrentId()
-    return this.http.post(
+    return this.http.post<AcknowledgementObject<Feedback>>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
       vxu,
       {
         ...httpOptions,
-        responseType: 'text',
+        // responseType: 'text',
         params: { registryId: registryId }
       });
   }
@@ -93,16 +95,16 @@ export class Hl7Service {
    * @param qbp
    * @returns IIS answer
    */
-  quickPostQBP(patientId: number, qbp: string): Observable<string> {
+  quickPostQBP(patientId: number, qbp: string): Observable<AcknowledgementObject<Feedback>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId = this.registryService.getCurrentId()
-    return this.http.post(
+    return this.http.post<AcknowledgementObject<Feedback>>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/qbp`,
       qbp,
       {
         ...httpOptions,
-        responseType: 'text',
+        // responseType: 'text',
         params: { registryId: registryId }
       });
   }

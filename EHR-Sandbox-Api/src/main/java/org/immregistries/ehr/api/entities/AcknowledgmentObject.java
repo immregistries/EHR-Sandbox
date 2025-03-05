@@ -26,11 +26,11 @@ public class AcknowledgmentObject extends EhrEntity {
     @Column(name = "id") // Explicitly annotate the ID column
     private Integer id;
 
-    @Column(columnDefinition = "TEXT", name = "raw")
-    private String raw = "";
+    @Column(columnDefinition = "TEXT", name = "rawAck")
+    private String rawAck = "";
 
-    @Column(columnDefinition = "TEXT", name = "vxu")
-    private String vxu = "";
+    @Column(columnDefinition = "TEXT", name = "rawVxu")
+    private String rawVxu = "";
 
     @Column(name = "message_id")
     private String messageId = "";
@@ -131,12 +131,12 @@ public class AcknowledgmentObject extends EhrEntity {
         this.timestamp = timestamp;
     }
 
-    public String getRaw() {
-        return raw;
+    public String getRawAck() {
+        return rawAck;
     }
 
-    public void setRaw(String raw) {
-        this.raw = raw;
+    public void setRawAck(String raw) {
+        this.rawAck = raw;
     }
 
     public VaccinationEvent getVaccination() {
@@ -188,11 +188,11 @@ public class AcknowledgmentObject extends EhrEntity {
     }
 
     public String getVxu() {
-        return vxu;
+        return rawVxu;
     }
 
     public void setVxu(String vxu) {
-        this.vxu = vxu;
+        this.rawVxu = vxu;
     }
 
     public Facility getFacility() {

@@ -141,7 +141,7 @@ public class FeedbackController {
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
-        acknowledgmentObject.setRaw(ack);
+        acknowledgmentObject.setRawAck(ack);
         Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
         if (registryId.isPresent()) {
             immunizationRegistry = Optional.of(immunizationRegistryService.getImmunizationRegistry(registryId.get()));

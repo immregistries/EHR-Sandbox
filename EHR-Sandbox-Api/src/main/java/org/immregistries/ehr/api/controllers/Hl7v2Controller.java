@@ -98,19 +98,40 @@ public class Hl7v2Controller {
             connector.setPassword(immunizationRegistry.getIisPassword());
             connector.setFacilityid(immunizationRegistry.getIisFacilityId());
             String rsp = connector.submitMessage(message, false);
-            return ResponseEntity.ok(rsp);
+            AcknowledgmentObject acknowledgmentObject = feedbackController.extractAckInfo(
+                    Optional.of(registryId),
+                    Optional.of(facilityId),
+                    Optional.of(patientId),
+                    Optional.empty(),
+                    rsp);
+            acknowledgmentObject.setVxu(message);
+            acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
+            acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
+            return ResponseEntity.ok(acknowledgmentObject);
         } catch (Exception e1) {
             e1.printStackTrace();
             return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * @param registryId
+     * @param facilityId
+     * @param patientId
+     * @param vaccinationId
+     * @param message
+     * @return Response entity with Acknowledgement object or Error message
+     */
     @PostMapping({VACCINATION_ID_PATH + "/vxu", PATIENT_ID_PATH + "/vxu"})
-    public ResponseEntity<String> vxuSend(@RequestParam(REGISTRY_ID) Integer registryId,
-                                          @PathVariable(FACILITY_ID) Integer facilityId,
-                                          @PathVariable(PATIENT_ID) Integer patientId,
-                                          @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
-                                          @RequestBody String message) {
+    public ResponseEntity<?> vxuSend(@RequestParam(REGISTRY_ID) Integer registryId,
+                                     @PathVariable(FACILITY_ID) Integer facilityId,
+                                     @PathVariable(PATIENT_ID) Integer patientId,
+                                     @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
+                                     @RequestBody String message) {
         Connector connector;
         Optional<VaccinationEvent> vaccinationEvent = Optional.empty();
         if (vaccinationId.isPresent()) {
@@ -137,6 +158,7 @@ public class Hl7v2Controller {
                     vaccinationId,
                     ack);
             acknowledgmentObject.setVxu(message);
+            acknowledgmentObject.setRawAck(ack);
             acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
@@ -147,7 +169,7 @@ public class Hl7v2Controller {
             if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {
 
             }
-            return ResponseEntity.ok(ack);
+            return ResponseEntity.ok(acknowledgmentObject);
         } catch (Exception e1) {
             e1.printStackTrace();
             return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());

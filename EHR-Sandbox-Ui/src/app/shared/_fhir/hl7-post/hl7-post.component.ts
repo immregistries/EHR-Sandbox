@@ -62,12 +62,11 @@ export class Hl7PostComponent {
   }
 
 
-  private successProcessing = (ack: string) => {
+  private successProcessing = (ack: AcknowledgementObject<Feedback>) => {
     this.resultLoading = false
     this.error = false
-    this.answer = ack
-    this.feedbackService.convertAck(ack, this.immunizationRegistryService.getCurrentId(), this.patientId, this.vaccinationId)
-      .subscribe(this.ackObjectProcessing)
+    this.resultObject = ack
+    this.feedbackService.doRefresh()
   }
 
   private errorProcessing = (err: any) => {

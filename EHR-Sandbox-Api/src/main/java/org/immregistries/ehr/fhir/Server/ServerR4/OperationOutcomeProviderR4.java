@@ -23,7 +23,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirProviderR4<OperationOutcome> {
@@ -155,7 +158,7 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
 
     public static AcknowledgmentObject acknowledgmentObject(OperationOutcome operationOutcome, ImmunizationRegistry immunizationRegistry, Facility facility, EhrPatient ehrPatient, VaccinationEvent vaccinationEvent) {
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
-        acknowledgmentObject.setRaw(operationOutcome.toString()); // TODO parser
+        acknowledgmentObject.setRawAck(operationOutcome.toString()); // TODO parser
         acknowledgmentObject.setMessageId(operationOutcome.getId());
 //        acknowledgmentObject.setSenderSoftware(operationOutcome.get); TODO extract from metadata ?
 //        acknowledgmentObject.setSender(hl7Reader.getValue(4));
