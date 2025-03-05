@@ -3,17 +3,16 @@ package org.immregistries.ehr.api.controllers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
-import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.EhrPatient;
+import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.Tenant;
+import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
-import org.immregistries.smm.tester.connectors.Connector;
-import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
@@ -35,8 +34,6 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 @RestController
 @RequestMapping({VACCINATION_PATH, FACILITY_ID_PATH + VACCINATION_PATH_HEADER})
 public class VaccinationController {
-    @Autowired
-    HL7printer hl7printer;
     @Autowired
     RandomGenerator randomGenerator;
 
@@ -153,47 +150,6 @@ public class VaccinationController {
             vaccination.setPatient(patient);
             vaccination.setAdministeringFacility(facility);
             return vaccinationEventRepository.save(vaccination);
-        }
-    }
-
-    @GetMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu")
-    public ResponseEntity<String> vxu(@PathVariable(VACCINATION_ID) Integer vaccinationId) {
-        GsonJsonParser gson = new GsonJsonParser();
-        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No vaccination found"));
-        Vaccine vaccine = vaccinationEvent.getVaccine();
-        EhrPatient patient = vaccinationEvent.getPatient();
-        Facility facility = vaccinationEvent.getAdministeringFacility();
-        String vxu = hl7printer.buildVxu(vaccinationEvent, patient, facility);
-        return ResponseEntity.ok(vxu);
-    }
-
-    @PostMapping(ControllerHelper.VACCINATION_ID_SUFFIX + "/vxu")
-    public ResponseEntity<String> vxuSend(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(VACCINATION_ID) Integer vaccinationId, @RequestBody String message) {
-        Connector connector;
-        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId).get();
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        try {
-            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
-            if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
-                connector.setUserid(immunizationRegistry.getIisUsername());
-                connector.setPassword(immunizationRegistry.getIisPassword());
-                connector.setFacilityid(immunizationRegistry.getIisFacilityId());
-            }
-//            else  {
-//                connector.setUserid("nist");
-//                connector.setKeyStore(new KeyStore());
-//            }
-
-            String result = connector.submitMessage(message, false);
-//            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
-            if (vaccinationEvent.getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0) {
-
-            }
-            return ResponseEntity.ok(result);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());
         }
     }
 

@@ -26,11 +26,9 @@ export class Hl7Service {
 
   /**
    *
-   * @param tenantId
-   * @param facilityId
    * @param patientId
    * @param vaccinationId
-   * @returns Hl7v2 VXU message
+   * @returns Hl7v2 VXU message for single vaccination
    */
   getVXU(patientId: number, vaccinationId: number): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
@@ -42,10 +40,22 @@ export class Hl7Service {
 
   /**
    *
-   * @param tenantId
-   * @param facilityId
    * @param patientId
+   * @param vaccinationId
    * @returns Hl7v2 VXU message
+   */
+  getVXUAll(patientId: number): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    return this.http.get(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vxu`,
+      { ...httpOptions, responseType: 'text' });
+  }
+
+  /**
+   *
+   * @param patientId
+   * @returns Hl7v2 QBP message
    */
   getQBP(patientId: number): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()

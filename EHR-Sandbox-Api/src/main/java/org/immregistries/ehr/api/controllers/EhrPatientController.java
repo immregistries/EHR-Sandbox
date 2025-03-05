@@ -1,8 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
 import jakarta.transaction.Transactional;
-import org.immregistries.ehr.api.ImmunizationRegistryService;
-import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.NextOfKinRelationshipPK;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
@@ -10,15 +8,8 @@ import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
-import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.ehr.logic.RandomGenerator;
 import org.immregistries.ehr.logic.RecommendationService;
-import org.immregistries.ehr.logic.mapping.forR5.ImmunizationMapperR5;
-import org.immregistries.smm.tester.connectors.Connector;
-import org.immregistries.smm.tester.connectors.SoapConnector;
-import org.immregistries.smm.tester.manager.query.QueryConverter;
-import org.immregistries.smm.tester.manager.query.QueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,16 +42,9 @@ public class EhrPatientController {
 
     private static final Logger logger = LoggerFactory.getLogger(EhrPatientController.class);
     public static final String VACCINATION_NUMBER = "vaccinationNumber";
-    @Autowired
-    private HL7printer hl7printer;
-    @Autowired
-    private ImmunizationMapperR5 immunizationMapper;
+
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
-    @Autowired
-    private FhirComponentsDispatcher fhirComponentsDispatcher;
-    @Autowired
-    private ImmunizationRegistryService immunizationRegistryService;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
     @Autowired
@@ -247,44 +231,5 @@ public class EhrPatientController {
 //        return ResponseEntity.badRequest().body(new HashSet<>());
     }
 
-    @GetMapping(PATIENT_ID_SUFFIX + "/qbp")
-    public ResponseEntity<String> qbp(@PathVariable(PATIENT_ID) Integer patientId) {
-        QueryConverter queryConverter;
-        if (ProcessingFlavor.Z44.isActive()) {
-            queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z44);
-        } else {
-            queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
-        }
-        EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
-//        VaccinationEvent vaccinationEvent = vaccinationEventRepository.findByPatientId(patientId);
-//        Vaccine vaccine = vaccinationEvent.getVaccine()
-        Facility facility = ehrPatient.getFacility();
-        String vxu = hl7printer.buildVxu(null, ehrPatient, facility);
-        String qbp = queryConverter.convert(vxu);
-        return ResponseEntity.ok(qbp);
-    }
 
-    @PostMapping(PATIENT_ID_SUFFIX + "/qbp")
-    public ResponseEntity<?> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId,
-                                     @PathVariable(FACILITY_ID) Integer facilityId,
-                                     @PathVariable(PATIENT_ID) Integer patientId,
-                                     @RequestBody String message) {
-        Connector connector;
-        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
-        try {
-            connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
-            connector.setUserid(immunizationRegistry.getIisUsername());
-            connector.setPassword(immunizationRegistry.getIisPassword());
-            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
-            String ack = connector.submitMessage(message, false);
-
-
-//            return ResponseEntity.ok(map);
-            return ResponseEntity.ok(ack);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

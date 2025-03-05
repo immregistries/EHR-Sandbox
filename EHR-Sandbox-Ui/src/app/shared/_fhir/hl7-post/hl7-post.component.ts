@@ -18,12 +18,11 @@ import { Feedback } from 'src/app/core/_model/rest';
 export class Hl7PostComponent {
   @Input() vaccinationId: number = -1;
   @Input() patientId: number = -1;
+  @Input() loading: boolean = false
+  @Input() hl7Message: string = "";
 
-  loading: boolean = false
   resultLoading: boolean = false
 
-  @Input()
-  public hl7Message: string = "";
   public answer: string = "";
   public error: boolean = false;
 
@@ -39,24 +38,6 @@ export class Hl7PostComponent {
     @Inject(MAT_DIALOG_DATA) public data: { patientId: number, vaccinationId: number }) {
     this.patientId = data.patientId
     this.vaccinationId = data.vaccinationId
-  }
-
-  ngOnInit(): void {
-    this.loading = true
-    if (this.vaccinationId > 0) {
-      this.hl7Service.getVXU(this.patientId, this.vaccinationId).subscribe((res) => {
-        this.hl7Message = res
-        this.loading = false
-      })
-    } else if (this.patientId > 0) {
-      this.hl7Service.getQBP(this.patientId).subscribe((res) => {
-        this.hl7Message = res
-        this.loading = false
-      })
-    } else {
-      this.loading = false
-    }
-
   }
 
   send() {

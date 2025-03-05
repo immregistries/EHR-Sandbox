@@ -1,27 +1,20 @@
-<app-tab-with-menu [label]="'Sending HL7v2 Message to IIS'">
-  <!-- <mat-tab>
-    <ng-template mat-tab-label> Sending HL7v2 Message to IIS</ng-template>
-    <mat-form-field style="width: 100%;" appearance="fill" mat-dialog-content>
-      <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-      <mat-label>HL7v2 message</mat-label>
-      <textarea matInput style="height: 180px;" placeholder="" [(ngModel)]="hl7Message" name="message"></textarea>
-    </mat-form-field>
-    <p>{{answer}}</p>
-    <p style="color: red;">{{error}}</p>
-  </mat-tab> -->
+<!-- <app-tab-with-menu [label]="'Sending HL7v2 Message to IIS'">
 
 </app-tab-with-menu>
-<app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId"></app-hl7-post>
-<!-- <mat-form-field style="width: 100%;" appearance="fill" mat-dialog-content>
-  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
-  <mat-label>HL7v2 message</mat-label>
-  <textarea matInput style="height: 180px;" placeholder="" [(ngModel)]="hl7Message" name="message"></textarea>
-</mat-form-field>
-<p>{{answer}}</p>
-<p style="color: red;">{{error}}</p>
-<div mat-dialog-actions align="end">
-  <button mat-raised-button type="submit" color="primary">
-    <mat-icon>send</mat-icon>
-    Send to IIS
-  </button>
-</div> -->
+<app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="qbp"
+  [loading]="qbpLoading"></app-hl7-post> -->
+<mat-tab-group #tabs>
+  <mat-tab disabled>
+    <ng-template mat-tab-label>
+      <app-immunization-registry-menu></app-immunization-registry-menu>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Send QPD" *ngIf="vaccinationId < 0">
+    <app-hl7-post [patientId]="patientId" [hl7Message]="qbp" [loading]="qbpLoading"></app-hl7-post>
+  </mat-tab>
+
+  <mat-tab label="Send VXU">
+    <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="vxu"
+                  [loading]="vxuLoading"></app-hl7-post>
+  </mat-tab>
+</mat-tab-group>

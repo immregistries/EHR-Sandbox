@@ -1,8 +1,8 @@
-import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { FhirResourceService } from '../../../core/_services/_fhir/fhir-resource.service';
-import { Observable, ObservableLike } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Hl7Service } from '../../../core/_services/_fhir/hl7.service';
 
 @Component({

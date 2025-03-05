@@ -74,6 +74,22 @@ public class FeedbackController {
         return acknowledgmentObjectRepository.findByFacilityId(facilityId);
     }
 
+    @PostMapping(FACILITY_ID_PATH + ACKS_PATH_HEADER)
+    public AcknowledgmentObject postFacilityAcks(@RequestParam(REGISTRY_ID) Optional<Integer> registryId,
+                                                 @PathVariable(FACILITY_ID) Integer facilityId,
+                                                 @PathVariable(PATIENT_ID) Optional<Integer> patientId,
+                                                 @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId, @RequestBody AcknowledgmentObject acknowledgmentObject) {
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow();
+//        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
+        acknowledgmentObject.setFacility(facility);
+        acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
+        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
+        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
+        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
+        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
+        return acknowledgmentObjectRepository.save(acknowledgmentObject);
+    }
+
 
     @GetMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
     public Optional<Feedback> getPatientFeedback(@PathVariable(PATIENT_ID) Integer patientId) {
@@ -176,6 +192,10 @@ public class FeedbackController {
             patient.ifPresent(feedback::setPatient);
             vaccinationEvent.ifPresent(feedback::setVaccinationEvent);
 
+            /*
+             * For serialization in case of not saving right away
+             */
+            acknowledgmentObject.setId(-1);
             if (StringUtils.isNotBlank(hl7Reader.getValue(8))) {
                 if (StringUtils.isNotBlank(hl7Reader.getValue(8, 2))) {
                     feedback.setContent(hl7Reader.getValue(8, 2));
@@ -219,16 +239,6 @@ public class FeedbackController {
                 feedback.getHl7Locations().add(hl7Location);
             }
             feedback.setAcknowledgmentObject(acknowledgmentObject);
-//            feedbackRepository.save(feedback);
-        }
-        if (facilityId.isPresent()) {
-            acknowledgmentObjectRepository.save(acknowledgmentObject);
-            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
-            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
-            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
-            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
-//            cacheAck.putIfAbsent(facilityId.get(), new ArrayList<>(10));
-//            cacheAck.get(facilityId.get()).add(acknowledgmentObject);
         }
         return acknowledgmentObject;
     }
@@ -267,9 +277,6 @@ public class FeedbackController {
         } catch (DataFormatException dataFormatException) {
         }
 //            feedbackRepository.save(feedback);
-        if (facilityId.isPresent()) {
-            acknowledgmentObjectRepository.save(acknowledgmentObject);
-        }
         return acknowledgmentObject;
     }
 

@@ -1,4 +1,9 @@
 .footer {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.mat-mdc-tab-disabled:first-child {
+  opacity: 1;
 }
