@@ -80,12 +80,12 @@ export class Hl7PostComponent {
       this.answer = err.error
     }
     console.error(err)
-    this.resultObject = { rawAck: this.answer, sortedResult: { errors: [], warnings: [], infos: [], notices: [] } }
+    this.resultObject = { rawResult: this.answer, sortedResult: { errors: [], warnings: [], infos: [], notices: [] } }
     this.snackBarService.errorMessage(this.answer)
   }
 
   private ackObjectProcessing = (acknowledgementObject: AcknowledgementObject<Feedback>) => {
-    acknowledgementObject.rawAck = this.answer
+    acknowledgementObject.rawResult = this.answer
     this.resultObject = acknowledgementObject
     this.feedbackService.doRefresh()
   }

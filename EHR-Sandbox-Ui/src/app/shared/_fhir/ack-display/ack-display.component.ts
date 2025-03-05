@@ -65,7 +65,7 @@ export class AckDisplayComponent {
   // errSegments: AckSortedResults<string> = { errors: [], warnings: [], notices: [], infos: [] }
 
   resultClass(): string {
-    if (this.acknowledgementObject?.rawAck === "") {
+    if (this.acknowledgementObject?.rawResult === "") {
       return "w3-left w3-padding"
     }
     if (this.isError) {

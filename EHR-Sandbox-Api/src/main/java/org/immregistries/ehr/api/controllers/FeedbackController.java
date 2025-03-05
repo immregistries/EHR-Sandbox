@@ -141,7 +141,7 @@ public class FeedbackController {
             @RequestBody String ack) {
         HL7Reader hl7Reader = new HL7Reader(ack);
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
-        acknowledgmentObject.setRawAck(ack);
+        acknowledgmentObject.setRawResult(ack);
         Optional<ImmunizationRegistry> immunizationRegistry = Optional.empty();
         if (registryId.isPresent()) {
             immunizationRegistry = Optional.of(immunizationRegistryService.getImmunizationRegistry(registryId.get()));
@@ -230,12 +230,12 @@ public class FeedbackController {
             int locationsNumbers = hl7Reader.getComponentCount(2);
             for (int i = 0; i < locationsNumbers; i++) {
                 Hl7Location hl7Location = new Hl7Location();
-                hl7Location.setSegmentId(hl7Reader.getValueRepeat(2, 0, i));
-                hl7Location.setSegmentSequence(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 1, i), 0));
-                hl7Location.setFieldPosition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 2, i), 0));
-                hl7Location.setFieldRepetition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 3, i), 0));
-                hl7Location.setComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 4, i), 0));
-                hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
+                hl7Location.setSegmentId(hl7Reader.getValueRepeat(2, 1, i));
+                hl7Location.setSegmentSequence(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 2, i), 0));
+                hl7Location.setFieldPosition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 3, i), 0));
+                hl7Location.setFieldRepetition(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 4, i), 0));
+                hl7Location.setComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
+                hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 6, i), 0));
                 feedback.getHl7Locations().add(hl7Location);
             }
             feedback.setAcknowledgmentObject(acknowledgmentObject);

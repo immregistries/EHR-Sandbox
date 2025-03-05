@@ -112,8 +112,8 @@ export declare interface BulkImportStatus {
 export declare interface AcknowledgementObject<T> {
   id?: number,
   messageId?: string,
-  rawAck?: string,
-  rawVxu?: string,
+  rawResult?: string,
+  rawSource?: string,
   sender?: string,
   destination?: string,
   senderSoftware?: string,

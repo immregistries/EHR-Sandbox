@@ -158,7 +158,7 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
 
     public static AcknowledgmentObject acknowledgmentObject(OperationOutcome operationOutcome, ImmunizationRegistry immunizationRegistry, Facility facility, EhrPatient ehrPatient, VaccinationEvent vaccinationEvent) {
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
-        acknowledgmentObject.setRawAck(operationOutcome.toString()); // TODO parser
+        acknowledgmentObject.setRawResult(operationOutcome.toString()); // TODO parser
         acknowledgmentObject.setMessageId(operationOutcome.getId());
 //        acknowledgmentObject.setSenderSoftware(operationOutcome.get); TODO extract from metadata ?
 //        acknowledgmentObject.setSender(hl7Reader.getValue(4));

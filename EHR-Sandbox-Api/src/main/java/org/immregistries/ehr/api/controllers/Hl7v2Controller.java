@@ -104,7 +104,7 @@ public class Hl7v2Controller {
                     Optional.of(patientId),
                     Optional.empty(),
                     rsp);
-            acknowledgmentObject.setVxu(message);
+            acknowledgmentObject.setRawSource(message);
             acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
@@ -119,6 +119,8 @@ public class Hl7v2Controller {
     }
 
     /**
+     * TODO SUPPORT Err - Vaccination attribution when multiple Vaccinations are sent
+     *
      * @param registryId
      * @param facilityId
      * @param patientId
@@ -157,8 +159,7 @@ public class Hl7v2Controller {
                     Optional.of(patientId),
                     vaccinationId,
                     ack);
-            acknowledgmentObject.setVxu(message);
-            acknowledgmentObject.setRawAck(ack);
+            acknowledgmentObject.setRawSource(message);
             acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());

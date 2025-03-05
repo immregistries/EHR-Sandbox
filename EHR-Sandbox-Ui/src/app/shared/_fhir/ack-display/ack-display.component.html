@@ -16,8 +16,8 @@
       <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
       <!-- <mat-option [value]="'Update'">Update</mat-option> -->
       <textarea [ngClass]="resultClass()" [style]="{ height: '77vh'}" readonly
-                name="answer">{{acknowledgementObject.rawAck}}</textarea>
-      <button mat-stroked-button type="button" [cdkCopyToClipboard]="acknowledgementObject.rawAck ?? ''"
+                name="answer">{{acknowledgementObject.rawResult}}</textarea>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="acknowledgementObject.rawResult ?? ''"
               (click)="snackBarService.successMessage('Copied to clipBoard')">
         <mat-icon>content_copy</mat-icon>
         Copy
@@ -69,6 +69,18 @@
     <app-feedback-table [removeRefColumns]="true"
                         [dataArray]="acknowledgementObject.sortedResult.infos"></app-feedback-table>
   </mat-tab>
-
+  <mat-tab label="Raw Source">
+    <div class="textarea-container">
+      <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+      <!-- <mat-option [value]="'Update'">Update</mat-option> -->
+      <textarea [ngClass]="resultClass()" [style]="{ height: '77vh'}" readonly
+                name="answer">{{acknowledgementObject.rawSource}}</textarea>
+      <button mat-stroked-button type="button" [cdkCopyToClipboard]="acknowledgementObject.rawSource ?? ''"
+              (click)="snackBarService.successMessage('Copied to clipBoard')">
+        <mat-icon>content_copy</mat-icon>
+        Copy
+      </button>
+    </div>
+  </mat-tab>
 
 </mat-tab-group>
