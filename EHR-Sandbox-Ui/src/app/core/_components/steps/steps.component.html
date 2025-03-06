@@ -8,15 +8,23 @@
     </ul>
     <mat-toolbar class="step-toolbar" color="none">
       <span class="matbar-spacer"></span>
-      <button mat-stroked-button color="primary" (click)="end()" type="button">
+      <button mat-stroked-button color="primary" (click)="end()" type="button"
+              matTooltip="Skip configuration and be redirected to main dashboard">
         <mat-icon>skip_next</mat-icon>
         Skip
         configuration
       </button>
       <span class="matbar-spacer"></span>
-      <button mat-raised-button color="primary" (click)="stepper.next()" type="button">
+      <button mat-raised-button color="primary" (click)="stepper.next()" type="button"
+              matTooltip="Optional: Configure Testing environment and commmunication">
         <mat-icon>start</mat-icon>
-        Optional step by step configuration
+        Step by step configuration
+      </button>
+      <span class="matbar-spacer"></span>
+      <button mat-raised-button color="primary" (click)="random()" type="button"
+              matTooltip="Generic configuration with a populated Facility and random names">
+        <mat-icon>casino</mat-icon>
+        Random configuration
       </button>
       <span class="matbar-spacer"></span>
     </mat-toolbar>
