@@ -134,7 +134,8 @@ export interface EhrPatient extends ObjectWithID {
   // nextOfKins?: NextOfKin[];
   nextOfKinRelationships?: NextOfKinRelationship[];
   facility?: Facility | number;
-  feedbacks?: (Feedback)[];
+  // feedbacks?: (Feedback)[];
+  feedbacksCount?: number;
   groupNames?: String[];
   financialStatus?: string;
   generalPractitioner?: Clinician | number;
@@ -161,7 +162,8 @@ export interface VaccinationEvent {
   orderingClinician?: Clinician;
   administeringClinician?: Clinician;
   vaccine: Vaccine;
-  feedbacks?: Feedback[];
+  // feedbacks?: Feedback[];
+  feedbacksCount?: number;
   primarySource?: boolean;
 }
 

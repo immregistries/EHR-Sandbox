@@ -66,7 +66,7 @@ export class Hl7PostComponent {
     this.resultLoading = false
     this.error = false
     this.resultObject = ack
-    this.feedbackService.doRefresh()
+    // this.feedbackService.doRefresh()
   }
 
   private errorProcessing = (err: any) => {
@@ -87,7 +87,7 @@ export class Hl7PostComponent {
   private ackObjectProcessing = (acknowledgementObject: AcknowledgementObject<Feedback>) => {
     acknowledgementObject.rawResult = this.answer
     this.resultObject = acknowledgementObject
-    this.feedbackService.doRefresh()
+    // this.feedbackService.doRefresh()
   }
 
   resultClass(): string {

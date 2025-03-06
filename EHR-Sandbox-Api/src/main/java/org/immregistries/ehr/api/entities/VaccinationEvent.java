@@ -68,12 +68,24 @@ public class VaccinationEvent extends EhrEntity {
 //    @JsonDeserialize(using = CustomFeedbackListDeserializer.class)
     @NotAudited
     @OrderBy("feedback_id")
+    @JsonIgnore
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
+    @Transient
+    public int getFeedbacksCount() {
+        if (feedbacks == null) {
+            return 0;
+        } else {
+            return feedbacks.size();
+        }
+    }
+
+    @JsonIgnore
     public Set<Feedback> getFeedbacks() {
         return feedbacks;
     }
 
+    @JsonIgnore
     public void setFeedbacks(Set<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
     }

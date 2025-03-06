@@ -3,10 +3,16 @@ package org.immregistries.ehr.api.repositories;
 import org.immregistries.ehr.api.entities.Feedback;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
-
 public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
-    Optional<Feedback> findByPatientId(Integer patientId);
+    Iterable<Feedback> findByFacilityId(Integer facilityId);
+
+    Iterable<Feedback> findByFacilityIdAndPatientId(Integer facilityId, Integer patientId);
+
+    Iterable<Feedback> findByPatientId(Integer patientId);
+
+    Iterable<Feedback> findByFacilityIdAndVaccinationEventId(Integer facilityId, Integer vaccinationEventId);
+
+    Iterable<Feedback> findByVaccinationEventId(Integer vaccinationEventId);
 
     void deleteByVaccinationEventIdAndSeverity(Integer vaccinationEventId, String severity);
 

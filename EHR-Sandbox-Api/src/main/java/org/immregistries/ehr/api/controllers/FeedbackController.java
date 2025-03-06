@@ -64,9 +64,19 @@ public class FeedbackController {
     private static final Logger logger = LoggerFactory.getLogger(FeedbackController.class);
 
     @GetMapping(FACILITY_ID_PATH + FEEDBACKS_PATH_HEADER)
-    public Iterable<Feedback> getPatientFeedback(@PathVariable(TENANT_ID) Integer tenantId,
-                                                 @PathVariable(FACILITY_ID) Integer facilityId) {
-        return facilityController.getFacility(tenantId, facilityId).get().getFeedbacks();
+    public Iterable<Feedback> getFacilityFeedback(@PathVariable(FACILITY_ID) Integer facilityId) {
+        return feedbackRepository.findByFacilityId(facilityId);
+    }
+
+    @GetMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
+    public Iterable<Feedback> getPatientFeedback(@PathVariable(PATIENT_ID) Integer patientId) {
+        return feedbackRepository.findByPatientId(patientId);
+    }
+
+    @GetMapping({VACCINATION_ID_PATH + FEEDBACKS_PATH_HEADER,
+            FACILITY_ID_PATH + VACCINATION_PATH_HEADER + VACCINATION_ID_SUFFIX + FEEDBACKS_PATH_HEADER})
+    public Iterable<Feedback> getVaccinationFeedback(@PathVariable(VACCINATION_ID) Integer vaccinationId) {
+        return feedbackRepository.findByVaccinationEventId(vaccinationId);
     }
 
     @GetMapping(FACILITY_ID_PATH + ACKS_PATH_HEADER)
@@ -74,11 +84,23 @@ public class FeedbackController {
         return acknowledgmentObjectRepository.findByFacilityId(facilityId);
     }
 
+    @GetMapping(PATIENT_ID_PATH + ACKS_PATH_HEADER)
+    public List<AcknowledgmentObject> getPatientAcks(@PathVariable(PATIENT_ID) Integer patientId) {
+        return acknowledgmentObjectRepository.findByPatientId(patientId);
+    }
+
+    @GetMapping({VACCINATION_ID_PATH + ACKS_PATH_HEADER,
+            FACILITY_ID_PATH + VACCINATION_PATH_HEADER + VACCINATION_ID_SUFFIX + ACKS_PATH_HEADER})
+    public List<AcknowledgmentObject> getVaccinationAcks(@PathVariable(VACCINATION_ID) Integer vaccinationId) {
+        return acknowledgmentObjectRepository.findByVaccinationId(vaccinationId);
+    }
+
     @PostMapping(FACILITY_ID_PATH + ACKS_PATH_HEADER)
     public AcknowledgmentObject postFacilityAcks(@RequestParam(REGISTRY_ID) Optional<Integer> registryId,
                                                  @PathVariable(FACILITY_ID) Integer facilityId,
                                                  @PathVariable(PATIENT_ID) Optional<Integer> patientId,
-                                                 @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId, @RequestBody AcknowledgmentObject acknowledgmentObject) {
+                                                 @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
+                                                 @RequestBody AcknowledgmentObject acknowledgmentObject) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
 //        ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         acknowledgmentObject.setFacility(facility);
@@ -90,11 +112,6 @@ public class FeedbackController {
         return acknowledgmentObjectRepository.save(acknowledgmentObject);
     }
 
-
-    @GetMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
-    public Optional<Feedback> getPatientFeedback(@PathVariable(PATIENT_ID) Integer patientId) {
-        return feedbackRepository.findByPatientId(patientId);
-    }
 
     @PostMapping(PATIENT_ID_PATH + FEEDBACKS_PATH_HEADER)
     public Feedback postPatientFeedback(@PathVariable(FACILITY_ID) Integer facilityId,

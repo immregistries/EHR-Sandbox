@@ -165,7 +165,7 @@ public class Hl7v2Controller {
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
-            acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
+//            acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
 //            logger.info("CONNECTOR {} {} {}", connector.getAckType(), connector.getType(), connector.getLabelDisplay());
             if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {
 

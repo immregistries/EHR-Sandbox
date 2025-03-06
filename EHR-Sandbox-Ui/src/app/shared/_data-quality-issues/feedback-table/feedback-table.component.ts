@@ -28,8 +28,12 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   public set patient(value: EhrPatient | undefined) {
     this._patient = value;
     this.refreshColumns()
-    if (value) {
-      this.dataSource.data = value.feedbacks ?? []
+    if (value && !this.vaccination) {
+      this._data_set_input = true
+      this.dataSource.data = []
+      this.feedbackService.readPatientFeedback(value.id ?? -1).subscribe((res) => {
+        this.dataSource.data = res ?? []
+      })
     }
   }
   private _vaccination?: VaccinationEvent | undefined;
@@ -41,7 +45,11 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     this._vaccination = value;
     this.refreshColumns()
     if (value) {
-      this.dataSource.data = value.feedbacks ?? []
+      this._data_set_input = true
+      this.dataSource.data = []
+      this.feedbackService.readVaccinationFeedback(value.id ?? -1).subscribe((res) => {
+        this.dataSource.data = res ?? []
+      })
     }
   }
   @Input() title: string = 'Issues'
@@ -62,11 +70,11 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   ) {
     super()
     this.allow_create = false
+    if (data?.vaccination) {
+      this.vaccination = data.vaccination;
+    }
     if (data?.patient) {
       this.patient = data.patient;
-    }
-    if (data.vaccination) {
-      this.vaccination = data.vaccination;
     }
   }
 

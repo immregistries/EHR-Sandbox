@@ -101,9 +101,13 @@ public class EhrPatient extends EhrEntity {
     private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
 //    private List<NextOfKinRelationship> nextOfKinRelationships = new ArrayList<>();
 
+    /**
+     * Not Serialized for optimisation
+     */
     @OneToMany(mappedBy = "patient")
     @NotAudited
     @OrderBy("feedback_id")
+    @JsonIgnore
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -138,10 +142,21 @@ public class EhrPatient extends EhrEntity {
         this.ehrGroups = ehrGroups;
     }
 
+    @Transient
+    public int getFeedbacksCount() {
+        if (feedbacks == null) {
+            return 0;
+        } else {
+            return feedbacks.size();
+        }
+    }
+
+    @JsonIgnore
     public Set<Feedback> getFeedbacks() {
         return feedbacks;
     }
 
+    @JsonIgnore
     public void setFeedbacks(Set<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
     }

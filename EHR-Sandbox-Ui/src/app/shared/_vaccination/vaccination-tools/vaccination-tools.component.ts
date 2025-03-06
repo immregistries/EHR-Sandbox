@@ -7,6 +7,7 @@ import { Hl7MessagingComponent } from 'src/app/shared/_fhir/hl7-messaging/hl7-me
 import { LocalCopyDialogComponent } from 'src/app/shared/_components/local-copy-dialog/local-copy-dialog.component';
 import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.component';
 import { VaccinationEvent } from 'src/app/core/_model/rest';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
 @Component({
   selector: 'app-vaccination-tools',
@@ -20,6 +21,7 @@ export class VaccinationToolsComponent implements OnInit {
   constructor(private dialog: MatDialog,
     private patientService: PatientService,
     private vaccinationService: VaccinationService,
+    private feedbackService: FeedbackService,
   ) { }
 
   ngOnInit(): void {
@@ -53,6 +55,7 @@ export class VaccinationToolsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
+      this.feedbackService.doRefresh()
     });
   }
 

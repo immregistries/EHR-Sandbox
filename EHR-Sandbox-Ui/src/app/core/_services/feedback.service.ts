@@ -30,33 +30,55 @@ export class FeedbackService extends RefreshService {
     super(snackBarService)
   }
 
-  postPatientFeedback(patientId: number, feedback: Feedback): Observable<Feedback> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
+  // postPatientFeedback(patientId: number, feedback: Feedback): Observable<Feedback> {
+  //   const tenantId: number = this.tenantService.getCurrentId()
+  //   const facilityId: number = this.facilityService.getCurrentId()
 
-    return this.http.post<Feedback>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/feedbacks`,
-      feedback,
-      httpOptions);
-  }
+  //   return this.http.post<Feedback>(
+  //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/feedbacks`,
+  //     feedback,
+  //     httpOptions);
+  // }
 
-  postVaccinationFeedback(patientId: number, vaccinationId: number, feedback: Feedback): Observable<Feedback> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
+  // postVaccinationFeedback(patientId: number, vaccinationId: number, feedback: Feedback): Observable<Feedback> {
+  //   const tenantId: number = this.tenantService.getCurrentId()
+  //   const facilityId: number = this.facilityService.getCurrentId()
 
-    return this.http.post<Feedback>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/feedbacks`,
-      feedback,
-      httpOptions);
-  }
+  //   return this.http.post<Feedback>(
+  //     `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/feedbacks`,
+  //     feedback,
+  //     httpOptions);
+  // }
 
   readFacilityFeedback(facilityId: number): Observable<Feedback[]> {
     const tenantId: number = this.tenantService.getCurrentId()
-    if (facilityId < 0) {
+    if (facilityId < 0 || tenantId < 0) {
       return of()
     }
     return this.http.get<Feedback[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/feedbacks`,
+      httpOptions).pipe(share());
+  }
+
+  readPatientFeedback(patientId: number): Observable<Feedback[]> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (facilityId < 0 || tenantId < 0 || patientId < 0) {
+      return of()
+    }
+    return this.http.get<Feedback[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/feedbacks`,
+      httpOptions).pipe(share());
+  }
+
+  readVaccinationFeedback(vaccinationId: number): Observable<Feedback[]> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (facilityId < 0 || tenantId < 0 || vaccinationId < 0) {
+      return of()
+    }
+    return this.http.get<Feedback[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations/${vaccinationId}/feedbacks`,
       httpOptions).pipe(share());
   }
 

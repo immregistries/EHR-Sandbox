@@ -9,6 +9,7 @@ import { FetchAndLoadComponent } from '../../_vaccination/fetch-and-load/fetch-a
 import { MatDialog } from '@angular/material/dialog';
 import { FhirResource } from 'fhir/r5';
 import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
 @Component({
   selector: 'app-patient-tools',
@@ -20,7 +21,9 @@ export class PatientToolsComponent implements OnInit {
 
   constructor(private dialog: MatDialog,
     public patientService: PatientService,
-    public fhirResourceService: FhirResourceService) { }
+    public fhirResourceService: FhirResourceService,
+    private feedbackService: FeedbackService,
+  ) { }
 
   ngOnInit(): void {
   }
@@ -103,6 +106,7 @@ export class PatientToolsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.patientService.doRefresh()
+      this.feedbackService.doRefresh()
     });
   }
 

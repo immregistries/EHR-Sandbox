@@ -1,7 +1,7 @@
-<button mat-icon-button *ngIf="element.feedbacks && element.feedbacks.length > 0" style="color: red;"
-        matTooltip="Errors documented: {{element.feedbacks.length}}" matTooltipClass="example-tooltip-red"
+<button mat-icon-button *ngIf="element.feedbacksCount && element.feedbacksCount > 0" style="color: red;"
+        matTooltip="Errors documented: {{element.feedbacksCount}}" matTooltipClass="example-tooltip-red"
         (click)="openFeedback(element); $event.stopPropagation();">
-  <mat-icon [matBadge]="element.feedbacks.length" [matBadgeSize]="element.feedbacks.length < 100? 'small' : 'medium'"
+  <mat-icon [matBadge]="element.feedbacksCount" [matBadgeSize]="element.feedbacksCount < 100? 'small' : 'medium'"
             matBadgeOverlap="true" matBadgePosition="below">
     warning
   </mat-icon>
