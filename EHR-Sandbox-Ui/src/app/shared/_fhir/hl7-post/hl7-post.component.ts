@@ -16,6 +16,7 @@ import { Feedback } from 'src/app/core/_model/rest';
   styleUrls: ['./hl7-post.component.css']
 })
 export class Hl7PostComponent {
+  @Input() isForcingVXU: boolean = false;
   @Input() vaccinationId: number = -1;
   @Input() patientId: number = -1;
   @Input() loading: boolean = false
@@ -42,7 +43,7 @@ export class Hl7PostComponent {
 
   send() {
     this.resultLoading = true
-    if (this.vaccinationId > 0) {
+    if (this.vaccinationId > 0 || this.isForcingVXU === true) {
       this.hl7Service.quickPostVXU(this.patientId, this.vaccinationId, this.hl7Message).subscribe({
         next: this.successProcessing,
         error: this.errorProcessing

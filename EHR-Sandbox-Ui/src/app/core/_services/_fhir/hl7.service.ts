@@ -74,12 +74,16 @@ export class Hl7Service {
    * @param vxu
    * @returns IIS answer
    */
-  quickPostVXU(patientId: number, vaccinationId: number, vxu: string): Observable<AcknowledgementObject<Feedback>> {
+  quickPostVXU(patientId: number, vaccinationId: number | undefined, vxu: string): Observable<AcknowledgementObject<Feedback>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId = this.registryService.getCurrentId()
+    let baseUri = `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}`;
+    if (vaccinationId && vaccinationId > -1) {
+      baseUri += `/vaccinations/${vaccinationId}`
+    }
     return this.http.post<AcknowledgementObject<Feedback>>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations/${vaccinationId}/vxu`,
+      `${baseUri}/vxu`,
       vxu,
       {
         ...httpOptions,

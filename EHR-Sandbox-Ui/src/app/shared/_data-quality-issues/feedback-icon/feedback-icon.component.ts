@@ -14,6 +14,22 @@ export class FeedbackIconComponent implements OnInit {
 
   @Input()
   element!: EhrPatient | VaccinationEvent
+  private _vaccination?: VaccinationEvent | undefined;
+  public set vaccination(value: VaccinationEvent | undefined) {
+    this._vaccination = value;
+    if (value) {
+      this.element = value
+    }
+
+  }
+  private _patient?: EhrPatient | undefined;
+  @Input()
+  public set patient(value: EhrPatient | undefined) {
+    this._patient = value;
+    if (value && !this.vaccination) {
+      this.element = value
+    }
+  }
 
   constructor(private dialog: MatDialog) { }
 
@@ -21,13 +37,14 @@ export class FeedbackIconComponent implements OnInit {
   }
 
   openFeedback(element: EhrPatient | VaccinationEvent) {
+    let data = {}
     const dialogRef = this.dialog.open(FeedbackTableComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: { patient: element },
+      data: { patient: this._patient, vaccination: this._vaccination },
     });
   }
 

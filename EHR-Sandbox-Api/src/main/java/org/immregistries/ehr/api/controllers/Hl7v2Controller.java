@@ -13,6 +13,8 @@ import org.immregistries.smm.tester.connectors.Connector;
 import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.immregistries.smm.tester.manager.query.QueryConverter;
 import org.immregistries.smm.tester.manager.query.QueryType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,8 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 @RestController
 @RequestMapping()
 public class Hl7v2Controller {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private HL7printer hl7printer;
 
@@ -152,13 +156,27 @@ public class Hl7v2Controller {
 //                connector.setKeyStore(new KeyStore());
 //            }
 
+
             String ack = connector.submitMessage(message, false);
-            AcknowledgmentObject acknowledgmentObject = feedbackController.extractAckInfo(
-                    Optional.of(registryId),
-                    Optional.of(facilityId),
-                    Optional.of(patientId),
-                    vaccinationId,
-                    ack);
+            AcknowledgmentObject acknowledgmentObject;
+            logger.info("SIIIIZE {}", vaccinationEventRepository.findByPatientId(patientId).size());
+
+            if (vaccinationId.isPresent()) {
+                acknowledgmentObject = feedbackController.extractAckInfo(
+                        Optional.of(registryId),
+                        Optional.of(facilityId),
+                        Optional.of(patientId),
+                        vaccinationId,
+                        ack);
+            } else {
+                logger.info("SIIIIZE {}", vaccinationEventRepository.findByPatientId(patientId).size());
+                acknowledgmentObject = feedbackController.extractAckInfo(
+                        Optional.of(registryId),
+                        Optional.of(facilityId),
+                        Optional.of(patientId),
+                        vaccinationEventRepository.findByPatientId(patientId),
+                        ack);
+            }
             acknowledgmentObject.setRawSource(message);
             acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
             feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());

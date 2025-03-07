@@ -156,6 +156,20 @@ public class FeedbackController {
             @PathVariable(PATIENT_ID) Optional<Integer> patientId,
             @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
             @RequestBody String ack) {
+        List<VaccinationEvent> vaccinationEvents = List.of();
+        if (vaccinationId.isPresent()) {
+            vaccinationEvents = vaccinationEventRepository.findById(vaccinationId.get()).stream().toList();
+        }
+        return extractAckInfo(registryId, facilityId, patientId, vaccinationEvents, ack);
+    }
+
+    public AcknowledgmentObject extractAckInfo(
+            Optional<Integer> registryId,
+            Optional<Integer> facilityId,
+            Optional<Integer> patientId,
+            List<VaccinationEvent> vaccinationEventList,
+            String ack) {
+        int vaccinationEventListSize = vaccinationEventList.size();
         HL7Reader hl7Reader = new HL7Reader(ack);
         AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
         acknowledgmentObject.setRawResult(ack);
@@ -172,19 +186,19 @@ public class FeedbackController {
         if (patientId.isPresent()) {
             patient = ehrPatientRepository.findById(patientId.get());
         }
-        Optional<VaccinationEvent> vaccinationEvent = Optional.empty();
-        if (vaccinationId.isPresent()) {
-            vaccinationEvent = vaccinationEventRepository.findById(vaccinationId.get());
+
+        facility.ifPresent(acknowledgmentObject::setFacility);
+        patient.ifPresent(acknowledgmentObject::setPatient);
+        if (vaccinationEventListSize == 1) {
+            acknowledgmentObject.setVaccination(vaccinationEventList.get(0));
         }
+
         if (hl7Reader.advanceToSegment("MSH")) {
             acknowledgmentObject.setMessageId(hl7Reader.getValue(9));
             acknowledgmentObject.setSenderSoftware(hl7Reader.getValue(3));
             acknowledgmentObject.setSender(hl7Reader.getValue(4));
             acknowledgmentObject.setDestinationSoftware(hl7Reader.getValue(5));
             acknowledgmentObject.setDestination(hl7Reader.getValue(6));
-            facility.ifPresent(acknowledgmentObject::setFacility);
-            patient.ifPresent(acknowledgmentObject::setPatient);
-            vaccinationEvent.ifPresent(acknowledgmentObject::setVaccination);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddhhmmssZ");
             String timestamp = hl7Reader.getValue(7);
             try {
@@ -205,9 +219,6 @@ public class FeedbackController {
             feedback.setRaw(hl7Reader.getOriginalSegment());
             feedback.setSeverity(severity);
             immunizationRegistry.ifPresent(obj -> feedback.setIis(String.valueOf(obj.getId())));
-            facility.ifPresent(feedback::setFacility);
-            patient.ifPresent(feedback::setPatient);
-            vaccinationEvent.ifPresent(feedback::setVaccinationEvent);
 
             /*
              * For serialization in case of not saving right away
@@ -254,7 +265,24 @@ public class FeedbackController {
                 hl7Location.setComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 5, i), 0));
                 hl7Location.setSubComponentNumber(NumberUtils.toInt(hl7Reader.getValueRepeat(2, 6, i), 0));
                 feedback.getHl7Locations().add(hl7Location);
+                if (vaccinationEventListSize == 1) {
+                    feedback.setVaccinationEvent(vaccinationEventList.get(0));
+                } else if (vaccinationEventListSize > 1) {
+                    switch (hl7Location.getSegmentId()) {
+//                        TODO OBX Map conveyed through ???
+                        case "ORC":
+                        case "RXA":
+                        case "RXR": {
+                            if (0 < hl7Location.getSegmentSequence() && hl7Location.getSegmentSequence() <= vaccinationEventListSize) {
+                                feedback.setVaccinationEvent(vaccinationEventList.get(hl7Location.getSegmentSequence() - 1));
+                            }
+                        }
+                    }
+                }
+
             }
+            facility.ifPresent(feedback::setFacility);
+            patient.ifPresent(feedback::setPatient);
             feedback.setAcknowledgmentObject(acknowledgmentObject);
         }
         return acknowledgmentObject;
