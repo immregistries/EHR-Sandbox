@@ -12,12 +12,17 @@ export class VaccinationResumePipe implements PipeTransform {
   constructor(private datePipe: DatePipe, private vaccinationCachePipe: VaccinationCachePipe, private codeMapsPipe: CodeMapsPipe) {
   }
 
-  transform(vaccination: (number | VaccinationEvent) | undefined, mode: ('lotNumber' | 'administeredDate' | 'createdDate' | 'updatedDate' | 'cvx')[], list?: VaccinationEvent[]): string | undefined {
+  transform(vaccination: (number | VaccinationEvent) | undefined | (number | VaccinationEvent)[], mode: ('lotNumber' | 'administeredDate' | 'createdDate' | 'updatedDate' | 'cvx')[], list?: VaccinationEvent[]): string | undefined {
     // if (this.facilityService.getCurrentId() > -1 && !this.vaccinationService.vaccinationsCached) {
     //   this.vaccinationService.quickReadPatients().subscribe()
     // }
     if (!vaccination) {
       return ''
+    }
+    if (Array.isArray(vaccination)) {
+      return vaccination.map((element) =>
+        this.transform(element, mode, list)
+      ).join(",")
     }
     let obj: VaccinationEvent | undefined = (this.vaccinationCachePipe.transform([vaccination], list) ?? [undefined])[0]
     if (!obj) {

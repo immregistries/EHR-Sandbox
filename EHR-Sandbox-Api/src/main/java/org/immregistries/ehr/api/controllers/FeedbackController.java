@@ -92,7 +92,7 @@ public class FeedbackController {
     @GetMapping({VACCINATION_ID_PATH + ACKS_PATH_HEADER,
             FACILITY_ID_PATH + VACCINATION_PATH_HEADER + VACCINATION_ID_SUFFIX + ACKS_PATH_HEADER})
     public List<AcknowledgmentObject> getVaccinationAcks(@PathVariable(VACCINATION_ID) Integer vaccinationId) {
-        return acknowledgmentObjectRepository.findByVaccinationId(vaccinationId);
+        return acknowledgmentObjectRepository.findAllByVaccinationsId(vaccinationId);
     }
 
     @PostMapping(FACILITY_ID_PATH + ACKS_PATH_HEADER)
@@ -189,9 +189,12 @@ public class FeedbackController {
 
         facility.ifPresent(acknowledgmentObject::setFacility);
         patient.ifPresent(acknowledgmentObject::setPatient);
-        if (vaccinationEventListSize == 1) {
-            acknowledgmentObject.setVaccination(vaccinationEventList.get(0));
+        for (VaccinationEvent vaccinationEvent : vaccinationEventList) {
+            acknowledgmentObject.addVaccination(vaccinationEvent);
         }
+//        if (vaccinationEventListSize == 1) {
+//            acknowledgmentObject.setVaccination(vaccinationEventList.get(0));
+//        }
 
         if (hl7Reader.advanceToSegment("MSH")) {
             acknowledgmentObject.setMessageId(hl7Reader.getValue(9));

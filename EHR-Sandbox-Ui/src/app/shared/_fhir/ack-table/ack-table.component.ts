@@ -71,7 +71,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
         return this.registryNamePipe.transform(data.iis)
       }
       if (sortHeaderId === "vaccination") {
-        return this.vaccinationResumePipe.transform(data.vaccination, ['cvx', 'administeredDate'])
+        return this.vaccinationResumePipe.transform(data.vaccinations, ['cvx', 'administeredDate'])
       }
       //@ts-ignore
       return data[sortHeaderId]
@@ -85,7 +85,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
     if (JSON.stringify([
       this.patientResumePipe.transform(data.patient, ["mrn"]),
       this.registryNamePipe.transform(data.iis),
-      this.vaccinationResumePipe.transform(data.vaccination, ['cvx', 'administeredDate'])
+      this.vaccinationResumePipe.transform(data.vaccinations, ['cvx', 'administeredDate'])
     ]).toLowerCase().indexOf(filter) !== -1) {
       return true
     }

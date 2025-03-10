@@ -19,7 +19,7 @@ public interface AcknowledgmentObjectRepository extends JpaRepository<Acknowledg
 
     List<AcknowledgmentObject> findByPatientId(Integer patientId);
 
-    List<AcknowledgmentObject> findByVaccinationId(Integer vaccinationId);
+    List<AcknowledgmentObject> findAllByVaccinationsId(Integer vaccinationId);
 
     //If you need to find by facility object instead of ID
     List<AcknowledgmentObject> findByFacility(Facility facility);
@@ -28,6 +28,6 @@ public interface AcknowledgmentObjectRepository extends JpaRepository<Acknowledg
     List<AcknowledgmentObject> findByPatient(EhrPatient patient);
 
     //If you need to find by vaccination object instead of ID
-    List<AcknowledgmentObject> findByVaccination(VaccinationEvent vaccination);
+    List<AcknowledgmentObject> findAllByVaccinations(VaccinationEvent vaccination);
 
 }

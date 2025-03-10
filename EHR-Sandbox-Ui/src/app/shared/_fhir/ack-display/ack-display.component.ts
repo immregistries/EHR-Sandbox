@@ -98,8 +98,8 @@ Name:\t${ehrPatient?.names[0].nameLast}, ${ehrPatient?.names[0].nameFirst ?? ""}
 DOB:\t${this.patientResumePipe.transform(ehrPatient, ["birthDate"])}
 MRN:\t${this.patientResumePipe.extractMrn(ehrPatient)}
 `
-      if (ack.vaccination) {
-        vaccinationEvent = (this.vaccinationCachePipe.transform([ack.vaccination]) ?? [undefined])[0]
+      if (ack.vaccinations) {
+        vaccinationEvent = (this.vaccinationCachePipe.transform(ack.vaccinations) ?? [undefined])[0]
       }
       if (vaccinationEvent && vaccinationEvent.vaccine) {
         txt += `Imms:

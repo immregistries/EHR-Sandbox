@@ -59,10 +59,14 @@ public class AcknowledgmentObject extends EhrEntity {
     @JsonIdentityReference(alwaysAsId = true)
     private EhrPatient patient;
 
-    @ManyToOne
-    @JoinColumn(name = "vaccination_id")
+    @ManyToMany
+    @JoinTable(
+            name = "acknowledgment_vaccination",
+            joinColumns = @JoinColumn(name = "acknowledgment_id"),
+            inverseJoinColumns = @JoinColumn(name = "vaccination_id")
+    )
     @JsonIdentityReference(alwaysAsId = true)
-    private VaccinationEvent vaccination;
+    private Set<VaccinationEvent> vaccinations = new HashSet<>();
 
     @Embedded
     private SortedResult sortedResult = new SortedResult();
@@ -139,13 +143,6 @@ public class AcknowledgmentObject extends EhrEntity {
         this.rawResult = rawResult;
     }
 
-    public VaccinationEvent getVaccination() {
-        return vaccination;
-    }
-
-    public void setVaccination(VaccinationEvent vaccinationEvent) {
-        this.vaccination = vaccinationEvent;
-    }
 
     public Integer getId() {
         return id;
@@ -209,6 +206,21 @@ public class AcknowledgmentObject extends EhrEntity {
 
     public void setPatient(EhrPatient patient) {
         this.patient = patient;
+    }
+
+    public Set<VaccinationEvent> getVaccinations() {
+        return vaccinations;
+    }
+
+    public void setVaccinations(Set<VaccinationEvent> vaccinations) {
+        this.vaccinations = vaccinations;
+    }
+
+    public void addVaccination(VaccinationEvent vaccination) {
+        if (this.vaccinations == null) {
+            this.vaccinations = new HashSet<>(3);
+        }
+        this.vaccinations.add(vaccination);
     }
 
     @Embeddable

@@ -47,6 +47,7 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     if (value) {
       this._data_set_input = true
       this.dataSource.data = []
+      console.log("ALLOOOOO")
       this.feedbackService.readVaccinationFeedback(value.id ?? -1).subscribe((res) => {
         this.dataSource.data = res ?? []
       })
@@ -69,21 +70,25 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent }
   ) {
     super()
+    console.log(data)
+
     this.allow_create = false
     if (data?.vaccination) {
+      this._data_set_input = true
       this.vaccination = data.vaccination;
     }
     if (data?.patient) {
+      this._data_set_input = true
       this.patient = data.patient;
     }
   }
 
   ngOnInit(): void {
     this.refreshColumns()
-    if (!this._data_set_input && !this.observableSource) {
-      this.observableRefresh = this.facilityService.getRefresh();
-      this.observableSource = this.feedbackService.readCurrentFacilityFeedback()
-    }
+    // if (!this._data_set_input && !this.observableSource) {
+    //   this.observableRefresh = this.facilityService.getRefresh();
+    //   this.observableSource = this.feedbackService.readCurrentFacilityFeedback()
+    // }
   }
 
   refreshColumns(): void {

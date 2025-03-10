@@ -10,15 +10,15 @@ import { FeedbackTableComponent } from '../feedback-table/feedback-table.compone
 })
 export class FeedbackIconComponent implements OnInit {
 
-  feedback!: Feedback[]
-
-  @Input()
-  element!: EhrPatient | VaccinationEvent
+  public feedbacksCount: number | undefined
   private _vaccination?: VaccinationEvent | undefined;
+  @Input()
   public set vaccination(value: VaccinationEvent | undefined) {
     this._vaccination = value;
     if (value) {
-      this.element = value
+      this.feedbacksCount = value.feedbacksCount
+    } else {
+      this.feedbacksCount = undefined
     }
 
   }
@@ -27,7 +27,9 @@ export class FeedbackIconComponent implements OnInit {
   public set patient(value: EhrPatient | undefined) {
     this._patient = value;
     if (value && !this.vaccination) {
-      this.element = value
+      this.feedbacksCount = value.feedbacksCount
+    } else if (!value) {
+      this.feedbacksCount = undefined
     }
   }
 
@@ -36,8 +38,7 @@ export class FeedbackIconComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openFeedback(element: EhrPatient | VaccinationEvent) {
-    let data = {}
+  openFeedback() {
     const dialogRef = this.dialog.open(FeedbackTableComponent, {
       maxWidth: '95vw',
       maxHeight: '95vh',

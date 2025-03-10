@@ -166,7 +166,7 @@ public class OperationOutcomeProviderR4 implements IResourceProvider, EhrFhirPro
 //        acknowledgmentObject.setDestination(hl7Reader.getValue(6));
         acknowledgmentObject.setFacility(facility);
         acknowledgmentObject.setPatient(ehrPatient);
-        acknowledgmentObject.setVaccination(vaccinationEvent);
+        acknowledgmentObject.addVaccination(vaccinationEvent);
         Timestamp timestamp = null;
         if (operationOutcome.getMeta().getLastUpdated() != null) {
             timestamp = new Timestamp(operationOutcome.getMeta().getLastUpdated().getTime());

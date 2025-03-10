@@ -123,7 +123,7 @@ export declare interface AcknowledgementObject<T> {
   iis?: number | string,
   sortedResult: SortedResult<T>,
   patient?: EhrPatient | number
-  vaccination?: VaccinationEvent | number
+  vaccinations?: (VaccinationEvent | number)[]
 }
 
 export declare interface SortedResult<T> {
