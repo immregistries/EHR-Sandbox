@@ -96,8 +96,6 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
   public errChart: any;
 
   updateChart(values?: AcknowledgementObject<Feedback>[]) {
-    // this.messagesChart?.destroy()
-    // this.errChart?.destroy()
     if (this.charts) {
       let messageData = [0, 0, 0, 0]
       let errData = [0, 0, 0, 0];
@@ -117,12 +115,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
         errData[3] += element.sortedResult.infos.length
       });
 
-      {
-        let chartStatus = Chart.getChart("MessagesStatusChart"); // <canvas> id
-        if (chartStatus != undefined) {
-          chartStatus.destroy();
-        }
-      }
+      Chart.getChart("MessagesStatusChart")?.destroy(); // <canvas> id
       this.messagesChart = new Chart("MessagesStatusChart", {
         type: 'pie', //this denotes tha type of chart
         data: {// values on X-Axis
@@ -151,12 +144,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
       });
 
-      {
-        let chartStatus = Chart.getChart("ErrChart"); // <canvas> id
-        if (chartStatus != undefined) {
-          chartStatus.destroy();
-        }
-      }
+      Chart.getChart("ErrChart")?.destroy(); // <canvas> id
       this.errChart = new Chart("ErrChart", {
         type: 'pie', //this denotes tha type of chart
 
