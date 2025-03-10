@@ -45,7 +45,6 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
     if (!this.observableRefresh) {
       this.observableRefresh = merge(this.facilityService.getCurrentObservable(), this.feedbackService.getRefresh())
       // this.observableRefresh?.subscribe(() => this.updateChart())
-
     }
     if (!this.observableSource) {
       this.observableSource = this.feedbackService.readAcks()
@@ -56,35 +55,6 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
   @Input()
   charts: boolean = false
-
-  // @Input()
-  // patientId?: number
-  // @Input()
-  // vaccinationId?: number;
-  // @Input()
-  // registryId?: number
-
-  // @Input()
-  // public set singleAck(value: string) {
-  // if (this.dataSource.data.length < 1) {
-  //   this.dataArray = []
-  // }
-  // console.log(this.dataSource.data)
-  // if (value && value.length > 1) {
-  // this.feedbackService.convertAck(value, this.registryId, this.patientId, this.vaccinationId).subscribe(result => {
-  // let array = JSON.parse(JSON.stringify(this.dataSource.data))
-  // result.id = array.push(result)
-  // // console.log(this.dataSource.data)
-  // this.dataArray = array
-  // // this.dataArray = [result]
-  // // console.log(this.dataSource.data)
-  // // this.dataArray = []
-  // this.facilityService.doRefresh()
-  // })
-  // }
-  // }
-
-
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
@@ -126,12 +96,12 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
   public errChart: any;
 
   updateChart(values?: AcknowledgementObject<Feedback>[]) {
-    this.messagesChart?.destroy()
-    this.errChart?.destroy()
+    // this.messagesChart?.destroy()
+    // this.errChart?.destroy()
     if (this.charts) {
       let messageData = [0, 0, 0, 0]
       let errData = [0, 0, 0, 0];
-      (values ? values : this.dataSource.data).forEach(element => {
+      (values ?? this.dataSource.data ?? []).forEach(element => {
         if (element.msa_2 === "AE") {
           messageData[0]++
         } else if (element.msa_2 === "AW") {
@@ -147,6 +117,12 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
         errData[3] += element.sortedResult.infos.length
       });
 
+      {
+        let chartStatus = Chart.getChart("MessagesStatusChart"); // <canvas> id
+        if (chartStatus != undefined) {
+          chartStatus.destroy();
+        }
+      }
       this.messagesChart = new Chart("MessagesStatusChart", {
         type: 'pie', //this denotes tha type of chart
         data: {// values on X-Axis
@@ -175,6 +151,12 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
 
       });
 
+      {
+        let chartStatus = Chart.getChart("ErrChart"); // <canvas> id
+        if (chartStatus != undefined) {
+          chartStatus.destroy();
+        }
+      }
       this.errChart = new Chart("ErrChart", {
         type: 'pie', //this denotes tha type of chart
 
