@@ -25,6 +25,7 @@
   <ng-container matColumnDef="dateCriterion">
     <th mat-header-cell *matHeaderCellDef>Dates</th>
     <td mat-cell *matCellDef="let element">
+      <!-- {{printDates(element)}} -->
       <div *ngFor="let dateCriterion of element.dateCriterion">
         {{dateCriterion.code.coding[0].display
         + " "

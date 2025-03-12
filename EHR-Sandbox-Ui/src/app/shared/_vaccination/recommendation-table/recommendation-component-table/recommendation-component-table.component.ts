@@ -1,4 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ImmunizationRecommendationRecommendation } from 'fhir/r5';
@@ -22,7 +23,7 @@ export class RecommendationComponentTableComponent extends AbstractDataTableComp
     "forecastStatus",
     "dateCriterion",
   ]
-  constructor() { super() }
+  constructor(private datePipe: DatePipe) { super() }
 
   ngOnInit(): void {
     this.dataSource.filterPredicate = (data, filter) => {
@@ -55,5 +56,31 @@ export class RecommendationComponentTableComponent extends AbstractDataTableComp
   printForecastStatus(element: ImmunizationRecommendationRecommendation): string {
     return element?.forecastStatus?.coding ? element.forecastStatus.coding[0].display
       + ' (' + (element.forecastStatus.coding[0].code ?? "-None-") + ')' : "N/A"
+  }
+
+  /**
+   *
+   * @param element Currently not used
+   * @returns
+   */
+  printDates(element: ImmunizationRecommendationRecommendation): string {
+    let disp = "";
+    let prevDate: string | null = null;
+    if (element.dateCriterion) {
+      for (const dateC of element.dateCriterion) {
+        let currentDate = this.datePipe.transform(dateC.value, 'shortDate')
+        if (dateC.code.coding) {
+          if (currentDate != prevDate) {
+            disp += "\n" + currentDate + ": "
+          } else {
+            disp += ", "
+          }
+          disp += dateC.code?.coding[0].display
+
+        }
+        prevDate = currentDate
+      }
+    }
+    return disp;
   }
 }
