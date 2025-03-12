@@ -9,14 +9,21 @@
   <ng-container matColumnDef="vaccineCode">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Vaccine Code</th>
     <td mat-cell *matCellDef="let element">
-      {{
+      {{ element.vaccineCode ?
       element.vaccineCode[0].coding[0].display
-      + ' (' + (element.vaccineCode[0].coding[0].code ?? "-None-") + ')'
+      + ' (' + (element.vaccineCode[0].coding[0].code ?? "-None-") + ')' : "N/A"
       }}
     </td>
   </ng-container>
+  <ng-container matColumnDef="forecastStatus">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Forecast Status</th>
+    <td mat-cell *matCellDef="let element">
+      {{printForecastStatus(element)}}
+
+    </td>
+  </ng-container>
   <ng-container matColumnDef="dateCriterion">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Dates</th>
+    <th mat-header-cell *matHeaderCellDef>Dates</th>
     <td mat-cell *matCellDef="let element">
       <div *ngFor="let dateCriterion of element.dateCriterion">
         {{dateCriterion.code.coding[0].display

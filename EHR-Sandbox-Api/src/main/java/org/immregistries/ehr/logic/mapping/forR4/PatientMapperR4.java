@@ -321,7 +321,9 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         contactName.addGivenElement().setValue(nextOfKin.getNameFirst());
         contactName.addGivenElement().setValue(nextOfKin.getNameMiddle());
         contactName.addSuffix(nextOfKin.getNameSuffix());
-        contact.setGender(MappingHelperR4.toFhirGender(nextOfKin.getSex()));
+        if (StringUtils.isNotBlank(nextOfKin.getSex())) {
+            contact.setGender(MappingHelperR4.toFhirGender(nextOfKin.getSex()));
+        }
         for (EhrAddress ehrAddress : nextOfKin.getAddresses()) {
             contact.setAddress(MappingHelperR4.toFhirAddress(ehrAddress)); //TODO extension for multiple NK1 addresses
         }

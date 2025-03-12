@@ -1,12 +1,10 @@
-import { AfterViewInit, Component, Inject, Input, OnChanges, OnInit, Optional, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Facility, Feedback, EhrPatient, VaccinationEvent, ImmunizationRegistry } from 'src/app/core/_model/rest';
-import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
+import { Facility, Feedback, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
 import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vaccination-dashboard/vaccination-dashboard.component';
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { Hl7Location } from 'src/app/core/_model/form-structure';
-import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
 @Component({
@@ -16,10 +14,13 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
 })
 export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback> implements OnInit, AfterViewInit {
-  // dataSource = new MatTableDataSource<Feedback>([]);
-  @Input() removeRefColumns: boolean = false;
 
-  @Input() facility: Facility | null = null;
+  @Input()
+  removeRefColumns: boolean = false;
+
+  @Input()
+  facility: Facility | null = null;
+
   private _patient?: EhrPatient | undefined;
   public get patient(): EhrPatient | undefined {
     return this._patient;
@@ -36,6 +37,7 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
       })
     }
   }
+
   private _vaccination?: VaccinationEvent | undefined;
   public get vaccination(): VaccinationEvent | undefined {
     return this._vaccination;
@@ -47,31 +49,24 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     if (value) {
       this._data_set_input = true
       this.dataSource.data = []
-      console.log("ALLOOOOO")
       this.feedbackService.readVaccinationFeedback(value.id ?? -1).subscribe((res) => {
         this.dataSource.data = res ?? []
       })
     }
   }
-  @Input() title: string = 'Issues'
-  // loading: boolean = false
+
+  @Input()
+  title: string = 'Issues'
 
   columns!: (keyof Feedback | 'remove')[]
 
   constructor(
     private dialog: MatDialog,
-    // private tenantService: TenantService,
-    private facilityService: FacilityService,
     private feedbackService: FeedbackService,
-    // private patientService: PatientService,
-    // private snackBarService: SnackBarService,
-    private immunizationRegistryService: ImmunizationRegistryService,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent }
   ) {
     super()
-    console.log(data)
-
     this.allow_create = false
     if (data?.vaccination) {
       this._data_set_input = true
@@ -85,12 +80,12 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
 
   ngOnInit(): void {
     this.refreshColumns()
-    // if (!this._data_set_input && !this.observableSource) {
-    //   this.observableRefresh = this.facilityService.getRefresh();
-    //   this.observableSource = this.feedbackService.readCurrentFacilityFeedback()
-    // }
   }
 
+  /**
+   * Refresh table's column depending on other settings,
+   * removes patient or vaccination columns if they're constant across the dataset
+   */
   refreshColumns(): void {
     this.columns = [
       "severity",
@@ -133,6 +128,11 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     });
   }
 
+  /**
+   *
+   * @param hl7Locations
+   * @returns Readable hl7Location for display
+   */
   locationDisplay(hl7Locations: Hl7Location[]): string {
     let disp = ""
     hl7Locations?.forEach(element => {

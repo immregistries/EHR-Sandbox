@@ -5,6 +5,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 
+/**
+ * Abstract component to harmonize basic table functionalities across the UI
+ */
 @Component({
   template: '',
   animations: [
@@ -17,7 +20,6 @@ import { Observable } from 'rxjs';
 
 })
 export class AbstractDataTableComponent<T> implements AfterViewInit {
-
   constructor() { }
 
   public dataSource = new MatTableDataSource<T>();
@@ -26,24 +28,44 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   @ViewChild(MatSort) sort?: MatSort;
 
 
+  /**
+   * Show Create button
+   */
   @Input()
   public allow_create: boolean = true
+  /**
+   * Show Populate button
+   */
   @Input()
   public allow_populate: boolean = false;
 
+  /**
+   * controls loading bar
+   */
   loading: boolean = false
-  lastIdSelectedBeforeRefresh: number = -1;
 
+  /**
+   * Selected element from table
+   */
   @Input()
   selectedElement: T | undefined;
   @Output() selectEmitter: EventEmitter<T | undefined> = new EventEmitter<T | undefined>();
 
 
-  @Input()
-  observableRefresh?: Observable<any>;
+  /**
+   * Observable to call for to fill datasource object if not filled manually
+   */
   @Input()
   observableSource?: Observable<T[]>;
+  /**
+   * Observable controlling when to refresh if observableSource set
+   */
+  @Input()
+  observableRefresh?: Observable<any>;
 
+  /**
+   * boolean used to detect and notifuy compoenet not to use observables, as the datasource was overriden by another component
+   */
   public _data_set_input: boolean = false
   @Input()
   public set dataArray(value: T[] | undefined | null) {
@@ -53,11 +75,23 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
     }
   }
 
+  /**
+   * Settings for dataSource Object
+   * Subscription to Input Observables if data not set through other mean
+   *
+   * Override here to customize sortingDataAccessor
+   */
   ngAfterViewInit(): void {
     // Set filter rules for research
     this.dataSource.filterPredicate = (data: T, filter: string) => {
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
+    if (this.sort) {
+      this.dataSource.sort = this.sort
+    }
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator
+    }
     if (!this._data_set_input) {
       this.observableRefresh?.subscribe(() => {
         this.loading = true
@@ -70,12 +104,6 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
           }
         })
       })
-    }
-    if (this.sort) {
-      this.dataSource.sort = this.sort
-    }
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator
     }
   }
 
@@ -100,6 +128,12 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   }
 
 
+  /**
+   * Method used to defer semantic check for automatic selection
+   * checks if the element has an Id to compare to
+   * @param t
+   * @returns
+   */
   private hasIdElement(t: T | undefined) {
     if (this.selectedElement && Object.keys(this.selectedElement).includes('id')) {
       return true
