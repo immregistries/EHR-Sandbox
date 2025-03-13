@@ -2,7 +2,9 @@
 
 NOTE: This Repository is in the process of being restructured to improve clarity, branch organization will be revised,
 and the Docker
-deployment kit on the deployment-kit branch is in the process of being fixed and upgraded
+deployment kit on the deployment-kit branch is in the process of being fixed and upgraded.
+
+Currently only H2 database is supported
 
 The EHR Sandbox is a testing tool developed by AIRA and NIST along with the IIS Sandbox tool.
 It's purpose is to simulate the behaviour of a Electronic health record (EHR).
@@ -21,6 +23,3 @@ boot and example
 parameters:
 ``mvn clean spring-boot:run -Pdev "-Dspring-boot.run.arguments=--server.port=9091 --server.servlet.context-path=/ehr --spring.datasource.url=jdbc:h2:file:../data-h2/ehr"``
 
-### List of dependencies (in progress) :
-
-- 

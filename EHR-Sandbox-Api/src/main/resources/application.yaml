@@ -1,16 +1,11 @@
-#spring.jpa.hibernate.ddl-auto:none
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        SQL: DEBUG
+#logging.level.org.hibernate.SQL: DEBUG
 spring:
+  config.import: optional:file:.env[.properties]
   #  main.web-application-type: none
   profiles.active: '@activatedProperties@'
   datasource:
-    #    url : "jdbc:mysql://localhost:3306/ehr"
-    username: 'ehr_web'
-    password: 'SharkBaitHooHaHa'
+    username: ${ENV_EHR_DATASOURCE_USER}
+    password: ${ENV_EHR_DATASOURCE_PASSWORD}
     #    url: jdbc:h2:mem:ehr-test;
     url: jdbc:h2:file:./data-h2/ehr;
     driverClassName: org.h2.Driver
@@ -21,15 +16,7 @@ spring:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      #      use-new-id-generator-mappings: false
-      #      id.new_generator_mappings: false
       ddl-auto: update
-  #      dialect: org.hibernate.dialect.H2Dialect
-  #    properties:
-  #      hibernate:
-  #        show_sql: true
-  #        use_sql_comments: true
-  #        format_sql: true
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
@@ -37,7 +24,7 @@ spring:
 ehr:
   api:
     app:
-      jwtSecret: EHRSandboxSecretKeythebigshortwquefvkqiywubflqieflhi3iBINSDFqwflquwehbk327872ihgrsog8y742ui3o2fkmejnrgb2og3q92pefiovbuqilogr3huf2peonu2r6w7ueh3vhuwd68w7ygv4fbhgn[]f[wegrnewbrgyu';fjrbw1utfir16firtfuyuyqwyefyqey2276363g8fg8g2f
+      jwtSecret: ${ENV_EHR_JWT_SECRET}
       jwtExpirationMs: 86400000
 #spring.output.ansi.enabled:always
 

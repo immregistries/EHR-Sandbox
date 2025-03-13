@@ -1,4 +1,3 @@
-version: "4"
 services:
   #  ehr-sandbox-mysql:
   #    image: mysql:latest
@@ -15,19 +14,19 @@ services:
   #      start_period: 5s
   #    environment:
   #      #      this password is not used in app, just changing default password
-  #      MYSQL_ROOT_PASSWORD: 'DearPrudenceWontYouComeOutAndPlay'
+  #      MYSQL_ROOT_PASSWORD: ${ENV_MYSQL_ROOT_PASSWORD}
   #    volumes:
   #      - ./database/create_database.sql:/docker-entrypoint-initdb.d/1.sql
   #      - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
   ehr-sandbox:
     build: .
     container_name: ehr-sandbox
-    #    environment:
-    #      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
-    #      - SPRING_DATASOURCE_URL=jdbc:h2:file:/data-h2/ehr;
+    environment:
+      #      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/data-h2/ehr;
     restart: unless-stopped
-    #    volumes:
-    #      - ./data-h2:/usr/root/data-h2
+    volumes:
+      - ehr-h2-data:/data-h2
     ports:
       #     Default port is 9091, can be changed here
       - "9091:8080"
@@ -35,4 +34,5 @@ services:
 #      ehr-sandbox-mysql:
 #        condition: service_healthy
 volumes:
-  sandbox-mysql:
+  #  sandbox-mysql:
+  ehr-h2-data:

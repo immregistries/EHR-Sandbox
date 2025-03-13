@@ -6,3 +6,4 @@
 /.idea/
 /data-h2/
 /EHR-Sandbox-Api/data-h2/ehr.mv.db
+/.env
