@@ -20,12 +20,13 @@ services:
   #      - ./database/create_user.sql:/docker-entrypoint-initdb.d/2.sql
   ehr-sandbox:
     build: .
-    container_name: ehr-sandbox
+    container_name: ehr-sandbox-squala
     env_file:
       - .env
     environment:
       #      - SPRING_DATASOURCE_URL=jdbc:mysql://ehr-sandbox-mysql:3306/ehr
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/data-h2/ehr;
+      - ENV_DEFAULT_IIS_URL=http://host.docker.internal:8080/iis
     restart: unless-stopped
     volumes:
       - ehr-h2-data:/data-h2

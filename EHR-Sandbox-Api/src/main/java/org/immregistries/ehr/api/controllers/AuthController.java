@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import jakarta.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.User;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
@@ -108,31 +109,46 @@ public class AuthController {
              *       - "host.docker.internal:host-gateway"
              *
              */
-            {
+            String defaultIisUrl = System.getenv("ENV_DEFAULT_IIS_URL");
+            if (StringUtils.isNotBlank(defaultIisUrl)) {
                 ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
-                immunizationRegistry.setName("Localhost from docker");
+                immunizationRegistry.setName("Default IIS");
                 immunizationRegistry.setIisFacilityId(newUser.getUsername());
                 immunizationRegistry.setIisUsername(newUser.getUsername());
                 immunizationRegistry.setIisPassword(newUser.getUsername());
-                immunizationRegistry.setIisHl7Url("http://host.docker.internal:8080/iis/soap");
-                immunizationRegistry.setIisFhirUrl("http://host.docker.internal:8080/iis/fhir");
+                immunizationRegistry.setIisHl7Url(defaultIisUrl + "/soap");
+                immunizationRegistry.setIisFhirUrl(defaultIisUrl + "/fhir");
                 immunizationRegistry.setUser(newUser);
-                immunizationRegistry.setDescription("Automatically generated, as when deployed in a docker container, localhost is reached through host.docker.internal");
+                immunizationRegistry.setDescription("Automatically generated, url defined by EHR sandbox global configuration");
                 immunizationRegistryRepository.save(immunizationRegistry);
-            }
+            } else {
+//                {
+//                    ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
+//                    immunizationRegistry.setName("Localhost from docker");
+//                    immunizationRegistry.setIisFacilityId(newUser.getUsername());
+//                    immunizationRegistry.setIisUsername(newUser.getUsername());
+//                    immunizationRegistry.setIisPassword(newUser.getUsername());
+//                    immunizationRegistry.setIisHl7Url("http://host.docker.internal:8080/iis/soap");
+//                    immunizationRegistry.setIisFhirUrl("http://host.docker.internal:8080/iis/fhir");
+//                    immunizationRegistry.setUser(newUser);
+//                    immunizationRegistry.setDescription("Automatically generated, as when deployed in a docker container, localhost is reached through host.docker.internal");
+//                    immunizationRegistryRepository.save(immunizationRegistry);
+//                }
 
-            {
-                ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
-                immunizationRegistry.setName("Localhost");
-                immunizationRegistry.setIisFacilityId(newUser.getUsername());
-                immunizationRegistry.setIisUsername(newUser.getUsername());
-                immunizationRegistry.setIisPassword(newUser.getUsername());
-                immunizationRegistry.setIisHl7Url("http://localhost:8080/iis/soap");
-                immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
-                immunizationRegistry.setUser(newUser);
-                immunizationRegistry.setDescription("Automatically generated credentials in case an instance of IIS Sandbox is accessible on localhost:8080");
-                immunizationRegistryRepository.save(immunizationRegistry);
+                {
+                    ImmunizationRegistry immunizationRegistry = new ImmunizationRegistry();
+                    immunizationRegistry.setName("Localhost");
+                    immunizationRegistry.setIisFacilityId(newUser.getUsername());
+                    immunizationRegistry.setIisUsername(newUser.getUsername());
+                    immunizationRegistry.setIisPassword(newUser.getUsername());
+                    immunizationRegistry.setIisHl7Url("http://localhost:8080/iis/soap");
+                    immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
+                    immunizationRegistry.setUser(newUser);
+                    immunizationRegistry.setDescription("Automatically generated credentials in case an instance of IIS Sandbox is accessible on localhost:8080");
+                    immunizationRegistryRepository.save(immunizationRegistry);
+                }
             }
+//
 //            {
 //                Tenant tenant = new Tenant();
 //                tenant.setUser(newUser);
