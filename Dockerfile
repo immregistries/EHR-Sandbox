@@ -1,4 +1,4 @@
-FROM bitnami/tomcat:10.1.30 as tomcat
+FROM bitnami/tomcat:10.1.30 AS tomcat
 
 RUN rm -rf /opt/bitnami/tomcat/webapps/* && \
     rm -rf /opt/bitnami/tomcat/webapps_default/*
@@ -15,6 +15,6 @@ RUN mkdir -p /target && chown -R 1001:1001 target
 USER 1001
 
 #COPY --chown=1001:1001 catalina.properties /opt/bitnami/tomcat/conf/catalina.properties
-COPY --chown=1001:1001 target/ehr.war /opt/bitnami/tomcat/webapps_default/ehr.war
+COPY --chown=1001:1001 ./EHR-Sandbox-Api/target/ehr.war /opt/bitnami/tomcat/webapps_default/ehr.war
 
 ENV TOMCAT_PASSWORD="28y341834uf8u3bfppkaebiThisIsSomehtingThatShouldBeModified917628\][3p1[l41[ppu398nmjq09o3bvnmkdjhwq976yu87yh872763f27bd"
