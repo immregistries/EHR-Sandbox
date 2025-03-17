@@ -2,3 +2,6 @@
 /ehr-sandbox-image.tar
 /EHR-Sandbox-Api/
 /EHR-Sandbox-Ui/
+/data-h2/
+/ehr-sandbox.iml
+/.env
