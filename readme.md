@@ -1,14 +1,26 @@
-## EHR Sandbox deployment kit 
+## EHR Sandbox deployment kit
 
-Allows deployment of the EHR Sandbox with the right database setup in docker-compose
-Step 1 (Optional )Install Docker Image
-```
- docker load -i ehr-sandbox-image.tar;
-```
+Kit to easily deploy the EHR sandbox from the images hosted on dockerhub.
 
-Step 2 Run this command to deploy in docker container
+``.env`` file should be copied from ``.env.example`` and modified to change default passwords and secrets
+
+Run this command to deploy in docker a container
+
 ```
  docker compose up;
+```
+
+to quickly deploy with default configuration
+
+```
+ copy .env.example .env;
+ docker compose up;
+```
+
+or use bash script
+
+```
+bash deploy.sh
 ```
 
 default url is localhost:9091/ehr/#/home, port can be changed in docker-compose.yml
