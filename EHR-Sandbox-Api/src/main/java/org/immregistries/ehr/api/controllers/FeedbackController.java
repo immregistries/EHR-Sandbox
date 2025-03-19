@@ -92,8 +92,6 @@ public class FeedbackController {
 //    @GetMapping(PATIENT_ID_PATH + ACKS_PATH_HEADER + "1")
 //    @Transactional
 //    public ResponseEntity<?> cleanPatientAcks(@PathVariable(PATIENT_ID) Integer patientId) {
-//        feedbackRepository.deleteAll();
-//        acknowledgmentObjectRepository.deleteAll();
 
     /// /        feedbackRepository.deleteByPatientId(patientId);
     /// /        acknowledgmentObjectRepository.deleteByPatientId(patientId);
