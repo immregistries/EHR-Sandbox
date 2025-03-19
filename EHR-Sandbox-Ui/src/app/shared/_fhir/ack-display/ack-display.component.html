@@ -33,7 +33,8 @@
                   [highlighted]="acknowledgementObject.sortedResult.errors.length > 0">{{acknowledgementObject.sortedResult.errors.length}}</mat-chip>
       </span>
     </ng-template>
-    <app-feedback-table [removeRefColumns]="true"
+    <app-feedback-table [patient]="acknowledgementObject.patient"
+                        [vaccination]="acknowledgementObject.vaccinations && acknowledgementObject.vaccinations.length === 1 ? acknowledgementObject.vaccinations[0] : undefined "
                         [dataArray]="acknowledgementObject.sortedResult.errors"></app-feedback-table>
   </mat-tab>
   <mat-tab>
@@ -44,7 +45,8 @@
                   [highlighted]="acknowledgementObject.sortedResult.warnings.length > 0">{{acknowledgementObject.sortedResult.warnings.length}}</mat-chip>
       </span>
     </ng-template>
-    <app-feedback-table [removeRefColumns]="true"
+    <app-feedback-table [patient]="acknowledgementObject.patient"
+                        [vaccination]="acknowledgementObject.vaccinations && acknowledgementObject.vaccinations.length === 1 ? acknowledgementObject.vaccinations[0] : undefined "
                         [dataArray]="acknowledgementObject.sortedResult.warnings"></app-feedback-table>
   </mat-tab>
   <mat-tab>
@@ -55,7 +57,8 @@
                   [highlighted]="acknowledgementObject.sortedResult.notices.length > 0">{{acknowledgementObject.sortedResult.notices.length}}</mat-chip>
       </span>
     </ng-template>
-    <app-feedback-table [removeRefColumns]="true"
+    <app-feedback-table [patient]="acknowledgementObject.patient"
+                        [vaccination]="acknowledgementObject.vaccinations && acknowledgementObject.vaccinations.length === 1 ? acknowledgementObject.vaccinations[0] : undefined "
                         [dataArray]="acknowledgementObject.sortedResult.notices"></app-feedback-table>
   </mat-tab>
   <mat-tab>
@@ -66,7 +69,8 @@
                   [highlighted]="acknowledgementObject.sortedResult.infos.length > 0">{{acknowledgementObject.sortedResult.infos.length}}</mat-chip>
       </span>
     </ng-template>
-    <app-feedback-table [removeRefColumns]="true"
+    <app-feedback-table [patient]="acknowledgementObject.patient"
+                        [vaccination]="acknowledgementObject.vaccinations && acknowledgementObject.vaccinations.length === 1 ? acknowledgementObject.vaccinations[0] : undefined "
                         [dataArray]="acknowledgementObject.sortedResult.infos"></app-feedback-table>
   </mat-tab>
   <mat-tab label="Raw Source">

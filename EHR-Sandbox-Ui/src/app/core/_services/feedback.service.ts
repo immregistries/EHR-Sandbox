@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Feedback } from '../_model/rest';
+import { EhrPatient, Feedback, VaccinationEvent } from '../_model/rest';
 import { BehaviorSubject, Observable, of, share, switchMap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
@@ -60,9 +60,10 @@ export class FeedbackService extends RefreshService {
       httpOptions).pipe(share());
   }
 
-  readPatientFeedback(patientId: number): Observable<Feedback[]> {
+  readPatientFeedback(patient: EhrPatient | number): Observable<Feedback[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
+    let patientId: number = (typeof patient === 'number') ? patient : patient.id ?? -1
     if (facilityId < 0 || tenantId < 0 || patientId < 0) {
       return of()
     }
@@ -71,9 +72,10 @@ export class FeedbackService extends RefreshService {
       httpOptions).pipe(share());
   }
 
-  readVaccinationFeedback(vaccinationId: number): Observable<Feedback[]> {
+  readVaccinationFeedback(vaccination: VaccinationEvent | number): Observable<Feedback[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
+    let vaccinationId: number = (typeof vaccination === 'number') ? vaccination : vaccination.id ?? -1
     if (facilityId < 0 || tenantId < 0 || vaccinationId < 0) {
       return of()
     }

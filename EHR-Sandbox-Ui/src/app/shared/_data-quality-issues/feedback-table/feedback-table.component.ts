@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Facility, Feedback, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
 import { PatientDashboardComponent } from 'src/app/shared/_patient/patient-dashboard/patient-dashboard.component';
@@ -6,6 +6,9 @@ import { VaccinationDashboardComponent } from 'src/app/shared/_vaccination/vacci
 import { AbstractDataTableComponent } from '../../_components/abstract-data-table/abstract-data-table.component';
 import { Hl7Location } from 'src/app/core/_model/form-structure';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { PatientResumePipe } from '../../_pipes/patient-resume.pipe';
+import { VaccinationResumePipe } from '../../_pipes/vaccination-resume.pipe';
+import { RegistryNamePipe } from '../../_pipes/registry-name.pipe';
 
 @Component({
   selector: 'app-feedback-table',
@@ -21,35 +24,35 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   @Input()
   facility: Facility | null = null;
 
-  private _patient?: EhrPatient | undefined;
-  public get patient(): EhrPatient | undefined {
+  private _patient?: EhrPatient | number | undefined;
+  public get patient(): EhrPatient | number | undefined {
     return this._patient;
   }
   @Input()
-  public set patient(value: EhrPatient | undefined) {
+  public set patient(value: EhrPatient | number | undefined) {
     this._patient = value;
     this.refreshColumns()
     if (value && !this.vaccination) {
       this._data_set_input = true
       this.dataSource.data = []
-      this.feedbackService.readPatientFeedback(value.id ?? -1).subscribe((res) => {
+      this.feedbackService.readPatientFeedback(value).subscribe((res) => {
         this.dataSource.data = res ?? []
       })
     }
   }
 
-  private _vaccination?: VaccinationEvent | undefined;
-  public get vaccination(): VaccinationEvent | undefined {
+  private _vaccination?: VaccinationEvent | number | undefined;
+  public get vaccination(): VaccinationEvent | number | undefined {
     return this._vaccination;
   }
   @Input()
-  public set vaccination(value: VaccinationEvent | undefined) {
+  public set vaccination(value: VaccinationEvent | number | undefined) {
     this._vaccination = value;
     this.refreshColumns()
     if (value) {
       this._data_set_input = true
       this.dataSource.data = []
-      this.feedbackService.readVaccinationFeedback(value.id ?? -1).subscribe((res) => {
+      this.feedbackService.readVaccinationFeedback(value).subscribe((res) => {
         this.dataSource.data = res ?? []
       })
     }
@@ -63,6 +66,9 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   constructor(
     private dialog: MatDialog,
     private feedbackService: FeedbackService,
+    private patientResumePipe: PatientResumePipe,
+    private vaccinationResumePipe: VaccinationResumePipe,
+    private registryNamePipe: RegistryNamePipe,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent }
   ) {
@@ -151,9 +157,23 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     return disp;
   }
 
-  // @ViewChild(MatSort) sort!: MatSort;
-  // override ngAfterViewInit(): void {
-  //   super.ngAfterViewInit()
-  //   this.dataSource.sort = this.sort;
-  // }
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit()
+    this.dataSource.sortingDataAccessor = (data: Feedback, sortHeaderId: string) => {
+      if (sortHeaderId === "hl7Locations") {
+        return this.locationDisplay(data?.hl7Locations ?? [])
+      }
+      if (sortHeaderId === "patient") {
+        return this.patientResumePipe.transform(data.patient, ["name"])
+      }
+      if (sortHeaderId === "iis") {
+        return this.registryNamePipe.transform(data.iis)
+      }
+      if (sortHeaderId === "vaccination") {
+        return this.vaccinationResumePipe.transform(data.vaccinationEvent, ['cvx', 'administeredDate'])
+      }
+      //@ts-ignore
+      return data[sortHeaderId]
+    }
+  }
 }
