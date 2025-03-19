@@ -89,6 +89,16 @@ public class FeedbackController {
         return acknowledgmentObjectRepository.findByPatientId(patientId);
     }
 
+//    @GetMapping(PATIENT_ID_PATH + ACKS_PATH_HEADER + "1")
+//    @Transactional
+//    public ResponseEntity<?> cleanPatientAcks(@PathVariable(PATIENT_ID) Integer patientId) {
+//        feedbackRepository.deleteAll();
+//        acknowledgmentObjectRepository.deleteAll();
+
+    /// /        feedbackRepository.deleteByPatientId(patientId);
+    /// /        acknowledgmentObjectRepository.deleteByPatientId(patientId);
+//        return ResponseEntity.ok().build();
+//    }
     @GetMapping({VACCINATION_ID_PATH + ACKS_PATH_HEADER,
             FACILITY_ID_PATH + VACCINATION_PATH_HEADER + VACCINATION_ID_SUFFIX + ACKS_PATH_HEADER})
     public List<AcknowledgmentObject> getVaccinationAcks(@PathVariable(VACCINATION_ID) Integer vaccinationId) {

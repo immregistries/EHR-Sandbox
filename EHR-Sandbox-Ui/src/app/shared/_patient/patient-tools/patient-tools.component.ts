@@ -124,5 +124,14 @@ export class PatientToolsComponent implements OnInit {
     });
   }
 
+  /**
+   * Currently unused
+   */
+  cleanFeedback() {
+    this.feedbackService.cleanPatientAcks(this.patient).subscribe(() => {
+      this.feedbackService.doRefresh()
+    })
+  }
+
 
 }

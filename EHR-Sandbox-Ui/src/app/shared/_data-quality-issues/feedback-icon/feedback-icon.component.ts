@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackTableComponent } from '../feedback-table/feedback-table.component';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-feedback-icon',
@@ -33,20 +35,34 @@ export class FeedbackIconComponent implements OnInit {
     }
   }
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog,
+    private feedbackService: FeedbackService
+  ) { }
 
   ngOnInit(): void {
   }
 
   openFeedback() {
-    const dialogRef = this.dialog.open(FeedbackTableComponent, {
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-      height: 'fit-content',
-      width: '100%',
-      panelClass: 'dialog-with-bar',
-      data: { patient: this._patient, vaccination: this._vaccination },
+    of(!this._vaccination).pipe(
+      switchMap(cond => {
+        if (cond) {
+          return this.feedbackService.readPatientFeedback(this._patient ?? -1);
+        } else {
+          return this.feedbackService.readVaccinationFeedback(this._vaccination ?? -1);
+        }
+      })
+    ).subscribe((res) => {
+      const dialogRef = this.dialog.open(FeedbackTableComponent, {
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        height: 'fit-content',
+        width: '100%',
+        panelClass: 'dialog-with-bar',
+        data: { patient: this._patient, vaccination: this._vaccination, datatable: res },
+      });
     });
+
+
   }
 
 

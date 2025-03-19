@@ -19,7 +19,7 @@ const httpOptions = {
 })
 export class FeedbackService extends RefreshService {
 
-  if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
+  private if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
@@ -132,6 +132,18 @@ export class FeedbackService extends RefreshService {
           params: (registryId && registryId > 0) ? { registryId: registryId } : {}
         })
     }))
+  }
+
+  cleanPatientAcks(patient: EhrPatient | number): Observable<string> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    let patientId: number = (typeof patient === 'number') ? patient : patient.id ?? -1
+    if (facilityId < 0 || tenantId < 0 || patientId < 0) {
+      return of()
+    }
+    return this.http.delete<string>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/acks`,
+      httpOptions).pipe(share());
   }
 
 }

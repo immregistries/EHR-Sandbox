@@ -30,4 +30,7 @@ public interface AcknowledgmentObjectRepository extends JpaRepository<Acknowledg
     //If you need to find by vaccination object instead of ID
     List<AcknowledgmentObject> findAllByVaccinations(VaccinationEvent vaccination);
 
+    void deleteByPatientId(Integer ehrPatientId);
+    
+
 }

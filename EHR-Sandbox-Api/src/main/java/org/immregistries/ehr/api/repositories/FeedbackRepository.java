@@ -20,6 +20,8 @@ public interface FeedbackRepository extends CrudRepository<Feedback, Integer> {
 
     void deleteByPatientIdAndSeverityAndVaccinationEventNull(Integer ehrPatientId, String severity);
 
+    void deleteByPatientId(Integer ehrPatientId);
+
     void deleteByPatientIdAndIisAndSeverityAndVaccinationEventNull(Integer ehrPatientId, String iis, String severity);
 
 }

@@ -32,13 +32,13 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   public set patient(value: EhrPatient | number | undefined) {
     this._patient = value;
     this.refreshColumns()
-    if (value && !this.vaccination) {
-      this._data_set_input = true
-      this.dataSource.data = []
-      this.feedbackService.readPatientFeedback(value).subscribe((res) => {
-        this.dataSource.data = res ?? []
-      })
-    }
+    // if (value && !this.vaccination) {
+    //   this._data_set_input = true
+    //   this.dataSource.data = []
+    // this.feedbackService.readPatientFeedback(value).subscribe((res) => {
+    //   this.dataSource.data = res ?? []
+    // })
+    // }
   }
 
   private _vaccination?: VaccinationEvent | number | undefined;
@@ -49,13 +49,13 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
   public set vaccination(value: VaccinationEvent | number | undefined) {
     this._vaccination = value;
     this.refreshColumns()
-    if (value) {
-      this._data_set_input = true
-      this.dataSource.data = []
-      this.feedbackService.readVaccinationFeedback(value).subscribe((res) => {
-        this.dataSource.data = res ?? []
-      })
-    }
+    // if (value) {
+    //   this._data_set_input = true
+    //   this.dataSource.data = []
+    // this.feedbackService.readVaccinationFeedback(value).subscribe((res) => {
+    //   this.dataSource.data = res ?? []
+    // })
+    // }
   }
 
   @Input()
@@ -70,17 +70,19 @@ export class FeedbackTableComponent extends AbstractDataTableComponent<Feedback>
     private vaccinationResumePipe: VaccinationResumePipe,
     private registryNamePipe: RegistryNamePipe,
     @Optional() public _dialogRef: MatDialogRef<FeedbackTableComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent }
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient: EhrPatient, vaccination: VaccinationEvent, datatable: Feedback[] }
   ) {
     super()
     this.allow_create = false
     if (data?.vaccination) {
-      this._data_set_input = true
       this.vaccination = data.vaccination;
     }
     if (data?.patient) {
-      this._data_set_input = true
       this.patient = data.patient;
+    }
+    if (data?.datatable) {
+      this._data_set_input = true
+      this.dataSource.data = data.datatable;
     }
   }
 
