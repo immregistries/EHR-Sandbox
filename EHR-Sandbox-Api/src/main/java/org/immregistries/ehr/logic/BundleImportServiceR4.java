@@ -14,6 +14,7 @@ import org.immregistries.ehr.fhir.Server.ServerR4.ImmunizationProviderR4;
 import org.immregistries.ehr.fhir.Server.ServerR4.PatientProviderR4;
 import org.immregistries.ehr.logic.mapping.forR4.ImmunizationMapperR4;
 import org.immregistries.ehr.logic.mapping.forR4.PatientMapperR4;
+import org.immregistries.ehr.logic.mapping.forR4.PractitionerMapperR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_RECORD;
 import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_SYSTEM_TAG;
+import static org.immregistries.ehr.logic.mapping.interfaces.IImmunizationMapper.*;
 
 @Service()
 public class BundleImportServiceR4 implements IBundleImportService {
@@ -45,6 +47,8 @@ public class BundleImportServiceR4 implements IBundleImportService {
     ImmunizationMapperR4 immunizationMapper;
     @Autowired
     PatientMapperR4 patientMapper;
+    @Autowired
+    PractitionerMapperR4 practitionerMapper;
 
     @Autowired
     ImmunizationIdentifierRepository immunizationIdentifierRepository;
@@ -167,5 +171,61 @@ public class BundleImportServiceR4 implements IBundleImportService {
     public List<IDomainResource> domainResourcesFromBaseBundleEntries(IBaseBundle iBaseBundle) {
         org.hl7.fhir.r4.model.Bundle bundle = (org.hl7.fhir.r4.model.Bundle) iBaseBundle;
         return bundle.getEntry().stream().filter(org.hl7.fhir.r4.model.Bundle.BundleEntryComponent::hasResource).map(bundleEntryComponent -> (IDomainResource) bundleEntryComponent.getResource()).collect(Collectors.toList());
+    }
+
+    public Set<EhrPatient> convertToLocalPatients(IBaseBundle iBaseBundle, Facility facility) {
+        Bundle bundle = (Bundle) iBaseBundle;
+        Map<String, EhrPatient> patientMap = new HashMap<>(bundle.getEntry().size());
+        Map<String, Clinician> clinicianMap = new HashMap<>(bundle.getEntry().size());
+//        Map<String, EhrPatient> immunizationMap = new HashMap<>(bundle.getEntry().size());
+        for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+            switch (entry.getResource().getResourceType()) {
+//                case Organization: {
+//                    break;
+//                }
+                case Practitioner: {
+                    Practitioner practitioner = (Practitioner) entry.getResource();
+                    Clinician clinician = practitionerMapper.toClinician(practitioner);
+                    clinician.setTenant(facility.getTenant());
+                    clinicianMap.put(entry.getFullUrl(), clinician);
+                    break;
+                }
+                case Patient: {
+                    Patient patient = (Patient) entry.getResource();
+                    EhrPatient ehrPatient = patientMapper.toEhrPatient(patient);
+                    ehrPatient.setFacility(facility);
+                    ehrPatient.setUpdatedDate(new Date());
+                    if (!patient.getGeneralPractitioner().isEmpty() && patient.getGeneralPractitionerFirstRep().hasReference()) {
+                        ehrPatient.setGeneralPractitioner(clinicianMap.get(patient.getGeneralPractitionerFirstRep().getReference()));
+                    }
+                    patientMap.put(entry.getFullUrl(), ehrPatient);
+                    break;
+                }
+                case Immunization: {
+                    Immunization immunization = (Immunization) entry.getResource();
+                    VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
+                    if (immunization.hasPatient() && immunization.getPatient().hasReference()) {
+                        EhrPatient ehrPatient = patientMap.get(immunization.getPatient().getReference());
+//                        vaccinationEvent.setPatient(patientMap.get(immunization.getPatient().getReference()));
+                        ehrPatient.getVaccinationEvents().add(vaccinationEvent);
+                    }
+                    for (Immunization.ImmunizationPerformerComponent performer : immunization.getPerformer()) {
+                        if (performer.getActor().hasReference()) {
+                            for (Coding function : performer.getFunction().getCoding()) {
+                                switch (function.getCode()) {
+                                    case ORDERING ->
+                                            vaccinationEvent.setOrderingClinician(clinicianMap.get(performer.getActor().getReference()));
+                                    case ENTERING ->
+                                            vaccinationEvent.setEnteringClinician(clinicianMap.get(performer.getActor().getReference()));
+                                    case ADMINISTERING ->
+                                            vaccinationEvent.setAdministeringClinician(clinicianMap.get(performer.getActor().getReference()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return new HashSet<>(patientMap.values());
     }
 }

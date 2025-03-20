@@ -3,6 +3,7 @@ package org.immregistries.ehr.logic;
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.generated.LinkTo;
@@ -11,6 +12,11 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.*;
 import org.immregistries.ehr.api.repositories.TenantRepository;
+import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.mitre.synthea.engine.Generator;
+import org.mitre.synthea.export.FhirR4;
+import org.mitre.synthea.helpers.Config;
+import org.mitre.synthea.world.agents.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +44,11 @@ public class RandomGenerator {
     @Autowired
     private TenantRepository tenantRepository;
 
+    private FhirComponentsDispatcher fhirComponentsDispatcher;
+
+    @Autowired
+    BundleImportServiceR4 bundleImportServiceR4;
+
     private static Date between(Date startInclusive, Date endExclusive) {
         long startMillis = startInclusive.getTime();
         long endMillis = endExclusive.getTime();
@@ -49,6 +60,9 @@ public class RandomGenerator {
     }
 
     public EhrPatient randomPatient(Facility facility) {
+        if (true) {
+            return randomSynthea(facility);
+        }
         Faker faker = new Faker();
 
         int randDay = (int) (Math.random() * 30 + 1);
@@ -375,5 +389,45 @@ public class RandomGenerator {
 
     private Code randomCode(Collection<Code> collection) {
         return collection.stream().skip((long) (random() * collection.size())).findFirst().get();
+    }
+
+    public EhrPatient randomSynthea(Facility facility) {
+        Generator.GeneratorOptions options = new Generator.GeneratorOptions();
+        options.population = 1;
+        Config.set("exporter.hospital.fhir.export", "false");
+        Config.set("exporter.practitioner.fhir.export", "false");
+
+        Generator generator = new Generator(options);
+        Person person = generator.generatePerson(1, 1);
+
+
+        Config.set("exporter.fhir_r4.export", "true");
+        IBaseBundle iBaseBundle = null;
+        iBaseBundle = FhirR4.convertToFHIR(person, new Date().getTime());
+        return bundleImportServiceR4.convertToLocalPatients(iBaseBundle, facility).stream().findFirst().orElse(null);
+//        if (ProcessingFlavor.R4.isActive()) {
+
+//            EhrPatient ehrPatient = null;
+//            String patientUrl = null;
+//            for (Bundle.BundleEntryComponent entryComponent:  bundle.getEntry()) {
+//                if(entryComponent.getResource() instanceof Patient) {
+//                    patientUrl = entryComponent.getFullUrl();
+//                    ehrPatient = fhirComponentsDispatcher.patientMapper().toEhrPatient((Patient) entryComponent.getResource());
+//                }
+//            }
+//            if (ehrPatient == null) {
+//                throw new RuntimeException("Failed at generating patient through Synthea");
+//            }
+//            Set<VaccinationEvent> vaccinationEvents = new HashSet<>(bundle.getEntry().size());
+//            for (Bundle.BundleEntryComponent entryComponent:  bundle.getEntry()) {
+//                if(entryComponent.getResource() instanceof Immunization) {
+//                    Immunization immunization = (Immunization) entryComponent.getResource();
+//                    if (immunization.getPatient().getReference().equals(patientUrl)) {
+//                        vaccinationEvents.add(fhirComponentsDispatcher.immunizationMapper().toVaccinationEvent(immunization));
+//                    }
+//                }
+//            }
+//            ehrPatient.setVaccinationEvents(vaccinationEvents);
+//        }
     }
 }
