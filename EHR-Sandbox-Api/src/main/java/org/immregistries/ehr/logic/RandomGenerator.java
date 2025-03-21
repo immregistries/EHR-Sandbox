@@ -3,7 +3,7 @@ package org.immregistries.ehr.logic;
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.r4.model.Bundle;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.generated.LinkTo;
@@ -22,10 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -52,13 +49,17 @@ public class RandomGenerator {
     private Generator generator;
 
     public RandomGenerator() {
-//        Generator.GeneratorOptions options = new Generator.GeneratorOptions();
-//        options.population = 1;
+        Generator.GeneratorOptions options = new Generator.GeneratorOptions();
+        options.population = 0;
+        options.enabledModules = List.of("patient", "immunization");
 
+        Config.set("modules.enabled", "[]");
         Config.set("exporter.hospital.fhir.export", "false");
         Config.set("exporter.practitioner.fhir.export", "false");
         Config.set("exporter.fhir_r4.export", "false");
-        generator = new Generator();
+        Config.set("exporter.fhir.export", "false");
+//        Exporter.ExporterRuntimeOptions ero = new Exporter.ExporterRuntimeOptions();
+        generator = new Generator(options);
     }
 
     private static Date between(Date startInclusive, Date endExclusive) {
@@ -73,7 +74,7 @@ public class RandomGenerator {
 
     public EhrPatient randomPatient(Facility facility) {
         if (true) {
-            return randomSynthea(facility);
+            return randomSyntheaPatient(facility);
         }
         Faker faker = new Faker();
 
@@ -403,12 +404,14 @@ public class RandomGenerator {
         return collection.stream().skip((long) (random() * collection.size())).findFirst().get();
     }
 
-    public EhrPatient randomSynthea(Facility facility) {
+    public EhrPatient randomSyntheaPatient(Facility facility) {
         Random random = new Random();
-//        Person person = generator.createPerson(random.nextLong(), null).generatePerson(2,);
-        Person person = generator.generatePerson(2, random.nextLong());
-        IBaseBundle iBaseBundle = FhirR4.convertToFHIR(person, new Date().getTime());
-        return bundleImportServiceR4.convertToLocalPatients(iBaseBundle, facility).stream().findFirst().orElse(null);
+        Person person = generator.createPerson(random.nextLong(), generator.randomDemographics(generator.getRandomizer()));
+//        Person person = generator.generatePerson(2, random.nextLong());
+        Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
+        logger.info("Synthea Gen {}", bundle.getEntry().size());
+        EhrPatient ehrPatient = bundleImportServiceR4.convertToLocalPatients(bundle, facility).stream().findFirst().orElse(null);
+        return ehrPatient;
 //        if (ProcessingFlavor.R4.isActive()) {
 
 //            EhrPatient ehrPatient = null;
