@@ -49,6 +49,18 @@ public class RandomGenerator {
     @Autowired
     BundleImportServiceR4 bundleImportServiceR4;
 
+    private Generator generator;
+
+    public RandomGenerator() {
+//        Generator.GeneratorOptions options = new Generator.GeneratorOptions();
+//        options.population = 1;
+
+        Config.set("exporter.hospital.fhir.export", "false");
+        Config.set("exporter.practitioner.fhir.export", "false");
+        Config.set("exporter.fhir_r4.export", "false");
+        generator = new Generator();
+    }
+
     private static Date between(Date startInclusive, Date endExclusive) {
         long startMillis = startInclusive.getTime();
         long endMillis = endExclusive.getTime();
@@ -392,18 +404,10 @@ public class RandomGenerator {
     }
 
     public EhrPatient randomSynthea(Facility facility) {
-        Generator.GeneratorOptions options = new Generator.GeneratorOptions();
-        options.population = 1;
-        Config.set("exporter.hospital.fhir.export", "false");
-        Config.set("exporter.practitioner.fhir.export", "false");
-
-        Generator generator = new Generator(options);
-        Person person = generator.generatePerson(1, 1);
-
-
-        Config.set("exporter.fhir_r4.export", "true");
-        IBaseBundle iBaseBundle = null;
-        iBaseBundle = FhirR4.convertToFHIR(person, new Date().getTime());
+        Random random = new Random();
+//        Person person = generator.createPerson(random.nextLong(), null).generatePerson(2,);
+        Person person = generator.generatePerson(2, random.nextLong());
+        IBaseBundle iBaseBundle = FhirR4.convertToFHIR(person, new Date().getTime());
         return bundleImportServiceR4.convertToLocalPatients(iBaseBundle, facility).stream().findFirst().orElse(null);
 //        if (ProcessingFlavor.R4.isActive()) {
 

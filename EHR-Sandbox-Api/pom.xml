@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.mitre.synthea</groupId>
             <artifactId>Synthea</artifactId>
-            <version>3.2.2-SNAPSHOT-CDS</version>
+            <version>3.2.2-SNAPSHOT-CDS-2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
