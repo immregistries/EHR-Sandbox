@@ -103,13 +103,6 @@ public class RandomGenerator {
         Date regStatusDate = between(twoYearsAgo, tenDaysAgo);
 
         String lastname = faker.name().lastName();
-        String mrn = RandomStringUtils.random(11, true, true);
-        String mrnSystem;
-        if (facility != null) {
-            mrnSystem = resourceIdentificationService.getFacilityPatientIdentifierSystem(facility);
-        } else {
-            mrnSystem = MRN_SYSTEM;
-        }
 
 
         EhrPatient ehrPatient = new EhrPatient();
@@ -123,10 +116,8 @@ public class RandomGenerator {
         ehrHumanName.setNameType("L");
         ehrPatient.addName(ehrHumanName);
 
-        EhrIdentifier ehrIdentifier = new EhrIdentifier();
-        ehrIdentifier.setType("MR");
-        ehrIdentifier.setValue(mrn);
-        ehrIdentifier.setSystem(mrnSystem);
+
+        EhrIdentifier ehrIdentifier = randomEhrIdentifierMrn(facility);
         ehrPatient.getIdentifiers().add(ehrIdentifier);
 
         ehrPatient.setBirthDate(birthDate);
@@ -238,6 +229,21 @@ public class RandomGenerator {
         ehrPatient.setUpdatedDate(new Date());
         ehrPatient.setCreatedDate(new Date());
         return ehrPatient;
+    }
+
+    private EhrIdentifier randomEhrIdentifierMrn(Facility facility) {
+        String mrn = RandomStringUtils.random(11, true, true);
+        String mrnSystem;
+        if (facility != null) {
+            mrnSystem = resourceIdentificationService.getFacilityPatientIdentifierSystem(facility);
+        } else {
+            mrnSystem = MRN_SYSTEM;
+        }
+        EhrIdentifier ehrIdentifier = new EhrIdentifier();
+        ehrIdentifier.setType("MR");
+        ehrIdentifier.setValue(mrn);
+        ehrIdentifier.setSystem(mrnSystem);
+        return ehrIdentifier;
     }
 
     public NextOfKin randomNextOfKin() {
@@ -411,6 +417,10 @@ public class RandomGenerator {
         Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
         logger.info("Synthea Gen {}", bundle.getEntry().size());
         EhrPatient ehrPatient = bundleImportServiceR4.convertToLocalPatients(bundle, facility).stream().findFirst().orElse(null);
+        assert ehrPatient != null;
+        if (ehrPatient.getIdentifiers().isEmpty()) {
+            ehrPatient.getIdentifiers().add(randomEhrIdentifierMrn(facility));
+        }
         return ehrPatient;
 //        if (ProcessingFlavor.R4.isActive()) {
 
@@ -436,5 +446,13 @@ public class RandomGenerator {
 //            }
 //            ehrPatient.setVaccinationEvents(vaccinationEvents);
 //        }
+    }
+
+    public Set<EhrPatient> randomSyntheaPatientList(Facility facility) {
+        Random random = new Random();
+        Person person = generator.createPerson(random.nextLong(), generator.randomDemographics(generator.getRandomizer()));
+        Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
+        logger.info("Synthea Gen {}", bundle.getEntry().size());
+        return bundleImportServiceR4.convertToLocalPatients(bundle, facility);
     }
 }
