@@ -11,7 +11,7 @@ import java.util.Set;
 import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
 
 public enum ProcessingFlavor {
-    BLACKJACK("BLACKJACK", "Generates completely random Records instead of Synthea"),
+    BLACKJACK("BLACKJACK", "Generates fully random Records instead of Synthea when populating facilities"),
     PAIN_PERDU("PAIN_PERDU", "Includes fields marked as deprecated from codesets in forms and tables"),
     LOTTERY("LOTTERY", "Use external API to verify Lot Number validity in forms"),
     //    LIGUAL("LIGUAL", "Sets all name types as legal"),

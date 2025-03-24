@@ -3,6 +3,7 @@ package org.immregistries.ehr.api.controllers;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
+import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.Tenant;
@@ -142,9 +143,17 @@ public class FacilityController {
         } else if (patientNumber.get() > 30) {
             patientNumber = Optional.of(3);
         }
-        for (int i = 0; i < patientNumber.get(); i++) {
-            ehrPatientController.postPatient(tenant, facility, randomGeneratorService.randomPatient(facility), Optional.of(true));
+        if (ProcessingFlavor.BLACKJACK.isActive()) {
+            for (int i = 0; i < patientNumber.get(); i++) {
+                ehrPatientController.postPatient(tenant, facility, randomGeneratorService.randomPatient(facility), Optional.of(true));
+            }
+        } else {
+            Set<EhrPatient> ehrPatients = randomGeneratorService.randomSyntheaPatientList(facility);
+            for (EhrPatient ehrPatient : ehrPatients) {
+                ehrPatientController.postPatient(tenant, facility, ehrPatient, Optional.of(true));
+            }
         }
+
         return ResponseEntity.ok("{}");
     }
 

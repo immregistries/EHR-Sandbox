@@ -36,8 +36,8 @@ public class RandomGeneratorService extends FullRandomGenerator {
         Config.set("modules.enabled", "[]");
         Config.set("exporter.hospital.fhir.export", "false");
         Config.set("exporter.practitioner.fhir.export", "false");
-        Config.set("exporter.fhir_r4.export", "false");
-        Config.set("exporter.fhir.export", "false");
+        Config.set("exporter.fhir_r4.export", "true");
+        Config.set("exporter.fhir.export", "true");
 //        Exporter.ExporterRuntimeOptions ero = new Exporter.ExporterRuntimeOptions();
         generator = new Generator(options);
     }
@@ -67,10 +67,10 @@ public class RandomGeneratorService extends FullRandomGenerator {
     }
 
     public Set<EhrPatient> randomSyntheaPatientList(Facility facility) {
-        Random random = new Random();
-        Person person = generator.createPerson(random.nextLong(), generator.randomDemographics(generator.getRandomizer()));
-        Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
-//        logger.info("Synthea Gen {}", bundle.getEntry().size());
-        return bundleImportServiceR4.convertToLocalPatients(bundle, facility);
+        Set<EhrPatient> ehrPatients = new HashSet<>(3);
+        ehrPatients.add(randomSyntheaPatient(facility));
+        ehrPatients.add(randomSyntheaPatient(facility));
+        ehrPatients.add(randomSyntheaPatient(facility));
+        return ehrPatients;
     }
 }
