@@ -1,9 +1,13 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ImmunizationRecommendationRecommendation } from 'fhir/r5';
 import { AbstractDataTableComponent } from 'src/app/shared/_components/abstract-data-table/abstract-data-table.component';
+import { VaccinationFormComponent } from '../../vaccination-form/vaccination-form.component';
+import { PatientService } from 'src/app/core/_services/patient.service';
+import { VaccinationEvent } from 'src/app/core/_model/rest';
 
 @Component({
   selector: 'app-recommendation-component-table',
@@ -18,12 +22,18 @@ import { AbstractDataTableComponent } from 'src/app/shared/_components/abstract-
   ],
 })
 export class RecommendationComponentTableComponent extends AbstractDataTableComponent<ImmunizationRecommendationRecommendation> implements OnInit {
-  columns: (keyof ImmunizationRecommendationRecommendation)[] = [
+
+  columns: (keyof ImmunizationRecommendationRecommendation | "button")[] = [
     "vaccineCode",
     "forecastStatus",
     "dateCriterion",
+    "button",
   ]
-  constructor(private datePipe: DatePipe) { super() }
+
+  constructor(private datePipe: DatePipe,
+    private dialog: MatDialog,
+    private patientService: PatientService,
+  ) { super() }
 
   ngOnInit(): void {
     this.dataSource.filterPredicate = (data, filter) => {
@@ -51,6 +61,14 @@ export class RecommendationComponentTableComponent extends AbstractDataTableComp
     return element?.vaccineCode && element?.vaccineCode[0].coding ?
       element.vaccineCode[0].coding[0].display
       + ' (' + (element.vaccineCode[0].coding[0].code ?? "-None-") + ')' : "N/A"
+  }
+
+  extractVaccineCode(element: ImmunizationRecommendationRecommendation): string {
+    return element?.vaccineCode && element?.vaccineCode[0].coding ? (element.vaccineCode[0].coding[0].code ?? "") : ""
+  }
+
+  extractForecastStatus(element: ImmunizationRecommendationRecommendation): string {
+    return element?.forecastStatus?.coding ? (element.forecastStatus.coding[0].code ?? "") : ""
   }
 
   printForecastStatus(element: ImmunizationRecommendationRecommendation): string {
@@ -83,4 +101,33 @@ export class RecommendationComponentTableComponent extends AbstractDataTableComp
     }
     return disp;
   }
+
+  openCreation(element: ImmunizationRecommendationRecommendation) {
+    let vaccination: VaccinationEvent = {
+      id: -1,
+      vaccine: {
+        vaccineCvxCode: this.extractVaccineCode(element),
+        createdDate: new Date(),
+        updatedDate: new Date(),
+        administeredDate: new Date(),
+        informationSource: '00',
+      },
+      primarySource: true,
+    }
+    const dialogRef = this.dialog.open(VaccinationFormComponent, {
+      maxWidth: '99vw',
+      maxHeight: '95vh',
+      minHeight: 'fit-content',
+      width: '90%',
+      panelClass: 'dialog-with-bar',
+      data: { patientId: this.patientService.getCurrentId(), vaccination: vaccination },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.patientService.doRefresh()
+      }
+    });
+  }
+
+
 }
