@@ -11,7 +11,8 @@ import java.util.Set;
 import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
 
 public enum ProcessingFlavor {
-    PAIN_PERDU("PERDU", "Includes fieldscmarked as deprecated from codesets in forms and tables"),
+    BLACKJACK("BLACKJACK", "Generates completely random Records instead of Synthea"),
+    PAIN_PERDU("PAIN_PERDU", "Includes fields marked as deprecated from codesets in forms and tables"),
     LOTTERY("LOTTERY", "Use external API to verify Lot Number validity in forms"),
     //    LIGUAL("LIGUAL", "Sets all name types as legal"),
     BIZNESS("BIZNESS", "(Incoming) Uses local id in FHIR references instead of business identifier"),

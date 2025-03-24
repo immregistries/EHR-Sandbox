@@ -10,7 +10,7 @@ import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.RandomGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class FacilityController {
     @Autowired
     private EhrPatientController ehrPatientController;
     @Autowired
-    private RandomGenerator randomGenerator;
+    private RandomGeneratorService randomGeneratorService;
     @Autowired
     private AuditRevisionEntityRepository auditRevisionEntityRepository;
     @Autowired
@@ -56,7 +56,7 @@ public class FacilityController {
 
     @GetMapping(FACILITY_ID_SUFFIX + "/$random_patient")
     public EhrPatient getRandomPatient(@PathVariable(FACILITY_ID) Integer facilityId) {
-        return randomGenerator.randomPatient(facilityRepository.findById(facilityId).get());
+        return randomGeneratorService.randomPatient(facilityRepository.findById(facilityId).get());
     }
 
     @GetMapping(FACILITY_ID_SUFFIX)
@@ -143,7 +143,7 @@ public class FacilityController {
             patientNumber = Optional.of(3);
         }
         for (int i = 0; i < patientNumber.get(); i++) {
-            ehrPatientController.postPatient(tenant, facility, randomGenerator.randomPatient(facility), Optional.of(true));
+            ehrPatientController.postPatient(tenant, facility, randomGeneratorService.randomPatient(facility), Optional.of(true));
         }
         return ResponseEntity.ok("{}");
     }

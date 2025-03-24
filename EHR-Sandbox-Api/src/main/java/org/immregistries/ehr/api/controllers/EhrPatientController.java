@@ -8,7 +8,7 @@ import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
 import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
-import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.RandomGeneratorService;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class EhrPatientController {
     private VaccinationController vaccinationController;
 
     @Autowired
-    private RandomGenerator randomGenerator;
+    private RandomGeneratorService randomGeneratorService;
     @Autowired
     private TenantRepository tenantRepository;
     @Autowired
@@ -92,14 +92,21 @@ public class EhrPatientController {
             EhrPatient patient,
             Optional<Integer> vaccinationNumber) {
         if (vaccinationNumber.isEmpty()) {
-            vaccinationNumber = Optional.of(3);
+            vaccinationNumber = Optional.of(4);
         }
         if (vaccinationNumber.get() > 30) {
-            vaccinationNumber = Optional.of(3);
+            vaccinationNumber = Optional.of(4);
         }
-        for (int i = 0; i < vaccinationNumber.get(); i++) {
-            vaccinationController.postVaccinationEvents(tenant, patient, randomGenerator.randomVaccinationEvent(patient, tenant, facility));
+        if (patient.getVaccinationEvents().isEmpty()) {
+            for (int i = 0; i < vaccinationNumber.get(); i++) {
+                vaccinationController.postVaccinationEvents(tenant, patient, randomGeneratorService.randomVaccinationEvent(patient, tenant, facility));
+            }
+        } else { // Usually when patient was generated through Synthea
+            for (VaccinationEvent vaccinationEvent : patient.getVaccinationEvents()) {
+                vaccinationController.postVaccinationEvents(tenant, patient, vaccinationEvent);
+            }
         }
+
         return ResponseEntity.ok("{}");
     }
 
@@ -185,14 +192,14 @@ public class EhrPatientController {
             nextOfKinRelationship.setNextOfKinRelationshipPK(new NextOfKinRelationshipPK());
             nextOfKinRelationship.getNextOfKin().setId(null);
         }
-        if (true) {
-            patient.getNames().stream().map(ehrHumanName -> {
-                ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());
-                ehrHumanName.setNameFirst(ehrHumanName.getNameFirst().toUpperCase());
-                ehrHumanName.setNameMiddle(ehrHumanName.getNameMiddle().toUpperCase());
-                return ehrHumanName;
-            });
-        }
+//        if (true) {
+//            patient.getNames().stream().map(ehrHumanName -> {
+//                ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());
+//                ehrHumanName.setNameFirst(ehrHumanName.getNameFirst().toUpperCase());
+//                ehrHumanName.setNameMiddle(ehrHumanName.getNameMiddle().toUpperCase());
+//                return ehrHumanName;
+//            });
+//        }
         EhrPatient newEntity = ehrPatientRepository.save(patient);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

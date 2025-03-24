@@ -204,6 +204,8 @@ public class BundleImportServiceR4 implements IBundleImportService {
                 case Immunization: {
                     Immunization immunization = (Immunization) entry.getResource();
                     VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(immunization);
+                    vaccinationEvent.getVaccine().setInformationSource("01");
+                    vaccinationEvent.setPrimarySource(false);
                     if (immunization.hasPatient() && immunization.getPatient().hasReference()) {
                         EhrPatient ehrPatient = patientMap.get(immunization.getPatient().getReference());
 //                        vaccinationEvent.setPatient(patientMap.get(immunization.getPatient().getReference()));

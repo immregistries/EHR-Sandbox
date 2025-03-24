@@ -3,7 +3,6 @@ package org.immregistries.ehr.logic;
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.Bundle;
 import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.generated.LinkTo;
@@ -12,55 +11,28 @@ import org.immregistries.ehr.CodeMapManager;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.*;
 import org.immregistries.ehr.api.repositories.TenantRepository;
-import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.mitre.synthea.engine.Generator;
-import org.mitre.synthea.export.FhirR4;
-import org.mitre.synthea.helpers.Config;
-import org.mitre.synthea.world.agents.Person;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.random;
 import static org.immregistries.codebase.client.reference.CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE;
-import static org.immregistries.ehr.logic.mapping.forR5.PatientMapperR5.MRN_SYSTEM;
+import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_SYSTEM;
 
 @Service
-public class RandomGenerator {
-    private static final Logger logger = LoggerFactory.getLogger(RandomGenerator.class);
+public class FullRandomGenerator {
     @Autowired
-    CodeMapManager codeMapManager;
-
-    @Autowired
-    private ResourceIdentificationService resourceIdentificationService;
+    private CodeMapManager codeMapManager;
     @Autowired
     private TenantRepository tenantRepository;
-
-    private FhirComponentsDispatcher fhirComponentsDispatcher;
-
     @Autowired
-    BundleImportServiceR4 bundleImportServiceR4;
-
-    private Generator generator;
-
-    public RandomGenerator() {
-        Generator.GeneratorOptions options = new Generator.GeneratorOptions();
-        options.population = 0;
-        options.enabledModules = List.of("patient", "immunization");
-
-        Config.set("modules.enabled", "[]");
-        Config.set("exporter.hospital.fhir.export", "false");
-        Config.set("exporter.practitioner.fhir.export", "false");
-        Config.set("exporter.fhir_r4.export", "false");
-        Config.set("exporter.fhir.export", "false");
-//        Exporter.ExporterRuntimeOptions ero = new Exporter.ExporterRuntimeOptions();
-        generator = new Generator(options);
-    }
+    private ResourceIdentificationService resourceIdentificationService;
 
     private static Date between(Date startInclusive, Date endExclusive) {
         long startMillis = startInclusive.getTime();
@@ -72,12 +44,8 @@ public class RandomGenerator {
         return new Date(randomMillisSinceEpoch);
     }
 
-    public EhrPatient randomPatient(Facility facility) {
-        if (true) {
-            return randomSyntheaPatient(facility);
-        }
+    public EhrPatient fullRandomPatient(Facility facility) {
         Faker faker = new Faker();
-
         int randDay = (int) (Math.random() * 30 + 1);
         int randMonth = (int) (Math.random() * 11);
         int randYear = (int) (Math.random() * 121 + 1900);
@@ -229,21 +197,6 @@ public class RandomGenerator {
         ehrPatient.setUpdatedDate(new Date());
         ehrPatient.setCreatedDate(new Date());
         return ehrPatient;
-    }
-
-    private EhrIdentifier randomEhrIdentifierMrn(Facility facility) {
-        String mrn = RandomStringUtils.random(11, true, true);
-        String mrnSystem;
-        if (facility != null) {
-            mrnSystem = resourceIdentificationService.getFacilityPatientIdentifierSystem(facility);
-        } else {
-            mrnSystem = MRN_SYSTEM;
-        }
-        EhrIdentifier ehrIdentifier = new EhrIdentifier();
-        ehrIdentifier.setType("MR");
-        ehrIdentifier.setValue(mrn);
-        ehrIdentifier.setSystem(mrnSystem);
-        return ehrIdentifier;
     }
 
     public NextOfKin randomNextOfKin() {
@@ -406,53 +359,23 @@ public class RandomGenerator {
         return ehrAddress;
     }
 
+    public EhrIdentifier randomEhrIdentifierMrn(Facility facility) {
+        String mrn = RandomStringUtils.random(11, true, true);
+        String mrnSystem;
+        if (facility != null) {
+            mrnSystem = resourceIdentificationService.getFacilityPatientIdentifierSystem(facility);
+        } else {
+            mrnSystem = MRN_SYSTEM;
+        }
+        EhrIdentifier ehrIdentifier = new EhrIdentifier();
+        ehrIdentifier.setType("MR");
+        ehrIdentifier.setValue(mrn);
+        ehrIdentifier.setSystem(mrnSystem);
+        return ehrIdentifier;
+    }
+
     private Code randomCode(Collection<Code> collection) {
         return collection.stream().skip((long) (random() * collection.size())).findFirst().get();
     }
 
-    public EhrPatient randomSyntheaPatient(Facility facility) {
-        Random random = new Random();
-        Person person = generator.createPerson(random.nextLong(), generator.randomDemographics(generator.getRandomizer()));
-//        Person person = generator.generatePerson(2, random.nextLong());
-        Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
-        logger.info("Synthea Gen {}", bundle.getEntry().size());
-        EhrPatient ehrPatient = bundleImportServiceR4.convertToLocalPatients(bundle, facility).stream().findFirst().orElse(null);
-        assert ehrPatient != null;
-        if (ehrPatient.getIdentifiers().isEmpty()) {
-            ehrPatient.getIdentifiers().add(randomEhrIdentifierMrn(facility));
-        }
-        return ehrPatient;
-//        if (ProcessingFlavor.R4.isActive()) {
-
-//            EhrPatient ehrPatient = null;
-//            String patientUrl = null;
-//            for (Bundle.BundleEntryComponent entryComponent:  bundle.getEntry()) {
-//                if(entryComponent.getResource() instanceof Patient) {
-//                    patientUrl = entryComponent.getFullUrl();
-//                    ehrPatient = fhirComponentsDispatcher.patientMapper().toEhrPatient((Patient) entryComponent.getResource());
-//                }
-//            }
-//            if (ehrPatient == null) {
-//                throw new RuntimeException("Failed at generating patient through Synthea");
-//            }
-//            Set<VaccinationEvent> vaccinationEvents = new HashSet<>(bundle.getEntry().size());
-//            for (Bundle.BundleEntryComponent entryComponent:  bundle.getEntry()) {
-//                if(entryComponent.getResource() instanceof Immunization) {
-//                    Immunization immunization = (Immunization) entryComponent.getResource();
-//                    if (immunization.getPatient().getReference().equals(patientUrl)) {
-//                        vaccinationEvents.add(fhirComponentsDispatcher.immunizationMapper().toVaccinationEvent(immunization));
-//                    }
-//                }
-//            }
-//            ehrPatient.setVaccinationEvents(vaccinationEvents);
-//        }
-    }
-
-    public Set<EhrPatient> randomSyntheaPatientList(Facility facility) {
-        Random random = new Random();
-        Person person = generator.createPerson(random.nextLong(), generator.randomDemographics(generator.getRandomizer()));
-        Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
-        logger.info("Synthea Gen {}", bundle.getEntry().size());
-        return bundleImportServiceR4.convertToLocalPatients(bundle, facility);
-    }
 }

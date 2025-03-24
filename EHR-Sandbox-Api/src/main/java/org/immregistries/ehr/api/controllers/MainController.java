@@ -13,7 +13,7 @@ import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.RandomGeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class MainController {
     @Autowired
     CodeMapManager codeMapManager;
     @Autowired
-    RandomGenerator randomGenerator;
+    RandomGeneratorService randomGeneratorService;
     @Autowired
     AuditRevisionEntityRepository auditRevisionEntityRepository;
     @Autowired
@@ -41,12 +41,12 @@ public class MainController {
 
     @GetMapping("/$random_patient")
     public EhrPatient randomPatient() {
-        return randomGenerator.randomPatient(null);
+        return randomGeneratorService.randomPatient(null);
     }
 
     @GetMapping("/$random_vaccination")
     public VaccinationEvent randomVaccination() {
-        return randomGenerator.randomVaccinationEvent(null, null, null);
+        return randomGeneratorService.randomVaccinationEvent(null, null, null);
     }
 
     /**

@@ -6,7 +6,7 @@ import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.ClinicianRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
-import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.RandomGeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ClinicianController {
     private TenantRepository tenantRepository;
 
     @Autowired
-    private RandomGenerator randomGenerator;
+    private RandomGeneratorService randomGeneratorService;
 
     @GetMapping()
     public Iterable<Clinician> clinicians(@PathVariable(TENANT_ID) Integer tenantId) {
@@ -43,7 +43,7 @@ public class ClinicianController {
 
     @GetMapping("/$random")
     public Clinician random(@PathVariable(TENANT_ID) Integer tenantId) {
-        return randomGenerator.randomClinician(tenantId);
+        return randomGeneratorService.randomClinician(tenantId);
     }
 
 
@@ -53,9 +53,15 @@ public class ClinicianController {
     }
 
     public Clinician postClinicians(Tenant tenant, Clinician clinician) {
+        if (clinician.getId() != null && clinician.getId() > -1) {
+            Optional<Clinician> old = clinicianRepository.findByTenantAndId(tenant, clinician.getId());
+            if (old.isEmpty()) {
+                clinician.setId(null);
+            }
+        }
         clinician.setTenant(tenant);
-        Clinician newClinician = clinicianRepository.save(clinician);
-        return newClinician;
+
+        return clinicianRepository.save(clinician);
     }
 
     @PutMapping(CLINICIAN_ID_SUFFIX)

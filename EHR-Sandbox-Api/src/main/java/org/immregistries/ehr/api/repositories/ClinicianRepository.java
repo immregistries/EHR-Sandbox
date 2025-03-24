@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.repositories;
 
 import org.immregistries.ehr.api.entities.Clinician;
+import org.immregistries.ehr.api.entities.Tenant;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,8 @@ public interface ClinicianRepository extends CrudRepository<Clinician, Integer> 
     Iterable<Clinician> findByTenantId(Integer tenantId);
 
     Optional<Clinician> findByTenantIdAndId(Integer tenantId, Integer clinicianId);
+
+    Optional<Clinician> findByTenantAndId(Tenant tenant, Integer clinicianId);
 
     boolean existsByTenantIdAndId(Integer tenantId, Integer clinicianId);
 

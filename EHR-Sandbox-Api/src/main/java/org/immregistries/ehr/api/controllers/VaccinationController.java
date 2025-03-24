@@ -9,7 +9,7 @@ import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
-import org.immregistries.ehr.logic.RandomGenerator;
+import org.immregistries.ehr.logic.RandomGeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 @RequestMapping({VACCINATION_PATH, FACILITY_ID_PATH + VACCINATION_PATH_HEADER})
 public class VaccinationController {
     @Autowired
-    RandomGenerator randomGenerator;
+    RandomGeneratorService randomGeneratorService;
 
     @Autowired
     private VaccinationEventRepository vaccinationEventRepository;
@@ -77,7 +77,7 @@ public class VaccinationController {
                                    @PathVariable(FACILITY_ID) Integer facilityId,
                                    @PathVariable(PATIENT_ID) Optional<Integer> patientId) {
         patientId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid patient id"));
-        return randomGenerator.randomVaccinationEvent(patientRepository.findById(patientId.get()).get(), tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get());
+        return randomGeneratorService.randomVaccinationEvent(patientRepository.findById(patientId.get()).get(), tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get());
     }
 
     @PostMapping()
