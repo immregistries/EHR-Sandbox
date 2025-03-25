@@ -184,4 +184,13 @@ public class Facility extends EhrEntity {
     public void setAddresses(Set<EhrAddress> addresses) {
         this.addresses = addresses;
     }
+
+    @Transient
+    public int getFeedbacksCount() {
+        if (feedbacks == null) {
+            return 0;
+        } else {
+            return feedbacks.size();
+        }
+    }
 }

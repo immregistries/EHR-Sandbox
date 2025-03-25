@@ -39,7 +39,9 @@
     <mat-grid-tile [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-feedback-table [facility]="facility"></app-feedback-table>
+          <!-- <app-ack-table [charts]="true"></app-ack-table> -->
+          <app-feedback-table [facility]="facility" [dataArray]="feedbacks"
+                              [title]="'Issues for this facility'"></app-feedback-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

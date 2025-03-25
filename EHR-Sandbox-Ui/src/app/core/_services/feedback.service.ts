@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { EhrPatient, Feedback, VaccinationEvent } from '../_model/rest';
+import { EhrPatient, Facility, Feedback, VaccinationEvent } from '../_model/rest';
 import { BehaviorSubject, Observable, of, share, switchMap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
@@ -50,8 +50,9 @@ export class FeedbackService extends RefreshService {
   //     httpOptions);
   // }
 
-  readFacilityFeedback(facilityId: number): Observable<Feedback[]> {
+  readFacilityFeedback(facility: Facility | number): Observable<Feedback[]> {
     const tenantId: number = this.tenantService.getCurrentId()
+    let facilityId: number = (typeof facility === 'number') ? facility : facility.id ?? -1
     if (facilityId < 0 || tenantId < 0) {
       return of()
     }

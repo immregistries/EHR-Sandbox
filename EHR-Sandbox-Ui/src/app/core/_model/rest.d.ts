@@ -63,9 +63,10 @@ export interface Facility {
   facilities?: Facility[];
   parentFacility?: Facility | number;
   childrenCount?: number;
-  identifiers?: EhrIdentifier[],
+  identifiers?: EhrIdentifier[];
   type?: string;
-  addresses?: EhrAddress[]
+  addresses?: EhrAddress[];
+  feedbacksCount?: number;
 }
 
 export interface ImmunizationRegistry {

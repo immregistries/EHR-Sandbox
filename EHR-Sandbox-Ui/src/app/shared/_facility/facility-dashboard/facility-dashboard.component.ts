@@ -1,7 +1,8 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Facility } from 'src/app/core/_model/rest';
+import { Facility, Feedback } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Component({
@@ -10,10 +11,14 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
   styleUrls: ['./facility-dashboard.component.css']
 })
 export class FacilityDashboardComponent {
+  feedbacks?: Feedback[];
+
   _facility!: Facility;
   @Input()
   set facility(value: Facility) {
     this._facility = value
+    this.feedbackService.readFacilityFeedback(value.id ?? -1).subscribe(res => this.feedbacks = res)
+
     if (this.facility.parentFacility && typeof this.facility.parentFacility != "object") {
       this.facilityService.readFacility(this.tenantService.getCurrentId(), this.facility.parentFacility).subscribe((res) => {
         this._facility.parentFacility = res
@@ -37,8 +42,10 @@ export class FacilityDashboardComponent {
   children: Facility[] = [];
   parentDisplay: String = "";
 
+
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
+    public feedbackService: FeedbackService,
     public dialog: MatDialog,
     @Optional() public _dialogRef: MatDialogRef<FacilityDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility | number }) {
@@ -55,6 +62,7 @@ export class FacilityDashboardComponent {
         this.facility = res
       })
     }
+
   }
 
   openFacility(element?: Facility | number) {

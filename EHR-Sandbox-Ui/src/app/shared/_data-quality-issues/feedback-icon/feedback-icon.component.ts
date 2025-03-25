@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
+import { EhrPatient, Facility, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { FeedbackTableComponent } from '../feedback-table/feedback-table.component';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { of, switchMap } from 'rxjs';
@@ -13,7 +13,11 @@ import { of, switchMap } from 'rxjs';
 export class FeedbackIconComponent implements OnInit {
 
   public feedbacksCount: number | undefined
+
   private _vaccination?: VaccinationEvent | undefined;
+  public get vaccination(): VaccinationEvent | undefined {
+    return this._vaccination;
+  }
   @Input()
   public set vaccination(value: VaccinationEvent | undefined) {
     this._vaccination = value;
@@ -22,13 +26,27 @@ export class FeedbackIconComponent implements OnInit {
     } else {
       this.feedbacksCount = undefined
     }
-
   }
+
   private _patient?: EhrPatient | undefined;
+  public get patient(): EhrPatient | undefined {
+    return this._patient;
+  }
   @Input()
   public set patient(value: EhrPatient | undefined) {
     this._patient = value;
     if (value && !this.vaccination) {
+      this.feedbacksCount = value.feedbacksCount
+    } else if (!value) {
+      this.feedbacksCount = undefined
+    }
+  }
+
+  private _facility?: Facility | undefined;
+  @Input()
+  public set facility(value: Facility | undefined) {
+    this._facility = value;
+    if (value && !this.vaccination && !this.patient) {
       this.feedbacksCount = value.feedbacksCount
     } else if (!value) {
       this.feedbacksCount = undefined
@@ -43,12 +61,14 @@ export class FeedbackIconComponent implements OnInit {
   }
 
   openFeedback() {
-    of(!this._vaccination).pipe(
+    of([this._vaccination, this._patient]).pipe(
       switchMap(cond => {
-        if (cond) {
+        if (cond[0]) {
+          return this.feedbackService.readVaccinationFeedback(this._vaccination ?? -1);
+        } else if (cond[1]) {
           return this.feedbackService.readPatientFeedback(this._patient ?? -1);
         } else {
-          return this.feedbackService.readVaccinationFeedback(this._vaccination ?? -1);
+          return this.feedbackService.readFacilityFeedback(this._facility ?? -1)
         }
       })
     ).subscribe((res) => {

@@ -34,7 +34,7 @@ export class PatientResumePipe implements PipeTransform {
         result += this.datePipe.transform(obj?.birthDate, "shortDate")
       } else if (element === 'mrn') {
         result += this.extractMrn(obj)
-      } else if (element === 'name') {
+      } else if (element === 'name' && obj?.names) {
         result += obj?.names[0].nameLast + ", " + (obj?.names[0].nameFirst ?? '')
       }
       result += " "

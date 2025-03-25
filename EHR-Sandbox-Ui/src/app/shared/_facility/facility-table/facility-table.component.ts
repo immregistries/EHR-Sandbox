@@ -17,7 +17,7 @@ export class FacilityTableComponent extends AbstractDataTableComponent<Facility>
   @Input()
   title: String = 'Facilities'
 
-  columns: string[] = ["nameDisplay", "childrenCount"]
+  columns: string[] = ["nameDisplay", "childrenCount", "alerts"]
 
   openFacility(element: Facility) {
     this.dialog.open(FacilityDashboardComponent, {
@@ -26,7 +26,7 @@ export class FacilityTableComponent extends AbstractDataTableComponent<Facility>
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: {facility: element}
+      data: { facility: element }
     })
 
   }
