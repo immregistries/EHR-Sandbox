@@ -4,7 +4,7 @@
           [matTooltip]="disabled() ? 'Select Tenant to enable' : ''">
     <mat-icon>arrow_drop_down</mat-icon>
     <span style="display: flex;align-items: center;">
-      {{(facilityService.getCurrentId() > 0)? ("Facility: " + (facilityService.getCurrent() | facilityName)) : "Select
+      {{(facilityService.getCurrentId() > 0)? ("Facility: " + (facilityService.getCurrent() | facilityName )) : "Select
       Facility" }}
 
       <button mat-icon-button type="button" (click)="openFacility();$event.stopPropagation();"
@@ -15,9 +15,21 @@
 
 
   <div content>
-    <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)">{{item | facilityName}}</button>
+    <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)">{{item
+      | facilityName}}
+    </button>
     <button mat-menu-item (click)="openDialog()" *ngIf="!disabled()">
       <mat-icon>add</mat-icon>
     </button>
+  </div>
+
+  <div subcontent>
+    <!-- <mat-menu #testcaca="matMenu">
+      <button mat-menu-item>Insects</button>
+      <button mat-menu-item>Molluscs</button>
+      <button mat-menu-item>Crustaceans</button>
+    </mat-menu>
+    <ng-component *ngFor="let item of list" ngIf="item.facilities">
+    </ng-component> -->
   </div>
 </app-hover-menu>

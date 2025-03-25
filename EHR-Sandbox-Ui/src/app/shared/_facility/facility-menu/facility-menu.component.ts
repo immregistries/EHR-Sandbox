@@ -81,7 +81,7 @@ export class FacilityMenuComponent implements OnInit {
         this.openDialog()
       }
     }
-    event?.stopPropagation()
+    // event?.stopPropagation()
   }
 
   openFacility() {

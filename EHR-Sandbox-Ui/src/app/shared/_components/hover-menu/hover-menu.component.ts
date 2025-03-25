@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-hover-menu',
@@ -33,5 +33,16 @@ export class HoverMenuComponent {
       trigger.closeMenu();
     }, 150);
   }
+
+  // @ViewChild('subMenuTemplate') subMenuTemplate: TemplateRef<any>;
+  // @ViewChild('nestedSubMenuTemplate') nestedSubMenuTemplate: TemplateRef<any>;
+
+  // getSubMenu(item: any) {
+  //   return this.subMenuTemplate;
+  // }
+
+  // getNestedSubMenu(item: any) {
+  //   return this.nestedSubMenuTemplate;
+  // }
 
 }

@@ -23,6 +23,7 @@ export class FacilityNamePipe implements PipeTransform {
       return list?.find((fac) => facility == fac.id)?.nameDisplay ?? '' + facility
     }
 
+    console.info(this.facilityService.facilitiesCached)
     return this.facilityService.facilitiesCached.find(f => (facility == f.id))?.nameDisplay ?? '' + facility;
   }
 }
