@@ -28,6 +28,9 @@ public class RandomGeneratorService extends FullRandomGenerator {
 
     private final Generator generator;
 
+    /*
+        TODO runtime configuration, or parameter for age at least
+     */
     public RandomGeneratorService() {
         Generator.GeneratorOptions options = new Generator.GeneratorOptions();
         options.population = 0;
