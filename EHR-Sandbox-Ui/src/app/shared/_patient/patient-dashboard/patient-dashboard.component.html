@@ -24,7 +24,8 @@
     <mat-grid-tile [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-feedback-table [patient]="patient"></app-feedback-table>
+          <app-feedback-table [patient]="patient" [dataArray]="feedbacks"
+                              [loading]="feedbacksLoading"></app-feedback-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

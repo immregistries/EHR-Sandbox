@@ -39,6 +39,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   @Input()
   public allow_populate: boolean = false;
 
+  @Input()
   /**
    * controls loading bar
    */

@@ -1,9 +1,10 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
-import { EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
+import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, merge } from 'rxjs';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
+import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -11,10 +12,27 @@ import { VaccinationService } from 'src/app/core/_services/vaccination.service';
   styleUrls: ['./patient-dashboard.component.css']
 })
 export class PatientDashboardComponent {
-  @Input() patient!: EhrPatient
+  public feedbacksLoading!: boolean
+  public feedbacks: Feedback[] = []
+
+  @Input()
+  private _patient!: EhrPatient;
+  public get patient(): EhrPatient {
+    return this._patient;
+  }
+  public set patient(value: EhrPatient) {
+    this.feedbacksLoading = true
+    this.feedbacks = []
+    this._patient = value;
+    this.feedbackService.readPatientFeedback(value).subscribe((res) => {
+      this.feedbacksLoading = false
+      this.feedbacks = res
+    })
+  }
 
   constructor(private patientService: PatientService,
     private vaccinationService: VaccinationService,
+    private feedbackService: FeedbackService,
     @Optional() public _dialogRef: MatDialogRef<PatientDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient?: EhrPatient | number }) {
     if (data?.patient) {
