@@ -51,7 +51,7 @@ export class SnackBarService {
    * @param vaccination
    */
   fatalFhirMessage(message: string, patient?: EhrPatient | number, vaccination?: VaccinationEvent | number) {
-    return this._snackBar.open("Critical fhir issue : " + message, `open`, { duration: 15000 })
+    return this._snackBar.open("Critical fhir issue : " + message, patient || vaccination ? `open` : `close`, { duration: 15000 })
       .onAction().subscribe(() => {
         if (patient && vaccination) {
           this.openVaccination(patient, vaccination)

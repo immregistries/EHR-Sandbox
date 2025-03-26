@@ -75,7 +75,6 @@ public class FhirClientController {
         return ResponseEntity.ok(resourceClient.read(resourceType, id, immunizationRegistryService.getImmunizationRegistry(registryId)));
     }
 
-
     @PostMapping({FHIR_CLIENT_PATH + "/{resourceType}/search", FHIR_CLIENT + "/{resourceType}/search"})
     public ResponseEntity<String> searchFhirResourceFromIIS(
             @RequestParam(REGISTRY_ID) Integer registryId,
@@ -260,7 +259,7 @@ public class FhirClientController {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         IBaseResource baseImmunization = parser.parseResource(message); //TODO verify resourceType ?
         MethodOutcome outcome = resourceClient.create(baseImmunization, immunizationRegistry);
-        /**
+        /*
          * Registering received id as external id
          */
         immunizationIdentifierRepository.save(new ImmunizationIdentifier(
@@ -347,7 +346,7 @@ public class FhirClientController {
         return ResponseEntity.ok(EhrFhirOutcome.fromMethodOutcome(outcome, parser));
     }
 
-    @PutMapping(FHIR_CLIENT_PATH)
+    @PutMapping({FHIR_CLIENT_PATH, FHIR_CLIENT_FACILITY_PATH})
     public ResponseEntity<String> putResource(
             @RequestParam(REGISTRY_ID) Integer registryId,
             @RequestParam("type") String type,

@@ -25,7 +25,7 @@ export class ClinicianTableComponent extends AbstractDataTableComponent<Clinicia
     super()
     this.observableRefresh = merge(
       tenantService.getCurrentObservable(),
-      facilityService.getCurrentObservable(),
+      // facilityService.getCurrentObservable(),
       clinicianService.getRefresh(),
     );
     this.observableSource = clinicianService.quickReadClinicians()

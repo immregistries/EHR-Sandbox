@@ -104,8 +104,11 @@ export class FhirPostComponent {
   private errorHandler = (err: any) => {
     this.requestLoading = false
     this.error = true
-    console.error(err)
-    if (err.status == 400) {
+    console.info(err)
+    if (!err.status) {
+      this.answer = err
+      this.snackBarService.fatalFhirMessage(err)
+    } else if (err.status == 400) {
       this.answer = err.error.errorMessage
       switch (this.resourceType) {
         case "Patient": {

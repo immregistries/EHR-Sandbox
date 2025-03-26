@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParamsOptions, HttpResponse } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { SettingsService } from '../settings.service';
 import { FacilityService } from '../facility.service';
 import { TenantService } from '../tenant.service';
@@ -48,6 +48,13 @@ export class FhirClientService extends IdUrlVerifyingService {
   }
 
   postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<EhrFhirOutcome> {
+    if (resourceLocalId < 0) {
+      if (this.tenantService.getCurrentId() > 0) {
+        return this.http.post(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/fhir-client?registryId=${this.registryService.getCurrentId()}`, resource)
+      } else {
+        return throwError(() => new Error('No Tenant Selected'));
+      }
+    }
     switch (type) {
       case "Patient": {
         return this.quickPostPatient(resourceLocalId, resource, operation);
@@ -346,7 +353,7 @@ export class FhirClientService extends IdUrlVerifyingService {
   putPatient(tenantId: number, facilityId: number, patientId: number, resource: string): Observable<EhrFhirOutcome> {
     const registryId = this.registryService.getCurrentId()
     return this.http.put<EhrFhirOutcome>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}${patientId > 0 ? '/patients/' + patientId : ''}/fhir-client`,
       resource,
       {
         ...httpOptions,
@@ -359,7 +366,7 @@ export class FhirClientService extends IdUrlVerifyingService {
   postPatient(tenantId: number, facilityId: number, patientId: number, resource: string): Observable<EhrFhirOutcome> {
     const registryId = this.registryService.getCurrentId()
     return this.http.post<EhrFhirOutcome>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/fhir-client`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/${patientId > 0 ? '/patients/' + patientId : ''}/fhir-client`,
       resource,
       {
         ...httpOptions,
