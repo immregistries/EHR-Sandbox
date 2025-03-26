@@ -16,7 +16,7 @@
           <mat-card-title>Parent Facility</mat-card-title>
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <p *ngIf="facility.parentFacility;else na">{{parentDisplay}}
+          <p *ngIf="facility.parentFacility;else na">{{facility.parentFacility | facilityName}}
           </p>
           <ng-template #na>
             <p>N/A</p>
@@ -32,7 +32,8 @@
     <mat-grid-tile [colspan]="2" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
-          <app-facility-table [title]="'Children Facilities'" [dataArray]="children"></app-facility-table>
+          <app-facility-table [title]="'Children Facilities'"
+                              [dataArray]="facility.facilities | facilityCache"></app-facility-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

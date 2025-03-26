@@ -43,6 +43,8 @@ import { VaccinationCachePipe } from '../shared/_pipes/vaccination-cache.pipe';
 import { CodeMapsPipe } from '../shared/_pipes/code-maps.pipe';
 import { AckStatusPipe } from '../shared/_pipes/ack-status.pipe';
 import { VaccinationResumePipe } from '../shared/_pipes/vaccination-resume.pipe';
+import { FacilityCachePipe } from '../shared/_pipes/facility-cache.pipe';
+import { FacilityNamePipe } from '../shared/_pipes/facility-name.pipe';
 
 
 
@@ -110,6 +112,8 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     PatientComparePipe,
     PatientResumePipe,
     PatientCachePipe,
+    FacilityCachePipe,
+    FacilityNamePipe,
     RegistryNamePipe,
     VaccinationComparePipe,
     VaccinationCachePipe,

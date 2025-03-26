@@ -133,6 +133,7 @@ import { AckTableComponent } from './_fhir/ack-table/ack-table.component';
 import { MatSortModule } from '@angular/material/sort';
 import { AckStatusPipe } from './_pipes/ack-status.pipe';
 import { VaccinationResumePipe } from './_pipes/vaccination-resume.pipe';
+import { FacilityCachePipe } from './_pipes/facility-cache.pipe';
 
 @NgModule({
   declarations: [
@@ -149,6 +150,7 @@ import { VaccinationResumePipe } from './_pipes/vaccination-resume.pipe';
     CodeMapsPipe,
     TextShortenPipe,
     FacilityNamePipe,
+    FacilityCachePipe,
     PatientCachePipe,
     PatientResumePipe,
 
@@ -357,6 +359,7 @@ import { VaccinationResumePipe } from './_pipes/vaccination-resume.pipe';
     CodeMapsPipe,
     TextShortenPipe,
     RegistryNamePipe,
+    FacilityCachePipe,
     FacilityNamePipe,
     PatientCachePipe,
     PatientResumePipe,

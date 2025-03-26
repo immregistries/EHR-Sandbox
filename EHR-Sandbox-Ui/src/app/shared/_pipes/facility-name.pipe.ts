@@ -1,6 +1,7 @@
 import { Pipe, type PipeTransform } from '@angular/core';
 import { Facility } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
+import { FacilityCachePipe } from './facility-cache.pipe';
 
 @Pipe({
   name: 'facilityName',
@@ -9,21 +10,15 @@ import { FacilityService } from 'src/app/core/_services/facility.service';
 export class FacilityNamePipe implements PipeTransform {
 
 
-  constructor(private facilityService: FacilityService) {
+  constructor(private facilityCachePipe: FacilityCachePipe) {
   }
 
   transform(facility: number | Facility, list?: Facility[]): string {
     if (!facility) {
       return "";
     }
-    if (typeof facility === "object") {
-      return facility.nameDisplay ?? ""
-    }
-    if (list) {
-      return list?.find((fac) => facility == fac.id)?.nameDisplay ?? '' + facility
-    }
 
-    console.info(this.facilityService.facilitiesCached)
-    return this.facilityService.facilitiesCached.find(f => (facility == f.id))?.nameDisplay ?? '' + facility;
+    let obj: Facility | undefined = (this.facilityCachePipe.transform([facility], list) ?? [undefined])[0]
+    return obj?.nameDisplay ?? '' + facility
   }
 }

@@ -50,8 +50,7 @@ public class Facility extends EhrEntity {
 
     @OneToMany(mappedBy = "parentFacility", cascade = CascadeType.DETACH)
 //    @JsonManagedReference("parent")
-//    @JsonIgnore()
-//    @JsonIdentityReference(alwaysAsId = true)
+    @JsonIdentityReference(alwaysAsId = true)
     @OrderBy("facility_id")
     private Set<Facility> facilities = new LinkedHashSet<>();
 

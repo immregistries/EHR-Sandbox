@@ -4,6 +4,7 @@ import { Facility, Feedback } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
+import { FacilityCachePipe } from '../../_pipes/facility-cache.pipe';
 
 @Component({
   selector: 'app-facility-dashboard',
@@ -18,51 +19,25 @@ export class FacilityDashboardComponent {
   set facility(value: Facility) {
     this._facility = value
     this.feedbackService.readFacilityFeedback(value.id ?? -1).subscribe(res => this.feedbacks = res)
-
-    if (this.facility.parentFacility && typeof this.facility.parentFacility != "object") {
-      this.facilityService.readFacility(this.tenantService.getCurrentId(), this.facility.parentFacility).subscribe((res) => {
-        this._facility.parentFacility = res
-        this.parentDisplay = this._facility.parentFacility.nameDisplay ?? ""
-      });
-    }
-    if (!this.facility.facilities) {
-      this.children = []
-      this.facilityService.readFacilityChildren(this.tenantService.getCurrentId(), this.facility.id ?? -1).subscribe((res) => {
-        this._facility.facilities = res
-        this.children = res
-      });
-    } else {
-      this.children = this.facility.facilities
-    }
   }
   get facility(): Facility {
     return this._facility
   }
 
-  children: Facility[] = [];
-  parentDisplay: String = "";
-
-
   constructor(public tenantService: TenantService,
     public facilityService: FacilityService,
+    public facilityCachePipe: FacilityCachePipe,
     public feedbackService: FeedbackService,
     public dialog: MatDialog,
     @Optional() public _dialogRef: MatDialogRef<FacilityDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { facility?: Facility | number }) {
     if (data?.facility) {
-      if (typeof data.facility === "number" || typeof data.facility === "string") {
-        this.facilityService.readFacility(tenantService.getCurrentId(), +data.facility).subscribe((res) => {
-          this.facility = res
-        });
-      } else {
-        this.facility = data.facility
-      }
+      this.facility = (this.facilityCachePipe.transform([data.facility]) ?? [])[0]
     } else {
       this.facilityService.getCurrentObservable().subscribe((res) => {
         this.facility = res
       })
     }
-
   }
 
   openFacility(element?: Facility | number) {
