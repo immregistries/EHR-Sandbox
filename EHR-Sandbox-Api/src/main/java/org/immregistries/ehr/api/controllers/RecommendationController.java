@@ -4,6 +4,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IDomainResource;
+import org.hl7.fhir.r4.model.Parameters;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.EhrPatient;
@@ -71,8 +72,13 @@ public class RecommendationController {
                 org.hl7.fhir.r4.model.Immunization immunization = (org.hl7.fhir.r4.model.Immunization) fhirComponentsDispatcher.immunizationMapper().toFhir(vaccinationEvent, "");
                 in.addParameter().setName("immunization").setResource(immunization);
             }
-            out = client.operation().onServer().named("$immds-forecast").withParameters(in).execute();
-            recommendationService.saveInStore((IDomainResource) ((org.hl7.fhir.r4.model.Parameters) out).getParameter("recommendation").getResource(), facilityId, patientId, immunizationRegistry);
+            Parameters outParameters = client.operation().onServer().named("$immds-forecast").withParameters(in).execute();
+            recommendationService.saveInStore((IDomainResource) outParameters.getParameter("recommendation").getResource(), facilityId, patientId, immunizationRegistry);
+//            List<org.hl7.fhir.r4.model.ImmunizationEvaluation> immunizationEvaluationList = outParameters.getParameters("evaluation").
+//                    stream().map((comp) -> (ImmunizationEvaluation) comp.getResource()).toList();
+//            for (ImmunizationEvaluation immunizationEvaluation : immunizationEvaluationList)
+//                logger.info(fhirComponentsDispatcher.parser("{}").encodeResourceToString(immunizationEvaluation));
+            out = outParameters;
         } else {
             org.hl7.fhir.r5.model.Patient patient = (org.hl7.fhir.r5.model.Patient) fhirComponentsDispatcher.patientMapper().toFhir(ehrPatient);
             org.hl7.fhir.r5.model.Parameters in = new org.hl7.fhir.r5.model.Parameters();
