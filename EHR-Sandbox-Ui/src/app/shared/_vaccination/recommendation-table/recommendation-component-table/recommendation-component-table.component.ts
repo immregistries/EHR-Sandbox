@@ -107,10 +107,10 @@ export class RecommendationComponentTableComponent extends AbstractDataTableComp
       id: -1,
       vaccine: {
         vaccineCvxCode: this.extractVaccineCode(element),
-        createdDate: new Date(),
-        updatedDate: new Date(),
         administeredDate: new Date(),
         informationSource: '00',
+        actionCode: "A",
+        completionStatus: "CP"
       },
       primarySource: true,
     }

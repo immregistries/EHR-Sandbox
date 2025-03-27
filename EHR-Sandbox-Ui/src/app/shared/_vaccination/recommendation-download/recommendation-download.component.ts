@@ -29,8 +29,10 @@ export class RecommendationDownloadComponent {
   }
 
   fetch() {
-    this.fhirClient.immdsForecast(this.facilityService.getCurrentId(), this.patientId).subscribe((res) => {
-      this._dialogRef.close(res)
+    this.fhirClient.immdsForecast(this.facilityService.getCurrentId(), this.patientId).subscribe({
+      next: (res) => this._dialogRef.close(res),
+      error: (err) => this.snackBarService.fatalFhirMessage(err)
+
     })
   }
 }

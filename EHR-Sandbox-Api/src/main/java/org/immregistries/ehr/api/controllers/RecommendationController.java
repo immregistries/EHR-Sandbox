@@ -67,7 +67,7 @@ public class RecommendationController {
             org.hl7.fhir.r4.model.Parameters in = new org.hl7.fhir.r4.model.Parameters();
             in.addParameter().setName("assessmentDate").setValue(new org.hl7.fhir.r4.model.DateType(new Date()));
             in.addParameter().setName("patient").setResource(patient);
-            for (VaccinationEvent vaccinationEvent : vaccinationEventRepository.findByPatientId(patientId)) {
+            for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
                 org.hl7.fhir.r4.model.Immunization immunization = (org.hl7.fhir.r4.model.Immunization) fhirComponentsDispatcher.immunizationMapper().toFhir(vaccinationEvent, "");
                 in.addParameter().setName("immunization").setResource(immunization);
             }
@@ -78,7 +78,7 @@ public class RecommendationController {
             org.hl7.fhir.r5.model.Parameters in = new org.hl7.fhir.r5.model.Parameters();
             in.addParameter().setName("assessmentDate").setValue(new org.hl7.fhir.r5.model.DateType(new Date()));
             in.addParameter().setName("patient").setResource(patient);
-            for (VaccinationEvent vaccinationEvent : vaccinationEventRepository.findByPatientId(patientId)) {
+            for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
                 org.hl7.fhir.r5.model.Immunization immunization = (org.hl7.fhir.r5.model.Immunization) fhirComponentsDispatcher.immunizationMapper().toFhir(vaccinationEvent, "");
                 in.addParameter().setName("immunization").setResource(immunization);
             }

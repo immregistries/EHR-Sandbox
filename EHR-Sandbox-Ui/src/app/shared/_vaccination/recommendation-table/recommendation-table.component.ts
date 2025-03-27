@@ -26,12 +26,7 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
   @Input()
   public set patientId(value: number) {
     this._patientId = value;
-    this.loading = true
-    this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
-      this.loading = false
-      this.dataSource.data = res
-      this.expandedElement = res.find((reco: ImmunizationRecommendation) => { return reco.id == this.expandedElement?.id }) ?? null
-    })
+    this.refreshReco();
   }
 
   columns: (keyof ImmunizationRecommendation)[] = [
@@ -50,6 +45,15 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
     super()
   }
 
+  private refreshReco() {
+    this.loading = true;
+    this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
+      this.loading = false;
+      this.dataSource.data = res;
+      this.expandedElement = res.find((reco: ImmunizationRecommendation) => { return reco.id == this.expandedElement?.id; }) ?? null;
+    });
+  }
+
   ngOnInit(): void {
 
   }
@@ -62,7 +66,7 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
     this.dialog.open(RecommendationDownloadComponent, { data: { 'patientId': this.patientId } }).afterClosed().subscribe((res) => {
       if (res) {
         this.patientService.doRefresh();
-        this.patientId = this.patientId
+        this.refreshReco()
       }
     });
   }
