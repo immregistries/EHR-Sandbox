@@ -18,10 +18,8 @@ export class PatientMenuComponent implements OnInit {
   list?: EhrPatient[];
 
   ngOnInit(): void {
-    this.facilityService.getCurrentObservable().subscribe(facility => {
-      this.patientService.quickReadPatients().subscribe((res) => {
-        this.list = res
-      })
+    this.patientService.quickReadPatients().subscribe((res) => {
+      this.list = res
     })
   }
 

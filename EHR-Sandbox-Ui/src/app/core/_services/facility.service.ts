@@ -21,7 +21,6 @@ const httpOptions = {
  */
 export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
-  private _facilitiesCached!: Facility[];
   // public get facilitiesCached(): Facility[] {
   //   return this._facilitiesCached;
   // }
@@ -29,7 +28,7 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   /**
    * Not destroyed as used in pipes
    */
-  readonly quickReadObservable: Observable<Facility[]> = combineLatest([
+  private readonly quickReadObservable: Observable<Facility[]> = combineLatest([
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
   ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readFacilities(tenant.id) : of([])))
@@ -62,9 +61,7 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   readAllFacilities(): Observable<Facility[]> {
     return this.http.get<Facility[]>(
       `${this.settings.getApiUrl()}/facilities`,
-      httpOptions).pipe(tap((result) => {
-        this._facilitiesCached = result
-      }));
+      httpOptions);
   }
 
   quickReadFacilities(): Observable<Facility[]> {
@@ -77,9 +74,7 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
     }
     return this.http.get<Facility[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities`,
-      httpOptions).pipe(tap((result) => {
-        this._facilitiesCached = result
-      }));
+      httpOptions);
 
   }
 
