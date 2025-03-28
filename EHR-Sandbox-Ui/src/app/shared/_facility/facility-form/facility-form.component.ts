@@ -69,7 +69,7 @@ export class FacilityFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.facilityService.readFacilities(this.tenantService.getCurrentId()).subscribe(res => {
+    this.facilityService.quickReadFacilities().subscribe(res => {
       this.facilityList = res
     })
   }

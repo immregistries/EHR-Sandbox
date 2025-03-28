@@ -27,13 +27,9 @@ export class FacilityMenuComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.facilityService.getRefresh().subscribe((bool) => {
-      this.tenantService.getCurrentObservable().subscribe(tenant => {
-        this.facilityService.readFacilities(tenant.id).subscribe((res) => {
-          this.list = res
-        })
-      })
-    });
+    this.facilityService.quickReadFacilities().subscribe((res) => {
+      this.list = res
+    })
   }
 
   openDialog() {

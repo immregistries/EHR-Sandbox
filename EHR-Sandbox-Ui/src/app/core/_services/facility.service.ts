@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Facility } from '../_model/rest';
-import { BehaviorSubject, merge, Observable, of, share, shareReplay, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, share, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { CurrentSelectedWithIdService } from './_abstract/current-selected-with-id.service';
 import { TenantService } from './tenant.service';
@@ -22,9 +22,19 @@ const httpOptions = {
 export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
   private _facilitiesCached!: Facility[];
-  public get facilitiesCached(): Facility[] {
-    return this._facilitiesCached;
-  }
+  // public get facilitiesCached(): Facility[] {
+  //   return this._facilitiesCached;
+  // }
+
+  /**
+   * Not destroyed as used in pipes
+   */
+  readonly quickReadObservable: Observable<Facility[]> = combineLatest([
+    this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
+    this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
+  ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readFacilities(tenant.id) : of([])))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
@@ -55,6 +65,10 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
       httpOptions).pipe(tap((result) => {
         this._facilitiesCached = result
       }));
+  }
+
+  quickReadFacilities(): Observable<Facility[]> {
+    return this.quickReadObservable
   }
 
   readFacilities(tenantId: number): Observable<Facility[]> {

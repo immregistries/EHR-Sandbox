@@ -17,17 +17,13 @@ const httpOptions = {
 })
 export class ClinicianService extends RefreshService {
 
-  private readonly if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService);
 
-  /**
-   * Experimental test
-   */
   private readonly quickReadObservable: Observable<Clinician[]> =
     combineLatest([
       this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
       this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
-    ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readClinicians(tenant.id) : of([])), tap(console.info)
-      ,).pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readClinicians(tenant.id) : of([])))
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }))
 
   private _cliniciansCached!: Clinician[];
   public get cliniciansCached(): Clinician[] {
