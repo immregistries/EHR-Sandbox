@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription, combineLatest, concat, shareReplay, startWith, switchMap, tap } from 'rxjs';
@@ -16,7 +16,7 @@ import FuzzySearch from 'fuzzy-search';
   templateUrl: './clinician-select.component.html',
   styleUrls: ['./clinician-select.component.css']
 })
-export class ClinicianSelectComponent extends AbstractBaseFormComponent {
+export class ClinicianSelectComponent extends AbstractBaseFormComponent implements OnInit, OnDestroy {
   @ViewChild('auto')
   matAutoComplete!: MatAutocomplete;
 
@@ -35,6 +35,7 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   private formChangesSubscription!: Subscription
   ngOnDestroy() {
     this.formChangesSubscription.unsubscribe();
+    this.sourceSubscription?.unsubscribe()
   }
 
   private _model?: Clinician;
@@ -71,22 +72,24 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
   private options: Clinician[] = []
   filteredOptions: Clinician[] = []
 
-  /**
-   * TODO optimize for multiple forms
-   */
+  private sourceSubscription!: Subscription
   ngOnInit() {
-    combineLatest([
-      this.clinicianService.getRefresh(), // Start with null to trigger initially
-      this.tenantService.getCurrentObservable() // Start with the initial ID
-    ])
-      .pipe(
-        switchMap(([_, tenant]) => this.clinicianService.quickReadClinicians()),
-        tap((res) => {
-          this.options = res;
-          this.filterChange('');
-        })
-      )
-      .subscribe();
+    this.sourceSubscription = this.clinicianService.quickReadClinicians().subscribe((res) => {
+      this.options = res
+      this.filterChange('')
+    })
+    // combineLatest([
+    //   this.clinicianService.getRefresh(), // Start with null to trigger initially
+    //   this.tenantService.getCurrentObservable() // Start with the initial ID
+    // ])
+    //   .pipe(
+    //     switchMap(([_, tenant]) => this.clinicianService.quickReadClinicians()),
+    //     tap((res) => {
+    //       this.options = res;
+    //       this.filterChange('');
+    //     })
+    //   )
+    //   .subscribe();
     // concat(
     //   this.clinicianService.getRefresh(),
     //   this.tenantService.getCurrentObservable()
@@ -101,6 +104,7 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
       // this.filterChange()
     })
   }
+
 
   displayFn(clinician: Clinician): string {
     let selected: Clinician | undefined = this.options.find((opt) => opt.id == clinician)

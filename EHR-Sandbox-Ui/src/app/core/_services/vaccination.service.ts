@@ -28,8 +28,8 @@ export class VaccinationService extends RefreshService {
     this._cached = value;
   }
 
-  if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService, this.patientService);
-  if_valid_tenant_facility_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService);
+  private readonly if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService, this.patientService);
+  private readonly if_valid_tenant_facility_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService, this.facilityService);
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

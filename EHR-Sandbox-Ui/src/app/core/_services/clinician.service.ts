@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, share, of, BehaviorSubject, switchMap, tap, shareReplay } from 'rxjs';
+import { Observable, share, of, BehaviorSubject, switchMap, tap, shareReplay, combineLatest, startWith, windowTime } from 'rxjs';
 import { Clinician } from '../_model/rest';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
 import { RefreshService } from './_abstract/refresh.service';
 import { SnackBarService } from './snack-bar.service';
+import { Console } from 'console';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -16,7 +17,17 @@ const httpOptions = {
 })
 export class ClinicianService extends RefreshService {
 
-  if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService);
+  private readonly if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService);
+
+  /**
+   * Experimental test
+   */
+  private readonly quickReadObservable: Observable<Clinician[]> =
+    combineLatest([
+      this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
+      this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
+    ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readClinicians(tenant.id) : of([])), tap(console.info)
+      ,).pipe(shareReplay({ bufferSize: 1, refCount: true }))
 
   private _cliniciansCached!: Clinician[];
   public get cliniciansCached(): Clinician[] {
@@ -31,19 +42,8 @@ export class ClinicianService extends RefreshService {
     super(snackBarService)
   }
 
-
   quickReadClinicians(): Observable<Clinician[]> {
-    return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value === true) {
-        return this.http.get<Clinician[]>(
-          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/clinicians`,
-          httpOptions).pipe(share()).pipe(tap((result) => {
-            this._cliniciansCached = result
-          }));
-      } else {
-        return of([])
-      }
-    }))
+    return this.quickReadObservable
   }
 
   readClinicians(tenantId: number): Observable<Clinician[]> {
@@ -52,7 +52,7 @@ export class ClinicianService extends RefreshService {
     }
     return this.http.get<Clinician[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians`,
-      httpOptions).pipe(share()).pipe(shareReplay(9, 1000)).pipe(tap((result) => {
+      httpOptions).pipe(tap((result) => {
         this._cliniciansCached = result
       }));
   }

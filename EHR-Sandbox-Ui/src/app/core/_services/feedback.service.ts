@@ -19,7 +19,7 @@ const httpOptions = {
 })
 export class FeedbackService extends RefreshService {
 
-  private if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
+  private readonly if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
