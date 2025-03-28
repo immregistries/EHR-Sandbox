@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, share, of, BehaviorSubject, switchMap } from 'rxjs';
+import { Observable, share, of, BehaviorSubject, switchMap, tap, shareReplay } from 'rxjs';
 import { Clinician } from '../_model/rest';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
@@ -18,6 +18,11 @@ export class ClinicianService extends RefreshService {
 
   if_valid_parent_ids: Observable<boolean> = this.observables_parent_ids_valid(undefined, this.tenantService);
 
+  private _cliniciansCached!: Clinician[];
+  public get cliniciansCached(): Clinician[] {
+    return this._cliniciansCached;
+  }
+
   constructor(private http: HttpClient,
     private tenantService: TenantService,
     private settings: SettingsService,
@@ -32,7 +37,9 @@ export class ClinicianService extends RefreshService {
       if (value === true) {
         return this.http.get<Clinician[]>(
           `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/clinicians`,
-          httpOptions).pipe(share());
+          httpOptions).pipe(share()).pipe(tap((result) => {
+            this._cliniciansCached = result
+          }));
       } else {
         return of([])
       }
@@ -42,11 +49,12 @@ export class ClinicianService extends RefreshService {
   readClinicians(tenantId: number): Observable<Clinician[]> {
     if (this.idsNotValid(tenantId)) {
       return of([])
-
     }
     return this.http.get<Clinician[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/clinicians`,
-      httpOptions).pipe(share());
+      httpOptions).pipe(share()).pipe(shareReplay(9, 1000)).pipe(tap((result) => {
+        this._cliniciansCached = result
+      }));
   }
 
   random(tenantId: number): Observable<Clinician> {

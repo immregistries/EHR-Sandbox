@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription, concat } from 'rxjs';
+import { Subscription, combineLatest, concat, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { Clinician } from 'src/app/core/_model/rest';
 import { ClinicianService } from 'src/app/core/_services/clinician.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -70,16 +70,32 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent {
 
   private options: Clinician[] = []
   filteredOptions: Clinician[] = []
+
+  /**
+   * TODO optimize for multiple forms
+   */
   ngOnInit() {
-    concat(
-      this.clinicianService.getRefresh(),
-      this.tenantService.getCurrentObservable()
-    ).subscribe(() => {
-      this.clinicianService.readClinicians(this.tenantService.getCurrentId()).subscribe((res) => {
-        this.options = res
-        this.filterChange('')
-      })
-    })
+    combineLatest([
+      this.clinicianService.getRefresh(), // Start with null to trigger initially
+      this.tenantService.getCurrentObservable() // Start with the initial ID
+    ])
+      .pipe(
+        switchMap(([_, tenant]) => this.clinicianService.quickReadClinicians()),
+        tap((res) => {
+          this.options = res;
+          this.filterChange('');
+        })
+      )
+      .subscribe();
+    // concat(
+    //   this.clinicianService.getRefresh(),
+    //   this.tenantService.getCurrentObservable()
+    // ).subscribe(() => {
+    //   this.clinicianService.readClinicians(this.tenantService.getCurrentId()).subscribe((res) => {
+    //     this.options = res
+    //     this.filterChange('')
+    //   })
+    // })
     this.formChangesSubscription = this.selectClinicianForm.form.valueChanges.subscribe((value) => {
       this.valueChanged('sub')
       // this.filterChange()
