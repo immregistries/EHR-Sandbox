@@ -47,7 +47,7 @@ export class AckTableComponent extends AbstractDataTableComponent<Acknowledgemen
       // this.observableRefresh?.subscribe(() => this.updateChart())
     }
     if (!this.observableSource) {
-      this.observableSource = this.feedbackService.readAcks()
+      this.observableSource = this.feedbackService.quickReadAcks()
         .pipe(tap((values) => this.updateChart(values)))
     }
 

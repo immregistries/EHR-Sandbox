@@ -20,12 +20,13 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class VaccinationService extends RefreshService {
-  private _cached: VaccinationEvent[] | undefined;
+
+  private _vaccinationsCached?: VaccinationEvent[] | undefined;
   public get vaccinationsCached(): VaccinationEvent[] | undefined {
-    return this._cached;
+    return this._vaccinationsCached;
   }
-  public set vaccinationsCached(value: VaccinationEvent[] | undefined) {
-    this._cached = value;
+  private set vaccinationsCached(value: VaccinationEvent[] | undefined) {
+    this._vaccinationsCached = value;
   }
 
   private readonly quickReadObservableFromFacility: Observable<VaccinationEvent[]> = combineLatest([
@@ -33,15 +34,15 @@ export class VaccinationService extends RefreshService {
     this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())), // Start with the initial ID
     this.facilityService.getCurrentObservable().pipe(startWith(this.facilityService.getCurrent())) // Start with the initial ID
   ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility.id && facility.id > 0 ? this.readVaccinationsFromFacility(tenant.id, facility.id) : of([])))
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.vaccinationsCached = res }))
 
   private readonly quickReadObservable: Observable<VaccinationEvent[]> = combineLatest([
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
-    this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())), // Start with the initial ID
-    this.facilityService.getCurrentObservable().pipe(startWith(this.facilityService.getCurrent())), // Start with the initial ID
-    this.patientService.getCurrentObservable().pipe(startWith(this.patientService.getCurrent())) // Start with the initial ID
+    this.tenantService.getCurrentObservable(), // Start with the initial ID
+    this.facilityService.getCurrentObservable(), // Start with the initial ID
+    this.patientService.getCurrentObservable() // Start with the initial ID
   ]).pipe(switchMap(([_, tenant, facility, patient]) => tenant?.id > 0 && facility.id && facility.id > 0 && patient.id && patient.id > 0 ? this.readVaccinations(tenant.id, facility.id, patient.id) : of([])))
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.vaccinationsCached = res }))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,
@@ -53,7 +54,7 @@ export class VaccinationService extends RefreshService {
     super(snackBarService)
   }
 
-  readRandom(patientId: number): Observable<VaccinationEvent> {
+  public readRandom(patientId: number): Observable<VaccinationEvent> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get<VaccinationEvent>(
@@ -62,29 +63,29 @@ export class VaccinationService extends RefreshService {
 
   /**
    *
-   * @returns list of patients associated to the tenant, facility and patient selected in their respected services
+   * @returns list of patients associated to the tenant, facility and patient selected in their respected services, automatically latest
    */
-  quickReadVaccinations(): Observable<VaccinationEvent[]> {
+  public quickReadVaccinations(): Observable<VaccinationEvent[]> {
     return this.quickReadObservable
   }
 
-  readVaccinations(tenantId: number, facilityId: number, patientId: number): Observable<VaccinationEvent[]> {
+  public quickReadVaccinationsFromFacility(): Observable<VaccinationEvent[]> {
+    return this.quickReadObservableFromFacility
+  }
+
+  public readVaccinations(tenantId: number, facilityId: number, patientId: number): Observable<VaccinationEvent[]> {
     return this.http.get<VaccinationEvent[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/vaccinations`,
-      httpOptions).pipe(tap((result) => {
-        this._cached = result
-      }))
+      httpOptions)
   }
 
-  readVaccinationsFromFacility(tenantId: number, facilityId: number): Observable<VaccinationEvent[]> {
+  public readVaccinationsFromFacility(tenantId: number, facilityId: number): Observable<VaccinationEvent[]> {
     return this.http.get<VaccinationEvent[]>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/vaccinations`,
-      httpOptions).pipe(tap((result) => {
-        this._cached = result
-      }))
+      httpOptions)
   }
 
-  readVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<VaccinationEvent> {
+  public readVaccination(tenantId: number, facilityId: number, patientId: number, vaccinationId: number): Observable<VaccinationEvent> {
     if (this.idsNotValid(tenantId, facilityId, patientId, vaccinationId)) {
       return of()
     }
@@ -94,13 +95,13 @@ export class VaccinationService extends RefreshService {
 
   }
 
-  quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent> {
+  public quickReadVaccinationFromFacility(vaccinationId: number): Observable<VaccinationEvent> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.readVaccinationFromFacility(tenantId, facilityId, vaccinationId)
   }
 
-  readVaccinationFromFacility(tenantId: number, facilityId: number, vaccinationId: number): Observable<VaccinationEvent> {
+  public readVaccinationFromFacility(tenantId: number, facilityId: number, vaccinationId: number): Observable<VaccinationEvent> {
     if (this.idsNotValid(tenantId, facilityId, vaccinationId)) {
       return of()
     }
@@ -109,13 +110,13 @@ export class VaccinationService extends RefreshService {
       httpOptions).pipe(share());
   }
 
-  quickPostVaccination(patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
+  public quickPostVaccination(patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.postVaccination(tenantId, facilityId, patientId, vaccination, params)
   }
 
-  postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
+  public postVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent, params?: HttpParams): Observable<HttpResponse<string>> {
     if (this.idsNotValid(tenantId, facilityId, patientId)) {
       return of()
     }
@@ -126,13 +127,13 @@ export class VaccinationService extends RefreshService {
 
   }
 
-  quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
+  public quickPutVaccination(patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.putVaccination(tenantId, facilityId, patientId, vaccination)
   }
 
-  putVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
+  public putVaccination(tenantId: number, facilityId: number, patientId: number, vaccination: VaccinationEvent): Observable<VaccinationEvent> {
     if (this.idsNotValid(tenantId, facilityId, patientId)) {
       return of()
     }
@@ -143,7 +144,7 @@ export class VaccinationService extends RefreshService {
   }
 
 
-  readVaccinationHistory(vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
+  public readVaccinationHistory(vaccinationId: number): Observable<Revision<VaccinationEvent>[]> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     if (this.idsNotValid(tenantId, facilityId, vaccinationId)) {
@@ -161,7 +162,7 @@ export class VaccinationService extends RefreshService {
   //     httpOptions);
   // }
 
-  lotNumberValidation(lotNumber: string, cvx: string, mvx: string): Observable<HttpResponse<string>> {
+  public lotNumberValidation(lotNumber: string, cvx: string, mvx: string): Observable<HttpResponse<string>> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     // return this.http.get<boolean>(

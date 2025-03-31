@@ -21,9 +21,14 @@ const httpOptions = {
  */
 export class FacilityService extends CurrentSelectedWithIdService<Facility> {
 
-  // public get facilitiesCached(): Facility[] {
-  //   return this._facilitiesCached;
-  // }
+  private _facilitiesCached?: Facility[] | undefined;
+  public get facilitiesCached(): Facility[] | undefined {
+    return this._facilitiesCached;
+  }
+  private set facilitiesCached(value: Facility[] | undefined) {
+    this._facilitiesCached = value;
+  }
+
 
   /**
    * Not destroyed as used in pipes
@@ -32,7 +37,7 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
   ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readFacilities(tenant.id) : of([])))
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.facilitiesCached = res }))
 
 
   constructor(private http: HttpClient,

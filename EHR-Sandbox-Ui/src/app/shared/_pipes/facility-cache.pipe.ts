@@ -10,7 +10,7 @@ import { TenantService } from 'src/app/core/_services/tenant.service';
 })
 export class FacilityCachePipe implements PipeTransform {
 
-  constructor(private facilityService: FacilityService, private tenantService: TenantService) {
+  constructor(private facilityService: FacilityService) {
   }
 
   transform(facilities: (number | Facility)[] | undefined, list?: Facility[]): Facility[] | undefined {
@@ -29,9 +29,10 @@ export class FacilityCachePipe implements PipeTransform {
       if (list) {
         return list.find((member) => value == member.id) ?? value
       } else {
-        this.facilityService.quickReadFacilities().subscribe((facilitiesCached) => {
-          return facilitiesCached?.find(p => (value == p.id)) ?? value;
-        })
+        return this.facilityService.facilitiesCached?.find(p => (value == p.id)) ?? value;
+        // this.facilityService.quickReadFacilities().subscribe((facilitiesCached) => {
+        //   return facilitiesCached?.find(p => (value == p.id)) ?? value;
+        // })
       }
     })
   }

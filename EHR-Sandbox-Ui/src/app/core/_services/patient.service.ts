@@ -20,12 +20,20 @@ const httpOptions = {
  */
 export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
 
+  private _patientsCached: EhrPatient[] | undefined;
+  public get patientsCached(): EhrPatient[] | undefined {
+    return this._patientsCached;
+  }
+  private set patientsCached(value: EhrPatient[] | undefined) {
+    this._patientsCached = value;
+  }
+
   private readonly quickReadObservable: Observable<EhrPatient[]> = combineLatest([
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
-    this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())), // Start with the initial ID
+    this.tenantService.getCurrentObservable(), // Start with the initial ID
     this.facilityService.getCurrentObservable().pipe(startWith(this.facilityService.getCurrent())) // Start with the initial ID
   ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readPatients(tenant.id, facility.id) : of([])))
-    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.patientsCached = res }))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

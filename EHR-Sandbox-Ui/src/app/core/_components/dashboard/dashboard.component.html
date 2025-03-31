@@ -25,7 +25,7 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #vaccinations>
           <app-vaccination-table [patientId]="patientService.getCurrentId()"
-                                 [observableSource]="vaccinationListObservable()"
+                                 [observableSource]="vaccinationService.quickReadVaccinations()"
                                  [observableRefresh]="vaccinationListRefreshObservable()"
                                  [allow_populate]="true"></app-vaccination-table>
         </mat-card-content>

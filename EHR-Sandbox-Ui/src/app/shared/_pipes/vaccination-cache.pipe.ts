@@ -14,23 +14,7 @@ export class VaccinationCachePipe implements PipeTransform {
   constructor(private facilityService: FacilityService, private vaccinationService: VaccinationService) {
   }
 
-  _updated_cached_vaccinations: Observable<VaccinationEvent[]> = new Observable((subscriber) => {
-    /**
- * If facility is selected and no cache
- */
-    if (this.facilityService.getCurrentId() > -1 && !this.vaccinationService.vaccinationsCached) {
-      this.vaccinationService.quickReadVaccinations().subscribe((res) => {
-        subscriber.next(res)
-      })
-    } else {
-      subscriber.next(this.vaccinationService.vaccinationsCached)
-    }
-  })
-
   transform(vaccinations: (number | VaccinationEvent)[] | undefined, list?: VaccinationEvent[]): VaccinationEvent[] | undefined {
-    if (this.facilityService.getCurrentId() > -1 && !this.vaccinationService.vaccinationsCached) {
-      this.vaccinationService.quickReadVaccinations().subscribe()
-    }
     if (!vaccinations) {
       return undefined
     }
@@ -47,6 +31,10 @@ export class VaccinationCachePipe implements PipeTransform {
         return list.find((pat) => value == pat.id) ?? value
       } else {
         return this.vaccinationService.vaccinationsCached?.find(p => (value == p.id)) ?? value;
+
+        return this.vaccinationService.quickReadVaccinationsFromFacility().subscribe((cached) => {
+          return cached.find(p => (value == p.id)) ?? value;
+        })
       }
     })
   }

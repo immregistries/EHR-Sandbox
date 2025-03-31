@@ -93,11 +93,13 @@ export class AckDisplayComponent {
     }
     let txt = ""
     if (ehrPatient) {
-      txt += `----------------- PATIENT SUBMITTED -----------------
-Name:\t${ehrPatient?.names[0].nameLast}, ${ehrPatient?.names[0].nameFirst ?? ""} ${ehrPatient?.names[0].nameMiddle ?? ""}
-DOB:\t${this.patientResumePipe.transform(ehrPatient, ["birthDate"])}
-MRN:\t${this.patientResumePipe.extractMrn(ehrPatient)}
-`
+      txt += `----------------- PATIENT SUBMITTED -----------------`
+      if (ehrPatient.names) {
+        txt += `Name:\t${ehrPatient?.names[0].nameLast}, ${ehrPatient?.names[0].nameFirst ?? ""} ${ehrPatient?.names[0].nameMiddle ?? ""}`
+      }
+      txt += `DOB:\t${this.patientResumePipe.transform(ehrPatient, ["birthDate"])}
+      MRN:\t${this.patientResumePipe.extractMrn(ehrPatient)}`
+
       if (ack.vaccinations) {
         vaccinationEvent = (this.vaccinationCachePipe.transform(ack.vaccinations) ?? [undefined])[0]
       }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { EhrPatient, Facility, Feedback, VaccinationEvent } from '../_model/rest';
-import { BehaviorSubject, Observable, of, share, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, share, shareReplay, startWith, switchMap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
@@ -97,23 +97,27 @@ export class FeedbackService extends RefreshService {
     }))
   }
 
-  readAcks(): Observable<AcknowledgementObject<Feedback>[]> {
-    return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      let baseUri = `${this.settings.getApiUrl()}`;
-      if (value === true) {
-        baseUri += `/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}`
-        return this.http.get<AcknowledgementObject<Feedback>[]>(
-          `${baseUri}/acks`,
-          {
-            ...httpOptions
-          })
-      } else {
-        return of([])
-      }
-    }))
+  private readonly quickReadObservable: Observable<AcknowledgementObject<Feedback>[]> = combineLatest([
+    this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
+    this.tenantService.getCurrentObservable(), // Start with the initial ID
+    this.facilityService.getCurrentObservable().pipe(startWith(this.facilityService.getCurrent())) // Start with the initial ID
+  ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readAcks(tenant.id, facility.id) : of([])))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+
+
+  public quickReadAcks(): Observable<AcknowledgementObject<Feedback>[]> {
+    return this.quickReadObservable
   }
 
-  convertAck(ack: String, registryId?: number, patientId?: number, vaccinationId?: number): Observable<AcknowledgementObject<Feedback>> {
+  private readAcks(tenantId: number, facilityId: number): Observable<AcknowledgementObject<Feedback>[]> {
+    return this.http.get<AcknowledgementObject<Feedback>[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/acks`,
+      {
+        ...httpOptions
+      })
+  }
+
+  public convertAck(ack: String, registryId?: number, patientId?: number, vaccinationId?: number): Observable<AcknowledgementObject<Feedback>> {
     return this.if_valid_parent_ids.pipe(switchMap((value) => {
       let baseUri = `${this.settings.getApiUrl()}`;
       if (value === true) {
@@ -135,7 +139,7 @@ export class FeedbackService extends RefreshService {
     }))
   }
 
-  cleanPatientAcks(patient: EhrPatient | number): Observable<string> {
+  public cleanPatientAcks(patient: EhrPatient | number): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     let patientId: number = (typeof patient === 'number') ? patient : patient.id ?? -1
