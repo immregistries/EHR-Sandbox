@@ -4,8 +4,8 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #groups>
           <app-group-table [allow_create]="true" [facility]="facilityService.getCurrentObservable() |  async"
-            (selectEmitter)="groupService.setCurrent($event ?? {})"
-            [observableSource]="groupService.quickReadGroups()"></app-group-table>
+                           (selectEmitter)="groupService.setCurrent($event ?? {})"
+                           [dataArray]="groupService.quickReadGroups() | async"></app-group-table>
         </mat-card-content>
       </mat-card>
 

@@ -2,7 +2,7 @@ import { Component, Inject, Input, Optional } from '@angular/core';
 import { EhrPatient, Feedback, VaccinationEvent } from 'src/app/core/_model/rest';
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, merge } from 'rxjs';
+import { Observable, merge, of } from 'rxjs';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
 
@@ -31,7 +31,7 @@ export class PatientDashboardComponent {
   }
 
   constructor(private patientService: PatientService,
-    private vaccinationService: VaccinationService,
+    public vaccinationService: VaccinationService,
     private feedbackService: FeedbackService,
     @Optional() public _dialogRef: MatDialogRef<PatientDashboardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patient?: EhrPatient | number }) {
@@ -51,11 +51,4 @@ export class PatientDashboardComponent {
     })
   }
 
-  vaccinationListRefreshObservable(): Observable<any> {
-    return merge(this.patientService.getRefresh(), this.patientService.getCurrentObservable())
-  }
-
-  vaccinationListObservable(): Observable<VaccinationEvent[]> {
-    return this.vaccinationService.quickReadVaccinations()
-  }
 }

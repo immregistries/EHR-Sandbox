@@ -28,7 +28,7 @@ export class ClinicianService extends RefreshService {
   private readonly quickReadObservable: Observable<Clinician[]> =
     combineLatest([
       this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
-      this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
+      this.tenantService.getCurrentObservable() // Start with the initial ID
     ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readClinicians(tenant.id) : of([])))
       .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.cliniciansCached = res }))
 

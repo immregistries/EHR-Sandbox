@@ -3,7 +3,7 @@ import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 /**
  * Abstract component to harmonize basic table functionalities across the UI
@@ -55,14 +55,16 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
 
   /**
    * Observable to call for to fill datasource object if not filled manually
+   * DEPRECATED AS INPUT, Not the preferred way, unless specific refresh needed
    */
   @Input()
   observableSource?: Observable<T[]>;
   /**
    * Observable controlling when to refresh if observableSource set
+   * DEPRECATED AS INPUT, Not the preferred way, unless specific refresh needed
    */
   @Input()
-  observableRefresh?: Observable<any>;
+  observableRefresh: Observable<any> = of(true);
 
   /**
    * boolean used to detect and notifuy compoenet not to use observables, as the datasource was overriden by another component

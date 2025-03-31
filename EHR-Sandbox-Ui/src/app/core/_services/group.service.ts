@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, of, share, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, share, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { FacilityService } from './facility.service';
 import { SettingsService } from './settings.service';
 import { TenantService } from './tenant.service';
@@ -20,6 +20,13 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
 
   private readonly if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
+  public readonly quickReadObservable: Observable<EhrGroup[]> = combineLatest([
+    this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
+    this.tenantService.getCurrentObservable(), // Start with the initial ID
+    this.facilityService.getCurrentObservable() // Start with the initial ID
+  ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readGroups(tenant.id, facility.id) : of([])))
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+
   constructor(private http: HttpClient,
     private settings: SettingsService,
     private facilityService: FacilityService,
@@ -35,15 +42,17 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
    * @returns list of patients associated to the tenant and facility selected in their respected services
    */
   quickReadGroups(): Observable<EhrGroup[]> {
-    return this.if_valid_parent_ids.pipe(switchMap((value) => {
-      if (value === true) {
-        return this.http.get<EhrGroup[]>(
-          `${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/facilities/${this.facilityService.getCurrentId()}/groups`,
-          httpOptions).pipe(share())
-      } else {
-        return of([])
-      }
-    }))
+    return this.quickReadObservable
+  }
+
+  /**
+   *
+   * @returns list of patients associated to the tenant and facility selected in their respected services
+   */
+  readGroups(tenantId: number, facilityId: number): Observable<EhrGroup[]> {
+    return this.http.get<EhrGroup[]>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/groups`,
+      httpOptions).pipe(share())
   }
 
   getRandom(): Observable<EhrGroup> {

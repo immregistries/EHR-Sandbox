@@ -35,9 +35,11 @@ export class GroupTableComponent extends AbstractDataTableComponent<EhrGroup> {
     public groupService: GroupService,
     private dialog: MatDialog) {
     super()
-    this.observableRefresh = merge(facilityService.getRefresh(),
+    this.observableRefresh = merge(
+      facilityService.getRefresh(),
       this.facilityService.getCurrentObservable(),
-      groupService.getRefresh())
+      groupService.getRefresh()
+    )
     this.observableSource = this.groupService.quickReadGroups();
   }
 
