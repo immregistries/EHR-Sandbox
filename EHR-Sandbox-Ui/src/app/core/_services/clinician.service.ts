@@ -25,7 +25,6 @@ export class ClinicianService extends RefreshService {
     this._cliniciansCached = value;
   }
 
-
   private readonly quickReadObservable: Observable<Clinician[]> =
     combineLatest([
       this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
