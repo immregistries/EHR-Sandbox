@@ -71,7 +71,7 @@ export class GroupToolsComponent {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: {},
+      data: { groupNameToExclude: this.ehrGroup.name },
     });
     dialogRef.afterClosed().subscribe(
       selectedPatientId => {

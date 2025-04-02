@@ -33,7 +33,7 @@ export class PatientListComponent implements OnInit {
     private facilityService: FacilityService,
     private patientService: PatientService,
     @Optional() public _dialogRef: MatDialogRef<PatientListComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {}) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { groupNameToExclude: string }) {
 
   }
 
@@ -41,9 +41,15 @@ export class PatientListComponent implements OnInit {
     this.facilityService.getCurrentObservable().pipe(switchMap(facility => {
       this.facility = facility
       return this.getList(facility)
-    })).subscribe((res) => {
-      this.list = res
-    })
+    })).pipe(map(value => {
+      if (!this.data.groupNameToExclude) {
+        return value
+      }
+      return value.filter((patient) => !patient.groupNames?.includes(this.data.groupNameToExclude))
+    }))
+      .subscribe((res) => {
+        this.list = res
+      })
   }
 
   getList(facility: Facility | undefined): Observable<EhrPatient[]> {
