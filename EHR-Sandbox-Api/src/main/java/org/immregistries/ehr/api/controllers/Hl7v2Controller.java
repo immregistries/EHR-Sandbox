@@ -159,8 +159,6 @@ public class Hl7v2Controller {
 
             String ack = connector.submitMessage(message, false);
             AcknowledgmentObject acknowledgmentObject;
-            logger.info("SIIIIZE {}", vaccinationEventRepository.findByPatientId(patientId).size());
-
             if (vaccinationId.isPresent()) {
                 acknowledgmentObject = feedbackController.extractAckInfo(
                         Optional.of(registryId),
@@ -169,7 +167,6 @@ public class Hl7v2Controller {
                         vaccinationId,
                         ack);
             } else {
-                logger.info("SIIIIZE {}", vaccinationEventRepository.findByPatientId(patientId).size());
                 acknowledgmentObject = feedbackController.extractAckInfo(
                         Optional.of(registryId),
                         Optional.of(facilityId),
