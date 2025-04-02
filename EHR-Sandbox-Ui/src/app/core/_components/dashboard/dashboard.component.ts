@@ -6,6 +6,7 @@ import { Observable, merge, of } from 'rxjs';
 import { EhrPatient, Feedback, VaccinationEvent } from '../../_model/rest';
 import { VaccinationService } from '../../_services/vaccination.service';
 import { FeedbackService } from '../../_services/feedback.service';
+import { RecommendationService } from '../../_services/recommendation.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,32 +20,11 @@ export class DashboardComponent {
     public patientService: PatientService,
     public vaccinationService: VaccinationService,
     public feedbackService: FeedbackService,
+    public recommendationService: RecommendationService,
   ) { }
 
   rowHeight(): string {
     return (window.innerHeight / 2 - 35) + 'px'
-  }
-
-  patientLoading: boolean = false
-
-  patientListRefreshObservable(): Observable<any> {
-    return merge(
-      this.facilityService.getCurrentObservable(),
-      this.patientService.getRefresh(),
-      this.facilityService.getRefresh(),
-    )
-  }
-
-  patientListObservable(): Observable<EhrPatient[]> {
-    return this.patientService.quickReadPatients()
-  }
-
-  feedbackListObservable(): Observable<Feedback[]> {
-    return this.feedbackService.readCurrentFacilityFeedback()
-  }
-
-  vaccinationListRefreshObservable(): Observable<any> {
-    return of(true)
   }
 
 }

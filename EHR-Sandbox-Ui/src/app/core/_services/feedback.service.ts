@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { EhrPatient, Facility, Feedback, VaccinationEvent } from '../_model/rest';
-import { BehaviorSubject, combineLatest, Observable, of, share, shareReplay, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, share, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { TenantService } from './tenant.service';
@@ -101,8 +101,10 @@ export class FeedbackService extends RefreshService {
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable(), // Start with the initial ID
     this.facilityService.getCurrentObservable().pipe(startWith(this.facilityService.getCurrent())) // Start with the initial ID
-  ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readAcks(tenant.id, facility.id) : of([])))
+  ]).pipe(tap(() => this.loading = true))
+    .pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readAcks(tenant.id, facility.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    .pipe(tap(() => this.loading = false))
 
 
   public quickReadAcks(): Observable<AcknowledgementObject<Feedback>[]> {

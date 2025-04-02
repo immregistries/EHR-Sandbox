@@ -84,6 +84,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       this.vaccination.vaccine.updatedDate = new Date()
       this.vaccinationService.quickPutVaccination(this.patientId, this.vaccination).subscribe({
         next: (res: VaccinationEvent) => {
+          this.vaccinationService.doRefresh()
           this.closeDialog(res)
         },
         error: (err) => {
@@ -96,6 +97,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
       this.vaccination.vaccine.updatedDate = new Date()
       this.vaccinationService.quickPostVaccination(this.patientId, this.vaccination).subscribe({
         next: (res: HttpResponse<string>) => {
+          this.vaccinationService.doRefresh()
           this.closeDialog(+(res.body ?? -1))
         },
         error: (err) => {

@@ -4,7 +4,7 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #patients>
           <app-patient-table (selectEmitter)="this.patientService.setCurrent($event ?? {names: []})"
-                             [dataArray]="patientService.quickReadPatients() | async"
+                             [loading]="patientService.loading" [dataArray]="patientService.quickReadPatients() | async"
                              [facility]="facilityService.getCurrentObservable() | async"
                              [allow_populate]="true"></app-patient-table>
         </mat-card-content>
@@ -20,7 +20,7 @@
     <mat-grid-tile [colspan]="4" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #vaccinations>
-          <app-vaccination-table [patientId]="patientService.getCurrentId()"
+          <app-vaccination-table [patientId]="patientService.getCurrentId()" [loading]="vaccinationService.loading"
                                  [dataArray]="vaccinationService.quickReadVaccinations() | async"
                                  [allow_populate]="true"></app-vaccination-table>
         </mat-card-content>
@@ -29,7 +29,9 @@
     <mat-grid-tile [colspan]="3" [rowspan]="1">
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content" #recommendations>
-          <app-recommendation-table [patientId]="patientService.getCurrentId()"></app-recommendation-table>
+          <app-recommendation-table [patientId]="patientService.getCurrentId()"
+                                    [loading]="recommendationService.loading"
+                                    [dataArray]="recommendationService.quickReadRecommendations() | async"></app-recommendation-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

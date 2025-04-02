@@ -41,9 +41,6 @@ export class PatientMenuComponent implements OnInit {
       data: {},
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.patientService.doRefresh()
-      }
     });
   }
 

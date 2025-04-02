@@ -29,8 +29,11 @@ export class ClinicianService extends RefreshService {
     combineLatest([
       this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
       this.tenantService.getCurrentObservable() // Start with the initial ID
-    ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readClinicians(tenant.id) : of([])))
+    ]).pipe(tap(() => this.loading = true))
+      .pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readClinicians(tenant.id) : of([])))
       .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.cliniciansCached = res }))
+      .pipe(tap(() => this.loading = false))
+
 
 
 

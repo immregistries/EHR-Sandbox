@@ -24,8 +24,11 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable(), // Start with the initial ID
     this.facilityService.getCurrentObservable() // Start with the initial ID
-  ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readGroups(tenant.id, facility.id) : of([])))
+  ]).pipe(tap(() => this.loading = true))
+    .pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readGroups(tenant.id, facility.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }))
+    .pipe(tap(() => this.loading = false))
+
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

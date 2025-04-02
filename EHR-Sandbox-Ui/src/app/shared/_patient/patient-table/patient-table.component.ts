@@ -95,7 +95,8 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
   populate() {
     if (this.facility?.id) {
       this.facilityService.populate(this.tenantService.getCurrentId(), this.facility.id).subscribe((res) => {
-        this.facilityService.doRefresh()
+        // this.facilityService.doRefresh()
+        this.patientService.doRefresh()
       })
     }
   }

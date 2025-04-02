@@ -130,7 +130,7 @@ export class VaccinationTableComponent extends AbstractDataTableComponent<Vaccin
   populate() {
     if (this.patientId) {
       this.patientService.populatePatient(this.patientId).subscribe((res) => {
-        this.patientService.doRefresh()
+        this.vaccinationService.doRefresh()
       })
     }
   }

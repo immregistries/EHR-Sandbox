@@ -92,11 +92,14 @@ export class LocalCopyDialogComponent implements OnInit {
               vaccinationCopy.primarySource = false
             }
             this.vaccinationService.postVaccination(tenantId, facility.id ?? -1, +res.body, vaccinationCopy, params).subscribe((res) => {
+              this.vaccinationService.doRefresh()
               this.snackBarService.successMessage("Vaccination copied to facility")
               this._dialogRef.close()
             })
           }
         } else {
+          this.patientService.doRefresh()
+
           this.snackBarService.successMessage("Patient copied to facility")
           this._dialogRef.close()
         }

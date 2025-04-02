@@ -26,7 +26,9 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
   @Input()
   public set patientId(value: number) {
     this._patientId = value;
-    this.refreshReco();
+    // if (this.patientId)
+    //   this.recommendationService.doRefresh()
+    // this.refreshReco();
   }
 
   columns: (keyof ImmunizationRecommendation)[] = [
@@ -46,27 +48,24 @@ export class RecommendationTableComponent extends AbstractDataTableComponent<Imm
   }
 
   private refreshReco() {
-    this.loading = true;
-    this.recommendationService.readRecommendations(this.patientId).subscribe((res) => {
-      this.loading = false;
-      this.dataSource.data = res;
-      this.expandedElement = res.find((reco: ImmunizationRecommendation) => { return reco.id == this.expandedElement?.id; }) ?? null;
-    });
+    // this.loading = true;
+    this.recommendationService.doRefresh()
   }
 
   ngOnInit(): void {
-
+    // this.loading = true;
+    // this.recommendationService.quickReadRecommendations().pipe(tap(() => this.loading = false)).subscribe((res) => {
+    //   this.dataArray = res;
+    //   this.selectedElement = res.find((reco: ImmunizationRecommendation) => { return reco.id == this.selectedElement?.id; }) ?? undefined;
+    // });
   }
-
-  expandedElement: ImmunizationRecommendation | null = null;
-
 
 
   openFetch() {
-    this.dialog.open(RecommendationDownloadComponent, { data: { 'patientId': this.patientId } }).afterClosed().subscribe((res) => {
+    this.dialog.open(RecommendationDownloadComponent, { data: { 'patientId': this.patientService.getCurrentId() } }).afterClosed().subscribe((res) => {
       if (res) {
-        this.patientService.doRefresh();
-        this.refreshReco()
+        // this.patientService.doRefresh();
+        // this.refreshReco()
       }
     });
   }

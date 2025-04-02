@@ -3,6 +3,7 @@ import { RefreshService } from './refresh.service';
 import { SnackBarService } from '../snack-bar.service';
 
 export class CurrentSelectedService<T> extends RefreshService {
+
   protected current!: BehaviorSubject<T>;
   private lastRefreshTime: number;
 

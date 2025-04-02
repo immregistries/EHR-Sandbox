@@ -33,16 +33,22 @@ export class VaccinationService extends RefreshService {
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())), // Start with the initial ID
     this.facilityService.getCurrentObservable().pipe(startWith(this.facilityService.getCurrent())) // Start with the initial ID
-  ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility.id && facility.id > 0 ? this.readVaccinationsFromFacility(tenant.id, facility.id) : of([])))
+  ]).pipe(tap(() => this.loading = true))
+    .pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility.id && facility.id > 0 ? this.readVaccinationsFromFacility(tenant.id, facility.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.vaccinationsCached = res }))
+    .pipe(tap(() => this.loading = false))
+
 
   private readonly quickReadObservable: Observable<VaccinationEvent[]> = combineLatest([
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable(), // Start with the initial ID
     this.facilityService.getCurrentObservable(), // Start with the initial ID
     this.patientService.getCurrentObservable() // Start with the initial ID
-  ]).pipe(switchMap(([_, tenant, facility, patient]) => tenant?.id > 0 && facility.id && facility.id > 0 && patient.id && patient.id > 0 ? this.readVaccinations(tenant.id, facility.id, patient.id) : of([])))
+  ]).pipe(tap(() => this.loading = true))
+    .pipe(switchMap(([_, tenant, facility, patient]) => tenant?.id > 0 && facility.id && facility.id > 0 && patient.id && patient.id > 0 ? this.readVaccinations(tenant.id, facility.id, patient.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.vaccinationsCached = res }))
+    .pipe(tap(() => this.loading = false))
+
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

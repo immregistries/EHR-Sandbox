@@ -9,7 +9,6 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { GroupDashboardComponent } from '../group-dashboard/group-dashboard.component';
 import { merge } from 'rxjs';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-group-table',

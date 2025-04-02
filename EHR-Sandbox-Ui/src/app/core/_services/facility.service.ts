@@ -36,8 +36,10 @@ export class FacilityService extends CurrentSelectedWithIdService<Facility> {
   private readonly quickReadObservable: Observable<Facility[]> = combineLatest([
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
     this.tenantService.getCurrentObservable().pipe(startWith(this.tenantService.getCurrent())) // Start with the initial ID
-  ]).pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readFacilities(tenant.id) : of([])))
+  ]).pipe(tap(() => this.loading = true))
+    .pipe(switchMap(([_, tenant]) => tenant?.id > 0 ? this.readFacilities(tenant.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.facilitiesCached = res }))
+    .pipe(tap(() => this.loading = false))
 
 
   constructor(private http: HttpClient,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, combineLatest, concat, concatMap, defer, filter, iif, merge, of, share, shareReplay, startWith, switchMap, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, concat, concatMap, defer, delay, filter, iif, merge, of, share, shareReplay, startWith, switchMap, take, tap, throwError } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { EhrPatient, Revision } from '../_model/rest';
 import { FacilityService } from './facility.service';
@@ -30,10 +30,12 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
 
   private readonly quickReadObservable: Observable<EhrPatient[]> = combineLatest([
     this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
-    this.tenantService.getCurrentObservable(), // Start with the initial ID
-    this.facilityService.getCurrentObservable() // Start with the initial ID
-  ]).pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readPatients(tenant.id, facility.id) : of([])))
+    this.tenantService.getCurrentObservable(),
+    this.facilityService.getCurrentObservable()
+  ]).pipe(tap(() => this.loading = true))
+    .pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readPatients(tenant.id, facility.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }), tap((res) => { this.patientsCached = res }))
+    .pipe(tap(() => this.loading = false))
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

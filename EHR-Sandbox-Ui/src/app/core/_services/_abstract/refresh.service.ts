@@ -8,6 +8,14 @@ import { IdUrlVerifyingService } from './id-url-verifying.service';
  */
 export abstract class RefreshService extends IdUrlVerifyingService {
 
+  private _loading: boolean = false;
+  public get loading(): boolean {
+    return this._loading;
+  }
+  set loading(value: boolean) {
+    this._loading = value;
+  }
+
   /**
    * Global observable used to trigger a refresh for all the lists of patients, when a new patient was created
    */

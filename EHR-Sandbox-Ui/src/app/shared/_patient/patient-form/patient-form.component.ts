@@ -52,6 +52,7 @@ export class PatientFormComponent {
     if (this.isEditionMode) {
       this.patientService.quickPutPatient(this.patient).subscribe({
         next: (res: EhrPatient) => {
+          this.patientService.doRefresh()
           this.closeDialog(res)
         },
         error: (err) => {
@@ -62,6 +63,7 @@ export class PatientFormComponent {
     } else {
       this.patientService.quickPostPatient(this.patient).subscribe({
         next: (res: HttpResponse<string>) => {
+          this.patientService.doRefresh()
           if (res.body && this.populate) {
             this.patientService.populatePatient(+res.body).subscribe((res2) => {
               this.closeDialog(+(res.body ?? -1))

@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FhirResource } from 'fhir/r5';
 import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
 import { FeedbackService } from 'src/app/core/_services/feedback.service';
+import { VaccinationService } from 'src/app/core/_services/vaccination.service';
 
 @Component({
   selector: 'app-patient-tools',
@@ -23,6 +24,7 @@ export class PatientToolsComponent implements OnInit {
     public patientService: PatientService,
     public fhirResourceService: FhirResourceService,
     private feedbackService: FeedbackService,
+    private vaccinationService: VaccinationService,
   ) { }
 
   ngOnInit(): void {
@@ -41,7 +43,6 @@ export class PatientToolsComponent implements OnInit {
       if (result) {
         this.patientService.setCurrent(result)
       }
-      this.patientService.doRefresh()
     });
   }
 
@@ -50,6 +51,7 @@ export class PatientToolsComponent implements OnInit {
     if (this.patient?.id) {
       this.patientService.populatePatient(this.patient?.id).subscribe((res) => {
         this.patientService.doRefresh()
+        this.vaccinationService.doRefresh()
       })
     }
   }
@@ -67,6 +69,7 @@ export class PatientToolsComponent implements OnInit {
       this.patientService.doRefresh()
     });
   }
+
   openIps() {
     const dialogRef = this.dialog.open(FhirMessagingComponent, {
       maxWidth: '95vw',
