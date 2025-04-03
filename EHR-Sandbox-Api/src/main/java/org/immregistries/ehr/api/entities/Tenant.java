@@ -18,8 +18,7 @@ public class Tenant extends EhrEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "tenant_id", nullable = false)
     private Integer id;
-
-
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
@@ -27,6 +26,9 @@ public class Tenant extends EhrEntity {
 
     @Column(name = "name_display", nullable = false, length = 250)
     private String nameDisplay;
+
+    @Column(name = "alias", nullable = true, length = 250)
+    private String alias = "";
 
     @OneToMany(mappedBy = "tenant")
 //    @JsonManagedReference("tenant-facility")
@@ -81,5 +83,13 @@ public class Tenant extends EhrEntity {
 
     public void setClinicians(Set<Clinician> clinicians) {
         this.clinicians = clinicians;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 }

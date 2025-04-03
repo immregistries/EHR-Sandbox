@@ -69,11 +69,13 @@ export class TenantMenuComponent implements AfterViewInit {
     event?.stopPropagation()
   }
 
-  shortenedName(): string | undefined {
+  public shortenedName(): string | undefined {
+    if (this.tenantService.getCurrent().alias) {
+      return this.tenantService.getCurrent().alias
+    }
     const name = this.tenantService.getCurrent().nameDisplay ?? '';
     if (name.length > 40) {
       return this.tenantService.getCurrent().nameDisplay?.substring(0, 38) + ".."
-
     } else {
       return this.tenantService.getCurrent().nameDisplay
     }

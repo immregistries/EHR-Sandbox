@@ -145,6 +145,7 @@ export interface EhrPatient extends ObjectWithID {
 export interface Tenant {
   id: number;
   nameDisplay?: string;
+  alias?: string;
   // facilities?: Facility[];
 }
 
