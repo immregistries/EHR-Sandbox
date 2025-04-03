@@ -30,22 +30,7 @@ export class VaccinationComparePipe implements PipeTransform {
    */
   private recursiveComparison(local: any, remote: any): ComparisonResult | any | null {
     if (local === remote) return null;
-    console.info('WSH', this.isIsoDate(new Date().toISOString()), new Date().toISOString())
-    console.info('Local', this.isIsoDate(local), local)
-    console.info('Remote', this.isIsoDate(remote), remote)
-    // if (local instanceof Date && remote instanceof Date && (local.getTime() - remote.getDate())) return null;
     if (this.isIsoDate(local) && this.isIsoDate(remote)) {
-      // let localDate: Date = new Date(local)
-      // localDate.setMilliseconds(0)
-      // localDate.setSeconds(0)
-      // localDate.setMinutes(0)
-      // localDate.setHours(0)
-      // let remoteDate = new Date(remote)
-      // remoteDate.setMilliseconds(0)
-      // remoteDate.setSeconds(0)
-      // remoteDate.setMinutes(0)
-      // remoteDate.setHours(0)
-      // console.info(localDate, remoteDate)
       if (this.areSameDatesIgnoringTime(local, remote)) return null;
     }
     if ((local === null || local === undefined) && (remote === null || remote === undefined)) return null;
