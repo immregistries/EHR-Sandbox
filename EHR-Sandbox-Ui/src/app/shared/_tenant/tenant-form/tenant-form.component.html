@@ -1,9 +1,12 @@
 <h2 mat-dialog-title>
   Environment / Tenant Form
 </h2>
-<form (submit)="save()">
-  <!-- Tenants are independent testing environments and include multiple facilities. -->
+<form (submit)="save()" class="mat-mat-grid-list-container">
+
   <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Name</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <mat-form-field appearance="fill">
         <mat-label>Tenant name</mat-label>
@@ -11,27 +14,35 @@
       </mat-form-field>
     </mat-card-content>
   </mat-card>
-  <!-- <mat-divider></mat-divider> -->
-  <mat-card class="form-card">
+  <mat-card>
     <mat-card-header>
-      <div> This sandbox works with independent testing environments, which can then include multiple facilities.</div>
+      <div>
+        This sandbox works with independent testing environments, which can then include multiple facilities.
+      </div>
     </mat-card-header>
     <mat-card-content>
       <!-- <mat-divider></mat-divider> -->
       <!-- Flavors: activate options by including keywords in environment name -->
       <mat-list>
         <mat-list-item>
-          Flavors: activate options by including keywords in name
+          <span matListItemTitle>Flavors: activate options by including keywords in name</span>
+          <span matListItemMeta>
+            <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
+          </span>
         </mat-list-item>
-        <mat-list-item *ngFor="let flavor of flavorList">
+        <mat-list-item *ngFor="let flavor of flavorListFiltered">
           <span matListItemTitle>{{flavor.key}}</span>
           <span matListItemLine>{{flavor.description}}</span>
-          <span matListItemMeta><button mat-stroked-button type="button"
-                                        (click)="append(flavor.key)">Append</button></span>
+          <span matListItemMeta>
+            <button mat-stroked-button type="button" (click)="append(flavor.key)">Append</button>
+          </span>
         </mat-list-item>
       </mat-list>
     </mat-card-content>
   </mat-card>
+
+  <!-- Tenants are independent testing environments and include multiple facilities. -->
+  <!-- <mat-divider></mat-divider> -->
 
   <div mat-dialog-actions align="end" class="form-action-bar">
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">

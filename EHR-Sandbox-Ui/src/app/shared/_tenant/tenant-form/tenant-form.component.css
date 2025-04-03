@@ -2,3 +2,28 @@
   margin: 0 0 16px;
   padding: 0 24px 9px;
 }
+
+.form-tile {
+  overflow: scroll;
+  /* display: flex; */
+}
+
+.mat-grid-list-container {
+  height: 100%;
+  /* Make the grid container take up the parent's height */
+}
+
+.mat-grid-list {
+  height: 100%;
+  /* Ensure the grid itself takes up the container's height */
+}
+
+.mat-grid-tile {
+  display: flex;
+  /* Use flexbox to distribute space evenly */
+}
+
+.mat-grid-tile-content {
+  flex: 1;
+  /* Make the content fill the entire tile */
+}

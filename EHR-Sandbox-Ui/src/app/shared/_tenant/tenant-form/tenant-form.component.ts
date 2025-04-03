@@ -1,6 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Inject, OnInit, Optional, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import FuzzySearch from 'fuzzy-search';
 import { Flavor, Tenant } from 'src/app/core/_model/rest';
 import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { TenantService } from 'src/app/core/_services/tenant.service';
@@ -31,6 +32,7 @@ export class TenantFormComponent implements OnInit {
 
     this.tenantService.readAllFlavors().subscribe((flavors) => {
       this.flavorList = flavors
+      this.flavorListFiltered = flavors
     })
   }
 
@@ -74,6 +76,20 @@ export class TenantFormComponent implements OnInit {
   }
 
   flavorList!: Flavor[];
+  flavorListFiltered!: Flavor[];
+
+  applyFilter(event: Event) {
+    const filterValue: string = (event.target as HTMLInputElement).value;
+    if (!filterValue || filterValue === '') {
+      this.flavorListFiltered = this.flavorList
+    } else {
+      this.flavorListFiltered = this.flavorList.filter((data) => {
+        return FuzzySearch.isMatch(JSON.stringify(data), filterValue, false)
+      })
+    }
+
+  }
+
 }
 
 
