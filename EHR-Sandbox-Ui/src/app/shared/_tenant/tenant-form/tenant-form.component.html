@@ -13,7 +13,7 @@
         <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay" style="min-width: 40em;">
       </mat-form-field>
       <div>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" [matTooltip]="'Used for display in selection menu'">
           <mat-label>Alias (Optional)</mat-label>
           <input matInput [(ngModel)]="tenant.alias" name="alias" optional>
         </mat-form-field>

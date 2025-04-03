@@ -18,7 +18,7 @@ public class Tenant extends EhrEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "tenant_id", nullable = false)
     private Integer id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
@@ -28,7 +28,7 @@ public class Tenant extends EhrEntity {
     private String nameDisplay;
 
     @Column(name = "alias", nullable = true, length = 250)
-    private String alias = "";
+    private String alias;
 
     @OneToMany(mappedBy = "tenant")
 //    @JsonManagedReference("tenant-facility")

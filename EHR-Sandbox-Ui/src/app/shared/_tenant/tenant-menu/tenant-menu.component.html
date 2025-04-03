@@ -1,7 +1,7 @@
 <app-hover-menu>
   <button trigger mat-raised-button class="button-protected" (click)="selectFirstOrCreate()"
           [color]="tenantService.getCurrentId() > 0 ? 'primary' : 'basic'">
-    {{(tenantService.getCurrentId() > 0)? ("Environment: " + shortenedName() )
+    {{(tenantService.getCurrentId() > 0)? ("Environment: " + shortenedName(tenantService.getCurrent()) )
     :
     "Select Environment" }}
     <mat-icon>arrow_drop_down</mat-icon>
@@ -9,7 +9,7 @@
   <div content>
     <button mat-menu-item *ngFor="let item of list" (click)="onSelection(item)" [matTooltip]="item.nameDisplay ?? ''"
             [matTooltipPosition]="'right'">
-      {{ item.alias ?? item.nameDisplay }}
+      {{ shortenedName(item) }}
       <!-- <mat-icon *ngIf="tenantService.getCurrentId() === item.id" class="pseudo-check">check</mat-icon> -->
     </button>
     <button mat-menu-item (click)="openDialog()">
