@@ -8,6 +8,7 @@
     <button *ngIf="allow_populate"
             [disabled]="!(facility && facility.id && facility.id > 0) || dataSource.data.length > 0" mat-stroked-button
             matTooltip="Populate with random patients" color="primary" (click)="populate()">
+      <mat-icon svgIcon="synthea"></mat-icon>
       <mat-icon>casino</mat-icon>
       Populate
     </button>

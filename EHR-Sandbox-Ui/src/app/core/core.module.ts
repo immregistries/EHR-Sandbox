@@ -52,6 +52,7 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
   return () => settingsService.loadEnvConfig('/runtime-config.json').then(() => {
     firstValueFrom(codeMapsService.load())
     matIconRegistry.addSvgIcon("fhir-send", domSanitizer.bypassSecurityTrustResourceUrl("assets/fhir-send4.svg"))
+    matIconRegistry.addSvgIcon("synthea", domSanitizer.bypassSecurityTrustResourceUrl("assets/synthea.svg"))
   });
 };
 
