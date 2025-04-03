@@ -13,7 +13,7 @@ export class VaccinationComparePipe implements PipeTransform {
     'updatedDate' // TODO change the way updated date is mapped ?
   ]
 
-  transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): {} {
+  public transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): {} {
     const differences = this.recursiveComparison(value, args[0]);
     if (!differences) {
       return "MATCH"
@@ -28,13 +28,25 @@ export class VaccinationComparePipe implements PipeTransform {
    * @param remote
    * @returns returns Comparison Result or null if no differences
    */
-  recursiveComparison(local: any, remote: any): ComparisonResult | any | null {
+  private recursiveComparison(local: any, remote: any): ComparisonResult | any | null {
     if (local === remote) return null;
+    console.info('WSH', this.isIsoDate(new Date().toISOString()), new Date().toISOString())
+    console.info('Local', this.isIsoDate(local), local)
+    console.info('Remote', this.isIsoDate(remote), remote)
     // if (local instanceof Date && remote instanceof Date && (local.getTime() - remote.getDate())) return null;
     if (this.isIsoDate(local) && this.isIsoDate(remote)) {
-      let localDate = new Date(local).setMilliseconds(0)
-      let remoteDate = new Date(remote).setMilliseconds(0)
-      if (localDate === remoteDate) return null;
+      // let localDate: Date = new Date(local)
+      // localDate.setMilliseconds(0)
+      // localDate.setSeconds(0)
+      // localDate.setMinutes(0)
+      // localDate.setHours(0)
+      // let remoteDate = new Date(remote)
+      // remoteDate.setMilliseconds(0)
+      // remoteDate.setSeconds(0)
+      // remoteDate.setMinutes(0)
+      // remoteDate.setHours(0)
+      // console.info(localDate, remoteDate)
+      if (this.areSameDatesIgnoringTime(local, remote)) return null;
     }
     if ((local === null || local === undefined) && (remote === null || remote === undefined)) return null;
     if (local === null || local === undefined || remote === null || remote === undefined) {
@@ -74,8 +86,45 @@ export class VaccinationComparePipe implements PipeTransform {
     return null;
   }
 
-  isIsoDate(date: any) {
-    const dateParsed = new Date(Date.parse(date))
-    return dateParsed.toUTCString() === new Date(date).toUTCString()
+  private isIsoDate(dateString: any) {
+    if (!dateString) {
+      return false; // Handle null or empty strings
+    }
+
+    const isoRegex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z?([+-]\d{2}:?\d{2})?$/;
+
+    if (!isoRegex.test(dateString)) {
+      return false; // Basic ISO 8601 format check failed
+    }
+
+    const date = new Date(dateString);
+
+    return !isNaN(date.getTime());
+    // const dateParsed = new Date(Date.parse(dateString))
+    // return dateParsed.toISOString() === new Date(dateString).toUTCString()
   }
+
+  private areSameDatesIgnoringTime(dateString1: string, dateString2: string): boolean {
+    if (!dateString1 || !dateString2) {
+      return false; // Handle null or empty strings
+    }
+
+    const date1 = new Date(dateString1);
+    const date2 = new Date(dateString2);
+
+    if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
+      return false; // Invalid date strings
+    }
+
+    const year1 = date1.getFullYear();
+    const month1 = date1.getMonth(); // Months are 0-indexed
+    const day1 = date1.getDate();
+
+    const year2 = date2.getFullYear();
+    const month2 = date2.getMonth();
+    const day2 = date2.getDate();
+
+    return year1 === year2 && month1 === month2 && day1 === day2;
+  }
+
 }
