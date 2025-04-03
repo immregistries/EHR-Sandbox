@@ -4,6 +4,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IDomainResource;
+import org.hl7.fhir.r4.model.ImmunizationEvaluation;
 import org.hl7.fhir.r4.model.Parameters;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.ProcessingFlavor;
@@ -14,6 +15,7 @@ import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.logic.EvaluationService;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +45,8 @@ public class RecommendationController {
     private FacilityRepository facilityRepository;
     @Autowired
     private RecommendationService recommendationService;
+    @Autowired
+    private EvaluationService evaluationService;
     @Autowired
     private EhrPatientRepository ehrPatientRepository;
     @Autowired
@@ -74,10 +79,7 @@ public class RecommendationController {
             }
             Parameters outParameters = client.operation().onServer().named("$immds-forecast").withParameters(in).execute();
             recommendationService.saveInStore((IDomainResource) outParameters.getParameter("recommendation").getResource(), facilityId, patientId, immunizationRegistry);
-//            List<org.hl7.fhir.r4.model.ImmunizationEvaluation> immunizationEvaluationList = outParameters.getParameters("evaluation").
-//                    stream().map((comp) -> (ImmunizationEvaluation) comp.getResource()).toList();
-//            for (ImmunizationEvaluation immunizationEvaluation : immunizationEvaluationList)
-//                logger.info(fhirComponentsDispatcher.parser("{}").encodeResourceToString(immunizationEvaluation));
+//            processEvaluations(outParameters, immunizationRegistry, ehrPatient, facilityId);
             out = outParameters;
         } else {
             org.hl7.fhir.r5.model.Patient patient = (org.hl7.fhir.r5.model.Patient) fhirComponentsDispatcher.patientMapper().toFhir(ehrPatient);
@@ -92,6 +94,33 @@ public class RecommendationController {
             recommendationService.saveInStore((IDomainResource) ((org.hl7.fhir.r5.model.Parameters) out).getParameter("recommendation").getResource(), facilityId, patientId, immunizationRegistry);
         }
         return fhirComponentsDispatcher.fhirContext().newJsonParser().encodeResourceToString(out);
+    }
+
+
+    /**
+     * In Progress
+     *
+     * @param outParameters
+     * @param immunizationRegistry
+     * @param ehrPatient
+     * @param facilityId
+     */
+    private void processEvaluations(org.hl7.fhir.r4.model.Parameters outParameters, ImmunizationRegistry immunizationRegistry, EhrPatient ehrPatient, Integer facilityId) {
+        List<ImmunizationEvaluation> immunizationEvaluationList = outParameters.getParameters("evaluation").
+                stream().map((comp) -> (ImmunizationEvaluation) comp.getResource()).toList();
+        for (ImmunizationEvaluation immunizationEvaluation : immunizationEvaluationList) {
+            logger.info(fhirComponentsDispatcher.parser("{}").encodeResourceToString(immunizationEvaluation));
+            for (VaccinationEvent vaccinationEvent : ehrPatient.getVaccinationEvents()) {
+                String evalCvx = immunizationEvaluation.getTargetDisease().getCodingFirstRep().getCode(); // TODO clarify
+//                if (StringUtils.equals(vaccinationEvent.getVaccine().getVaccineCvxCode(), evalCvx)) {
+//
+//                }
+//                if (false) {
+//                    evaluationService.saveInStore(immunizationEvaluation, facilityId, vaccinationEvent.getId(), immunizationRegistry);
+//                    break;
+//                }
+            }
+        }
     }
 
 
