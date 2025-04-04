@@ -1,8 +1,6 @@
 <h2 mat-dialog-title>
   Environment / Tenant Form
 </h2>
-<!-- <h4>
-</h4> -->
 <form (submit)="save()" class="list-container" mat-dialog-content>
   <mat-card>
     <mat-card-header>
@@ -37,7 +35,7 @@
           <span matListItemTitle>{{flavor.key}}</span>
           <span matListItemLine>{{flavor.description}}</span>
           <span matListItemMeta>
-            <button mat-stroked-button type="button" (click)="append(flavor.key)"
+            <button mat-stroked-button type="button" (click)="append(flavor)"
                     [disabled]="flavorActivated(flavor)">Append</button>
           </span>
         </mat-list-item>
@@ -45,10 +43,7 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Tenants are independent testing environments and include multiple facilities. -->
-  <!-- <mat-divider></mat-divider> -->
-
-  <div mat-dialog-actions align="end" class="form-action-bar w3-bottom">
+  <div mat-dialog-actions align="end" class="form-action-bar">
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

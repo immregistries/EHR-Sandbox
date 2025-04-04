@@ -40,13 +40,6 @@
   /* Hide overflow on the content container */
 }
 
-.mat-list {
-  flex-grow: 1;
-  /* Allow the list to grow and shrink */
-  overflow-y: auto;
-  /* Enable vertical scrolling for the list */
-}
-
 
 /* Optional: Style the list header to stay at the top of the scrollable area */
 .list-card .list-header {
@@ -56,10 +49,4 @@
   /* Ensure it doesn't become transparent over scrolling content */
   z-index: 1;
   /* Keep it above the list items */
-}
-
-/* Ensure mat-card-content doesn't have default padding that interferes with full height */
-.list-container>mat-card:not(.list-card)>.mat-card-content {
-  padding-bottom: 0;
-  /* Adjust if needed based on your layout */
 }

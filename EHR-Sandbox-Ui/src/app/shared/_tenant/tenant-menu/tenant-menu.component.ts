@@ -31,8 +31,8 @@ export class TenantMenuComponent implements AfterViewInit {
 
   openDialog() {
     const dialogRef = this.dialog.open(TenantFormComponent, {
-      maxWidth: '90vw',
-      maxHeight: '95vh',
+      maxWidth: '98vw',
+      maxHeight: '98vh',
       minWidth: '80vw',
       height: 'fit-content',
       width: 'fit-content',

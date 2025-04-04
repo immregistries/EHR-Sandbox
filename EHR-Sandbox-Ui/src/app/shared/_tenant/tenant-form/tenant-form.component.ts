@@ -63,15 +63,15 @@ export class TenantFormComponent implements OnInit {
     })
   }
 
-  append(flavor_name: string) {
+  append(flavor: Flavor) {
     if (!this.tenant.nameDisplay) {
       this.tenant.nameDisplay = ''
     }
-    if (!this.tenant.nameDisplay.endsWith(flavor_name)) {
+    if (!this.flavorActivated(flavor)) {
       if (this.tenant.nameDisplay.length > 0) {
         this.tenant.nameDisplay += ' '
       }
-      this.tenant.nameDisplay += flavor_name
+      this.tenant.nameDisplay += flavor.key
     }
   }
 

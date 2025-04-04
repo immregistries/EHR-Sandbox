@@ -34,7 +34,10 @@
       Choose name for testing environment
       <span class="matbar-spacer"></span>
     </mat-toolbar>
-    <app-tenant-form (success)="nextTenant($event)"></app-tenant-form>
+    <div>
+      <app-tenant-form (success)="nextTenant($event)"></app-tenant-form>
+
+    </div>
   </mat-step>
   <mat-step label="Create Facility">
     <mat-toolbar class="step-toolbar">
