@@ -79,8 +79,8 @@ export class ClinicianSelectComponent extends AbstractBaseFormComponent implemen
       this.filterChange('')
     })
     // combineLatest([
-    //   this.clinicianService.getRefresh(), // Start with null to trigger initially
-    //   this.tenantService.getCurrentObservable() // Start with the initial ID
+    //   this.clinicianService.getRefresh(), //
+    //   this.tenantService.getCurrentObservable()
     // ])
     //   .pipe(
     //     switchMap(([_, tenant]) => this.clinicianService.quickReadClinicians()),

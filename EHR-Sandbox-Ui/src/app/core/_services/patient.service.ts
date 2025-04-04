@@ -29,7 +29,7 @@ export class PatientService extends CurrentSelectedWithIdService<EhrPatient> {
   }
 
   private readonly quickReadObservable: Observable<EhrPatient[]> = combineLatest([
-    this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
+    this.getRefresh(),
     this.tenantService.getCurrentObservable(),
     this.facilityService.getCurrentObservable()
   ]).pipe(tap(() => this.loading = true))

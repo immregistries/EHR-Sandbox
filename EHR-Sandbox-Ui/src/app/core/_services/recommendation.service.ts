@@ -19,9 +19,9 @@ const httpOptions = {
 export class RecommendationService extends RefreshService {
 
   private readonly quickReadObservable: Observable<ImmunizationRecommendation[]> = combineLatest([
-    this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
-    this.tenantService.getCurrentObservable(), // Start with the initial ID
-    this.facilityService.getCurrentObservable(), // Start with the initial ID
+    this.getRefresh(),
+    this.tenantService.getCurrentObservable(),
+    this.facilityService.getCurrentObservable(),
     this.patientService.getCurrentObservable(),
   ]).pipe(tap(() => this.loading = true))
     .pipe(switchMap(([_, tenant, facility, patient]) => tenant?.id > 0 && facility?.id && facility.id > 0 && patient.id && patient.id > 0 ? this.readRecommendations(tenant.id, facility.id, patient.id) : of([])))

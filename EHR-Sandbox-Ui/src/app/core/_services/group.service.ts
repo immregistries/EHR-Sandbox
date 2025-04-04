@@ -21,9 +21,9 @@ export class GroupService extends CurrentSelectedService<EhrGroup> {
   private readonly if_valid_parent_ids: Observable<boolean> = new Observable((subscriber) => subscriber.next(this.tenantService.getCurrentId() > 0 && this.facilityService.getCurrentId() > 0))
 
   public readonly quickReadObservable: Observable<EhrGroup[]> = combineLatest([
-    this.getRefresh().pipe(startWith(false)), // Start with null to trigger initially
-    this.tenantService.getCurrentObservable(), // Start with the initial ID
-    this.facilityService.getCurrentObservable() // Start with the initial ID
+    this.getRefresh(),
+    this.tenantService.getCurrentObservable(),
+    this.facilityService.getCurrentObservable()
   ]).pipe(tap(() => this.loading = true))
     .pipe(switchMap(([_, tenant, facility]) => tenant?.id > 0 && facility?.id && facility.id > 0 ? this.readGroups(tenant.id, facility.id) : of([])))
     .pipe(shareReplay({ bufferSize: 1, refCount: true }))
