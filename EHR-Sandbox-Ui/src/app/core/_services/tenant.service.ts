@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Flavor, Tenant } from '../_model/rest';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, mergeMap, Observable, shareReplay, tap } from 'rxjs';
 import { SettingsService } from './settings.service';
 import { FacilityService } from './facility.service';
 import { CurrentSelectedWithIdService } from './_abstract/current-selected-with-id.service';
@@ -19,37 +19,64 @@ const httpOptions = {
 })
 export class TenantService extends CurrentSelectedWithIdService<Tenant> {
 
+  private readonly quickReadObservable = this.getRefresh()
+    .pipe(tap(() => this.loading = true))
+    .pipe(mergeMap(() => this.readTenants()))
+    .pipe(shareReplay({ bufferSize: 1, refCount: false }))
+    .pipe(tap(() => this.loading = false))
+
   constructor(private http: HttpClient, private settings: SettingsService,
     snackBarService: SnackBarService
   ) {
     super(new BehaviorSubject<Tenant>({ id: -1 }), snackBarService)
   }
 
-  readTenants(): Observable<Tenant[]> {
+  public quickReadTenants(): Observable<Tenant[]> {
+    return this.quickReadObservable
+  }
+
+  public readTenants(): Observable<Tenant[]> {
     return this.http.get<Tenant[]>(
       this.settings.getApiUrl() + '/tenants', httpOptions);
   }
 
-  getRandom(): Observable<Tenant> {
+  public getRandom(): Observable<Tenant> {
     return this.http.get<Tenant>(
       `${this.settings.getApiUrl()}/tenants/$random`, httpOptions);
   }
 
-  readTenant(tenantId: number): Observable<Tenant> {
+  public readTenant(tenantId: number): Observable<Tenant> {
     return this.http.get<Tenant>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}`, httpOptions);
   }
 
-  postTenant(tenant: Tenant): Observable<HttpResponse<Tenant>> {
+  public postTenant(tenant: Tenant): Observable<HttpResponse<Tenant>> {
     return this.http.post<Tenant>(
       this.settings.getApiUrl()
       + '/tenants',
       tenant, { observe: 'response' });
   }
 
-  readAllFlavors(): Observable<Flavor[]> {
+  public readAllFlavors(): Observable<Flavor[]> {
     return this.http.get<Flavor[]>(
       this.settings.getApiUrl() + '/flavors', httpOptions);
+  }
+
+  public flavorActivated(tenant: Tenant, flavor: Flavor): boolean {
+    const key = flavor.key
+    if (!tenant.nameDisplay) {
+      return false
+    } else if (tenant.nameDisplay.startsWith(key + " ")
+      || tenant.nameDisplay.endsWith(" " + key)
+      || tenant.nameDisplay.indexOf(" " + key + " ") > 0) {
+      return true
+    } else if (tenant.nameDisplay.startsWith(key + "_")
+      || tenant.nameDisplay.endsWith("_" + key)
+      || tenant.nameDisplay.indexOf("_" + key + "_") > 0) {
+      return true
+    } else if (tenant.nameDisplay === key) {
+      return true
+    } else return false
   }
 
 }

@@ -22,10 +22,8 @@ export class TenantMenuComponent implements AfterViewInit {
     public dialog: MatDialog) { }
 
   ngAfterViewInit(): void {
-    this.tenantService.getRefresh().subscribe((bool) => {
-      this.tenantService.readTenants().subscribe((res) => {
-        this.list = res
-      })
+    this.tenantService.quickReadTenants().subscribe((res) => {
+      this.list = res
     })
   }
 
@@ -39,7 +37,6 @@ export class TenantMenuComponent implements AfterViewInit {
       panelClass: 'dialog-without-bar'
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.tenantService.doRefresh()
       if (result) {
         this.tenantService.setCurrent(result)
         this.facilityService.setCurrent({ id: -1 })

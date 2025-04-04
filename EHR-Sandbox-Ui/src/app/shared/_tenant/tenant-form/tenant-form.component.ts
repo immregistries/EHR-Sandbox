@@ -42,6 +42,7 @@ export class TenantFormComponent implements OnInit {
   save() {
     this.tenantService.postTenant(this.tenant).subscribe({
       next: (res: HttpResponse<Tenant>) => {
+        this.tenantService.doRefresh()
         if (res.body) {
           if (this._dialogRef && this._dialogRef.id) {
             this._dialogRef.close(res.body)
@@ -90,21 +91,8 @@ export class TenantFormComponent implements OnInit {
 
   }
 
-  flavorActivated(flavor: Flavor): boolean {
-    const key = flavor.key
-    if (!this.tenant.nameDisplay) {
-      return false
-    } else if (this.tenant.nameDisplay.startsWith(key + " ")
-      || this.tenant.nameDisplay.endsWith(" " + key)
-      || this.tenant.nameDisplay.indexOf(" " + key + " ") > 0) {
-      return true
-    } else if (this.tenant.nameDisplay.startsWith(key + "_")
-      || this.tenant.nameDisplay.endsWith("_" + key)
-      || this.tenant.nameDisplay.indexOf("_" + key + "_") > 0) {
-      return true
-    } else if (this.tenant.nameDisplay === key) {
-      return true
-    } else return false
+  public flavorActivated(flavor: Flavor): boolean {
+    return this.tenantService.flavorActivated(this.tenantService.getCurrent(), flavor)
   }
 
 }
