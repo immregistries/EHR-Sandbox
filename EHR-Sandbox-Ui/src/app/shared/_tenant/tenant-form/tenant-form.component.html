@@ -1,11 +1,15 @@
 <h2 mat-dialog-title>
   Environment / Tenant Form
 </h2>
-<form (submit)="save()" class="mat-mat-grid-list-container">
-
-  <mat-card class="form-card">
+<!-- <h4>
+</h4> -->
+<form (submit)="save()" class="list-container" mat-dialog-content>
+  <mat-card>
     <mat-card-header>
-      <mat-card-title>Name</mat-card-title>
+      <mat-card-title>Configuration</mat-card-title>
+      <mat-card-subtitle>
+        This sandbox works with independent testing environments, which can then include multiple facilities.
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <mat-form-field appearance="fill" style="min-width: 40em;">
@@ -18,25 +22,17 @@
           <input matInput [(ngModel)]="tenant.alias" name="alias" optional>
         </mat-form-field>
       </div>
-
     </mat-card-content>
   </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <div>
-        This sandbox works with independent testing environments, which can then include multiple facilities.
-      </div>
+  <mat-card class="list-card">
+    <mat-card-header class="list-header">
+      <mat-card-title>Flavors: activate options by including keywords in name</mat-card-title>
+      <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
+
     </mat-card-header>
-    <mat-card-content>
-      <!-- <mat-divider></mat-divider> -->
-      <!-- Flavors: activate options by including keywords in environment name -->
+
+    <mat-card-content class="list-card-content">
       <mat-list>
-        <mat-list-item>
-          <span matListItemTitle>Flavors: activate options by including keywords in name</span>
-          <span matListItemMeta>
-            <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
-          </span>
-        </mat-list-item>
         <mat-list-item *ngFor="let flavor of flavorListFiltered">
           <span matListItemTitle>{{flavor.key}}</span>
           <span matListItemLine>{{flavor.description}}</span>
@@ -52,7 +48,7 @@
   <!-- Tenants are independent testing environments and include multiple facilities. -->
   <!-- <mat-divider></mat-divider> -->
 
-  <div mat-dialog-actions align="end" class="form-action-bar">
+  <div mat-dialog-actions align="end" class="form-action-bar w3-bottom">
     <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random

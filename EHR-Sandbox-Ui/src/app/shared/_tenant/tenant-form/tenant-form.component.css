@@ -1,29 +1,65 @@
-.custom-form-title {
-  margin: 0 0 16px;
-  padding: 0 24px 9px;
-}
-
-.form-tile {
+/* .form-tile {
   overflow: scroll;
-  /* display: flex; */
-}
+} */
 
-.mat-grid-list-container {
-  height: 100%;
-  /* Make the grid container take up the parent's height */
-}
 
-.mat-grid-list {
-  height: 100%;
-  /* Ensure the grid itself takes up the container's height */
-}
-
-.mat-grid-tile {
+.list-header {
   display: flex;
-  /* Use flexbox to distribute space evenly */
+  justify-content: space-between;
+  align-items: center;
 }
 
-.mat-grid-tile-content {
-  flex: 1;
-  /* Make the content fill the entire tile */
+.form-container {
+  /* Add this class to the parent component */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* Occupy the full height of the parent */
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  /* Allow the form to grow and take available space */
+  overflow: hidden;
+  /* Prevent the form itself from scrolling */
+}
+
+.list-card {
+  overflow: auto;
+  /* Enable scrolling for the content within the list card */
+}
+
+.list-card .mat-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* Make the content container take full height of the card */
+  overflow: hidden;
+  /* Hide overflow on the content container */
+}
+
+.mat-list {
+  flex-grow: 1;
+  /* Allow the list to grow and shrink */
+  overflow-y: auto;
+  /* Enable vertical scrolling for the list */
+}
+
+
+/* Optional: Style the list header to stay at the top of the scrollable area */
+.list-card .list-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  /* Ensure it doesn't become transparent over scrolling content */
+  z-index: 1;
+  /* Keep it above the list items */
+}
+
+/* Ensure mat-card-content doesn't have default padding that interferes with full height */
+.list-container>mat-card:not(.list-card)>.mat-card-content {
+  padding-bottom: 0;
+  /* Adjust if needed based on your layout */
 }
