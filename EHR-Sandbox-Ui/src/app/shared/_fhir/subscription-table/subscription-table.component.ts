@@ -13,18 +13,18 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./subscription-table.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
 export class SubscriptionTableComponent implements OnInit {
-  @Input() facility: Facility = {id: -1};
+  @Input() facility: Facility = { id: -1 };
   @Input() title: string = 'Registered Subscriptions'
   loading: boolean = false
   columns: (keyof EhrSubscription | "event_since_start")[] = [
-    "name", "status", "identifier","notificationUrlLocation"
+    "name", "status", "identifier", "notificationUrlLocation"
     , "event_since_start"
   ]
 
@@ -35,7 +35,7 @@ export class SubscriptionTableComponent implements OnInit {
     private dialog: MatDialog,
     private facilityService: FacilityService,
     private subscriptionService: SubscriptionService,
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.ngOnChanges()
@@ -46,29 +46,29 @@ export class SubscriptionTableComponent implements OnInit {
   }
   ngAfterViewInit(): void {
     // Set filter rules for research
-    this.dataSource.filterPredicate = (data: EhrSubscription | number, filter: string) =>{
+    this.dataSource.filterPredicate = (data: EhrSubscription | number, filter: string) => {
       return JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1
     };
   }
 
   ngOnChanges(): void {
     merge(this.subscriptionService.getRefresh(),
-      this.facilityService.getCurrentObservable().pipe(tap(facility =>{this.facility = facility}))
-    ).pipe(startWith(tap(() => this.loading = true)))
-    .subscribe(() => {
-      this.subscriptionService.readSubscription().pipe(tap()).subscribe(res => {
-        this.loading = false
-        if (res) {
-          this.dataSource.data = [res];
-        } else {
-          this.dataSource.data = [];
-        }
+      this.facilityService.getCurrentObservable().pipe(tap(facility => { this.facility = facility }))
+    ).pipe(startWith(tap(() => this.loading = true))) // TODO change this weird part ?
+      .subscribe(() => {
+        this.subscriptionService.readSubscription().pipe(tap()).subscribe(res => {
+          this.loading = false
+          if (res) {
+            this.dataSource.data = [res];
+          } else {
+            this.dataSource.data = [];
+          }
+        })
       })
-    })
   }
 
   onSelection(event: EhrSubscription) {
-    if (this.expandedElement && this.expandedElement.identifier == event.identifier){
+    if (this.expandedElement && this.expandedElement.identifier == event.identifier) {
       this.expandedElement = null
     } else {
       this.expandedElement = event
