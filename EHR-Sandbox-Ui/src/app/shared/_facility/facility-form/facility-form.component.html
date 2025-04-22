@@ -1,23 +1,25 @@
-<h2 mat-dialog-title>
-  Facility Form
-</h2>
+<h2 mat-dialog-title>Facility Form</h2>
 <form (submit)="save()">
   <div class="grid-container">
     <div *ngFor="let card of FORM_CARDS">
       <mat-card class="form-card">
         <mat-card-header *ngIf="card.title">
           <mat-card-title>
-            {{card.title}}
+            {{ card.title }}
           </mat-card-title>
         </mat-card-header>
         <mat-card-content class="form-card-content">
           <ng-container *ngFor="let form of card.forms">
-            <app-card-form class="card-form high-density" [baseForm]="form" [model]="facility[form.attributeName]"
-                           (modelChange)="facility[form.attributeName] = $event"></app-card-form>
+            <app-card-form
+              class="card-form high-density"
+              [baseForm]="form"
+              [model]="facility[form.attributeName]"
+              (modelChange)="facility[form.attributeName] = $event"
+            ></app-card-form>
           </ng-container>
         </mat-card-content>
         <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
-          {{card.toolTips}}
+          {{ card.toolTips }}
         </mat-card-footer>
       </mat-card>
     </div>
@@ -25,16 +27,17 @@
   <div>
     <mat-card class="form-card">
       <mat-card-header>
-        <mat-card-title>
-          Parent Facility
-        </mat-card-title>
+        <mat-card-title> Parent Facility </mat-card-title>
       </mat-card-header>
       <mat-card-content class="form-card-content">
         <mat-form-field appearance="fill">
           <mat-label>Parent Facility</mat-label>
           <mat-select [(ngModel)]="parentId" name="parentFacility">
             <mat-option *ngIf="parentId" value="undefined"></mat-option>
-            <mat-option *ngFor="let item of facilityList" value="{{item.id | number }}">{{item.nameDisplay}}
+            <mat-option
+              *ngFor="let item of facilityList"
+              value="{{ item.id | number }}"
+              >{{ item.nameDisplay }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -54,11 +57,22 @@
     </mat-card> -->
   </div>
 
-
   <div mat-dialog-actions align="end" class="form-action-bar">
-    <mat-checkbox *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate</mat-checkbox>
+    <mat-checkbox
+      style="padding-right: 3px"
+      *ngIf="!editionMode"
+      [(ngModel)]="add_patients"
+      name="add_patients"
+      >Populate</mat-checkbox
+    >
     <!-- <mat-slide-toggle *ngIf="!editionMode" [(ngModel)]="add_patients" name="add_patients">Populate</mat-slide-toggle> -->
-    <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="random()"
+      *ngIf="!editionMode"
+      color="primary"
+    >
       <mat-icon>casino</mat-icon>
       Random
     </button>
