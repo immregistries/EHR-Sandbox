@@ -1,15 +1,6 @@
-.dashboard-card {
-  /* width: 98%; */
-}
-
 .text-dashboard-card {
   min-width: 20em;
   padding: 5px;
-}
-
-.card-title {
-  /* padding-top: 1px;
-  margin: 0px; */
 }
 
 .dashboard-container {
@@ -24,11 +15,6 @@
   padding: 5px;
 }
 
-.grid-list-padded {
-  padding-top: 20px;
-  /* display: flex; */
-}
-
 .mat-mdc-card-content:last-child {
   padding: 8px 8px 0;
 }
@@ -37,28 +23,3 @@
   display: flex;
   padding: 4px 4px 0;
 }
-/*
-.dashboard-card-content {
-  /* text-align: center; */
-/* display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  flex-direction: column;
-  gap: 5px 5px; */
-/* }  */
-/*
-.grid-tile-content{
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-} */

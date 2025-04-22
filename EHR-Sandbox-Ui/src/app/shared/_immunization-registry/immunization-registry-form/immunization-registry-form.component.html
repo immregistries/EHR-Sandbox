@@ -65,9 +65,6 @@
           <mat-label>Extra headers</mat-label>
           <input matInput [(ngModel)]="immunizationRegistry.headers" />
         </mat-form-field>
-        <mat-checkbox [(ngModel)]="immunizationRegistry.default"
-          >Selected by default</mat-checkbox
-        >
       </mat-card-content>
       <mat-card-footer>
         <mat-card-subtitle>
@@ -96,6 +93,11 @@
     <mat-card-footer>
       <mat-card class="form-card" style="text-align: right">
         <mat-card-content>
+          <mat-checkbox
+            [(ngModel)]="immunizationRegistry.default"
+            style="padding-right: 5px"
+            >Selected by default</mat-checkbox
+          >
           <button
             mat-stroked-button
             [matTooltip]="
@@ -146,7 +148,6 @@
         FHIR Authentication modes
       </mat-card-title>
     </mat-card-header>
-    <!-- <h3 style="text-align: left;"></h3> -->
     <ul class="w3-ul">
       <li>Default authentication mode is <b>Basic</b></li>
       <li>
