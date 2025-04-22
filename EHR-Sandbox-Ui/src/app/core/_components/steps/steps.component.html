@@ -1,6 +1,6 @@
-<mat-stepper linear #stepper style="height: 100%; text-align: left;">
+<mat-stepper linear #stepper style="height: 100%; text-align: left">
   <mat-step label="Initial Configuration">
-    <h3 style="text-align: left;">For first time user</h3>
+    <h3 style="text-align: left">For first time user</h3>
     <ul class="w3-ul">
       <li>Set up tenant / Testing Environment</li>
       <li>Set up Facility</li>
@@ -8,21 +8,35 @@
     </ul>
     <mat-toolbar class="step-toolbar" color="none">
       <span class="matbar-spacer"></span>
-      <button mat-stroked-button color="primary" (click)="end()" type="button"
-              matTooltip="Skip configuration and be redirected to main dashboard">
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="end()"
+        type="button"
+        matTooltip="Skip configuration and be redirected to main dashboard"
+      >
         <mat-icon>skip_next</mat-icon>
-        Skip
-        configuration
+        Skip configuration
       </button>
       <span class="matbar-spacer"></span>
-      <button mat-raised-button color="primary" (click)="stepper.next()" type="button"
-              matTooltip="Optional: Configure Testing environment and commmunication">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="stepper.next()"
+        type="button"
+        matTooltip="Optional: Configure Testing environment and commmunication"
+      >
         <mat-icon>start</mat-icon>
         Step by step configuration
       </button>
       <span class="matbar-spacer"></span>
-      <button mat-raised-button color="primary" (click)="random()" type="button"
-              matTooltip="Generic configuration with a populated Facility and random names">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="random()"
+        type="button"
+        matTooltip="Generic configuration with a populated Facility and random names"
+      >
         <mat-icon>casino</mat-icon>
         Random configuration
       </button>
@@ -34,10 +48,7 @@
       Choose name for testing environment
       <span class="matbar-spacer"></span>
     </mat-toolbar>
-    <div>
-      <app-tenant-form (success)="nextTenant($event)"></app-tenant-form>
-
-    </div>
+    <app-tenant-form (success)="nextTenant($event)"></app-tenant-form>
   </mat-step>
   <mat-step label="Create Facility">
     <mat-toolbar class="step-toolbar">
@@ -50,7 +61,13 @@
     <mat-toolbar class="step-toolbar">
       Choose name for testing environment
       <span class="matbar-spacer"></span>
-      <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="stepper.next()"
+        type="button"
+        class="w3-right"
+      >
         <mat-icon>skip_next</mat-icon>
         Skip step
       </button>
@@ -58,12 +75,17 @@
     <app-immunization-registry-dashboard></app-immunization-registry-dashboard>
     <mat-toolbar class="step-toolbar">
       <span class="matbar-spacer"></span>
-      <button mat-raised-button color="primary" (click)="stepper.next()" type="button" class="w3-right">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="stepper.next()"
+        type="button"
+        class="w3-right"
+      >
         <mat-icon>skip_next</mat-icon>
         Skip step
       </button>
     </mat-toolbar>
-
   </mat-step>
   <mat-step label="Ready">
     <mat-toolbar class="step-toolbar">
@@ -74,10 +96,9 @@
       </button>
       <span class="matbar-spacer"></span>
     </mat-toolbar>
-    <h3 style="text-align: left;">Other Step by step tutorial</h3>
+    <h3 style="text-align: left">Other Step by step tutorial</h3>
     <ul class="w3-ul">
       <li><a href="/ehr/#/vxu-steps">Produce VXU Step by step</a></li>
     </ul>
-
   </mat-step>
 </mat-stepper>

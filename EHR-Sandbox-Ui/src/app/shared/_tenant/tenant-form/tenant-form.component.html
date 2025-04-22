@@ -1,49 +1,77 @@
-<h2 mat-dialog-title>
-  Environment / Tenant Form
-</h2>
+<h2 mat-dialog-title>Environment / Tenant Form</h2>
 <form (submit)="save()" class="list-container" mat-dialog-content>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Configuration</mat-card-title>
-      <mat-card-subtitle>
-        This sandbox works with independent testing environments, which can then include multiple facilities.
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-form-field appearance="fill" style="min-width: 40em;">
-        <mat-label>Tenant name</mat-label>
-        <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay" style="min-width: 40em;">
-      </mat-form-field>
-      <div>
-        <mat-form-field appearance="fill" [matTooltip]="'Used for display in selection menu'">
-          <mat-label>Alias (Optional)</mat-label>
-          <input matInput [(ngModel)]="tenant.alias" name="alias" optional>
+  <div class="form-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Configuration</mat-card-title>
+        <mat-card-subtitle>
+          This sandbox works with independent testing environments, which can
+          then include multiple facilities.
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="fill" style="min-width: 40em">
+          <mat-label>Tenant name</mat-label>
+          <input
+            matInput
+            [(ngModel)]="tenant.nameDisplay"
+            name="nameDisplay"
+            style="min-width: 40em"
+          />
         </mat-form-field>
-      </div>
-    </mat-card-content>
-  </mat-card>
-  <mat-card class="list-card">
-    <mat-card-header class="list-header">
-      <mat-card-title>Flavors: activate options by including keywords in name</mat-card-title>
-      <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
-    </mat-card-header>
+        <div>
+          <mat-form-field
+            appearance="fill"
+            [matTooltip]="'Used for display in selection menu'"
+          >
+            <mat-label>Alias (Optional)</mat-label>
+            <input matInput [(ngModel)]="tenant.alias" name="alias" optional />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="list-card">
+      <mat-card-header class="list-header">
+        <mat-card-title
+          >Flavors: activate options by including keywords in
+          name</mat-card-title
+        >
+        <input
+          (keyup)="applyFilter($event)"
+          class="search-bar"
+          placeholder="Search"
+        />
+      </mat-card-header>
 
-    <mat-card-content class="list-card-content">
-      <mat-list>
-        <mat-list-item *ngFor="let flavor of flavorListFiltered">
-          <span matListItemTitle>{{flavor.key}}</span>
-          <span matListItemLine>{{flavor.description}}</span>
-          <span matListItemMeta>
-            <button mat-stroked-button type="button" (click)="append(flavor)"
-                    [disabled]="flavorActivated(flavor)">Append</button>
-          </span>
-        </mat-list-item>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
+      <mat-card-content class="list-card-content">
+        <mat-list>
+          <mat-list-item *ngFor="let flavor of flavorListFiltered">
+            <span matListItemTitle>{{ flavor.key }}</span>
+            <span matListItemLine>{{ flavor.description }}</span>
+            <span matListItemMeta>
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="append(flavor)"
+                [disabled]="flavorActivated(flavor)"
+              >
+                Append
+              </button>
+            </span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
   <div mat-dialog-actions align="end" class="form-action-bar">
-    <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="random()"
+      *ngIf="!editionMode"
+      color="primary"
+    >
       <mat-icon>casino</mat-icon>
       Random
     </button>

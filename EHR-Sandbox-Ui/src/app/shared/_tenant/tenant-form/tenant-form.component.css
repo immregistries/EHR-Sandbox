@@ -2,7 +2,6 @@
   overflow: scroll;
 } */
 
-
 .list-header {
   display: flex;
   justify-content: space-between;
@@ -12,8 +11,9 @@
 .form-container {
   /* Add this class to the parent component */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100%;
+  overflow: scroll;
   /* Occupy the full height of the parent */
 }
 
@@ -39,7 +39,6 @@
   overflow: hidden;
   /* Hide overflow on the content container */
 }
-
 
 /* Optional: Style the list header to stay at the top of the scrollable area */
 .list-card .list-header {
