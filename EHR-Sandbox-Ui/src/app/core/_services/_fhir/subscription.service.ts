@@ -40,6 +40,7 @@ export class SubscriptionService {
     const registryId: number | undefined = this.registryService.getCurrentId()
     return this.http.post<any>(
       `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription/data-quality-issues`,
+      null,
       {
         ...httpOptions,
         params: { registryId: registryId }

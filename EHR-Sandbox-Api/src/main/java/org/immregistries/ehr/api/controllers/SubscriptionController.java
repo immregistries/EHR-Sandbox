@@ -138,6 +138,7 @@ public class SubscriptionController {
         sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
 //        sub.setTopic(iis_uri + "/SubscriptionTopic/sandbox");
 //        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/Group");
+        // TODO set canonical definition and host somewhere on HIT DEV ?
         sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/data-quality-issues");
 
 

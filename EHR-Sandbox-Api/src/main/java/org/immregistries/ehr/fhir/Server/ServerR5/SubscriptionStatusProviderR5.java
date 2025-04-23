@@ -21,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import java.util.Optional;
 
 @Controller
-
 public class SubscriptionStatusProviderR5 implements IResourceProvider {
     @Autowired
     EhrSubscriptionRepository ehrSubscriptionRepository;

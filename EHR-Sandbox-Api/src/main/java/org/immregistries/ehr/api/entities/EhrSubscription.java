@@ -15,7 +15,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ehr_subscription")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "subscription_identifier",
+        property = "identifier",
         scope = EhrSubscription.class)
 public class EhrSubscription extends EhrEntity {
     public EhrSubscription() {
