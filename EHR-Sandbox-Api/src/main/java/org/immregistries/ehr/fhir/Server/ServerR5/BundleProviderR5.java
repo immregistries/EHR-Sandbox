@@ -78,7 +78,7 @@ public class BundleProviderR5 implements IResourceProvider {
          */
         String secret = request.getHeader(SECRET_HEADER_NAME);
 
-        if (!ehrSubscription.getHeader().equals(SECRET_HEADER_NAME + ":" + SECRET_PREFIX + secret)) {
+        if (!(ehrSubscription.getHeaders().containsKey(SECRET_HEADER_NAME) && ehrSubscription.getHeaders().get(SECRET_HEADER_NAME).equals(SECRET_PREFIX + secret))) {
             throw new AuthenticationException("Invalid header for subscription notification");
         }
 

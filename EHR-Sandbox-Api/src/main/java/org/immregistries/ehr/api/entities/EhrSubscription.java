@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r5.model.*;
+import org.hl7.fhir.r5.model.Subscription;
+
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * based on Fhir Subscription, made to register them in the database
@@ -21,8 +25,8 @@ public class EhrSubscription extends EhrEntity {
     public EhrSubscription() {
     }
 
-    public EhrSubscription(Subscription subscription) {
-        externalId = new IdType(subscription.getId()).getIdPart();
+    public EhrSubscription(org.hl7.fhir.r5.model.Subscription subscription) {
+        externalId = new org.hl7.fhir.r5.model.IdType(subscription.getId()).getIdPart();
         identifier = subscription.getIdentifierFirstRep().getValue();
         name = subscription.getName();
         status = subscription.hasStatus() ? subscription.getStatus().toCode() : null;
@@ -30,7 +34,11 @@ public class EhrSubscription extends EhrEntity {
         end = subscription.getEnd();
         reason = subscription.getReason();
         channelType = subscription.hasChannelType() ? subscription.getChannelType().getCode() : null;
-        header = subscription.hasParameter() ? subscription.getParameter().get(0).getName() + ":" + subscription.getParameter().get(0).getValue() : "";
+        headers = subscription.getParameter().stream()
+                .collect(Collectors.toMap(
+                        Subscription.SubscriptionParameterComponent::getName,
+                        Subscription.SubscriptionParameterComponent::getValue)
+                );
         heartbeatPeriod = subscription.getHeartbeatPeriod();
         timeout = subscription.getTimeout();
         contentType = subscription.getContentType();
@@ -39,22 +47,46 @@ public class EhrSubscription extends EhrEntity {
         maxCount = subscription.getMaxCount();
     }
 
-    public Subscription toSubscription() {
-        Subscription subscription = new Subscription();
+    public EhrSubscription(org.hl7.fhir.r4b.model.Subscription subscription) {
+        externalId = new org.hl7.fhir.r4b.model.IdType(subscription.getId()).getIdPart();
+//        identifier = subscription.getIdentifierFirstRep().getValue();
+//        name = subscription.getName();
+        status = subscription.hasStatus() ? subscription.getStatus().toCode() : null;
+//        topic = subscription.getTopic();
+        end = subscription.getEnd();
+        reason = subscription.getReason();
+        if (subscription.hasChannel()) {
+            channelType = subscription.getChannel().hasType() ? subscription.getChannel().getType().toCode() : null;
+            notificationUrlLocation = subscription.getChannel().getEndpoint();
+            headers = subscription.getChannel().getHeader().stream()
+                    .collect(Collectors.toMap(
+                            (header)-> header.getValue().split(":")[0],
+                            (header)-> header.getValue().split(":")[1])
+                    );
+        }
+//        heartbeatPeriod = subscription.getHeartbeatPeriod();
+//        timeout = subscription.getTimeout();
+//        contentType = subscription.getContentType();
+//        content = subscription.hasContent() ? subscription.getContent().toCode() : null;
+//        maxCount = subscription.getMaxCount();
+    }
+
+    public org.hl7.fhir.r5.model.Subscription toSubscription() {
+        org.hl7.fhir.r5.model.Subscription subscription = new org.hl7.fhir.r5.model.Subscription();
         subscription.setId(externalId);
-        subscription.addIdentifier(new Identifier().setValue(identifier));
+        subscription.addIdentifier(new org.hl7.fhir.r5.model.Identifier().setValue(identifier));
         subscription.setName(name);
-        subscription.setStatus(Enumerations.SubscriptionStatusCodes.valueOf(status));
+        subscription.setStatus(org.hl7.fhir.r5.model.Enumerations.SubscriptionStatusCodes.valueOf(status));
         subscription.setTopic(topic);
         subscription.setEnd(end);
         subscription.setReason(reason);
-        subscription.setChannelType(new Coding().setCode(channelType));
-        if (StringUtils.isNotBlank(header)) {
-            subscription.addParameter().setName(header.split(":")[0]).setValue(header.split(":")[1]);
+        subscription.setChannelType(new org.hl7.fhir.r5.model.Coding().setCode(channelType));
+        for (Map.Entry<String,String> entry : headers.entrySet()) {
+            subscription.addParameter().setName(entry.getKey()).setValue(entry.getValue());
         }
         subscription.setHeartbeatPeriod(heartbeatPeriod);
         subscription.setTimeout(timeout);
-        subscription.setContent(Subscription.SubscriptionPayloadContent.valueOf(content));
+        subscription.setContent(org.hl7.fhir.r5.model.Subscription.SubscriptionPayloadContent.valueOf(content));
         subscription.setContentType(contentType);
         subscription.setEndpoint(notificationUrlLocation);
         subscription.setMaxCount(maxCount);
@@ -86,8 +118,10 @@ public class EhrSubscription extends EhrEntity {
     @Column(name = "subscription_channel_type", length = 45)
     private String channelType;
 
-    @Column(name = "subscription_header", length = 612)
-    private String header;
+    @ElementCollection
+    @MapKeyColumn(name = "header_name")
+    @Column(name = "header_value")
+    private Map<String,String> headers = new HashMap<>(2);
 
     @Column(name = "subscription_heartbeat_period")
     private Integer heartbeatPeriod;
@@ -171,14 +205,6 @@ public class EhrSubscription extends EhrEntity {
         this.heartbeatPeriod = heartbeatPeriod;
     }
 
-    public String getHeader() {
-        return header;
-    }
-
-    public void setHeader(String header) {
-        this.header = header;
-    }
-
     public String getChannelType() {
         return channelType;
     }
@@ -241,5 +267,13 @@ public class EhrSubscription extends EhrEntity {
 
     public void setSubscriptionInfo(EhrSubscriptionInfo subscriptionInfo) {
         this.subscriptionInfo = subscriptionInfo;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 }
