@@ -193,6 +193,11 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             ehrPatient.addName(MappingHelperR4.toEhrName(humanName));
         }
 
+        for (Identifier identifier : p.getIdentifier()) {
+            EhrIdentifier ehrIdentifier = new EhrIdentifier(identifier);
+            ehrPatient.getIdentifiers().add(ehrIdentifier);
+        }
+
 
         Extension motherMaiden = p.getExtensionByUrl(MOTHER_MAIDEN_NAME_EXTENSION);
         if (motherMaiden != null) {

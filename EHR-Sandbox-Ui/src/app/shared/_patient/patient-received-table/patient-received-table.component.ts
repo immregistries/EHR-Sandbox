@@ -24,8 +24,7 @@ export class PatientReceivedTableComponent {
 
   public columns: (keyof EhrPatient | keyof EhrHumanName | "mrn")[] = [
     "mrn",
-    "nameLast",
-    "nameFirst",
+    "names",
     "birthDate"
   ]
 
