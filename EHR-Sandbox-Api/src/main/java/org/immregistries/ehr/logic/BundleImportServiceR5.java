@@ -89,7 +89,9 @@ public class BundleImportServiceR5 implements IBundleImportService {
                         immunization.setPatient(new Reference("Patient/" + localPatientId));
                         MethodOutcome methodOutcome = immunizationProvider.create(immunization, facility);
                         Integer dbId = EhrUtils.convert(methodOutcome.getId().getValue());
-                        immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId, immunizationRegistry.getId(), receivedId));
+                        if (dbId != null) {
+                            immunizationIdentifierRepository.save(new ImmunizationIdentifier(dbId, immunizationRegistry.getId(), receivedId));
+                        }
                         responseBuilder.append("\nImmunization ").append(receivedId).append(" loaded as Immunization ").append(dbId);
                         logger.info("Immunization {} loaded as Immunization {}", receivedId, dbId);
                         count++;
@@ -140,7 +142,9 @@ public class BundleImportServiceR5 implements IBundleImportService {
                         VaccinationEvent vaccinationEvent = immunizationMapper.toVaccinationEvent(facility, immunization);
                         vaccinationEvent.setPatient(ehrPatientRepository.findByFacilityIdAndId(facility.getId(), localPatientId).orElseThrow());
                         Integer localVaccinationId = resourceIdentificationService.getImmunizationLocalId(immunization, immunizationRegistry, facility);
-                        immunizationIdentifierRepository.save(new ImmunizationIdentifier(localVaccinationId, immunizationRegistry.getId(), receivedId));
+                        if (localVaccinationId != null) {
+                            immunizationIdentifierRepository.save(new ImmunizationIdentifier(localVaccinationId, immunizationRegistry.getId(), receivedId));
+                        }
                         entities.add(vaccinationEvent);
                     } else {
                         logger.info("ERROR : Patient  {}  Unknown", immunization.getPatient().getReference());

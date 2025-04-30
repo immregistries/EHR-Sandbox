@@ -191,7 +191,10 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
             v.setVaccineMvxCode(i.getManufacturer().getReference().getIdentifier().getValue());
         }
 
-        v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
+
+        if (i.hasDoseQuantity()) {
+            v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
+        }
 
         v.setUpdatedDate(new Date());
 
