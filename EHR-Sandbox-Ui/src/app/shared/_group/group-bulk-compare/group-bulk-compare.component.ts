@@ -15,21 +15,23 @@ import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.serv
   styleUrls: ['./group-bulk-compare.component.css']
 })
 export class GroupBulkCompareComponent {
-  loading: boolean = false
+  public loading: boolean = false
 
   @Input()
-  ehrGroup!: EhrGroup;
+  public ehrGroup!: EhrGroup;
   @Input()
-  bulkImportStatus!: BulkImportStatus;
-  selectedPatient?: EhrPatient
+  public bulkImportStatus!: BulkImportStatus;
+  public selectedPatient?: EhrPatient
+  public remoteSelectedPatient?: EhrPatient
 
-  selectedVaccination: VaccinationEvent | null = null;
+  public selectedVaccination: VaccinationEvent | null = null;
 
-  remoteVaccinations: VaccinationEvent[] = [];
-  localVaccinations: VaccinationEvent[] = [];
+  public remoteVaccinations: VaccinationEvent[] = [];
+  public localVaccinations: VaccinationEvent[] = [];
   private allRemoteVaccinations: VaccinationEvent[] = [];
+  public remotePatients: EhrPatient[] = [];
 
-  outputUrlList: { "type": string, "url": string }[] = []
+  public outputUrlList: { "type": string, "url": string }[] = []
 
   constructor(
     private dialog: MatDialog,
@@ -44,13 +46,6 @@ export class GroupBulkCompareComponent {
       if (data.ehrGroup) {
         this.ehrGroup = data.ehrGroup
       }
-      // this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, "http://localhost:8080/iis/fhir/qq/Binary/f2P6gEDoC4HeUPYaSRHGNhPJrT6PLdKQ").subscribe((patients) => {
-      //   console.log('patientsRegistered', patients)
-      //   this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, "http://localhost:8080/iis/fhir/qq/Binary/rwB0dyKpQghcjYOx31fBrYbemtSF4LAe").subscribe((imm) => {
-      //     console.log('immunizationRegistered', imm)
-      //     this.allRemoteVaccinations = imm
-      //   });
-      // });
       if (data.bulkImportStatus) {
         this.bulkImportStatus = data.bulkImportStatus
         if (this.bulkImportStatus.result) {
@@ -60,13 +55,13 @@ export class GroupBulkCompareComponent {
            * 2 get vaccinations
            */
           this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, this.outputUrlList.find((item) => item.type == "Patient")?.url ?? "").subscribe((patients) => {
+            this.remotePatients = patients
             let immUrl = this.outputUrlList.find((item) => item.type == "Immunization")?.url;
             if (immUrl) {
-              this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, immUrl).subscribe((imm) => {
-                this.allRemoteVaccinations = imm
+              this.groupService.getGroupBulkViewResult(this.ehrGroup.id ?? -1, immUrl).subscribe((res) => {
+                this.allRemoteVaccinations = res
               });
             }
-
           });
         }
       }
@@ -86,6 +81,18 @@ export class GroupBulkCompareComponent {
     this.vaccinationService.quickReadVaccinations().subscribe((res) => {
       this.localVaccinations = res
     })
+  }
+
+
+  remotePatientSelected(value?: EhrPatient) {
+    this.remoteSelectedPatient = value
+    // this.remoteVaccinations = JSON.parse(JSON.stringify(this.allRemoteVaccinations
+    //   .filter((vac) => {
+    //     if (!vac.patient) {
+    //       return false
+    //     }
+    //     return vac.patient == this.selectedPatient?.id
+    //   })))
   }
 
   selectVaccination(value: VaccinationEvent | null | undefined) {

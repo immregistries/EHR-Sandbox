@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { EhrHumanName, EhrPatient } from 'src/app/core/_model/rest';
@@ -78,10 +78,16 @@ export class PatientReceivedTableComponent {
   onSelection(index: number) {
     if (this.selectedElementIndex === index) {
       this.selectedElementIndex = undefined
+      this.selectEmitter.emit(undefined)
     } else {
       this.selectedElementIndex = index
+      this.selectEmitter.emit(this._localPatients[index])
+
     }
   }
+
+  @Output() selectEmitter: EventEmitter<EhrPatient | undefined> = new EventEmitter<EhrPatient | undefined>();
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

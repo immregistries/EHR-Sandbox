@@ -17,8 +17,15 @@
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile>
-      IN PROGRESS
-      <!-- <app-patient-received-table></app-patient-received-table> -->
+      <!-- IN PROGRESS -->
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content">
+          <app-patient-received-table [title]="'Remote Group Members'" [remotePatients]="remotePatients"
+                                      [patientToCompare]="patientService.getCurrent()"
+                                      [localPatients]="ehrGroup.patientList ?? []"
+                                      (selectEmitter)="remotePatientSelected($event)"></app-patient-received-table>
+        </mat-card-content>
+      </mat-card>
       <!-- TODO -->
     </mat-grid-tile>
     <mat-grid-tile>
