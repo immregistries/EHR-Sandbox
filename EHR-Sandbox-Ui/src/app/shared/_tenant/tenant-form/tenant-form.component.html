@@ -12,35 +12,22 @@
       <mat-card-content>
         <mat-form-field appearance="fill" style="min-width: 40em">
           <mat-label>Tenant name</mat-label>
-          <input
-            matInput
-            [(ngModel)]="tenant.nameDisplay"
-            name="nameDisplay"
-            style="min-width: 40em"
-          />
+          <input matInput [(ngModel)]="tenant.nameDisplay" name="nameDisplay" style="min-width: 40em" required/>
         </mat-form-field>
         <div>
-          <mat-form-field
-            appearance="fill"
-            [matTooltip]="'Used for display in selection menu'"
-          >
+          <mat-form-field appearance="fill" [matTooltip]="'Used for display in selection menu'">
             <mat-label>Alias (Optional)</mat-label>
-            <input matInput [(ngModel)]="tenant.alias" name="alias" optional />
+            <input matInput [(ngModel)]="tenant.alias" name="alias" optional/>
           </mat-form-field>
         </div>
       </mat-card-content>
     </mat-card>
     <mat-card class="list-card">
       <mat-card-header class="list-header">
-        <mat-card-title
-          >Flavors: activate options by including keywords in
-          name</mat-card-title
-        >
-        <input
-          (keyup)="applyFilter($event)"
-          class="search-bar"
-          placeholder="Search"
-        />
+        <mat-card-title>Flavors: activate options by including keywords in
+          name
+        </mat-card-title>
+        <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search"/>
       </mat-card-header>
 
       <mat-card-content class="list-card-content">
@@ -49,12 +36,7 @@
             <span matListItemTitle>{{ flavor.key }}</span>
             <span matListItemLine>{{ flavor.description }}</span>
             <span matListItemMeta>
-              <button
-                mat-stroked-button
-                type="button"
-                (click)="append(flavor)"
-                [disabled]="flavorActivated(flavor)"
-              >
+              <button mat-stroked-button type="button" (click)="append(flavor)" [disabled]="flavorActivated(flavor)">
                 Append
               </button>
             </span>
@@ -65,13 +47,7 @@
   </div>
 
   <div mat-dialog-actions align="end" class="form-action-bar">
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="random()"
-      *ngIf="!editionMode"
-      color="primary"
-    >
+    <button mat-stroked-button type="button" (click)="random()" *ngIf="!editionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random
     </button>
