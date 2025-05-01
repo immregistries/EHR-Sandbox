@@ -7,6 +7,8 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { PatientDashboardComponent } from '../patient-dashboard/patient-dashboard.component';
 import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientComparePipe } from '../../_pipes/patient-compare.pipe';
+import { PatientFormComponent } from '../patient-form/patient-form.component';
+import { AbstractMergingTableComponent } from '../../_components/abstract-merging-table/abstract-merging-table.component';
 
 @Component({
   selector: 'app-patient-received-table',
@@ -20,7 +22,7 @@ import { PatientComparePipe } from '../../_pipes/patient-compare.pipe';
     ]),
   ],
 })
-export class PatientReceivedTableComponent {
+export class PatientReceivedTableComponent extends AbstractMergingTableComponent<EhrPatient> {
 
   public columns: (keyof EhrPatient | keyof EhrHumanName | "mrn")[] = [
     "mrn",
@@ -29,69 +31,29 @@ export class PatientReceivedTableComponent {
   ]
 
   @Input() title: string = 'Patients received'
-  differencesWithSelected: any = ''
-  loading = false;
-
-  expandedElement: EhrPatient | null = null;
-  dataSource = new MatTableDataSource<EhrPatient>([]);
-  matchingMatrix: {}[][] = []
-
-
-  selectedElementIndex?: number
-  private _localPatients!: EhrPatient[];
-  @Input()
-  set localPatients(values: EhrPatient[] | undefined | null) {
-    this._localPatients = values ?? [];
-    this.updateMatchingMatrix()
-  }
-  get localPatients() { return this._localPatients }
-
-  @Input()
-  set remotePatients(values: EhrPatient[]) {
-    this.loading = false
-    this.dataSource.data = values;
-    this.expandedElement = values.find((EhrPatient: EhrPatient) => { return EhrPatient.id == this.expandedElement?.id }) ?? null
-    this.updateMatchingMatrix()
-    // this.dataSource.sort?.sort({ id: "match", start: 'desc', disableClear: false })
-  }
-  get remotePatients(): EhrPatient[] {
-    return this.dataSource.data
-  }
-
-  private _patientToCompare!: EhrPatient | null;
-  @Input()
-  public get patientToCompare(): EhrPatient | null {
-    return this._patientToCompare;
-  }
-  public set patientToCompare(value: EhrPatient | null) {
-    this._patientToCompare = value;
-    this.updateDifferences()
-  }
 
   constructor(private dialog: MatDialog,
     public codeMapsService: CodeMapsService,
     public patientService: PatientService,
-    public patientComparePipe: PatientComparePipe) { }
+    public patientComparePipe: PatientComparePipe) {
+    super()
+  }
 
-
-  onSelection(index: number) {
+  public selectedElementIndex?: number
+  public onSelection(index: number) {
     if (this.selectedElementIndex === index) {
       this.selectedElementIndex = undefined
       this.selectEmitter.emit(undefined)
     } else {
       this.selectedElementIndex = index
-      this.selectEmitter.emit(this._localPatients[index])
-
+      this.selectEmitter.emit(this.localValues ? this.localValues[index] : undefined)
     }
+    this.updateDifferences()
   }
 
-  @Output() selectEmitter: EventEmitter<EhrPatient | undefined> = new EventEmitter<EhrPatient | undefined>();
+  @Output()
+  public selectEmitter: EventEmitter<EhrPatient | undefined> = new EventEmitter<EhrPatient | undefined>();
 
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
 
   // matching(member: GroupMember): any {
   //   if (member.entity.identifier?.type?.text == "Immunization" || member.entity.reference?.startsWith("Immunization/")) {
@@ -141,30 +103,50 @@ export class PatientReceivedTableComponent {
     });
   }
 
-
   extractMrn(element: EhrPatient): string {
     return element.identifiers?.find((identifier) => {
       return identifier.type == 'MR'
     })?.value ?? ''
   }
 
-  updateMatchingMatrix() {
+  protected updateMatchingMatrix(): void {
     this.matchingMatrix = []
-    this.remotePatients?.forEach(element => {
+    this.remoteValues?.forEach(element => {
       let length = this.matchingMatrix.push([]); // Adds new line and returns length
-      this.localPatients?.forEach(local => {
+      this.localValues?.forEach(local => {
         this.matchingMatrix[length - 1].push(this.patientComparePipe.transform(element, local))
       })
     });
     // console.log(this.matchingMatrix)
   }
 
-  private updateDifferences() {
-    if (this._patientToCompare && this.expandedElement) {
-      this.differencesWithSelected = this.patientComparePipe.transform(this.expandedElement, this._patientToCompare)
+  protected updateDifferences(): void {
+    if (this.valueToCompare && this.expandedElement) {
+      this.differencesWithSelected = this.patientComparePipe.transform(this.expandedElement, this.valueToCompare)
     } else {
       this.differencesWithSelected = null
     }
+  }
+
+  public openMerge(remote: EhrPatient) {
+    let element = JSON.parse(JSON.stringify(remote))
+    element.id = this.valueToCompare ? this.valueToCompare.id : undefined
+    element.primarySource = false
+    // TODO Information source
+    const dialogRef = this.dialog.open(PatientFormComponent, {
+      maxWidth: '98vw',
+      maxHeight: '95vh',
+      height: 'fit-content',
+      width: '100%',
+      panelClass: 'dialog-with-bar',
+      data: { patient: element, comparedPatient: this.valueToCompare },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.patientService.doRefresh()
+      }
+      // this.patientService.doRefresh()
+    });
   }
 
 }

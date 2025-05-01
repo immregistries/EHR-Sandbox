@@ -55,8 +55,23 @@
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element; let i = dataIndex" [attr.colspan]="columns.length">
       <div class="element-detail" [@detailExpand]="selectedElementIndex == i? 'expanded' : 'collapsed'">
-        <pre>{{element | json}}</pre>
-
+        <div>
+          <button mat-stroked-button color="primary" (click)="openMerge(element)"
+                  [disabled]="!valueToCompare || isMatch(element)">
+            <mat-icon>merge</mat-icon>
+            Merge
+          </button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="openMerge(element)" [disabled]="valueToCompare">
+            <mat-icon>file_save</mat-icon>
+            Import
+          </button>
+        </div>
+        <app-json-dialog-button [disabled]="!valueToCompare || isMatch(element)" [content]="differencesWithSelected"
+                                [label]="'Difference'"></app-json-dialog-button>
+        <app-json-dialog-button [content]="element" [label]="'JSON Object'"></app-json-dialog-button>
+        <p *ngIf="valueToCompare && isMatch(element)">Matches with currently selected local record</p>
       </div>
     </td>
   </ng-container>

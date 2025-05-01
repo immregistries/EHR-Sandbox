@@ -34,10 +34,9 @@
           <mat-card class="dashboard-card">
             <mat-card-content class="dashboard-card-content">
               <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
-              <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations"
-                                              [patientId]="selectedPatient?.id"
-                                              [vaccinationToCompare]="selectedVaccination"
-                                              [localVaccinations]="localVaccinations"></app-vaccination-received-table>
+              <app-vaccination-received-table [remoteValues]="remoteVaccinations" [patientId]="selectedPatient?.id"
+                                              [valueToCompare]="selectedVaccination"
+                                              [localValues]="localVaccinations"></app-vaccination-received-table>
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>
@@ -58,9 +57,9 @@
         <mat-grid-tile>
           <mat-card class="dashboard-card">
             <mat-card-content class="dashboard-card-content">
-              <app-patient-received-table title="Remote Group Members" [remotePatients]="remotePatients"
-                                          [patientToCompare]="patientService.getCurrent()"
-                                          [localPatients]="ehrGroup.patientList ?? []"
+              <app-patient-received-table title="Remote Group Members" [remoteValues]="remotePatients"
+                                          [valueToCompare]="patientService.getCurrent()"
+                                          [localValues]="ehrGroup.patientList ?? []"
                                           (selectEmitter)="remotePatientSelected($event)"></app-patient-received-table>
             </mat-card-content>
           </mat-card>

@@ -36,22 +36,8 @@ export class GroupAllDashboardComponent {
     }
   }
 
-
-  /**
-   * Necessary to get updated after add patients
-   * @returns
-   */
-  // currentGroupAlwaysUpToDate(): Observable<EhrPatient[]> {
-
-  // return merge(
-  //   this.groupService.getRefresh(),
-  //   this.groupService.getCurrentObservable()
-  // ).pipe(map((res) => {
-
-  //   return this.groupService.getCurrent().patientList ?? []
-  // }))
-  // this.groupService.getCurrentObservable()
-
-  // }
+  rowHeight(): string {
+    return (window.innerHeight / 2 - 35) + 'px'
+  }
 
 }

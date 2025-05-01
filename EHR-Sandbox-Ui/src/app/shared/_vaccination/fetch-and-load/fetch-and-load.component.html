@@ -49,8 +49,8 @@
       <mat-card class="dashboard-card">
         <mat-card-content class="dashboard-card-content">
           <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
-          <app-vaccination-received-table [remoteVaccinations]="remoteVaccinations" [patientId]="patientId"
-                                          [vaccinationToCompare]="selectedVaccination"></app-vaccination-received-table>
+          <app-vaccination-received-table [remoteValues]="remoteVaccinations" [patientId]="patientId"
+                                          [valueToCompare]="selectedVaccination"></app-vaccination-received-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

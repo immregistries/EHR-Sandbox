@@ -39,18 +39,21 @@
       <div class="element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
         <div>
           <button mat-stroked-button color="primary" (click)="openMerge(element)"
-                  [disabled]="!vaccinationToCompare || isMatch(element)">Merge
+                  [disabled]="!valueToCompare || isMatch(element)">
+            <mat-icon>merge</mat-icon>
+            Merge
           </button>
         </div>
         <div>
-          <button mat-stroked-button color="primary" (click)="openMerge(element)" [disabled]="vaccinationToCompare">Save
-            Locally
+          <button mat-stroked-button color="primary" (click)="openMerge(element)" [disabled]="valueToCompare">
+            <mat-icon>file_save</mat-icon>
+            Import
           </button>
         </div>
-        <app-json-dialog-button [disabled]="!vaccinationToCompare || isMatch(element)"
-                                [content]="differencesWithSelected" [label]="'Difference'"></app-json-dialog-button>
+        <app-json-dialog-button [disabled]="!valueToCompare || isMatch(element)" [content]="differencesWithSelected"
+                                [label]="'Difference'"></app-json-dialog-button>
         <app-json-dialog-button [content]="element" [label]="'JSON Object'"></app-json-dialog-button>
-        <p *ngIf="vaccinationToCompare && isMatch(element)">Matches with currently selected local record</p>
+        <p *ngIf="valueToCompare && isMatch(element)">Matches with currently selected local record</p>
       </div>
     </td>
   </ng-container>
@@ -59,9 +62,8 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let element; columns: columns; let i = dataIndex" class="element-row"
       [class.is-new-row]="hasNoMatch(i)" [class.no-match-row]="false"
-      [class.match-row]="(element | vaccinationCompare: vaccinationToCompare) == 'MATCH'"
-      [class.potential-match-row]="false" [class.expanded-row]="expandedElement === element"
-      (click)="selectElement(element)">
+      [class.match-row]="(element | vaccinationCompare: valueToCompare) == 'MATCH'" [class.potential-match-row]="false"
+      [class.expanded-row]="expandedElement === element" (click)="selectElement(element)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
