@@ -9,6 +9,7 @@ import { VaccinationFormComponent } from '../vaccination-form/vaccination-form.c
 import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { MatTableDataSource } from '@angular/material/table';
+import { CodeMapsPipe } from '../../_pipes/code-maps.pipe';
 
 @Component({
   selector: 'app-vaccination-received-table',
@@ -86,14 +87,16 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
     public codeMapsService: CodeMapsService,
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
-    public vaccinationComparePipe: VaccinationComparePipe) { }
+    public vaccinationComparePipe: VaccinationComparePipe,
+    private codeMapsPipe: CodeMapsPipe
+  ) { }
 
   ngAfterViewInit(): void {
     this.codeMapsService.getObservableCodeBaseMap().subscribe((codeBaseMap) => {
       this.codeBaseMap = codeBaseMap
     });
     // Set filter rules for research
-    this.dataSource.filterPredicate = this.vaccinationFilterPredicate
+    this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
     this.dataSource.sortingDataAccessor = this.sortingAccessor
     // this.dataSource.sort = new MatSort()
     // this.dataSource.sort?.register({ id: "match", start: 'desc', disableClear: false })
@@ -105,16 +108,16 @@ export class VaccinationReceivedTableComponent implements AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  vaccinationFilterPredicate(data: VaccinationEvent, filter: string): boolean {
-    if (JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1) {
-      return true
+  vaccinationFilterPredicate() {
+    return (data: VaccinationEvent, filter: string): boolean => {
+      if (JSON.stringify(data).trim().toLowerCase().indexOf(filter) !== -1) {
+        return true
+      }
+      if (JSON.stringify(this.codeMapsPipe.transform(data.vaccine.vaccineCvxCode, "VACCINATION_CVX_CODE")).trim().toLowerCase().indexOf(filter) !== -1) {
+        return true
+      }
+      return false
     }
-    if (data.vaccine["vaccineCvxCode"] &&
-      JSON.stringify(this.codeBaseMap["VACCINATION_CVX_CODE"][data.vaccine["vaccineCvxCode"]])
-        .trim().toLowerCase().indexOf(filter) !== -1) {
-      return true
-    }
-    return false
   }
 
 
