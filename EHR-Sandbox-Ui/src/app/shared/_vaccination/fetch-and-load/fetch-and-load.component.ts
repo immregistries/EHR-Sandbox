@@ -22,7 +22,7 @@ export class FetchAndLoadComponent implements OnInit {
 
   loading: boolean = false;
 
-  selectedVaccination: VaccinationEvent | null = null;
+  selectedVaccinationIndex: number | null = null;
 
   remoteVaccinations: VaccinationEvent[] = [];
 
@@ -70,8 +70,8 @@ export class FetchAndLoadComponent implements OnInit {
     })
   }
 
-  selectVaccination(value: VaccinationEvent | null | undefined) {
-    this.selectedVaccination = value ?? null
+  selectVaccination(value: number | null | undefined) {
+    this.selectedVaccinationIndex = value ?? null
   }
 
   refreshLocalHistoryObservable(): Observable<boolean> {

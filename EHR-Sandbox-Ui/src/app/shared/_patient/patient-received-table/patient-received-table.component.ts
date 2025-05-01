@@ -48,7 +48,6 @@ export class PatientReceivedTableComponent extends AbstractMergingTableComponent
       this.selectedElementIndex = index
       this.selectEmitter.emit(this.localValues ? this.localValues[index] : undefined)
     }
-    this.updateDifferences()
   }
 
   @Output()
@@ -120,17 +119,10 @@ export class PatientReceivedTableComponent extends AbstractMergingTableComponent
     // console.log(this.matchingMatrix)
   }
 
-  protected updateDifferences(): void {
-    if (this.valueToCompare && this.expandedElement) {
-      this.differencesWithSelected = this.patientComparePipe.transform(this.expandedElement, this.valueToCompare)
-    } else {
-      this.differencesWithSelected = null
-    }
-  }
-
   public openMerge(remote: EhrPatient) {
     let element = JSON.parse(JSON.stringify(remote))
-    element.id = this.valueToCompare ? this.valueToCompare.id : undefined
+    let comparedLocalElement = this.comparedWith()
+    element.id = comparedLocalElement ? comparedLocalElement.id : undefined
     element.primarySource = false
     // TODO Information source
     const dialogRef = this.dialog.open(PatientFormComponent, {
@@ -139,13 +131,13 @@ export class PatientReceivedTableComponent extends AbstractMergingTableComponent
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: { patient: element, comparedPatient: this.valueToCompare },
+      data: { patient: element, comparedPatient: comparedLocalElement },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.patientService.doRefresh()
+        // this.updateMatchingMatrix()
       }
-      // this.patientService.doRefresh()
     });
   }
 

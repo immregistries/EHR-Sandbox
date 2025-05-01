@@ -39,7 +39,7 @@
         <mat-card-content class="dashboard-card-content">
           <!-- TODO Change argument for observable Source -->
           <app-vaccination-table [patientId]="patientId ?? -1" [allow_create]="false"
-                                 (selectEmitter)="selectVaccination($event)"
+                                 (selectIndexEmitter)="selectVaccination($event)"
                                  [observableSource]="vaccinationService.quickReadVaccinations()"
                                  [observableRefresh]="refreshLocalHistoryObservable()"></app-vaccination-table>
         </mat-card-content>
@@ -50,7 +50,8 @@
         <mat-card-content class="dashboard-card-content">
           <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
           <app-vaccination-received-table [remoteValues]="remoteVaccinations" [patientId]="patientId"
-                                          [valueToCompare]="selectedVaccination"></app-vaccination-received-table>
+                                          [localValues]="vaccinationService.quickReadVaccinations() | async"
+                                          [localSelectedIndex]="selectedVaccinationIndex"></app-vaccination-received-table>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

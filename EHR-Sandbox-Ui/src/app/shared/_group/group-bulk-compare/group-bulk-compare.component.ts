@@ -68,7 +68,20 @@ export class GroupBulkCompareComponent {
     }
   }
 
-  patientSelected(value?: EhrPatient) {
+  public selectedPatientIndex?: number
+  public patientIndexSelected(value: number | undefined) {
+    this.selectedPatientIndex = value
+    console.info(value, this.ehrGroup.patientList, "oooo")
+    if (value != undefined && this.ehrGroup.patientList) {
+      console.info(value, "oooo")
+
+      this.patientSelected(this.ehrGroup.patientList[value] ?? undefined)
+    } else {
+      this.patientSelected(undefined)
+    }
+  }
+
+  public patientSelected(value?: EhrPatient) {
     this.patientService.setCurrent(value ?? { id: -1, names: [] })
     this.selectedPatient = value
     this.remoteVaccinations = JSON.parse(JSON.stringify(this.allRemoteVaccinations
@@ -83,7 +96,6 @@ export class GroupBulkCompareComponent {
     })
   }
 
-
   remotePatientSelected(value?: EhrPatient) {
     this.remoteSelectedPatient = value
     // this.remoteVaccinations = JSON.parse(JSON.stringify(this.allRemoteVaccinations
@@ -93,6 +105,11 @@ export class GroupBulkCompareComponent {
     //     }
     //     return vac.patient == this.selectedPatient?.id
     //   })))
+  }
+
+  public selectedVaccinationIndex?: number
+  selectVaccinationIndex(value: number | undefined) {
+    this.selectedVaccinationIndex = value
   }
 
   selectVaccination(value: VaccinationEvent | null | undefined) {

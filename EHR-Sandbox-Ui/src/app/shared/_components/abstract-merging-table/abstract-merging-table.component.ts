@@ -29,10 +29,41 @@ export abstract class AbstractMergingTableComponent<T extends ObjectWithID> {
 
   public matchingMatrix: {}[][] = []
   public loading = false;
-  public differencesWithSelected: any = ''
 
-  isMatch(element: T | null): boolean {
-    return (this.expandedElement && this.differencesWithSelected == 'MATCH') ? true : false;
+
+
+  public expandedElement: T | null = null;
+
+  public selectElement(element: T | null, index: number) {
+    this.expandedElement = this.expandedElement === element ? null : element
+  }
+
+  // protected abstract updateDifferences(): void;
+
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+
+
+  protected abstract updateMatchingMatrix(): void;
+
+  @Input()
+  public localSelectedIndex?: number | null | undefined;
+
+
+  comparisonWithSelected(index: number) {
+    return (index && this.localSelectedIndex != undefined) ? this.matchingMatrix[index][this.localSelectedIndex] : null
+  }
+
+  comparedWith(): T | null {
+    return this.localValues && this.localSelectedIndex != undefined ? this.localValues[this.localSelectedIndex] : null
+  }
+
+  isMatch(index: number): boolean {
+    return this.comparisonWithSelected(index) == 'MATCH' ? true : false;
   }
 
   hasNoMatch(index: number): boolean {
@@ -41,32 +72,6 @@ export abstract class AbstractMergingTableComponent<T extends ObjectWithID> {
 
   hasNoMatchObject(data: T): boolean {
     return !this.matchingMatrix[this.dataSource.data.indexOf(data)]?.includes('MATCH');
-  }
-
-  public expandedElement: T | null = null;
-
-  public selectElement(element: T | null) {
-    this.expandedElement = this.expandedElement === element ? null : element
-    this.updateDifferences()
-  }
-
-  protected abstract updateDifferences(): void;
-  protected abstract updateMatchingMatrix(): void;
-
-  private _valueToCompare!: T | null;
-  @Input()
-  public get valueToCompare(): T | null {
-    return this._valueToCompare;
-  }
-  public set valueToCompare(value: T | null) {
-    this._valueToCompare = value;
-    this.updateDifferences()
-  }
-
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
 }

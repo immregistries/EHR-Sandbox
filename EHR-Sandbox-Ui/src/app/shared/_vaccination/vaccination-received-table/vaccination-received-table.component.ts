@@ -72,10 +72,10 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
     }
   }
 
-  sortingAccessor(data: any, property: string): number | string {
+  sortingAccessor(data: VaccinationEvent, property: string): number | string {
     if (property === 'match') {
-      if (this.valueToCompare) {
-        return this.isMatch(data) ? 1 : -1
+      if (this.localSelectedIndex != undefined) {
+        return this.isMatch(this.localSelectedIndex) ? 1 : -1
       } else {
         if (this.dataSource?.data) {
           return this.hasNoMatchObject(data) ? 1 : -1
@@ -85,6 +85,7 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
       }
     }
     else {
+      //@ts-ignore
       return data[property];
     }
   }
@@ -102,7 +103,8 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
 
   openMerge(remote: VaccinationEvent) {
     let element = JSON.parse(JSON.stringify(remote))
-    element.id = this.valueToCompare ? this.valueToCompare.id : undefined
+    let comparedLocalElement = this.comparedWith()
+    element.id = comparedLocalElement ? comparedLocalElement.id : undefined
     element.primarySource = false
     // TODO Information source
     const dialogRef = this.dialog.open(VaccinationFormComponent, {
@@ -111,7 +113,7 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: { patientId: this.patientId, vaccination: element, comparedVaccination: this.valueToCompare },
+      data: { patientId: this.patientId, vaccination: element, comparedVaccination: comparedLocalElement },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -119,14 +121,6 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
       }
       // this.patientService.doRefresh()
     });
-  }
-
-  protected updateDifferences(): void {
-    if (this.valueToCompare && this.expandedElement) {
-      this.differencesWithSelected = this.vaccinationComparePipe.transform(this.expandedElement, this.valueToCompare)
-    } else {
-      this.differencesWithSelected = null
-    }
   }
 
 }

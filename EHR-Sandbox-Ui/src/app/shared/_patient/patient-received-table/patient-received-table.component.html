@@ -57,27 +57,29 @@
       <div class="element-detail" [@detailExpand]="selectedElementIndex == i? 'expanded' : 'collapsed'">
         <div>
           <button mat-stroked-button color="primary" (click)="openMerge(element)"
-                  [disabled]="!valueToCompare || isMatch(element)">
+                  [disabled]="localSelectedIndex == undefined || isMatch(i)">
             <mat-icon>merge</mat-icon>
             Merge
           </button>
         </div>
         <div>
-          <button mat-stroked-button color="primary" (click)="openMerge(element)" [disabled]="valueToCompare">
+          <button mat-stroked-button color="primary" (click)="openMerge(element)"
+                  [disabled]="localSelectedIndex != undefined">
             <mat-icon>file_save</mat-icon>
             Import
           </button>
         </div>
-        <app-json-dialog-button [disabled]="!valueToCompare || isMatch(element)" [content]="differencesWithSelected"
-                                [label]="'Difference'"></app-json-dialog-button>
+        <app-json-dialog-button [disabled]="localSelectedIndex == undefined || isMatch(i)"
+                                [content]="comparisonWithSelected(i)" [label]="'Difference'"></app-json-dialog-button>
         <app-json-dialog-button [content]="element" [label]="'JSON Object'"></app-json-dialog-button>
-        <p *ngIf="valueToCompare && isMatch(element)">Matches with currently selected local record</p>
+        <p *ngIf="localSelectedIndex != undefined && isMatch(i)">Matches with currently selected local record</p>
       </div>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let element; columns: columns;let i = dataIndex" class="element-row" (click)="onSelection(i)">
+  <tr mat-row *matRowDef="let element; columns: columns; let i = dataIndex" class="element-row"
+      (click)="onSelection(i)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>

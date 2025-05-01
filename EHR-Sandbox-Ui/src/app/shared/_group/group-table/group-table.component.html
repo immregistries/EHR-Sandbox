@@ -47,8 +47,8 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let element; columns: columns;" class="element-row"
-      [class.expanded-row]="groupService.getCurrent() === element" (click)="onSelection(element)">
+  <tr mat-row *matRowDef="let element; columns: columns;let i  = dataIndex" class="element-row"
+      [class.expanded-row]="groupService.getCurrent() === element" (click)="onSelection(element, i)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>

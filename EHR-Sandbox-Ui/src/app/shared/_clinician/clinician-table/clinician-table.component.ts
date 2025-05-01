@@ -49,7 +49,7 @@ export class ClinicianTableComponent extends AbstractDataTableComponent<Clinicia
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.onSelection(result)
+        this.onSelection(result, 1)
       }
       this.ngAfterViewInit()
     });
