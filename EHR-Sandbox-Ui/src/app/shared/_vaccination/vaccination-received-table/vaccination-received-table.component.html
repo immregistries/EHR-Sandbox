@@ -1,6 +1,8 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
     <span class="custom-title">{{title}}</span>
+    <span class="custom-title"> {{localSelectedIndex}}</span>
+    <span class="custom-title">{{comparedWith()?.id}}</span>
   </div>
   <input (keyup)="applyFilter($event)" class="search-bar" placeholder="Search">
 </div>

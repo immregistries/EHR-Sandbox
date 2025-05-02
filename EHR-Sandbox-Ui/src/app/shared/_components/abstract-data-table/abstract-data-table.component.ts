@@ -129,7 +129,11 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
       this.selectedElement = event
     }
     this.selectEmitter.emit(this.selectedElement);
-    this.selectIndexEmitter.emit(index)
+    if (this.selectedElement) {
+      this.selectIndexEmitter.emit(this.dataSource.data.findIndex((v) => v === this.selectedElement))
+    } else {
+      this.selectIndexEmitter.emit(undefined)
+    }
   }
 
 
