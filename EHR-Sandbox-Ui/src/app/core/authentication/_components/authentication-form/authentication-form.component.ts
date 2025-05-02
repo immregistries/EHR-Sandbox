@@ -4,6 +4,7 @@ import { User } from 'src/app/core/_model/rest';
 import { AuthService } from 'src/app/core/authentication/_services/auth.service';
 import { TokenStorageService } from 'src/app/core/authentication/_services/token-storage.service';
 import { EventEmitter } from '@angular/core';
+import { TenantService } from 'src/app/core/_services/tenant.service';
 
 @Component({
   selector: 'app-authentication-form',
@@ -12,7 +13,7 @@ import { EventEmitter } from '@angular/core';
 })
 export class AuthenticationFormComponent implements OnInit {
 
-  constructor(private authService: AuthService, private tokenStorage: TokenStorageService) { }
+  constructor(private authService: AuthService, private tokenStorage: TokenStorageService, private tenantService: TenantService) { }
 
 
   authFormGroup = new UntypedFormGroup({ username: new UntypedFormControl(''), password: new UntypedFormControl(''), email: new UntypedFormControl('') })
@@ -46,6 +47,7 @@ export class AuthenticationFormComponent implements OnInit {
             this.tokenStorage.saveUser(data.body);
             this.isLoginFailed = false;
             this.isLoggedIn = true;
+            this.tenantService.doRefresh()
             this.success.emit(data.status);
           }
         }

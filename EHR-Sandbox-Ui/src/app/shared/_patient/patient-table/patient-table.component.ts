@@ -40,6 +40,7 @@ export class PatientTableComponent extends AbstractDataTableComponent<EhrPatient
     private dialog: MatDialog,
     private patientResumePipe: PatientResumePipe) {
     super()
+    this.selectedElement = this.patientService.getCurrent()
     // this.observableRefresh = merge(
     //   this.facilityService.getCurrentObservable()
     //     .pipe(tap(facility => { this.facility = facility })),

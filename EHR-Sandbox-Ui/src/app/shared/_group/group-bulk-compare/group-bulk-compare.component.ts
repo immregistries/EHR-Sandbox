@@ -71,10 +71,7 @@ export class GroupBulkCompareComponent {
   public selectedPatientIndex?: number
   public patientIndexSelected(value: number | undefined) {
     this.selectedPatientIndex = value
-    console.info(value, this.ehrGroup.patientList, "oooo")
     if (value != undefined && this.ehrGroup.patientList) {
-      console.info(value, "oooo")
-
       this.patientSelected(this.ehrGroup.patientList[value] ?? undefined)
     } else {
       this.patientSelected(undefined)

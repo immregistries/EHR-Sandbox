@@ -55,7 +55,7 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
   ngAfterViewInit(): void {
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
-    this.dataSource.sortingDataAccessor = this.sortingAccessor
+    // this.dataSource.sortingDataAccessor = this.sortingAccessor
     // this.dataSource.sort = new MatSort()
     // this.dataSource.sort?.register({ id: "match", start: 'desc', disableClear: false })
   }
@@ -72,23 +72,23 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
     }
   }
 
-  sortingAccessor(data: VaccinationEvent, property: string): number | string {
-    if (property === 'match') {
-      if (this.localSelectedIndex != undefined) {
-        return this.isMatch(this.localSelectedIndex) ? 1 : -1
-      } else {
-        if (this.dataSource?.data) {
-          return this.hasNoMatchObject(data) ? 1 : -1
-        } else {
-          return 1
-        }
-      }
-    }
-    else {
-      //@ts-ignore
-      return data[property];
-    }
-  }
+  // sortingAccessor(data: VaccinationEvent, property: string): number | string {
+  //   if (property === 'match') {
+  //     if (this.localSelectedIndex != undefined) {
+  //       return this.isMatch(this.localSelectedIndex) ? 1 : -1
+  //     } else {
+  //       if (this.dataSource?.data) {
+  //         return this.hasNoMatchObject(data) ? 1 : -1
+  //       } else {
+  //         return 1
+  //       }
+  //     }
+  //   }
+  //   else {
+  //     //@ts-ignore
+  //     return data[property];
+  //   }
+  // }
 
   protected updateMatchingMatrix(): void {
     this.matchingMatrix = []

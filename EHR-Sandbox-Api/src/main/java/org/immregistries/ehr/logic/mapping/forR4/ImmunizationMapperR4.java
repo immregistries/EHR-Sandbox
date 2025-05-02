@@ -149,10 +149,10 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
             if (performer.getActor() != null) {
                 Clinician clinician = null;
                 if (StringUtils.isNotBlank(performer.getActor().getReference())) {
-                    Integer performerId = EhrUtils.convert(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+                    Integer performerId = EhrUtils.convert(performer.getActor().getReference().split("Practitioner/")[1]); // TODO
                     clinician = clinicianRepository.findByTenantIdAndId(facility.getTenant().getId(), performerId).orElse(null);
                 }
-                if (clinician != null) {
+                if (clinician == null) {
                     if (performer.getActor().hasIdentifier()) {
                         Identifier identifier = performer.getActor().getIdentifier();
                         clinician = clinicianRepository.findByTenantIdAndIdentifier(facility.getTenant().getId(), identifier.getSystem(), identifier.getValue()).orElse(null);

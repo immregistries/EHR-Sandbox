@@ -47,9 +47,8 @@
         <mat-grid-tile>
           <mat-card class="dashboard-card">
             <mat-card-content class="dashboard-card-content">
-
-              <app-patient-table (selectEmitter)="patientSelected($event)" [dataArray]="ehrGroup.patientList ?? []"
-                                 [selectedElement]="selectedPatient" [allow_create]="false"
+              <app-patient-table (selectIndexEmitter)="patientIndexSelected($event)" [selectedElement]="selectedPatient"
+                                 [dataArray]="ehrGroup.patientList ?? []" [allow_create]="false"
                                  title="Local Group Members"></app-patient-table>
             </mat-card-content>
           </mat-card>

@@ -10,6 +10,7 @@
       <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
 
       <mat-hint align="start" *ngIf="baseForm.hintProducer"><strong>{{baseForm.hintProducer()}}</strong></mat-hint>
+      <mat-hint align="start" *ngIf="compareTo"><strong>{{'Previously : ' + compareTo}}</strong></mat-hint>
 
       <mat-error *ngIf="valueCtrl.errors && valueCtrl.errors['customIssue']; else otherError">
         {{valueCtrl.errors['customIssue']}}
@@ -45,6 +46,9 @@
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <span matBadge="history" [matBadgeHidden]="!compareTo" matBadgeColor="accent" matBadgePosition="below"></span>
+    <mat-hint align="start" *ngIf="baseForm.hintProducer"><strong>{{baseForm.hintProducer()}}</strong></mat-hint>
+    <mat-hint align="start" *ngIf="compareTo"><strong>{{'Previously : ' + compareTo}}</strong></mat-hint>
+
   </mat-form-field>
 
   <div *ngSwitchCase="'short'">

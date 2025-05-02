@@ -51,7 +51,7 @@ export abstract class AbstractMergingTableComponent<T extends ObjectWithID> {
   protected abstract updateMatchingMatrix(): void;
 
   @Input()
-  public localSelectedIndex?: number | null | undefined;
+  public localSelectedIndex?: number | undefined;
 
 
   comparisonWithSelected(index: number) {

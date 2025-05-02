@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.entities;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.immregistries.ehr.api.entities.embedabbles.*;
@@ -121,6 +122,7 @@ public class EhrPatient extends EhrEntity {
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @OrderBy("group_id")
     private Set<EhrGroup> ehrGroups = new LinkedHashSet<>();
 
@@ -337,7 +339,7 @@ public class EhrPatient extends EhrEntity {
     @NotAudited
     @Transient
     public EhrIdentifier getMrnEhrIdentifier() {
-        return identifiers.stream().filter((identifier) -> identifier.getType().equals(MRN_TYPE_VALUE)).findFirst().orElse(null);
+        return identifiers.stream().filter((identifier) -> StringUtils.equals(identifier.getType(), MRN_TYPE_VALUE)).findFirst().orElse(null);
     }
 
     public Set<EhrPhoneNumber> getPhones() {

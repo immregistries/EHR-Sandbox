@@ -131,7 +131,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                 Clinician clinician = null;
                 if (StringUtils.isNotBlank(performer.getActor().getReference())) {
                     try {
-                        Integer performerId = EhrUtils.convert(performer.getActor().getReference().split("Clinician/")[1]); // TODO
+                        Integer performerId = EhrUtils.convert(performer.getActor().getReference().split("Practitioner/")[1]); // TODO
                         clinician = clinicianRepository.findByTenantIdAndId(facility.getTenant().getId(), performerId).orElse(null);
                     } catch (NumberFormatException numberFormatException) {
                     }
