@@ -1,12 +1,32 @@
-import { Directive, Input } from '@angular/core';
+import { AfterViewInit, Directive, Input, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ObjectWithID } from 'src/app/core/_model/rest';
 
 @Directive()
-export abstract class AbstractMergingTableComponent<T extends ObjectWithID> {
+export abstract class AbstractMergingTableComponent<T extends ObjectWithID> implements AfterViewInit {
   constructor() { }
 
+  abstract paginator?: MatPaginator;
+  abstract sort?: MatSort;
+
+
   public dataSource = new MatTableDataSource<T>([]);
+
+  ngAfterViewInit(): void {
+    // Set filter rules for research
+    if (this.sort) {
+      this.dataSource.sort = this.sort
+    }
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator
+    }
+    // this.dataSource.sortingDataAccessor = this.sortingAccessor
+    // this.dataSource.sort = new MatSort()
+    // this.dataSource.sort?.register({ id: "match", start: 'desc', disableClear: false })
+  }
+
   @Input()
   set remoteValues(values: T[]) {
     this.loading = false
@@ -29,8 +49,6 @@ export abstract class AbstractMergingTableComponent<T extends ObjectWithID> {
 
   public matchingMatrix: {}[][] = []
   public loading = false;
-
-
 
   public expandedElement: T | null = null;
 

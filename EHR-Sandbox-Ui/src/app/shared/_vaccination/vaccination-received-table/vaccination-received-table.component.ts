@@ -1,5 +1,5 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VaccinationEvent, Vaccine } from 'src/app/core/_model/rest';
 import { VaccinationService } from 'src/app/core/_services/vaccination.service';
@@ -8,6 +8,8 @@ import { PatientService } from 'src/app/core/_services/patient.service';
 import { VaccinationComparePipe } from '../../_pipes/vaccination-compare.pipe';
 import { CodeMapsPipe } from '../../_pipes/code-maps.pipe';
 import { AbstractMergingTableComponent } from '../../_components/abstract-merging-table/abstract-merging-table.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-vaccination-received-table',
@@ -22,6 +24,9 @@ import { AbstractMergingTableComponent } from '../../_components/abstract-mergin
   ],
 })
 export class VaccinationReceivedTableComponent extends AbstractMergingTableComponent<VaccinationEvent> implements AfterViewInit {
+
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort?: MatSort;
 
   columns: (keyof VaccinationEvent | keyof Vaccine | "alerts" | "index" | "match")[] = [
     "vaccineCvxCode",
@@ -52,7 +57,8 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
     super()
   }
 
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit
     // Set filter rules for research
     this.dataSource.filterPredicate = this.vaccinationFilterPredicate()
     // this.dataSource.sortingDataAccessor = this.sortingAccessor

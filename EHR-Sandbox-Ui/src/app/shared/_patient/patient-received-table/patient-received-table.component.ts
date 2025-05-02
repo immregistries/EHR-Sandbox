@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { EhrHumanName, EhrPatient } from 'src/app/core/_model/rest';
@@ -9,11 +9,13 @@ import { CodeMapsService } from 'src/app/core/_services/code-maps.service';
 import { PatientComparePipe } from '../../_pipes/patient-compare.pipe';
 import { PatientFormComponent } from '../patient-form/patient-form.component';
 import { AbstractMergingTableComponent } from '../../_components/abstract-merging-table/abstract-merging-table.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-patient-received-table',
   templateUrl: './patient-received-table.component.html',
-  styleUrls: ['./patient-received-table.component.css'],
+  styleUrls: ['./patient-received-table.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),
@@ -23,6 +25,9 @@ import { AbstractMergingTableComponent } from '../../_components/abstract-mergin
   ],
 })
 export class PatientReceivedTableComponent extends AbstractMergingTableComponent<EhrPatient> {
+
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort?: MatSort;
 
   public columns: (keyof EhrPatient | keyof EhrHumanName | "mrn")[] = [
     "mrn",
