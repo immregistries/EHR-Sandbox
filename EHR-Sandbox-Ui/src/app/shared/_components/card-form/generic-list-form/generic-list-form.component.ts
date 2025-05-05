@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { BaseForm, GenericForm } from 'src/app/core/_model/form-structure';
+import { BaseForm, ComparisonResult, GenericForm } from 'src/app/core/_model/form-structure';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
 
 @Component({
@@ -9,12 +9,12 @@ import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-f
 })
 export class GenericListFormComponent<T> extends AbstractBaseFormComponent implements OnInit {
 
-  private _compareTo?: string
+  private _compareTo?: ComparisonResult
   @Input()
-  public set compareTo(value: string | undefined) {
+  public set compareTo(value: ComparisonResult | undefined) {
     this._compareTo = value;
   }
-  public get compareTo(): string | undefined {
+  public get compareTo(): ComparisonResult | undefined {
     return this._compareTo
   }
 

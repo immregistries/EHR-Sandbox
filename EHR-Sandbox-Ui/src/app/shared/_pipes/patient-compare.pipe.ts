@@ -8,9 +8,11 @@ import { AbstractComparisonPipe } from './abstract-comparison.pipe';
 })
 export class PatientComparePipe extends AbstractComparisonPipe implements PipeTransform {
   readonly fields_to_ignore: string[] = [
+    'id',
     'patient',
     'createdDate',
-    'updatedDate' // TODO change the way updated date is mapped ?
+    'updatedDate', // TODO change the way updated date is mapped ?
+    'groupNames',
   ]
 
   transform(value: EhrPatient, ...args: (EhrPatient | null)[]): {} {

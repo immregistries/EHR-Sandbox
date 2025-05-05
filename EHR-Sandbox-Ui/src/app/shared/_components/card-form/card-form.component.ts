@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { BaseForm } from 'src/app/core/_model/form-structure';
+import { BaseForm, ComparisonResult } from 'src/app/core/_model/form-structure';
 import { CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_model/code-base-map";
 import { AbstractBaseFormComponent } from './abstract-base-form/abstract-base-form.component';
 import { FormControl } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-card-form',
@@ -11,6 +12,11 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./card-form.component.css']
 })
 export class CardFormComponent extends AbstractBaseFormComponent implements AfterViewInit {
+
+  constructor(public datePipe: DatePipe) {
+    super()
+
+  }
 
   /**
    * solely for select-codebase components
@@ -41,7 +47,7 @@ export class CardFormComponent extends AbstractBaseFormComponent implements Afte
   }
   @Output() modelChange = new EventEmitter<any>();
 
-  @Input() compareTo?: string;
+  @Input() compareTo?: ComparisonResult;
 
   referencesChange(emitted: CodeReferenceTableMember): void {
     this.referenceTableMemberEmitter.emit(emitted)
@@ -55,6 +61,15 @@ export class CardFormComponent extends AbstractBaseFormComponent implements Afte
   ngAfterViewInit(): void {
     // this.valueCtrl?.valueChanges.subscribe(value => {
     // })
+  }
+
+  dateDisplayComparison(comparisonResult: ComparisonResult) {
+    if (comparisonResult && comparisonResult instanceof Date) {
+      return this.datePipe.transform(comparisonResult, 'MM/dd/yyyy')
+    } else {
+      return undefined
+    }
+
   }
 
 }

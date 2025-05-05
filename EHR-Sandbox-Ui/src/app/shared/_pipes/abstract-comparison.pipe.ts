@@ -49,7 +49,7 @@ export abstract class AbstractComparisonPipe {
     /**
      * if result is populated
      */
-    if (Object.keys(result).length > 0) {
+    if (Object.values(result).length > 0) {
       return result;
     }
     return null;
