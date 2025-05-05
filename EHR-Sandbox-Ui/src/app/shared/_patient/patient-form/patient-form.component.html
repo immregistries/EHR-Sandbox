@@ -2,7 +2,7 @@
   <mat-dialog-content class="form-dialog-content">
     <mat-tab-group>
       <mat-tab label="Patient Form">
-        <div class="grid-container">
+        <div class="grid-container special-icon-badge">
           <div *ngFor="let card of PATIENT_FORM_CARDS">
             <mat-card class="form-card">
               <mat-card-header *ngIf="card.title">
@@ -25,7 +25,7 @@
         </div>
       </mat-tab>
       <mat-tab label="Form with Requirements lifted">
-        <div class="grid-container">
+        <div class="grid-container special-icon-badge">
           <div *ngFor="let card of PATIENT_FORM_CARDS">
             <mat-card class="form-card">
               <mat-card-header *ngIf="card.title">
