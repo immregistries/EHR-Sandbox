@@ -1,10 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { NextOfKinRelationship } from 'src/app/core/_model/rest';
-import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/form-structure';
-import { NextOfKinRelationshipListFormComponent } from './next-of-kin-relationship-list-form/next-of-kin-relationship-list-form.component';
-import { error } from 'console';
+import { BaseForm, GenericForm } from 'src/app/core/_model/form-structure';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
-import { flush } from '@angular/core/testing';
 
 @Component({
   // selector: 'app-generic-list-form',
@@ -12,6 +8,21 @@ import { flush } from '@angular/core/testing';
   styleUrls: ['./generic-list-form.component.css']
 })
 export class GenericListFormComponent<T> extends AbstractBaseFormComponent implements OnInit {
+
+  private _compareTo?: string
+  @Input()
+  public set compareTo(value: string | undefined) {
+    this._compareTo = value;
+  }
+  public get compareTo(): string | undefined {
+    return this._compareTo
+  }
+
+  getCompareTo(i: number, attributeName: string): any {
+    //@ts-ignore
+    return this.compareTo && this.compareTo[i] ? this.compareTo[i][attributeName] : undefined
+  }
+
 
   private _baseForm!: BaseForm;
   public get baseForm(): BaseForm {
@@ -32,7 +43,7 @@ export class GenericListFormComponent<T> extends AbstractBaseFormComponent imple
     this.addDefaultValue()
   }
   @Output()
-  modelChange: EventEmitter<(T)[]> = new EventEmitter<(T)[]>()
+  public modelChange: EventEmitter<(T)[]> = new EventEmitter<(T)[]>()
 
   ngOnInit(): void {
     // if (!this.itemList || this.itemList.length < 1) {

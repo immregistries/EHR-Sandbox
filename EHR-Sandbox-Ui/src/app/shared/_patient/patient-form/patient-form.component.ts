@@ -37,13 +37,16 @@ export class PatientFormComponent {
     private snackBarService: SnackBarService,
     patientComparePipe: PatientComparePipe,
     @Optional() public _dialogRef?: MatDialogRef<PatientFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient, issues?: Feedback[], comparedPatient?: EhrPatient }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient, issues?: Feedback[], comparedPatient?: EhrPatient, comparison?: ComparisonResult }) {
     if (data && data.patient) {
       this.patient = data.patient;
       this._patientId = data.patient.id ?? -1
       this.isEditionMode = true
       this.issues = data.issues
-      if (data.comparedPatient) {
+      if (data.comparison) {
+        this.compareTo = data.comparison
+        console.info(this.compareTo)
+      } else if (data.comparedPatient) {
         this.compareTo = patientComparePipe.transform(this.patient, data.comparedPatient)
       }
     }

@@ -107,7 +107,7 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
     // console.log(this.matchingMatrix)
   }
 
-  openMerge(remote: VaccinationEvent) {
+  openMerge(remote: VaccinationEvent, index: number) {
     let element = JSON.parse(JSON.stringify(remote))
     let comparedLocalElement = this.comparedWith()
     element.id = comparedLocalElement ? comparedLocalElement.id : undefined
@@ -119,7 +119,7 @@ export class VaccinationReceivedTableComponent extends AbstractMergingTableCompo
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-with-bar',
-      data: { patientId: this.patientId, vaccination: element, comparedVaccination: comparedLocalElement },
+      data: { patientId: this.patientId, vaccination: element, comparison: this.comparisonWithSelected(index) },
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

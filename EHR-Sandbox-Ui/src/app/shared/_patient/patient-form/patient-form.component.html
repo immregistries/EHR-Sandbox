@@ -14,7 +14,7 @@
                 <ng-container *ngFor="let form of card.forms">
                   <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
                                  (modelChange)="change(form, $event)"
-                                 [compareTo]="compareTo? compareTo[form.attributeName] : null"></app-card-form>
+                                 [compareTo]="compareTo? compareTo[form.attributeName] : undefined"></app-card-form>
                 </ng-container>
               </mat-card-content>
               <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">

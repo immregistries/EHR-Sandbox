@@ -57,14 +57,14 @@
       <div class="element-detail"
            [@detailExpand]="selectedElementIndex == i && selectedElementIndex != undefined ? 'expanded' : 'collapsed'">
         <div>
-          <button mat-stroked-button color="primary" (click)="openMerge(element)"
+          <button mat-stroked-button color="primary" (click)="openMerge(element,i)"
                   [disabled]="localSelectedIndex == undefined || isMatch(i)">
             <mat-icon>merge</mat-icon>
             Merge
           </button>
         </div>
         <div>
-          <button mat-stroked-button color="primary" (click)="openMerge(element)"
+          <button mat-stroked-button color="primary" (click)="openMerge(element,i)"
                   [disabled]="localSelectedIndex != undefined">
             <mat-icon>file_save</mat-icon>
             Import

@@ -73,7 +73,7 @@ export abstract class AbstractMergingTableComponent<T extends ObjectWithID> impl
 
 
   comparisonWithSelected(index: number) {
-    return (index && this.localSelectedIndex != undefined) ? this.matchingMatrix[index][this.localSelectedIndex] : null
+    return (index != undefined && this.localSelectedIndex != undefined) ? this.matchingMatrix[index][this.localSelectedIndex] : null
   }
 
   comparedWith(): T | null {
