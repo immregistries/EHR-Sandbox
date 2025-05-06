@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { SettingsService } from '../../_services/settings.service';
 import { User } from '../../_model/rest';
 import { JwtResponse } from '../security';

@@ -41,12 +41,14 @@ export class StepsComponent {
       this.tenantService.postTenant(tenant).subscribe(
         (res) => {
           if (res.body) {
+            this.tenantService.doRefresh()
             let tenantId = res.body.id
             this.tenantService.setCurrent(res.body);
             this.facilityService.getRandom(tenantId).subscribe((facility) => {
               this.facilityService.postFacility(tenantId, facility, true).subscribe(
                 (res2) => {
                   if (res2.body) {
+                    this.facilityService.doRefresh()
                     this.facilityService.setCurrent(res2.body);
                     this.router.navigate(['/dashboard'])
                   }

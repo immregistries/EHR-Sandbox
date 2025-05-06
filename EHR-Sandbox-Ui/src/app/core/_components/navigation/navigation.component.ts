@@ -10,6 +10,10 @@ import { TokenStorageService } from 'src/app/core/authentication/_services/token
 import { NotificationCheckService } from '../../_services/notification-check.service';
 import { SnackBarService } from '../../_services/snack-bar.service';
 import { FeedbackService } from '../../_services/feedback.service';
+import { AuthService } from '../../authentication/_services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UserDialogComponent } from 'src/app/shared/_components/user-dialog/user-dialog.component';
+
 
 @Component({
   selector: 'app-navigation',
@@ -28,13 +32,12 @@ export class NavigationComponent {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    // private dialog: MatDialog,
+    private dialog: MatDialog,
     public tenantService: TenantService,
     public facilityService: FacilityService,
     public patientService: PatientService,
-    private tokenService: TokenStorageService,
-    private notificationCheckService: NotificationCheckService,
-    private feedbackService: FeedbackService,
+    public tokenService: TokenStorageService,
+    public authService: AuthService,
     public router: Router) {
     this.router.events.subscribe(
       (event: NavigationEvent) => {
@@ -55,7 +58,10 @@ export class NavigationComponent {
     return !this.dontShowTopBar.includes(this.pathname.split('?')[0])
   }
 
+  openUser() {
+    this.dialog.open(UserDialogComponent)
 
+  }
 
 
 }
