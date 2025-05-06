@@ -159,7 +159,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                     }
                 }
                 if (clinician != null) {
-                    switch (MappingHelperR4.codeFromSystemOrDefault(performer.getFunction(), FUNCTION_SYSTEM)) {
+                    switch (mappingHelperR4.codeFromSystemOrDefault(performer.getFunction(), FUNCTION_SYSTEM)) {
                         case ADMINISTERING: {
                             ve.setAdministeringClinician(clinician);
                             break;
@@ -220,7 +220,7 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
             v.setAdministeredAmount(i.getDoseQuantity().getValue().toString());
         }
 
-        v.setInformationSource(MappingHelperR4.codeFromSystemOrDefault(i.getReportOrigin(), INFORMATION_SOURCE_SYSTEM));
+        v.setInformationSource(mappingHelperR4.codeFromSystemOrDefault(i.getReportOrigin(), INFORMATION_SOURCE_SYSTEM));
         v.setUpdatedDate(new Date());
 
         v.setLotNumber(i.getLotNumber());
@@ -245,11 +245,11 @@ public class ImmunizationMapperR4 implements IImmunizationMapper<Immunization> {
                     break;
             }
         }
-        v.setRefusalReasonCode(MappingHelperR4.codeFromSystemOrDefault(i.getStatusReason(), REFUSAL_REASON_CODE_SYSTEM));
-        v.setBodySite(MappingHelperR4.codeFromSystemOrDefault(i.getSite(), BODY_SITE_SYSTEM));
-        v.setBodyRoute(MappingHelperR4.codeFromSystemOrDefault(i.getRoute(), BODY_ROUTE_SYSTEM));
-        v.setFundingSource(MappingHelperR4.codeFromSystemOrDefault(i.getFundingSource(), FUNDING_SOURCE_SYSTEM));
-        v.setFinancialStatus(MappingHelperR4.codeFromSystemOrDefault(i.getProgramEligibilityFirstRep(), FUNDING_ELIGIBILITY_SYSTEM));
+        v.setRefusalReasonCode(mappingHelperR4.codeFromSystemOrDefault(i.getStatusReason(), REFUSAL_REASON_CODE_SYSTEM));
+        v.setBodySite(mappingHelperR4.codeFromSystemOrDefault(i.getSite(), BODY_SITE_SYSTEM));
+        v.setBodyRoute(mappingHelperR4.codeFromSystemOrDefault(i.getRoute(), BODY_ROUTE_SYSTEM));
+        v.setFundingSource(mappingHelperR4.codeFromSystemOrDefault(i.getFundingSource(), FUNDING_SOURCE_SYSTEM));
+        v.setFinancialStatus(mappingHelperR4.codeFromSystemOrDefault(i.getProgramEligibilityFirstRep(), FUNDING_ELIGIBILITY_SYSTEM));
 
         return v;
     }

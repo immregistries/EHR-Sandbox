@@ -1,7 +1,9 @@
 package org.immregistries.ehr.logic.mapping;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.r5.model.*;
+import org.immregistries.codebase.client.CodeMap;
 import org.immregistries.codebase.client.generated.Code;
 import org.immregistries.codebase.client.reference.CodesetType;
 import org.immregistries.ehr.CodeMapManager;
@@ -29,7 +31,7 @@ public class MappingHelperR5 extends MappingHelper {
         return coding;
     }
 
-    public static Enumerations.AdministrativeGender toFhirGender(String sex) {
+    public Enumerations.AdministrativeGender toFhirGender(String sex) {
         if (sex == null) {
             return null;
         }
@@ -47,7 +49,7 @@ public class MappingHelperR5 extends MappingHelper {
         }
     }
 
-    public static String toEhrSex(Enumerations.AdministrativeGender gender) {
+    public String toEhrSex(Enumerations.AdministrativeGender gender) {
         if (gender == null) {
             return "";
         }
@@ -65,32 +67,65 @@ public class MappingHelperR5 extends MappingHelper {
         }
     }
 
-    public static ContactPoint toFhirContact(EhrPhoneNumber phoneNumber) {
-        ContactPoint contactPoint = new ContactPoint()
-                .setValue(phoneNumber.getNumber())
-                .setSystem(ContactPoint.ContactPointSystem.PHONE);
-        try {
-            if (StringUtils.isNotBlank(phoneNumber.getType())) {
-                contactPoint.setUse(ContactPoint.ContactPointUse.valueOf(phoneNumber.getType()));
+    public ContactPoint toFhirContact(EhrPhoneNumber phoneNumber) {
+//        return phoneNumber.toR4();
+        ContactPoint contactPoint = new ContactPoint();
+        contactPoint.setSystem(ContactPoint.ContactPointSystem.PHONE)
+                .setValue(phoneNumber.getNumber());
+        String use = phoneNumber.getUse();
+        if (use != null) {
+            try {
+                contactPoint.setUse(ContactPoint.ContactPointUse.fromCode(use));
+            } catch (FHIRException ignored) {
+                CodeMap codeMap = codeMapManager.getCodeMap();
+                Code useCode = codeMap.getCodeForCodeset(CodesetType.TELECOMMUNICATION_USE, use);
+                if (useCode != null) {
+                    contactPoint.addExtension(USE_EXTENSION_URL, new Coding().setSystem(PHONE_USE_V2_SYSTEM).setCode(use));
+                    switch (use) {
+                        case "": {
+                            break;
+                        }
+                        case "PRN":
+                        case "ORN":
+                        case "VHN": {
+                            contactPoint.setUse(ContactPoint.ContactPointUse.HOME);
+                            break;
+                        }
+                        case "WPN": {
+                            contactPoint.setUse(ContactPoint.ContactPointUse.WORK);
+                            break;
+                        }
+                        case "PRS": {
+                            contactPoint.setUse(ContactPoint.ContactPointUse.MOBILE);
+                            break;
+                        }
+                    }
+                }
             }
-        } catch (IllegalArgumentException illegalArgumentException) {
         }
         return contactPoint;
     }
 
-    public static EhrPhoneNumber toEhrPhoneNumber(ContactPoint phoneContact) {
-        if (phoneContact.hasSystem() && phoneContact.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)) {
-            EhrPhoneNumber ehrPhoneNumber = new EhrPhoneNumber(phoneContact.getValue());
-            if (phoneContact.hasUse()) {
-                ehrPhoneNumber.setType(phoneContact.getUse().toCode());
+    public EhrPhoneNumber toEhrPhoneNumber(ContactPoint contactPoint) {
+        EhrPhoneNumber ehrPhoneNumber = new EhrPhoneNumber();
+        ehrPhoneNumber.setNumber(contactPoint.getValue());
+        Extension useExtension = contactPoint.getExtensionByUrl(USE_EXTENSION_URL);
+        if (useExtension != null) {
+            Coding coding = MappingHelper.extensionGetCoding(useExtension);
+            if (coding != null && StringUtils.isNotBlank(coding.getCode())) {
+                ehrPhoneNumber.setUse(coding.getCode());
+            } else {
+                ehrPhoneNumber.setUse("");
             }
-            return ehrPhoneNumber;
+        } else if (contactPoint.getUse() != null) {
+            ehrPhoneNumber.setUse(contactPoint.getUse().toCode());
         } else {
-            return null;
+            ehrPhoneNumber.setUse(null);
         }
+        return ehrPhoneNumber;
     }
 
-    public static Address toFhirAddress(EhrAddress ehrAddress) {
+    public Address toFhirAddress(EhrAddress ehrAddress) {
         return new Address()
                 .addLine(ehrAddress.getAddressLine1())
                 .addLine(ehrAddress.getAddressLine2())
@@ -100,7 +135,7 @@ public class MappingHelperR5 extends MappingHelper {
                 .setPostalCode(ehrAddress.getAddressZip());
     }
 
-    public static EhrAddress toEhrAddress(Address address) {
+    public EhrAddress toEhrAddress(Address address) {
         EhrAddress ehrAddress = new EhrAddress();
         if (address.getLine().size() > 0) {
             ehrAddress.setAddressLine1(address.getLine().get(0).getValueNotNull());
@@ -116,7 +151,7 @@ public class MappingHelperR5 extends MappingHelper {
         return ehrAddress;
     }
 
-    public static String codeFromSystemOrDefault(CodeableConcept codeableConcept, String system) {
+    public String codeFromSystemOrDefault(CodeableConcept codeableConcept, String system) {
         String value = null;
         if (codeableConcept != null) {
             value = codeableConcept.getCode(system);
@@ -127,7 +162,7 @@ public class MappingHelperR5 extends MappingHelper {
         return value;
     }
 
-    public static EhrHumanName toEhrName(HumanName name) {
+    public EhrHumanName toEhrName(HumanName name) {
         EhrHumanName ehrHumanName = new EhrHumanName();
         ehrHumanName.setNameLast(name.getFamily());
         if (name.getGiven().size() > 0) {
@@ -141,7 +176,7 @@ public class MappingHelperR5 extends MappingHelper {
         return ehrHumanName;
     }
 
-    public static HumanName toFhirName(EhrHumanName ehrHumanName) {
+    public HumanName toFhirName(EhrHumanName ehrHumanName) {
         if (ProcessingFlavor.UPPERCASE.isActive()) {
             ehrHumanName.setNameLast(ehrHumanName.getNameLast().toUpperCase());
             ehrHumanName.setNameFirst(ehrHumanName.getNameFirst().toUpperCase());

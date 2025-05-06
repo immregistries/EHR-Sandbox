@@ -6,11 +6,14 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.logic.mapping.interfaces.IPractitionerMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
 
+    @Autowired
+    private MappingHelperR4 mappingHelperR4;
 
     public Clinician toClinician(Practitioner practitioner) {
         Clinician clinician = new Clinician();
@@ -32,7 +35,7 @@ public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
         for (ContactPoint telecom : practitioner.getTelecom()) {
             if (null != telecom.getSystem()) {
                 if (telecom.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)) {
-                    clinician.addPhoneNumber(MappingHelperR4.toEhrPhoneNumber(telecom));
+                    clinician.addPhoneNumber(mappingHelperR4.toEhrPhoneNumber(telecom));
                 }
             }
         }
@@ -42,7 +45,7 @@ public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
         }
 
         for (Address address : practitioner.getAddress()) {
-            clinician.addAddress(MappingHelperR4.toEhrAddress(address));
+            clinician.addAddress(mappingHelperR4.toEhrAddress(address));
         }
         return clinician;
     }
@@ -60,7 +63,7 @@ public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
             practitioner.addQualification().setCode(new CodeableConcept(new Coding().setCode(clinician.getQualification()).setSystem(QUALIFICATION_SYSTEM)));
         }
         for (EhrAddress ehrAddress : clinician.getAddresses()) {
-            practitioner.addAddress(MappingHelperR4.toFhirAddress(ehrAddress));
+            practitioner.addAddress(mappingHelperR4.toFhirAddress(ehrAddress));
         }
 
         for (EhrIdentifier ehrIdentifier : clinician.getIdentifiers()) {
@@ -68,7 +71,7 @@ public class PractitionerMapperR4 implements IPractitionerMapper<Practitioner> {
         }
 
         for (EhrPhoneNumber phoneNumber : clinician.getPhones()) {
-            practitioner.addTelecom(MappingHelperR4.toFhirContact(phoneNumber));
+            practitioner.addTelecom(mappingHelperR4.toFhirContact(phoneNumber));
         }
 
         return practitioner;

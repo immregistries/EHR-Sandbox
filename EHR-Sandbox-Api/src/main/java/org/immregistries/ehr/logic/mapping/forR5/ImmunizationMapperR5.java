@@ -143,7 +143,7 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                     }
                 }
                 if (clinician != null) {
-                    switch (MappingHelperR5.codeFromSystemOrDefault(performer.getFunction(), FUNCTION_SYSTEM)) {
+                    switch (mappingHelperR5.codeFromSystemOrDefault(performer.getFunction(), FUNCTION_SYSTEM)) {
                         case ADMINISTERING: {
                             ve.setAdministeringClinician(clinician);
                             break;
@@ -220,16 +220,16 @@ public class ImmunizationMapperR5 implements IImmunizationMapper<Immunization> {
                     break;
             }
         }
-        v.setRefusalReasonCode(MappingHelperR5.codeFromSystemOrDefault(i.getReasonFirstRep().getConcept(), REFUSAL_REASON_CODE_SYSTEM));
-        v.setBodySite(MappingHelperR5.codeFromSystemOrDefault(i.getSite(), BODY_SITE_SYSTEM));
-        v.setBodyRoute(MappingHelperR5.codeFromSystemOrDefault(i.getRoute(), BODY_ROUTE_SYSTEM));
+        v.setRefusalReasonCode(mappingHelperR5.codeFromSystemOrDefault(i.getReasonFirstRep().getConcept(), REFUSAL_REASON_CODE_SYSTEM));
+        v.setBodySite(mappingHelperR5.codeFromSystemOrDefault(i.getSite(), BODY_SITE_SYSTEM));
+        v.setBodyRoute(mappingHelperR5.codeFromSystemOrDefault(i.getRoute(), BODY_ROUTE_SYSTEM));
 
-        v.setFundingSource(MappingHelperR5.codeFromSystemOrDefault(i.getFundingSource(), FUNDING_SOURCE_SYSTEM));
+        v.setFundingSource(mappingHelperR5.codeFromSystemOrDefault(i.getFundingSource(), FUNDING_SOURCE_SYSTEM));
         if (i.hasProgramEligibility()) {
-            v.setFinancialStatus(MappingHelperR5.codeFromSystemOrDefault(i.getProgramEligibilityFirstRep().getProgramStatus(), FUNDING_ELIGIBILITY_SYSTEM));
+            v.setFinancialStatus(mappingHelperR5.codeFromSystemOrDefault(i.getProgramEligibilityFirstRep().getProgramStatus(), FUNDING_ELIGIBILITY_SYSTEM));
         }
         if (i.hasInformationSource() && i.getInformationSource().getConcept() != null) {
-            v.setInformationSource(MappingHelperR5.codeFromSystemOrDefault(i.getInformationSource().getConcept(), INFORMATION_SOURCE_SYSTEM));
+            v.setInformationSource(mappingHelperR5.codeFromSystemOrDefault(i.getInformationSource().getConcept(), INFORMATION_SOURCE_SYSTEM));
         }
 
         return v;
