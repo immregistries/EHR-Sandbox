@@ -29,7 +29,8 @@
         ],
         "allowedCommonJsDependencies": [
           "randexp",
-          "fuzzy-search"
+          "fuzzy-search",
+          "recursive-diff"
         ],
         "scripts": [],
         "baseHref": "/ehr/"

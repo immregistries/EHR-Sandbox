@@ -5,6 +5,7 @@ import { CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_mode
 import { AbstractBaseFormComponent } from './abstract-base-form/abstract-base-form.component';
 import { FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { rdiffResult } from 'recursive-diff';
 
 @Component({
   selector: 'app-card-form',
@@ -47,7 +48,7 @@ export class CardFormComponent extends AbstractBaseFormComponent implements Afte
   }
   @Output() modelChange = new EventEmitter<any>();
 
-  @Input() compareTo?: ComparisonResult;
+  @Input() compareTo?: any;
 
   referencesChange(emitted: CodeReferenceTableMember): void {
     this.referenceTableMemberEmitter.emit(emitted)
@@ -63,7 +64,7 @@ export class CardFormComponent extends AbstractBaseFormComponent implements Afte
     // })
   }
 
-  dateDisplayComparison(comparisonResult: ComparisonResult) {
+  dateDisplayComparison(comparisonResult: any) {
     if (comparisonResult && typeof comparisonResult === 'number' || typeof comparisonResult === 'string') {
       return this.datePipe.transform(comparisonResult, 'MM/dd/yyyy')
     } else {

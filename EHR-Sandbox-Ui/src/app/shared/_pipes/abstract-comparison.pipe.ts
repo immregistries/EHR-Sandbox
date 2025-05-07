@@ -1,10 +1,15 @@
 import { Directive } from "@angular/core";
 import { ComparisonResult } from "src/app/core/_model/form-structure";
-
+import rdiff, { rdiffResult } from "recursive-diff"
 
 @Directive()
 export abstract class AbstractComparisonPipe {
   abstract fields_to_ignore: string[]
+
+
+  protected packageComp(local: any, remote: any): rdiffResult[] {
+    return rdiff.getDiff(local, remote, true);
+  }
 
   /**
      * Recursive comparision of elements,
