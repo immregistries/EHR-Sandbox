@@ -34,7 +34,6 @@ public class MappingHelperR4 extends MappingHelper {
     }
 
     public ContactPoint toFhirContact(EhrPhoneNumber phoneNumber) {
-//        return phoneNumber.toR4();
         ContactPoint contactPoint = new ContactPoint();
         contactPoint.setSystem(ContactPoint.ContactPointSystem.PHONE)
                 .setValue(phoneNumber.getNumber());
@@ -158,7 +157,7 @@ public class MappingHelperR4 extends MappingHelper {
             return extension.castToCodeableConcept(extension.getValue());
         } else return null;
     }
-    
+
     public String codeFromSystemOrDefault(CodeableConcept codeableConcept, String system) {
         String value = null;
         if (codeableConcept != null) {

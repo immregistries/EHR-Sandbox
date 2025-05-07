@@ -64,7 +64,7 @@ export class CardFormComponent extends AbstractBaseFormComponent implements Afte
   }
 
   dateDisplayComparison(comparisonResult: ComparisonResult) {
-    if (comparisonResult && comparisonResult instanceof Date) {
+    if (comparisonResult && typeof comparisonResult === 'number' || typeof comparisonResult === 'string') {
       return this.datePipe.transform(comparisonResult, 'MM/dd/yyyy')
     } else {
       return undefined
