@@ -12,7 +12,6 @@ import org.immregistries.ehr.api.ProcessingFlavor;
 import static org.immregistries.ehr.logic.IFhirTransactionWriter.TYPE_ISO;
 import static org.immregistries.ehr.logic.IFhirTransactionWriter.TYPE_UUID;
 import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.IDENTIFIER_TYPE_SYSTEM;
-import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_TYPE_VALUE;
 
 @Embeddable()
 public class EhrIdentifier {
@@ -88,7 +87,7 @@ public class EhrIdentifier {
         org.hl7.fhir.r5.model.Identifier identifier = new org.hl7.fhir.r5.model.Identifier().setValue(value).setSystem(system);
         if (this.getType() != null) {
             identifier.setType(new org.hl7.fhir.r5.model.CodeableConcept(
-                    new org.hl7.fhir.r5.model.Coding(IDENTIFIER_TYPE_SYSTEM, MRN_TYPE_VALUE, "")));
+                    new org.hl7.fhir.r5.model.Coding(IDENTIFIER_TYPE_SYSTEM, this.getType(), "")));
         }
 //        if (assignerIdentifier != null) {
 //            identifier.setAssigner(new org.hl7.fhir.r5.model.Reference(assignerReference).setIdentifier(assignerIdentifier.toR5()));
@@ -103,7 +102,7 @@ public class EhrIdentifier {
         org.hl7.fhir.r4.model.Identifier identifier = new org.hl7.fhir.r4.model.Identifier().setValue(value).setSystem(system);
         if (this.getType() != null) {
             identifier.setType(new org.hl7.fhir.r4.model.CodeableConcept(
-                    new org.hl7.fhir.r4.model.Coding(IDENTIFIER_TYPE_SYSTEM, MRN_TYPE_VALUE, "")));
+                    new org.hl7.fhir.r4.model.Coding(IDENTIFIER_TYPE_SYSTEM, this.getType(), "")));
         }
 //        if (assignerIdentifier != null) {
 //            identifier.setAssigner(new org.hl7.fhir.r4.model.Reference(assignerReference).setIdentifier(assignerIdentifier.toR4()));
