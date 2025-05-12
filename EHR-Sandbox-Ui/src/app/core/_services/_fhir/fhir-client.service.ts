@@ -366,7 +366,7 @@ export class FhirClientService extends IdUrlVerifyingService {
   postPatient(tenantId: number, facilityId: number, patientId: number, resource: string): Observable<EhrFhirOutcome> {
     const registryId = this.registryService.getCurrentId()
     return this.http.post<EhrFhirOutcome>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/${patientId > 0 ? '/patients/' + patientId : ''}/fhir-client`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/${patientId > 0 ? 'patients/' + patientId : ''}/fhir-client`,
       resource,
       {
         ...httpOptions,
