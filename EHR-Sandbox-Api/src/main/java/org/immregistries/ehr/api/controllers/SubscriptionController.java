@@ -139,7 +139,8 @@ public class SubscriptionController {
 //        sub.setTopic(iis_uri + "/SubscriptionTopic/sandbox");
 //        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/Group");
         // TODO set canonical definition and host somewhere on HIT DEV ?
-        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/data-quality-issues");
+//        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/data-quality-issues");
+        sub.setTopic("/SubscriptionTopic/data-quality-issues");
 
 
         sub.setReason("testing purposes");
