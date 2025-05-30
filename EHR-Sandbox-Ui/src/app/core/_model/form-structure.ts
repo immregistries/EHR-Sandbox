@@ -44,8 +44,6 @@ export declare interface FormCard {
   hl7Location?: Hl7Location,
 }
 
-
-
 export declare interface BaseFormNoDisabled {
   type: FormType,
   title: string,

@@ -34,16 +34,16 @@ export class SubscriptionService {
     this.refresh = new BehaviorSubject<boolean>(false)
   }
 
-  createSubscription(): Observable<boolean | null> {
+  createSubscription(topic: string): Observable<boolean | null> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     const registryId: number | undefined = this.registryService.getCurrentId()
     return this.http.post<any>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription/data-quality-issues`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription`,
       null,
       {
         ...httpOptions,
-        params: { registryId: registryId }
+        params: { registryId: registryId, topic: topic }
       });
   }
 

@@ -1,0 +1,12 @@
+.mat-mdc-tab-disabled:first-child {
+  opacity: 1;
+}
+
+.card-title {
+  padding: 0px;
+  margin: 0px;
+}
+
+.dashboard-card-content {
+  text-align: center;
+}

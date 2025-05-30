@@ -3,9 +3,7 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r5.model.Subscription;
-
 
 import java.util.Date;
 import java.util.HashMap;
@@ -60,8 +58,8 @@ public class EhrSubscription extends EhrEntity {
             notificationUrlLocation = subscription.getChannel().getEndpoint();
             headers = subscription.getChannel().getHeader().stream()
                     .collect(Collectors.toMap(
-                            (header)-> header.getValue().split(":")[0],
-                            (header)-> header.getValue().split(":")[1])
+                            (header) -> header.getValue().split(":")[0],
+                            (header) -> header.getValue().split(":")[1])
                     );
         }
 //        heartbeatPeriod = subscription.getHeartbeatPeriod();
@@ -81,7 +79,7 @@ public class EhrSubscription extends EhrEntity {
         subscription.setEnd(end);
         subscription.setReason(reason);
         subscription.setChannelType(new org.hl7.fhir.r5.model.Coding().setCode(channelType));
-        for (Map.Entry<String,String> entry : headers.entrySet()) {
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
             subscription.addParameter().setName(entry.getKey()).setValue(entry.getValue());
         }
         subscription.setHeartbeatPeriod(heartbeatPeriod);
@@ -118,10 +116,10 @@ public class EhrSubscription extends EhrEntity {
     @Column(name = "subscription_channel_type", length = 45)
     private String channelType;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "header_name")
     @Column(name = "header_value")
-    private Map<String,String> headers = new HashMap<>(2);
+    private Map<String, String> headers = new HashMap<>(2);
 
     @Column(name = "subscription_heartbeat_period")
     private Integer heartbeatPeriod;
