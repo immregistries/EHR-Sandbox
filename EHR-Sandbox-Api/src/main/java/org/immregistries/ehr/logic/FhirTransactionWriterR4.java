@@ -43,7 +43,7 @@ public class FhirTransactionWriterR4 implements IFhirTransactionWriter {
 
 
     /**
-     * Hybrid experiemental method using different mapping methods
+     * Hybrid experimental method using different mapping methods
      *
      * @param facility         Facility/ organization writing the message
      * @param vaccinationEvent Vaccination

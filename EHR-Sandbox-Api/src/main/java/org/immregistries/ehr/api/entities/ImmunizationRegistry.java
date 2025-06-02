@@ -27,6 +27,9 @@ public class ImmunizationRegistry {
     @Column(name = "iis_FHIR_url", nullable = false, length = 250)
     private String iisFhirUrl = "";
 
+    @Column(name = "iis_FHIR_messaging_url", nullable = false, length = 250)
+    private String iisFhirMessagingUrl = "";
+
     @Column(name = "iis_username", nullable = false, length = 250)
     private String iisUsername = "";
 
@@ -131,5 +134,13 @@ public class ImmunizationRegistry {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getIisFhirMessagingUrl() {
+        return iisFhirMessagingUrl;
+    }
+
+    public void setIisFhirMessagingUrl(String iisFhirMessagingUrl) {
+        this.iisFhirMessagingUrl = iisFhirMessagingUrl;
     }
 }

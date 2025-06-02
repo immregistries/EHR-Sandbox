@@ -88,7 +88,7 @@ public class AuthController {
             newUser.setPassword(encoder.encode(user.getPassword()));
             userRepository.save(newUser);
 
-//            /**
+//            /*
 //             * Defining default IIS's automatically on first login
 //             */
 //            {
@@ -103,7 +103,7 @@ public class AuthController {
 //                immunizationRegistryRepository.save(immunizationRegistryOnline);
 //            }
 
-            /**
+            /*
              * Configuration to query localhost with dockercompose containing
              *     extra_hosts:
              *       - "host.docker.internal:host-gateway"
@@ -118,6 +118,7 @@ public class AuthController {
                 immunizationRegistry.setIisPassword(newUser.getUsername());
                 immunizationRegistry.setIisHl7Url(defaultIisUrl + "/soap");
                 immunizationRegistry.setIisFhirUrl(defaultIisUrl + "/fhir");
+                immunizationRegistry.setIisFhirMessagingUrl(defaultIisUrl + "/fhirMessaging");
                 immunizationRegistry.setUser(newUser);
                 immunizationRegistry.setDescription("Automatically generated, url defined by EHR sandbox global configuration");
                 immunizationRegistryRepository.save(immunizationRegistry);
@@ -143,6 +144,7 @@ public class AuthController {
                     immunizationRegistry.setIisPassword(newUser.getUsername());
                     immunizationRegistry.setIisHl7Url("http://localhost:8080/iis/soap");
                     immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
+                    immunizationRegistry.setIisFhirMessagingUrl("http://localhost:8080/iis/fhirMessaging");
                     immunizationRegistry.setUser(newUser);
                     immunizationRegistry.setDescription("Automatically generated credentials in case an instance of IIS Sandbox is accessible on localhost:8080");
                     immunizationRegistryRepository.save(immunizationRegistry);
