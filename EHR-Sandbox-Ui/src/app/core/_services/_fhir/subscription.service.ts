@@ -59,6 +59,7 @@ export class SubscriptionService {
         params: { registryId: registryId }
       });
   }
+
   putSubscription(subscription: string): Observable<EhrFhirOutcome> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
@@ -91,7 +92,7 @@ export class SubscriptionService {
       return of()
     }
     return this.http.get<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/fhir-client/subscription/sample`,
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/subscription/sample`,
       {
         ...httpOptions,
         params: { registryId: registryId }
