@@ -63,7 +63,6 @@ export class SubscriptionFormComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.loading = false
-        console.log(err)
         this.error = `${err.error}`
       }
     })
