@@ -63,7 +63,8 @@ export class SubscriptionFormComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.loading = false
-        this.error = `${err.status} : ${err.statusText}`
+        console.log(err)
+        this.error = `${err.error}`
       }
     })
   }
@@ -73,9 +74,9 @@ export class SubscriptionFormComponent implements OnInit {
     type: FormType.code,
     attributeName: "topic",
     options: [
-      { code: "/data-quality-issues", display: "Data quality issues" },
-      { code: "/group", display: "" },
-      { code: "/patients", display: "" },
+      { code: "/SubscriptionTopic/data-quality-issues", display: "" },
+      { code: "/SubscriptionTopic/group", display: "" },
+      { code: "/SubscriptionTopic/patients", display: "" },
     ]
   }
 

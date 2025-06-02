@@ -63,7 +63,7 @@ public class SubscriptionController {
     public ResponseEntity<String> getSample(@PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(REGISTRY_ID) Integer registryId, @RequestParam("topic") Optional<String> topic) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
-        Subscription sub = subscriptionGenerator.generateRestHookSubscription(facility, ir.getIisFhirUrl(), topic.orElse(null));
+        Subscription sub = subscriptionGenerator.generateRestHookSubscription(facility, topic.orElse(null));
         return ResponseEntity.ok().body(fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
@@ -75,7 +75,7 @@ public class SubscriptionController {
         if (stringBody.isPresent()) {
             sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody.get());
         } else if (topic.isPresent()) {
-            sub = subscriptionGenerator.generateRestHookSubscription(facility, ir.getIisFhirUrl(), topic.get());
+            sub = subscriptionGenerator.generateRestHookSubscription(facility, topic.get());
         } else {
             sub = null;
         }

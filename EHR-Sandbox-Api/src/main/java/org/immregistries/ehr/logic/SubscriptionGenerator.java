@@ -21,21 +21,21 @@ public class SubscriptionGenerator {
 
     /**
      * IN PROGRESS
+     * TODO generate specific object for a list of supported topics
      *
      * @param facility
-     * @param iis_uri
      * @param topicUrl
      * @return
      */
-    public Subscription generateRestHookSubscription(Facility facility, String iis_uri, String topicUrl) {
-        Subscription subscription = generateRestHookSubscription(facility, iis_uri);
+    public Subscription generateRestHookSubscription(Facility facility, String topicUrl) {
+        Subscription subscription = generateRestHookSubscription(facility);
         if (StringUtils.isNotBlank(topicUrl)) {
             subscription.setTopic(topicUrl);
         }
         return subscription;
     }
 
-    public Subscription generateRestHookSubscription(Facility facility, String iis_uri) {
+    public Subscription generateRestHookSubscription(Facility facility) {
         Subscription sub = new Subscription();
         sub.addIdentifier().setValue(facility.getId() + "").setSystem("EHR_Sandbox"); // Currently facilityIds are used as identifiers
         sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
@@ -47,7 +47,7 @@ public class SubscriptionGenerator {
 
 
         sub.setReason("testing purposes");
-        /**
+        /*
          * Giving a name for display with facility number and name
          */
         sub.setName("EHR n" + facility.getId() + " " + facility.getNameDisplay());
