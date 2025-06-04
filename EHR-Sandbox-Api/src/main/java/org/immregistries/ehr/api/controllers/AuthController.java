@@ -118,7 +118,7 @@ public class AuthController {
                 immunizationRegistry.setIisPassword(newUser.getUsername());
                 immunizationRegistry.setIisHl7Url(defaultIisUrl + "/soap");
                 immunizationRegistry.setIisFhirUrl(defaultIisUrl + "/fhir");
-                immunizationRegistry.setIisFhirMessagingUrl(defaultIisUrl + "/fhirMessaging");
+                immunizationRegistry.setIisFhirMessagingUrl(defaultIisUrl + "/fhirMessaging/soap");
                 immunizationRegistry.setUser(newUser);
                 immunizationRegistry.setDescription("Automatically generated, url defined by EHR sandbox global configuration");
                 immunizationRegistryRepository.save(immunizationRegistry);
@@ -144,7 +144,7 @@ public class AuthController {
                     immunizationRegistry.setIisPassword(newUser.getUsername());
                     immunizationRegistry.setIisHl7Url("http://localhost:8080/iis/soap");
                     immunizationRegistry.setIisFhirUrl("http://localhost:8080/iis/fhir");
-                    immunizationRegistry.setIisFhirMessagingUrl("http://localhost:8080/iis/fhirMessaging");
+                    immunizationRegistry.setIisFhirMessagingUrl("http://localhost:8080/iis/fhirMessaging/soap");
                     immunizationRegistry.setUser(newUser);
                     immunizationRegistry.setDescription("Automatically generated credentials in case an instance of IIS Sandbox is accessible on localhost:8080");
                     immunizationRegistryRepository.save(immunizationRegistry);

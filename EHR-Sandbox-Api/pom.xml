@@ -35,6 +35,12 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>gov.cdc.izgw</groupId>
+            <artifactId>v2tofhir</artifactId>
+            <version>1.0.0-v2tofhir-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
             <groupId>org.mitre.synthea</groupId>
             <artifactId>Synthea</artifactId>
             <version>3.2.2-SNAPSHOT-CDS-2</version>

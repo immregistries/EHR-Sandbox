@@ -11,6 +11,8 @@ import org.immregistries.ehr.api.ProcessingFlavor;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.entities.embedabbles.*;
 import org.immregistries.ehr.logic.mapping.interfaces.IOrganizationMapper;
+import org.immregistries.smm.tester.manager.query.QueryConverter;
+import org.immregistries.smm.tester.manager.query.QueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,16 @@ public class HL7printer {
             return "";
         } else {
             return simpleDateFormat.format(date);
+        }
+
+    }
+
+    public String buildQbp(Facility facility, EhrPatient patient) {
+        QueryConverter queryConverter;
+        if (ProcessingFlavor.Z44.isActive()) {
+            queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z44);
+        } else {
+            queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
         }
 
     }
