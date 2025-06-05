@@ -4,6 +4,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { FhirResourceService } from '../../../core/_services/_fhir/fhir-resource.service';
 import { Observable } from 'rxjs';
 import { Hl7Service } from '../../../core/_services/_fhir/hl7.service';
+import { FhirV2Service } from 'src/app/core/_services/_fhir/fhir-v2.service';
 
 @Component({
   selector: 'app-fhir-messaging',
@@ -37,12 +38,8 @@ export class FhirMessagingComponent implements AfterViewInit {
   public patientFhirId = "";
 
   public show_hl7_tab: boolean = false
-  public hl7Message: string = ""
-  public hl7FhirTransaction: string = ""
-  public loading: boolean = false
 
   constructor(private fhirResourceService: FhirResourceService,
-    private hl7Service: Hl7Service,
     @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {
       patientId: number,
@@ -98,36 +95,9 @@ export class FhirMessagingComponent implements AfterViewInit {
         }
       }
     }
-    /**
-         * Special cases with extra tab for hl7
-         */
-    this.getHl7Message()
   }
 
-  getHl7Message() {
-    if (this.show_hl7_tab) {
-      this.loading = true
-      if (this.vaccinationId > 0) {
-        this.hl7Service.getVXU(this.patientId, this.vaccinationId).subscribe((res) => {
-          this.hl7Message = res
-          this.loading = false
-        })
-        this.fhirResourceService.getVaccinationExportBundle(this.patientId, this.vaccinationId).subscribe((resource) => {
-          this.hl7FhirTransaction = resource
-        })
-      } else if (this.patientId > 0) {
-        this.hl7Service.getQBP(this.patientId).subscribe((res) => {
-          this.hl7Message = res
-          this.loading = false
-        })
-        this.fhirResourceService.getPatientExportBundle(this.patientId).subscribe((resource) => {
-          this.hl7FhirTransaction = resource
-        })
-      } else {
-        this.loading = false
-      }
-    }
-  }
+
 
   ngAfterViewInit(): void {
     this.tabGroup.selectedIndex = 1;

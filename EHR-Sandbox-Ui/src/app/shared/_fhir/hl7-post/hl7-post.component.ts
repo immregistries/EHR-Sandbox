@@ -22,6 +22,11 @@ export class Hl7PostComponent {
   @Input() loading: boolean = false
   @Input() hl7Message: string = "";
 
+  /**
+   * TODO change this temp solution
+   */
+  @Input() displayStyle: string = "display: flex; width: 100%;";
+
   resultLoading: boolean = false
 
   public answer: string = "";

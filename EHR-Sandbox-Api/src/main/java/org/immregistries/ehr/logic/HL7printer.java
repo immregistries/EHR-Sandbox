@@ -57,7 +57,8 @@ public class HL7printer {
         } else {
             queryConverter = QueryConverter.getQueryConverter(QueryType.QBP_Z34);
         }
-
+        String vxu = buildVxu(facility, patient, null);
+        return queryConverter.convert(vxu);
     }
 
     public String buildVxu(Facility facility, EhrPatient patient, Set<VaccinationEvent> vaccinationEvents) {

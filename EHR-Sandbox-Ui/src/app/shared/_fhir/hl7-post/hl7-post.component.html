@@ -1,5 +1,5 @@
-<span style="display: flex; width: 100%">
-  <form [style]="'width: 50%'" (submit)="send()">
+<span [style]="displayStyle">
+  <form [style]="'width: 100%'" (submit)="send()">
     <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
 
     <div class="textarea-container">
@@ -30,7 +30,7 @@
     </div>
   </form>
 
-  <span [style]="{width: '50%'}">
+  <span [style]="{width: '100%'}">
     <app-ack-display [loading]="resultLoading" [acknowledgementObject]="resultObject"
                      [isError]="error"></app-ack-display>
     <!-- <app-ack-table></app-ack-table> -->
