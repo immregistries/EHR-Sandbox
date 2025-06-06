@@ -64,7 +64,7 @@ public class FhirMessagingController {
         MessageParser messageParser = new MessageParser();
         try {
             Bundle bundle = messageParser.convert(qbp);
-            return ResponseEntity.ok(fhirContextR4.newJsonParser().encodeResourceToString(bundle));
+            return ResponseEntity.ok(fhirContextR4.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
         } catch (HL7Exception e) {
             throw new RuntimeException(e);
         }
@@ -79,7 +79,7 @@ public class FhirMessagingController {
         MessageParser messageParser = new MessageParser();
         try {
             Bundle bundle = messageParser.convert(vxu);
-            return ResponseEntity.ok(fhirContextR4.newJsonParser().encodeResourceToString(bundle));
+            return ResponseEntity.ok(fhirContextR4.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
         } catch (HL7Exception e) {
             throw new RuntimeException(e);
         }
@@ -98,7 +98,7 @@ public class FhirMessagingController {
         MessageParser messageParser = new MessageParser();
         try {
             Bundle bundle = messageParser.convert(vxu);
-            return ResponseEntity.ok(fhirContextR4.newJsonParser().encodeResourceToString(bundle));
+            return ResponseEntity.ok(fhirContextR4.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
         } catch (HL7Exception e) {
             throw new RuntimeException(e);
         }
