@@ -6,13 +6,13 @@
                   [displayStyle]="'display: flex; width: 100%; flex-direction: column'"></app-hl7-post>
   </div>
   <div style="width: 33%;">
-    <h2>V2 to FHIR project, FHIR Messaging bundle</h2>
+    <h2>FHIR Messaging bundle, using V2 to FHIR project</h2>
     <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="fhirV2Message"
                   [loading]="fhirV2MessageLoading"
                   [displayStyle]="'display: flex; width: 100%; flex-direction: column'"></app-hl7-post>
   </div>
   <div style="width: 33%;">
-    <h2>Prototype for content equivalent FHIR Transaction</h2>
+    <h2>FHIR Transaction, prototype aiming at carrying equivalent content</h2>
     <app-fhir-post [operation]="'$transaction'" [resource]="transaction" [resourceType]="''"
                    [resourceLoading]="transactionLoading"></app-fhir-post>
   </div>
