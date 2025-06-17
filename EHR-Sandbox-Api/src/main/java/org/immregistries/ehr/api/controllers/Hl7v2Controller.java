@@ -132,9 +132,9 @@ public class Hl7v2Controller {
         }
     }
 
-    public static Connector getConnector(ImmunizationRegistry immunizationRegistry) throws Exception {
+    public static Connector getConnector(ImmunizationRegistry immunizationRegistry, String url) throws Exception {
         Connector connector;
-        connector = new SoapConnector("Test", immunizationRegistry.getIisHl7Url());
+        connector = new SoapConnector("Test", url);
         if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
             connector.setUserid(immunizationRegistry.getIisUsername());
             connector.setPassword(immunizationRegistry.getIisPassword());
@@ -145,6 +145,10 @@ public class Hl7v2Controller {
 //                connector.setKeyStore(new KeyStore());
 //            }
         return connector;
+    }
+
+    public static Connector getConnector(ImmunizationRegistry immunizationRegistry) throws Exception {
+        return getConnector(immunizationRegistry, immunizationRegistry.getIisHl7Url());
     }
 
     public AcknowledgmentObject processAck(Integer registryId, Integer facilityId, Integer patientId, Optional<Integer> vaccinationId, String message, String ack) {

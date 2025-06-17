@@ -7,6 +7,7 @@ import { TenantService } from '../tenant.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { AcknowledgementObject } from '../../_model/form-structure';
 import { Feedback } from '../../_model/rest';
+import { IMessagingService } from './i.messaging.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,7 +19,7 @@ const httpOptions = {
 /**
  * Service allowing the use of the HL7 and Vxu related functionnalities of the API
  */
-export class Hl7Service {
+export class Hl7Service implements IMessagingService {
 
   constructor(private http: HttpClient,
     private settings: SettingsService,

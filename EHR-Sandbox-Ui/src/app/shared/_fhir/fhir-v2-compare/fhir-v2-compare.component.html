@@ -8,7 +8,7 @@
   <div style="width: 33%;">
     <h2>FHIR Messaging bundle, using V2 to FHIR project</h2>
     <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="fhirV2Message"
-                  [loading]="fhirV2MessageLoading"
+                  [fhirV2Mode]="true" [loading]="fhirV2MessageLoading"
                   [displayStyle]="'display: flex; width: 100%; flex-direction: column'"></app-hl7-post>
   </div>
   <div style="width: 33%;">

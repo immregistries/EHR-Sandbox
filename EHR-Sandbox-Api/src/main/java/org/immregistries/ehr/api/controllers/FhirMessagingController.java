@@ -112,7 +112,7 @@ public class FhirMessagingController {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
-            connector = Hl7v2Controller.getConnector(immunizationRegistry);
+            connector = Hl7v2Controller.getConnector(immunizationRegistry, immunizationRegistry.getIisFhirMessagingUrl());
             connector.setUrl(immunizationRegistry.getIisFhirMessagingUrl());
             String rsp = connector.submitMessage(message, false);
 //            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, Optional.empty(), message, rsp);
@@ -146,14 +146,14 @@ public class FhirMessagingController {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         Connector connector;
         try {
-            connector = Hl7v2Controller.getConnector(immunizationRegistry);
-            connector.setUrl(immunizationRegistry.getIisFhirMessagingUrl());
-            String ack = connector.submitMessage(message, false);
+            connector = Hl7v2Controller.getConnector(immunizationRegistry, immunizationRegistry.getIisFhirMessagingUrl());
+            String result = connector.submitMessage(message, false);
+            AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
+            acknowledgmentObject.setRawSource(message);
+            acknowledgmentObject.setRawResult(result);
 //            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, vaccinationId, message, ack);
-//            if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {
-//
-//            }
-            return ResponseEntity.ok(ack);
+//            if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {}
+            return ResponseEntity.ok(acknowledgmentObject);
         } catch (Exception e1) {
             logger.error("ERROR {}", "SOAP Client", e1);
             return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());
