@@ -82,10 +82,15 @@
 
       <span class="matbar-spacer"></span>
       <app-refresh-notification></app-refresh-notification>
-      <a mat-icon-button style="float: right;" (click)="logout()">
-        <mat-icon>login</mat-icon>
-      </a>
 
+      <a (click)="openUser()" mat-icon-button *ngIf="tokenService.getUser().username">
+        <mat-icon>person</mat-icon>
+      </a>
+      <small><b *ngIf="tokenService.getUser().username">{{tokenService.getUser().username}}</b></small>
+
+      <a mat-icon-button (click)="logout()">
+        <mat-icon>{{tokenService.getUser().username ? 'logout' : 'login'}}</mat-icon>
+      </a>
     </mat-toolbar>
     <div class="outlet">
       <router-outlet #outlet></router-outlet>

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NextOfKin } from 'src/app/core/_model/rest';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
-import FormType, { BaseForm, GenericForm } from 'src/app/core/_model/form-structure';
+import FormType, { BaseForm, ComparisonResult, GenericForm } from 'src/app/core/_model/form-structure';
 import { EhrFormArray } from 'src/app/core/_model/form-test';
 
 @Component({
@@ -10,6 +10,8 @@ import { EhrFormArray } from 'src/app/core/_model/form-test';
   styleUrls: ['./next-of-kin-form.component.css']
 })
 export class NextOfKinFormComponent extends AbstractBaseFormComponent {
+  @Input()
+  compareTo?: ComparisonResult;
   @Input()
   baseForm!: BaseForm;
   @Input()

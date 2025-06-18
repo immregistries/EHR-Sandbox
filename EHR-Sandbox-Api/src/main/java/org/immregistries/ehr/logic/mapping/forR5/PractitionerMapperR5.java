@@ -9,10 +9,13 @@ import org.immregistries.ehr.api.entities.embedabbles.EhrAddress;
 import org.immregistries.ehr.api.entities.embedabbles.EhrPhoneNumber;
 import org.immregistries.ehr.logic.mapping.MappingHelperR5;
 import org.immregistries.ehr.logic.mapping.interfaces.IPractitionerMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PractitionerMapperR5 implements IPractitionerMapper<Practitioner> {
+    @Autowired
+    private MappingHelperR5 mappingHelperR5;
 
     public Clinician toClinician(Practitioner practitioner) {
         Clinician clinician = new Clinician();
@@ -27,12 +30,12 @@ public class PractitionerMapperR5 implements IPractitionerMapper<Practitioner> {
         for (ContactPoint telecom : practitioner.getTelecom()) {
             if (null != telecom.getSystem()) {
                 if (telecom.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)) {
-                    clinician.addPhoneNumber(MappingHelperR5.toEhrPhoneNumber(telecom));
+                    clinician.addPhoneNumber(mappingHelperR5.toEhrPhoneNumber(telecom));
                 }
             }
         }
         for (Address address : practitioner.getAddress()) {
-            clinician.addAddress(MappingHelperR5.toEhrAddress(address));
+            clinician.addAddress(mappingHelperR5.toEhrAddress(address));
         }
         return clinician;
     }
@@ -45,11 +48,11 @@ public class PractitionerMapperR5 implements IPractitionerMapper<Practitioner> {
                 .setFamily(clinician.getNameLast());
         for (EhrAddress ehrAddress : clinician.getAddresses()
         ) {
-            practitioner.addAddress(MappingHelperR5.toFhirAddress(ehrAddress));
+            practitioner.addAddress(mappingHelperR5.toFhirAddress(ehrAddress));
         }
 
         for (EhrPhoneNumber phoneNumber : clinician.getPhones()) {
-            practitioner.addTelecom(MappingHelperR5.toFhirContact(phoneNumber));
+            practitioner.addTelecom(mappingHelperR5.toFhirContact(phoneNumber));
         }
 
         return practitioner;

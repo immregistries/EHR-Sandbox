@@ -99,8 +99,9 @@
 
 
       <tr mat-header-row *matHeaderRowDef="columns;"></tr>
-      <tr [ngClass]="element.severity | ackStatus" mat-row *matRowDef="let element; columns: columns;"
-          class="element-row" [class.expanded-row]="selectedElement === element" (click)="onSelection(element)">
+      <tr [ngClass]="element.severity | ackStatus" mat-row
+          *matRowDef="let element; columns: columns; let i  = dataIndex" class="element-row"
+          [class.expanded-row]="selectedElement === element" (click)="onSelection(element, i)">
       </tr>
       <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
     </table>

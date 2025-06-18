@@ -1,6 +1,6 @@
 <div class="sticky-header">
   <div class="sticky-header-prefix">
-    <span class="custom-title">Members</span>
+    <span class="custom-title">{{title}}</span>
     <!-- <button mat-icon-button style="margin-top: -7px; margin-bottom: -6px;" (click)="openCreation()" color="primary" [disabled]="!(facility && facility.id > 0)" matTooltip="New Patient">
       <mat-icon>add</mat-icon>
     </button> -->
@@ -9,24 +9,28 @@
 </div>
 <!-- <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar> -->
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
-  <ng-container matColumnDef="nameFirst">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> First name</th>
-    <td mat-cell *matCellDef="let element">{{element.names[0].nameFirst}}</td>
+  <ng-container matColumnDef="names">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <td mat-cell *matCellDef="let element">{{element | patientResume: ["name"]:dataSource.data}}</td>
   </ng-container>
   <ng-container matColumnDef="mrn">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Identifier</th>
-    <td mat-cell *matCellDef="let element">{{extractMrn(element)}}</td>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Identifier</th>
+    <td mat-cell *matCellDef="let element">{{element | patientResume: ["mrn"]:dataSource.data}}</td>
+  </ng-container>
+  <ng-container matColumnDef="nameFirst">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+    <td mat-cell *matCellDef="let element">{{element.names[0].nameFirst}}</td>
   </ng-container>
   <ng-container matColumnDef="nameMiddle">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Middle name</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Middle name</th>
     <td mat-cell *matCellDef="let element">{{element.names[0].nameMiddle}}</td>
   </ng-container>
   <ng-container matColumnDef="nameLast">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Last name</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
     <td mat-cell *matCellDef="let element">{{element.names[0].nameLast}}</td>
   </ng-container>
   <ng-container matColumnDef="birthDate">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Birth date</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Birth date</th>
     <td mat-cell *matCellDef="let element">{{element.birthDate | date: 'shortDate'}}</td>
   </ng-container>
   <ng-container matColumnDef="details">
@@ -50,16 +54,39 @@
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element; let i = dataIndex" [attr.colspan]="columns.length">
-      <div class="element-detail" [@detailExpand]="selectedElementIndex == i? 'expanded' : 'collapsed'">
-        <pre>{{element | json}}</pre>
-
+      <div class="element-detail"
+           [@detailExpand]="selectedElementIndex == i && selectedElementIndex != undefined ? 'expanded' : 'collapsed'">
+        <div>
+          <button mat-stroked-button color="primary" (click)="openMerge(element,i)"
+                  [disabled]="localSelectedIndex == undefined || isMatch(i)">
+            <mat-icon>merge</mat-icon>
+            Merge
+          </button>
+        </div>
+        <div>
+          <button mat-stroked-button color="primary" (click)="openMerge(element,i)"
+                  [disabled]="localSelectedIndex != undefined">
+            <mat-icon>file_save</mat-icon>
+            Import
+          </button>
+        </div>
+        <app-json-dialog-button [disabled]="localSelectedIndex == undefined || isMatch(i)"
+                                [content]="comparisonWithSelected(i)" [label]="'Difference'"></app-json-dialog-button>
+        <app-json-dialog-button [content]="element" [label]="'JSON Object'"></app-json-dialog-button>
+        <p *ngIf="localSelectedIndex != undefined && isMatch(i)">Matches with currently selected local record</p>
       </div>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let element; columns: columns;let i = dataIndex" class="element-row" (click)="onSelection(i)">
+  <tr mat-row *matRowDef="let element; columns: columns; let i = dataIndex" class="element-row"
+      (click)="onSelection(i)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
 </table>
-<app-empty-list-message></app-empty-list-message>
+<span>
+  <span class="legend-is-new">Record with no Match</span>
+  <span class="legend-match">Match with selected record</span>
+  <!-- <span class="legend-potential-match">Potential Match </span> -->
+  <!-- <span class="legend-no-match">Not match </span> -->
+</span>

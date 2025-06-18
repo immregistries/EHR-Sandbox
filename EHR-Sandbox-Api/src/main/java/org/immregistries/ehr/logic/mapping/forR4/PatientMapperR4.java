@@ -62,7 +62,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
         p.setBirthDate(ehrPatient.getBirthDate());
         for (EhrHumanName name : ehrPatient.getNames()) {
-            p.addName(MappingHelperR4.toFhirName(name));
+            p.addName(mappingHelperR4.toFhirName(name));
         }
 
 
@@ -70,7 +70,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
                 .setUrl(MOTHER_MAIDEN_NAME_EXTENSION)
                 .setValue(new StringType(ehrPatient.getMotherMaiden()));
 
-        p.setGender(MappingHelperR4.toFhirGender(ehrPatient.getSex()));
+        p.setGender(mappingHelperR4.toFhirGender(ehrPatient.getSex()));
 
         //Race and ethnicity
         if (!ehrPatient.getRaces().isEmpty()) {
@@ -109,7 +109,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
         // telecom
         for (EhrPhoneNumber phoneNumber : ehrPatient.getPhones()) {
-            p.addTelecom(MappingHelperR4.toFhirContact(phoneNumber));
+            p.addTelecom(mappingHelperR4.toFhirContact(phoneNumber));
         }
         if (StringUtils.isNotBlank(ehrPatient.getEmail())) {
             p.addTelecom().setSystem(ContactPoint.ContactPointSystem.EMAIL)
@@ -126,7 +126,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
 
         for (EhrAddress ehrAddress : ehrPatient.getAddresses()) {
-            p.addAddress(MappingHelperR4.toFhirAddress(ehrAddress));
+            p.addAddress(mappingHelperR4.toFhirAddress(ehrAddress));
         }
 
         if (ehrPatient.getBirthOrder() != null && !ehrPatient.getBirthOrder().isBlank()) {
@@ -190,7 +190,12 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         ehrPatient.setBirthDate(p.getBirthDate());
         // Name
         for (HumanName humanName : p.getName()) {
-            ehrPatient.addName(MappingHelperR4.toEhrName(humanName));
+            ehrPatient.addName(mappingHelperR4.toEhrName(humanName));
+        }
+
+        for (Identifier identifier : p.getIdentifier()) {
+            EhrIdentifier ehrIdentifier = new EhrIdentifier(identifier);
+            ehrPatient.getIdentifiers().add(ehrIdentifier);
         }
 
 
@@ -198,15 +203,15 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         if (motherMaiden != null) {
             ehrPatient.setMotherMaiden(motherMaiden.getValue().toString());
         }
-        ehrPatient.setSex(MappingHelperR4.toEhrSex(p.getGender()));
+        ehrPatient.setSex(mappingHelperR4.toEhrSex(p.getGender()));
 
         Extension races = p.getExtensionByUrl(RACE_EXTENSION);
         if (races != null) {
             for (Extension ext : races.getExtensionsByUrl(RACE_EXTENSION_OMB)) {
-                ehrPatient.addRace(new EhrRace(MappingHelperR4.extensionGetCoding(ext).getCode()));
+                ehrPatient.addRace(new EhrRace(mappingHelperR4.extensionGetCoding(ext).getCode()));
             }
             for (Extension ext : races.getExtensionsByUrl(RACE_EXTENSION_DETAILED)) {
-                ehrPatient.addRace(new EhrRace(MappingHelperR4.extensionGetCoding(ext).getCode()));
+                ehrPatient.addRace(new EhrRace(mappingHelperR4.extensionGetCoding(ext).getCode()));
             }
         }
         Extension ethnicityExtension = p.getExtensionByUrl(ETHNICITY_EXTENSION);
@@ -217,10 +222,10 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
              * By default takes Omb value
              */
             if (ethnicityOmb != null) {
-                Coding ethnicity = MappingHelperR4.extensionGetCoding(ethnicityOmb);
+                Coding ethnicity = mappingHelperR4.extensionGetCoding(ethnicityOmb);
                 ehrPatient.setEthnicity(ethnicity.getCode());
             } else if (ethnicityDetailed != null) {
-                Coding ethnicity = MappingHelperR4.extensionGetCoding(ethnicityDetailed);
+                Coding ethnicity = mappingHelperR4.extensionGetCoding(ethnicityDetailed);
                 ehrPatient.setEthnicity(ethnicity.getCode());
             }
         }
@@ -228,7 +233,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         for (ContactPoint telecom : p.getTelecom()) {
             if (null != telecom.getSystem()) {
                 if (telecom.getSystem().equals(ContactPoint.ContactPointSystem.PHONE)) {
-                    ehrPatient.addPhoneNumber(MappingHelperR4.toEhrPhoneNumber(telecom));
+                    ehrPatient.addPhoneNumber(mappingHelperR4.toEhrPhoneNumber(telecom));
                 } else if (telecom.getSystem().equals(ContactPoint.ContactPointSystem.EMAIL)) {
                     ehrPatient.setEmail(telecom.getValue());
                 }
@@ -249,7 +254,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
         // Address
         for (Address address : p.getAddress()) {
-            ehrPatient.addAddress(MappingHelperR4.toEhrAddress(address));
+            ehrPatient.addAddress(mappingHelperR4.toEhrAddress(address));
         }
 
         if (null != p.getMultipleBirth()) {
@@ -266,7 +271,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
 
         Extension publicity = p.getExtensionByUrl(PUBLICITY_EXTENSION);
         if (publicity != null) {
-            Coding value = MappingHelperR4.extensionGetCoding(publicity);
+            Coding value = mappingHelperR4.extensionGetCoding(publicity);
             ehrPatient.setPublicityIndicator(value.getCode());
             if (value.getVersion() != null && !value.getVersion().isBlank()) {
                 try {
@@ -278,7 +283,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
         Extension protection = p.getExtensionByUrl(PROTECTION_EXTENSION);
         if (protection != null) {
-            Coding value = MappingHelperR4.extensionGetCoding(protection);
+            Coding value = mappingHelperR4.extensionGetCoding(protection);
             ehrPatient.setProtectionIndicator(value.getCode());
             if (value.getVersion() != null && !value.getVersion().isBlank()) {
                 try {
@@ -290,7 +295,7 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         }
         Extension registry = p.getExtensionByUrl(REGISTRY_STATUS_EXTENSION);
         if (registry != null) {
-            Coding value = MappingHelperR4.extensionGetCoding(registry);
+            Coding value = mappingHelperR4.extensionGetCoding(registry);
             ehrPatient.setRegistryStatusIndicator(value.getCode());
             if (value.getVersion() != null && !value.getVersion().isBlank()) {
                 try {
@@ -322,13 +327,13 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
         contactName.addGivenElement().setValue(nextOfKin.getNameMiddle());
         contactName.addSuffix(nextOfKin.getNameSuffix());
         if (StringUtils.isNotBlank(nextOfKin.getSex())) {
-            contact.setGender(MappingHelperR4.toFhirGender(nextOfKin.getSex()));
+            contact.setGender(mappingHelperR4.toFhirGender(nextOfKin.getSex()));
         }
         for (EhrAddress ehrAddress : nextOfKin.getAddresses()) {
-            contact.setAddress(MappingHelperR4.toFhirAddress(ehrAddress)); //TODO extension for multiple NK1 addresses
+            contact.setAddress(mappingHelperR4.toFhirAddress(ehrAddress)); //TODO extension for multiple NK1 addresses
         }
         for (EhrPhoneNumber phoneNumber : nextOfKin.getPhoneNumbers()) {
-            contact.addTelecom(MappingHelperR4.toFhirContact(phoneNumber));
+            contact.addTelecom(mappingHelperR4.toFhirContact(phoneNumber));
         }
         if (StringUtils.isNotBlank(nextOfKin.getEmail())) {
             contact.addTelecom().setSystem(ContactPoint.ContactPointSystem.EMAIL)
@@ -352,12 +357,12 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
             nextOfKin.setNameMiddle(contactName.getGiven().get(1).getValueNotNull());
         }
         nextOfKin.setNameSuffix(contactName.getSuffixAsSingleString());
-        nextOfKin.setSex(MappingHelperR4.toEhrSex(contact.getGender()));
-        nextOfKin.addAddress(MappingHelperR4.toEhrAddress(contact.getAddress()));
+        nextOfKin.setSex(mappingHelperR4.toEhrSex(contact.getGender()));
+        nextOfKin.addAddress(mappingHelperR4.toEhrAddress(contact.getAddress()));
         for (ContactPoint telecom : contact.getTelecom()) {
             switch (telecom.getSystem()) {
                 case PHONE: {
-                    nextOfKin.addPhoneNumber(MappingHelperR4.toEhrPhoneNumber(telecom));
+                    nextOfKin.addPhoneNumber(mappingHelperR4.toEhrPhoneNumber(telecom));
                     break;
                 }
                 case EMAIL: {

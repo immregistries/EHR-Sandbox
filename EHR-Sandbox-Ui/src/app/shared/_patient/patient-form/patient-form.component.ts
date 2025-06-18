@@ -5,13 +5,13 @@ import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/core/_services/facility.service';
-import FormType, { FormCardGeneric, GenericForm } from 'src/app/core/_model/form-structure';
+import FormType, { ComparisonResult, FormCardGeneric, GenericForm } from 'src/app/core/_model/form-structure';
+import { PatientComparePipe } from '../../_pipes/patient-compare.pipe';
 
 @Component({
   selector: 'app-patient-form',
   templateUrl: './patient-form.component.html',
   styleUrls: ['./patient-form.component.css'],
-
 })
 export class PatientFormComponent {
   private _patientId: number = -1;
@@ -29,16 +29,26 @@ export class PatientFormComponent {
   isEditionMode: boolean = false;
   populate = false
 
+  public compareTo: ComparisonResult | any | null = null
+
+
   constructor(private patientService: PatientService,
     private facilityService: FacilityService,
     private snackBarService: SnackBarService,
+    patientComparePipe: PatientComparePipe,
     @Optional() public _dialogRef?: MatDialogRef<PatientFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient, issues?: Feedback[] }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { patient: EhrPatient, issues?: Feedback[], comparedPatient?: EhrPatient, comparison?: ComparisonResult }) {
     if (data && data.patient) {
       this.patient = data.patient;
       this._patientId = data.patient.id ?? -1
       this.isEditionMode = true
       this.issues = data.issues
+      if (data.comparison) {
+        this.compareTo = data.comparison
+        console.info(this.compareTo)
+      } else if (data.comparedPatient) {
+        this.compareTo = patientComparePipe.transform(this.patient, data.comparedPatient)
+      }
     }
   }
 

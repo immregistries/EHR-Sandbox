@@ -51,6 +51,7 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
   @Input()
   selectedElement: T | undefined;
   @Output() selectEmitter: EventEmitter<T | undefined> = new EventEmitter<T | undefined>();
+  @Output() selectIndexEmitter: EventEmitter<number | undefined> = new EventEmitter<number | undefined>();
 
 
   /**
@@ -128,6 +129,11 @@ export class AbstractDataTableComponent<T> implements AfterViewInit {
       this.selectedElement = event
     }
     this.selectEmitter.emit(this.selectedElement);
+    if (this.selectedElement) {
+      this.selectIndexEmitter.emit(this.dataSource.data.findIndex((v) => v === this.selectedElement))
+    } else {
+      this.selectIndexEmitter.emit(undefined)
+    }
   }
 
 

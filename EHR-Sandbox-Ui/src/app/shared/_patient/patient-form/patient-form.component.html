@@ -2,7 +2,7 @@
   <mat-dialog-content class="form-dialog-content">
     <mat-tab-group>
       <mat-tab label="Patient Form">
-        <div class="grid-container">
+        <div class="grid-container special-icon-badge">
           <div *ngFor="let card of PATIENT_FORM_CARDS">
             <mat-card class="form-card">
               <mat-card-header *ngIf="card.title">
@@ -12,12 +12,9 @@
               </mat-card-header>
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
-                  <app-card-form
-                    class="card-form high-density"
-                    [baseForm]="form"
-                    [model]="patient[form.attributeName]"
-                    (modelChange)="change(form, $event)"
-                  ></app-card-form>
+                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
+                                 (modelChange)="change(form, $event)"
+                                 [compareTo]="compareTo? compareTo[form.attributeName] : undefined"></app-card-form>
                 </ng-container>
               </mat-card-content>
               <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
@@ -28,7 +25,7 @@
         </div>
       </mat-tab>
       <mat-tab label="Form with Requirements lifted">
-        <div class="grid-container">
+        <div class="grid-container special-icon-badge">
           <div *ngFor="let card of PATIENT_FORM_CARDS">
             <mat-card class="form-card">
               <mat-card-header *ngIf="card.title">
@@ -38,13 +35,8 @@
               </mat-card-header>
               <mat-card-content class="form-card-content">
                 <ng-container *ngFor="let form of card.forms">
-                  <app-card-form
-                    class="card-form high-density"
-                    [baseForm]="form"
-                    [model]="patient[form.attributeName]"
-                    (modelChange)="change(form, $event)"
-                    [overrideNoFieldsRequired]="true"
-                  ></app-card-form>
+                  <app-card-form class="card-form high-density" [baseForm]="form" [model]="patient[form.attributeName]"
+                                 (modelChange)="change(form, $event)" [overrideNoFieldsRequired]="true"></app-card-form>
                 </ng-container>
               </mat-card-content>
               <mat-card-footer class="form-card-footer" *ngIf="card.toolTips">
@@ -63,29 +55,16 @@
           Native Json model form, useful to copy and paste patient to different
           users, ID fields changes are ignored
         </div>
-        <app-patient-json-form
-          [model]="patient | json"
-          (modelChange)="patient = $event"
-        ></app-patient-json-form>
+        <app-patient-json-form [model]="patient | json" (modelChange)="patient = $event"></app-patient-json-form>
       </mat-tab>
     </mat-tab-group>
   </mat-dialog-content>
 
   <div mat-dialog-actions align="end" class="form-action-bar">
-    <mat-checkbox
-      *ngIf="!isEditionMode"
-      [(ngModel)]="populate"
-      name="add_patients"
-      style="padding-right: 3px"
-      >Populate Vaccinations
+    <mat-checkbox *ngIf="!isEditionMode" [(ngModel)]="populate" name="add_patients" style="padding-right: 3px">Populate
+      Vaccinations
     </mat-checkbox>
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="fillRandom()"
-      *ngIf="!isEditionMode"
-      color="primary"
-    >
+    <button mat-stroked-button type="button" (click)="fillRandom()" *ngIf="!isEditionMode" color="primary">
       <mat-icon>casino</mat-icon>
       Random
     </button>

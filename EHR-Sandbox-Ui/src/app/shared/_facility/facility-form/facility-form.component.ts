@@ -122,7 +122,7 @@ export class FacilityFormComponent implements OnInit {
   readonly FORM_CARDS: FormCardGeneric<Facility>[] = [{
     title: 'Facility name and type',
     forms: [
-      { type: FormType.text, title: 'Name', attributeName: 'nameDisplay' },
+      { type: FormType.text, title: 'Name', attributeName: 'nameDisplay', required: true },
       { type: FormType.code, title: 'Type', attributeName: 'type', codeMapLabel: 'FACILITY_TYPE' },
     ]
   }, {

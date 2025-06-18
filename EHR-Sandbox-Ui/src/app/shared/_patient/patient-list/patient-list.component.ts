@@ -41,27 +41,24 @@ export class PatientListComponent implements OnInit {
     this.facilityService.getCurrentObservable().pipe(switchMap(facility => {
       this.facility = facility
       return this.getList(facility)
-    })).pipe(map(value => {
-      if (!this.data.groupNameToExclude) {
-        return value
-      }
-      return value.filter((patient) => !patient.groupNames?.includes(this.data.groupNameToExclude))
-    }))
-      .subscribe((res) => {
+    })).subscribe((res) => {
         this.list = res
       })
   }
 
   getList(facility: Facility | undefined): Observable<EhrPatient[]> {
+    let obs: Observable<EhrPatient[]>;
     if (!facility?.id || facility.id <= 0) {
-      this.tenantService.getCurrentObservable().subscribe(() => {
-        return this.patientService.readAllPatients(this.tenantService.getCurrentId())
-      })
-      return this.patientService.readAllPatients(this.tenantService.getCurrentId())
+      obs = this.patientService.readAllPatients(this.tenantService.getCurrentId())
     } else {
-      return this.patientService.readPatients(this.tenantService.getCurrentId(), facility.id ?? -1)
+      obs = this.patientService.readPatients(this.tenantService.getCurrentId(), facility.id ?? -1)
     }
-
+    return obs.pipe(map(value => {
+      if (!this.data.groupNameToExclude) {
+        return value
+      }
+      return value.filter((patient) => !patient.groupNames?.includes(this.data.groupNameToExclude))
+    }))
   }
 
   openPatient(patient: EhrPatient) {

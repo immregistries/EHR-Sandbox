@@ -1,6 +1,10 @@
 package org.immregistries.ehr.logic.mapping;
 
 
+import org.hl7.fhir.exceptions.FHIRException;
+import org.hl7.fhir.r5.model.Coding;
+import org.hl7.fhir.r5.model.Extension;
+
 import java.text.SimpleDateFormat;
 
 public class MappingHelper {
@@ -19,6 +23,31 @@ public class MappingHelper {
     public static final String PRACTITIONER = "Practitioner";
 
     public static final SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss yyyy");
+
+
+    public static final String PHONE_USE_V2_SYSTEM = "http://terminology.hl7.org/ValueSet/v2-0201";
+    public static final String USE_EXTENSION_URL = "use";
+
+
+    public static Coding extensionGetCoding(Extension extension) {
+        return extension.getValueCoding();
+    }
+
+    /**
+     * imitating org.hl7.fhir.r4.model.Extension.getValueCoding()
+     *
+     * @param extension R4 Extension
+     * @return Value coding or empty value
+     */
+    public static org.hl7.fhir.r4.model.Coding extensionGetCoding(org.hl7.fhir.r4.model.Extension extension) {
+        if (extension.getValue() == null) {
+            return new org.hl7.fhir.r4.model.Coding();
+        } else {
+            if (!(extension.getValue() instanceof org.hl7.fhir.r4.model.Coding))
+                throw new FHIRException("Type mismatch: the type Coding was expected, but " + extension.getValue().getClass().getName() + " was encountered");
+            return extension.castToCoding(extension.getValue());
+        }
+    }
 
 
 }

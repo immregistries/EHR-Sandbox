@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RandomGeneratorService extends FullRandomGenerator {
@@ -61,6 +62,13 @@ public class RandomGeneratorService extends FullRandomGenerator {
         Bundle bundle = FhirR4.convertToFHIR(person, new Date().getTime());
 //        logger.info("Synthea Gen {}", bundle.getEntry().size());
         EhrPatient ehrPatient = bundleImportServiceR4.convertToLocalPatients(bundle, facility).stream().findFirst().orElse(null);
+        // TODO change mapping ?
+        ehrPatient.setPhones(ehrPatient.getPhones().stream().map((phone) -> {
+            if ("home".equals(phone.getUse())) {
+                phone.setUse("PRN");
+            }
+            return phone;
+        }).collect(Collectors.toSet()));
         assert ehrPatient != null;
         if (ehrPatient.getIdentifiers().isEmpty()) {
             ehrPatient.getIdentifiers().add(fullRandomGenerator.randomEhrIdentifierMrn(facility));

@@ -134,6 +134,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { AckStatusPipe } from './_pipes/ack-status.pipe';
 import { VaccinationResumePipe } from './_pipes/vaccination-resume.pipe';
 import { FacilityCachePipe } from './_pipes/facility-cache.pipe';
+import { UserDialogComponent } from './_components/user-dialog/user-dialog.component';
 
 @NgModule({
   declarations: [
@@ -242,6 +243,7 @@ import { FacilityCachePipe } from './_pipes/facility-cache.pipe';
     NameListFormComponent,
     AckDisplayComponent,
     AckTableComponent,
+    UserDialogComponent,
   ],
   imports: [
     DatePipe,
@@ -395,6 +397,8 @@ import { FacilityCachePipe } from './_pipes/facility-cache.pipe';
     NameListFormComponent,
     AckDisplayComponent,
     AckTableComponent,
+
+    UserDialogComponent
 
   ]
 })

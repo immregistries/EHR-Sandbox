@@ -219,6 +219,7 @@ public class EhrPatientController {
         EhrPatient oldPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, newPatient.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
         newPatient.setFacility(oldPatient.getFacility());
+        newPatient.setEhrGroups(oldPatient.getEhrGroups()); // TODO better solution in config ?
         newPatient.setUpdatedDate(new Date());
         return ehrPatientRepository.save(newPatient);
     }
