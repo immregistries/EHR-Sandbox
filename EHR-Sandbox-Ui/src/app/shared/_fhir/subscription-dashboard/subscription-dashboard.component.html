@@ -7,9 +7,9 @@
   <mat-tab label="Manage Subscriptions">
     <div class="grid-container">
       <mat-grid-list cols="6" rowHeight="370px">
-
         <mat-grid-tile [colspan]="2">
-          <mat-card class="dashboard-card">
+          <app-subscription-form></app-subscription-form>
+          <!-- <mat-card class="dashboard-card">
             <mat-card-content class="dashboard-card-content">
               <mat-card-title>Actions</mat-card-title>
               <div>
@@ -21,7 +21,7 @@
                 <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
               </div>
             </mat-card-content>
-          </mat-card>
+          </mat-card> -->
         </mat-grid-tile>
         <mat-grid-tile [colspan]="4" [rowspan]="1">
           <mat-card class="dashboard-card">

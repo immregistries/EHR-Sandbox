@@ -2,9 +2,6 @@ package org.immregistries.ehr.api.controllers;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
-import org.hl7.fhir.r5.model.Coding;
 import org.hl7.fhir.r5.model.Enumerations;
 import org.hl7.fhir.r5.model.Subscription;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
@@ -17,16 +14,14 @@ import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.Client.IResourceClient;
 import org.immregistries.ehr.fhir.EhrFhirOutcome;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.logic.SubscriptionGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
@@ -52,9 +47,11 @@ public class SubscriptionController {
     @Autowired
     private EhrSubscriptionInfoRepository subscriptionInfoRepository;
     @Autowired
-    FhirComponentsDispatcher fhirComponentsDispatcher;
+    private FhirComponentsDispatcher fhirComponentsDispatcher;
     @Autowired
-    IResourceClient resourceClient;
+    private IResourceClient resourceClient;
+    @Autowired
+    private SubscriptionGenerator subscriptionGenerator;
 
     @GetMapping(FACILITY_ID_PATH + "/subscription")
     public Optional<EhrSubscription> ehrSubscription(@PathVariable(FACILITY_ID) Integer facilityId) {
@@ -62,22 +59,31 @@ public class SubscriptionController {
         return ehrSubscription;
     }
 
-    @GetMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription/sample")
-    public ResponseEntity<String> getSample(@PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(REGISTRY_ID) Integer registryId) {
-        Facility facility = facilityRepository.findById(facilityId).get();
+    @GetMapping(FACILITY_ID_PATH + "/subscription/sample")
+    public ResponseEntity<String> getSample(@PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(REGISTRY_ID) Integer registryId, @RequestParam("topic") Optional<String> topic) {
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
-        Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
+        Subscription sub = subscriptionGenerator.generateRestHookSubscription(facility, topic.orElse(null));
         return ResponseEntity.ok().body(fhirComponentsDispatcher.fhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(sub));
     }
 
     @PostMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription")
-    public Boolean subscribeToIISManualCreate(@RequestParam(REGISTRY_ID) Integer registryId, @RequestBody String stringBody) {
+    public EhrFhirOutcome subscribeToIIS(@PathVariable(FACILITY_ID) Integer facilityId, @RequestParam(REGISTRY_ID) Integer registryId, @RequestBody() Optional<String> stringBody, @RequestParam("topic") Optional<String> topic) {
+        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
         ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
-        Subscription sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody);
+        Subscription sub;
+        if (stringBody.isPresent()) {
+            sub = fhirComponentsDispatcher.fhirContext().newJsonParser().parseResource(Subscription.class, stringBody.get());
+        } else if (topic.isPresent()) {
+            sub = subscriptionGenerator.generateRestHookSubscription(facility, topic.get());
+        } else {
+            sub = null;
+        }
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
         MethodOutcome outcome = resourceClient.create(sub, client);
         processSubscriptionOutcome(ir, outcome);
-        return outcome.getCreated();
+        return EhrFhirOutcome.fromMethodOutcome(outcome, fhirComponentsDispatcher.parser("{}"));
+
     }
 
     @PutMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription")
@@ -90,28 +96,35 @@ public class SubscriptionController {
         return EhrFhirOutcome.fromMethodOutcome(outcome, fhirComponentsDispatcher.parser("{}"));
     }
 
-    @PostMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription/data-quality-issues")
-    public EhrFhirOutcome subscribeToIISFeedback(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam("groupId") Optional<String> groupId) {
-        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
-        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
-        Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
-        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
-        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", new EhrIdentifier(sub.getIdentifierFirstRep()), client);
-        processSubscriptionOutcome(ir, outcome);
-        return EhrFhirOutcome.fromMethodOutcome(outcome, fhirComponentsDispatcher.parser("{}"));
-    }
+//    @PostMapping(FACILITY_ID_PATH + FHIR_CLIENT + "/subscription")
+//    public EhrFhirOutcome subscribeToIISFeedback(@RequestParam(REGISTRY_ID) Integer registryId, @PathVariable(FACILITY_ID) Integer facilityId, @RequestParam("groupId") Optional<String> groupId, @RequestParam("topic") Optional<String> topic) {
+//        ImmunizationRegistry ir = immunizationRegistryService.getImmunizationRegistry(registryId);
+//        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new RuntimeException("No facility found"));
+//        Subscription sub = generateRestHookSubscription(facility, ir.getIisFhirUrl());
+//        IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(ir);
+//        MethodOutcome outcome = resourceClient.updateOrCreate(sub, "Subscription", new EhrIdentifier(sub.getIdentifierFirstRep()), client);
+//        processSubscriptionOutcome(ir, outcome);
+//        return EhrFhirOutcome.fromMethodOutcome(outcome, fhirComponentsDispatcher.parser("{}"));
+//    }
 
 
-    private EhrSubscription processSubscriptionOutcome(ImmunizationRegistry ir, MethodOutcome outcome) {
+    /**
+     * Saves subscription information to local database from the FHIR method outcome
+     *
+     * @param immunizationRegistry remote registry information
+     * @param outcome              FHIR methodOutcome
+     * @return Updated Subscription
+     */
+    private EhrSubscription processSubscriptionOutcome(ImmunizationRegistry immunizationRegistry, MethodOutcome outcome) {
         Subscription outcomeSub = (Subscription) outcome.getResource();
         if ((outcome.getCreated() != null && outcome.getCreated()) || (outcome.getResource() != null)) {
             outcomeSub.setStatus(Enumerations.SubscriptionStatusCodes.ACTIVE);
         }
         EhrSubscription ehrSubscription = new EhrSubscription(outcomeSub);
-        ehrSubscription.setImmunizationRegistry(ir);
+        ehrSubscription.setImmunizationRegistry(immunizationRegistry);
         EhrSubscriptionInfo subscriptionInfo = new EhrSubscriptionInfo(ehrSubscription);
 //        ehrSubscription.setSubscriptionInfo(subscriptionInfo);
-        ehrSubscriptionRepository.save(ehrSubscription);
+        return ehrSubscriptionRepository.save(ehrSubscription);
 //        switch(outcomeSub.getStatus()) {
 //            case ACTIVE: {
 //                // return positive message
@@ -129,77 +142,7 @@ public class SubscriptionController {
 //            case ENTEREDINERROR: {
 //            }
 //        }
-        return ehrSubscription;
-    }
-
-    public Subscription generateRestHookSubscription(Facility facility, String iis_uri) {
-        Subscription sub = new Subscription();
-        sub.addIdentifier().setValue(facility.getId() + "").setSystem("EHR_Sandbox"); // Currently facilityIds are used as identifiers
-        sub.setStatus(Enumerations.SubscriptionStatusCodes.REQUESTED);
-//        sub.setTopic(iis_uri + "/SubscriptionTopic/sandbox");
-//        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/Group");
-        // TODO set canonical definition and host somewhere on HIT DEV ?
-        sub.setTopic(iis_uri.split("/fhir")[0] + "/SubscriptionTopic/data-quality-issues");
-
-
-        sub.setReason("testing purposes");
-        /**
-         * Giving a name for display with facility number and name
-         */
-        sub.setName("EHR n" + facility.getId() + " " + facility.getNameDisplay());
-
-        sub.setHeartbeatPeriod(5);
-        sub.setTimeout(30);
-        sub.setEnd(new Date(System.currentTimeMillis() + 3 * 60 * 1000));
-        sub.setContent(Subscription.SubscriptionPayloadContent.FULLRESOURCE);
-        sub.setContentType("application/fhir+json");
-
-        sub.setChannelType(new Coding().setSystem("http://terminology.hl7.org/CodeSystem/subscription-channel-type").setCode(RESTHOOK));
-        sub.setEndpoint(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/fhir/R5/" + facility.getId());
-
-        /**
-         * Generating a key for identification
-         *
-         */
-        byte[] array = new byte[256];
-        new Random().nextBytes(array);
-        RandomStringGenerator randomStringGenerator =
-                new RandomStringGenerator.Builder()
-                        .withinRange('0', 'z')
-                        .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
-                        .build();
-        String generatedString = randomStringGenerator.generate(64);
-        sub.addParameter().setName(SECRET_HEADER_NAME).setValue(SECRET_PREFIX + generatedString);
-
-        /**
-         * Fetching the topic as it is currently defined in the IIS Sandbox
-         * TODO define canonical ?
-         */
-//        SubscriptionTopic topic;
-//        URL url;
-//        HttpURLConnection con;
-//        try {
-//            url = new URL(iis_uri.split("/fhir")[0] + "/SubscriptionTopic");
-//            con = (HttpURLConnection) url.openConnection();
-//            con.setRequestMethod("GET");
-//            con.setRequestProperty("Content-Type", "application/json");
-//            con.setConnectTimeout(5000);
-//            int status = con.getResponseCode();
-//            if (status == 200) {
-//                topic = fhirContext.newJsonParser().parseResource(SubscriptionTopic.class, con.getInputStream());
-//                sub.addContained(topic);
-//                sub.setTopicElement(new CanonicalType(url.toExternalForm()));
-//            } else {
-//                logger.info("ERROR getting Topic {}",status);
-//            }
-//            con.disconnect();
-//
-//        } catch (MalformedURLException | ProtocolException e) {
-//            throw new RuntimeException(e);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-        return sub;
+//        return ehrSubscription;
     }
 
 

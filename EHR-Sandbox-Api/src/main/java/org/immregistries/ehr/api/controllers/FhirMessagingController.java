@@ -1,6 +1,9 @@
 package org.immregistries.ehr.api.controllers;
 
-import org.apache.commons.lang3.StringUtils;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.hl7v2.HL7Exception;
+import gov.cdc.izgw.v2tofhir.converter.MessageParser;
+import org.hl7.fhir.r4.model.Bundle;
 import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.AcknowledgmentObjectRepository;
@@ -9,10 +12,10 @@ import org.immregistries.ehr.api.repositories.FeedbackRepository;
 import org.immregistries.ehr.api.repositories.VaccinationEventRepository;
 import org.immregistries.ehr.logic.HL7printer;
 import org.immregistries.smm.tester.connectors.Connector;
-import org.immregistries.smm.tester.connectors.SoapConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +27,19 @@ import java.util.Set;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
 
+/**
+ * Prototype for FHIR Messaging paradigm implementation by integrating v2ToFHIR dependency
+ */
 @RestController
 @RequestMapping()
-public class Hl7v2Controller {
+public class FhirMessagingController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private HL7printer hl7printer;
+    @Autowired
+    @Qualifier("fhirContextR4")
+    private FhirContext fhirContextR4;
 
     @Autowired
     private FeedbackController feedbackController;
@@ -46,26 +55,37 @@ public class Hl7v2Controller {
     private ImmunizationRegistryService immunizationRegistryService;
 
 
-    @GetMapping(PATIENT_ID_PATH + "/qbp")
+    @GetMapping(PATIENT_ID_PATH + "/qbp/fhir")
     public ResponseEntity<String> qbp(@PathVariable(PATIENT_ID) Integer patientId) {
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = ehrPatient.getFacility();
         String qbp = hl7printer.buildQbp(facility, ehrPatient);
-        return ResponseEntity.ok(qbp);
+        MessageParser messageParser = new MessageParser();
+        try {
+            Bundle bundle = messageParser.convert(qbp);
+            return ResponseEntity.ok(fhirContextR4.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
+        } catch (HL7Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @GetMapping(PATIENT_ID_PATH + "/vxu")
+    @GetMapping(PATIENT_ID_PATH + "/vxu/fhir")
     public ResponseEntity<String> vxuAll(@PathVariable(PATIENT_ID) Integer patientId) {
-
         EhrPatient ehrPatient = ehrPatientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No patient found"));
         Facility facility = ehrPatient.getFacility();
         String vxu = hl7printer.buildVxu(facility, ehrPatient, ehrPatient.getVaccinationEvents());
-        return ResponseEntity.ok(vxu);
+        MessageParser messageParser = new MessageParser();
+        try {
+            Bundle bundle = messageParser.convert(vxu);
+            return ResponseEntity.ok(fhirContextR4.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
+        } catch (HL7Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @GetMapping(VACCINATION_ID_PATH + "/vxu")
+    @GetMapping(VACCINATION_ID_PATH + "/vxu/fhir")
     public ResponseEntity<String> vxuSingle(@PathVariable(VACCINATION_ID) Integer vaccinationId) {
         GsonJsonParser gson = new GsonJsonParser();
         VaccinationEvent vaccinationEvent = vaccinationEventRepository.findById(vaccinationId)
@@ -74,10 +94,17 @@ public class Hl7v2Controller {
         EhrPatient patient = vaccinationEvent.getPatient();
         Facility facility = vaccinationEvent.getAdministeringFacility();
         String vxu = hl7printer.buildVxu(facility, patient, Set.of(vaccinationEvent));
-        return ResponseEntity.ok(vxu);
+
+        MessageParser messageParser = new MessageParser();
+        try {
+            Bundle bundle = messageParser.convert(vxu);
+            return ResponseEntity.ok(fhirContextR4.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle));
+        } catch (HL7Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @PostMapping(PATIENT_ID_PATH + "/qbp")
+    @PostMapping(PATIENT_ID_PATH + "/qbp/fhir")
     public ResponseEntity<?> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId,
                                      @PathVariable(FACILITY_ID) Integer facilityId,
                                      @PathVariable(PATIENT_ID) Integer patientId,
@@ -85,10 +112,11 @@ public class Hl7v2Controller {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
-            connector = getConnector(immunizationRegistry);
+            connector = Hl7v2Controller.getConnector(immunizationRegistry, immunizationRegistry.getIisFhirMessagingUrl());
+            connector.setUrl(immunizationRegistry.getIisFhirMessagingUrl());
             String rsp = connector.submitMessage(message, false);
-            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, Optional.empty(), message, rsp);
-            return ResponseEntity.ok(acknowledgmentObject);
+//            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, Optional.empty(), message, rsp);
+            return ResponseEntity.ok(rsp);
         } catch (Exception e1) {
             e1.printStackTrace();
             return new ResponseEntity<>("SOAP Error: " + e1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -105,7 +133,7 @@ public class Hl7v2Controller {
      * @param message
      * @return Response entity with Acknowledgement object or Error message
      */
-    @PostMapping({VACCINATION_ID_PATH + "/vxu", PATIENT_ID_PATH + "/vxu"})
+    @PostMapping({VACCINATION_ID_PATH + "/vxu/fhir", PATIENT_ID_PATH + "/vxu/fhir"})
     public ResponseEntity<?> vxuSend(@RequestParam(REGISTRY_ID) Integer registryId,
                                      @PathVariable(FACILITY_ID) Integer facilityId,
                                      @PathVariable(PATIENT_ID) Integer patientId,
@@ -118,62 +146,17 @@ public class Hl7v2Controller {
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         Connector connector;
         try {
-            connector = getConnector(immunizationRegistry);
-
-            String ack = connector.submitMessage(message, false);
-            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, vaccinationId, message, ack);
-//            if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {
-//
-//            }
+            connector = Hl7v2Controller.getConnector(immunizationRegistry, immunizationRegistry.getIisFhirMessagingUrl());
+            String result = connector.submitMessage(message, false);
+            AcknowledgmentObject acknowledgmentObject = new AcknowledgmentObject();
+            acknowledgmentObject.setRawSource(message);
+            acknowledgmentObject.setRawResult(result);
+//            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, vaccinationId, message, ack);
+//            if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {}
             return ResponseEntity.ok(acknowledgmentObject);
         } catch (Exception e1) {
             logger.error("ERROR {}", "SOAP Client", e1);
             return ResponseEntity.internalServerError().body("SOAP Error: " + e1.getMessage());
         }
-    }
-
-    public static Connector getConnector(ImmunizationRegistry immunizationRegistry, String url) throws Exception {
-        Connector connector;
-        connector = new SoapConnector("Test", url);
-        if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
-            connector.setUserid(immunizationRegistry.getIisUsername());
-            connector.setPassword(immunizationRegistry.getIisPassword());
-            connector.setFacilityid(immunizationRegistry.getIisFacilityId());
-        }
-//            else  {
-//                connector.setUserid("nist");
-//                connector.setKeyStore(new KeyStore());
-//            }
-        return connector;
-    }
-
-    public static Connector getConnector(ImmunizationRegistry immunizationRegistry) throws Exception {
-        return getConnector(immunizationRegistry, immunizationRegistry.getIisHl7Url());
-    }
-
-    public AcknowledgmentObject processAck(Integer registryId, Integer facilityId, Integer patientId, Optional<Integer> vaccinationId, String message, String ack) {
-        AcknowledgmentObject acknowledgmentObject;
-        if (vaccinationId.isPresent()) {
-            acknowledgmentObject = feedbackController.extractAckInfo(
-                    Optional.of(registryId),
-                    Optional.of(facilityId),
-                    Optional.of(patientId),
-                    vaccinationId,
-                    ack);
-        } else {
-            acknowledgmentObject = feedbackController.extractAckInfo(
-                    Optional.of(registryId),
-                    Optional.of(facilityId),
-                    Optional.of(patientId),
-                    vaccinationEventRepository.findByPatientId(patientId),
-                    ack);
-        }
-        acknowledgmentObject.setRawSource(message);
-        acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
-        return acknowledgmentObject;
     }
 }

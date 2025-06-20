@@ -75,6 +75,7 @@ export interface ImmunizationRegistry {
   user?: User | number;
   iisHl7Url?: string;
   iisFhirUrl?: string;
+  iisFhirMessagingUrl?: string;
   iisUsername?: string;
   iisFacilityId?: string;
   iisPassword?: string;

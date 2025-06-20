@@ -6,7 +6,6 @@ import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Patient;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
@@ -18,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+
+import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_RECORD;
+import static org.immregistries.ehr.api.controllers.EhrPatientController.GOLDEN_SYSTEM_TAG;
 
 @Service
 public class ResourceClient implements IResourceClient {
@@ -76,7 +78,8 @@ public class ResourceClient implements IResourceClient {
             if (ehrIdentifier != null && StringUtils.isNotBlank(ehrIdentifier.getValue())) {
                 outcome = client.update().resource(resource).conditionalByUrl(
                         type + "?identifier=" + ehrIdentifier.getSystem() + "|" + ehrIdentifier.getValue()
-                                + "&_tag:not=http://hapifhir.io/fhir/NamingSystem/mdm-record-status|GOLDEN_RECORD"
+//                                + "&_tag:not=" + GOLDEN_SYSTEM_TAG + "|" + GOLDEN_RECORD
+                                + "&_tag:not=" + GOLDEN_SYSTEM_TAG + "|" + GOLDEN_RECORD
                 ).execute();
             } else {
                 outcome = client.create().resource(resource).execute();

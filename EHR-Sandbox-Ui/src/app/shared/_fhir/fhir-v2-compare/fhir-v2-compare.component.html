@@ -1,0 +1,19 @@
+<div style="display: flex; justify-content: space-between; gap: 0px 5px">
+  <div style="width: 33%;">
+    <h2>Original Hl7V2 message</h2>
+    <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="hl7V2Message"
+                  [loading]="hl7V2Loading"
+                  [displayStyle]="'display: flex; width: 100%; flex-direction: column'"></app-hl7-post>
+  </div>
+  <div style="width: 33%;">
+    <h2>FHIR Messaging bundle, using V2 to FHIR project</h2>
+    <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="fhirV2Message"
+                  [fhirV2Mode]="true" [loading]="fhirV2MessageLoading"
+                  [displayStyle]="'display: flex; width: 100%; flex-direction: column'"></app-hl7-post>
+  </div>
+  <div style="width: 33%;">
+    <h2>FHIR Transaction, prototype aiming at carrying equivalent content</h2>
+    <app-fhir-post [operation]="'$transaction'" [resource]="transaction" [resourceType]="''"
+                   [resourceLoading]="transactionLoading"></app-fhir-post>
+  </div>
+</div>

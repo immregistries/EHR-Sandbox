@@ -2,43 +2,39 @@
   <mat-card class="form-container">
     <mat-card class="form-card">
       <mat-card-header class="card-title">
-        <mat-card-title class="card-title"> IIS Information </mat-card-title>
+        <mat-card-title class="card-title"> IIS Information</mat-card-title>
       </mat-card-header>
       <mat-card-content class="form-card-content">
         <div>
           <mat-form-field appearance="fill" style="min-width: 40em">
             <mat-label>Nickname</mat-label>
-            <input
-              matInput
-              [(ngModel)]="immunizationRegistry.name"
-              style="min-width: 40em"
-              required=""
-            />
+            <input matInput [(ngModel)]="immunizationRegistry.name" style="min-width: 40em" required=""/>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field appearance="fill" style="min-width: 40em">
             <mat-label>Description</mat-label>
-            <textarea
-              matInput
-              [(ngModel)]="immunizationRegistry.description"
-            ></textarea>
+            <textarea matInput [(ngModel)]="immunizationRegistry.description"></textarea>
           </mat-form-field>
         </div>
       </mat-card-content>
     </mat-card>
     <mat-card class="form-card">
       <mat-card-header class="card-title">
-        <mat-card-title class="card-title"> API URLs </mat-card-title>
+        <mat-card-title class="card-title">API URLs</mat-card-title>
       </mat-card-header>
       <mat-card-content class="form-card-content">
         <mat-form-field appearance="fill" style="min-width: 40em">
-          <mat-label>FHIR api url</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisFhirUrl" />
+          <mat-label>FHIR Restful API URL</mat-label>
+          <input matInput [(ngModel)]="immunizationRegistry.iisFhirUrl"/>
         </mat-form-field>
         <mat-form-field appearance="fill" style="min-width: 40em">
-          <mat-label>HL7v2 api url</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisHl7Url" />
+          <mat-label>FHIR Messaging URL</mat-label>
+          <input matInput [(ngModel)]="immunizationRegistry.iisFhirMessagingUrl"/>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="min-width: 40em">
+          <mat-label>HL7v2 SOAP URL</mat-label>
+          <input matInput [(ngModel)]="immunizationRegistry.iisHl7Url"/>
         </mat-form-field>
       </mat-card-content>
     </mat-card>
@@ -51,41 +47,35 @@
       <mat-card-content class="form-card-content">
         <mat-form-field appearance="fill">
           <mat-label>IIS facility Id</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisFacilityId" />
+          <input matInput [(ngModel)]="immunizationRegistry.iisFacilityId"/>
         </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label> IIS username</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisUsername" />
+          <input matInput [(ngModel)]="immunizationRegistry.iisUsername"/>
         </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>IIS password</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.iisPassword" />
+          <input matInput [(ngModel)]="immunizationRegistry.iisPassword"/>
         </mat-form-field>
         <mat-form-field appearance="fill" style="min-width: 40em">
           <mat-label>Extra headers</mat-label>
-          <input matInput [(ngModel)]="immunizationRegistry.headers" />
+          <input matInput [(ngModel)]="immunizationRegistry.headers"/>
         </mat-form-field>
       </mat-card-content>
       <mat-card-footer>
         <mat-card-subtitle>
-          <div
-            *ngIf="
+          <div *ngIf="
               (!immunizationRegistry.iisUsername ||
                 immunizationRegistry.iisUsername.length < 0) &&
                 immunizationRegistry.iisPassword &&
                 immunizationRegistry.iisPassword.length > 0;
               then bearer;
               else basic
-            "
-          >
+            ">
             here is ignored
           </div>
-          <ng-template #bearer
-            >Option activated : Token Bearer Authentication</ng-template
-          >
-          <ng-template #basic
-            >Default option : Basic Authentication</ng-template
-          >
+          <ng-template #bearer>Option activated : Token Bearer Authentication</ng-template>
+          <ng-template #basic>Default option : Basic Authentication</ng-template>
         </mat-card-subtitle>
       </mat-card-footer>
     </mat-card>
@@ -93,47 +83,28 @@
     <mat-card-footer>
       <mat-card class="form-card" style="text-align: right">
         <mat-card-content>
-          <mat-checkbox
-            [(ngModel)]="immunizationRegistry.default"
-            style="padding-right: 5px"
-            >Selected by default</mat-checkbox
-          >
-          <button
-            mat-stroked-button
-            [matTooltip]="
+          <mat-checkbox [(ngModel)]="immunizationRegistry.default" style="padding-right: 5px">Selected by
+            default
+          </mat-checkbox>
+          <button mat-stroked-button [matTooltip]="
               !immunizationRegistry.id || immunizationRegistry.id < 1
                 ? 'Save to check metadata'
                 : 'Check Metadata'
-            "
-            color="primary"
-            type="button"
-            [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1"
-            (click)="duplicate(immunizationRegistry)"
-          >
+            " color="primary" type="button" [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1"
+                  (click)="duplicate(immunizationRegistry)">
             <mat-icon>file_copy</mat-icon>
             Create copy
           </button>
-          <button
-            mat-stroked-button
-            [matTooltip]="
+          <button mat-stroked-button [matTooltip]="
               !immunizationRegistry.id || immunizationRegistry.id < 1
                 ? 'Save to check metadata'
                 : 'Check Metadata'
-            "
-            color="primary"
-            type="button"
-            [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1"
-            (click)="checkMetadata()"
-          >
+            " color="primary" type="button" [disabled]="!immunizationRegistry.id || immunizationRegistry.id < 1"
+                  (click)="checkMetadata()">
             <mat-icon>send</mat-icon>
             Save & Check Metadata
           </button>
-          <button
-            mat-raised-button
-            type="submit"
-            color="primary"
-            (click)="save()"
-          >
+          <button mat-raised-button type="submit" color="primary" (click)="save()">
             <mat-icon>save</mat-icon>
             Save
           </button>

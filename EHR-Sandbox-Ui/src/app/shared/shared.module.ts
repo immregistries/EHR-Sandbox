@@ -135,6 +135,8 @@ import { AckStatusPipe } from './_pipes/ack-status.pipe';
 import { VaccinationResumePipe } from './_pipes/vaccination-resume.pipe';
 import { FacilityCachePipe } from './_pipes/facility-cache.pipe';
 import { UserDialogComponent } from './_components/user-dialog/user-dialog.component';
+import { SubscriptionFormComponent } from './_fhir/subscription-dashboard/subscription-form/subscription-form.component';
+import { FhirV2CompareComponent } from "./_fhir/fhir-v2-compare/fhir-v2-compare.component";
 
 @NgModule({
   declarations: [
@@ -244,6 +246,8 @@ import { UserDialogComponent } from './_components/user-dialog/user-dialog.compo
     AckDisplayComponent,
     AckTableComponent,
     UserDialogComponent,
+    SubscriptionFormComponent,
+    FhirV2CompareComponent,
   ],
   imports: [
     DatePipe,
@@ -398,7 +402,9 @@ import { UserDialogComponent } from './_components/user-dialog/user-dialog.compo
     AckDisplayComponent,
     AckTableComponent,
 
-    UserDialogComponent
+    UserDialogComponent,
+    SubscriptionFormComponent,
+    FhirV2CompareComponent,
 
   ]
 })

@@ -6,13 +6,16 @@ import { EhrSubscription } from 'src/app/core/_model/rest';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
 import { SubscriptionService } from 'src/app/core/_services/_fhir/subscription.service';
+import FormType, { BaseForm } from 'src/app/core/_model/form-structure';
 
 @Component({
-  selector: 'app-subscription-dashboard',
-  templateUrl: './subscription-dashboard.component.html',
-  styleUrls: ['./subscription-dashboard.component.css']
+  selector: 'app-subscription-form',
+  templateUrl: './subscription-form.component.html',
+  styleUrls: ['./subscription-form.component.css']
 })
-export class SubscriptionDashboardComponent implements OnInit {
+export class SubscriptionFormComponent implements OnInit {
+
+  public topic: string = ""
 
   constructor(public subscriptionService: SubscriptionService,
     public facilityService: FacilityService,
@@ -49,6 +52,31 @@ export class SubscriptionDashboardComponent implements OnInit {
       })
     })
 
+  }
+
+  subscribeToIIS() {
+    this.loading = true
+    this.subscriptionService.createSubscription(this.topic).subscribe({
+      next: (res) => {
+        this.loading = false
+        this.ngOnInit()
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading = false
+        this.error = `${err.error}`
+      }
+    })
+  }
+
+  public readonly SUBSCRIPTION_TOPIC_FORM: BaseForm = {
+    title: "Topic",
+    type: FormType.code,
+    attributeName: "topic",
+    options: [
+      { code: "/SubscriptionTopic/data-quality-issues", display: "" },
+      { code: "/SubscriptionTopic/group", display: "" },
+      { code: "/SubscriptionTopic/patients", display: "" },
+    ]
   }
 
 }

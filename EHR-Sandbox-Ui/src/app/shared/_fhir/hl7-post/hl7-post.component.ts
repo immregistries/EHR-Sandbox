@@ -9,6 +9,8 @@ import { FeedbackService } from 'src/app/core/_services/feedback.service';
 import { FacilityService } from 'src/app/core/_services/facility.service';
 import { AcknowledgementObject } from 'src/app/core/_model/form-structure';
 import { Feedback } from 'src/app/core/_model/rest';
+import { FhirV2Service } from 'src/app/core/_services/_fhir/fhir-v2.service';
+import { IMessagingService } from 'src/app/core/_services/_fhir/i.messaging.service';
 
 @Component({
   selector: 'app-hl7-post',
@@ -16,11 +18,18 @@ import { Feedback } from 'src/app/core/_model/rest';
   styleUrls: ['./hl7-post.component.css']
 })
 export class Hl7PostComponent {
+
+  @Input() fhirV2Mode: boolean = false;
   @Input() isForcingVXU: boolean = false;
   @Input() vaccinationId: number = -1;
   @Input() patientId: number = -1;
   @Input() loading: boolean = false
   @Input() hl7Message: string = "";
+
+  /**
+   * TODO change this temp solution
+   */
+  @Input() displayStyle: string = "display: flex; width: 100%;";
 
   resultLoading: boolean = false
 
@@ -33,6 +42,7 @@ export class Hl7PostComponent {
     private feedbackService: FeedbackService,
     private facilityService: FacilityService,
     private hl7Service: Hl7Service,
+    private fhirV2Service: FhirV2Service,
     public snackBarService: SnackBarService,
     public immunizationRegistryService: ImmunizationRegistryService,
     public _dialogRef: MatDialogRef<Hl7MessagingComponent>,
@@ -42,14 +52,18 @@ export class Hl7PostComponent {
   }
 
   send() {
+    let service: IMessagingService = this.hl7Service
+    if (this.fhirV2Mode === true) {
+      service = this.fhirV2Service
+    }
     this.resultLoading = true
     if (this.vaccinationId > 0 || this.isForcingVXU === true) {
-      this.hl7Service.quickPostVXU(this.patientId, this.vaccinationId, this.hl7Message).subscribe({
+      service.quickPostVXU(this.patientId, this.vaccinationId, this.hl7Message).subscribe({
         next: this.successProcessing,
         error: this.errorProcessing
       })
     } else if (this.patientId > 0) {
-      this.hl7Service.quickPostQBP(this.patientId, this.hl7Message).subscribe({
+      service.quickPostQBP(this.patientId, this.hl7Message).subscribe({
         next: this.successProcessing,
         error: this.errorProcessing
       })
@@ -63,10 +77,14 @@ export class Hl7PostComponent {
   }
 
 
-  private successProcessing = (ack: AcknowledgementObject<Feedback>) => {
+  private successProcessing = (ack: AcknowledgementObject<Feedback> | string) => {
     this.resultLoading = false
     this.error = false
-    this.resultObject = ack
+    if (typeof ack === "string") {
+      this.resultObject = { rawResult: ack, sortedResult: { errors: [], warnings: [], infos: [], notices: [] } }
+    } else {
+      this.resultObject = ack
+    }
     // this.feedbackService.doRefresh()
   }
 

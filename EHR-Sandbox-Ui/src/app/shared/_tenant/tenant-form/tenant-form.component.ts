@@ -92,7 +92,7 @@ export class TenantFormComponent implements OnInit {
   }
 
   public flavorActivated(flavor: Flavor): boolean {
-    return this.tenantService.flavorActivated(this.tenantService.getCurrent(), flavor)
+    return this.tenantService.flavorActivated(this.tenant, flavor)
   }
 
 }

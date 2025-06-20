@@ -17,4 +17,7 @@
     <app-hl7-post [patientId]="patientId" [vaccinationId]="vaccinationId" [hl7Message]="vxu"
                   [isForcingVXU]="patientId > -1" [loading]="vxuLoading"></app-hl7-post>
   </mat-tab>
+  <mat-tab label="FHIR translation prototypes">
+    <app-fhir-v2-compare [patientId]="patientId" [vaccinationId]="vaccinationId"></app-fhir-v2-compare>
+  </mat-tab>
 </mat-tab-group>
