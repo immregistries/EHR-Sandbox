@@ -118,7 +118,7 @@ public class EhrSubscription extends EhrEntity {
     @Column(name = "subscription_channel_type", length = 45)
     private String channelType;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "header_name")
     @Column(name = "header_value")
     private Map<String,String> headers = new HashMap<>(2);
