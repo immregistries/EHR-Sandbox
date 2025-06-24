@@ -1,6 +1,7 @@
 package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.okhttp.client.OkHttpRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.*;
@@ -13,7 +14,6 @@ import jakarta.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.fhir.ProxyRestfulClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-public class EhrFhirClientFactory extends ProxyRestfulClientFactory implements ITestingUiClientFactory {
+public class EhrFhirClientFactory extends OkHttpRestfulClientFactory implements ITestingUiClientFactory {
     private static final Logger logger = LoggerFactory.getLogger(EhrFhirClientFactory.class);
 
     LoggingInterceptor loggingInterceptor;

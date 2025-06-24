@@ -12,10 +12,12 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,11 +83,15 @@ public class ProxyRestfulClientFactory extends ApacheRestfulClientFactory {
                     .setProxy(myProxy)
                     .build();
             logger.info("pong {} {}", myProxy, defaultRequestConfig.getProxy());
-
+            HttpRoutePlanner routePlanner = new DefaultProxyRoutePlanner(myProxy);
+//            System.getProperties().put("http.proxyHost", "localhost");
+//            System.getProperties().put("http.proxyPort", "8888");
+//            System.getProperties().put("java.net.useSystemProxies", "true");
 
             HttpClientBuilder builder = getHttpClientBuilder()
                     .useSystemProperties()
                     .setDefaultRequestConfig(defaultRequestConfig)
+                    .setRoutePlanner(routePlanner)
                     .disableCookieManagement();
 
             PoolingHttpClientConnectionManager connectionManager =
@@ -103,7 +109,6 @@ public class ProxyRestfulClientFactory extends ApacheRestfulClientFactory {
                 builder.setDefaultCredentialsProvider(credsProvider);
             }
 
-            builder.setProxy(myProxy);
             myHttpClient = builder.build();
         }
 

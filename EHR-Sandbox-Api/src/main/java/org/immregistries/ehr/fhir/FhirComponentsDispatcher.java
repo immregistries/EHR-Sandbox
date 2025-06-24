@@ -79,14 +79,15 @@ public class FhirComponentsDispatcher {
 //                                 ,ApplicationContext context
     ) {
 
-        System.getProperties().put("http.proxyHost", "localhost");
-        System.getProperties().put("http.proxyPort", "8888");
+//        System.getProperties().put("http.proxyHost", "localhost");
+//        System.getProperties().put("http.proxyPort", "8888");
         {
             this.fhirContextR5 = fhirContextR5;
             CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
             this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
             ehrFhirClientFactoryR5 = new EhrFhirClientFactory();
             ehrFhirClientFactoryR5.setFhirContext(fhirContextR5);
+            fhirContextR5.setRestfulClientFactory(ehrFhirClientFactoryR5);
             ehrFhirClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
             ehrFhirClientFactoryR5.setProxy("localhost", 8888);
         }
@@ -96,9 +97,11 @@ public class FhirComponentsDispatcher {
             fhirContextR4.setNarrativeGenerator(null);
             ehrFhirClientFactoryR4 = new EhrFhirClientFactory();
             ehrFhirClientFactoryR4.setFhirContext(fhirContextR4);
+            fhirContextR4.setRestfulClientFactory(ehrFhirClientFactoryR4);
             ehrFhirClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
             ehrFhirClientFactoryR4.setProxy("localhost", 8888);
         }
+
     }
 
 
