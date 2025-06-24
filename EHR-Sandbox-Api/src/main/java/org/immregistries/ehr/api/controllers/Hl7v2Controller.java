@@ -132,8 +132,17 @@ public class Hl7v2Controller {
         }
     }
 
+    /**
+     * TODO figure out how to add a proxy to the Http Process, maybe customize smm-tester
+     *
+     * @param immunizationRegistry
+     * @param url
+     * @return
+     * @throws Exception
+     */
     public static Connector getConnector(ImmunizationRegistry immunizationRegistry, String url) throws Exception {
         Connector connector;
+//        javax.net.ssl.SSLContext sslContext = new SSLContext();
         connector = new SoapConnector("Test", url);
         if (StringUtils.isNotBlank(immunizationRegistry.getIisUsername())) {
             connector.setUserid(immunizationRegistry.getIisUsername());
