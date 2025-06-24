@@ -78,9 +78,6 @@ public class FhirComponentsDispatcher {
                                     @Qualifier("fhirContextR4") FhirContext fhirContextR4
 //                                 ,ApplicationContext context
     ) {
-
-//        System.getProperties().put("http.proxyHost", "localhost");
-//        System.getProperties().put("http.proxyPort", "8888");
         {
             this.fhirContextR5 = fhirContextR5;
             CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
