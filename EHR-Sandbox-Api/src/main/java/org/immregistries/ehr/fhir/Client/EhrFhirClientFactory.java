@@ -1,16 +1,12 @@
 package org.immregistries.ehr.fhir.Client;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.impl.GenericClient;
 import ca.uhn.fhir.rest.client.interceptor.*;
-import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
 import com.google.gson.Gson;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +31,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
+public class EhrFhirClientFactory extends ApacheRestfulClientFactory {
     public static final String PROXY_TEST_HOST = "EHR_PROXY_TEST_HOST";
     public static final String PROXY_TEST_PORT = "EHR_PROXY_TEST_PORT";
     private static final Logger logger = LoggerFactory.getLogger(EhrFhirClientFactory.class);
@@ -103,13 +99,6 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
         return client;
     }
 
-    public IGenericClient newGenericClient(String serverURL, String username, String password) {
-        IGenericClient client = newGenericClient(serverURL);
-        IClientInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
-        client.registerInterceptor(authInterceptor);
-        return client;
-    }
-
     @Override
     public synchronized IGenericClient newGenericClient(String theServerBase) {
         IGenericClient client = super.newGenericClient(theServerBase);
@@ -118,11 +107,6 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
 //        interceptor.addHeaderValue("Cache-Control", "no-cache");
 //        client.registerInterceptor(interceptor);
         return client;
-    }
-
-    @Override
-    public IGenericClient newClient(FhirContext fhirContext, HttpServletRequest httpServletRequest, String s) {
-        return new GenericClient(fhirContext, this.getHttpClient(s), s, this);
     }
 
     public static String authorisationTokenContent(ImmunizationRegistry ir) {
