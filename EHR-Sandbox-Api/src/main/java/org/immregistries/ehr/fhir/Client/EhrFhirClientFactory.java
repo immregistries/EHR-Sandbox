@@ -1,7 +1,7 @@
 package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.okhttp.client.OkHttpRestfulClientFactory;
+import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.*;
@@ -34,7 +34,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-public class EhrFhirClientFactory extends OkHttpRestfulClientFactory implements ITestingUiClientFactory {
+public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
     private static final Logger logger = LoggerFactory.getLogger(EhrFhirClientFactory.class);
 
     LoggingInterceptor loggingInterceptor;
@@ -110,7 +110,7 @@ public class EhrFhirClientFactory extends OkHttpRestfulClientFactory implements 
 
     @Override
     public IGenericClient newClient(FhirContext fhirContext, HttpServletRequest httpServletRequest, String s) {
-        return null;
+        return fhirContext.newRestfulGenericClient(s);
     }
 
     public static String authorisationTokenContent(ImmunizationRegistry ir) {

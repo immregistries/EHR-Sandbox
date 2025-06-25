@@ -86,7 +86,7 @@ public class FhirComponentsDispatcher {
             ehrFhirClientFactoryR5.setFhirContext(fhirContextR5);
             fhirContextR5.setRestfulClientFactory(ehrFhirClientFactoryR5);
             ehrFhirClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
-            ehrFhirClientFactoryR5.setProxy("localhost", 8888);
+            ehrFhirClientFactoryR5.setProxy("host.docker.internal", 8888);
         }
 
         {
@@ -96,7 +96,7 @@ public class FhirComponentsDispatcher {
             ehrFhirClientFactoryR4.setFhirContext(fhirContextR4);
             fhirContextR4.setRestfulClientFactory(ehrFhirClientFactoryR4);
             ehrFhirClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
-            ehrFhirClientFactoryR4.setProxy("localhost", 8888);
+            ehrFhirClientFactoryR4.setProxy("host.docker.internal", 8888);
         }
 
     }
