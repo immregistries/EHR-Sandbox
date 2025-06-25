@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.impl.GenericClient;
 import ca.uhn.fhir.rest.client.interceptor.*;
 import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
 import com.google.gson.Gson;
@@ -35,6 +36,8 @@ import java.util.Date;
 import java.util.Map;
 
 public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements ITestingUiClientFactory {
+    public static final String PROXY_TEST_HOST = "EHR_PROXY_TEST_HOST";
+    public static final String PROXY_TEST_PORT = "EHR_PROXY_TEST_PORT";
     private static final Logger logger = LoggerFactory.getLogger(EhrFhirClientFactory.class);
 
     LoggingInterceptor loggingInterceptor;
@@ -50,6 +53,15 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
         loggingInterceptor.setLogger(logger);
         loggingInterceptor.setLogRequestSummary(true);
         loggingInterceptor.setLogRequestBody(true);
+
+        /*
+         * Experimental Proxy configuration
+         */
+        String proxyHost = StringUtils.defaultIfBlank(System.getenv(PROXY_TEST_HOST), System.getProperty(PROXY_TEST_HOST));
+        String proxyPort = StringUtils.defaultIfBlank(System.getenv(PROXY_TEST_PORT), System.getProperty(PROXY_TEST_PORT));
+        if (StringUtils.isNotBlank(proxyHost) && StringUtils.isNotBlank(proxyPort)) {
+            setProxy(proxyHost, Integer.valueOf(proxyPort));
+        }
     }
 
     public IGenericClient newGenericClient(ImmunizationRegistry registry) {
@@ -110,7 +122,7 @@ public class EhrFhirClientFactory extends ApacheRestfulClientFactory implements 
 
     @Override
     public IGenericClient newClient(FhirContext fhirContext, HttpServletRequest httpServletRequest, String s) {
-        return fhirContext.newRestfulGenericClient(s);
+        return new GenericClient(fhirContext, this.getHttpClient(s), s, this);
     }
 
     public static String authorisationTokenContent(ImmunizationRegistry ir) {

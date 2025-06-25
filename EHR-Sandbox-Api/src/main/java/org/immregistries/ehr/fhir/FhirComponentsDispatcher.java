@@ -27,6 +27,7 @@ import java.util.Map;
 
 @Service
 public class FhirComponentsDispatcher {
+
     Logger logger = LoggerFactory.getLogger(FhirComponentsDispatcher.class);
 
     @Autowired
@@ -78,27 +79,29 @@ public class FhirComponentsDispatcher {
                                     @Qualifier("fhirContextR4") FhirContext fhirContextR4
 //                                 ,ApplicationContext context
     ) {
-        {
-            this.fhirContextR5 = fhirContextR5;
-            CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
-            this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
-            ehrFhirClientFactoryR5 = new EhrFhirClientFactory();
-            ehrFhirClientFactoryR5.setFhirContext(fhirContextR5);
-            fhirContextR5.setRestfulClientFactory(ehrFhirClientFactoryR5);
-            ehrFhirClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
-            ehrFhirClientFactoryR5.setProxy("host.docker.internal", 8888);
-        }
 
-        {
-            this.fhirContextR4 = fhirContextR4;
-            fhirContextR4.setNarrativeGenerator(null);
-            ehrFhirClientFactoryR4 = new EhrFhirClientFactory();
-            ehrFhirClientFactoryR4.setFhirContext(fhirContextR4);
-            fhirContextR4.setRestfulClientFactory(ehrFhirClientFactoryR4);
-            ehrFhirClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
-            ehrFhirClientFactoryR4.setProxy("host.docker.internal", 8888);
-        }
 
+        this.fhirContextR5 = fhirContextR5;
+        CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
+        this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
+        ehrFhirClientFactoryR5 = new EhrFhirClientFactory();
+        ehrFhirClientFactoryR5.setFhirContext(fhirContextR5);
+        fhirContextR5.setRestfulClientFactory(ehrFhirClientFactoryR5);
+        ehrFhirClientFactoryR5.setServerValidationMode(ServerValidationModeEnum.NEVER);
+
+        this.fhirContextR4 = fhirContextR4;
+        fhirContextR4.setNarrativeGenerator(null);
+        ehrFhirClientFactoryR4 = new EhrFhirClientFactory();
+        ehrFhirClientFactoryR4.setFhirContext(fhirContextR4);
+        fhirContextR4.setRestfulClientFactory(ehrFhirClientFactoryR4);
+        ehrFhirClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
+
+//        String proxyHost = StringUtils.defaultIfBlank(System.getenv(PROXY_TEST_HOST), System.getProperty(PROXY_TEST_HOST));
+//        String proxyPort = StringUtils.defaultIfBlank(System.getenv(PROXY_TEST_PORT), System.getProperty(PROXY_TEST_PORT));
+//        if (StringUtils.isNotBlank(proxyHost) && StringUtils.isNotBlank(proxyPort)) {
+//            ehrFhirClientFactoryR5.setProxy(proxyHost, Integer.valueOf(proxyPort));
+//            ehrFhirClientFactoryR4.setProxy(proxyHost, Integer.valueOf(proxyPort));
+//        }
     }
 
 
