@@ -47,7 +47,7 @@ export class Hl7Service implements IMessagingService {
    * @param vaccinationId
    * @returns Hl7v2 VXU message
    */
-  getVXUAll(patientId: number): Observable<string> {
+  getVXUAll(patientId: number, registryId?: string): Observable<string> {
     const tenantId: number = this.tenantService.getCurrentId()
     const facilityId: number = this.facilityService.getCurrentId()
     return this.http.get(

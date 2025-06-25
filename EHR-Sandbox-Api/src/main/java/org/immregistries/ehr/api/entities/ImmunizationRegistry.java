@@ -45,6 +45,9 @@ public class ImmunizationRegistry {
     @Column(name = "description", nullable = false, length = 600)
     private String description = "";
 
+    @Column(name = "receivingFacility", nullable = false, length = 600)
+    private String receivingFacility = "";
+
     public String getHeaders() {
         return headers;
     }
@@ -142,5 +145,13 @@ public class ImmunizationRegistry {
 
     public void setIisFhirMessagingUrl(String iisFhirMessagingUrl) {
         this.iisFhirMessagingUrl = iisFhirMessagingUrl;
+    }
+
+    public String getReceivingFacility() {
+        return receivingFacility;
+    }
+
+    public void setReceivingFacility(String receivingFacility) {
+        this.receivingFacility = receivingFacility;
     }
 }

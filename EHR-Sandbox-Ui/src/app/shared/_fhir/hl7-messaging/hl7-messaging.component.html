@@ -7,6 +7,9 @@
   <mat-tab disabled>
     <ng-template mat-tab-label>
       <app-immunization-registry-menu></app-immunization-registry-menu>
+      <mat-checkbox [(ngModel)]="reloadOnChange" matTooltip="Update and override MSH-6 on receiving site change">Update
+        MSH-6
+      </mat-checkbox>
     </ng-template>
   </mat-tab>
   <mat-tab label="Send QPD" *ngIf="vaccinationId < 0">

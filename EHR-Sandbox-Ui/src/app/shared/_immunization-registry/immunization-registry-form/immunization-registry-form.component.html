@@ -17,6 +17,12 @@
             <textarea matInput [(ngModel)]="immunizationRegistry.description"></textarea>
           </mat-form-field>
         </div>
+        <div>
+          <mat-form-field appearance="fill" style="min-width: 40em">
+            <mat-label>Receiving facility (MSH-6 segment)</mat-label>
+            <input matInput [(ngModel)]="immunizationRegistry.receivingFacility" style="min-width: 40em"/>
+          </mat-form-field>
+        </div>
       </mat-card-content>
     </mat-card>
     <mat-card class="form-card">

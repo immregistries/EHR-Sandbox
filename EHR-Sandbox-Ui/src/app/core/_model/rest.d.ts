@@ -82,6 +82,7 @@ export interface ImmunizationRegistry {
   headers?: string;
   default?: boolean;
   description?: string;
+  receivingFacility?: string;
 }
 
 export interface NextOfKin {
