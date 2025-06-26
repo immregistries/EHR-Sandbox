@@ -1,6 +1,7 @@
 services:
   ehr-sandbox:
-    image: clemhen/ehr-sandbox:deployable-v3
+    image:
+      clemhen/ehr-sandbox:proxy-fhir-test-6
     container_name: ehr-sandbox-gyro
     env_file:
       - .env
