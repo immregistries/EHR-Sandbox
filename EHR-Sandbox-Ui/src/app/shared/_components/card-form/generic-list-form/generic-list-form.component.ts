@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BaseForm, ComparisonResult, GenericForm } from 'src/app/core/_model/form-structure';
 import { AbstractBaseFormComponent } from '../abstract-base-form/abstract-base-form.component';
-import { rdiffResult } from 'recursive-diff';
 
 @Component({
   // selector: 'app-generic-list-form',
@@ -10,12 +9,12 @@ import { rdiffResult } from 'recursive-diff';
 })
 export class GenericListFormComponent<T> extends AbstractBaseFormComponent implements OnInit {
 
-  private _compareTo?: rdiffResult
+  private _compareTo?: ComparisonResult
   @Input()
-  public set compareTo(value: rdiffResult | undefined) {
+  public set compareTo(value: ComparisonResult | undefined) {
     this._compareTo = value;
   }
-  public get compareTo(): rdiffResult | undefined {
+  public get compareTo(): ComparisonResult | undefined {
     return this._compareTo
   }
 

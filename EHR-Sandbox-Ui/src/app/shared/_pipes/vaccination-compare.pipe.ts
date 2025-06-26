@@ -13,8 +13,8 @@ export class VaccinationComparePipe extends AbstractComparisonPipe implements Pi
     'updatedDate' // TODO change the way updated date is mapped ?
   ]
 
-  public transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): {} {
-    const differences = this.packageComp(value, args[0]);
+  public transform(value: VaccinationEvent, ...args: (VaccinationEvent | null)[]): {} | string {
+    const differences = this.recursiveComparison(value, args[0]);
     if (!differences || differences.length === 0) {
       return "MATCH"
     } else {

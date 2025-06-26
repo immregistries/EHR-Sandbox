@@ -5,7 +5,6 @@ import { CodeReferenceTable, CodeReferenceTableMember } from "src/app/core/_mode
 import { AbstractBaseFormComponent } from './abstract-base-form/abstract-base-form.component';
 import { FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { rdiffResult } from 'recursive-diff';
 
 @Component({
   selector: 'app-card-form',

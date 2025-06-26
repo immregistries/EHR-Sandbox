@@ -80,7 +80,6 @@ public class FhirComponentsDispatcher {
 //                                 ,ApplicationContext context
     ) {
 
-
         this.fhirContextR5 = fhirContextR5;
         CustomNarrativeGenerator customNarrativeGenerator = new CustomNarrativeGenerator();
         this.fhirContextR5.setNarrativeGenerator(customNarrativeGenerator);
@@ -96,12 +95,6 @@ public class FhirComponentsDispatcher {
         fhirContextR4.setRestfulClientFactory(ehrFhirClientFactoryR4);
         ehrFhirClientFactoryR4.setServerValidationMode(ServerValidationModeEnum.NEVER);
 
-//        String proxyHost = StringUtils.defaultIfBlank(System.getenv(PROXY_TEST_HOST), System.getProperty(PROXY_TEST_HOST));
-//        String proxyPort = StringUtils.defaultIfBlank(System.getenv(PROXY_TEST_PORT), System.getProperty(PROXY_TEST_PORT));
-//        if (StringUtils.isNotBlank(proxyHost) && StringUtils.isNotBlank(proxyPort)) {
-//            ehrFhirClientFactoryR5.setProxy(proxyHost, Integer.valueOf(proxyPort));
-//            ehrFhirClientFactoryR4.setProxy(proxyHost, Integer.valueOf(proxyPort));
-//        }
     }
 
 

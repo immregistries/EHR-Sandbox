@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { EhrPatient } from 'src/app/core/_model/rest';
-import { ComparisonResult } from 'src/app/core/_model/form-structure';
 import { AbstractComparisonPipe } from './abstract-comparison.pipe';
-import { rdiffResult } from 'recursive-diff';
+import { ComparisonResult } from 'src/app/core/_model/form-structure';
 
 @Pipe({
   name: 'patientCompare'
@@ -16,8 +15,8 @@ export class PatientComparePipe extends AbstractComparisonPipe implements PipeTr
     'groupNames',
   ]
 
-  transform(value: EhrPatient, ...args: (EhrPatient | null)[]): rdiffResult[] | string {
-    const differences = this.packageComp(value, args[0]);
+  transform(value: EhrPatient, ...args: (EhrPatient | null)[]): ComparisonResult | string {
+    const differences = this.recursiveComparison(value, args[0]);
     if (!differences || differences.length == 0) {
       return "MATCH"
     } else {
