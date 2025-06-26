@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
+import org.immregistries.ehr.api.controllers.AuthController;
 import org.immregistries.ehr.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,11 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private PasswordEncoder encoder;
+    /**
+     * TODO make service
+     */
+    @Autowired
+    private AuthController authController;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationTokenFilter.class);
 
@@ -45,10 +51,22 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            if (parseBasic(request) != null) {
-                User user = parseBasic(request);
+            User user = parseBasic(request);
+            if (user != null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-                if (encoder.matches(user.getPassword(), userDetails.getPassword())) {
+                if (userDetails != null) {
+                    if (encoder.matches(user.getPassword(), userDetails.getPassword())) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                } else {
+                    /**
+                     * TODO more separation in the logic
+                     */
+                    authController.registerUser(user);
+                    userDetails = userDetailsService.loadUserByUsername(user.getUsername());
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -260,7 +260,7 @@ export class VaccinationFormComponent implements OnInit, AfterViewInit, OnDestro
           }
         },
         {
-          type: FormType.text, title: "Amount Admininistered (mL)", attributeName: "administeredAmount",
+          type: FormType.text, title: "Amount Administered (mL)", attributeName: "administeredAmount",
           hl7Location: {
             segmentId: "RXA",
             componentNumber: 6

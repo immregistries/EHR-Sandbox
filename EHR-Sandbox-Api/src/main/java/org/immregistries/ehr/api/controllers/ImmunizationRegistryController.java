@@ -39,11 +39,23 @@ public class ImmunizationRegistryController {
     @Autowired
     private ImmunizationRegistryService immunizationRegistryService;
 
+    /**
+     * Read registry info
+     *
+     * @param registryId id
+     * @return Registry with Id
+     */
     @GetMapping({REGISTRY_ID_SUFFIX})
     public ImmunizationRegistry getImmunizationRegistry(@PathVariable(REGISTRY_ID) Integer registryId) {
         return immunizationRegistryService.getImmunizationRegistry(registryId);
     }
 
+    /**
+     * Fetch FHIR metadata from Server
+     *
+     * @param registryId registry id
+     * @return fetched FHIR metadata
+     */
     @GetMapping({REGISTRY_ID_SUFFIX + "/metadata"})
     public ResponseEntity<String> getImmunizationRegistryMetadata(@PathVariable(REGISTRY_ID) Integer registryId) {
         IGenericClient client = fhirComponentsDispatcher.clientFactory().newGenericClient(getImmunizationRegistry(registryId));
@@ -61,8 +73,13 @@ public class ImmunizationRegistryController {
         return ResponseEntity.ok(client.getFhirContext().newJsonParser().setPrettyPrint(true).encodeResourceToString(capabilityStatement));
     }
 
+    /**
+     * Get all ImmunizationRegistries
+     *
+     * @return All ImmunizationRegistries for User
+     */
     @GetMapping()
-    public Iterable<ImmunizationRegistry> getImmRegistries() {
+    public Iterable<ImmunizationRegistry> getAllImmunizationRegistries() {
         return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(), Sort.by(Sort.Order.desc("isDefault"), Sort.Order.desc("name")));
     }
 

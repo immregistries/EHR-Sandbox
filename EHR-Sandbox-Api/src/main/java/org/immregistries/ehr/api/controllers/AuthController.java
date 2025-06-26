@@ -77,8 +77,8 @@ public class AuthController {
 
     }
 
-    private synchronized void createUser(User user) {
-        /**
+    public synchronized void createUser(User user) {
+        /*
          * Checking the existence again since method is synchronised and might create duplicates with request spam
          */
         if (!userRepository.existsByUsername(user.getUsername())) {
