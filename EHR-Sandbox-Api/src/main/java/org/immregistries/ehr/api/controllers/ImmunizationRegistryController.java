@@ -66,6 +66,12 @@ public class ImmunizationRegistryController {
         return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(), Sort.by(Sort.Order.desc("isDefault"), Sort.Order.desc("name")));
     }
 
+    /**
+     * Modify ImmunizationRegistry
+     *
+     * @param immunizationRegistry updated ImmunizationRegistry information
+     * @return Updated ImmunizationRegistry
+     */
     @PutMapping()
     public ImmunizationRegistry putImmunizationRegistry(@RequestBody ImmunizationRegistry immunizationRegistry) {
         Optional<ImmunizationRegistry> old = immunizationRegistryRepository.findByIdAndUserId(immunizationRegistry.getId(), userDetailsService.currentUserId());
@@ -80,6 +86,12 @@ public class ImmunizationRegistryController {
         }
     }
 
+    /**
+     * Create ImmunizationRegistry
+     *
+     * @param immunizationRegistry ImmunizationRegistry information
+     * @return Created Registry
+     */
     @PostMapping()
     public ImmunizationRegistry postImmunizationRegistry(@RequestBody ImmunizationRegistry immunizationRegistry) {
         immunizationRegistry.setUser(userDetailsService.currentUser());

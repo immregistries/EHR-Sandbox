@@ -77,6 +77,13 @@ public class Hl7v2Controller {
         return ResponseEntity.ok(vxu);
     }
 
+    /**
+     * @param registryId ImmunizationRegistryId of receiver
+     * @param facilityId Sending facility
+     * @param patientId
+     * @param message
+     * @return
+     */
     @PostMapping(PATIENT_ID_PATH + "/qbp")
     public ResponseEntity<?> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId,
                                      @PathVariable(FACILITY_ID) Integer facilityId,

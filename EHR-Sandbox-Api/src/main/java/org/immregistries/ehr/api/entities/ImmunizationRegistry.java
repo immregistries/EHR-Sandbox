@@ -3,6 +3,9 @@ package org.immregistries.ehr.api.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+/**
+ * Information used by client for both FHIR and Hl7V2 Messaging
+ */
 @Entity
 @Table(name = "immunization_registry", indexes = {
         @Index(name = "user_id", columnList = "user_id")
@@ -13,38 +16,72 @@ public class ImmunizationRegistry {
     @Column(name = "immunization_registry_id", nullable = false)
     private Integer id;
 
+    /**
+     * EHR user owning the logging information
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
+    /**
+     * Name of IIS, used essentially in UI, unique in user's Scope
+     */
     @Column(name = "name", nullable = false, length = 50)
     private String name = "";
 
+    /**
+     * HL7v2 SOAP endpoint URL
+     */
     @Column(name = "iis_HL7_url", nullable = false, length = 250)
     private String iisHl7Url = "";
 
+    /**
+     * FHIR Restful endpoint URL
+     */
     @Column(name = "iis_FHIR_url", nullable = false, length = 250)
     private String iisFhirUrl = "";
 
+    /**
+     * Optional, for experimental FHIR Messaging endpoint
+     */
     @Column(name = "iis_FHIR_messaging_url", nullable = false, length = 250)
     private String iisFhirMessagingUrl = "";
 
+    /**
+     * IIS side username
+     */
     @Column(name = "iis_username", nullable = false, length = 250)
     private String iisUsername = "";
 
+    /**
+     * IIS side tenant Id, used to complete URL in FHIR and as FacilityID in SOAP,
+     * TODO improve support of diverse configuration
+     */
     @Column(name = "iis_facility_id", nullable = false, length = 250)
     private String iisFacilityId = "";
 
+    /**
+     * IIS side password
+     */
     @Column(name = "iis_password", nullable = false, length = 600)
     private String iisPassword = "";
 
+    /**
+     * Used for quick selection in UI
+     */
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault = false;
 
+    /**
+     * Optional description of the IIS endpoint
+     */
     @Column(name = "description", nullable = false, length = 600)
     private String description = "";
 
+    /**
+     * Optional, MSH-6 segment for Receiving Facility, only used in UI
+     */
     @Column(name = "receivingFacility", nullable = false, length = 600)
     private String receivingFacility = "";
 
