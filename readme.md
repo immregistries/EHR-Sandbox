@@ -28,3 +28,9 @@ default url is localhost:9091/ehr/#/home, port can be changed in docker-compose.
 ### Environments variables used :
 
 - see ``.env.example``
+
+### Troubleshooting issues
+
+If you're aiming at an endpoint hosted on your localhost, replace `localhost` by `host.docker.internal` in the EHR
+sandbox User interface's settings URL's.
+[explanation](https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach)
