@@ -79,8 +79,21 @@ public class ImmunizationRegistryController {
      * @return All ImmunizationRegistries for User
      */
     @GetMapping()
-    public Iterable<ImmunizationRegistry> getAllImmunizationRegistries() {
-        return immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(), Sort.by(Sort.Order.desc("isDefault"), Sort.Order.desc("name")));
+    public ResponseEntity<?> getAllImmunizationRegistries(@RequestParam(value = "name", required = false) String name) {
+//        Map<String, String> envVars = System.getenv();
+//
+//        logger.info("All Environment Variables: {} {}", System.getenv("PROXY_HOST_SOAP"), System.getenv("PROXY_PORT_SOAP"));
+//        logger.info("All Environment Variables:");
+//        logger.info("All Environment Variables:");
+//        for (Map.Entry<String, String> entry : envVars.entrySet()) {
+//            logger.info("{} = {}", entry.getKey(), entry.getValue());
+//        }
+        if (StringUtils.isNotBlank(name)) {
+            return ResponseEntity.ok(immunizationRegistryRepository.findByNameAndUserId(name, userDetailsService.currentUserId()));
+        }
+        return ResponseEntity.ok(immunizationRegistryRepository.findByUserId(userDetailsService.currentUserId(),
+                Sort.by(Sort.Order.desc("isDefault"),
+                        Sort.Order.desc("name"))));
     }
 
     /**

@@ -28,8 +28,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/data-h2/ehr;
       - ENV_DEFAULT_IIS_URL=http://host.docker.internal:8080/iis
     restart: unless-stopped
-    volumes:
-      - ehr-h2-data:/data-h2
+    #    volumes:
+    #      - ehr-h2-data:/data-h2
     ports:
       #     Default port is 9091, can be changed here
       - "9091:8080"

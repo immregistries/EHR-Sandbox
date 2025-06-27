@@ -79,22 +79,22 @@ public class Hl7v2Controller {
 
     /**
      * @param registryId ImmunizationRegistryId of receiver
-     * @param facilityId Sending facility
-     * @param patientId
-     * @param message
+     * @param facilityId Sending facility (optional)
+     * @param patientId  Sent patient (optional)
+     * @param message    Hl7v2 message in body
      * @return
      */
-    @PostMapping(PATIENT_ID_PATH + "/qbp")
+    @PostMapping({TENANT_ID_PATH + "/qbp", PATIENT_ID_PATH + "/qbp"})
     public ResponseEntity<?> qbpSend(@RequestParam(REGISTRY_ID) Integer registryId,
-                                     @PathVariable(FACILITY_ID) Integer facilityId,
-                                     @PathVariable(PATIENT_ID) Integer patientId,
+                                     @PathVariable(value = FACILITY_ID, required = false) Integer facilityId,
+                                     @PathVariable(value = PATIENT_ID, required = false) Integer patientId,
                                      @RequestBody String message) {
         Connector connector;
         ImmunizationRegistry immunizationRegistry = immunizationRegistryService.getImmunizationRegistry(registryId);
         try {
             connector = getConnector(immunizationRegistry);
             String rsp = connector.submitMessage(message, false);
-            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, Optional.empty(), message, rsp);
+            AcknowledgmentObject acknowledgmentObject = processAck(registryId, Optional.ofNullable(facilityId), Optional.ofNullable(patientId), Optional.empty(), message, rsp);
             return ResponseEntity.ok(acknowledgmentObject);
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -112,11 +112,11 @@ public class Hl7v2Controller {
      * @param message
      * @return Response entity with Acknowledgement object or Error message
      */
-    @PostMapping({VACCINATION_ID_PATH + "/vxu", PATIENT_ID_PATH + "/vxu"})
+    @PostMapping({TENANT_ID_PATH + "/vxu", VACCINATION_ID_PATH + "/vxu", PATIENT_ID_PATH + "/vxu"})
     public ResponseEntity<?> vxuSend(@RequestParam(REGISTRY_ID) Integer registryId,
-                                     @PathVariable(FACILITY_ID) Integer facilityId,
-                                     @PathVariable(PATIENT_ID) Integer patientId,
-                                     @PathVariable(VACCINATION_ID) Optional<Integer> vaccinationId,
+                                     @PathVariable(value = FACILITY_ID, required = false) Integer facilityId,
+                                     @PathVariable(value = PATIENT_ID, required = false) Integer patientId,
+                                     @PathVariable(value = VACCINATION_ID, required = false) Integer vaccinationId,
                                      @RequestBody String message) {
 //        Optional<VaccinationEvent> vaccinationEvent = Optional.empty();
 //        if (vaccinationId.isPresent()) {
@@ -128,7 +128,7 @@ public class Hl7v2Controller {
             connector = getConnector(immunizationRegistry);
 
             String ack = connector.submitMessage(message, false);
-            AcknowledgmentObject acknowledgmentObject = processAck(registryId, facilityId, patientId, vaccinationId, message, ack);
+            AcknowledgmentObject acknowledgmentObject = processAck(registryId, Optional.ofNullable(facilityId), Optional.ofNullable(patientId), Optional.ofNullable(vaccinationId), message, ack);
 //            if (vaccinationEvent.isPresent() && (vaccinationEvent.get().getVaccine().getActionCode().equals("D") || message.indexOf("|D") > 0)) {
 //
 //            }
@@ -167,29 +167,32 @@ public class Hl7v2Controller {
         return getConnector(immunizationRegistry, immunizationRegistry.getIisHl7Url());
     }
 
-    public AcknowledgmentObject processAck(Integer registryId, Integer facilityId, Integer patientId, Optional<Integer> vaccinationId, String message, String ack) {
+    public AcknowledgmentObject processAck(Integer registryId, Optional<Integer> facilityId, Optional<Integer> patientId, Optional<Integer> vaccinationId, String message, String ack) {
         AcknowledgmentObject acknowledgmentObject;
-        if (vaccinationId.isPresent()) {
+        if (vaccinationId.isEmpty() && patientId.isPresent()) {
             acknowledgmentObject = feedbackController.extractAckInfo(
                     Optional.of(registryId),
-                    Optional.of(facilityId),
-                    Optional.of(patientId),
-                    vaccinationId,
+                    facilityId,
+                    patientId,
+                    vaccinationEventRepository.findByPatientId(patientId.get()),
                     ack);
+
         } else {
             acknowledgmentObject = feedbackController.extractAckInfo(
                     Optional.of(registryId),
-                    Optional.of(facilityId),
-                    Optional.of(patientId),
-                    vaccinationEventRepository.findByPatientId(patientId),
+                    facilityId,
+                    patientId,
+                    vaccinationId,
                     ack);
         }
         acknowledgmentObject.setRawSource(message);
-        acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
-        feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
+        if (facilityId.isPresent() && patientId.isPresent()) {
+            acknowledgmentObject = acknowledgmentObjectRepository.save(acknowledgmentObject);
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getInfos());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getNotices());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getWarnings());
+            feedbackRepository.saveAll(acknowledgmentObject.getSortedResult().getErrors());
+        }
         return acknowledgmentObject;
     }
 }

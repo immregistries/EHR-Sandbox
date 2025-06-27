@@ -68,7 +68,7 @@ public class TenantController {
         if (tenantRepository.existsByUserIdAndNameDisplay(userDetailsService.currentUserId(), tenant.getNameDisplay())) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Tenant already exists");
         }
-        if (tenant.getNameDisplay().length() < 1) {
+        if (StringUtils.isBlank(tenant.getNameDisplay())) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "No tenant name specified");
         }
         tenant.setUser(userDetailsService.currentUser());
