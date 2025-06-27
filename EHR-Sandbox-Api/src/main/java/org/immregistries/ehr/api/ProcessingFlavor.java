@@ -11,8 +11,8 @@ import java.util.Set;
 import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
 
 public enum ProcessingFlavor {
-    BLACKJACK("BLACKJACK", "Generates fully random Records instead of Synthea when populating facilities"),
-    PAIN_PERDU("PAINPERDU", "Includes fields marked as deprecated from codesets in forms and tables"),
+    BLACKJACK("BLACKJACK", "Generates fully random records instead of Synthea framework when populating facilities"),
+    PAIN_PERDU("PAINPERDU", "Includes deprecated codes in forms and tables"),
     LOTTERY("LOTTERY", "Use external API to verify Lot Number validity in forms"),
     //    LIGUAL("LIGUAL", "Sets all name types as legal"),
 //    BIZNESS("BIZNESS", "(Incoming) Uses local id in FHIR references instead of business identifier"),
@@ -20,7 +20,7 @@ public enum ProcessingFlavor {
     R4("R4", "(In progress, might break some functionalities) Use Fhir R4 version"),
     Z44("Z44", "Use Z44 profile for QBP instead of default Z34"),
     BABYNAME("BABYNAME", "Detect invalid names and change name type to 'Newborn' or 'TEST' when producing HL7v2 messages"),
-    GLOTTOPHOBIA("GLOTTOPHOBIA", "Accents adn special characters like ñéë are converted to ASCII"),
+    GLOTTOPHOBIA("GLOTTOPHOBIA", "Accents and special characters are converted to ASCII ñéë -> nee"),
     UPPERCASE("UPPERCASE", "Converts all names to uppercase before sending to demonstrate incompatibility with case sensitivity in some systems."),
     SINGLENAME("SINGLENAME", "Only allow single Name for patients in forms, Name type set to Legal by default"),
     LEGALFIRST("LEGALFIRST", "Legal name is first in segment for Hl7v2");

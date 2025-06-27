@@ -1,6 +1,7 @@
 package org.immregistries.ehr.api.controllers;
 
 import com.github.javafaker.Faker;
+import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
@@ -38,9 +39,18 @@ public class TenantController {
         return tenant;
     }
 
+    /**
+     * Get all tenant or search by name (exact value)
+     *
+     * @param name exact name to match
+     * @return All the users tenants or single match on the name parameter
+     */
     @GetMapping()
-    public Iterable<Tenant> tenants() {
-        return tenantRepository.findByUserId(userDetailsService.currentUserId());
+    public ResponseEntity<?> getAllOrSearchTenants(@RequestParam(value = "name", required = false) String name) {
+        if (StringUtils.isNotBlank(name)) {
+            return ResponseEntity.ok(tenantRepository.findByUserIdAndNameDisplay(userDetailsService.currentUserId(), name));
+        }
+        return ResponseEntity.ok(tenantRepository.findByUserId(userDetailsService.currentUserId()));
     }
 
     @GetMapping(TENANT_ID_SUFFIX)

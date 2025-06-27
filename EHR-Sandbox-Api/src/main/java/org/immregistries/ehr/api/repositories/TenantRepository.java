@@ -17,6 +17,8 @@ public interface TenantRepository extends CrudRepository<Tenant, Integer> {
 
     Boolean existsByUserIdAndNameDisplay(int userId, String nameDisplay);
 
+    Optional<Tenant> findByUserIdAndNameDisplay(int userId, String nameDisplay);
+
     Boolean existsByUserId(int id);
 
 }
