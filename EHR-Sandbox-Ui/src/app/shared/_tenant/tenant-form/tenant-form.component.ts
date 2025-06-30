@@ -31,8 +31,10 @@ export class TenantFormComponent implements OnInit {
     }
 
     this.tenantService.readAllFlavors().subscribe((flavors) => {
-      this.flavorList = flavors
-      this.flavorListFiltered = flavors
+      this.flavorList = flavors.filter((data) => {
+        return !data.hidden
+      })
+      this.flavorListFiltered = this.flavorList
     })
   }
 

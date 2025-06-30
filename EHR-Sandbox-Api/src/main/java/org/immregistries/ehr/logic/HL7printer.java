@@ -429,10 +429,17 @@ public class HL7printer {
         String sendingFacIdentifier;
         if (Objects.nonNull(facility)) {
             EhrIdentifier ehrIdentifier = IOrganizationMapper.facilityGetOneEhrIdentifier(facility);
-            sendingFacIdentifier = StringUtils.defaultIfBlank(ehrIdentifier.getAssignerReference(), "") + "^"
-                    + StringUtils.defaultIfBlank(ehrIdentifier.getValue(), "") + "^" +
-                    StringUtils.defaultIfBlank(ehrIdentifier.getType(), "");
-//        "^" + identifier.getValue() + "^L,M,N";
+            // TODO temps fix clarify segment structure and choose better identifier
+            if (StringUtils.isAllBlank(ehrIdentifier.getAssignerReference(), ehrIdentifier.getType())) {
+                sendingFacIdentifier = StringUtils.defaultIfBlank(ehrIdentifier.getValue(), "");
+            } else {
+                sendingFacIdentifier = StringUtils.defaultIfBlank(ehrIdentifier.getAssignerReference(), "") + "^"
+                        + StringUtils.defaultIfBlank(ehrIdentifier.getValue(), "") + "^" +
+                        StringUtils.defaultIfBlank(ehrIdentifier.getType(), "");
+                //        "^" + identifier.getValue() + "^L,M,N";
+            }
+
+
         } else {
             sendingFacIdentifier = "";
         }

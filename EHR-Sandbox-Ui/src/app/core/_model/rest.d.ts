@@ -299,6 +299,7 @@ export interface Revisions<T> {
 export interface Flavor {
   key: string,
   description: string,
+  hidden: boolean,
 }
 
 export interface EhrFhirOutcome {

@@ -48,6 +48,10 @@ public enum ProcessingFlavor {
         return description;
     }
 
+    public boolean getHidden() {
+        return hidden;
+    }
+
     public boolean isHidden() {
         return hidden;
     }

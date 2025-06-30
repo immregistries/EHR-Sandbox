@@ -106,6 +106,7 @@ public class MainController {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("key", flavor.getKey());
             jsonObject.addProperty("description", flavor.getDescription());
+            jsonObject.addProperty("hidden", flavor.getHidden());
             jsonArray.add(jsonObject);
         }
         return jsonArray.toString();
