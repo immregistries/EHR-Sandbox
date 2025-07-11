@@ -2,6 +2,7 @@ package org.immregistries.ehr.api.repositories;
 
 import org.immregistries.ehr.api.entities.EhrPatient;
 import org.immregistries.ehr.api.entities.Tenant;
+import org.immregistries.ehr.api.entities.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.history.RevisionRepository;
@@ -21,6 +22,12 @@ public interface EhrPatientRepository extends CrudRepository<EhrPatient, Integer
 
     @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f  WHERE f.tenant = :tenant")
     Iterable<EhrPatient> findByTenantId(@Param("tenant") Tenant tenant);
+
+    @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user")
+    Iterable<EhrPatient> findByUserId(@Param("user") User user);
+
+    @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user AND p.id = :id")
+    Optional<EhrPatient> findByUserIdAndId(@Param("user") User user, @Param("id") Integer id);
 
 //    Iterable<EhrPatient> findByTenantIdAndFacilityId(Integer tenantId, Integer facilityId);
 //    Optional<EhrPatient> findByTenantIdAndFacilityIdAndId(Integer tenantId, Integer facilityId, String id);

@@ -65,7 +65,7 @@ export class Hl7MessagingComponent implements AfterViewInit, OnInit {
     this.tabGroup.selectedIndex = 1;
   }
 
-  public reloadOnChange: boolean = false;
+  public reloadOnChange: boolean = true;
   updateMsh6(message: string, registry: ImmunizationRegistry): string {
     console.info(this.reloadOnChange, registry.receivingFacility)
     if (!this.reloadOnChange) {
