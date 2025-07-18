@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface VaccinationEventRepository extends JpaRepository<VaccinationEvent, Integer>, RevisionRepository<VaccinationEvent, Integer, Integer> {
 
-    @Query(value = "SELECT v FROM VaccinationEvent v RIGHT JOIN Facility f on p.facility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user")
+    @Query(value = "SELECT v FROM VaccinationEvent v RIGHT JOIN Facility f on v.administeringFacility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user")
     Iterable<EhrPatient> findByUserId(@Param("user") User user);
 
     @Query(value = "SELECT v FROM VaccinationEvent v RIGHT JOIN Facility f on v.administeringFacility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user AND v.id = :id")
