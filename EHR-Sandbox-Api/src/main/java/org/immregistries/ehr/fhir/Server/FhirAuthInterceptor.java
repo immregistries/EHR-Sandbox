@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.hl7.fhir.r5.model.Bundle;
 import org.immregistries.ehr.api.entities.EhrUtils;
 import org.immregistries.ehr.api.entities.Facility;
+import org.immregistries.ehr.api.entities.Tenant;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.api.repositories.UserRepository;
@@ -34,8 +35,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
-import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
+import static org.immregistries.ehr.api.AuditRevisionListener.*;
 
 /**
  * Incomplete, currently used for tracking of modifying users in envers framework for history
@@ -97,12 +97,12 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
 
                 if (userDetails != null && username != null) {
                     theRequestDetails.setAttribute(USER_ID, userDetails.getId());
-                    facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
+                    Facility facility = facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
                             () -> new InvalidRequestException("TENANT ID not recognised")
                     );
-                    request.setAttribute(TENANT_NAME, facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
-                            () -> new InvalidRequestException("TENANT ID not recognised")
-                    ).getTenant().getId());
+                    Tenant tenant = facility.getTenant();
+                    request.setAttribute(TENANT_NAME, tenant.getNameDisplay());
+                    request.setAttribute(TENANT_ID, tenant.getId());
                     // TODO IMMUNIZATION REGISTRY IDENTIFICATION and set attribute IMMUNIZATION_REGISTRY_ID
 
                     /**

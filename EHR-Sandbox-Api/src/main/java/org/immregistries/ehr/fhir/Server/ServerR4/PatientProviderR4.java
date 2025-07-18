@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.transaction.Transactional;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -13,19 +14,17 @@ import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
-import org.immregistries.ehr.api.security.UserDetailsImpl;
+import org.immregistries.ehr.fhir.Server.ServerHelper;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.forR4.PatientMapperR4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
-import java.util.Optional;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGISTRY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
@@ -56,14 +55,12 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
     }
 
     @Read
+    @Transactional
     public Patient Read(@IdParam IdType theId, RequestDetails requestDetails) {
-        UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication();
-        User user = new User();
-        user.setId(userDetailsImpl.getId());
-        return  patientRepository.findByUserIdAndId(user,Integer.valueOf(theId.getIdPart()))
+        User user = ServerHelper.currentUser();
+        return patientRepository.findByUserIdAndId(user, Integer.valueOf(theId.getIdPart()))
                 .map(ehrPatient -> patientMapper.toFhir(ehrPatient))
-                .orElseThrow(() ->new InvalidRequestException("HAPI-1996: Resource " + theId + " is not known"));
-
+                .orElseThrow(() -> new InvalidRequestException("HAPI-1996: Resource " + theId + " is not known"));
     }
 
 
