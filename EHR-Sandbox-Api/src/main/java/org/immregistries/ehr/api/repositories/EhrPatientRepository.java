@@ -20,10 +20,10 @@ public interface EhrPatientRepository extends CrudRepository<EhrPatient, Integer
     @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' ANd i.value = :value")
     Optional<EhrPatient> findByFacilityIdAndIdentifier(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("value") String value);
 
-    @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f  WHERE f.tenant = :tenant")
+    @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility.id = f.id  WHERE f.tenant = :tenant")
     Iterable<EhrPatient> findByTenantId(@Param("tenant") Tenant tenant);
 
-    @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user")
+    @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility.id = f.id RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user")
     Iterable<EhrPatient> findByUserId(@Param("user") User user);
 
     @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility = f RIGHT JOIN Tenant t on f.tenant = t  WHERE t.user = :user AND p.id = :id")
