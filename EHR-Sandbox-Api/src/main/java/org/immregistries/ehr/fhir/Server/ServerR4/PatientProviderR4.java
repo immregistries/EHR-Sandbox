@@ -3,20 +3,26 @@ package org.immregistries.ehr.fhir.Server.ServerR4;
 import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.param.StringParam;
+import ca.uhn.fhir.rest.param.TokenAndListParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.immregistries.ehr.api.entities.*;
+import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
 import org.immregistries.ehr.fhir.Server.ServerHelper;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.forR4.PatientMapperR4;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +31,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGISTRY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
+import static org.immregistries.ehr.fhir.Server.FhirAuthInterceptor.FACILITY;
 
 @Controller
 public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<Patient> {
@@ -58,9 +70,62 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
     @Transactional
     public Patient Read(@IdParam IdType theId, RequestDetails requestDetails) {
         User user = ServerHelper.currentUser();
-        return patientRepository.findByUserIdAndId(user, Integer.valueOf(theId.getIdPart()))
+        Facility facility = (Facility) requestDetails.getAttribute(FACILITY);
+        return patientRepository.findByFacilityIdAndId(facility.getId(), Integer.valueOf(theId.getIdPart()))
                 .map(ehrPatient -> patientMapper.toFhir(ehrPatient))
                 .orElseThrow(() -> new InvalidRequestException("HAPI-1996: Resource " + theId + " is not known"));
+    }
+
+    @Search
+    @Transactional
+    public List<Patient> search(RequestDetails requestDetails, @OptionalParam(name = Patient.SP_FAMILY) StringParam theFamilyName,
+                                @OptionalParam(name = Patient.SP_IDENTIFIER)
+                                TokenAndListParam theIdentifier) {
+        Stream<EhrPatient> ehrPatientStream = null;
+        User user = ServerHelper.currentUser();
+        Facility facility = (Facility) requestDetails.getAttribute(FACILITY);
+
+        int size = theIdentifier.size();
+        if (size > 0) {
+            ehrPatientStream = getEhrPatientStreamIdentifierParam(theIdentifier, facility, size);
+        } else {
+            ehrPatientStream = StreamSupport.stream(patientRepository.findByFacilityId(facility.getId()).spliterator(), false);
+        }
+        return ehrPatientStream
+                .map(ehrPatient -> patientMapper.toFhir(ehrPatient)).collect(Collectors.toList());
+    }
+
+    @NotNull
+    private Stream<EhrPatient> getEhrPatientStreamIdentifierParam(TokenAndListParam theIdentifier, Facility facility, int size) {
+        Stream<EhrPatient> ehrPatientStream;
+        Iterable<EhrPatient> ehrPatientIterable = null;
+        TokenParam identifier = theIdentifier.getValuesAsQueryTokens().get(0).getValuesAsQueryTokens().get(0);
+        if (StringUtils.isNoneBlank(identifier.getSystem(), identifier.getValue())) {
+            ehrPatientIterable = patientRepository.findByFacilityIdAndIdentifier(facility.getId(), identifier.getSystem(), identifier.getValue());
+        } else if (StringUtils.isNotBlank(identifier.getSystem())) {
+            ehrPatientIterable = patientRepository.findByFacilityIdAndIdentifierSystem(facility.getId(), identifier.getSystem());
+        } else {
+            ehrPatientIterable = patientRepository.findByFacilityIdAndIdentifierValue(facility.getId(), identifier.getValue());
+        }
+
+        ehrPatientStream = StreamSupport.stream(ehrPatientIterable.spliterator(), false);
+        for (int i = 1; i < size; i++) {
+            TokenParam tokenParam = theIdentifier.getValuesAsQueryTokens().get(i).getValuesAsQueryTokens().get(0);
+            final Predicate<EhrIdentifier> predicate;
+            if (StringUtils.isNoneBlank(identifier.getSystem(), identifier.getValue())) {
+                predicate = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getSystem(), tokenParam.getSystem())
+                        && StringUtils.equals(ehrIdentifier.getValue(), tokenParam.getValue());
+            } else if (StringUtils.isNotBlank(identifier.getSystem())) {
+                predicate = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getSystem(), tokenParam.getSystem());
+            } else {
+                predicate = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getValue(), tokenParam.getValue());
+            }
+            ehrPatientStream = ehrPatientStream
+                    .filter(ehrPatient -> ehrPatient.getIdentifiers()
+                            .stream().anyMatch(predicate));
+
+        }
+        return ehrPatientStream;
     }
 
 

@@ -35,7 +35,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import static org.immregistries.ehr.api.AuditRevisionListener.*;
+import static org.immregistries.ehr.api.AuditRevisionListener.TENANT_NAME;
+import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
 
 /**
  * Incomplete, currently used for tracking of modifying users in envers framework for history
@@ -43,6 +44,9 @@ import static org.immregistries.ehr.api.AuditRevisionListener.*;
 @Interceptor
 @Component
 public class FhirAuthInterceptor extends AuthorizationInterceptor {
+    public static final String FACILITY = "FACILITY";
+    public static final String TENANT_ID = "TENANT_ID";
+
 
     Logger logger = LoggerFactory.getLogger(FhirAuthInterceptor.class);
     @Autowired
@@ -95,13 +99,13 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
                     userDetails = (UserDetailsImpl) authentication.getPrincipal();
                 }
 
-                if (userDetails != null && username != null) {
+                if (userDetails != null) {
                     theRequestDetails.setAttribute(USER_ID, userDetails.getId());
-                    Facility facility = facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
+                    Facility facility = facilityRepository.findByUserAndId(userDetailsService.currentUser(), EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
                             () -> new InvalidRequestException("TENANT ID not recognised")
                     );
-                    //TODO solve Session proxy exception
                     Tenant tenant = facility.getTenant();
+                    request.setAttribute(FACILITY, facility);
                     request.setAttribute(TENANT_NAME, tenant.getNameDisplay());
                     request.setAttribute(TENANT_ID, tenant.getId());
                     // TODO IMMUNIZATION REGISTRY IDENTIFICATION and set attribute IMMUNIZATION_REGISTRY_ID

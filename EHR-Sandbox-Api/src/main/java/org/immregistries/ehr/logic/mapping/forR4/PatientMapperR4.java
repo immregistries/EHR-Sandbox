@@ -56,6 +56,8 @@ public class PatientMapperR4 implements IPatientMapper<Patient> {
     public Patient toFhir(EhrPatient ehrPatient) {
         Patient p = new Patient();
 
+        p.setId(new IdType().setValue("Patient/" + ehrPatient.getId()));
+        
         for (EhrIdentifier ehrIdentifier : ehrPatient.getIdentifiers()) {
             p.addIdentifier(ehrIdentifier.toR4());
         }

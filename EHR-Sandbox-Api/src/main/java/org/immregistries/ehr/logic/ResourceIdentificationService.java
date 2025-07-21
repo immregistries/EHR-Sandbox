@@ -151,7 +151,7 @@ public class ResourceIdentificationService {
             ehrPatient = ehrPatientRepository.findByFacilityIdAndMrn(facility.getId(), ehrIdentifier.getValue()).orElse(null);
         }
         if (ehrPatient == null) {
-            ehrPatient = ehrPatientRepository.findByFacilityIdAndIdentifier(facility.getId(), StringUtils.defaultIfBlank(ehrIdentifier.getSystem(), ""), ehrIdentifier.getValue())
+            ehrPatient = ehrPatientRepository.findOneByFacilityIdAndIdentifier(facility.getId(), StringUtils.defaultIfBlank(ehrIdentifier.getSystem(), ""), ehrIdentifier.getValue())
                     .orElse(null);
         }
         return ehrPatient;
