@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.transaction.Transactional;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -54,6 +55,7 @@ public class ImmunizationProviderR4 implements IResourceProvider, EhrFhirProvide
     }
 
     @Read
+    @Transactional
     public Immunization Read(@IdParam IdType theId, RequestDetails requestDetails) {
         User user = ServerHelper.currentUser();
         return vaccinationEventRepository.findByUserIdAndId(user, Integer.valueOf(theId.getIdPart()))

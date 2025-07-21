@@ -100,6 +100,7 @@ public class FhirAuthInterceptor extends AuthorizationInterceptor {
                     Facility facility = facilityRepository.findById(EhrUtils.convert(theRequestDetails.getTenantId())).orElseThrow(
                             () -> new InvalidRequestException("TENANT ID not recognised")
                     );
+                    //TODO solve Session proxy exception
                     Tenant tenant = facility.getTenant();
                     request.setAttribute(TENANT_NAME, tenant.getNameDisplay());
                     request.setAttribute(TENANT_ID, tenant.getId());
