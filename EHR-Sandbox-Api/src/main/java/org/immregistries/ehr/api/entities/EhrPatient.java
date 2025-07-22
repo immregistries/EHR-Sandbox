@@ -20,7 +20,7 @@ import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_
         property = "id",
         scope = EhrPatient.class)
 @Audited(targetAuditMode = NOT_AUDITED)
-public class EhrPatient extends EhrEntity {
+public class EhrPatient extends EhrEntity implements EhrEntityWithIdentifiers {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_TYPE_VALUE;
 
-public interface EhrPatientRepository extends CrudRepository<EhrPatient, Integer>, RevisionRepository<EhrPatient, Integer, Integer> {
+public interface EhrPatientRepository extends CrudRepository<EhrPatient, Integer>, RevisionRepository<EhrPatient, Integer, Integer>, IIdentifierSearchRepository<EhrPatient> {
 
     @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.type = '" + MRN_TYPE_VALUE + "' ANd i.value = :mrn")
     Optional<EhrPatient> findByFacilityIdAndMrn(@Param("facilityId") Integer facilityId, @Param("mrn") String mrn);
