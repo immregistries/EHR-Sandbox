@@ -14,19 +14,19 @@ import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_
 
 public interface EhrPatientRepository extends CrudRepository<EhrPatient, Integer>, RevisionRepository<EhrPatient, Integer, Integer>, IIdentifierSearchRepository<EhrPatient> {
 
-    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.type = '" + MRN_TYPE_VALUE + "' ANd i.value = :mrn")
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.type = '" + MRN_TYPE_VALUE + "' AND i.value = :mrn")
     Optional<EhrPatient> findByFacilityIdAndMrn(@Param("facilityId") Integer facilityId, @Param("mrn") String mrn);
 
-    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' ANd i.value = :value")
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' AND i.value = :value")
     Optional<EhrPatient> findOneByFacilityIdAndIdentifier(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("value") String value);
 
-    @Query(value = "SELECT DISTINCT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' ANd i.value = :value")
+    @Query(value = "SELECT DISTINCT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' AND i.value = :value")
     Iterable<EhrPatient> findByFacilityIdAndIdentifier(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("value") String value);
 
-    @Query(value = "SELECT DISTINCT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId ANd i.value = :value")
+    @Query(value = "SELECT DISTINCT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.value = :value")
     Iterable<EhrPatient> findByFacilityIdAndIdentifierValue(@Param("facilityId") Integer facilityId, @Param("value") String value);
 
-    @Query(value = "SELECT DISTINCT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId ANd i.system = :system")
+    @Query(value = "SELECT DISTINCT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = :system")
     Iterable<EhrPatient> findByFacilityIdAndIdentifierSystem(@Param("facilityId") Integer facilityId, @Param("system") String system);
 
     @Query(value = "SELECT p FROM EhrPatient p RIGHT JOIN Facility f on p.facility.id = f.id  WHERE f.tenant = :tenant")
