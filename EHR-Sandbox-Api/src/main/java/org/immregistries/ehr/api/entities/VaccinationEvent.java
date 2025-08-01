@@ -28,14 +28,14 @@ public class VaccinationEvent extends EhrEntity {
     @JsonProperty("patient")
     private EhrPatient patient;
 
-    /**
-     * DO NOT USE THIS METHOD
-     *
-     * @param id
-     */
-    @JsonProperty("patient")
-    public void dontUseThisMethod(Integer id) {
-    }
+//    /**
+//     * DO NOT USE THIS METHOD
+//     *
+//     * @param id
+//     */
+//    @JsonProperty("patient")
+//    public void dontUseThisMethod(Integer id) {
+//    }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
     @JoinColumn(name = "entering_clinician_id")

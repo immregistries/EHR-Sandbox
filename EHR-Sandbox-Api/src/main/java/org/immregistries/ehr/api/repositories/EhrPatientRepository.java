@@ -14,6 +14,15 @@ import static org.immregistries.ehr.logic.mapping.interfaces.IPatientMapper.MRN_
 
 public interface EhrPatientRepository extends CrudRepository<EhrPatient, Integer>, RevisionRepository<EhrPatient, Integer, Integer>, IIdentifierSearchRepository<EhrPatient> {
 
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId  AND i.value = :value AND i.type = :type")
+    Iterable<EhrPatient> findByFacilityIdAndIdentifierValueAndIdentifierType(@Param("facilityId") Integer facilityId, @Param("value") String value, @Param("type") String type);
+
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' AND i.type = :type")
+    Iterable<EhrPatient> findByFacilityIdAndIdentifierSystemAndIdentifierType(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("type") String type);
+
+    @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.system = ':system' AND i.value = :value AND i.type = :type")
+    Iterable<EhrPatient> findByFacilityIdAndIdentifier(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("value") String value, @Param("type") String type);
+
     @Query(value = "SELECT p FROM EhrPatient p INNER JOIN p.identifiers i WHERE p.facility.id = :facilityId AND i.type = '" + MRN_TYPE_VALUE + "' AND i.value = :mrn")
     Optional<EhrPatient> findByFacilityIdAndMrn(@Param("facilityId") Integer facilityId, @Param("mrn") String mrn);
 

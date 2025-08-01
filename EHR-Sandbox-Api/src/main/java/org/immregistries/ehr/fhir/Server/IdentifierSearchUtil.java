@@ -1,6 +1,7 @@
 package org.immregistries.ehr.fhir.Server;
 
 import ca.uhn.fhir.rest.param.TokenAndListParam;
+import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.param.TokenParamModifier;
 import org.apache.commons.lang3.StringUtils;
@@ -9,35 +10,53 @@ import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.embedabbles.EhrIdentifier;
 import org.immregistries.ehr.api.repositories.IIdentifierSearchRepository;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public final class IdentifierSearchUtil {
+    private final static Logger logger = LoggerFactory.getLogger(IdentifierSearchUtil.class);
 
     /**
      * TODO support modifiers
      *
      * @param theIdentifier
      * @param facility
-     * @param size
      * @param searchRepository
      * @return
      */
     @NotNull
-    public static Stream<EhrEntityWithIdentifiers> getStream(TokenAndListParam theIdentifier, Facility facility, int size, IIdentifierSearchRepository searchRepository) {
+    public static Stream<EhrEntityWithIdentifiers> getStream(TokenAndListParam theIdentifier, Facility facility, IIdentifierSearchRepository searchRepository) {
+        int size = theIdentifier.size();
         Stream<EhrEntityWithIdentifiers> ehrEntityStream;
-        TokenParam identifier = theIdentifier.getValuesAsQueryTokens().get(0).getValuesAsQueryTokens().get(0);
+        List<TokenParam> tokenParams = new ArrayList<>(5);
+        TokenParam tokenForSearch = null;
+
+        for (TokenOrListParam tokenOrListParam : theIdentifier.getValuesAsQueryTokens()) {
+
+            for (TokenParam tokenParam : tokenOrListParam.getValuesAsQueryTokens()) {
+                if (tokenForSearch == null && (tokenParam.getModifier() == null || TokenParamModifier.OF_TYPE.equals(tokenParam.getModifier()))) {
+                    tokenForSearch = tokenParam;
+                } else {
+                    tokenParams.add(tokenParam);
+                }
+            }
+        }
+        logger.info("TokenAndList {} TokenOrListParam 0 {}", theIdentifier.size(), theIdentifier.getValuesAsQueryTokens().get(0).getValuesAsQueryTokens().size());
 
         /*
          * TODO get first identifier with null modifier ?
          */
         int ini = 0;
         Iterable<EhrEntityWithIdentifiers> ehrEntityIterable;
-        if (identifier.getModifier() == null) {
+        if (tokenForSearch != null) {
             ini = 1;
-            ehrEntityIterable = getIterableFromSearchOneIdentifier(facility, searchRepository, identifier);
+            ehrEntityIterable = getIterableFromSearchOneIdentifier(facility, searchRepository, tokenForSearch);
         } else {
             ehrEntityIterable = searchRepository.findByFacilityId(facility.getId());
         }
@@ -50,40 +69,84 @@ public final class IdentifierSearchUtil {
         return ehrEntityStream;
     }
 
-    private static Iterable<EhrEntityWithIdentifiers> getIterableFromSearchOneIdentifier(Facility facility, IIdentifierSearchRepository searchRepository, TokenParam identifier) {
+    private static Iterable<EhrEntityWithIdentifiers> getIterableFromSearchOneIdentifier(Facility facility, IIdentifierSearchRepository searchRepository, TokenParam tokenParam) {
         Iterable<EhrEntityWithIdentifiers> ehrEntityIterable;
-        if (StringUtils.isNoneBlank(identifier.getSystem(), identifier.getValue())) {
-            ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifier(facility.getId(), identifier.getSystem(), identifier.getValue());
-        } else if (StringUtils.isNotBlank(identifier.getSystem())) {
-            ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifierSystem(facility.getId(), identifier.getSystem());
+        String value = tokenParam.getValue();
+        String system = tokenParam.getSystem();
+
+        if (TokenParamModifier.OF_TYPE.equals(tokenParam.getModifier())) {
+            String[] strings = tokenParam.getValue().split("\\|");
+            String type = strings[0];
+            value = strings[1];
+//            logger.info("Of type {}  value: {} system: {} type: {}", tokenParam, value, system, type);
+
+            if (StringUtils.isNoneBlank(tokenParam.getSystem(), tokenParam.getValue())) {
+                ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifier(facility.getId(), system, value, type);
+            } else if (StringUtils.isNotBlank(tokenParam.getSystem())) {
+                ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifierSystemAndIdentifierType(facility.getId(), system, type);
+            } else {
+                ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifierValueAndIdentifierType(facility.getId(), value, type);
+            }
         } else {
-            ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifierValue(facility.getId(), identifier.getValue());
+            if (StringUtils.isNoneBlank(system, value)) {
+                ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifier(facility.getId(), system, value);
+            } else if (StringUtils.isNotBlank(system)) {
+                ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifierSystem(facility.getId(), system);
+            } else {
+                ehrEntityIterable = searchRepository.findByFacilityIdAndIdentifierValue(facility.getId(), value);
+            }
         }
+
         return ehrEntityIterable;
     }
 
     @NotNull
     private static Stream<EhrEntityWithIdentifiers> filterStreamWithTokenParam(TokenParam tokenParam, Stream<EhrEntityWithIdentifiers> ehrEntityStream) {
-        final Predicate<EhrIdentifier> predicate;
-        Predicate<EhrIdentifier> predicate1;
-        if (StringUtils.isNoneBlank(tokenParam.getSystem(), tokenParam.getValue())) {
-            predicate1 = ehrIdentifier ->
-                    StringUtils.equals(ehrIdentifier.getSystem(), tokenParam.getSystem())
-                            && StringUtils.equals(ehrIdentifier.getValue(), tokenParam.getValue());
-        } else if (StringUtils.isNotBlank(tokenParam.getSystem())) {
-            predicate1 = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getSystem(), tokenParam.getSystem());
+
+
+        Predicate<EhrIdentifier> predicate;
+
+//        if (TokenParamModifier.OF_TYPE.equals(tokenParam.getModifier())) {
+//            predicate1 = Predicate.not(predicate1);
+//        }
+
+        String system = tokenParam.getSystem();
+        String value = tokenParam.getValue();
+
+        Predicate<EhrIdentifier> predicateType = null;
+//        https://www.hl7.org/fhir/search.html#modifieroftype
+        if (TokenParamModifier.OF_TYPE.equals(tokenParam.getModifier())) {
+            String[] strings = tokenParam.getValue().split("\\|");
+            String type = strings[0];
+            value = strings[1];
+//            logger.info("Of type {}  value: {} system: {} type: {}", tokenParam, value, system, type);
+            predicateType = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getType(), type);
+        }
+
+        
+        String finalValue = value;
+        if (StringUtils.isNoneBlank(system, value)) {
+            predicate = ehrIdentifier ->
+                    StringUtils.equals(ehrIdentifier.getSystem(), system)
+                            && StringUtils.equals(ehrIdentifier.getValue(), finalValue);
+        } else if (StringUtils.isNotBlank(system)) {
+            predicate = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getSystem(), system);
         } else {
-            predicate1 = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getValue(), tokenParam.getValue());
+            predicate = ehrIdentifier -> StringUtils.equals(ehrIdentifier.getValue(), finalValue);
         }
 
-        if (tokenParam.getModifier().equals(TokenParamModifier.NOT)) {
-            predicate1 = Predicate.not(predicate1);
+        if (null != predicateType) {
+            predicate = predicate.and(predicateType);
         }
 
-        predicate = predicate1;
+        if (TokenParamModifier.NOT.equals(tokenParam.getModifier())) {
+            predicate = Predicate.not(predicate);
+        }
+
+        final Predicate<EhrIdentifier> finalPredicate = predicate;
         ehrEntityStream = ehrEntityStream
                 .filter(ehrEntity -> ehrEntity.getIdentifiers()
-                        .stream().anyMatch(predicate));
+                        .stream().anyMatch(finalPredicate));
         return ehrEntityStream;
     }
 }

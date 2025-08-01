@@ -81,9 +81,8 @@ public class PatientProviderR4 implements IResourceProvider, EhrFhirProviderR4<P
         User user = ServerHelper.currentUser();
         Facility facility = (Facility) requestDetails.getAttribute(FACILITY);
 
-        int size = theIdentifier.size();
-        if (size > 0) {
-            ehrPatientStream = IdentifierSearchUtil.getStream(theIdentifier, facility, size, patientRepository)
+        if (theIdentifier != null) {
+            ehrPatientStream = IdentifierSearchUtil.getStream(theIdentifier, facility, patientRepository)
                     .map(entity -> (EhrPatient) entity);
         } else {
             ehrPatientStream = StreamSupport.stream(patientRepository.findByFacilityId(facility.getId()).spliterator(), false);

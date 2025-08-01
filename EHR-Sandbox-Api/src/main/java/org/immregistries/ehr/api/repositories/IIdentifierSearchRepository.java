@@ -5,6 +5,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface IIdentifierSearchRepository<T extends EhrEntityWithIdentifiers> {
 
+
+    Iterable<T> findByFacilityIdAndIdentifierValueAndIdentifierType(@Param("facilityId") Integer facilityId, @Param("value") String value, @Param("type") String type);
+
+    Iterable<T> findByFacilityIdAndIdentifierSystemAndIdentifierType(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("type") String type);
+
+    Iterable<T> findByFacilityIdAndIdentifier(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("value") String value, @Param("type") String type);
+
     Iterable<T> findByFacilityIdAndIdentifier(@Param("facilityId") Integer facilityId, @Param("system") String system, @Param("value") String value);
 
     Iterable<T> findByFacilityIdAndIdentifierValue(@Param("facilityId") Integer facilityId, @Param("value") String value);
