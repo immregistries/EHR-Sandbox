@@ -70,12 +70,15 @@ public class SmartHealthLinksService {
         if (!shlink.startsWith(SHLINK_PREFIX)) {
             throw new RuntimeException("Not prefixed with shlink");
         }
-        String decodedFrom64 = new String(Base64.getDecoder().decode(shlink.substring(SHLINK_PREFIX.length()).getBytes()));
+        String decodedFrom64 = new String(Base64.getUrlDecoder().decode(shlink.substring(SHLINK_PREFIX.length()).getBytes()));
         JsonObject payloadObject = JsonParser.parseString(decodedFrom64).getAsJsonObject();
         logger.info("shlink {}", payloadObject);
 
         String url = payloadObject.get(URL).getAsString();
-        String key = payloadObject.get(KEY).getAsString();
+        String key = "";
+        if (payloadObject.has(KEY)) {
+            key = payloadObject.get(KEY).getAsString();
+        }
         String flags = null;
         JsonElement flagsObject = payloadObject.get(FLAG);
         if (flagsObject != null) {
@@ -98,8 +101,11 @@ public class SmartHealthLinksService {
         }
 
         String recipient = "EHR-sandbox-test";
-        byte[] encodedKey = Base64.getUrlDecoder().decode(key.getBytes());
-        SecretKey secretKey = new SecretKeySpec(encodedKey, "AES");
+        SecretKey secretKey = null;
+        if (StringUtils.isNotBlank(key)) {
+            byte[] encodedKey = Base64.getUrlDecoder().decode(key.getBytes());
+            secretKey = new SecretKeySpec(encodedKey, "AES");
+        }
         /**
          * if flag contains "U"
          */
@@ -114,6 +120,7 @@ public class SmartHealthLinksService {
             try {
                 manifestElement = (JsonObject) JsonParser.parseString(manifest);
             } catch (ClassCastException classCastException) {
+                logger.error("manifest error {} {}", url, manifest);
                 throw new RuntimeException("Invalid Manifest : " + classCastException.getMessage());
             }
             JsonArray files = manifestElement.get(FILES).getAsJsonArray();
@@ -202,6 +209,7 @@ public class SmartHealthLinksService {
             if (embeddedLengthMax != null) {
                 bodyObject.addProperty("embeddedLengthMax", embeddedLengthMax);
             }
+            logger.info("Manifest URI {}", uri);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .header("content-type", "application/json")
@@ -209,6 +217,10 @@ public class SmartHealthLinksService {
                     .build();
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("manifest reading response code: {} result: {} headers: {}", response.statusCode(), response.body(), response.headers());
+            if (StringUtils.isBlank(response.body())) {
+                throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode());
+            }
             return response.body();
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);

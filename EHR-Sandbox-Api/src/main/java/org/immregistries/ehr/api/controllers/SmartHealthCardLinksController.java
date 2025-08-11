@@ -79,7 +79,7 @@ public class SmartHealthCardLinksController {
         if (!url.contains(SHLINK_PREFIX)) {
             throw new RuntimeException("Invalid shlink");
         }
-        String shlink = SHLINK_PREFIX + url.split(SHLINK_PREFIX)[1];
+        String shlink = SHLINK_PREFIX + url.trim().split(SHLINK_PREFIX)[1];
         PublicKey publicKey = null;
         if (StringUtils.isNotBlank(jwkString.orElse(null))) {
             JWK jwk = null;

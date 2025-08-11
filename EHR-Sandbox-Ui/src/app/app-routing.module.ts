@@ -20,6 +20,7 @@ import { JsonFormComponent } from './shared/_components/abstract-json-form/abstr
 import { PatientJsonFormComponent } from './shared/_components/abstract-json-form/patient-json-form/patient-json-form.component';
 import { AckDisplayComponent } from './shared/_fhir/ack-display/ack-display.component';
 import { Hl7PostComponent } from './shared/_fhir/hl7-post/hl7-post.component';
+import { SmartHealthLinkImportComponent } from './shared/_fhir/smart-health-link-import/smart-health-link-import.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -43,6 +44,7 @@ const routes: Routes = [
   { path: 'vxu-steps', component: VxuStepsComponent },
   { path: 'json-form', component: PatientJsonFormComponent },
   { path: 'ack', component: Hl7PostComponent },
+  { path: 'shlinks-import', component: SmartHealthLinkImportComponent },
 
 ];
 
