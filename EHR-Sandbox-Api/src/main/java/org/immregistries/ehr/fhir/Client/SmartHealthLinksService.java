@@ -1,12 +1,19 @@
 package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.context.FhirContext;
-import com.google.gson.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
+import org.immregistries.ehr.logic.shlink.ShLinkManifest;
+import org.immregistries.ehr.logic.shlink.ShLinkPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,39 +73,24 @@ public class SmartHealthLinksService {
 
     public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey) {
         Gson gson = new Gson();
+        ObjectMapper mapper = new ObjectMapper();
+
         List<String> result = new ArrayList<>(3);
         if (!shlink.startsWith(SHLINK_PREFIX)) {
             throw new RuntimeException("Not prefixed with shlink");
         }
         String decodedFrom64 = new String(Base64.getUrlDecoder().decode(shlink.substring(SHLINK_PREFIX.length()).getBytes()));
-        JsonObject payloadObject = JsonParser.parseString(decodedFrom64).getAsJsonObject();
-        logger.info("shlink {}", payloadObject);
+        ShLinkPayload shLinkPayload;
+        try {
+            shLinkPayload = mapper.readValue(decodedFrom64, ShLinkPayload.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid smart health link Payload");
+        }
+        logger.info("shlink {}", shLinkPayload);
 
-        String url = payloadObject.get(URL).getAsString();
-        String key = "";
-        if (payloadObject.has(KEY)) {
-            key = payloadObject.get(KEY).getAsString();
-        }
-        String flags = null;
-        JsonElement flagsObject = payloadObject.get(FLAG);
-        if (flagsObject != null) {
-            flags = flagsObject.getAsString();
-        }
-        String exp = null;
-        JsonElement expObject = payloadObject.get(EXP);
-        if (expObject != null) {
-            exp = expObject.getAsString();
-        }
-        String label = null;
-        JsonElement labelObject = payloadObject.get(LABEL);
-        if (labelObject != null) {
-            label = labelObject.getAsString();
-        }
-        String v = null;
-        JsonElement vObject = payloadObject.get(V);
-        if (vObject != null) {
-            v = vObject.getAsString();
-        }
+        String url = shLinkPayload.getUrl();
+        String key = shLinkPayload.getKey().orElse("");
+        String flags = shLinkPayload.getFlag().orElse("");
 
         String recipient = "EHR-sandbox-test";
         SecretKey secretKey = null;
@@ -116,20 +108,18 @@ public class SmartHealthLinksService {
         } else { // Manifest
             String manifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE);
 //            logger.info("manifest {}", manifest);
-            JsonObject manifestElement;
+            ShLinkManifest shLinkManifest;
             try {
-                manifestElement = (JsonObject) JsonParser.parseString(manifest);
-            } catch (ClassCastException classCastException) {
-                logger.error("manifest error {} {}", url, manifest);
-                throw new RuntimeException("Invalid Manifest : " + classCastException.getMessage());
+                shLinkManifest = mapper.readValue(manifest, ShLinkManifest.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Invalid Manifest: " + e.getMessage());
             }
-            JsonArray files = manifestElement.get(FILES).getAsJsonArray();
-            for (JsonElement file : files) {
-                JsonObject manifestFile = (JsonObject) file;
-                if (manifestFile.has(EMBEDDED)) {
-                    result.addAll(embeddedFile(manifestFile, secretKey, publicKey));
-                } else if (manifestFile.has(LOCATION)) {//TODO
 
+            for (ShLinkManifest.FileManifest file : shLinkManifest.getFiles()) {
+                if (StringUtils.isNotBlank(file.getEmbedded())) {
+                    result.addAll(embeddedFile(file, secretKey, publicKey));
+                } else if (StringUtils.isNotBlank(file.getLocation())) {//TODO
+                    result.add(file.getLocation());
                 } else {
                     throw new RuntimeException("Manifest File Requires either Embedded or Location");
                 }
@@ -138,11 +128,11 @@ public class SmartHealthLinksService {
         return result;
     }
 
-    private List<String> embeddedFile(JsonObject manifestFile, SecretKey secretKey, PublicKey publicKey) {
+    private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, PublicKey publicKey) {
         Gson gson = new Gson();
-        switch (manifestFile.get(CONTENT_TYPE).getAsString()) {
+        switch (manifestFile.getContentType()) {
             case "application/smart-health-card": {
-                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.get(EMBEDDED).getAsString());
+                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.getEmbedded());
                 JsonArray verifiableCredentials = gson.toJsonTree(jwt.getPayload()).getAsJsonObject().getAsJsonArray(VERIFIABLE_CREDENTIAL);
                 List<String> result = new ArrayList<>(verifiableCredentials.size());
                 for (JsonElement compact : verifiableCredentials) {
@@ -162,7 +152,7 @@ public class SmartHealthLinksService {
                 return result;
             }
             case "application/fhir+json": { //TODO test
-                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.get(EMBEDDED).getAsString());
+                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.getEmbedded());
                 return List.of(gson.toJson(jwt.getPayload()));
             }
             case "application/smart-api-access": //TODO
