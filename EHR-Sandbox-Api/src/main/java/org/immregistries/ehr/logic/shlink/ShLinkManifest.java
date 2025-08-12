@@ -47,6 +47,15 @@ public class ShLinkManifest {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "ShLinkManifest{" +
+                "id='" + id + '\'' +
+                ", status='" + status + '\'' +
+                ", files=" + files +
+                '}';
+    }
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class FileManifest {
         @JsonProperty(value = "contentType", required = true)
@@ -88,6 +97,16 @@ public class ShLinkManifest {
 
         public void setLastUpdated(Date lastUpdated) {
             this.lastUpdated = lastUpdated;
+        }
+
+        @Override
+        public String toString() {
+            return "FileManifest{" +
+                    "contentType='" + contentType + '\'' +
+                    ", location='" + location + '\'' +
+                    ", embedded='" + embedded + '\'' +
+                    ", lastUpdated=" + lastUpdated +
+                    '}';
         }
     }
 }
