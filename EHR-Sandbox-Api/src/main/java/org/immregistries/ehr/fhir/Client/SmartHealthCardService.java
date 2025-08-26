@@ -165,7 +165,7 @@ public class SmartHealthCardService {
         } else {
             jwt = Jwts.parser().build().parse(compact);
         }
-        return parseVCFromJwt(jwt).getAsString();
+        return parseVCFromJwt(jwt).toString();
     }
 
     public List<VaccinationEvent> parseBundleVaccinationsFromVC(JsonObject vc) throws CompressionException {

@@ -3,15 +3,11 @@ package org.immregistries.ehr.fhir.Client;
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
-import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.logic.shlink.ShLinkManifest;
 import org.immregistries.ehr.logic.shlink.ShLinkPayload;
 import org.slf4j.Logger;
@@ -36,25 +32,12 @@ import java.util.List;
 
 @Service
 public class SmartHealthLinksService {
-    private static final String ISSUER_URL = "https://spec.smarthealth.cards/examples/issuer";
     private static final Logger logger = LoggerFactory.getLogger(SmartHealthLinksService.class);
-    public static final String EMBEDDED = "embedded";
-    public static final String CONTENT_TYPE = "contentType";
-    public static final String FILES = "files";
-    public static final String U = "U";
-    public static final String URL = "url";
-    public static final String KEY = "key";
-    public static final String FLAG = "flag";
-    public static final String EXP = "exp";
-    public static final String LABEL = "label";
-    public static final String V = "v";
+    public static final String U_FLAG = "U";
     public static final String SHLINK_PREFIX = "shlink:/";
-    public static final String LOCATION = "location";
     public static final String VERIFIABLE_CREDENTIAL = "verifiableCredential";
     public static final String APPLICATION_JOSE = "application/jose";
 
-    @Autowired
-    FacilityRepository facilityRepository;
     @Autowired
     SmartHealthCardService smartHealthCardService;
     //    @Autowired
@@ -101,7 +84,7 @@ public class SmartHealthLinksService {
         /**
          * if flag contains "U"
          */
-        if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U)) {
+        if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U_FLAG)) {
             String data = directFileRequest(url, recipient);
             Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(data);
             result.add(gson.toJson(jwt.getPayload()));
@@ -133,7 +116,19 @@ public class SmartHealthLinksService {
         switch (manifestFile.getContentType()) {
             case "application/smart-health-card": {
                 Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.getEmbedded());
-                JsonArray verifiableCredentials = gson.toJsonTree(jwt.getPayload()).getAsJsonObject().getAsJsonArray(VERIFIABLE_CREDENTIAL);
+//                else if (publicKey != null) {
+//                    jwt = Jwts.parser().verifyWith(publicKey).build().parse(manifestFile.getEmbedded());
+//                } else {
+//                    /*
+//                    Dirty solution for testing by removing the signature of the jwt
+//                     */
+//                    String embeddedInfo = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0." + StringUtils.substringBetween(manifestFile.getEmbedded(), ".", ".") + ".";
+//                    jwt = Jwts.parser().unsecured().unsecuredDecompression().build().parse(embeddedInfo);
+//                }
+
+                String payload = new String((byte[]) jwt.getPayload());
+
+                JsonArray verifiableCredentials = JsonParser.parseString(payload).getAsJsonObject().getAsJsonArray(VERIFIABLE_CREDENTIAL);
                 List<String> result = new ArrayList<>(verifiableCredentials.size());
                 for (JsonElement compact : verifiableCredentials) {
                     String res;
