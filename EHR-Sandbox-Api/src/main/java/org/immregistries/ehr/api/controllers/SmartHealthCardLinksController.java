@@ -1,5 +1,6 @@
 package org.immregistries.ehr.api.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -44,7 +45,7 @@ public class SmartHealthCardLinksController {
     private SmartHealthCardService smartHealthCardService;
 
     @PostMapping(TENANT_ID_PATH + "/$read-shlink")
-    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) {
+    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) throws JsonProcessingException {
         List<String> body = readHealthLink(url, password, jwk);
         return ResponseEntity.ok(body);
     }
@@ -53,7 +54,7 @@ public class SmartHealthCardLinksController {
     public ResponseEntity<List<VaccinationEvent>> importSmartHealthLink(
             @PathVariable(FACILITY_ID) Integer facilityId,
             @PathVariable(PATIENT_ID) Integer patientId,
-            @RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) {
+            @RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) throws JsonProcessingException {
         List<String> body = readHealthLink(url, password, jwk);
         List<VaccinationEvent> vaccinationEvents = new ArrayList<>(10);
         for (String str : body) {
@@ -75,7 +76,7 @@ public class SmartHealthCardLinksController {
         return ResponseEntity.ok(vaccinationEvents);
     }
 
-    private List<String> readHealthLink(String url, Optional<String> password, Optional<String> jwkString) {
+    private List<String> readHealthLink(String url, Optional<String> password, Optional<String> jwkString) throws JsonProcessingException {
         if (!url.contains(SHLINK_PREFIX)) {
             throw new RuntimeException("Invalid shlink");
         }

@@ -2,47 +2,47 @@ package org.immregistries.ehr.logic.shlink;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 
 import java.io.Serializable;
 import java.util.List;
 
 
-public class ShCardPayload implements Serializable {
-    @JsonProperty("iss")
-    private String iss;
-
-    @JsonProperty("nbf")
-    private long nbf;
+public class ShCardClaims extends DefaultClaims implements Serializable {
+//    @JsonProperty("iss")
+//    private String issuer;
+//
+//    @JsonProperty("nbf")
+//    private long notBefore;
 
     @JsonProperty("vc")
-    private VerifiableCredential vc;
+    private VerifiableCredential verifiableCredential;
 
-    // Constructors, getters, and setters
+//    public String getIssuer() {
+//        return issuer;
+//    }
+//
+//    public void setIssuer(String issuer) {
+//        this.issuer = issuer;
+//    }
+//
+//    public long getNotBefore() {
+//        return notBefore;
+//    }
+//
+//    public void setNotBefore(long notBefore) {
+//        this.notBefore = notBefore;
+//    }
 
-    public String getIss() {
-        return iss;
+    public VerifiableCredential getVerifiableCredential() {
+        return verifiableCredential;
     }
 
-    public void setIss(String iss) {
-        this.iss = iss;
+    public void setVerifiableCredential(VerifiableCredential verifiableCredential) {
+        this.verifiableCredential = verifiableCredential;
     }
 
-    public long getNbf() {
-        return nbf;
-    }
-
-    public void setNbf(long nbf) {
-        this.nbf = nbf;
-    }
-
-    public VerifiableCredential getVc() {
-        return vc;
-    }
-
-    public void setVc(VerifiableCredential vc) {
-        this.vc = vc;
-    }
 
     public static class VerifiableCredential implements Serializable {
         @JsonProperty("type")

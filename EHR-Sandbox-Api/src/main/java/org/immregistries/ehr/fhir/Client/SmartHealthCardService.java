@@ -1,11 +1,15 @@
 package org.immregistries.ehr.fhir.Client;
 
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.nimbusds.jose.util.Base64URL;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IDomainResource;
 import org.immregistries.ehr.api.entities.Facility;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
@@ -19,6 +23,7 @@ import org.immregistries.ehr.logic.mapping.MappingHelper;
 import org.immregistries.ehr.logic.mapping.forR4.ImmunizationMapperR4;
 import org.immregistries.ehr.logic.mapping.forR5.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.interfaces.IImmunizationMapper;
+import org.immregistries.ehr.logic.shlink.ShCardClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,19 +158,23 @@ public class SmartHealthCardService {
     }
 
 
-    public String parseVCFromCompactJwt(Authentication authentication, String compact) {
+    public ShCardClaims.VerifiableCredential parseVCFromCompactJwt(Authentication authentication, String compact) throws JsonProcessingException {
         PublicKey publicKey = jwtUtils.getUserPublicKey(authentication);
         return parseVCFromCompactJwt(publicKey, compact);
     }
 
-    public String parseVCFromCompactJwt(PublicKey publicKey, String compact) throws CompressionException {
-        Jwt jwt;
+    public ShCardClaims.VerifiableCredential parseVCFromCompactJwt(PublicKey publicKey, String compact) throws CompressionException, JsonProcessingException {
+        ShCardClaims shCardClaims;
         if (publicKey != null) {
-            jwt = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(compact);
+            Jws<Claims> jws = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(compact);
+            shCardClaims = (ShCardClaims) jws.getPayload();
         } else {
-            jwt = Jwts.parser().build().parse(compact);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Base64URL base64URL = Base64URL.from(StringUtils.substringBetween(compact, "."));
+            shCardClaims = objectMapper.readValue(base64URL.decodeToString(), ShCardClaims.class);
+            logger.info("PAYLOAD {} {}", shCardClaims, shCardClaims.getIssuer());
         }
-        return parseVCFromJwt(jwt).toString();
+        return shCardClaims.getVerifiableCredential();
     }
 
     public List<VaccinationEvent> parseBundleVaccinationsFromVC(JsonObject vc) throws CompressionException {
@@ -219,7 +228,6 @@ public class SmartHealthCardService {
 
 
     public String parseVCFromCompactJwtUnsecure(String compact) {
-        Gson gson = new Gson();
         String[] chunks = compact.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
         JsonObject header = JsonParser.parseString(new String(decoder.decode(chunks[0]))).getAsJsonObject();
@@ -237,34 +245,20 @@ public class SmartHealthCardService {
     }
 
 
-    public JsonObject parseVCFromJwt(Jwt jwt) {
-        Gson gson = new Gson();
-        logger.info("JWT {}", gson.toJson(jwt));
-        JsonObject jwtPayload = gson.toJsonTree(jwt.getPayload()).getAsJsonObject();
-        JsonObject vc = null;
-        if (jwtPayload.has(VC)) {
-            vc = jwtPayload.getAsJsonObject(VC);
-        }
-        return vc;
-    }
-
-
     public String qrCodeRead(String shc) {
         if (!shc.startsWith(SHC_HEADER)) {
             throw new RuntimeException("Not a SmartHealthCard");
         }
-        logger.info("test decode encode {}", getDecodedFromQrCode(getEncodedForQrCode("Salut la companie")));
         String encodedForQrCode = shc.substring(shc.lastIndexOf("/") + 1);
         String decodedFromQrCode = getDecodedFromQrCode(encodedForQrCode);
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String verifiableCredential = parseVCFromCompactJwt(authentication, decodedFromQrCode);
-            return verifiableCredential;
+            ObjectMapper objectMapper = new ObjectMapper();
+            ShCardClaims.VerifiableCredential verifiableCredential = parseVCFromCompactJwt(authentication, decodedFromQrCode);
+            return objectMapper.writer().writeValueAsString(verifiableCredential);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to Read Qr Code " + decodedFromQrCode, e);
         }
-        return decodedFromQrCode;
-
     }
 
 

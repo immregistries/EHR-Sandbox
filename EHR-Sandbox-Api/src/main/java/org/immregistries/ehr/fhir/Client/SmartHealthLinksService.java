@@ -8,6 +8,7 @@ import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
+import org.immregistries.ehr.logic.shlink.ShCardClaims;
 import org.immregistries.ehr.logic.shlink.ShLinkManifest;
 import org.immregistries.ehr.logic.shlink.ShLinkPayload;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class SmartHealthLinksService {
     FhirContext fhirContextR4;
 
 
-    public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey) {
+    public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey) throws JsonProcessingException {
         Gson gson = new Gson();
         ObjectMapper mapper = new ObjectMapper();
 
@@ -111,7 +112,7 @@ public class SmartHealthLinksService {
         return result;
     }
 
-    private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, PublicKey publicKey) {
+    private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, PublicKey publicKey) throws JsonProcessingException {
         Gson gson = new Gson();
         switch (manifestFile.getContentType()) {
             case "application/smart-health-card": {
@@ -129,9 +130,9 @@ public class SmartHealthLinksService {
                 String payload = new String((byte[]) jwt.getPayload());
 
                 JsonArray verifiableCredentials = JsonParser.parseString(payload).getAsJsonObject().getAsJsonArray(VERIFIABLE_CREDENTIAL);
-                List<String> result = new ArrayList<>(verifiableCredentials.size());
+                List<ShCardClaims.VerifiableCredential> result = new ArrayList<>(verifiableCredentials.size());
                 for (JsonElement compact : verifiableCredentials) {
-                    String res;
+                    ShCardClaims.VerifiableCredential res = null;
                     try {
                         /**
                          * Verify Signature
@@ -140,11 +141,17 @@ public class SmartHealthLinksService {
                     } catch (CompressionException compressionException) {
                         // Do unverified raw inflate if compression headers are invalid
 //                        compressionException.printStackTrace();
-                        res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
+//                        res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
                     }
                     result.add(res);
                 }
-                return result;
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<String> list = new ArrayList<>();
+                for (ShCardClaims.VerifiableCredential verifiableCredential : result) {
+                    String s = objectMapper.writeValueAsString(verifiableCredential);
+                    list.add(s);
+                }
+                return list;
             }
             case "application/fhir+json": { //TODO test
                 Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.getEmbedded());
