@@ -1,6 +1,5 @@
 package org.immregistries.ehr.fhir.Client;
 
-import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -41,8 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 @Service
 public class SmartHealthCardService {
@@ -164,17 +161,28 @@ public class SmartHealthCardService {
     }
 
     public ShCardClaims.VerifiableCredential parseVCFromCompactJwt(PublicKey publicKey, String compact) throws CompressionException, JsonProcessingException {
-        ShCardClaims shCardClaims;
+        logger.info("Parsing compact {}\n\n", compact);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Gson gson = new Gson();
         if (publicKey != null) {
-            Jws<Claims> jws = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(compact);
-            shCardClaims = (ShCardClaims) jws.getPayload();
+            Jwt jws = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(compact);
+            logger.info("Parsing payload {}\n\n", jws.getPayload());
+
+
+            // Casting or parsing directly doesn't work with claims
+            String jsonPayload = gson.toJson(jws.getPayload());
+            logger.info("json payload {}", jsonPayload);
+            ShCardClaims shCardClaims = objectMapper.readValue(jsonPayload, ShCardClaims.class);
+            return shCardClaims.getVerifiableCredential();
         } else {
-            ObjectMapper objectMapper = new ObjectMapper();
             Base64URL base64URL = Base64URL.from(StringUtils.substringBetween(compact, "."));
-            shCardClaims = objectMapper.readValue(base64URL.decodeToString(), ShCardClaims.class);
-            logger.info("PAYLOAD {} {}", shCardClaims, shCardClaims.getIssuer());
+            logger.info("TESTTT {}", new String(base64URL.decode()));
+            ShCardClaims shCardClaims = objectMapper.readValue(new String(base64URL.decode()), ShCardClaims.class);
+//            return parseVCFromCompactJwtUnsecure(compact);
+//            logger.info("PAYLOAD {} {}", shCardClaims, shCardClaims.getIssuer());
+            return shCardClaims.getVerifiableCredential();
         }
-        return shCardClaims.getVerifiableCredential();
     }
 
     public List<VaccinationEvent> parseBundleVaccinationsFromVC(JsonObject vc) throws CompressionException {
@@ -227,7 +235,7 @@ public class SmartHealthCardService {
     }
 
 
-    public String parseVCFromCompactJwtUnsecure(String compact) {
+    public ShCardClaims.VerifiableCredential parseVCFromCompactJwtUnsecure(String compact) throws JsonProcessingException {
         String[] chunks = compact.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
         JsonObject header = JsonParser.parseString(new String(decoder.decode(chunks[0]))).getAsJsonObject();
@@ -239,9 +247,10 @@ public class SmartHealthCardService {
         } else {
             payloadString = new String(payload);
         }
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonObject jwtPayload = JsonParser.parseString(payloadString).getAsJsonObject();
-        return jwtPayload.getAsJsonObject(VC).toString();
+        ShCardClaims shCardClaims = objectMapper.readValue(payloadString, ShCardClaims.class);
+        return shCardClaims.getVerifiableCredential();
     }
 
 
@@ -287,27 +296,13 @@ public class SmartHealthCardService {
 
     public static String rawInflate(byte[] deflated) {
         try {
-            Inflater inflater = new Inflater(true);
-            inflater.setInput(deflated);
-            byte[] result = new byte[MAXIMUM_DATA_SIZE];
-            int resultLength = inflater.inflate(result);
-            inflater.end();
-            return new String(result).substring(0, resultLength);
+            return new String(CompressionUtil.inflate(deflated));
         } catch (DataFormatException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static byte[] rawDeflate(String claimsString) {
-        byte[] output = new byte[MAXIMUM_DATA_SIZE];
-        Deflater deflater = new Deflater();
-        deflater.setInput(claimsString.getBytes());
-        deflater.finish();
-        int compressedDataSize = deflater.deflate(output);
-        if (compressedDataSize >= MAXIMUM_DATA_SIZE) {
-            throw new InternalErrorException("Resource is too large");
-        }
-        byte[] deflated = Arrays.copyOfRange(output, 0, compressedDataSize);
-        return deflated;
+        return CompressionUtil.deflate(claimsString.getBytes());
     }
 }

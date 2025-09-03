@@ -3,14 +3,17 @@ package org.immregistries.ehr.fhir.Client;
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.jsonwebtoken.CompressionException;
-import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwe;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.logic.shlink.ShCardClaims;
+import org.immregistries.ehr.logic.shlink.ShLinkFilePayload;
 import org.immregistries.ehr.logic.shlink.ShLinkManifest;
 import org.immregistries.ehr.logic.shlink.ShLinkPayload;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,19 +89,12 @@ public class SmartHealthLinksService {
          * if flag contains "U"
          */
         if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U_FLAG)) {
-            String data = directFileRequest(url, recipient);
-            Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(data);
-            result.add(gson.toJson(jwt.getPayload()));
+            byte[] data = directFileRequestReading(url, recipient);
+            Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(new String(data));
+            logger.info("df payload {}\n base64 {}\n", new String(jwe.getPayload()));
+            result.addAll(processShCardJwe(jwe, publicKey));
         } else { // Manifest
-            String manifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE);
-//            logger.info("manifest {}", manifest);
-            ShLinkManifest shLinkManifest;
-            try {
-                shLinkManifest = mapper.readValue(manifest, ShLinkManifest.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Invalid Manifest: " + e.getMessage());
-            }
-
+            ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE);
             for (ShLinkManifest.FileManifest file : shLinkManifest.getFiles()) {
                 if (StringUtils.isNotBlank(file.getEmbedded())) {
                     result.addAll(embeddedFile(file, secretKey, publicKey));
@@ -116,46 +112,12 @@ public class SmartHealthLinksService {
         Gson gson = new Gson();
         switch (manifestFile.getContentType()) {
             case "application/smart-health-card": {
-                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.getEmbedded());
-//                else if (publicKey != null) {
-//                    jwt = Jwts.parser().verifyWith(publicKey).build().parse(manifestFile.getEmbedded());
-//                } else {
-//                    /*
-//                    Dirty solution for testing by removing the signature of the jwt
-//                     */
-//                    String embeddedInfo = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0." + StringUtils.substringBetween(manifestFile.getEmbedded(), ".", ".") + ".";
-//                    jwt = Jwts.parser().unsecured().unsecuredDecompression().build().parse(embeddedInfo);
-//                }
-
-                String payload = new String((byte[]) jwt.getPayload());
-
-                JsonArray verifiableCredentials = JsonParser.parseString(payload).getAsJsonObject().getAsJsonArray(VERIFIABLE_CREDENTIAL);
-                List<ShCardClaims.VerifiableCredential> result = new ArrayList<>(verifiableCredentials.size());
-                for (JsonElement compact : verifiableCredentials) {
-                    ShCardClaims.VerifiableCredential res = null;
-                    try {
-                        /**
-                         * Verify Signature
-                         */
-                        res = smartHealthCardService.parseVCFromCompactJwt(publicKey, compact.getAsString());
-                    } catch (CompressionException compressionException) {
-                        // Do unverified raw inflate if compression headers are invalid
-//                        compressionException.printStackTrace();
-//                        res = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact.getAsString());
-                    }
-                    result.add(res);
-                }
-                ObjectMapper objectMapper = new ObjectMapper();
-                List<String> list = new ArrayList<>();
-                for (ShCardClaims.VerifiableCredential verifiableCredential : result) {
-                    String s = objectMapper.writeValueAsString(verifiableCredential);
-                    list.add(s);
-                }
-                return list;
+                Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(manifestFile.getEmbedded());
+                return processShCardJwe(jwe, publicKey);
             }
             case "application/fhir+json": { //TODO test
-                Jwt jwt = Jwts.parser().decryptWith(secretKey).build().parse(manifestFile.getEmbedded());
-                return List.of(gson.toJson(jwt.getPayload()));
+                Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(manifestFile.getEmbedded());
+                return List.of(gson.toJson(new String(jwe.getPayload())));
             }
             case "application/smart-api-access": //TODO
             default: {
@@ -164,7 +126,39 @@ public class SmartHealthLinksService {
         }
     }
 
-    public String directFileRequest(String baseUrl, String recipient) {
+    @NotNull
+    private List<String> processShCardJwe(Jwe<byte[]> jwe, PublicKey publicKey) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String payload = new String(jwe.getPayload());
+        ShLinkFilePayload shLinkFilePayload = objectMapper.readValue(payload, ShLinkFilePayload.class);
+        List<String> verifiableCredentials = shLinkFilePayload.getVerifiableCredential();
+        List<String> resultList = new ArrayList<>();
+        for (String compact : verifiableCredentials) {
+            ShCardClaims.VerifiableCredential verifiableCredential = null;
+            try {
+                /**
+                 * Verify Signature
+                 */
+                verifiableCredential = smartHealthCardService.parseVCFromCompactJwt(publicKey, compact);
+            } catch (CompressionException compressionException) {
+                // Do unverified raw inflate if compression headers are invalid
+//                        compressionException.printStackTrace();
+                verifiableCredential = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact);
+            }
+            String s = objectMapper.writeValueAsString(verifiableCredential);
+            resultList.add(s);
+        }
+        return resultList;
+    }
+
+    /**
+     * Executes  the direct file request
+     *
+     * @param baseUrl
+     * @param recipient
+     * @return Operation Result
+     */
+    public byte[] directFileRequestReading(String baseUrl, String recipient) {
         try {
             if (baseUrl.contains("?")) {
                 baseUrl += "&";
@@ -178,7 +172,7 @@ public class SmartHealthLinksService {
                     .GET()
                     .build();
             HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
             return response.body();
         } catch (MalformedURLException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -188,8 +182,18 @@ public class SmartHealthLinksService {
         }
     }
 
-    public String manifestReading(String url, String recipient, String passcode, Integer embeddedLengthMax) {
+    /**
+     * Executes the manifest reading
+     *
+     * @param url
+     * @param recipient
+     * @param passcode
+     * @param embeddedLengthMax
+     * @return the manifest
+     */
+    public ShLinkManifest manifestReading(String url, String recipient, String passcode, Integer embeddedLengthMax) {
         URI uri = null;
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
             uri = new URI(url);
             Gson gson = new Gson();
@@ -209,13 +213,16 @@ public class SmartHealthLinksService {
                     .build();
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            logger.info("manifest reading response code: {} result: {} headers: {}", response.statusCode(), response.body(), response.headers());
+//            logger.info("manifest reading response code: {} result: {} headers: {}", response.statusCode(), response.body(), response.headers());
             if (StringUtils.isBlank(response.body())) {
                 throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode());
             }
-            return response.body();
+
+            return objectMapper.readValue(response.body(), ShLinkManifest.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid Manifest: " + e.getMessage());
         } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error when retrieving Manifest", e);
         }
     }
 
