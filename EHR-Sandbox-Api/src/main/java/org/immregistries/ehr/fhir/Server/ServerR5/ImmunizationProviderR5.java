@@ -1,20 +1,18 @@
 package org.immregistries.ehr.fhir.Server.ServerR5;
 
-import ca.uhn.fhir.rest.annotation.Create;
-import ca.uhn.fhir.rest.annotation.ResourceParam;
-import ca.uhn.fhir.rest.annotation.Update;
+import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.transaction.Transactional;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Immunization;
 import org.hl7.fhir.r5.model.ResourceType;
-import org.immregistries.ehr.api.entities.EhrUtils;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
-import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
+import org.immregistries.ehr.fhir.Server.ServerHelper;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.forR5.ImmunizationMapperR5;
 import org.slf4j.Logger;
@@ -54,6 +52,15 @@ public class ImmunizationProviderR5 implements IResourceProvider, EhrFhirProvide
     @Override
     public ResourceType getResourceName() {
         return ResourceType.Immunization;
+    }
+
+    @Read
+    @Transactional
+    public Immunization Read(@IdParam IdType theId, RequestDetails requestDetails) {
+        User user = ServerHelper.currentUser();
+        return vaccinationEventRepository.findByUserIdAndId(user, Integer.valueOf(theId.getIdPart()))
+                .map(vaccinationEvent -> immunizationMapper.toFhir(vaccinationEvent, null))
+                .orElseThrow(() -> new InvalidRequestException("HAPI-1996: Resource " + theId + " is not known"));
     }
 
     @Create

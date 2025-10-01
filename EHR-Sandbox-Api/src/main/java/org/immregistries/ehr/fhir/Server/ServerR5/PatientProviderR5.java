@@ -1,22 +1,23 @@
 package org.immregistries.ehr.fhir.Server.ServerR5;
 
-import ca.uhn.fhir.rest.annotation.Create;
-import ca.uhn.fhir.rest.annotation.ResourceParam;
-import ca.uhn.fhir.rest.annotation.Update;
+import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.param.StringParam;
+import ca.uhn.fhir.rest.param.TokenAndListParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.transaction.Transactional;
 import org.hl7.fhir.r5.model.IdType;
 import org.hl7.fhir.r5.model.Patient;
 import org.hl7.fhir.r5.model.ResourceType;
-import org.immregistries.ehr.api.entities.EhrPatient;
-import org.immregistries.ehr.api.entities.EhrUtils;
-import org.immregistries.ehr.api.entities.Facility;
-import org.immregistries.ehr.api.entities.ImmunizationRegistry;
+import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.ImmunizationRegistryRepository;
+import org.immregistries.ehr.fhir.Server.IdentifierSearchUtil;
+import org.immregistries.ehr.fhir.Server.ServerHelper;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
 import org.immregistries.ehr.logic.mapping.forR5.PatientMapperR5;
 import org.slf4j.Logger;
@@ -27,9 +28,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.immregistries.ehr.api.AuditRevisionListener.IMMUNIZATION_REGISTRY_ID;
 import static org.immregistries.ehr.api.AuditRevisionListener.USER_ID;
+import static org.immregistries.ehr.fhir.Server.FhirAuthInterceptor.FACILITY;
 
 @Controller
 public class PatientProviderR5 implements IResourceProvider, EhrFhirProviderR5<Patient> {
@@ -55,6 +61,36 @@ public class PatientProviderR5 implements IResourceProvider, EhrFhirProviderR5<P
     public ResourceType getResourceName() {
         return ResourceType.Patient;
     }
+
+    @Read
+    @Transactional
+    public Patient Read(@IdParam IdType theId, RequestDetails requestDetails) {
+        User user = ServerHelper.currentUser();
+        Facility facility = (Facility) requestDetails.getAttribute(FACILITY);
+        return patientRepository.findByFacilityIdAndId(facility.getId(), Integer.valueOf(theId.getIdPart()))
+                .map(ehrPatient -> patientMapper.toFhir(ehrPatient))
+                .orElseThrow(() -> new InvalidRequestException("HAPI-1996: Resource " + theId + " is not known"));
+    }
+
+    @Search
+    @Transactional
+    public List<Patient> search(RequestDetails requestDetails, @OptionalParam(name = Patient.SP_FAMILY) StringParam theFamilyName,
+                                @OptionalParam(name = Patient.SP_IDENTIFIER)
+                                TokenAndListParam theIdentifier) {
+        Stream<EhrPatient> ehrPatientStream = null;
+        User user = ServerHelper.currentUser();
+        Facility facility = (Facility) requestDetails.getAttribute(FACILITY);
+
+        if (theIdentifier != null) {
+            ehrPatientStream = IdentifierSearchUtil.getStream(theIdentifier, facility, patientRepository)
+                    .map(entity -> (EhrPatient) entity);
+        } else {
+            ehrPatientStream = StreamSupport.stream(patientRepository.findByFacilityId(facility.getId()).spliterator(), false);
+        }
+        return ehrPatientStream
+                .map(ehrPatient -> patientMapper.toFhir(ehrPatient)).collect(Collectors.toList());
+    }
+
 
     @Create
     public MethodOutcome create(@ResourceParam Patient fhirPatient, RequestDetails requestDetails) {
