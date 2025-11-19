@@ -1,0 +1,16 @@
+.clvr-card {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.clvr-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+}
