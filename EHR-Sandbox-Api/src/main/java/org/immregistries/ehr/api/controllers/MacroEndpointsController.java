@@ -10,7 +10,7 @@ import org.hl7.fhir.r5.model.*;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.fhir.Server.EhrFhirProvider;
+import org.immregistries.ehr.fhir.server.EhrFhirProvider;
 import org.immregistries.ehr.logic.mapping.forR5.ImmunizationMapperR5;
 import org.immregistries.ehr.logic.mapping.forR5.OrganizationMapperR5;
 import org.immregistries.ehr.logic.mapping.forR5.PatientMapperR5;

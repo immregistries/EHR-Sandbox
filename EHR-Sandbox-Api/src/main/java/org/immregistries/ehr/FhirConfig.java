@@ -2,8 +2,8 @@ package org.immregistries.ehr;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import org.immregistries.ehr.fhir.Server.ServerR4.EhrFhirServerR4;
-import org.immregistries.ehr.fhir.Server.ServerR5.EhrFhirServerR5;
+import org.immregistries.ehr.fhir.server.r4.EhrFhirServerR4;
+import org.immregistries.ehr.fhir.server.r5.EhrFhirServerR5;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

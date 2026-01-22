@@ -11,7 +11,7 @@ import org.immregistries.ehr.api.entities.embedabbles.Hl7Location;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.api.security.UserDetailsServiceImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.fhir.Server.ServerR4.OperationOutcomeProviderR4;
+import org.immregistries.ehr.fhir.server.r4.OperationOutcomeProviderR4;
 import org.immregistries.smm.tester.manager.HL7Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

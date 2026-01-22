@@ -1,4 +1,4 @@
-FROM bitnami/tomcat:10.1.30 AS tomcat
+FROM bitnami/tomcat:9.0.62 AS tomcat
 
 RUN rm -rf /opt/bitnami/tomcat/webapps/* && \
     rm -rf /opt/bitnami/tomcat/webapps_default/*

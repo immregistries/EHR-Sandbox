@@ -9,9 +9,9 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.KeyType;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
-import org.immregistries.ehr.fhir.Client.SmartHealthCardService;
-import org.immregistries.ehr.fhir.Client.SmartHealthLinksService;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.fhir.client.SmartHealthCardService;
+import org.immregistries.ehr.fhir.client.SmartHealthLinksService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
-import static org.immregistries.ehr.fhir.Client.SmartHealthCardService.CREDENTIAL_SUBJECT;
-import static org.immregistries.ehr.fhir.Client.SmartHealthCardService.VC;
-import static org.immregistries.ehr.fhir.Client.SmartHealthLinksService.SHLINK_PREFIX;
+import static org.immregistries.ehr.fhir.client.SmartHealthCardService.CREDENTIAL_SUBJECT;
+import static org.immregistries.ehr.fhir.client.SmartHealthCardService.VC;
+import static org.immregistries.ehr.fhir.client.SmartHealthLinksService.SHLINK_PREFIX;
 
 @Controller
 public class SmartHealthCardLinksController {

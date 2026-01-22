@@ -7,7 +7,7 @@ import org.immregistries.ehr.api.repositories.AuditRevisionEntityRepository;
 import org.immregistries.ehr.api.repositories.EhrPatientRepository;
 import org.immregistries.ehr.api.repositories.FacilityRepository;
 import org.immregistries.ehr.api.repositories.TenantRepository;
-import org.immregistries.ehr.fhir.Client.MatchAndEverythingService;
+import org.immregistries.ehr.fhir.client.MatchAndEverythingService;
 import org.immregistries.ehr.logic.RandomGeneratorService;
 import org.immregistries.ehr.logic.RecommendationService;
 import org.slf4j.Logger;
