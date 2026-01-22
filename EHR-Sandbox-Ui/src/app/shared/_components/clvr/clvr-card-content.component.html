@@ -1,0 +1,15 @@
+<mat-card class="clvr-card">
+  <mat-card-header>
+    <mat-card-title>CLVR</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="clvr-content">
+    <div #qrCode class="qr-container">
+      <qrcode [qrdata]="qrData" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-raised-button color="primary" (click)="exportToPdf()">
+      Export to PDF
+    </button>
+  </mat-card-actions>
+</mat-card>

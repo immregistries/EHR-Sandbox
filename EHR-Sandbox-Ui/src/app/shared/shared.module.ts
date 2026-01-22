@@ -137,6 +137,7 @@ import { FacilityCachePipe } from './_pipes/facility-cache.pipe';
 import { UserDialogComponent } from './_components/user-dialog/user-dialog.component';
 import { SubscriptionFormComponent } from './_fhir/subscription-dashboard/subscription-form/subscription-form.component';
 import { FhirV2CompareComponent } from "./_fhir/fhir-v2-compare/fhir-v2-compare.component";
+import { ClvrComponent } from './_components/clvr/clvr-card-content.component';
 
 @NgModule({
   declarations: [
@@ -248,6 +249,7 @@ import { FhirV2CompareComponent } from "./_fhir/fhir-v2-compare/fhir-v2-compare.
     UserDialogComponent,
     SubscriptionFormComponent,
     FhirV2CompareComponent,
+    ClvrComponent,
   ],
   imports: [
     DatePipe,
@@ -404,7 +406,9 @@ import { FhirV2CompareComponent } from "./_fhir/fhir-v2-compare/fhir-v2-compare.
 
     UserDialogComponent,
     SubscriptionFormComponent,
+    SubscriptionFormComponent,
     FhirV2CompareComponent,
+    ClvrComponent,
 
   ]
 })
