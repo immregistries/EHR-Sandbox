@@ -93,7 +93,7 @@ public class SmartHealthLinksService {
             logger.info("df payload {}\n base64 {}\n", new String(jwe.getPayload()));
             result.addAll(processShCardJwe(jwe, publicKey));
         } else { // Manifest
-            ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE);
+            ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE, flags);
             for (ShLinkManifest.FileManifest file : shLinkManifest.getFiles()) {
                 if (StringUtils.isNotBlank(file.getEmbedded())) {
                     result.addAll(embeddedFile(file, secretKey, publicKey));
@@ -188,9 +188,10 @@ public class SmartHealthLinksService {
      * @param recipient
      * @param passcode
      * @param embeddedLengthMax
+     * @param flags
      * @return the manifest
      */
-    public ShLinkManifest manifestReading(String url, String recipient, String passcode, Integer embeddedLengthMax) {
+    public ShLinkManifest manifestReading(String url, String recipient, String passcode, Integer embeddedLengthMax, String flags) {
         URI uri = null;
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -215,7 +216,7 @@ public class SmartHealthLinksService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 //            logger.info("manifest reading response code: {} result: {} headers: {}", response.statusCode(), response.body(), response.headers());
             if (StringUtils.isBlank(response.body())) {
-                if (StringUtils.isBlank(passcode)) {
+                if (StringUtils.isBlank(passcode) && StringUtils.containsAny(flags, "P")) {
                     throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode() + " Have you tried a passcode ?");
                 } else {
                     throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode());

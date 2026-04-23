@@ -1,6 +1,7 @@
 package org.immregistries.ehr.logic.shlink;
 
 import ca.uhn.fhir.context.FhirContext;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -204,7 +205,7 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
                 this.fhirBundle = fhirBundle;
             }
 
-            @JsonProperty
+            @JsonIgnore
             public IBaseBundle parseBundle(FhirContext ctx) {
                 if (this.fhirBundle == null) return null;
                 return (IBaseBundle) ctx.newJsonParser().parseResource(this.fhirBundle.toString());
