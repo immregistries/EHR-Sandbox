@@ -59,7 +59,6 @@ public class SmartHealthLinksService {
 
 
     public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey) throws JsonProcessingException {
-        Gson gson = new Gson();
         ObjectMapper mapper = new ObjectMapper();
 
         List<String> result = new ArrayList<>(3);
@@ -209,13 +208,18 @@ public class SmartHealthLinksService {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .header("content-type", "application/json")
+                    .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(bodyObject)))
                     .build();
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 //            logger.info("manifest reading response code: {} result: {} headers: {}", response.statusCode(), response.body(), response.headers());
             if (StringUtils.isBlank(response.body())) {
-                throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode());
+                if (StringUtils.isBlank(passcode)) {
+                    throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode() + " Have you tried a passcode ?");
+                } else {
+                    throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode());
+                }
             }
 
             return objectMapper.readValue(response.body(), ShLinkManifest.class);

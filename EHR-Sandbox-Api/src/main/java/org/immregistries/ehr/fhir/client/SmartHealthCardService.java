@@ -1,6 +1,7 @@
 package org.immregistries.ehr.fhir.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -163,13 +164,13 @@ public class SmartHealthCardService {
     public ShCardClaims.VerifiableCredential parseVCFromCompactJwt(PublicKey publicKey, String compact) throws CompressionException, JsonProcessingException {
         logger.info("Parsing compact {}\n\n", compact);
         ObjectMapper objectMapper = new ObjectMapper();
+        // Tells Jackson that "1776924536" is in seconds (JWT standard)
+        objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
 
         Gson gson = new Gson();
         if (publicKey != null) {
             Jwt jws = Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(compact);
             logger.info("Parsing payload {}\n\n", jws.getPayload());
-
-
             // Casting or parsing directly doesn't work with claims
             String jsonPayload = gson.toJson(jws.getPayload());
             logger.info("json payload {}", jsonPayload);
@@ -177,7 +178,7 @@ public class SmartHealthCardService {
             return shCardClaims.getVerifiableCredential();
         } else {
             Base64URL base64URL = Base64URL.from(StringUtils.substringBetween(compact, "."));
-            logger.info("TESTTT {}", new String(base64URL.decode()));
+            logger.info("No key parsing  {}", new String(base64URL.decode()));
             ShCardClaims shCardClaims = objectMapper.readValue(new String(base64URL.decode()), ShCardClaims.class);
 //            return parseVCFromCompactJwtUnsecure(compact);
 //            logger.info("PAYLOAD {} {}", shCardClaims, shCardClaims.getIssuer());

@@ -1,7 +1,10 @@
 package org.immregistries.ehr.logic.shlink;
 
+import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 
@@ -133,6 +136,25 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
         return this;
     }
 
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    /**
+     * Necessary to handle deserialization
+     *
+     * @param key   key with which the specified value is to be associated
+     * @param value value to be associated with the specified key
+     * @return
+     */
+    @Override
+    public Object put(String key, Object value) {
+        if ("vc".equals(key) && value instanceof Map) {
+            // Convert the generic Map into your typed POJO
+            return super.put(key, mapper.convertValue(value, VerifiableCredential.class));
+        }
+        return super.put(key, value);
+    }
+
     // Nested classes as per the provided structure
 
     public static class VerifiableCredential implements Serializable {
@@ -163,7 +185,7 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
             private String fhirVersion;
 
             @JsonProperty("fhirBundle")
-            private IBaseBundle fhirBundle;
+            private JsonNode fhirBundle;
 
 
             public String getFhirVersion() {
@@ -174,13 +196,21 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
                 this.fhirVersion = fhirVersion;
             }
 
-            public IBaseBundle getFhirBundle() {
+            public JsonNode getFhirBundle() {
                 return fhirBundle;
             }
 
-            public void setFhirBundle(IBaseBundle fhirBundle) {
+            public void setFhirBundle(JsonNode fhirBundle) {
                 this.fhirBundle = fhirBundle;
+            }
+
+            @JsonProperty
+            public IBaseBundle parseBundle(FhirContext ctx) {
+                if (this.fhirBundle == null) return null;
+                return (IBaseBundle) ctx.newJsonParser().parseResource(this.fhirBundle.toString());
             }
         }
     }
+
+
 }
