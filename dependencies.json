@@ -1,10 +1,10 @@
 {
   "dependencies": [
     {
-      "name": "",
-      "repository": "",
-      "sha1": "",
-      "cmd": "mvn clean install"
+      "name": "Synthea-Immunization-Forecaster",
+      "repository": "https://github.com/cerbeor/Synthea-Immunization-Forecaster",
+      "sha1": "59bf15369149cc0536a287a2b3eaa275c370d7e8",
+      "cmd": "./gradlew publishToMavenLocal"
     }
   ]
 }
