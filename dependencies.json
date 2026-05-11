@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    {
+      "name": "",
+      "repository": "",
+      "sha1": "",
+      "cmd": "mvn clean install"
+    }
+  ]
+}
