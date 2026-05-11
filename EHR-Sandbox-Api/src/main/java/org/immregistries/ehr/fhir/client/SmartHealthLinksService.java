@@ -67,12 +67,8 @@ public class SmartHealthLinksService {
         }
         String decodedFrom64 = new String(Base64.getUrlDecoder().decode(shlink.substring(SHLINK_PREFIX.length()).getBytes()));
         ShLinkPayload shLinkPayload;
-        try {
-            shLinkPayload = mapper.readValue(decodedFrom64, ShLinkPayload.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Invalid smart health link Payload");
-        }
-        logger.info("shlink {}", shLinkPayload);
+
+        shLinkPayload = extractShLinkPayload(mapper, decodedFrom64);
 
         String url = shLinkPayload.getUrl();
         String key = shLinkPayload.getKey().orElse("");
@@ -84,16 +80,17 @@ public class SmartHealthLinksService {
             byte[] encodedKey = Base64.getUrlDecoder().decode(key.getBytes());
             secretKey = new SecretKeySpec(encodedKey, "AES");
         }
-        /**
-         * if flag contains "U"
+        /*
+         * if flag contains "U" -> Direct file download
          */
         if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U_FLAG)) {
             byte[] data = directFileRequestReading(url, recipient);
             Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(new String(data));
-            logger.info("df payload {}\n base64 {}\n", new String(jwe.getPayload()));
             result.addAll(processShCardJwe(jwe, publicKey));
-        } else { // Manifest
+
+        } else { // else Manifest retrieval
             ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE, flags);
+
             for (ShLinkManifest.FileManifest file : shLinkManifest.getFiles()) {
                 if (StringUtils.isNotBlank(file.getEmbedded())) {
                     result.addAll(embeddedFile(file, secretKey, publicKey));
@@ -105,6 +102,16 @@ public class SmartHealthLinksService {
             }
         }
         return result;
+    }
+
+    private static ShLinkPayload extractShLinkPayload(ObjectMapper mapper, String decodedFrom64) {
+        ShLinkPayload shLinkPayload;
+        try {
+            shLinkPayload = mapper.readValue(decodedFrom64, ShLinkPayload.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid smart health link Payload");
+        }
+        return shLinkPayload;
     }
 
     private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, PublicKey publicKey) throws JsonProcessingException {
@@ -217,9 +224,9 @@ public class SmartHealthLinksService {
 //            logger.info("manifest reading response code: {} result: {} headers: {}", response.statusCode(), response.body(), response.headers());
             if (StringUtils.isBlank(response.body())) {
                 if (StringUtils.isBlank(passcode) && StringUtils.containsAny(flags, "P")) {
-                    throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode() + " Have you tried a passcode ?");
+                    throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode() + " Smart Health Link seems to require a passcode");
                 } else {
-                    throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode());
+                    throw new RuntimeException("Error retrieving Manifest: status code " + response.statusCode() + ", manifest url: " + uri);
                 }
             }
 
