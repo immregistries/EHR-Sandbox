@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Jwk;
 import io.jsonwebtoken.security.Jwks;
 import io.jsonwebtoken.security.MacAlgorithm;
+import io.micrometer.common.util.StringUtils;
 import jakarta.xml.bind.DatatypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +152,13 @@ public class JwtUtils {
 
     private void init() {
         if (key == null) {
-            this.key = new SecretKeySpec(DatatypeConverter.parseBase64Binary(jwtSecret), SIGNATURE_ALGORITHM_NAME);
+            if (StringUtils.isBlank(jwtSecret)) {
+                byte[] randomBytes = new byte[64];
+                new SecureRandom().nextBytes(randomBytes);
+                this.key = new SecretKeySpec(randomBytes, SIGNATURE_ALGORITHM_NAME);
+            } else {
+                this.key = new SecretKeySpec(DatatypeConverter.parseBase64Binary(jwtSecret), SIGNATURE_ALGORITHM_NAME);
+            }
         }
     }
 }

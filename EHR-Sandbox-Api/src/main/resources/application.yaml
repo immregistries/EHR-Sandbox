@@ -2,12 +2,11 @@
 spring:
   config.import: optional:file:.env[.properties]
   #  main.web-application-type: none
-  profiles.active: '@activatedProperties@'
   datasource:
     username: ${ENV_EHR_DATASOURCE_USER}
     password: ${ENV_EHR_DATASOURCE_PASSWORD}
     #    url: jdbc:h2:mem:ehr-test;
-    url: jdbc:h2:file:./data-h2/ehr;
+    url: ${SPRING_DATASOURCE_URL}
     driverClassName: org.h2.Driver
   #  h2:
   #    console.enabled: true
@@ -24,16 +23,10 @@ spring:
 ehr:
   api:
     app:
-      jwtSecret: ${ENV_EHR_JWT_SECRET}
+      jwtSecret: ${ENV_EHR_JWT_SECRET:}
       jwtExpirationMs: 86400000
 #spring.output.ansi.enabled:always
 
----
-spring.config.activate.on-profile: dev
 server:
   servlet:
-    contextPath: /ehr
-
-
----
-spring.config.activate.on-profile: prod
+    contextPath: ${SERVER_SERVLET_CONTEXT_PATH:/ehr}
