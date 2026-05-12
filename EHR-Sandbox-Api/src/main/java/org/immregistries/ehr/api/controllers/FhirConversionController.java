@@ -8,8 +8,9 @@ import org.immregistries.ehr.api.ImmunizationRegistryService;
 import org.immregistries.ehr.api.entities.*;
 import org.immregistries.ehr.api.repositories.*;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.fhir.client.SmartHealthCardService;
 import org.immregistries.ehr.logic.ResourceIdentificationService;
+import org.immregistries.ehr.shlink.service.SmartHealthCardParser;
+import org.immregistries.ehr.shlink.service.SmartHealthCardWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,9 @@ public class FhirConversionController {
 
 
     @Autowired
-    SmartHealthCardService smartHealthCardService;
+    SmartHealthCardWriter smartHealthCardWriter;
+    @Autowired
+    SmartHealthCardParser smartHealthCardParser;
 
 
     @GetMapping(PATIENT_ID_PATH + "/resource")
@@ -139,12 +142,13 @@ public class FhirConversionController {
 
     @PostMapping(FACILITY_ID_PATH + "/$qrCode")
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
-    public ResponseEntity<?> qrCode(@PathVariable(FACILITY_ID) Integer facilityId, @RequestBody String resourceString, HttpServletRequest request) {
+    public ResponseEntity<?> createSmartHealthCard(@PathVariable(FACILITY_ID) Integer facilityId, @RequestBody String resourceString, HttpServletRequest request) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
 //        if (resourceString.startsWith(SmartHealthCardService.SHC_HEADER)) { // TODO remove
 //            return ResponseEntity.ok(qrCodeRead(facilityId, resourceString, request));
 //        }
-        return smartHealthCardService.qrCodeWrite(facility, resourceString, request);
+        String issuerUrl = request.getRequestURL().substring(0, request.getRequestURL().indexOf(TENANT_PATH_HEADER));
+        return smartHealthCardWriter.qrCodeWrite(facility, resourceString, issuerUrl);
     }
 
 
@@ -152,7 +156,7 @@ public class FhirConversionController {
     @Transactional(readOnly = true, noRollbackFor = Exception.class)
     public ResponseEntity<String> qrCodeRead(@PathVariable(FACILITY_ID) Integer facilityId, @RequestBody String shc, HttpServletRequest request) {
         Facility facility = facilityRepository.findById(facilityId).orElseThrow();
-        return ResponseEntity.ok(smartHealthCardService.qrCodeRead(shc));
+        return ResponseEntity.ok(smartHealthCardParser.qrCodeRead(shc));
     }
 
 

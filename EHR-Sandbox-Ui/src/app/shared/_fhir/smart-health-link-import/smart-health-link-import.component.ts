@@ -1,11 +1,9 @@
-import { Component, Inject, Input, Optional } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
-import { FhirResourceService } from 'src/app/core/_services/_fhir/fhir-resource.service';
-import { FeedbackService } from 'src/app/core/_services/feedback.service';
-import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {Component, Inject, Input, Optional} from '@angular/core';
+import {SnackBarService} from 'src/app/core/_services/snack-bar.service';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {GroupBulkCompareComponent} from '../../_group/group-bulk-compare/group-bulk-compare.component';
+import {SmartHealthLinkService} from 'src/app/core/_services/_fhir/smart-health-link-service';
 
 @Component({
   selector: 'app-smart-health-link-import',
@@ -37,15 +35,15 @@ export class SmartHealthLinkImportComponent {
   error: boolean = false;
   style: string = 'width: 100%'
 
-  constructor(private fhirClient: FhirClientService,
-    private fhirResourceService: FhirResourceService,
-    public snackBarService: SnackBarService,
-    private feedbackService: FeedbackService, public sanitizer: DomSanitizer,
-    @Optional() public _dialogRef: MatDialogRef<SmartHealthLinkImportComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-      patientId: number,
-      url: string
-    }) {
+  constructor(private smartHealthLinkService: SmartHealthLinkService,
+              public snackBarService: SnackBarService,
+              public sanitizer: DomSanitizer,
+              public matDialog: MatDialog,
+              @Optional() public _dialogRef: MatDialogRef<SmartHealthLinkImportComponent>,
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+                patientId: number,
+                url: string
+              }) {
     if (data?.patientId) {
       this.patientId = data.patientId
     }
@@ -61,7 +59,7 @@ export class SmartHealthLinkImportComponent {
     this.answer = undefined
     this.requestLoading = true
     this.sanitizedHtml = undefined
-    this.fhirClient.shlinkRead(this.url, this.password, this.jwk).subscribe({
+    this.smartHealthLinkService.shlinkRead(this.url, this.password, this.jwk).subscribe({
       next: (res) => {
         this.requestLoading = false
         this.error = false
@@ -71,10 +69,12 @@ export class SmartHealthLinkImportComponent {
         let composition;
         try {
           composition = jsonRes["credentialSubject"]['fhirBundle']['entry'][0]['resource']
-        } catch (exception) { }
+        } catch (exception) {
+        }
         try {
           composition = jsonRes['entry'][0]['resource']
-        } catch (exception) { }
+        } catch (exception) {
+        }
         if (composition['text']['div']) {
           this.sanitizedHtml = this.sanitizer.bypassSecurityTrustHtml(composition['text']['div']);
         }
@@ -96,10 +96,40 @@ export class SmartHealthLinkImportComponent {
   }
 
 
+  openPatient() {
+    this.smartHealthLinkService.importShlinkForPatient(this.patientId, this.url, this.password, this.jwk).subscribe({
+      next: (res) => {
+        this.requestLoading = false
+        this.matDialog.open(GroupBulkCompareComponent, {
+          maxWidth: '95vw',
+          maxHeight: '98vh',
+          height: 'fit-content',
+          width: '100%',
+          // panelClass: 'dialog-without-bar',
+          data: {ehrGroup: undefined, bulkImportStatus: undefined}
+        })
+        // this.answerArray = res
+      },
+      error: (err) => {
+        this.requestLoading = false
+        this.error = true
+        this.answer = err.error
+        console.error(err)
+        if (err.status == 400) {
+          this.answer = err.error
+          console.error(err)
+          this.snackBarService.fatalFhirMessage(err.error ?? "")
+        } else {
+          this.answer = err.error
+        }
+      }
+    })
+  }
+
   importVaccinations() {
     this.answer = undefined
     this.requestLoading = true
-    this.fhirClient.importShlinkForPatient(this.patientId, this.url, this.password, this.jwk).subscribe({
+    this.smartHealthLinkService.importShlinkForPatient(this.patientId, this.url, this.password, this.jwk).subscribe({
       next: (res) => {
         this.requestLoading = false
         this._dialogRef.close(res)

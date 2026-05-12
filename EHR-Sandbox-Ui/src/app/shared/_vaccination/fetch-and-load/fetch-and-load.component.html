@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Fetch Vaccination History from IIS</h2>
 
 <div mat-dialog-content>
-  <mat-toolbar color="basic">
+  <mat-toolbar *ngIf="showButtons" color="basic">
     <!-- <span style="flex: 1 1 auto;"></span> -->
     <app-immunization-registry-menu></app-immunization-registry-menu>
     <button mat-raised-button matTooltip="Fetch remote vaccination history, using $match and $everything operations"
@@ -11,7 +11,7 @@
     </button>
     <button mat-raised-button matTooltip="Smart health linik" color="basic" (click)="shlink()">
       <mat-icon>cloud_download</mat-icon>
-      SHlink
+      Smart Health Link
     </button>
   </mat-toolbar>
 

@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.shlink;
+package org.immregistries.ehr.shlink.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

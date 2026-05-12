@@ -1,21 +1,19 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirMessagingComponent } from 'src/app/shared/_fhir/fhir-messaging/fhir-messaging.component';
-import { PatientService } from 'src/app/core/_services/patient.service';
-import { VaccinationEvent } from 'src/app/core/_model/rest';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
-import { Observable, of } from 'rxjs';
-import { SmartHealthLinkImportComponent } from '../../_fhir/smart-health-link-import/smart-health-link-import.component';
-import { error } from 'console';
-import { SnackBarService } from 'src/app/core/_services/snack-bar.service';
+import {Component, Inject, Input, Optional} from '@angular/core';
+import {VaccinationService} from 'src/app/core/_services/vaccination.service';
+import {PatientService} from 'src/app/core/_services/patient.service';
+import {VaccinationEvent} from 'src/app/core/_model/rest';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {FhirClientService} from 'src/app/core/_services/_fhir/fhir-client.service';
+import {Observable, of} from 'rxjs';
+import {SmartHealthLinkImportComponent} from '../../_fhir/smart-health-link-import/smart-health-link-import.component';
+import {SnackBarService} from 'src/app/core/_services/snack-bar.service';
 
 @Component({
   selector: 'app-fetch-and-load',
   templateUrl: './fetch-and-load.component.html',
   styleUrls: ['./fetch-and-load.component.css']
 })
-export class FetchAndLoadComponent implements OnInit {
+export class FetchAndLoadComponent {
 
   @Input()
   patientId?: number;
@@ -26,18 +24,20 @@ export class FetchAndLoadComponent implements OnInit {
 
   remoteVaccinations: VaccinationEvent[] = [];
 
+  showButtons: boolean = true;
+
   constructor(
     private dialog: MatDialog,
     private fhirClient: FhirClientService,
     public vaccinationService: VaccinationService,
     public patientService: PatientService,
     public snackBarService: SnackBarService,
-    @Optional() public _dialogRef: MatDialogRef<FhirMessagingComponent>,
+    @Optional() public _dialogRef: MatDialogRef<FetchAndLoadComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number }) {
+    if (!data?.patientId) {
+      this.showButtons = false
+    }
     this.patientId = data?.patientId
-  }
-
-  ngOnInit(): void {
   }
 
   loadEverythingFromPatient() {
@@ -62,10 +62,10 @@ export class FetchAndLoadComponent implements OnInit {
       height: 'fit-content',
       width: '100%',
       panelClass: 'dialog-without-bar',
-      data: { patientId: this.patientId, url: url ?? "" }
+      data: {patientId: this.patientId, url: url ?? ""}
     }).afterClosed().subscribe((res) => {
       if (res) {
-        this.remoteVaccinations = res
+        this.remoteVaccinations = res.vaccinationEvents
       }
     })
   }

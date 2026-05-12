@@ -1,51 +1,51 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { AuthenticationModule } from './authentication/authentication.module';
-import { SharedModule } from '../shared/shared.module';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {CommonModule, DatePipe} from '@angular/common';
+import {AuthenticationModule} from './authentication/authentication.module';
+import {SharedModule} from '../shared/shared.module';
 
-import { SettingsService } from './_services/settings.service';
-import { PatientService } from './_services/patient.service';
-import { TenantService } from './_services/tenant.service';
-import { FacilityService } from './_services/facility.service';
-import { CodeMapsService } from './_services/code-maps.service';
-import { FeedbackService } from './_services/feedback.service';
-import { ClinicianService } from './_services/clinician.service';
+import {SettingsService} from './_services/settings.service';
+import {PatientService} from './_services/patient.service';
+import {TenantService} from './_services/tenant.service';
+import {FacilityService} from './_services/facility.service';
+import {CodeMapsService} from './_services/code-maps.service';
+import {FeedbackService} from './_services/feedback.service';
+import {ClinicianService} from './_services/clinician.service';
 
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { LayoutModule } from '@angular/cdk/layout';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NavigationComponent } from './_components/navigation/navigation.component';
-import { DashboardComponent } from './_components/dashboard/dashboard.component';
-import { HomeComponent } from './_components/home/home.component';
-import { AppRoutingModule } from '../app-routing.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HttpClientModule} from '@angular/common/http';
+import {LayoutModule} from '@angular/cdk/layout';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NavigationComponent} from './_components/navigation/navigation.component';
+import {DashboardComponent} from './_components/dashboard/dashboard.component';
+import {HomeComponent} from './_components/home/home.component';
+import {AppRoutingModule} from '../app-routing.module';
 
-import { RefreshNotificationComponent } from './_components/refresh-notification/refresh-notification.component';
-import { VaccinationComparePipe } from '../shared/_pipes/vaccination-compare.pipe';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { JsonDialogService } from './_services/json-dialog.service';
-import { StepsComponent } from './_components/steps/steps.component';
-import { FhirBulkService } from './_services/_fhir/fhir-bulk.service';
-import { FhirClientService } from './_services/_fhir/fhir-client.service';
-import { FhirResourceService } from './_services/_fhir/fhir-resource.service';
-import { Hl7Service } from './_services/_fhir/hl7.service';
-import { SubscriptionService } from './_services/_fhir/subscription.service';
-import { GroupStepsComponent } from './_components/group-steps/group-steps.component';
-import { firstValueFrom } from 'rxjs';
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
-import { PatientComparePipe } from '../shared/_pipes/patient-compare.pipe';
-import { PatientResumePipe } from '../shared/_pipes/patient-resume.pipe';
-import { PatientCachePipe } from '../shared/_pipes/patient-cache.pipe';
-import { RegistryNamePipe } from '../shared/_pipes/registry-name.pipe';
-import { VaccinationCachePipe } from '../shared/_pipes/vaccination-cache.pipe';
-import { CodeMapsPipe } from '../shared/_pipes/code-maps.pipe';
-import { AckStatusPipe } from '../shared/_pipes/ack-status.pipe';
-import { VaccinationResumePipe } from '../shared/_pipes/vaccination-resume.pipe';
-import { FacilityCachePipe } from '../shared/_pipes/facility-cache.pipe';
-import { FacilityNamePipe } from '../shared/_pipes/facility-name.pipe';
-
+import {RefreshNotificationComponent} from './_components/refresh-notification/refresh-notification.component';
+import {VaccinationComparePipe} from '../shared/_pipes/vaccination-compare.pipe';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {JsonDialogService} from './_services/json-dialog.service';
+import {StepsComponent} from './_components/steps/steps.component';
+import {FhirBulkService} from './_services/_fhir/fhir-bulk.service';
+import {FhirClientService} from './_services/_fhir/fhir-client.service';
+import {FhirResourceService} from './_services/_fhir/fhir-resource.service';
+import {Hl7Service} from './_services/_fhir/hl7.service';
+import {SubscriptionService} from './_services/_fhir/subscription.service';
+import {GroupStepsComponent} from './_components/group-steps/group-steps.component';
+import {firstValueFrom} from 'rxjs';
+import {MatIconRegistry} from '@angular/material/icon';
+import {DomSanitizer} from '@angular/platform-browser';
+import {PatientComparePipe} from '../shared/_pipes/patient-compare.pipe';
+import {PatientResumePipe} from '../shared/_pipes/patient-resume.pipe';
+import {PatientCachePipe} from '../shared/_pipes/patient-cache.pipe';
+import {RegistryNamePipe} from '../shared/_pipes/registry-name.pipe';
+import {VaccinationCachePipe} from '../shared/_pipes/vaccination-cache.pipe';
+import {CodeMapsPipe} from '../shared/_pipes/code-maps.pipe';
+import {AckStatusPipe} from '../shared/_pipes/ack-status.pipe';
+import {VaccinationResumePipe} from '../shared/_pipes/vaccination-resume.pipe';
+import {FacilityCachePipe} from '../shared/_pipes/facility-cache.pipe';
+import {FacilityNamePipe} from '../shared/_pipes/facility-name.pipe';
+import {SmartHealthLinkService} from './_services/_fhir/smart-health-link-service';
 
 
 const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsService, matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) => {
@@ -55,7 +55,6 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     matIconRegistry.addSvgIcon("synthea", domSanitizer.bypassSecurityTrustResourceUrl("assets/synthea.svg"))
   });
 };
-
 
 
 @NgModule({
@@ -131,6 +130,7 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
     ClinicianService,
     JsonDialogService,
     FhirClientService,
+    SmartHealthLinkService,
     FhirResourceService,
     FhirBulkService,
     Hl7Service,
@@ -152,4 +152,5 @@ const initAppFn = (settingsService: SettingsService, codeMapsService: CodeMapsSe
 
   ]
 })
-export class CoreModule { }
+export class CoreModule {
+}

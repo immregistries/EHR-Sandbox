@@ -1,4 +1,4 @@
-package org.immregistries.ehr.fhir.client;
+package org.immregistries.ehr.shlink.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

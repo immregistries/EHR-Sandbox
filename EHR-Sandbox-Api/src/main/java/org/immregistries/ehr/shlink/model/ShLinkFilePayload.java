@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.shlink;
+package org.immregistries.ehr.shlink.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,10 +11,13 @@ import java.util.List;
  */
 public class ShLinkFilePayload {
 
-    @JsonProperty("type")
+    public static final String VERIFIABLE_CREDENTIAL = "verifiableCredential";
+    public static final String TYPE = "type";
+
+    @JsonProperty(TYPE)
     private List<String> type = new ArrayList<>();
 
-    @JsonProperty("verifiableCredential")
+    @JsonProperty(VERIFIABLE_CREDENTIAL)
     private List<String> verifiableCredential = new ArrayList<>();
 
     /**

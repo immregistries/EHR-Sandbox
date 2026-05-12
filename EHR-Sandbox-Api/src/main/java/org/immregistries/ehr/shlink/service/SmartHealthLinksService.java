@@ -1,6 +1,5 @@
-package org.immregistries.ehr.fhir.client;
+package org.immregistries.ehr.shlink.service;
 
-import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -9,15 +8,14 @@ import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.Jwe;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
-import org.immregistries.ehr.logic.shlink.ShCardClaims;
-import org.immregistries.ehr.logic.shlink.ShLinkFilePayload;
-import org.immregistries.ehr.logic.shlink.ShLinkManifest;
-import org.immregistries.ehr.logic.shlink.ShLinkPayload;
+import org.immregistries.ehr.shlink.model.ShCardClaims;
+import org.immregistries.ehr.shlink.model.ShLinkFilePayload;
+import org.immregistries.ehr.shlink.model.ShLinkManifest;
+import org.immregistries.ehr.shlink.model.ShLinkPayload;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -34,31 +32,17 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static org.immregistries.ehr.shlink.SmartHealthConstants.*;
+import static org.immregistries.ehr.shlink.SmartHealthConstants.ContentType.*;
+
 @Service
 public class SmartHealthLinksService {
     private static final Logger logger = LoggerFactory.getLogger(SmartHealthLinksService.class);
-    public static final String U_FLAG = "U";
-    public static final String SHLINK_PREFIX = "shlink:/";
-    public static final String VERIFIABLE_CREDENTIAL = "verifiableCredential";
-    public static final String APPLICATION_JOSE = "application/jose";
 
     @Autowired
-    SmartHealthCardService smartHealthCardService;
-    //    @Autowired
-//    EhrFhirClientFactory ehrFhirClientFactory;
-    //    @Autowired
-//    EhrFhirClientFactory ehrFhirClientFactory;
-//    @Autowired
-//    EhrFhirClientFactory ehrFhirClientFactory;
-    @Autowired()
-    @Qualifier("fhirContextR5")
-    FhirContext fhirContextR5;
-    @Autowired()
-    @Qualifier("fhirContextR4")
-    FhirContext fhirContextR4;
+    SmartHealthCardParser smartHealthCardParser;
 
-
-    public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey) throws JsonProcessingException {
+    public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey, String recipient) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
         List<String> result = new ArrayList<>(3);
@@ -74,22 +58,21 @@ public class SmartHealthLinksService {
         String key = shLinkPayload.getKey().orElse("");
         String flags = shLinkPayload.getFlag().orElse("");
 
-        String recipient = "EHR-sandbox-test";
         SecretKey secretKey = null;
         if (StringUtils.isNotBlank(key)) {
             byte[] encodedKey = Base64.getUrlDecoder().decode(key.getBytes());
-            secretKey = new SecretKeySpec(encodedKey, "AES");
+            secretKey = new SecretKeySpec(encodedKey, ALGORITHM);
         }
         /*
          * if flag contains "U" -> Direct file download
          */
-        if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U_FLAG)) {
+        if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U_FLAG.toString())) {
             byte[] data = directFileRequestReading(url, recipient);
             Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(new String(data));
             result.addAll(processShCardJwe(jwe, publicKey));
 
         } else { // else Manifest retrieval
-            ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, SmartHealthCardService.MAXIMUM_DATA_SIZE, flags);
+            ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, MAXIMUM_DATA_SIZE, flags);
 
             for (ShLinkManifest.FileManifest file : shLinkManifest.getFiles()) {
                 if (StringUtils.isNotBlank(file.getEmbedded())) {
@@ -117,15 +100,15 @@ public class SmartHealthLinksService {
     private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, PublicKey publicKey) throws JsonProcessingException {
         Gson gson = new Gson();
         switch (manifestFile.getContentType()) {
-            case "application/smart-health-card": {
+            case APPLICATION_SMART_HEALTH_CARD: {
                 Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(manifestFile.getEmbedded());
                 return processShCardJwe(jwe, publicKey);
             }
-            case "application/fhir+json": { //TODO test
+            case APPLICATION_FHIR_JSON: { //TODO test
                 Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(manifestFile.getEmbedded());
                 return List.of(gson.toJson(new String(jwe.getPayload())));
             }
-            case "application/smart-api-access": //TODO
+            case APPLICATION_SMART_API_ACCESS: //TODO
             default: {
                 throw new RuntimeException("Manifest Content type not supported");
             }
@@ -145,11 +128,11 @@ public class SmartHealthLinksService {
                 /**
                  * Verify Signature
                  */
-                verifiableCredential = smartHealthCardService.parseVCFromCompactJwt(publicKey, compact);
+                verifiableCredential = smartHealthCardParser.parseVCFromCompactJwt(publicKey, compact);
             } catch (CompressionException compressionException) {
                 // Do unverified raw inflate if compression headers are invalid
 //                        compressionException.printStackTrace();
-                verifiableCredential = smartHealthCardService.parseVCFromCompactJwtUnsecure(compact);
+                verifiableCredential = smartHealthCardParser.parseVCFromCompactJwtUnsecure(compact);
             }
             String s = objectMapper.writeValueAsString(verifiableCredential);
             resultList.add(s);

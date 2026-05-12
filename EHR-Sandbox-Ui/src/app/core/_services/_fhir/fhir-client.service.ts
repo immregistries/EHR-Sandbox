@@ -1,19 +1,20 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpParamsOptions, HttpResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { SettingsService } from '../settings.service';
-import { FacilityService } from '../facility.service';
-import { TenantService } from '../tenant.service';
-import { ImmunizationRegistryService } from 'src/app/core/_services/immunization-registry.service';
-import { Identifier } from 'fhir/r5';
-import { EhrFhirOutcome, VaccinationEvent } from 'src/app/core/_model/rest';
-import { SubscriptionService } from './subscription.service';
-import { IdUrlVerifyingService } from '../_abstract/id-url-verifying.service';
-import { SnackBarService } from '../snack-bar.service';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable, of, throwError} from 'rxjs';
+import {SettingsService} from '../settings.service';
+import {FacilityService} from '../facility.service';
+import {TenantService} from '../tenant.service';
+import {ImmunizationRegistryService} from 'src/app/core/_services/immunization-registry.service';
+import {Identifier} from 'fhir/r5';
+import {EhrFhirOutcome, VaccinationEvent} from 'src/app/core/_model/rest';
+import {SubscriptionService} from './subscription.service';
+import {IdUrlVerifyingService} from '../_abstract/id-url-verifying.service';
+import {SnackBarService} from '../snack-bar.service';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,7 +48,9 @@ export class FhirClientService extends IdUrlVerifyingService {
     }
   }
 
-  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceLocalId: number, parentId: number, overridingReferences?: { [reference: string]: string }): Observable<EhrFhirOutcome> {
+  postResource(type: string, resource: string, operation: "Create" | "Update" | "UpdateOrCreate", resourceLocalId: number, parentId: number, overridingReferences?: {
+    [reference: string]: string
+  }): Observable<EhrFhirOutcome> {
     if (resourceLocalId < 0) {
       if (this.tenantService.getCurrentId() > 0) {
         return this.http.post(`${this.settings.getApiUrl()}/tenants/${this.tenantService.getCurrentId()}/fhir-client?registryId=${this.registryService.getCurrentId()}`, resource)
@@ -116,30 +119,6 @@ export class FhirClientService extends IdUrlVerifyingService {
       }
     }
     return of("");
-  }
-
-  shlinkRead(url: string, password?: string, jwk?: string): Observable<string> {
-    const registryId = this.registryService.getCurrentId()
-    const tenantId: number = this.tenantService.getCurrentId()
-    if (this.idsNotValid(tenantId)) {
-      return of()
-    }
-    return this.http.post<string>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/$read-shlink`,
-      url,
-      { ...httpOptions, params: { 'password': password ?? "", 'jwk': jwk ?? "" } });
-  }
-
-  importShlinkForPatient(patientId: number, url: string, password?: string, jwk?: string): Observable<VaccinationEvent[]> {
-    const tenantId: number = this.tenantService.getCurrentId()
-    const facilityId: number = this.facilityService.getCurrentId()
-    if (this.idsNotValid(tenantId, facilityId, patientId)) {
-      return of()
-    }
-    return this.http.post<VaccinationEvent[]>(
-      `${this.settings.getApiUrl()}/tenants/${tenantId}/facilities/${facilityId}/patients/${patientId}/$import-shlink`,
-      url,
-      { ...httpOptions, params: { 'password': password ?? "", 'jwk': jwk ?? "" } });
   }
 
   transaction(resource: string, facilityId: number): Observable<string> {
@@ -276,6 +255,7 @@ export class FhirClientService extends IdUrlVerifyingService {
       }
     );
   }
+
   putPractitioner(tenantId: number, clinicianId: number, resource: string): Observable<EhrFhirOutcome> {
     const registryId = this.registryService.getCurrentId()
     return this.http.put<EhrFhirOutcome>(
@@ -406,7 +386,7 @@ export class FhirClientService extends IdUrlVerifyingService {
       {
         ...httpOptions,
         responseType: 'text',
-        params: { registryId: registryId }
+        params: {registryId: registryId}
       });
   }
 
@@ -418,7 +398,7 @@ export class FhirClientService extends IdUrlVerifyingService {
       {
         ...httpOptions,
         responseType: 'text',
-        params: { registryId: registryId }
+        params: {registryId: registryId}
       });
   }
 
@@ -431,7 +411,7 @@ export class FhirClientService extends IdUrlVerifyingService {
       {
         ...httpOptions,
         responseType: 'text',
-        params: { registryId: registryId }
+        params: {registryId: registryId}
       });
   }
 

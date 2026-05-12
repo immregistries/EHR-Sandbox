@@ -1,10 +1,12 @@
-package org.immregistries.ehr.logic.shlink;
+package org.immregistries.ehr.shlink.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;
 import java.util.Set;
+
+import static org.immregistries.ehr.shlink.SmartHealthConstants.*;
 
 /**
  * Represents a SMART Health Link, which provides a link to a user's health information.
@@ -95,13 +97,13 @@ public class ShLinkPayload {
     public void setFlag(String flag) {
         // Optional validation to ensure flag characters are valid and in order.
         if (flag != null) {
-            Set<Character> validFlags = Set.of('L', 'P', 'U');
+            Set<Character> validFlags = Set.of(L_FLAG, P_FLAG, U_FLAG);
             for (char c : flag.toCharArray()) {
                 if (!validFlags.contains(c)) {
                     throw new IllegalArgumentException("Invalid flag character: " + c);
                 }
             }
-            if (flag.contains("P") && flag.contains("U")) {
+            if (flag.contains(P_FLAG.toString()) && flag.contains(U_FLAG.toString())) {
                 throw new IllegalArgumentException("Flag 'P' and 'U' cannot be used together.");
             }
             // Additional check for alphabetical order

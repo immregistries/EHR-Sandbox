@@ -1,4 +1,4 @@
-package org.immregistries.ehr.logic.shlink;
+package org.immregistries.ehr.shlink.model;
 
 import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,76 +12,77 @@ import org.hl7.fhir.instance.model.api.IBaseBundle;
 import java.io.Serializable;
 import java.util.*;
 
+
 /**
  * A custom implementation of the {@link Claims} interface that also
  * extends {@link LinkedHashMap}, allowing it to function as a
  * a self-contained representation of the JWT payload.
- * <p>
- * This class provides convenient methods to access and set claim values
- * while internally storing the data within the map structure.
- * </p>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ShCardClaims extends LinkedHashMap<String, Object> implements Claims, Serializable {
 
-    private static final String CONVERSION_ERROR_MSG = "Cannot convert existing claim value of type '%s' to desired type " +
-            "'%s'. JJWT only converts simple String, Date, Long, Integer, Short and Byte types automatically. " +
-            "Anything more complex is expected to be already converted to your desired type by the JSON Deserializer " +
-            "implementation. You may specify a custom Deserializer for a JwtParser with the desired conversion " +
-            "configuration via the JwtParserBuilder.deserializer() method. " +
-            "See https://github.com/jwtk/jjwt#custom-json-processor for more information. If using Jackson, you can " +
-            "specify custom claim POJO types as described in https://github.com/jwtk/jjwt#json-jackson-custom-types";
+    // Standard JWT Claim Keys
+    public static final String ISS = "iss";
+    public static final String SUB = "sub";
+    public static final String AUD = "aud";
+    public static final String EXP = "exp";
+    public static final String NBF = "nbf";
+    public static final String IAT = "iat";
+    public static final String JTI = "jti";
+    public static final String VC = "vc";
 
-    /**
-     * Default no-argument constructor. Required for Jackson deserialization.
-     */
+    private static final String CONVERSION_ERROR_MSG = "Cannot convert existing claim value of type '%s' to desired type " +
+            "'%s'. JJWT only converts simple String, Date, Long, Integer, Short and Byte types automatically. ";
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     public ShCardClaims() {
         super();
     }
 
-    // Custom Getters and Setters for type-safety and convenience
+    // Custom Getters and Setters
     public VerifiableCredential getVerifiableCredential() {
-        return (VerifiableCredential) get("vc");
+        return (VerifiableCredential) get(VC);
     }
 
     public void setVerifiableCredential(VerifiableCredential verifiableCredential) {
-        put("vc", verifiableCredential);
+        put(VC, verifiableCredential);
     }
 
-    // Direct implementation of Claims interface methods, leveraging the map
+    // Claims interface implementation
     @Override
     public String getIssuer() {
-        return (String) get("iss");
+        return (String) get(ISS);
     }
 
     @Override
     public Date getExpiration() {
-        return (Date) get("exp");
+        return (Date) get(EXP);
     }
 
     @Override
     public Date getIssuedAt() {
-        return (Date) get("iat");
+        return (Date) get(IAT);
     }
 
     @Override
     public Date getNotBefore() {
-        return (Date) get("nbf");
+        return (Date) get(NBF);
     }
 
     @Override
     public Set<String> getAudience() {
-        return (Set<String>) get("aud");
+        return (Set<String>) get(AUD);
     }
 
     @Override
     public String getSubject() {
-        return (String) get("sub");
+        return (String) get(SUB);
     }
 
     @Override
     public String getId() {
-        return (String) get("jti");
+        return (String) get(JTI);
     }
 
     @Override
@@ -98,37 +99,37 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
     }
 
     public Claims setIssuer(String iss) {
-        put("iss", iss);
+        put(ISS, iss);
         return this;
     }
 
     public Claims setExpiration(Date exp) {
-        put("exp", exp);
+        put(EXP, exp);
         return this;
     }
 
     public Claims setIssuedAt(Date iat) {
-        put("iat", iat);
+        put(IAT, iat);
         return this;
     }
 
     public Claims setNotBefore(Date nbf) {
-        put("nbf", nbf);
+        put(NBF, nbf);
         return this;
     }
 
     public Claims setAudience(Set<String> aud) {
-        put("aud", aud);
+        put(AUD, aud);
         return this;
     }
 
     public Claims setSubject(String sub) {
-        put("sub", sub);
+        put(SUB, sub);
         return this;
     }
 
     public Claims setId(String jti) {
-        put("jti", jti);
+        put(JTI, jti);
         return this;
     }
 
@@ -137,32 +138,21 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
         return this;
     }
 
-
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    /**
-     * Necessary to handle deserialization
-     *
-     * @param key   key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return
-     */
     @Override
     public Object put(String key, Object value) {
-        if ("vc".equals(key) && value instanceof Map) {
-            // Convert the generic Map into your typed POJO
+        if (VC.equals(key) && value instanceof Map) {
             return super.put(key, mapper.convertValue(value, VerifiableCredential.class));
         }
         return super.put(key, value);
     }
 
-    // Nested classes as per the provided structure
-
     public static class VerifiableCredential implements Serializable {
-        @JsonProperty("type")
+        public static final String TYPE = "type";
+        public static final String CREDENTIAL_SUBJECT = "credentialSubject";
+        @JsonProperty(TYPE)
         private List<String> type;
 
-        @JsonProperty("credentialSubject")
+        @JsonProperty(CREDENTIAL_SUBJECT)
         private CredentialSubject credentialSubject;
 
         public List<String> getType() {
@@ -188,7 +178,6 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
             @JsonProperty("fhirBundle")
             private JsonNode fhirBundle;
 
-
             public String getFhirVersion() {
                 return fhirVersion;
             }
@@ -212,6 +201,4 @@ public class ShCardClaims extends LinkedHashMap<String, Object> implements Claim
             }
         }
     }
-
-
 }

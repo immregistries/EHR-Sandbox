@@ -8,10 +8,12 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.KeyType;
 import org.apache.commons.lang3.StringUtils;
+import org.immregistries.ehr.api.dtos.ReceivedHistoryDTO;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
-import org.immregistries.ehr.fhir.client.SmartHealthCardService;
-import org.immregistries.ehr.fhir.client.SmartHealthLinksService;
+import org.immregistries.ehr.shlink.service.SmartHealthCardParser;
+import org.immregistries.ehr.shlink.service.SmartHealthLinksService;
+import org.immregistries.ehr.shlink.service.VerifiableCredentialBundleExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +31,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.immregistries.ehr.api.controllers.ControllerHelper.*;
-import static org.immregistries.ehr.fhir.client.SmartHealthCardService.CREDENTIAL_SUBJECT;
-import static org.immregistries.ehr.fhir.client.SmartHealthCardService.VC;
-import static org.immregistries.ehr.fhir.client.SmartHealthLinksService.SHLINK_PREFIX;
+import static org.immregistries.ehr.shlink.SmartHealthConstants.CREDENTIAL_SUBJECT;
+import static org.immregistries.ehr.shlink.SmartHealthConstants.SHLINK_PREFIX;
+import static org.immregistries.ehr.shlink.model.ShCardClaims.VC;
 
 @Controller
 public class SmartHealthCardLinksController {
+    public static final String PASSWORD = "password";
+    public static final String JWK = "jwk";
     Logger logger = LoggerFactory.getLogger(SmartHealthCardLinksController.class);
 
     @Autowired
@@ -42,38 +46,44 @@ public class SmartHealthCardLinksController {
     @Autowired
     private SmartHealthLinksService smartHealthLinksService;
     @Autowired
-    private SmartHealthCardService smartHealthCardService;
+    private SmartHealthCardParser smartHealthCardParser;
+    @Autowired
+    private VerifiableCredentialBundleExtractor verifiableCredentialBundleExtractor;
 
-    @PostMapping(TENANT_ID_PATH + "/$read-shlink")
-    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) throws JsonProcessingException {
+    @PostMapping(TENANT_ID_PATH + "/$read-sh-link")
+    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam(PASSWORD) Optional<String> password, @RequestParam(JWK) Optional<String> jwk) throws JsonProcessingException {
         List<String> body = readHealthLink(url, password, jwk);
         return ResponseEntity.ok(body);
     }
 
-    @PostMapping(PATIENT_ID_PATH + "/$import-shlink")
-    public ResponseEntity<List<VaccinationEvent>> importSmartHealthLink(
+    @PostMapping(PATIENT_ID_PATH + "/$import-sh-link")
+    public ResponseEntity<ReceivedHistoryDTO> importSmartHealthLink(
             @PathVariable(FACILITY_ID) Integer facilityId,
             @PathVariable(PATIENT_ID) Integer patientId,
-            @RequestBody() String url, @RequestParam("password") Optional<String> password, @RequestParam("jwk") Optional<String> jwk) throws JsonProcessingException {
+            @RequestBody() String url, @RequestParam(PASSWORD) Optional<String> password, @RequestParam(JWK) Optional<String> jwk) throws JsonProcessingException {
         List<String> body = readHealthLink(url, password, jwk);
         List<VaccinationEvent> vaccinationEvents = new ArrayList<>(10);
+        ReceivedHistoryDTO receivedHistoryDTO = new ReceivedHistoryDTO();
+
         for (String str : body) {
             JsonElement jsonElement = JsonParser.parseString(str);
-            logger.info("parse result {}", str);
             JsonObject vc = null;
             if (jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has(VC)) {
-                vc = jsonElement.getAsJsonObject().getAsJsonObject("VC");
+                vc = jsonElement.getAsJsonObject().getAsJsonObject(VC);
             } else if (jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has(CREDENTIAL_SUBJECT)) {
                 vc = jsonElement.getAsJsonObject();
             }
             if (vc != null) {
-                vaccinationEvents.addAll(smartHealthCardService.parseBundleVaccinationsFromVC(vc));
+                receivedHistoryDTO.setPatient(verifiableCredentialBundleExtractor.parseBundlePatientFromVC(vc));
+                vaccinationEvents.addAll(verifiableCredentialBundleExtractor.parseBundleVaccinationsFromVC(vc));
             } else {
-                vaccinationEvents.addAll(smartHealthCardService.parseBundleVaccinationsUnknownVersion(str));
+                vaccinationEvents.addAll(verifiableCredentialBundleExtractor.parseBundleVaccinationsUnknownVersion(str));
                 // TODO figure bundle version and parse
             }
         }
-        return ResponseEntity.ok(vaccinationEvents);
+        receivedHistoryDTO.setVaccinationEvents(vaccinationEvents);
+
+        return ResponseEntity.ok(receivedHistoryDTO);
     }
 
     private List<String> readHealthLink(String url, Optional<String> password, Optional<String> jwkString) throws JsonProcessingException {
@@ -85,7 +95,7 @@ public class SmartHealthCardLinksController {
         if (StringUtils.isNotBlank(jwkString.orElse(null))) {
             JWK jwk = null;
             try {
-                jwk = JWK.parse(jwkString.get());
+                jwk = com.nimbusds.jose.jwk.JWK.parse(jwkString.get());
                 KeyType keyType = jwk.getKeyType();
                 if (keyType.equals(KeyType.EC)) {
                     publicKey = jwk.toECKey().toPublicKey();
@@ -98,7 +108,7 @@ public class SmartHealthCardLinksController {
                 throw new RuntimeException(e);
             }
         }
-        List<String> body = smartHealthLinksService.importSmartHealthLink(shlink, password.orElse(null), publicKey);
+        List<String> body = smartHealthLinksService.importSmartHealthLink(shlink, password.orElse(null), publicKey, "EHR-sandbox-test");
         return body;
     }
 
