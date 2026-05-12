@@ -118,7 +118,7 @@ public class AuthController {
                 immunizationRegistry.setIisPassword(newUser.getUsername());
                 immunizationRegistry.setIisHl7Url(defaultIisUrl + "/soap");
                 immunizationRegistry.setIisFhirUrl(defaultIisUrl + "/fhir");
-                immunizationRegistry.setIisFhirMessagingUrl(defaultIisUrl + "/fhirMessaging/soap");
+                immunizationRegistry.setIisFhirMessagingUrl(defaultIisUrl + "/fhir-messaging/soap");
                 immunizationRegistry.setUser(newUser);
                 immunizationRegistry.setDescription("Automatically generated, url defined by EHR sandbox global configuration");
                 immunizationRegistryRepository.save(immunizationRegistry);
