@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.jsonwebtoken.CompressionException;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.KeyType;
+import io.jsonwebtoken.*;
 import org.immregistries.ehr.api.security.JwtUtils;
 import org.immregistries.ehr.shlink.model.ShCardClaims;
 import org.slf4j.Logger;
@@ -43,7 +45,6 @@ public class SmartHealthCardParser {
     }
 
     public ShCardClaims.VerifiableCredential parseVCFromCompactJwt(PublicKey publicKey, String compact) throws CompressionException, JsonProcessingException {
-        logger.info("Parsing compact {}\n\n", compact);
         // Tells Jackson that "1776924536" is in nanoseconds (JWT standard)
         objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
 
@@ -55,6 +56,35 @@ public class SmartHealthCardParser {
         } else {
             throw new RuntimeException("Key not found");
         }
+    }
+
+    public ShCardClaims.VerifiableCredential parseVCFromCompactJwt(JWKSet jwkSet, String compact) throws CompressionException, JsonProcessingException {
+        // Tells Jackson that "1776924536" is in nanoseconds (JWT standard)
+        objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
+        Jwt jws = Jwts.parser()
+                .keyLocator(header -> {
+                    String kid1 = (String) header.get("kid");
+                    JWK jwk = jwkSet.getKeyByKeyId(kid1);
+                    try {
+                        PublicKey publicKey = null;
+                        KeyType keyType = jwk.getKeyType();
+                        if (keyType.equals(KeyType.EC)) {
+                            publicKey = jwk.toECKey().toPublicKey();
+                        } else if (keyType.equals(KeyType.RSA)) {
+                            publicKey = jwk.toRSAKey().toPublicKey();
+                        } else if (keyType.equals(KeyType.OCT) || keyType.equals(KeyType.OKP)) {
+                            publicKey = jwk.toOctetKeyPair().toPublicKey();
+                        }
+                        return publicKey;
+                    } catch (JOSEException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .build().parseSignedClaims(compact);
+        String jsonPayload = gson.toJson(jws.getPayload());
+        ShCardClaims shCardClaims = objectMapper.readValue(jsonPayload, ShCardClaims.class);
+        return shCardClaims.getVerifiableCredential();
+
     }
 
 

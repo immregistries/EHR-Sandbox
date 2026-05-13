@@ -58,4 +58,16 @@ export class SmartHealthLinkService extends IdUrlVerifyingService {
       {...httpOptions, params: {'password': password ?? "", 'jwk': jwk ?? ""}});
   }
 
+  importShlink(url: string, password?: string, jwk?: string): Observable<ReceivedHistoryDTO> {
+    const tenantId: number = this.tenantService.getCurrentId()
+    const facilityId: number = this.facilityService.getCurrentId()
+    if (this.idsNotValid(tenantId, facilityId)) {
+      return of()
+    }
+    return this.http.post<ReceivedHistoryDTO>(
+      `${this.settings.getApiUrl()}/tenants/${tenantId}/$import-sh-link`,
+      url,
+      {...httpOptions, params: {'password': password ?? "", 'jwk': jwk ?? ""}});
+  }
+
 }

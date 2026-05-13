@@ -4,6 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {GroupBulkCompareComponent} from '../../_group/group-bulk-compare/group-bulk-compare.component';
 import {SmartHealthLinkService} from 'src/app/core/_services/_fhir/smart-health-link-service';
+import {FetchAndLoadComponent} from '../../_vaccination/fetch-and-load/fetch-and-load.component';
 
 @Component({
   selector: 'app-smart-health-link-import',
@@ -13,12 +14,12 @@ import {SmartHealthLinkService} from 'src/app/core/_services/_fhir/smart-health-
 export class SmartHealthLinkImportComponent {
 
   readonly exampleUrl = [
-    "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC9pZU9VdU9vZkF2aUU2eEtjV0hwQkx1azA4LUVLZjRYdTROT1BOb2Fmb2RZIiwiZXhwIjoxOTQ4MjI3NjI5LjcwOCwiZmxhZyI6IiIsImtleSI6IjJ1UkR0TzZIbTBwa3VudFNPeEgtSmlZZEhOWWg2N0VFbzh4NGNpM2xWR00iLCJsYWJlbCI6IlNITCBmcm9tIDIwMjQtMDktMjcifQ",
-    "https://viewer.tcpdev.org/shlink.html#shlink:/eyJ1cmwiOiJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vc2Vhbm5vL3NoYy1kZW1vLWRhdGEvbWFpbi9pcHMvSVBTX0lHLWJ1bmRsZS0wMS1lbmMudHh0IiwiZmxhZyI6IkxVIiwia2V5IjoicnhUZ1lsT2FLSlBGdGNFZDBxY2NlTjh3RVU0cDk0U3FBd0lXUWU2dVg3USIsImxhYmVsIjoiRGVtbyBTSEwgZm9yIElQU19JRy1idW5kbGUtMDEifQ",
+    // "https://shlink.ips.health/ips#shlink:/eyJ1cmwiOiJodHRwczovL2FwaS52YXh4LmxpbmsvYXBpL3NobC9pZU9VdU9vZkF2aUU2eEtjV0hwQkx1azA4LUVLZjRYdTROT1BOb2Fmb2RZIiwiZXhwIjoxOTQ4MjI3NjI5LjcwOCwiZmxhZyI6IiIsImtleSI6IjJ1UkR0TzZIbTBwa3VudFNPeEgtSmlZZEhOWWg2N0VFbzh4NGNpM2xWR00iLCJsYWJlbCI6IlNITCBmcm9tIDIwMjQtMDktMjcifQ",
+    // "https://viewer.tcpdev.org/shlink.html#shlink:/eyJ1cmwiOiJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vc2Vhbm5vL3NoYy1kZW1vLWRhdGEvbWFpbi9pcHMvSVBTX0lHLWJ1bmRsZS0wMS1lbmMudHh0IiwiZmxhZyI6IkxVIiwia2V5IjoicnhUZ1lsT2FLSlBGdGNFZDBxY2NlTjh3RVU0cDk0U3FBd0lXUWU2dVg3USIsImxhYmVsIjoiRGVtbyBTSEwgZm9yIElQU19JRy1idW5kbGUtMDEifQ",
   ]
 
   readonly exampleJwks = [
-    `{"kty": "EC","kid": "3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s","use": "sig","alg": "ES256","crv": "P-256","x": "11XvRWy1I2S0EyJlyf_bWfw_TQ5CJJNLw78bHXNxcgw","y": "eZXwxvO1hvCY0KucrPfKo7yAyMT6Ajc3N7OkAB6VYy8","d": "FvOOk6hMixJ2o9zt4PCfan_UW7i4aOEnzj76ZaCI9Og"}`,
+    // `{"kty": "EC","kid": "3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s","use": "sig","alg": "ES256","crv": "P-256","x": "11XvRWy1I2S0EyJlyf_bWfw_TQ5CJJNLw78bHXNxcgw","y": "eZXwxvO1hvCY0KucrPfKo7yAyMT6Ajc3N7OkAB6VYy8","d": "FvOOk6hMixJ2o9zt4PCfan_UW7i4aOEnzj76ZaCI9Og"}`,
   ]
 
   @Input()
@@ -97,7 +98,7 @@ export class SmartHealthLinkImportComponent {
 
 
   openPatient() {
-    this.smartHealthLinkService.importShlinkForPatient(this.patientId, this.url, this.password, this.jwk).subscribe({
+    this.smartHealthLinkService.importShlink(this.url, this.password, this.jwk).subscribe({
       next: (res) => {
         this.requestLoading = false
         this.matDialog.open(GroupBulkCompareComponent, {
@@ -106,7 +107,7 @@ export class SmartHealthLinkImportComponent {
           height: 'fit-content',
           width: '100%',
           // panelClass: 'dialog-without-bar',
-          data: {ehrGroup: undefined, bulkImportStatus: undefined}
+          data: {receivedHistory: res}
         })
         // this.answerArray = res
       },

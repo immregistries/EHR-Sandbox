@@ -14,6 +14,8 @@ import {SnackBarService} from 'src/app/core/_services/snack-bar.service';
   styleUrls: ['./fetch-and-load.component.css']
 })
 export class FetchAndLoadComponent {
+  @Input()
+  title: string = "Fetch Vaccination History from IIS"
 
   @Input()
   patientId?: number;
@@ -33,9 +35,12 @@ export class FetchAndLoadComponent {
     public patientService: PatientService,
     public snackBarService: SnackBarService,
     @Optional() public _dialogRef: MatDialogRef<FetchAndLoadComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { patientId: number, title?: string }) {
     if (!data?.patientId) {
       this.showButtons = false
+    }
+    if (data?.title) {
+      this.title = data.title
     }
     this.patientId = data?.patientId
   }

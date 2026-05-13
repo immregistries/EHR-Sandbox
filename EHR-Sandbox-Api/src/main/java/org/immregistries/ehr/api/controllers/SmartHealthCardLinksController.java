@@ -4,13 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.KeyType;
+import com.nimbusds.jose.jwk.JWKSet;
 import org.apache.commons.lang3.StringUtils;
 import org.immregistries.ehr.api.dtos.ReceivedHistoryDTO;
 import org.immregistries.ehr.api.entities.VaccinationEvent;
+import org.immregistries.ehr.api.security.UserDetailsImpl;
 import org.immregistries.ehr.fhir.FhirComponentsDispatcher;
+import org.immregistries.ehr.api.JwkCacheService;
 import org.immregistries.ehr.shlink.service.SmartHealthCardParser;
 import org.immregistries.ehr.shlink.service.SmartHealthLinksService;
 import org.immregistries.ehr.shlink.service.VerifiableCredentialBundleExtractor;
@@ -18,13 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.PublicKey;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,18 +50,24 @@ public class SmartHealthCardLinksController {
     @Autowired
     private VerifiableCredentialBundleExtractor verifiableCredentialBundleExtractor;
 
+    @Autowired
+    JwkCacheService jwkCacheService;
+
     @PostMapping(TENANT_ID_PATH + "/$read-sh-link")
-    public ResponseEntity<List<String>> displayHealthLink(@RequestBody() String url, @RequestParam(PASSWORD) Optional<String> password, @RequestParam(JWK) Optional<String> jwk) throws JsonProcessingException {
-        List<String> body = readHealthLink(url, password, jwk);
+    public ResponseEntity<List<String>> displayHealthLink(
+            @AuthenticationPrincipal UserDetailsImpl userPrincipal,
+            @RequestBody() String url, @RequestParam(PASSWORD) Optional<String> password, @RequestParam(JWK) Optional<String> jwk) throws JsonProcessingException {
+        List<String> body = readHealthLink(url, password, jwk, userPrincipal.getId());
         return ResponseEntity.ok(body);
     }
 
-    @PostMapping(PATIENT_ID_PATH + "/$import-sh-link")
+    @PostMapping(TENANT_ID_PATH + "/$import-sh-link")
     public ResponseEntity<ReceivedHistoryDTO> importSmartHealthLink(
-            @PathVariable(FACILITY_ID) Integer facilityId,
-            @PathVariable(PATIENT_ID) Integer patientId,
+            @AuthenticationPrincipal UserDetailsImpl userPrincipal,
+//            @PathVariable(FACILITY_ID) Integer facilityId,
+//            @PathVariable(PATIENT_ID) Integer patientId,
             @RequestBody() String url, @RequestParam(PASSWORD) Optional<String> password, @RequestParam(JWK) Optional<String> jwk) throws JsonProcessingException {
-        List<String> body = readHealthLink(url, password, jwk);
+        List<String> body = readHealthLink(url, password, jwk, userPrincipal.getId());
         List<VaccinationEvent> vaccinationEvents = new ArrayList<>(10);
         ReceivedHistoryDTO receivedHistoryDTO = new ReceivedHistoryDTO();
 
@@ -86,30 +92,28 @@ public class SmartHealthCardLinksController {
         return ResponseEntity.ok(receivedHistoryDTO);
     }
 
-    private List<String> readHealthLink(String url, Optional<String> password, Optional<String> jwkString) throws JsonProcessingException {
+    private List<String> readHealthLink(String url, Optional<String> password, Optional<String> jwkString, Integer userId) throws JsonProcessingException {
         if (!url.contains(SHLINK_PREFIX)) {
             throw new RuntimeException("Invalid shlink");
         }
-        String shlink = SHLINK_PREFIX + url.trim().split(SHLINK_PREFIX)[1];
-        PublicKey publicKey = null;
+        String shLink = SHLINK_PREFIX + url.trim().split(SHLINK_PREFIX)[1];
+        JWKSet jwkSet = parseAndSaveJWK(jwkString, userId);
+        List<String> body = smartHealthLinksService.importSmartHealthLink(shLink, password.orElse(null), jwkSet, "EHR-sandbox-test");
+        return body;
+    }
+
+    private JWKSet parseAndSaveJWK(Optional<String> jwkString, Integer userId) {
         if (StringUtils.isNotBlank(jwkString.orElse(null))) {
-            JWK jwk = null;
             try {
-                jwk = com.nimbusds.jose.jwk.JWK.parse(jwkString.get());
-                KeyType keyType = jwk.getKeyType();
-                if (keyType.equals(KeyType.EC)) {
-                    publicKey = jwk.toECKey().toPublicKey();
-                } else if (keyType.equals(KeyType.RSA)) {
-                    publicKey = jwk.toRSAKey().toPublicKey();
-                } else if (keyType.equals(KeyType.OCT) || keyType.equals(KeyType.OKP)) {
-                    publicKey = jwk.toOctetKeyPair().toPublicKey();
-                }
-            } catch (JOSEException | ParseException e) {
+                JWK jwk = com.nimbusds.jose.jwk.JWK.parse(jwkString.get());
+                jwkCacheService.addSingleKeyToCache(userId.toString(), jwk);
+                return jwkCacheService.getJwkSetForUser(userId.toString(), "");
+            } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            return null;
         }
-        List<String> body = smartHealthLinksService.importSmartHealthLink(shlink, password.orElse(null), publicKey, "EHR-sandbox-test");
-        return body;
     }
 
 

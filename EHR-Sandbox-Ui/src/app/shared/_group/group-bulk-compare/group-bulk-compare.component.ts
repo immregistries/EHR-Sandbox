@@ -1,13 +1,14 @@
-import { Component, Inject, Input, Optional } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
-import { EhrGroup, EhrPatient, VaccinationEvent } from 'src/app/core/_model/rest';
-import { BulkImportStatus } from 'src/app/core/_model/form-structure';
-import { GroupService } from 'src/app/core/_services/group.service';
-import { PatientService } from 'src/app/core/_services/patient.service';
-import { VaccinationService } from 'src/app/core/_services/vaccination.service';
-import { FhirBulkService } from 'src/app/core/_services/_fhir/fhir-bulk.service';
-import { FhirClientService } from 'src/app/core/_services/_fhir/fhir-client.service';
+import {Component, Inject, Input, Optional} from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Observable, of} from 'rxjs';
+import {EhrGroup, EhrPatient, VaccinationEvent} from 'src/app/core/_model/rest';
+import {BulkImportStatus} from 'src/app/core/_model/form-structure';
+import {GroupService} from 'src/app/core/_services/group.service';
+import {PatientService} from 'src/app/core/_services/patient.service';
+import {VaccinationService} from 'src/app/core/_services/vaccination.service';
+import {FhirBulkService} from 'src/app/core/_services/_fhir/fhir-bulk.service';
+import {FhirClientService} from 'src/app/core/_services/_fhir/fhir-client.service';
+import {ReceivedHistoryDTO} from 'src/app/core/_model/dtos';
 
 @Component({
   selector: 'app-group-bulk-compare',
@@ -41,7 +42,11 @@ export class GroupBulkCompareComponent {
     public groupService: GroupService,
     public fhirBulkService: FhirBulkService,
     @Optional() public _dialogRef: MatDialogRef<GroupBulkCompareComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { ehrGroup: EhrGroup, bulkImportStatus: BulkImportStatus }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+      ehrGroup?: EhrGroup,
+      bulkImportStatus?: BulkImportStatus,
+      receivedHistory?: ReceivedHistoryDTO
+    }) {
     if (data) {
       if (data.ehrGroup) {
         this.ehrGroup = data.ehrGroup
@@ -65,10 +70,20 @@ export class GroupBulkCompareComponent {
           });
         }
       }
+      if (data?.receivedHistory) {
+        this.allRemoteVaccinations = data.receivedHistory.vaccinationEvents
+        if (data.receivedHistory.patient) {
+          this.remotePatients = [data.receivedHistory.patient]
+          this.selectedPatient = data.receivedHistory.patient
+        } else {
+          this.remotePatients = []
+        }
+      }
     }
   }
 
   public selectedPatientIndex?: number
+
   public patientIndexSelected(value: number | undefined) {
     this.selectedPatientIndex = value
     if (value != undefined && this.ehrGroup.patientList) {
@@ -79,7 +94,7 @@ export class GroupBulkCompareComponent {
   }
 
   public patientSelected(value?: EhrPatient) {
-    this.patientService.setCurrent(value ?? { id: -1, names: [] })
+    this.patientService.setCurrent(value ?? {id: -1, names: []})
     this.selectedPatient = value
     this.remoteVaccinations = JSON.parse(JSON.stringify(this.allRemoteVaccinations
       .filter((vac) => {
@@ -105,6 +120,7 @@ export class GroupBulkCompareComponent {
   }
 
   public selectedVaccinationIndex?: number
+
   selectVaccinationIndex(value: number | undefined) {
     this.selectedVaccinationIndex = value
   }

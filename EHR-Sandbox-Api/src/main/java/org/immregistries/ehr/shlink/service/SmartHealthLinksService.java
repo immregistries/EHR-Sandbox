@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.nimbusds.jose.jwk.JWKSet;
 import io.jsonwebtoken.CompressionException;
 import io.jsonwebtoken.Jwe;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +28,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -42,7 +42,7 @@ public class SmartHealthLinksService {
     @Autowired
     SmartHealthCardParser smartHealthCardParser;
 
-    public List<String> importSmartHealthLink(String shlink, String password, PublicKey publicKey, String recipient) throws JsonProcessingException {
+    public List<String> importSmartHealthLink(String shlink, String password, JWKSet jwkSet, String recipient) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
         List<String> result = new ArrayList<>(3);
@@ -69,14 +69,14 @@ public class SmartHealthLinksService {
         if (StringUtils.isNotBlank(flags) && flags.toUpperCase().contains(U_FLAG.toString())) {
             byte[] data = directFileRequestReading(url, recipient);
             Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(new String(data));
-            result.addAll(processShCardJwe(jwe, publicKey));
+            result.addAll(processShCardJwe(jwe, jwkSet));
 
         } else { // else Manifest retrieval
             ShLinkManifest shLinkManifest = manifestReading(url, recipient, password, MAXIMUM_DATA_SIZE, flags);
 
             for (ShLinkManifest.FileManifest file : shLinkManifest.getFiles()) {
                 if (StringUtils.isNotBlank(file.getEmbedded())) {
-                    result.addAll(embeddedFile(file, secretKey, publicKey));
+                    result.addAll(embeddedFile(file, secretKey, jwkSet));
                 } else if (StringUtils.isNotBlank(file.getLocation())) {//TODO
                     result.add(file.getLocation());
                 } else {
@@ -97,12 +97,12 @@ public class SmartHealthLinksService {
         return shLinkPayload;
     }
 
-    private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, PublicKey publicKey) throws JsonProcessingException {
+    private List<String> embeddedFile(ShLinkManifest.FileManifest manifestFile, SecretKey secretKey, JWKSet jwkSet) throws JsonProcessingException {
         Gson gson = new Gson();
         switch (manifestFile.getContentType()) {
             case APPLICATION_SMART_HEALTH_CARD: {
                 Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(manifestFile.getEmbedded());
-                return processShCardJwe(jwe, publicKey);
+                return processShCardJwe(jwe, jwkSet);
             }
             case APPLICATION_FHIR_JSON: { //TODO test
                 Jwe<byte[]> jwe = Jwts.parser().decryptWith(secretKey).build().parseEncryptedContent(manifestFile.getEmbedded());
@@ -116,7 +116,7 @@ public class SmartHealthLinksService {
     }
 
     @NotNull
-    private List<String> processShCardJwe(Jwe<byte[]> jwe, PublicKey publicKey) throws JsonProcessingException {
+    private List<String> processShCardJwe(Jwe<byte[]> jwe, JWKSet jwkSet) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String payload = new String(jwe.getPayload());
         ShLinkFilePayload shLinkFilePayload = objectMapper.readValue(payload, ShLinkFilePayload.class);
@@ -128,7 +128,7 @@ public class SmartHealthLinksService {
                 /**
                  * Verify Signature
                  */
-                verifiableCredential = smartHealthCardParser.parseVCFromCompactJwt(publicKey, compact);
+                verifiableCredential = smartHealthCardParser.parseVCFromCompactJwt(jwkSet, compact);
             } catch (CompressionException compressionException) {
                 // Do unverified raw inflate if compression headers are invalid
 //                        compressionException.printStackTrace();
