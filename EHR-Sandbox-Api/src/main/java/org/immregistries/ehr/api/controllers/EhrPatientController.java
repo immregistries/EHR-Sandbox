@@ -211,17 +211,24 @@ public class EhrPatientController {
         return ResponseEntity.created(location).body(newEntity.getId());
     }
 
-    @PutMapping("")
+    @PutMapping()
     public EhrPatient putPatient(@PathVariable(FACILITY_ID) Integer facilityId,
+                                 @PathVariable(TENANT_ID) Integer tenantId,
                                  @RequestBody EhrPatient newPatient) {
         // patient data check + flavours
 //        logger.info("facility {}", newPatient.getFacility().getNameDisplay());
-        EhrPatient oldPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, newPatient.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
-        newPatient.setFacility(oldPatient.getFacility());
-        newPatient.setEhrGroups(oldPatient.getEhrGroups()); // TODO better solution in config ?
-        newPatient.setUpdatedDate(new Date());
-        return ehrPatientRepository.save(newPatient);
+
+        if (newPatient.getId() == null || newPatient.getId() < 0) {
+            ResponseEntity<Integer> responseEntity = postPatient(tenantRepository.findById(tenantId).get(), facilityRepository.findById(facilityId).get(), newPatient, Optional.of(false));
+            return ehrPatientRepository.findById(responseEntity.getBody()).get();
+        } else {
+            EhrPatient oldPatient = ehrPatientRepository.findByFacilityIdAndId(facilityId, newPatient.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Invalid ids"));
+            newPatient.setFacility(oldPatient.getFacility());
+            newPatient.setEhrGroups(oldPatient.getEhrGroups()); // TODO better solution in config ?
+            newPatient.setUpdatedDate(new Date());
+            return ehrPatientRepository.save(newPatient);
+        }
     }
 
     @Autowired

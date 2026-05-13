@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>IPS Display</h2>
+<div mat-dialog-content>
+  <mat-tab-group>
+    <mat-tab [label]="'Patient information merging'">
+      <mat-grid-list cols="2" [rowHeight]="'40vh'">
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <mat-card-content class="dashboard-card-content">
+              <app-patient-table (selectIndexEmitter)="patientIndexSelected($event)" [selectedElement]="selectedPatient"
+                                 [dataArray]="localPatients" [allow_create]="false"
+                                 title="Local Patients"></app-patient-table>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <mat-card-content class="dashboard-card-content">
+              <app-patient-received-table title="Smart Health Link IPS Patient" [remoteValues]="remotePatients"
+                                          [localSelectedIndex]="selectedPatientIndex"
+                                          [localValues]="localPatients"
+                                          (selectEmitter)="remotePatientSelected($event)"></app-patient-received-table>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-tab>
+    <mat-tab [label]="'Immunization history merging'">
+      <mat-grid-list cols="2" [rowHeight]="'40vh'">
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <mat-card-content class="dashboard-card-content">
+              <app-vaccination-table [patientId]="selectedPatient?.id ?? -1" [allow_create]="false"
+                                     (selectIndexEmitter)="selectVaccinationIndex($event)"
+                                     [dataArray]="localVaccinations"
+                                     title="Local Patient's History"></app-vaccination-table>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-card class="dashboard-card">
+            <mat-card-content class="dashboard-card-content">
+              <mat-progress-bar *ngIf="loading" [mode]="'query'"></mat-progress-bar>
+              <app-vaccination-received-table [remoteValues]="remoteVaccinations" [patientId]="selectedPatient?.id"
+                                              [localSelectedIndex]="selectedVaccinationIndex"
+                                              title="IPS Vaccination History"
+                                              [localValues]="localVaccinations"></app-vaccination-received-table>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-tab>
+
+  </mat-tab-group>
+
+</div>

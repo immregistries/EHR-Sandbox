@@ -115,13 +115,11 @@ public class SmartHealthCardLinksController {
             try {
                 JWK jwk = com.nimbusds.jose.jwk.JWK.parse(jwkString);
                 jwkCacheService.addSingleKeyToCache(userId.toString(), jwk);
-                return jwkCacheService.getJwkSetForUser(userId.toString(), "");
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            return null;
         }
+        return jwkCacheService.getJwkSetForUser(userId.toString(), "");
     }
 
 

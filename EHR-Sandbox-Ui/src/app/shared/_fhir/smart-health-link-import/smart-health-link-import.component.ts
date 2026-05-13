@@ -5,6 +5,7 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {GroupBulkCompareComponent} from '../../_group/group-bulk-compare/group-bulk-compare.component';
 import {SmartHealthLinkService} from 'src/app/core/_services/_fhir/smart-health-link-service';
 import {FetchAndLoadComponent} from '../../_vaccination/fetch-and-load/fetch-and-load.component';
+import {IpsDisplayComponent} from '../ips-display/ips-display.component';
 
 @Component({
   selector: 'app-smart-health-link-import',
@@ -97,11 +98,11 @@ export class SmartHealthLinkImportComponent {
   }
 
 
-  openPatient() {
+  openIps() {
     this.smartHealthLinkService.importShlink(this.url, this.password, this.jwk).subscribe({
       next: (res) => {
         this.requestLoading = false
-        this.matDialog.open(GroupBulkCompareComponent, {
+        this.matDialog.open(IpsDisplayComponent, {
           maxWidth: '95vw',
           maxHeight: '98vh',
           height: 'fit-content',

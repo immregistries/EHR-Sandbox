@@ -1,5 +1,5 @@
 import {Component, Inject, Input, Optional} from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Observable, of} from 'rxjs';
 import {EhrGroup, EhrPatient, VaccinationEvent} from 'src/app/core/_model/rest';
 import {BulkImportStatus} from 'src/app/core/_model/form-structure';
@@ -68,15 +68,6 @@ export class GroupBulkCompareComponent {
               });
             }
           });
-        }
-      }
-      if (data?.receivedHistory) {
-        this.allRemoteVaccinations = data.receivedHistory.vaccinationEvents
-        if (data.receivedHistory.patient) {
-          this.remotePatients = [data.receivedHistory.patient]
-          this.selectedPatient = data.receivedHistory.patient
-        } else {
-          this.remotePatients = []
         }
       }
     }
