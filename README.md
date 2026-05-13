@@ -29,29 +29,45 @@ To force rebuild and checking out the git revision use ``-f`` flag
 
 ## Compilation
 
-Execute ``mvn clean install`` to generate war file in base directory
+After installing dependencies execute ``mvn clean install`` to generate war file `target/ehr.war`
 
 ## Environment Variables
 
 [example.env](example.env) Provides a working example and skeleton of Environment Variables to set up with H2 databases
 
-Use
-```cp example.env .env```
-then configure the variables
+Use ``cp example.env .env``
+then configure the variables in `.env`.
 
-```openssl rand -hex 32``` to gene
+If you want to change the JWT Secret in the `.env` use  ```openssl rand -hex 32``` to generate one.
+
+## Compilation
+
+```bash
+mvn clean install
+```
+
+.war file will be located in `target/ehr.war`
 
 ## Dev
 
-Compile in dev mode ``mvn clean install -Pdev``
-, default run port is 9091, to change use ``java -jar -Dserver.port=9091``
+Compile in dev mode ``mvn clean install -Pdev``, for a quicker build, the UI will not be included.
+, default run port is 8080, to change use `SERVER_PORT` variable in `.env
 
-Export docker
-image ``mvn clean install -Pprod`` ``docker build . -t ehr-sandbox``
-``docker save ehr-sandbox -o ehr-sandbox-image.tar``
+Compile and run the .war
 
-Run with Spring
-boot and example
-parameters:
-``mvn clean spring-boot:run -Pdev "-Dspring-boot.run.arguments=--server.port=9091 --server.servlet.context-path=/ehr --spring.datasource.url=jdbc:h2:file:../data-h2/ehr"``
+```bash
+mvn clean install
+set -a;
+source .env;   
+set +a;
+java -jar target/ehr.war
+```
+
+[//]: # (Run with Spring)
+
+[//]: # (boot and example)
+
+[//]: # (parameters:)
+
+[//]: # (``mvn clean spring-boot:run -Pdev``)
 
