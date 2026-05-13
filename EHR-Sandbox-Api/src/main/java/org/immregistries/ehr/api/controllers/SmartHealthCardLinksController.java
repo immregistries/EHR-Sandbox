@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.immregistries.ehr.api.controllers.ControllerHelper.PATIENT_ID_PATH;
 import static org.immregistries.ehr.api.controllers.ControllerHelper.TENANT_ID_PATH;
 import static org.immregistries.ehr.shlink.SmartHealthConstants.CREDENTIAL_SUBJECT;
 import static org.immregistries.ehr.shlink.SmartHealthConstants.SHLINK_PREFIX;
@@ -61,7 +62,7 @@ public class SmartHealthCardLinksController {
         return ResponseEntity.ok(body);
     }
 
-    @PostMapping(TENANT_ID_PATH + "/$import-sh-link")
+    @PostMapping({TENANT_ID_PATH + "/$import-sh-link", PATIENT_ID_PATH + "/$import-sh-link"})
     public ResponseEntity<ReceivedHistoryDTO> importSmartHealthLink(
             @AuthenticationPrincipal UserDetailsImpl userPrincipal,
 //            @PathVariable(FACILITY_ID) Integer facilityId,
