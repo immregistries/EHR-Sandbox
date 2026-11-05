@@ -1,5 +1,5 @@
 import {DatePipe} from '@angular/common';
-import {ChangeDetectionStrategy, Component, input, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input, output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ButtonModule} from 'primeng/button';
 import {IconFieldModule} from 'primeng/iconfield';
@@ -14,11 +14,27 @@ import {
   RecordToolAction,
   RecordToolsComponent,
 } from '../../../shared/components/record-tools/record-tools.component';
-import {PatientNamePipe} from '../../../shared/pipes/patient-name.pipe';
+import {patientDisplayName} from '../../../shared/pipes/patient-name.pipe';
+import {parseApiDate} from '../../../shared/util/date';
 
 export interface PatientToolRequest {
   action: RecordToolAction;
   patient: EhrPatient;
+}
+
+/**
+ * Flattened row. Sorting and filtering operate on these fields rather than on
+ * the nested patient, so every column sorts on exactly the value displayed —
+ * `names` is an array whose preferred ('L') entry is not necessarily first.
+ */
+interface PatientRow {
+  patient: EhrPatient;
+  id: number;
+  name: string;
+  birthDate: Date | undefined;
+  sex: string;
+  mrn: string;
+  issues: number;
 }
 
 @Component({
@@ -35,18 +51,18 @@ export interface PatientToolRequest {
     TagModule,
     TooltipModule,
     RecordToolsComponent,
-    PatientNamePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-table
       #table
-      [value]="patients()"
+      [value]="rows()"
       [loading]="loading()"
       [scrollable]="true"
       scrollHeight="flex"
       [rowHover]="true"
       dataKey="id"
+      sortMode="single"
       [globalFilterFields]="globalFilterFields"
       [tableStyle]="{ 'min-width': '32rem' }"
     >
@@ -89,24 +105,25 @@ export interface PatientToolRequest {
       <ng-template #header>
         <tr>
           <th style="width: 3rem"></th>
-          <th pSortableColumn="names.0.nameLast">Name <p-sortIcon field="names.0.nameLast" /></th>
-          <th pSortableColumn="birthDate">Birth date <p-sortIcon field="birthDate" /></th>
-          <th>Sex</th>
-          <th>MRN</th>
-          <th>Issues</th>
+          @for (column of columns; track column.field) {
+            <th [pSortableColumn]="column.field">
+              {{ column.header }}
+              <p-sortIcon [field]="column.field" />
+            </th>
+          }
         </tr>
       </ng-template>
 
-      <ng-template #body let-patient let-expanded="expanded">
+      <ng-template #body let-row let-expanded="expanded">
         <tr
           class="patient-row"
-          [class.row--selected]="patient.id === selectedId()"
-          (click)="patientSelect.emit(patient)"
+          [class.row--selected]="row.id === selectedId()"
+          (click)="patientSelect.emit(row.patient)"
         >
           <td>
             <p-button
               type="button"
-              [pRowToggler]="patient"
+              [pRowToggler]="row"
               [text]="true"
               size="small"
               severity="secondary"
@@ -115,13 +132,13 @@ export interface PatientToolRequest {
               (click)="$event.stopPropagation()"
             />
           </td>
-          <td>{{ patient | patientName }}</td>
-          <td>{{ patient.birthDate | date: 'mediumDate' }}</td>
-          <td>{{ patient.sex ?? '—' }}</td>
-          <td class="mono">{{ patient.identifiers?.[0]?.value ?? '—' }}</td>
+          <td>{{ row.name || 'Unnamed patient' }}</td>
+          <td>{{ row.birthDate ? (row.birthDate | date: 'mediumDate') : '—' }}</td>
+          <td>{{ row.sex || '—' }}</td>
+          <td class="mono">{{ row.mrn || '—' }}</td>
           <td>
-            @if (patient.feedbacksCount) {
-              <p-tag [value]="patient.feedbacksCount" severity="warn" [rounded]="true" />
+            @if (row.issues) {
+              <p-tag [value]="row.issues" severity="warn" [rounded]="true" />
             } @else {
               <span class="muted">—</span>
             }
@@ -129,12 +146,12 @@ export interface PatientToolRequest {
         </tr>
       </ng-template>
 
-      <ng-template #expandedrow let-patient>
+      <ng-template #expandedrow let-row>
         <tr class="detail-row">
           <td colspan="6">
             <app-record-tools
               [tools]="patientTools"
-              (toolSelect)="toolSelect.emit({ action: $event, patient })"
+              (toolSelect)="toolSelect.emit({ action: $event, patient: row.patient })"
             />
           </td>
         </tr>
@@ -168,9 +185,31 @@ export class PatientSummaryTableComponent {
   readonly populate = output<void>();
 
   readonly patientTools = PATIENT_TOOLS;
-  readonly globalFilterFields = ['names.0.nameFirst', 'names.0.nameLast', 'sex'];
+
+  /** Every column is sortable; `field` names a flat key on PatientRow. */
+  readonly columns = [
+    {field: 'name', header: 'Name'},
+    {field: 'birthDate', header: 'Birth date'},
+    {field: 'sex', header: 'Sex'},
+    {field: 'mrn', header: 'MRN'},
+    {field: 'issues', header: 'Issues'},
+  ];
+
+  readonly globalFilterFields = ['name', 'sex', 'mrn'];
 
   search = '';
+
+  readonly rows = computed<PatientRow[]>(() =>
+    this.patients().map((patient) => ({
+      patient,
+      id: patient.id ?? -1,
+      name: patientDisplayName(patient),
+      birthDate: parseApiDate(patient.birthDate),
+      sex: patient.sex ?? '',
+      mrn: patient.identifiers?.[0]?.value ?? '',
+      issues: patient.feedbacksCount ?? 0,
+    })),
+  );
 
   /** Populate seeds an empty facility, so it is offered only when empty. */
   canPopulate(): boolean {

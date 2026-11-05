@@ -117,3 +117,160 @@ describe('PatientSummaryTableComponent', () => {
     expect(requests).toEqual(['edit:1']);
   });
 });
+
+describe('PatientSummaryTableComponent rows', () => {
+  it('flattens every column so each sorts on the value displayed', async () => {
+    const h = await renderComponent(PatientSummaryTableComponent, {
+      inputs: {
+        patients: [
+          aPatient({
+            id: 7,
+            // The preferred ('L') name is deliberately not the first entry.
+            names: [
+              {nameFirst: 'Nick', nameLast: 'Zulu', nameType: 'N'},
+              {nameFirst: 'Ada', nameLast: 'Lovelace', nameType: 'L'},
+            ],
+            birthDate: '1985-12-09' as unknown as Date,
+            sex: 'F',
+            identifiers: [{value: 'MRN-042'}],
+            feedbacksCount: 3,
+          }),
+        ],
+        canEdit: true,
+      },
+    });
+
+    const [row] = h.component.rows();
+
+    expect(row.name).toBe('Ada Lovelace');
+    expect(row.sex).toBe('F');
+    expect(row.mrn).toBe('MRN-042');
+    expect(row.issues).toBe(3);
+    // Date-only values must not drift to the previous day.
+    expect(row.birthDate?.getDate()).toBe(9);
+  });
+
+  it('declares a sortable field for every visible column', async () => {
+    const h = await renderComponent(PatientSummaryTableComponent, {
+      inputs: {patients: [aPatient({id: 1})], canEdit: true},
+    });
+
+    const headers = h.queryAll<HTMLElement>('thead th');
+    // PrimeNG marks a pSortableColumn header with this class and aria-sort.
+    const sortable = h.queryAll<HTMLElement>('thead th.p-datatable-sortable-column');
+
+    // Every header except the row-toggle spacer is sortable.
+    expect(sortable.length).toBe(headers.length - 1);
+    expect(sortable.every((th) => th.hasAttribute('aria-sort'))).toBeTrue();
+    expect(h.component.columns.map((column) => column.field)).toEqual([
+      'name',
+      'birthDate',
+      'sex',
+      'mrn',
+      'issues',
+    ]);
+  });
+});
+
+describe('PatientSummaryTableComponent sorting', () => {
+  /** Unsorted on every column, so each sort is observable. */
+  const unsorted = [
+    aPatient({
+      id: 1,
+      names: [{nameFirst: 'Zoe', nameLast: 'Zulu', nameType: 'L'}],
+      birthDate: '1990-03-12' as unknown as Date,
+      sex: 'F',
+      identifiers: [{value: 'MRN-003'}],
+      feedbacksCount: 2,
+    }),
+    aPatient({
+      id: 2,
+      names: [{nameFirst: 'Ada', nameLast: 'Lovelace', nameType: 'L'}],
+      birthDate: '1985-12-09' as unknown as Date,
+      sex: 'M',
+      identifiers: [{value: 'MRN-001'}],
+      feedbacksCount: 5,
+    }),
+    aPatient({
+      id: 3,
+      names: [{nameFirst: 'Mia', nameLast: 'Mendez', nameType: 'L'}],
+      birthDate: '2001-06-23' as unknown as Date,
+      sex: 'F',
+      identifiers: [{value: 'MRN-002'}],
+      feedbacksCount: 0,
+    }),
+  ];
+
+  function columnText(
+    h: ComponentHarness<PatientSummaryTableComponent>,
+    index: number,
+  ): string[] {
+    return h
+      .queryAll<HTMLElement>('tr.patient-row')
+      .map((tr) => (tr.children[index]?.textContent ?? '').trim());
+  }
+
+  function clickHeader(h: ComponentHarness<PatientSummaryTableComponent>, label: string): void {
+    const header = h
+      .queryAll<HTMLElement>('thead th')
+      .find((th) => (th.textContent ?? '').trim().startsWith(label));
+    header?.click();
+    h.detectChanges();
+  }
+
+  it('reorders rows ascending then descending on every column', async () => {
+    const h = await renderComponent(PatientSummaryTableComponent, {
+      inputs: {patients: unsorted, canEdit: true},
+    });
+
+    // [header label, column index in the row]
+    const columns: [string, number][] = [
+      ['Name', 1],
+      ['Birth date', 2],
+      ['Sex', 3],
+      ['MRN', 4],
+      ['Issues', 5],
+    ];
+
+    for (const [label, index] of columns) {
+      clickHeader(h, label);
+      const ascending = columnText(h, index);
+
+      clickHeader(h, label);
+      const descending = columnText(h, index);
+
+      expect(ascending.length)
+        .withContext(`${label}: rows rendered`)
+        .toBe(unsorted.length);
+      expect(descending)
+        .withContext(`${label}: second click reverses the order`)
+        .toEqual([...ascending].reverse());
+
+      // Reset to unsorted before exercising the next column.
+      clickHeader(h, label);
+    }
+  });
+
+  it('sorts names by the preferred entry, not the first in the array', async () => {
+    const h = await renderComponent(PatientSummaryTableComponent, {
+      inputs: {
+        patients: [
+          aPatient({
+            id: 1,
+            // First entry sorts last; preferred entry sorts first.
+            names: [
+              {nameFirst: 'Zed', nameLast: 'Zulu', nameType: 'N'},
+              {nameFirst: 'Ada', nameLast: 'Lovelace', nameType: 'L'},
+            ],
+          }),
+          aPatient({id: 2, names: [{nameFirst: 'Bob', nameLast: 'Brown', nameType: 'L'}]}),
+        ],
+        canEdit: true,
+      },
+    });
+
+    clickHeader(h, 'Name');
+
+    expect(columnText(h, 1)).toEqual(['Ada Lovelace', 'Bob Brown']);
+  });
+});

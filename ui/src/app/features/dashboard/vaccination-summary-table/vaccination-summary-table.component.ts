@@ -1,5 +1,5 @@
 import {DatePipe} from '@angular/common';
-import {ChangeDetectionStrategy, Component, input, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input, output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ButtonModule} from 'primeng/button';
 import {TableModule} from 'primeng/table';
@@ -11,10 +11,25 @@ import {
   RecordToolsComponent,
   VACCINATION_TOOLS,
 } from '../../../shared/components/record-tools/record-tools.component';
+import {parseApiDate} from '../../../shared/util/date';
 
 export interface VaccinationToolRequest {
   action: RecordToolAction;
   vaccination: VaccinationEvent;
+}
+
+/**
+ * Flattened row, so each column sorts on the value it displays rather than
+ * on a path into the nested `vaccine` object.
+ */
+interface VaccinationRow {
+  vaccination: VaccinationEvent;
+  id: number;
+  administeredDate: Date | undefined;
+  cvx: string;
+  lot: string;
+  status: string;
+  issues: number;
 }
 
 @Component({
@@ -32,12 +47,13 @@ export interface VaccinationToolRequest {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-table
-      [value]="vaccinations()"
+      [value]="rows()"
       [loading]="loading()"
       [scrollable]="true"
       scrollHeight="flex"
       [rowHover]="true"
       dataKey="id"
+      sortMode="single"
       [tableStyle]="{ 'min-width': '32rem' }"
     >
       <ng-template #caption>
@@ -68,22 +84,21 @@ export interface VaccinationToolRequest {
       <ng-template #header>
         <tr>
           <th style="width: 3rem"></th>
-          <th pSortableColumn="vaccine.administeredDate">
-            Administered <p-sortIcon field="vaccine.administeredDate" />
-          </th>
-          <th>CVX</th>
-          <th>Lot</th>
-          <th>Status</th>
-          <th>Issues</th>
+          @for (column of columns; track column.field) {
+            <th [pSortableColumn]="column.field">
+              {{ column.header }}
+              <p-sortIcon [field]="column.field" />
+            </th>
+          }
         </tr>
       </ng-template>
 
-      <ng-template #body let-vaccination let-expanded="expanded">
+      <ng-template #body let-row let-expanded="expanded">
         <tr>
           <td>
             <p-button
               type="button"
-              [pRowToggler]="vaccination"
+              [pRowToggler]="row"
               [text]="true"
               size="small"
               severity="secondary"
@@ -91,13 +106,13 @@ export interface VaccinationToolRequest {
               ariaLabel="Toggle actions"
             />
           </td>
-          <td>{{ vaccination.vaccine?.administeredDate | date: 'mediumDate' }}</td>
-          <td class="mono">{{ vaccination.vaccine?.vaccineCvxCode ?? '—' }}</td>
-          <td class="mono">{{ vaccination.vaccine?.lotNumber ?? '—' }}</td>
-          <td>{{ vaccination.vaccine?.completionStatus ?? '—' }}</td>
+          <td>{{ row.administeredDate ? (row.administeredDate | date: 'mediumDate') : '—' }}</td>
+          <td class="mono">{{ row.cvx || '—' }}</td>
+          <td class="mono">{{ row.lot || '—' }}</td>
+          <td>{{ row.status || '—' }}</td>
           <td>
-            @if (vaccination.feedbacksCount) {
-              <p-tag [value]="vaccination.feedbacksCount" severity="warn" [rounded]="true" />
+            @if (row.issues) {
+              <p-tag [value]="row.issues" severity="warn" [rounded]="true" />
             } @else {
               <span class="muted">—</span>
             }
@@ -105,12 +120,12 @@ export interface VaccinationToolRequest {
         </tr>
       </ng-template>
 
-      <ng-template #expandedrow let-vaccination>
+      <ng-template #expandedrow let-row>
         <tr class="detail-row">
           <td colspan="6">
             <app-record-tools
               [tools]="vaccinationTools"
-              (toolSelect)="toolSelect.emit({ action: $event, vaccination })"
+              (toolSelect)="toolSelect.emit({ action: $event, vaccination: row.vaccination })"
             />
           </td>
         </tr>
@@ -142,6 +157,27 @@ export class VaccinationSummaryTableComponent {
   readonly populate = output<void>();
 
   readonly vaccinationTools = VACCINATION_TOOLS;
+
+  /** Every column is sortable; `field` names a flat key on VaccinationRow. */
+  readonly columns = [
+    {field: 'administeredDate', header: 'Administered'},
+    {field: 'cvx', header: 'CVX'},
+    {field: 'lot', header: 'Lot'},
+    {field: 'status', header: 'Status'},
+    {field: 'issues', header: 'Issues'},
+  ];
+
+  readonly rows = computed<VaccinationRow[]>(() =>
+    this.vaccinations().map((vaccination) => ({
+      vaccination,
+      id: vaccination.id ?? -1,
+      administeredDate: parseApiDate(vaccination.vaccine?.administeredDate),
+      cvx: vaccination.vaccine?.vaccineCvxCode ?? '',
+      lot: vaccination.vaccine?.lotNumber ?? '',
+      status: vaccination.vaccine?.completionStatus ?? '',
+      issues: vaccination.feedbacksCount ?? 0,
+    })),
+  );
 
   canPopulate(): boolean {
     return this.canEdit() && this.vaccinations().length === 0;

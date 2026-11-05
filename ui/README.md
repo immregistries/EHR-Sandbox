@@ -113,8 +113,18 @@ expanded row; the component emits a `RecordToolAction` and the host decides
 what to do. Actions whose dialog has not been migrated are flagged `pending`
 and raise an explicit "not available yet" toast rather than doing nothing.
 
-Working today: create/populate toolbars, search, sorting, row expansion, and
-patient selection. Populate calls the real endpoints
+Both tables flatten their data into view rows (`PatientRow`,
+`VaccinationRow`) before handing it to `p-table`. Every column is therefore
+sortable on exactly the value it displays — `names` is an array whose
+preferred ('L') entry is not necessarily first, so sorting the nested model
+would disagree with the rendering.
+
+Date-only values from the API (`YYYY-MM-DD`) go through
+`shared/util/date.ts#parseApiDate`: `new Date('1985-12-09')` is UTC midnight,
+which renders as the previous day anywhere west of UTC.
+
+Working today: create/populate toolbars, search, sorting on all columns, row
+expansion, and patient selection. Populate calls the real endpoints
 (`/facilities/{id}/$populate`, `/patients/{id}/$populate`) and is offered only
 while the target is empty, matching the old UI.
 
