@@ -1,0 +1,26 @@
+@use 'variables' as v;
+
+@mixin respond-above($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin respond-below($breakpoint) {
+  @media (max-width: calc($breakpoint - 1px)) {
+    @content;
+  }
+}
+
+@mixin surface-card {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: v.$radius-md;
+  box-shadow: var(--app-shadow);
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

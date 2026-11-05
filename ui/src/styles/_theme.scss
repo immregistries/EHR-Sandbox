@@ -1,0 +1,33 @@
+// Scheme-dependent tokens. Everything the app styles against should reference
+// one of these custom properties so a single switch of `.app-dark` on <html>
+// restyles the whole application.
+
+:root {
+  --app-bg: #{#f8fafc};
+  --app-surface: #{#ffffff};
+  --app-surface-alt: #{#f1f5f9};
+  --app-border: #{#e2e8f0};
+  --app-text: #{#0f172a};
+  --app-text-muted: #{#64748b};
+  --app-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 1px 2px rgb(0 0 0 / 6%);
+
+  --app-success: #{#16a34a};
+  --app-warning: #{#d97706};
+  --app-danger: #{#dc2626};
+  --app-info: #{#0284c7};
+}
+
+:root.app-dark {
+  --app-bg: #{#09090b};
+  --app-surface: #{#18181b};
+  --app-surface-alt: #{#27272a};
+  --app-border: #{#3f3f46};
+  --app-text: #{#fafafa};
+  --app-text-muted: #{#a1a1aa};
+  --app-shadow: 0 1px 3px rgb(0 0 0 / 60%), 0 1px 2px rgb(0 0 0 / 40%);
+
+  --app-success: #{#4ade80};
+  --app-warning: #{#fbbf24};
+  --app-danger: #{#f87171};
+  --app-info: #{#38bdf8};
+}
