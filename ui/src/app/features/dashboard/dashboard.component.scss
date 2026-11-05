@@ -1,0 +1,51 @@
+@use 'variables' as v;
+
+.dashboard {
+  display: grid;
+  gap: v.$spacing-md;
+  grid-template-columns: 4fr 3fr;
+  grid-template-rows: minmax(300px, 1fr) minmax(300px, 1fr);
+  grid-template-areas:
+    'patients quality'
+    'vaccinations forecast';
+  height: 100%;
+  min-height: 0;
+}
+
+.panel--patients {
+  grid-area: patients;
+}
+.panel--quality {
+  grid-area: quality;
+}
+.panel--vaccinations {
+  grid-area: vaccinations;
+}
+.panel--forecast {
+  grid-area: forecast;
+}
+
+.panel {
+  min-height: 0;
+  min-width: 0;
+}
+
+.placeholder {
+  margin: 0;
+  padding: v.$spacing-lg v.$spacing-sm;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--app-text-muted);
+}
+
+@media (max-width: v.$breakpoint-lg) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-template-areas:
+      'patients'
+      'vaccinations'
+      'quality'
+      'forecast';
+  }
+}

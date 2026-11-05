@@ -2,10 +2,11 @@ import {Routes} from '@angular/router';
 import {authGuard} from './core/guards/auth.guard';
 import {facilityGuard} from './core/guards/facility.guard';
 import {tenantGuard} from './core/guards/tenant.guard';
+import {MainLayoutComponent} from './shared/layout/main-layout/main-layout.component';
 
 /**
  * Tenant and facility context live in the url:
- *   /t/:tenantId/f/:facilityId/patients/:patientId/vaccinations/:vaccinationId
+ *   /t/:tenantId/f/:facilityId/dashboard/patients/:patientId
  * so any view is directly linkable and the store derives its context from the
  * router instead of a separately held "current selection".
  */
@@ -17,8 +18,13 @@ export const routes: Routes = [
   },
   {
     path: '',
+    component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
+      {
+        path: 'home',
+        loadChildren: () => import('./features/home/home.routes').then((m) => m.HOME_ROUTES),
+      },
       {
         path: 'tenants',
         loadChildren: () => import('./features/tenant/tenant.routes').then((m) => m.TENANT_ROUTES),
@@ -52,7 +58,7 @@ export const routes: Routes = [
           {path: '', redirectTo: 'facilities', pathMatch: 'full'},
         ],
       },
-      {path: '', redirectTo: 'tenants', pathMatch: 'full'},
+      {path: '', redirectTo: 'home', pathMatch: 'full'},
     ],
   },
   {path: '**', redirectTo: ''},

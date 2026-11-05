@@ -1,0 +1,89 @@
+@use 'variables' as v;
+
+.login-page {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: v.$spacing-md;
+  background: var(--app-bg);
+}
+
+.theme-toggle {
+  position: absolute;
+  top: v.$spacing-md;
+  right: v.$spacing-md;
+}
+
+:host ::ng-deep .login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: v.$spacing-xs;
+  padding: v.$spacing-lg v.$spacing-lg 0;
+  text-align: center;
+
+  i {
+    font-size: 1.75rem;
+    color: var(--p-primary-color);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--app-text-muted);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-xs;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 550;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+:host ::ng-deep .full-width {
+  width: 100%;
+}
+
+.disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: v.$spacing-xs;
+  margin: v.$spacing-md 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--app-text-muted);
+
+  i {
+    margin-top: 1px;
+    color: var(--app-warning);
+  }
+}

@@ -1,0 +1,114 @@
+@use 'variables' as v;
+@use 'mixins';
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: v.$sidebar-width;
+  height: 100%;
+  background: var(--app-surface);
+  border-right: 1px solid var(--app-border);
+  transition: width 0.18s ease;
+
+  &--collapsed {
+    width: v.$sidebar-width-collapsed;
+  }
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  height: v.$topbar-height;
+  padding: 0 v.$spacing-md;
+  border-bottom: 1px solid var(--app-border);
+  flex: 0 0 auto;
+
+  i {
+    font-size: 1.15rem;
+    color: var(--p-primary-color);
+  }
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: v.$spacing-sm 0;
+}
+
+.nav-section {
+  padding: v.$spacing-md v.$spacing-md v.$spacing-xs;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--app-text-muted);
+}
+
+.nav-separator {
+  height: 1px;
+  margin: v.$spacing-sm v.$spacing-sm;
+  background: var(--app-border);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  padding: 0.5rem v.$spacing-md;
+  color: var(--app-text);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition:
+    background 0.12s,
+    color 0.12s;
+
+  i {
+    font-size: 0.95rem;
+    width: 1.1rem;
+    flex: 0 0 auto;
+    text-align: center;
+  }
+
+  &:hover {
+    background: var(--app-surface-alt);
+  }
+
+  &.active {
+    background: var(--app-surface-alt);
+    border-left-color: var(--p-primary-color);
+    color: var(--p-primary-color);
+    font-weight: 550;
+  }
+
+  &--pending {
+    color: var(--app-text-muted);
+  }
+}
+
+.nav-label {
+  @include mixins.truncate;
+
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.nav-badge {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  border-radius: v.$radius-sm;
+  background: var(--app-surface-alt);
+  border: 1px solid var(--app-border);
+  color: var(--app-text-muted);
+}

@@ -1,0 +1,76 @@
+@use 'variables' as v;
+@use 'mixins';
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-lg;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero {
+  @include mixins.surface-card;
+
+  padding: v.$spacing-xl v.$spacing-lg;
+}
+
+.hero-text {
+  max-width: 640px;
+
+  h1 {
+    margin: 0 0 v.$spacing-sm;
+    font-size: 1.9rem;
+    font-weight: 680;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--app-text-muted);
+  }
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: v.$spacing-sm;
+  margin-top: v.$spacing-lg;
+}
+
+:host ::ng-deep .full-width {
+  width: 100%;
+}
+
+.capabilities {
+  display: grid;
+  gap: v.$spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.capability {
+  display: flex;
+  gap: v.$spacing-md;
+  align-items: flex-start;
+
+  i {
+    font-size: 1.1rem;
+    color: var(--p-primary-color);
+    margin-top: 2px;
+  }
+
+  h3 {
+    margin: 0 0 2px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--app-text-muted);
+  }
+}

@@ -42,14 +42,14 @@ describe('LoginComponent', () => {
     setSelector(h.store, selectAuthError, 'Bad credentials');
     h.detectChanges();
 
-    expect(h.text('.error')).toBe('Bad credentials');
+    expect(h.text('p-message')).toContain('Bad credentials');
   });
 
-  it('renders no error element when there is no error', () => {
+  it('renders no error message when there is no error', () => {
     setSelector(h.store, selectAuthError, null);
     h.detectChanges();
 
-    expect(h.query('.error')).toBeNull();
+    expect(h.query('p-message')).toBeNull();
   });
 
   it('reflects the loading state on the submit button', () => {

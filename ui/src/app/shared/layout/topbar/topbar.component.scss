@@ -1,0 +1,40 @@
+@use 'variables' as v;
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$spacing-md;
+  height: v.$topbar-height;
+  flex: 0 0 auto;
+  padding: 0 v.$spacing-md;
+  background: var(--app-surface);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  min-width: 0;
+}
+
+.username {
+  display: inline-flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+  font-size: 0.82rem;
+  color: var(--app-text-muted);
+  white-space: nowrap;
+
+  i {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: v.$breakpoint-md) {
+  .username {
+    display: none;
+  }
+}

@@ -89,7 +89,25 @@ Coverage thresholds in `karma.conf.js` are a **ratchet** — currently at the
 floor the exemplars reach (45/30/25/45). Raise them as suites land; target is
 80/70/80/80.
 
+## Layout
+
+`shared/layout` holds the app shell: `MainLayoutComponent` (sidebar + topbar +
+outlet), a collapsible `SidebarComponent`, and a `TopbarComponent` carrying the
+tenant/facility selectors, refresh, theme toggle and logout.
+
+The selectors **navigate rather than mutate**: picking a tenant routes to
+`/t/:tenantId`, picking a facility to `/t/:tenantId/f/:facilityId`. Sidebar
+sections are scoped (`global` / `tenant` / `facility`) in
+`sidebar/nav-items.ts` and appear as the url provides the ids they need;
+not-yet-built destinations are marked `pending` and render a "soon" badge.
+
+Selecting a patient on the dashboard likewise navigates to
+`…/dashboard/patients/:patientId`, so a dashboard view is shareable as a link.
+
 ## Status
 
-Models, services, stores, routing, theming and auth are in place. Feature
-components (dashboard, tenant/facility/patient lists) are placeholders.
+Models, services, stores, routing, theming and auth are in place, along with
+the layout shell, login page, home page and facility dashboard (patients +
+immunizations live; data-quality and recommendation panels are framed
+placeholders). Tenant, facility and patient list pages are still placeholders,
+and dialogs are not built yet.
