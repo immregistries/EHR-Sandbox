@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {concatLatestFrom} from '@ngrx/operators';
 import {Store} from '@ngrx/store';
 import {catchError, filter, map, of, switchMap} from 'rxjs';
-import {PatientService} from '../../services';
+import {FacilityService, PatientService} from '../../services';
 import {selectRouteFacilityId, selectRouteTenantId} from '../router.selectors';
 import {PatientActions} from './patient.actions';
 
@@ -12,6 +12,7 @@ export class PatientEffects {
   private readonly actions$ = inject(Actions);
   private readonly store = inject(Store);
   private readonly patientService = inject(PatientService);
+  private readonly facilityService = inject(FacilityService);
 
   loadPatients$ = createEffect(() =>
     this.actions$.pipe(
@@ -78,6 +79,42 @@ export class PatientEffects {
           catchError((error) => of(PatientActions.savePatientFailure({error: error.message}))),
         ),
       ),
+    ),
+  );
+
+  /** Populating a facility is a FacilityService call; the result is patients. */
+  populateFacility$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PatientActions.populateFacility),
+      switchMap(({tenantId, facilityId}) =>
+        this.facilityService.populate(tenantId, facilityId).pipe(
+          map(() => PatientActions.populateFacilitySuccess()),
+          catchError((error) =>
+            of(PatientActions.populateFacilityFailure({error: error.message})),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  populatePatient$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PatientActions.populatePatient),
+      switchMap(({tenantId, facilityId, patientId}) =>
+        this.patientService.populatePatient(tenantId, facilityId, patientId).pipe(
+          map(() => PatientActions.populatePatientSuccess()),
+          catchError((error) =>
+            of(PatientActions.populateFacilityFailure({error: error.message})),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  reloadAfterPopulate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PatientActions.populateFacilitySuccess),
+      map(() => PatientActions.refresh()),
     ),
   );
 

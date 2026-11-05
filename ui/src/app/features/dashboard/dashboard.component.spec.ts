@@ -1,4 +1,5 @@
 import {Router} from '@angular/router';
+import {MessageService, ToastMessageOptions} from 'primeng/api';
 import {PatientActions} from '../../core/store/patient/patient.actions';
 import {adapter as patientAdapter, initialState as patientInitial} from '../../core/store/patient/patient.reducer';
 import {VaccinationActions} from '../../core/store/vaccination/vaccination.actions';
@@ -52,6 +53,52 @@ describe('DashboardComponent', () => {
     h.component.selectPatient(patients[1]);
 
     expect(navigate).toHaveBeenCalledWith(['/t', 4, 'f', 9, 'dashboard', 'patients', 2]);
+  });
+
+  it('populates an empty facility through the store', async () => {
+    const h = await render({tenantId: 4, facilityId: 9});
+    const dispatches = recordDispatches(h.store);
+
+    h.component.populateFacility();
+
+    expect(dispatches.actions).toEqual([
+      PatientActions.populateFacility({tenantId: 4, facilityId: 9}),
+    ]);
+  });
+
+  it('populates the selected patient with random vaccinations', async () => {
+    const h = await render({tenantId: 4, facilityId: 9, patientId: 1});
+    const dispatches = recordDispatches(h.store);
+
+    h.component.populatePatient();
+
+    expect(dispatches.actions).toEqual([
+      PatientActions.populatePatient({tenantId: 4, facilityId: 9, patientId: 1}),
+    ]);
+  });
+
+  it('treats the open tool as a selection rather than a dialog', async () => {
+    const h = await render({tenantId: 4, facilityId: 9});
+    const router = h.fixture.debugElement.injector.get(Router);
+    const navigate = spyOn(router, 'navigate');
+
+    h.component.onPatientTool({action: 'open', patient: patients[0]});
+
+    expect(navigate).toHaveBeenCalledWith(['/t', 4, 'f', 9, 'dashboard', 'patients', 1]);
+  });
+
+  it('reports unmigrated dialogs instead of failing silently', async () => {
+    const h = await render({tenantId: 4, facilityId: 9});
+    const messageService = h.fixture.debugElement.injector.get(MessageService);
+    const messages: ToastMessageOptions[] = [];
+    spyOn(messageService, 'add').and.callFake((message: ToastMessageOptions) => {
+      messages.push(message);
+    });
+
+    h.component.onPatientTool({action: 'hl7', patient: patients[0]});
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].summary).toContain('HL7v2 messaging');
   });
 
   it('dispatches a vaccination refresh', async () => {

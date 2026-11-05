@@ -1,0 +1,41 @@
+@use 'variables' as v;
+
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: v.$spacing-sm;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.patient-row {
+  cursor: pointer;
+}
+
+.row--selected {
+  background: var(--app-surface-alt);
+}
+
+.detail-row > td {
+  padding: 0;
+  background: var(--app-surface-alt);
+}
+
+.mono {
+  font-family: v.$font-family-mono;
+  font-size: 0.78rem;
+}
+
+.muted,
+.empty {
+  color: var(--app-text-muted);
+}
+
+.empty {
+  text-align: center;
+  padding: v.$spacing-lg;
+  font-size: 0.82rem;
+}

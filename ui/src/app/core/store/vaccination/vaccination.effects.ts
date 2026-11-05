@@ -4,6 +4,7 @@ import {concatLatestFrom} from '@ngrx/operators';
 import {Store} from '@ngrx/store';
 import {catchError, filter, map, of, switchMap} from 'rxjs';
 import {VaccinationService} from '../../services';
+import {PatientActions} from '../patient/patient.actions';
 import {selectRouteFacilityId, selectRoutePatientId, selectRouteTenantId,} from '../router.selectors';
 import {VaccinationActions} from './vaccination.actions';
 
@@ -94,6 +95,14 @@ export class VaccinationEffects {
   reloadAfterCreate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(VaccinationActions.createVaccinationSuccess),
+      map(() => VaccinationActions.refresh()),
+    ),
+  );
+
+  /** Random vaccinations added to a patient must appear in the list. */
+  reloadAfterPopulate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PatientActions.populatePatientSuccess),
       map(() => VaccinationActions.refresh()),
     ),
   );

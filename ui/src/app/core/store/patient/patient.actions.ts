@@ -18,6 +18,15 @@ export const PatientActions = createActionGroup({
     'Update Patient Success': props<{ patient: EhrPatient }>(),
     'Save Patient Failure': props<{ error: string }>(),
 
+    /** Seeds an empty facility with random patients. */
+    'Populate Facility': props<{ tenantId: number; facilityId: number }>(),
+    'Populate Facility Success': emptyProps(),
+    'Populate Facility Failure': props<{ error: string }>(),
+
+    /** Seeds a patient with random vaccinations. */
+    'Populate Patient': props<{ tenantId: number; facilityId: number; patientId: number }>(),
+    'Populate Patient Success': emptyProps(),
+
     'Load History': props<{ tenantId: number; facilityId: number; patientId: number }>(),
     'Load History Success': props<{ history: Revision<EhrPatient>[] }>(),
 

@@ -8,6 +8,10 @@
  *
  * Wires a MockStore with a full AppState, noop animations, a stubbed router
  * and the PrimeNG services components inject.
+ *
+ * Call it at most ONCE per spec: TestBed cannot be reconfigured after it is
+ * instantiated. To compare two states, write two specs (or re-render via the
+ * component's inputs with `fixture.componentRef.setInput`).
  */
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';

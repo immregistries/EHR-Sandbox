@@ -104,10 +104,26 @@ not-yet-built destinations are marked `pending` and render a "soon" badge.
 Selecting a patient on the dashboard likewise navigates to
 `…/dashboard/patients/:patientId`, so a dashboard view is shareable as a link.
 
+### Row actions
+
+`shared/components/record-tools` is the translation of the old
+`patient-tools` / `vaccination-tools` components. The tool sets are declared
+as data (`PATIENT_TOOLS`, `VACCINATION_TOOLS`) and rendered in a table's
+expanded row; the component emits a `RecordToolAction` and the host decides
+what to do. Actions whose dialog has not been migrated are flagged `pending`
+and raise an explicit "not available yet" toast rather than doing nothing.
+
+Working today: create/populate toolbars, search, sorting, row expansion, and
+patient selection. Populate calls the real endpoints
+(`/facilities/{id}/$populate`, `/patients/{id}/$populate`) and is offered only
+while the target is empty, matching the old UI.
+
 ## Status
 
 Models, services, stores, routing, theming and auth are in place, along with
 the layout shell, login page, home page and facility dashboard (patients +
-immunizations live; data-quality and recommendation panels are framed
-placeholders). Tenant, facility and patient list pages are still placeholders,
-and dialogs are not built yet.
+immunizations live with their full action toolbars; data-quality and
+recommendation panels are framed placeholders). Tenant, facility and patient
+list pages are still placeholders, and the dialogs behind the row tools
+(forms, HL7v2/FHIR messaging, local copy, remote history, JSON viewer) are
+not built yet.

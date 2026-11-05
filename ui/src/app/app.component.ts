@@ -11,7 +11,10 @@ import {AuthActions} from './core/store/auth/auth.actions';
   imports: [RouterOutlet, ToastModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <!-- Keyed outlet for interceptor errors, plus a default one for
+         everything dispatched without a key. -->
     <p-toast key="globalError" position="bottom-right" />
+    <p-toast position="bottom-right" />
     <router-outlet />
   `,
 })

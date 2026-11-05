@@ -14,9 +14,17 @@ import {
 import {selectRouteFacilityId, selectRouteTenantId,} from '../../core/store/router.selectors';
 import {VaccinationActions} from '../../core/store/vaccination/vaccination.actions';
 import {selectAllVaccinations, selectVaccinationsLoading,} from '../../core/store/vaccination/vaccination.selectors';
+import {MessageService} from 'primeng/api';
+import {RecordToolAction} from '../../shared/components/record-tools/record-tools.component';
 import {DashboardPanelComponent} from './dashboard-panel/dashboard-panel.component';
-import {PatientSummaryTableComponent} from './patient-summary-table/patient-summary-table.component';
-import {VaccinationSummaryTableComponent} from './vaccination-summary-table/vaccination-summary-table.component';
+import {
+  PatientSummaryTableComponent,
+  PatientToolRequest,
+} from './patient-summary-table/patient-summary-table.component';
+import {
+  VaccinationSummaryTableComponent,
+  VaccinationToolRequest,
+} from './vaccination-summary-table/vaccination-summary-table.component';
 
 /**
  * Facility dashboard: patients on the left, the selected patient's
@@ -60,7 +68,11 @@ import {VaccinationSummaryTableComponent} from './vaccination-summary-table/vacc
           [patients]="patients()"
           [loading]="patientsLoading()"
           [selectedId]="selectedPatientId()"
+          [canEdit]="hasFacility()"
           (patientSelect)="selectPatient($event)"
+          (create)="notImplemented('Patient creation')"
+          (populate)="populateFacility()"
+          (toolSelect)="onPatientTool($event)"
         />
       </app-dashboard-panel>
 
@@ -96,6 +108,10 @@ import {VaccinationSummaryTableComponent} from './vaccination-summary-table/vacc
           <app-vaccination-summary-table
             [vaccinations]="vaccinations()"
             [loading]="vaccinationsLoading()"
+            [canEdit]="selectedPatientId() > 0"
+            (create)="notImplemented('Immunization entry')"
+            (populate)="populatePatient()"
+            (toolSelect)="onVaccinationTool($event)"
           />
         } @else {
           <p class="placeholder">Select a patient to see their immunizations.</p>
@@ -122,6 +138,7 @@ import {VaccinationSummaryTableComponent} from './vaccination-summary-table/vacc
 export class DashboardComponent {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
+  private readonly messageService = inject(MessageService);
 
   readonly tenantId = this.store.selectSignal(selectRouteTenantId);
   readonly facilityId = this.store.selectSignal(selectRouteFacilityId);
@@ -133,6 +150,8 @@ export class DashboardComponent {
 
   readonly vaccinations = this.store.selectSignal(selectAllVaccinations);
   readonly vaccinationsLoading = this.store.selectSignal(selectVaccinationsLoading);
+
+  readonly hasFacility = computed(() => this.tenantId() > 0 && this.facilityId() > 0);
 
   readonly vaccinationsTitle = computed(() => {
     const patient = this.selectedPatient();
@@ -181,5 +200,60 @@ export class DashboardComponent {
 
   refreshVaccinations(): void {
     this.store.dispatch(VaccinationActions.refresh());
+  }
+
+  populateFacility(): void {
+    this.store.dispatch(
+      PatientActions.populateFacility({
+        tenantId: this.tenantId(),
+        facilityId: this.facilityId(),
+      }),
+    );
+  }
+
+  populatePatient(): void {
+    this.store.dispatch(
+      PatientActions.populatePatient({
+        tenantId: this.tenantId(),
+        facilityId: this.facilityId(),
+        patientId: this.selectedPatientId(),
+      }),
+    );
+  }
+
+  onPatientTool({action, patient}: PatientToolRequest): void {
+    if (action === 'open') {
+      this.selectPatient(patient);
+      return;
+    }
+    this.notImplemented(this.toolName(action));
+  }
+
+  onVaccinationTool({action}: VaccinationToolRequest): void {
+    this.notImplemented(this.toolName(action));
+  }
+
+  /** Dialogs are not built yet; say so rather than failing silently. */
+  notImplemented(feature: string): void {
+    this.messageService.add({
+      severity: 'info',
+      summary: `${feature} is not available yet`,
+      detail: 'This dialog has not been migrated to the new UI yet.',
+      life: 3500,
+    });
+  }
+
+  private toolName(action: RecordToolAction): string {
+    const names: Record<RecordToolAction, string> = {
+      open: 'Patient dashboard',
+      edit: 'Editing',
+      hl7: 'HL7v2 messaging',
+      fhir: 'FHIR messaging',
+      ips: 'IPS bundle',
+      localCopy: 'Local facility copy',
+      remoteHistory: 'Remote history fetch',
+      json: 'Raw record inspection',
+    };
+    return names[action];
   }
 }
