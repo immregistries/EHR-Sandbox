@@ -32,6 +32,14 @@ Node `v24.16.0` (see `.nvmrc`): `nvm use`.
   facility used to reset the selected patient from inside `PatientService`).
 - **`CallState`** (`core/store/call-state.ts`) gives every slice uniform
   loading/error handling.
+- **Session restore across reloads.** On a refresh the store starts empty
+  while `/auth/user` is still in flight, so `authGuard` waits for
+  `selectSessionStatus().resolved` instead of reading `authenticated`
+  immediately — otherwise a signed-in user is bounced to the login page.
+  The guard starts a probe only when the session is **unknown** — re-probing
+  an established one would undo a fresh login on any backend whose
+  `/auth/user` does not confirm a just-created session. `exhaustMap` in the
+  effect drops the duplicate the app shell sends, so only one probe runs.
 - **Code maps** load once per session (on login or session restore) into the
   `codeMaps` slice. Views read them through factory selectors —
   `selectCodeSet(label)`, `selectCode(label, value)`,

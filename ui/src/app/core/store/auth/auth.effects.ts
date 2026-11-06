@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {catchError, map, of, switchMap, tap} from 'rxjs';
+import {catchError, exhaustMap, map, of, switchMap, tap} from 'rxjs';
 import {AuthService, TokenStorageService} from '../../services';
 import {FacilityActions} from '../facility/facility.actions';
 import {PatientActions} from '../patient/patient.actions';
@@ -49,10 +49,15 @@ export class AuthEffects {
     {dispatch: false},
   );
 
+  /**
+   * Both the app shell and the auth guard ask for a restore, so ignore the
+   * request while one is already outstanding rather than probing twice.
+   */
   restoreSession$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.restoreSession),
-      switchMap(() =>
+      // exhaustMap drops requests arriving while a probe is in flight.
+      exhaustMap(() =>
         this.authService.checkLoggedUser().pipe(
           map((username) =>
             username

@@ -19,6 +19,7 @@ export const initialState: AuthState = {
 export const reducer = createReducer(
   initialState,
   on(AuthActions.login, (state) => ({...state, callState: 'loading' as CallState})),
+  on(AuthActions.restoreSession, (state) => ({...state, callState: 'loading' as CallState})),
   on(AuthActions.loginSuccess, (state, {username}) => ({
     ...state,
     username,
@@ -35,10 +36,10 @@ export const reducer = createReducer(
     ...initialState,
     callState: {error},
   })),
-  on(
-    AuthActions.logout,
-    AuthActions.sessionExpired,
-    AuthActions.restoreSessionFailure,
-    () => initialState,
-  ),
+  on(AuthActions.logout, AuthActions.sessionExpired, () => initialState),
+  // Not signed in, but the probe has answered — guards must not keep waiting.
+  on(AuthActions.restoreSessionFailure, () => ({
+    ...initialState,
+    callState: 'loaded' as CallState,
+  })),
 );

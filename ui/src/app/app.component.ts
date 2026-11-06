@@ -24,6 +24,9 @@ export class AppComponent implements OnInit {
   private readonly theme = inject(ThemeService);
 
   ngOnInit(): void {
+    // The auth guard also asks for this; the effect ignores a duplicate
+    // while one probe is in flight. Dispatching here too means the login
+    // page knows about an existing session without waiting for a guard.
     this.store.dispatch(AuthActions.restoreSession());
   }
 }
