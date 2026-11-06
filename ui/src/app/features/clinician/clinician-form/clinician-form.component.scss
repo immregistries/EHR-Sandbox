@@ -1,0 +1,19 @@
+@use 'variables' as v;
+
+.clinician-form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: v.$spacing-sm;
+  padding-top: v.$spacing-sm;
+  border-top: 1px solid var(--app-border);
+}
+
+:host ::ng-deep .full-width {
+  width: 100%;
+}

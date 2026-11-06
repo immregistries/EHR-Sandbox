@@ -95,15 +95,28 @@ export interface FieldFlavorOverride {
   required?: boolean;
 }
 
-export interface FormCard<T = Record<string, unknown>> {
+/**
+ * A card whose fields address a nested object: `path` names it, and `F` is
+ * that object's type, so `attributeName` is checked against the right keys.
+ */
+export interface FormCard<T = Record<string, unknown>, F = T> {
   title: string;
+  /**
+   * Dotted path every field in this card reads and writes under, e.g.
+   * 'vaccine' for a VaccinationEvent. Controls stay keyed by attributeName.
+   */
+  path?: string;
   /** Explanatory note rendered under the card. */
   note?: string;
-  fields: FormField<T>[];
+  fields: FormField<F>[];
   hl7Location?: Hl7Location;
 }
 
-export type FormConfig<T> = FormCard<T>[];
+/** Any card of an entity form, whatever nested type its fields address. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyFormCard<T> = FormCard<T, any>;
+
+export type FormConfig<T> = AnyFormCard<T>[];
 
 /** Renders an HL7 location as the `PID-5.1` style notation used in feedback. */
 export function hl7LocationLabel(location: Hl7Location | undefined): string {

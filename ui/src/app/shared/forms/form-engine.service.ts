@@ -1,6 +1,39 @@
 import {inject, Injectable} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {parseApiDate} from '../util/date';
 import {FormConfig, FormField, FormType} from './form-config';
+
+/**
+ * Shapes an incoming value for its control. The API sends dates as strings,
+ * but p-datepicker only renders a Date — a string leaves the input blank.
+ */
+function coerce(field: { type: FormType }, value: unknown): unknown {
+  if (field.type === FormType.date) {
+    return parseApiDate(value as string | Date | null | undefined) ?? null;
+  }
+  if (field.type === FormType.clinician) {
+    // Kept as the entity: the API expects one back, and the select matches
+    // options on `id`. A bare id is normalised to a stub the options merge
+    // will complete.
+    return typeof value === 'number' ? {id: value} : (value ?? null);
+  }
+  return value ?? null;
+}
+
+/** Drops the UI-only `label` a select option carries. */
+function stripLabel(value: unknown): unknown {
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+  const {label: _label, ...entity} = value as Record<string, unknown>;
+  return entity;
+}
+
+/** Where a field's value lives on the entity, honouring any card path. */
+function fieldPath(card: { path?: string }, field: { attributeName: string; path?: string }): string {
+  const own = field.path ?? field.attributeName;
+  return card.path ? `${card.path}.${own}` : own;
+}
 
 /** Reads a dotted path, e.g. 'nextOfKin.nameFirst'. */
 function readPath(source: Record<string, unknown>, path: string): unknown {
@@ -39,10 +72,11 @@ export class FormEngineService {
 
   /** Builds a FormGroup for one entity from its config. */
   build<T extends object>(config: FormConfig<T>, value: Partial<T> = {}): FormGroup {
+    const source = value as Record<string, unknown>;
     const group: Record<string, FormControl | FormArray> = {};
     for (const card of config) {
       for (const field of card.fields) {
-        const current = (value as Record<string, unknown>)[field.attributeName];
+        const current = readPath(source, fieldPath(card, field));
         group[field.attributeName] =
           field.type === FormType.list
             ? this.buildList(field, Array.isArray(current) ? current : [])
@@ -67,7 +101,7 @@ export class FormEngineService {
         if (field.type === FormType.list) {
           const array = control as FormArray;
           array.clear({emitEvent: false});
-          const raw = source[field.attributeName];
+          const raw = readPath(source, fieldPath(card, field));
           const items = Array.isArray(raw) ? raw : [];
           const entries = field.singleEntry
             ? [items[0] ?? {...(field.itemDefault ?? {})}]
@@ -80,9 +114,10 @@ export class FormEngineService {
           array.updateValueAndValidity();
           continue;
         }
-        (control as FormControl).setValue(source[field.attributeName] ?? null, {
-          emitEvent: false,
-        });
+        (control as FormControl).setValue(
+          coerce(field, readPath(source, fieldPath(card, field))),
+          {emitEvent: false},
+        );
       }
     }
     form.markAsPristine();
@@ -116,7 +151,10 @@ export class FormEngineService {
   }
 
   private buildControl(field: FormField<never>, value: unknown): FormControl {
-    const control = this.fb.control({value: value ?? null, disabled: field.disabled === true});
+    const control = this.fb.control({
+      value: coerce(field, value),
+      disabled: field.disabled === true,
+    });
     control.setValidators(this.validatorsFor(field, false));
     return control;
   }
@@ -178,20 +216,46 @@ export class FormEngineService {
    * shapes for fields declared with a `path`.
    */
   toEntity<T extends object>(form: FormGroup, config: FormConfig<T>): Partial<T> {
-    const raw = form.getRawValue() as Record<string, unknown>;
+    const flat = form.getRawValue() as Record<string, unknown>;
+    const raw: Record<string, unknown> = {};
+
+    // Re-nest scalar fields that a card maps under a path (e.g. `vaccine`).
     for (const card of config) {
       for (const field of card.fields) {
-        if (field.type !== FormType.list || !this.hasPaths(field)) {
+        if (field.type === FormType.list) {
           continue;
         }
-        const entries = (raw[field.attributeName] as Record<string, unknown>[]) ?? [];
-        raw[field.attributeName] = entries.map((entry) => {
-          const nested: Record<string, unknown> = {};
-          for (const sub of field.itemFields ?? []) {
-            writePath(nested, sub.path ?? sub.attributeName, entry[sub.attributeName]);
-          }
-          return nested;
-        });
+        const value = flat[field.attributeName];
+        writePath(
+          raw,
+          fieldPath(card, field),
+          // Options carry a display `label` that is not part of the entity.
+          field.type === FormType.clinician ? stripLabel(value) : value,
+        );
+      }
+    }
+
+    for (const card of config) {
+      for (const field of card.fields) {
+        if (field.type !== FormType.list) {
+          continue;
+        }
+        if (!this.hasPaths(field)) {
+          writePath(raw, fieldPath(card, field), flat[field.attributeName]);
+          continue;
+        }
+        const entries = (flat[field.attributeName] as Record<string, unknown>[]) ?? [];
+        writePath(
+          raw,
+          fieldPath(card, field),
+          entries.map((entry) => {
+            const nested: Record<string, unknown> = {};
+            for (const sub of field.itemFields ?? []) {
+              writePath(nested, sub.path ?? sub.attributeName, entry[sub.attributeName]);
+            }
+            return nested;
+          }),
+        );
       }
     }
     return (this.prune(raw) ?? {}) as Partial<T>;

@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal,} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
@@ -24,7 +15,7 @@ import {
   selectIdentifierTypeOptions,
   selectQualificationOptions,
 } from '../../core/store/code-maps/code-maps.selectors';
-import {FormField, FormOption, FormType, hl7LocationLabel} from './form-config';
+import {FormField, FormOption, hl7LocationLabel} from './form-config';
 
 /** hasValidator compares by identity, so the reference must be shared. */
 const REQUIRED = Validators.required;
@@ -142,15 +133,26 @@ const TRUE_FALSE: FormOption[] = [
                 <span class="code-option__value">{{ option.value }}</span>
               </span>
             </ng-template>
+            <!-- The closed select shows the same label + code as the list. -->
+            <ng-template #selectedItem let-option>
+              @if (option) {
+                <span class="code-option">
+                  <span class="code-option__label">{{ option.label }}</span>
+                  <span class="code-option__value">{{ option.value }}</span>
+                </span>
+              }
+            </ng-template>
           </p-select>
         }
         @case ('clinician') {
+          <!-- Binds the whole entity (the API expects one back), so options
+               are compared by id rather than object identity. -->
           <p-select
             [inputId]="inputId()"
             [formControl]="control()"
             [options]="clinicians()"
             optionLabel="label"
-            optionValue="id"
+            [dataKey]="'id'"
             [filter]="true"
             filterBy="label"
             placeholder="—"

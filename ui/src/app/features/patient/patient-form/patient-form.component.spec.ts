@@ -272,3 +272,37 @@ describe('PatientFormComponent layout', () => {
     expect(wide).not.toContain('Birth');
   });
 });
+
+describe('PatientFormComponent date fields', () => {
+  it('shows the birth date of the patient being edited', async () => {
+    resetFixtureIds();
+    // The API sends dates as strings; p-datepicker needs a Date.
+    const patient = aPatient({id: 3, birthDate: '1985-12-09' as unknown as Date});
+
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+      inputs: {patient},
+    });
+
+    const value = h.component.form().get('birthDate')?.value;
+    expect(value instanceof Date).toBeTrue();
+    expect((value as Date).getDate()).toBe(9);
+  });
+
+  it('shows a generated birth date after fill random', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+    });
+    const patientService = h.fixture.debugElement.injector.get(PatientService);
+    spyOn(patientService, 'readRandom').and.returnValue(
+      of({names: [], birthDate: '2001-07-04'} as unknown as EhrPatient),
+    );
+
+    h.component.fillRandom();
+    h.detectChanges();
+
+    const value = h.component.form().get('birthDate')?.value;
+    expect(value instanceof Date).toBeTrue();
+    expect((value as Date).getDate()).toBe(4);
+  });
+});

@@ -1,9 +1,10 @@
 import {TestBed} from '@angular/core/testing';
 import {FormArray, FormGroup, Validators} from '@angular/forms';
-import {FormCard, FormType} from './form-config';
+import {FormCard, FormConfig, FormType} from './form-config';
 import {FormEngineService} from './form-engine.service';
 
 interface Sample {
+  vaccine?: { administeredDate?: string | Date };
   name?: string;
   birthDate?: Date;
   names?: { nameFirst?: string; nameLast?: string }[];
@@ -238,5 +239,79 @@ describe('FormEngineService single-entry lists', () => {
     engine.reset(form, CONFIG_SINGLE, {});
 
     expect((form.get('names') as FormArray).length).toBe(1);
+  });
+});
+
+describe('FormEngineService date fields', () => {
+  let engine: FormEngineService;
+
+  const DATES: FormCard<Sample>[] = [
+    {
+      title: 'Dates',
+      fields: [{type: FormType.date, title: 'Birth date', attributeName: 'birthDate'}],
+    },
+  ];
+
+  const NESTED: FormConfig<Sample> = [
+    {
+      title: 'Vaccine',
+      path: 'vaccine',
+      fields: [{type: FormType.date, title: 'Administered', attributeName: 'administeredDate'}],
+    },
+  ] as FormConfig<Sample>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    engine = TestBed.inject(FormEngineService);
+  });
+
+  /**
+   * The API sends dates as strings. p-datepicker only renders a Date, so a
+   * string leaves the input visibly blank even though the control is set.
+   */
+  it('builds a date control holding a Date, not the raw string', () => {
+    const form = engine.build(DATES, {birthDate: '1990-03-12' as unknown as Date});
+
+    const value = form.get('birthDate')?.value;
+    expect(value instanceof Date).toBeTrue();
+    expect((value as Date).getDate()).toBe(12);
+  });
+
+  it('coerces dates nested under a card path', () => {
+    const form = engine.build(NESTED, {
+      vaccine: {administeredDate: '2024-06-01'},
+    } as never);
+
+    const value = form.get('administeredDate')?.value;
+    expect(value instanceof Date).toBeTrue();
+    expect((value as Date).getMonth()).toBe(5);
+  });
+
+  it('coerces dates on reset, which is what fill random uses', () => {
+    const form = engine.build(NESTED, {} as never);
+
+    engine.reset(form, NESTED, {vaccine: {administeredDate: '2024-06-01'}} as never);
+
+    expect(form.get('administeredDate')?.value instanceof Date).toBeTrue();
+  });
+
+  it('keeps a Date it is already given', () => {
+    const date = new Date(2020, 0, 15);
+    const form = engine.build(DATES, {birthDate: date});
+
+    expect(form.get('birthDate')?.value).toBe(date);
+  });
+
+  it('leaves a missing date null', () => {
+    const form = engine.build(DATES, {});
+
+    expect(form.get('birthDate')?.value).toBeNull();
+  });
+
+  it('does not drift a date-only value to the previous day', () => {
+    const form = engine.build(DATES, {birthDate: '1985-12-09' as unknown as Date});
+
+    // UTC parsing would render this as Dec 8 west of UTC.
+    expect((form.get('birthDate')?.value as Date).getDate()).toBe(9);
   });
 });

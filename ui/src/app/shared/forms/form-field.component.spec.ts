@@ -1,6 +1,5 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {runInInjectionContext, Injector} from '@angular/core';
-import {TestBed} from '@angular/core/testing';
+import {Injector} from '@angular/core';
 import {ComponentHarness, renderComponent} from '../../../testing';
 import {FormField, FormType} from './form-config';
 import {FormEngineService} from './form-engine.service';
@@ -33,7 +32,7 @@ describe('FormFieldComponent validation rendering', () => {
 
   async function render(
     field: FormField<never> = REQUIRED_FIELD,
-  ): Promise<{h: ComponentHarness<FormFieldComponent>; group: FormGroup}> {
+  ): Promise<{ h: ComponentHarness<FormFieldComponent>; group: FormGroup }> {
     const engine = makeEngine();
     const group = engine.build([{title: 'Card', fields: [field]}] as never, {});
     const h = await renderComponent(FormFieldComponent, {inputs: {field, group}});
@@ -283,5 +282,50 @@ describe('FormFieldComponent code options', () => {
     });
 
     expect(h.component.codeOptions().map((option) => option.value)).toEqual(['F']);
+  });
+});
+
+describe('FormFieldComponent selected code display', () => {
+  const SEX: FormField<never> = {
+    type: FormType.code,
+    title: 'Sex',
+    attributeName: 'sex',
+    codeMapLabel: 'PATIENT_SEX',
+  } as FormField<never>;
+
+  const CODE_STATE = {
+    codeMaps: {
+      codeBaseMap: {PATIENT_SEX: {F: {value: 'F', label: 'Female'}}},
+      identifierTypeCodeSystem: null,
+      qualificationCodeSystem: null,
+      callState: 'loaded',
+    },
+  } as never;
+
+  /** The closed select shows label and code, like the dropdown options. */
+  it('shows the code alongside the label when a value is selected', async () => {
+    const engine = makeEngine();
+    const group = engine.build([{title: 'Card', fields: [SEX]}] as never, {sex: 'F'} as never);
+
+    const h = await renderComponent(FormFieldComponent, {
+      inputs: {field: SEX, group},
+      state: CODE_STATE,
+    });
+
+    const label = h.query<HTMLElement>('p-select')?.textContent ?? '';
+    expect(label).toContain('Female');
+    expect(label).toContain('F');
+  });
+
+  it('shows the placeholder when nothing is selected', async () => {
+    const engine = makeEngine();
+    const group = engine.build([{title: 'Card', fields: [SEX]}] as never, {});
+
+    const h = await renderComponent(FormFieldComponent, {
+      inputs: {field: SEX, group},
+      state: CODE_STATE,
+    });
+
+    expect(h.query<HTMLElement>('p-select')?.textContent).not.toContain('Female');
   });
 });

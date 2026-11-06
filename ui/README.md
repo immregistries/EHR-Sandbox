@@ -122,6 +122,24 @@ types (HL7 table 0203) and clinician qualifications (table 0360) are
 published as code systems, not codemap entries — binding them to a
 `codeMapLabel` yields an empty dropdown.
 
+### Nested values
+
+A card can declare `path` so all its fields read and write under one nested
+object — the vaccination form uses `path: 'vaccine'`, since most of a
+`VaccinationEvent`'s fields live on its `vaccine`. Individual fields can do
+the same with their own `path` (next of kin). Shared sub-field groups for
+addresses, phones and identifiers live in `shared/forms/common-fields.ts`,
+so patient and clinician forms stay in step.
+
+### Entity references
+
+A `FormType.clinician` field holds the **whole entity**, not an id. The API
+returns clinicians expanded and expects one back: an `{id}`-only stub is an
+unresolvable detached entity that fails to save, and the backend decides
+"existing" versus "create this one" by whether `id` is set. The select
+therefore compares options with `dataKey="id"`, and the engine strips the
+UI-only `label` an option carries before saving.
+
 ### Tenant flavors
 
 The backend encodes flavors in the tenant name, so a tenant called
@@ -240,7 +258,10 @@ would disagree with the rendering.
 
 Date-only values from the API (`YYYY-MM-DD`) go through
 `shared/util/date.ts#parseApiDate`: `new Date('1985-12-09')` is UTC midnight,
-which renders as the previous day anywhere west of UTC.
+which renders as the previous day anywhere west of UTC. The form engine
+applies the same conversion when building or resetting a `FormType.date`
+control — `p-datepicker` renders nothing for a string, so an un-coerced date
+leaves the input visibly blank while the control holds a value.
 
 Working today: create/populate toolbars, search, sorting on all columns, row
 expansion, and patient selection. Populate calls the real endpoints

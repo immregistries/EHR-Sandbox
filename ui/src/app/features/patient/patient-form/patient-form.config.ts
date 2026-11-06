@@ -1,5 +1,10 @@
 import {EhrPatient} from '../../../core/models';
 import {FormCard, FormField, FormType} from '../../../shared/forms/form-config';
+import {
+  ADDRESS_ITEM_FIELDS as ADDRESS_FIELDS,
+  IDENTIFIER_ITEM_FIELDS as IDENTIFIER_FIELDS,
+  PHONE_ITEM_FIELDS as PHONE_FIELDS,
+} from '../../../shared/forms/common-fields';
 
 const NAME_FIELDS: FormField<never>[] = [
   {
@@ -41,79 +46,6 @@ const NAME_FIELDS: FormField<never>[] = [
   },
 ];
 
-const IDENTIFIER_FIELDS: FormField<never>[] = [
-  {
-    type: FormType.text,
-    title: 'Value',
-    attributeName: 'value',
-    hl7Location: {segmentId: 'PID', fieldPosition: 3, componentNumber: 1}
-  },
-  {
-    type: FormType.text,
-    title: 'System',
-    attributeName: 'system',
-    hl7Location: {segmentId: 'PID', fieldPosition: 3, componentNumber: 4}
-  },
-  {
-    type: FormType.code,
-    title: 'Type',
-    attributeName: 'type',
-    codeSystem: 'identifierType',
-    hl7Location: {segmentId: 'PID', fieldPosition: 3, componentNumber: 5}
-  },
-  {type: FormType.text, title: 'Assigner', attributeName: 'assignerReference'},
-];
-
-const ADDRESS_FIELDS: FormField<never>[] = [
-  {
-    type: FormType.text,
-    title: 'Line 1',
-    attributeName: 'addressLine1',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 1}
-  },
-  {
-    type: FormType.text,
-    title: 'Line 2',
-    attributeName: 'addressLine2',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 2}
-  },
-  {
-    type: FormType.text,
-    title: 'City',
-    attributeName: 'addressCity',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 3}
-  },
-  {
-    type: FormType.text,
-    title: 'State',
-    attributeName: 'addressState',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 4}
-  },
-  {
-    type: FormType.text,
-    title: 'ZIP',
-    attributeName: 'addressZip',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 5}
-  },
-  {
-    type: FormType.text,
-    title: 'Country',
-    attributeName: 'addressCountry',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 6}
-  },
-  {
-    type: FormType.text,
-    title: 'County / parish',
-    attributeName: 'addressCountyParish',
-    hl7Location: {segmentId: 'PID', fieldPosition: 11, componentNumber: 9}
-  },
-];
-
-const PHONE_FIELDS: FormField<never>[] = [
-  {type: FormType.text, title: 'Number', attributeName: 'number', hl7Location: {segmentId: 'PID', fieldPosition: 13}},
-  {type: FormType.code, title: 'Type', attributeName: 'type', codeMapLabel: 'PHONE_TYPE'},
-  {type: FormType.code, title: 'Use', attributeName: 'use', codeMapLabel: 'PHONE_USE'},
-];
 
 const RACE_FIELDS: FormField<never>[] = [
   {

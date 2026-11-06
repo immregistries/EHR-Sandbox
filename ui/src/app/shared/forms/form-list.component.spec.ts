@@ -1,7 +1,7 @@
 import {Injector} from '@angular/core';
 import {FormArray, FormBuilder} from '@angular/forms';
 import {ComponentHarness, renderComponent} from '../../../testing';
-import {FormCard, FormField, FormType} from './form-config';
+import {FormConfig, FormField, FormType} from './form-config';
 import {FormEngineService} from './form-engine.service';
 import {FormListComponent} from './form-list.component';
 
@@ -23,7 +23,7 @@ const IDENTIFIER_FIELD: FormField<never> = {
   ],
 } as FormField<never>;
 
-const CONFIG = [{title: 'Identifiers', fields: [IDENTIFIER_FIELD]}] as FormCard<never>[];
+const CONFIG = [{title: 'Identifiers', fields: [IDENTIFIER_FIELD]}] as FormConfig<never>;
 
 /**
  * A repeating field must re-render when the whole form is repopulated —
@@ -159,7 +159,7 @@ describe('FormListComponent layout', () => {
   it('renders no track in single-entry mode', async () => {
     const engine = makeEngine();
     const field = {...IDENTIFIER_FIELD, singleEntry: true} as FormField<never>;
-    const config = [{title: 'C', fields: [field]}] as FormCard<never>[];
+    const config = [{title: 'C', fields: [field]}] as FormConfig<never>;
     const form = engine.build(config, {} as never);
 
     const h = await renderComponent(FormListComponent, {
@@ -250,7 +250,7 @@ describe('FormListComponent clear', () => {
   it('offers no clear in single-entry mode', async () => {
     const engine = makeEngine();
     const field = {...IDENTIFIER_FIELD, singleEntry: true} as FormField<never>;
-    const config = [{title: 'C', fields: [field]}] as FormCard<never>[];
+    const config = [{title: 'C', fields: [field]}] as FormConfig<never>;
     const form = engine.build(config, {} as never);
 
     const h = await renderComponent(FormListComponent, {

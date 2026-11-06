@@ -4,7 +4,7 @@ import {Store} from '@ngrx/store';
 import {ButtonModule} from 'primeng/button';
 import {CardModule} from 'primeng/card';
 import {DialogModule} from 'primeng/dialog';
-import {EhrPatient} from '../../core/models';
+import {EhrPatient, VaccinationEvent} from '../../core/models';
 import {PatientActions} from '../../core/store/patient/patient.actions';
 import {
   selectAllPatients,
@@ -18,6 +18,7 @@ import {selectAllVaccinations, selectVaccinationsLoading,} from '../../core/stor
 import {MessageService} from 'primeng/api';
 import {RecordToolAction} from '../../shared/components/record-tools/record-tools.component';
 import {PatientFormComponent} from '../patient/patient-form/patient-form.component';
+import {VaccinationFormComponent} from '../vaccination/vaccination-form/vaccination-form.component';
 import {DashboardPanelComponent} from './dashboard-panel/dashboard-panel.component';
 import {
   PatientSummaryTableComponent,
@@ -43,6 +44,7 @@ import {
     CardModule,
     DialogModule,
     PatientFormComponent,
+    VaccinationFormComponent,
     DashboardPanelComponent,
     PatientSummaryTableComponent,
     VaccinationSummaryTableComponent,
@@ -113,7 +115,7 @@ import {
             [vaccinations]="vaccinations()"
             [loading]="vaccinationsLoading()"
             [canEdit]="selectedPatientId() > 0"
-            (create)="notImplemented('Immunization entry')"
+            (create)="openVaccinationCreate()"
             (populate)="populatePatient()"
             (toolSelect)="onVaccinationTool($event)"
           />
@@ -137,6 +139,23 @@ import {
             [patient]="editingPatient()"
             (saved)="onSaved()"
             (cancelled)="formOpen.set(false)"
+          />
+        }
+      </p-dialog>
+
+      <p-dialog
+        [header]="editingVaccination() ? 'Edit immunization' : 'New immunization'"
+        [visible]="vaccinationFormOpen()"
+        (visibleChange)="vaccinationFormOpen.set($event)"
+        [modal]="true"
+        [draggable]="false"
+        [style]="{width: 'min(1100px, 95vw)'}"
+      >
+        @if (vaccinationFormOpen()) {
+          <app-vaccination-form
+            [vaccination]="editingVaccination()"
+            (saved)="onVaccinationSaved()"
+            (cancelled)="vaccinationFormOpen.set(false)"
           />
         }
       </p-dialog>
@@ -173,6 +192,8 @@ export class DashboardComponent {
 
   readonly formOpen = signal(false);
   readonly editingPatient = signal<EhrPatient | undefined>(undefined);
+  readonly vaccinationFormOpen = signal(false);
+  readonly editingVaccination = signal<VaccinationEvent | undefined>(undefined);
 
   readonly vaccinations = this.store.selectSignal(selectAllVaccinations);
   readonly vaccinationsLoading = this.store.selectSignal(selectVaccinationsLoading);
@@ -274,8 +295,23 @@ export class DashboardComponent {
     this.store.dispatch(PatientActions.refresh());
   }
 
-  onVaccinationTool({action}: VaccinationToolRequest): void {
+  onVaccinationTool({action, vaccination}: VaccinationToolRequest): void {
+    if (action === 'edit') {
+      this.editingVaccination.set(vaccination);
+      this.vaccinationFormOpen.set(true);
+      return;
+    }
     this.notImplemented(this.toolName(action));
+  }
+
+  openVaccinationCreate(): void {
+    this.editingVaccination.set(undefined);
+    this.vaccinationFormOpen.set(true);
+  }
+
+  onVaccinationSaved(): void {
+    this.vaccinationFormOpen.set(false);
+    this.store.dispatch(VaccinationActions.refresh());
   }
 
   /** Dialogs are not built yet; say so rather than failing silently. */
