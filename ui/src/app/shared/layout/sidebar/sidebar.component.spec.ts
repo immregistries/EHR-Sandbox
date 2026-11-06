@@ -72,6 +72,18 @@ describe('SidebarComponent', () => {
     expect(hrefs).toContain('/tenants');
   });
 
+  it('offers Clinicians as a live tenant destination', async () => {
+    const h = await renderComponent(SidebarComponent, {state: {route: {tenantId: 3}}});
+
+    const link = h
+      .queryAll<HTMLAnchorElement>('a.nav-link')
+      .find((a) => a.textContent?.includes('Clinicians'));
+
+    expect(link?.getAttribute('href')).toBe('/t/3/clinicians');
+    // No "soon" badge: the page is implemented.
+    expect(link?.querySelector('.nav-badge')).toBeNull();
+  });
+
   it('hides labels when collapsed', async () => {
     const h = await renderComponent(SidebarComponent, {
       state: {route: {tenantId: 3}},

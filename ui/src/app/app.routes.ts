@@ -22,6 +22,11 @@ const CONTEXT_FREE_ROUTES: Routes = [
     path: 'tenants',
     loadChildren: () => import('./features/tenant/tenant.routes').then((m) => m.TENANT_ROUTES),
   },
+  {
+    path: 'settings',
+    loadChildren: () =>
+      import('./features/settings/settings.routes').then((m) => m.SETTINGS_ROUTES),
+  },
 ];
 
 export const routes: Routes = [
@@ -41,6 +46,11 @@ export const routes: Routes = [
         canActivate: [tenantGuard],
         children: [
           ...CONTEXT_FREE_ROUTES,
+          {
+            path: 'clinicians',
+            loadChildren: () =>
+              import('./features/clinician/clinician.routes').then((m) => m.CLINICIAN_ROUTES),
+          },
           {
             path: 'facilities',
             loadChildren: () =>

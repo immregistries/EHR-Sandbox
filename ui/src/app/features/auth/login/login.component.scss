@@ -15,12 +15,6 @@
   top: v.$spacing-md;
   right: v.$spacing-md;
 }
-
-:host ::ng-deep .login-card {
-  width: 100%;
-  max-width: 400px;
-}
-
 .login-header {
   display: flex;
   flex-direction: column;
@@ -68,11 +62,6 @@ form {
     width: 100%;
   }
 }
-
-:host ::ng-deep .full-width {
-  width: 100%;
-}
-
 .disclaimer {
   display: flex;
   align-items: flex-start;

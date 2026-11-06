@@ -18,6 +18,7 @@ import {VaccinationService} from '../../../core/services';
 import {ClinicianActions} from '../../../core/store/clinician/clinician.actions';
 import {selectRouteFacilityId, selectRoutePatientId, selectRouteTenantId,} from '../../../core/store/router.selectors';
 import {EntityFormComponent} from '../../../shared/forms/entity-form.component';
+import {FormFooterComponent} from '../../../shared/forms/form-footer.component';
 import {FormConfig} from '../../../shared/forms/form-config';
 import {FormEngineService} from '../../../shared/forms/form-engine.service';
 import {collectWarnings} from '../../../shared/forms/form-warnings';
@@ -32,18 +33,22 @@ import {VACCINATION_FORM_CONFIG} from './vaccination-form.config';
 @Component({
   selector: 'app-vaccination-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, MessageModule, EntityFormComponent],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    MessageModule,
+    EntityFormComponent,
+    FormFooterComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form class="vaccination-form" [formGroup]="form()" (ngSubmit)="submit()">
-      <app-entity-form
+      <div class="form-dialog-body">
+        <app-entity-form
         [config]="config"
         [form]="form()"
         [warnings]="warnings()"
-        [allowRandom]="isCreating()"
         [liftRequired]="liftRequired()"
-        (liftRequiredChange)="liftRequired.set($event)"
-        (fillRandom)="fillRandom()"
         (jsonChange)="applyJson($event)"
       />
 
@@ -59,15 +64,23 @@ import {VACCINATION_FORM_CONFIG} from './vaccination-form.config';
         <p-message severity="error" [text]="error" styleClass="full-width" />
       }
 
-      <footer class="form-actions">
-        <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="cancelled.emit()" />
-        <p-button
-          type="submit"
-          [label]="vaccination() ? 'Save changes' : 'Create immunization'"
-          icon="pi pi-check"
-          [loading]="saving()"
-        />
-      </footer>
+      </div>
+
+      <app-form-footer
+        [allowRandom]="isCreating()"
+        [(liftRequired)]="liftRequired"
+        (fillRandom)="fillRandom()"
+      >
+        <ng-container actions>
+          <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="cancelled.emit()" />
+          <p-button
+            type="submit"
+            [label]="vaccination() ? 'Save changes' : 'Create immunization'"
+            icon="pi pi-check"
+            [loading]="saving()"
+          />
+        </ng-container>
+      </app-form-footer>
     </form>
   `,
   styleUrl: './vaccination-form.component.scss',

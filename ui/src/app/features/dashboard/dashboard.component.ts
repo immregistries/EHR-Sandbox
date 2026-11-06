@@ -131,8 +131,7 @@ import {
         [modal]="true"
         [draggable]="false"
         [dismissableMask]="false"
-        styleClass="patient-form-dialog"
-        [style]="{width: 'min(1100px, 95vw)'}"
+        styleClass="form-dialog"
       >
         @if (formOpen()) {
           <app-patient-form
@@ -149,7 +148,7 @@ import {
         (visibleChange)="vaccinationFormOpen.set($event)"
         [modal]="true"
         [draggable]="false"
-        [style]="{width: 'min(1100px, 95vw)'}"
+        styleClass="form-dialog"
       >
         @if (vaccinationFormOpen()) {
           <app-vaccination-form

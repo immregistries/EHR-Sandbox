@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  model,
-  output,
-  signal
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal} from '@angular/core';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ButtonModule} from 'primeng/button';
 import {MessageModule} from 'primeng/message';
@@ -42,42 +32,6 @@ import {FormEngineService} from './form-engine.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="entity-form">
-      <header class="form-toolbar">
-        <div class="toolbar-group">
-          <p-toggleswitch
-            inputId="lift-required"
-            [ngModel]="liftRequired()"
-            (ngModelChange)="liftRequired.set($event)"
-            [ngModelOptions]="{standalone: true}"
-          />
-          <label for="lift-required" class="toggle-label">
-            Lift required-field rules
-            <small>Save incomplete data to test how the registry responds</small>
-          </label>
-        </div>
-
-        <span class="toolbar-spacer"></span>
-
-        @if (allowRandom()) {
-          <p-button
-            icon="pi pi-sparkles"
-            label="Fill random"
-            size="small"
-            [outlined]="true"
-            severity="secondary"
-            pTooltip="Replace the form with a generated record"
-            tooltipPosition="bottom"
-            (onClick)="fillRandom.emit()"
-          />
-        }
-      </header>
-
-      @if (liftRequired()) {
-        <p-message severity="warn" styleClass="full-width">
-          Required-field rules are lifted — this record may be rejected by the registry.
-        </p-message>
-      }
-
       <p-tabs value="form">
         <p-tablist>
           <p-tab value="form">Form</p-tab>
@@ -128,8 +82,13 @@ export class EntityFormComponent {
   readonly comparison = input<Record<string, unknown> | undefined>(undefined);
   readonly warnings = input<FormWarnings>({});
   readonly allowRandom = input(true);
+  /**
+   * Whether relaxing required rules makes sense. Settings forms describe
+   * local configuration, not data sent to a registry, so they opt out.
+   */
+  readonly allowLift = input(true);
 
-  readonly liftRequired = model(false);
+  readonly liftRequired = input(false);
   readonly fillRandom = output<void>();
   /** Emitted when the JSON tab produces a valid, different model. */
   readonly jsonChange = output<Record<string, unknown>>();

@@ -1,0 +1,18 @@
+@use 'variables' as v;
+
+.registry-form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+
+.default-label {
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+
+.actions-spacer {
+  flex: 1;
+}

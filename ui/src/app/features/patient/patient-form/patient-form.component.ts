@@ -15,13 +15,11 @@ import {ButtonModule} from 'primeng/button';
 import {MessageModule} from 'primeng/message';
 import {EhrPatient, Feedback} from '../../../core/models';
 import {PatientService} from '../../../core/services';
-import {
-  selectRouteFacilityId,
-  selectRouteTenantId,
-} from '../../../core/store/router.selectors';
+import {selectRouteFacilityId, selectRouteTenantId,} from '../../../core/store/router.selectors';
 import {TenantActions} from '../../../core/store/tenant/tenant.actions';
 import {selectCurrentTenant, selectFlavors} from '../../../core/store/tenant/tenant.selectors';
 import {EntityFormComponent} from '../../../shared/forms/entity-form.component';
+import {FormFooterComponent} from '../../../shared/forms/form-footer.component';
 import {FormConfig} from '../../../shared/forms/form-config';
 import {activeFlavorKeys, applyFlavors} from '../../../shared/forms/form-flavors';
 import {FormEngineService} from '../../../shared/forms/form-engine.service';
@@ -36,17 +34,23 @@ import {PATIENT_FORM_CONFIG} from './patient-form.config';
 @Component({
   selector: 'app-patient-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, MessageModule, EntityFormComponent],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    MessageModule,
+    EntityFormComponent,
+    FormFooterComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <form class="patient-form" [formGroup]="form()" (ngSubmit)="submit()">
-      <app-entity-form
+      <div class="form-dialog-body">
+        <app-entity-form
         [config]="config()"
         [form]="form()"
         [comparison]="comparison()"
         [warnings]="warnings()"
-        [allowRandom]="isCreating()"
-        (fillRandom)="fillRandom()"
+        [liftRequired]="liftRequired()"
         (jsonChange)="applyJson($event)"
       />
 
@@ -54,20 +58,28 @@ import {PATIENT_FORM_CONFIG} from './patient-form.config';
         <p-message severity="error" [text]="error" styleClass="full-width" />
       }
 
-      <footer class="form-actions">
-        <p-button
-          label="Cancel"
-          severity="secondary"
-          [text]="true"
-          (onClick)="cancelled.emit()"
-        />
-        <p-button
-          type="submit"
-          [label]="patient() ? 'Save changes' : 'Create patient'"
-          icon="pi pi-check"
-          [loading]="saving()"
-        />
-      </footer>
+      </div>
+
+      <app-form-footer
+        [allowRandom]="isCreating()"
+        [(liftRequired)]="liftRequired"
+        (fillRandom)="fillRandom()"
+      >
+        <ng-container actions>
+          <p-button
+            label="Cancel"
+            severity="secondary"
+            [text]="true"
+            (onClick)="cancelled.emit()"
+          />
+          <p-button
+            type="submit"
+            [label]="patient() ? 'Save changes' : 'Create patient'"
+            icon="pi pi-check"
+            [loading]="saving()"
+          />
+        </ng-container>
+      </app-form-footer>
     </form>
   `,
   styleUrl: './patient-form.component.scss',
@@ -95,6 +107,7 @@ export class PatientFormComponent {
     applyFlavors(PATIENT_FORM_CONFIG, activeFlavorKeys(this.tenantName(), this.flavorKeys())),
   );
   readonly saving = signal(false);
+  readonly liftRequired = signal(false);
   readonly saveError = signal<string | null>(null);
 
   private readonly tenantId = this.store.selectSignal(selectRouteTenantId);

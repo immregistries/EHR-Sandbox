@@ -39,11 +39,6 @@
   gap: v.$spacing-sm;
   margin-top: v.$spacing-lg;
 }
-
-:host ::ng-deep .full-width {
-  width: 100%;
-}
-
 .capabilities {
   display: grid;
   gap: v.$spacing-md;

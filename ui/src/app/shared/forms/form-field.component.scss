@@ -24,10 +24,6 @@
     max-width: 8rem;
   }
 
-  :host ::ng-deep p-select,
-  :host ::ng-deep p-datepicker {
-    width: 100%;
-  }
 }
 
 .required {
@@ -62,10 +58,6 @@
 
 .hint {
   color: var(--app-text-muted);
-}
-
-.field--invalid :host ::ng-deep .p-inputtext {
-  border-color: var(--app-danger);
 }
 
 .code-option {

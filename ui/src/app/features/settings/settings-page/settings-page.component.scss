@@ -1,0 +1,109 @@
+@use 'variables' as v;
+@use 'mixins';
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$spacing-md;
+}
+
+.page-title {
+  display: flex;
+  align-items: baseline;
+  gap: v.$spacing-sm;
+
+  h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--app-text-muted);
+}
+
+.layout {
+  display: grid;
+  gap: v.$spacing-md;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  align-items: start;
+}
+
+.registry-list {
+  @include mixins.surface-card;
+
+  display: flex;
+  flex-direction: column;
+  padding: v.$spacing-sm;
+  gap: 2px;
+}
+
+.registry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px v.$spacing-sm;
+  padding: v.$spacing-sm;
+  border: 0;
+  border-radius: v.$radius-sm;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--app-surface-alt);
+  }
+
+  &--active {
+    background: var(--app-surface-alt);
+    box-shadow: inset 2px 0 0 var(--p-primary-color);
+  }
+}
+
+.registry-name {
+  @include mixins.truncate;
+
+  font-size: 0.85rem;
+  font-weight: 550;
+}
+
+.registry-url {
+  @include mixins.truncate;
+
+  grid-column: 1 / -1;
+  font-family: v.$font-family-mono;
+  font-size: 0.68rem;
+  color: var(--app-text-muted);
+}
+
+.registry-detail {
+  @include mixins.surface-card;
+
+  padding: v.$spacing-md;
+  min-width: 0;
+}
+
+.empty {
+  margin: 0;
+  padding: v.$spacing-md;
+  font-size: 0.82rem;
+  color: var(--app-text-muted);
+}
+
+@media (max-width: v.$breakpoint-lg) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

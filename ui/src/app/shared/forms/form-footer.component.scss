@@ -1,0 +1,49 @@
+@use 'variables' as v;
+
+.form-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: v.$spacing-sm v.$spacing-md;
+  padding: v.$spacing-sm 0 0;
+  margin-top: v.$spacing-xs;
+  border-top: 1px solid var(--app-border);
+  // Opaque: form content scrolls underneath it.
+  background: var(--app-surface);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+}
+
+.option-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  font-weight: 550;
+  cursor: pointer;
+
+  small {
+    font-weight: 400;
+    font-size: 0.7rem;
+    color: var(--app-text-muted);
+  }
+}
+
+.footer-spacer {
+  flex: 1;
+}
+@media (max-width: v.$breakpoint-md) {
+  .form-footer {
+    gap: v.$spacing-sm;
+  }
+
+  .option-label small {
+    display: none;
+  }
+}

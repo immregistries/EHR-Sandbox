@@ -1,0 +1,30 @@
+@use 'variables' as v;
+
+.checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-md;
+}
+
+.check-label {
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.check-detail {
+  margin-top: -0.25rem;
+  padding-left: v.$spacing-sm;
+  font-family: v.$font-family-mono;
+  font-size: 0.72rem;
+  color: var(--app-danger);
+  word-break: break-word;
+}

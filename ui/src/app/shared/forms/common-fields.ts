@@ -14,8 +14,14 @@ export const ADDRESS_ITEM_FIELDS: FormField<never>[] = [
 
 export const PHONE_ITEM_FIELDS: FormField<never>[] = [
   {type: FormType.text, title: 'Number', attributeName: 'number'},
-  {type: FormType.code, title: 'Type', attributeName: 'type', codeMapLabel: 'PHONE_TYPE'},
-  {type: FormType.code, title: 'Use', attributeName: 'use', codeMapLabel: 'PHONE_USE'},
+  // The codebase has no PHONE_* codesets: these are the HL7 telecom tables.
+  {
+    type: FormType.code,
+    title: 'Type / equipment',
+    attributeName: 'type',
+    codeMapLabel: 'TELECOMMUNICATION_EQUIPMENT',
+  },
+  {type: FormType.code, title: 'Use', attributeName: 'use', codeMapLabel: 'TELECOMMUNICATION_USE'},
 ] as FormField<never>[];
 
 export const IDENTIFIER_ITEM_FIELDS: FormField<never>[] = [

@@ -122,6 +122,19 @@ types (HL7 table 0203) and clinician qualifications (table 0360) are
 published as code systems, not codemap entries — binding them to a
 `codeMapLabel` yields an empty dropdown.
 
+### Form dialog layout
+
+A form wraps its content in `.form-dialog-body`, which scrolls, and places
+`app-form-footer` outside it so the save actions stay visible however long
+the form is. The footer also carries the form-wide options (lift required
+rules, fill random); a form opts out of either with `allowLift` /
+`allowRandom`.
+
+**No `::ng-deep`.** Styles that must reach inside a PrimeNG template, or a
+class projected into one, live in the `app` layer of `src/styles.scss` and
+are scoped by the host element (`app-form-field p-select { … }`). Component
+stylesheets only style their own markup.
+
 ### Nested values
 
 A card can declare `path` so all its fields read and write under one nested
@@ -130,6 +143,15 @@ object — the vaccination form uses `path: 'vaccine'`, since most of a
 the same with their own `path` (next of kin). Shared sub-field groups for
 addresses, phones and identifiers live in `shared/forms/common-fields.ts`,
 so patient and clinician forms stay in step.
+
+### Remote registry failures
+
+A 401 from a `/registry/{id}/$auth`, `$connectivity`, `metadata` or
+`fhir-client` call means the **remote IIS** rejected its configured
+credentials — not that this app's session ended. `authInterceptor` excludes
+those paths from `sessionExpired` (otherwise a failed connection check logs
+the user out), and `errorInterceptor` suppresses the toast for them, since
+the settings page reports the outcome inline.
 
 ### Entity references
 

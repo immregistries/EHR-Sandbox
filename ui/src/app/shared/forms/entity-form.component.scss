@@ -36,11 +36,6 @@
     color: var(--app-text-muted);
   }
 }
-
-:host ::ng-deep .full-width {
-  width: 100%;
-}
-
 .cards {
   display: grid;
   gap: v.$spacing-md;
@@ -52,8 +47,23 @@
  * A card holding a repeating field takes the full row, so its horizontal
  * track has room to show several entries before scrolling.
  */
+/**
+ * A card holding a repeating field needs room for its horizontal track, so
+ * it takes the full row. On a wide dialog that leaves too much empty space,
+ * so there it spans half the grid instead — still several entries wide.
+ */
 .card--wide {
   grid-column: 1 / -1;
+}
+
+@media (min-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  }
+
+  .card--wide {
+    grid-column: span 2;
+  }
 }
 
 .json-note {

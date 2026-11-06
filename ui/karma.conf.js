@@ -29,10 +29,10 @@ module.exports = function (config) {
       // so coverage can never regress. Target is 80/70/80/80.
       check: {
         global: {
-          statements: 74,
-          branches: 60,
-          functions: 55,
-          lines: 73,
+          statements: 75,
+          branches: 62,
+          functions: 57,
+          lines: 74,
         },
       },
     },

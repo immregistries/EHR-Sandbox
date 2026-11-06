@@ -33,3 +33,61 @@
     font-family: v.$font-family-mono;
   }
 }
+
+@layer app {
+  /**
+   * Utility used by components to make a PrimeNG control fill its field.
+   * Declared globally because these class names land on elements inside
+   * PrimeNG templates, which component styles cannot reach without
+   * ::ng-deep.
+   */
+  .full-width {
+    width: 100%;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /**
+   * Form dialogs: wide enough for the three-column card grid, and as tall
+   * as the viewport allows. The body scrolls; the action footer stays put.
+   */
+  .p-dialog.form-dialog {
+    width: min(1480px, 96vw);
+    max-width: 96vw;
+  }
+
+  .p-dialog .form-dialog-body {
+    overflow: auto;
+    /* Fills the dialog, leaving room for its header and the form footer. */
+    max-height: calc(92vh - 11rem);
+    min-height: 16rem;
+  }
+
+  app-form-field {
+    p-select,
+    p-datepicker,
+    p-autocomplete {
+      width: 100%;
+    }
+
+    .p-inputtext,
+    .p-select,
+    .p-datepicker {
+      width: 100%;
+    }
+  }
+
+  app-form-field .field--invalid .p-inputtext {
+    border-color: var(--app-danger);
+  }
+
+  /* The host's save actions, projected into the form footer. */
+  app-form-footer [actions] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
