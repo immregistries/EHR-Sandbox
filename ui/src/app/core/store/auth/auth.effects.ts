@@ -39,9 +39,10 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(({token, redirectTo}) => {
+        tap(({username, token, redirectTo}) => {
           if (token) {
             this.tokenStorage.saveToken(token);
+            this.tokenStorage.saveUser({id: -1, username, accessToken: token, tokenType: 'Bearer'});
           }
           this.router.navigateByUrl(redirectTo ?? '/tenants');
         }),
@@ -57,16 +58,26 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(AuthActions.restoreSession),
       // exhaustMap drops requests arriving while a probe is in flight.
-      exhaustMap(() =>
-        this.authService.checkLoggedUser().pipe(
+      exhaustMap(() => {
+        // Auth is token-based: no stored token means no session, so there is
+        // nothing to validate and no request worth making.
+        if (!this.tokenStorage.getToken()) {
+          return of(AuthActions.restoreSessionFailure());
+        }
+        const stored = this.tokenStorage.getUser();
+        return this.authService.checkLoggedUser().pipe(
           map((username) =>
-            username
-              ? AuthActions.restoreSessionSuccess({username: String(username)})
-              : AuthActions.restoreSessionFailure(),
+            AuthActions.restoreSessionSuccess({
+              username: String(username || stored?.username || ''),
+            }),
           ),
-          catchError(() => of(AuthActions.restoreSessionFailure())),
-        ),
-      ),
+          // The token is present but rejected, so it is stale: clear it.
+          catchError(() => {
+            this.tokenStorage.signOut();
+            return of(AuthActions.restoreSessionFailure());
+          }),
+        );
+      }),
     ),
   );
 

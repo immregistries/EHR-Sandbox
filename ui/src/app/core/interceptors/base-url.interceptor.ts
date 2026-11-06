@@ -1,5 +1,7 @@
 import {HttpInterceptorFn} from '@angular/common/http';
 
-/** Sends credentials with every relative (same-origin API) request. */
-export const baseUrlInterceptor: HttpInterceptorFn = (req, next) =>
-  req.url.startsWith('http') ? next(req) : next(req.clone({withCredentials: true}));
+/**
+ * Normalises outgoing API requests. Auth is token-based — the Authorization
+ * header is added by `authInterceptor` — so no credentials are attached here.
+ */
+export const baseUrlInterceptor: HttpInterceptorFn = (req, next) => next(req);

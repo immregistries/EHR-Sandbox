@@ -32,14 +32,22 @@ Node `v24.16.0` (see `.nvmrc`): `nvm use`.
   facility used to reset the selected patient from inside `PatientService`).
 - **`CallState`** (`core/store/call-state.ts`) gives every slice uniform
   loading/error handling.
-- **Session restore across reloads.** On a refresh the store starts empty
-  while `/auth/user` is still in flight, so `authGuard` waits for
+- **Authentication is token-based.** `POST /auth` returns a JWT, which
+  `TokenStorageService` keeps in `localStorage` so a login survives closing
+  the browser; `authInterceptor` sends it as `Authorization: Bearer …` on
+  every request. No cookies are involved, so requests are not sent
+  `withCredentials`. Storing the token in `localStorage` makes it readable by
+  any script on this origin — a deliberate tradeoff for persistence. Sign-out
+  removes only the auth keys, since the colour scheme shares that storage.
+- **Session restore across reloads.** The stored token *is* the session:
+  `restoreSession` skips the HTTP call entirely when there is no token, and
+  clears a token the API rejects. On a refresh the store starts empty while
+  the validating call is in flight, so `authGuard` waits for
   `selectSessionStatus().resolved` instead of reading `authenticated`
-  immediately — otherwise a signed-in user is bounced to the login page.
-  The guard starts a probe only when the session is **unknown** — re-probing
-  an established one would undo a fresh login on any backend whose
-  `/auth/user` does not confirm a just-created session. `exhaustMap` in the
-  effect drops the duplicate the app shell sends, so only one probe runs.
+  immediately — otherwise a signed-in user is bounced to the login page. The
+  guard starts a probe only when the session is **unknown**; re-probing an
+  established one would undo a fresh login. `exhaustMap` in the effect drops
+  the duplicate the app shell sends, so only one call runs.
 - **Code maps** load once per session (on login or session restore) into the
   `codeMaps` slice. Views read them through factory selectors —
   `selectCodeSet(label)`, `selectCode(label, value)`,
