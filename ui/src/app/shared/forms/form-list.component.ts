@@ -18,6 +18,28 @@ import {FormFieldComponent} from './form-field.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="list">
+      @if (!singleEntry()) {
+        <header class="list-header">
+          <h4 class="list-title">{{ field().title }}</h4>
+          @if (entries().length) {
+            <span class="list-count">{{ entries().length }}</span>
+          }
+          <span class="list-spacer"></span>
+          <p-button
+            icon="pi pi-eraser"
+            label="Clear"
+            [text]="true"
+            size="small"
+            severity="secondary"
+            [disabled]="!entries().length"
+            [pTooltip]="'Remove every ' + field().title.toLowerCase()"
+            tooltipPosition="left"
+            [ariaLabel]="'Clear ' + field().title"
+            (onClick)="clear()"
+          />
+        </header>
+      }
+
       @if (singleEntry()) {
         <!-- One fixed entry: the value stays an array, but the add/remove
              controls and the per-entry header are not offered. -->
@@ -159,6 +181,15 @@ export class FormListComponent {
 
   remove(index: number): void {
     this.array().removeAt(index);
+    this.bumpVersion();
+  }
+
+  /** Empties the list; the per-entry button removes one at a time. */
+  clear(): void {
+    if (!this.array().length) {
+      return;
+    }
+    this.array().clear();
     this.bumpVersion();
   }
 

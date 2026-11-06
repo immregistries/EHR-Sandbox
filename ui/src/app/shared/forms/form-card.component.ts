@@ -33,7 +33,6 @@ interface FieldGroup {
         @for (group of fieldGroups(); track $index) {
           @if (group.list) {
             <section class="list-row">
-              <h4 class="list-row-title">{{ group.list.title }}</h4>
               <app-form-list
                 [field]="group.list"
                 [array]="arrayFor(group.list.attributeName)"

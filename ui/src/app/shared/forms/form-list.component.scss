@@ -11,6 +11,35 @@
  * Entries sit side by side and scroll horizontally, so a patient with many
  * identifiers or addresses does not stretch the card vertically.
  */
+.list-header {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+}
+
+.list-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--app-text-muted);
+}
+
+.list-count {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--app-surface-alt);
+  border: 1px solid var(--app-border);
+  color: var(--app-text-muted);
+}
+
+.list-spacer {
+  flex: 1;
+}
+
 .track {
   display: flex;
   align-items: flex-start;

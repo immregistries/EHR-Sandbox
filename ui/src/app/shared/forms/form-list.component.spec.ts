@@ -170,3 +170,93 @@ describe('FormListComponent layout', () => {
     expect(h.query('.entry-grid--single')).not.toBeNull();
   });
 });
+
+describe('FormListComponent clear', () => {
+  function clearButton(h: ComponentHarness<FormListComponent>): HTMLButtonElement | undefined {
+    return h
+      .queryAll<HTMLButtonElement>('.list-header button')
+      .find((button) => (button.textContent ?? '').includes('Clear'));
+  }
+
+  it('shows the list title and entry count in the header', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {
+      identifiers: [{value: 'A'}, {value: 'B'}],
+    } as never);
+
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array: form.get('identifiers') as FormArray},
+    });
+
+    expect(h.text('.list-title')).toBe('Identifier');
+    expect(h.text('.list-count')).toBe('2');
+  });
+
+  it('removes every entry when cleared', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {
+      identifiers: [{value: 'A'}, {value: 'B'}, {value: 'C'}],
+    } as never);
+    const array = form.get('identifiers') as FormArray;
+
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array},
+    });
+
+    clearButton(h)?.click();
+    h.detectChanges();
+
+    expect(array.length).toBe(0);
+    expect(h.queryAll('.entry').length).toBe(0);
+  });
+
+  it('leaves the field an empty array, not a removed value', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {identifiers: [{value: 'A'}]} as never);
+
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array: form.get('identifiers') as FormArray},
+    });
+    h.component.clear();
+
+    expect(Array.isArray(form.get('identifiers')?.value)).toBeTrue();
+    expect(form.get('identifiers')?.value).toEqual([]);
+  });
+
+  it('disables clear when the list is already empty', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {} as never);
+
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array: form.get('identifiers') as FormArray},
+    });
+
+    expect(clearButton(h)?.disabled).toBeTrue();
+  });
+
+  it('re-enables clear once an entry is added', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {} as never);
+
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array: form.get('identifiers') as FormArray},
+    });
+    h.component.add();
+    h.detectChanges();
+
+    expect(clearButton(h)?.disabled).toBeFalse();
+  });
+
+  it('offers no clear in single-entry mode', async () => {
+    const engine = makeEngine();
+    const field = {...IDENTIFIER_FIELD, singleEntry: true} as FormField<never>;
+    const config = [{title: 'C', fields: [field]}] as FormCard<never>[];
+    const form = engine.build(config, {} as never);
+
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field, array: form.get('identifiers') as FormArray},
+    });
+
+    expect(h.query('.list-header')).toBeNull();
+  });
+});
