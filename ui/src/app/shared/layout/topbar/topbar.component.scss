@@ -38,3 +38,47 @@
     display: none;
   }
 }
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-xs;
+  min-width: 0;
+}
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2px 6px;
+  border-radius: v.$radius-sm;
+  font-size: 0.82rem;
+  color: var(--app-text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.75rem;
+  }
+
+  &:hover {
+    background: var(--app-surface-alt);
+    color: var(--app-text);
+  }
+
+  &--current {
+    color: var(--app-text);
+    font-weight: 550;
+  }
+}
+
+.crumb-sep {
+  font-size: 0.7rem;
+  color: var(--app-text-muted);
+}
+
+@media (max-width: v.$breakpoint-md) {
+  .crumb:not(.crumb--current) {
+    display: none;
+  }
+}

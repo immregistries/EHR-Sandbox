@@ -10,7 +10,9 @@ import {
   selectCode,
   selectCodeSet,
   selectCodeSetOptions,
+  selectIdentifierTypeOptions,
   selectIncludeDeprecatedCodes,
+  selectQualificationOptions,
   selectVisibleCodeBaseMap,
 } from './code-maps.selectors';
 
@@ -61,5 +63,46 @@ describe('code-maps selectors', () => {
     const options = selectCodeSetOptions('VACCINATION_CVX_CODE')(stateWithTenant('General'));
 
     expect(options.map((code) => code.value)).toEqual(['08']);
+  });
+});
+
+describe('bundled code system selectors', () => {
+  function stateWith(identifierConcepts: { code: string; display: string }[]) {
+    return appStateFactory({
+      codeMaps: {
+        ...codeMapsInitial,
+        identifierTypeCodeSystem: {
+          resourceType: 'CodeSystem',
+          status: 'active',
+          content: 'complete',
+          concept: identifierConcepts,
+        } as never,
+      },
+    });
+  }
+
+  it('projects identifier types into select options', () => {
+    const options = selectIdentifierTypeOptions(
+      stateWith([
+        {code: 'MR', display: 'Medical record number'},
+        {code: 'SS', display: 'Social security number'},
+      ]),
+    );
+
+    expect(options).toEqual([
+      {value: 'MR', label: 'Medical record number', description: undefined},
+      {value: 'SS', label: 'Social security number', description: undefined},
+    ]);
+  });
+
+  it('returns nothing before the code system has loaded', () => {
+    expect(selectIdentifierTypeOptions(appStateFactory({}))).toEqual([]);
+    expect(selectQualificationOptions(appStateFactory({}))).toEqual([]);
+  });
+
+  it('falls back to the code when a concept has no display', () => {
+    const options = selectIdentifierTypeOptions(stateWith([{code: 'XX'} as never]));
+
+    expect(options[0].label).toBe('XX');
   });
 });

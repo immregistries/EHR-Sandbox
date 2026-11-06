@@ -29,7 +29,7 @@ describe('SidebarComponent', () => {
     expect(labels(h)).toContain('Data Quality Issues');
   });
 
-  it('builds links against the current tenant and facility', async () => {
+  it('builds scoped links against the current tenant and facility', async () => {
     const h = await renderComponent(SidebarComponent, {
       state: {route: {tenantId: 3, facilityId: 8}},
     });
@@ -38,6 +38,37 @@ describe('SidebarComponent', () => {
 
     expect(hrefs).toContain('/t/3/f/8/dashboard');
     expect(hrefs).toContain('/t/3/facilities');
+  });
+
+  it('keeps the selected context on context-free pages', async () => {
+    const h = await renderComponent(SidebarComponent, {
+      state: {route: {tenantId: 3, facilityId: 8}},
+    });
+
+    const hrefs = h.queryAll<HTMLAnchorElement>('a.nav-link').map((a) => a.getAttribute('href'));
+
+    // Home and Tenants carry the deepest prefix, so visiting them does not
+    // drop the tenant or the facility.
+    expect(hrefs).toContain('/t/3/f/8/home');
+    expect(hrefs).toContain('/t/3/f/8/tenants');
+    expect(hrefs).not.toContain('/home');
+  });
+
+  it('prefixes context-free pages with the tenant alone when no facility is selected', async () => {
+    const h = await renderComponent(SidebarComponent, {state: {route: {tenantId: 3}}});
+
+    const hrefs = h.queryAll<HTMLAnchorElement>('a.nav-link').map((a) => a.getAttribute('href'));
+
+    expect(hrefs).toContain('/t/3/home');
+    expect(hrefs).toContain('/t/3/tenants');
+  });
+
+  it('uses bare links when nothing is selected', async () => {
+    const h = await renderComponent(SidebarComponent, {state: {route: {}}});
+
+    const hrefs = h.queryAll<HTMLAnchorElement>('a.nav-link').map((a) => a.getAttribute('href'));
+
+    expect(hrefs).toContain('/home');
     expect(hrefs).toContain('/tenants');
   });
 

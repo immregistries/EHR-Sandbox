@@ -66,6 +66,29 @@ export const selectCode = (label: string | undefined, value: string | undefined)
     value ? codeSet?.[value] : undefined,
   );
 
+/**
+ * Concepts of a bundled FHIR CodeSystem, shaped like codemap options so a
+ * form field can bind to either source.
+ */
+const codeSystemOptions = (system: { concept?: { code?: string; display?: string; definition?: string }[] } | null) =>
+  (system?.concept ?? []).map((concept) => ({
+    value: concept.code ?? '',
+    label: concept.display ?? concept.code ?? '',
+    description: concept.definition,
+  }));
+
+/** Identifier types (HL7 table 0203), used by identifier forms. */
+export const selectIdentifierTypeOptions = createSelector(
+  selectIdentifierTypeCodeSystem,
+  codeSystemOptions,
+);
+
+/** Clinician qualifications (HL7 table 0360). */
+export const selectQualificationOptions = createSelector(
+  selectQualificationCodeSystem,
+  codeSystemOptions,
+);
+
 /** A code set as an array, ready for p-select / p-autocomplete options. */
 export const selectCodeSetOptions = (label: string | undefined) =>
   createSelector(selectCodeSet(label), (codeSet) => Object.values(codeSet ?? {}));

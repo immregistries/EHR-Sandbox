@@ -7,9 +7,23 @@ import {MainLayoutComponent} from './shared/layout/main-layout/main-layout.compo
 /**
  * Tenant and facility context live in the url:
  *   /t/:tenantId/f/:facilityId/dashboard/patients/:patientId
- * so any view is directly linkable and the store derives its context from the
- * router instead of a separately held "current selection".
+ *
+ * Context-free pages (home, tenants) are mounted at the root, under
+ * /t/:tenantId and under /t/:tenantId/f/:facilityId, so navigating to them
+ * preserves whatever context is already selected — the IIS Sandbox approach,
+ * extended one level for facilities.
  */
+const CONTEXT_FREE_ROUTES: Routes = [
+  {
+    path: 'home',
+    loadChildren: () => import('./features/home/home.routes').then((m) => m.HOME_ROUTES),
+  },
+  {
+    path: 'tenants',
+    loadChildren: () => import('./features/tenant/tenant.routes').then((m) => m.TENANT_ROUTES),
+  },
+];
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -21,18 +35,12 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      {
-        path: 'home',
-        loadChildren: () => import('./features/home/home.routes').then((m) => m.HOME_ROUTES),
-      },
-      {
-        path: 'tenants',
-        loadChildren: () => import('./features/tenant/tenant.routes').then((m) => m.TENANT_ROUTES),
-      },
+      ...CONTEXT_FREE_ROUTES,
       {
         path: 't/:tenantId',
         canActivate: [tenantGuard],
         children: [
+          ...CONTEXT_FREE_ROUTES,
           {
             path: 'facilities',
             loadChildren: () =>
@@ -42,6 +50,7 @@ export const routes: Routes = [
             path: 'f/:facilityId',
             canActivate: [facilityGuard],
             children: [
+              ...CONTEXT_FREE_ROUTES,
               {
                 path: 'dashboard',
                 loadChildren: () =>

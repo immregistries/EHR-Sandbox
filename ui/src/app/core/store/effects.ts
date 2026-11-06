@@ -1,4 +1,5 @@
 import {AuthEffects} from './auth/auth.effects';
+import {ClinicianEffects} from './clinician/clinician.effects';
 import {CodeMapsEffects} from './code-maps/code-maps.effects';
 import {ContextEffects} from './context.effects';
 import {FacilityEffects} from './facility/facility.effects';
@@ -16,4 +17,5 @@ export const appEffects = [
   VaccinationEffects,
   RegistryEffects,
   CodeMapsEffects,
+  ClinicianEffects,
 ];

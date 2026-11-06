@@ -1,0 +1,105 @@
+@use 'variables' as v;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+  min-width: 0;
+}
+
+/**
+ * Entries sit side by side and scroll horizontally, so a patient with many
+ * identifiers or addresses does not stretch the card vertically.
+ */
+.track {
+  display: flex;
+  align-items: flex-start;
+  gap: v.$spacing-sm;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: v.$spacing-xs;
+  scroll-snap-type: x proximity;
+
+  // Keep the scrollbar visible rather than overlaying the fields.
+  scrollbar-width: thin;
+  scrollbar-color: var(--app-border) transparent;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--app-border);
+    border-radius: 999px;
+  }
+}
+
+.entry {
+  flex: 0 0 auto;
+  width: 260px;
+  scroll-snap-align: start;
+  border: 1px solid var(--app-border);
+  border-radius: v.$radius-sm;
+  background: var(--app-bg);
+}
+
+.entry-header {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  padding: 0.25rem v.$spacing-sm 0.25rem v.$spacing-md;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.entry-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.entry-badge {
+  max-width: 7ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--app-surface-alt);
+  border: 1px solid var(--app-border);
+  color: var(--app-text-muted);
+}
+
+.entry-spacer {
+  flex: 1;
+}
+
+/** Fields stack within an entry, since each entry is a narrow column. */
+.entry-grid {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-md;
+}
+
+.entry-grid--single {
+  display: grid;
+  gap: v.$spacing-sm v.$spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  padding: 0;
+}
+
+.track-actions {
+  flex: 0 0 auto;
+  align-self: center;
+  padding-left: v.$spacing-xs;
+}
+
+.empty {
+  margin: 0;
+  align-self: center;
+  font-size: 0.78rem;
+  color: var(--app-text-muted);
+}

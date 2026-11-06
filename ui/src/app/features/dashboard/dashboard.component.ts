@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {ButtonModule} from 'primeng/button';
 import {CardModule} from 'primeng/card';
+import {DialogModule} from 'primeng/dialog';
 import {EhrPatient} from '../../core/models';
 import {PatientActions} from '../../core/store/patient/patient.actions';
 import {
@@ -16,6 +17,7 @@ import {VaccinationActions} from '../../core/store/vaccination/vaccination.actio
 import {selectAllVaccinations, selectVaccinationsLoading,} from '../../core/store/vaccination/vaccination.selectors';
 import {MessageService} from 'primeng/api';
 import {RecordToolAction} from '../../shared/components/record-tools/record-tools.component';
+import {PatientFormComponent} from '../patient/patient-form/patient-form.component';
 import {DashboardPanelComponent} from './dashboard-panel/dashboard-panel.component';
 import {
   PatientSummaryTableComponent,
@@ -39,6 +41,8 @@ import {
   imports: [
     ButtonModule,
     CardModule,
+    DialogModule,
+    PatientFormComponent,
     DashboardPanelComponent,
     PatientSummaryTableComponent,
     VaccinationSummaryTableComponent,
@@ -70,7 +74,7 @@ import {
           [selectedId]="selectedPatientId()"
           [canEdit]="hasFacility()"
           (patientSelect)="selectPatient($event)"
-          (create)="notImplemented('Patient creation')"
+          (create)="openCreate()"
           (populate)="populateFacility()"
           (toolSelect)="onPatientTool($event)"
         />
@@ -118,6 +122,25 @@ import {
         }
       </app-dashboard-panel>
 
+      <p-dialog
+        [header]="editingPatient() ? 'Edit patient' : 'New patient'"
+        [visible]="formOpen()"
+        (visibleChange)="formOpen.set($event)"
+        [modal]="true"
+        [draggable]="false"
+        [dismissableMask]="false"
+        styleClass="patient-form-dialog"
+        [style]="{width: 'min(1100px, 95vw)'}"
+      >
+        @if (formOpen()) {
+          <app-patient-form
+            [patient]="editingPatient()"
+            (saved)="onSaved()"
+            (cancelled)="formOpen.set(false)"
+          />
+        }
+      </p-dialog>
+
       <app-dashboard-panel
         class="panel panel--forecast"
         title="Recommendations"
@@ -147,6 +170,9 @@ export class DashboardComponent {
   readonly patientsLoading = this.store.selectSignal(selectPatientsLoading);
   readonly selectedPatientId = this.store.selectSignal(selectCurrentPatientId);
   readonly selectedPatient = this.store.selectSignal(selectCurrentPatient);
+
+  readonly formOpen = signal(false);
+  readonly editingPatient = signal<EhrPatient | undefined>(undefined);
 
   readonly vaccinations = this.store.selectSignal(selectAllVaccinations);
   readonly vaccinationsLoading = this.store.selectSignal(selectVaccinationsLoading);
@@ -226,7 +252,26 @@ export class DashboardComponent {
       this.selectPatient(patient);
       return;
     }
+    if (action === 'edit') {
+      this.openEdit(patient);
+      return;
+    }
     this.notImplemented(this.toolName(action));
+  }
+
+  openCreate(): void {
+    this.editingPatient.set(undefined);
+    this.formOpen.set(true);
+  }
+
+  openEdit(patient: EhrPatient): void {
+    this.editingPatient.set(patient);
+    this.formOpen.set(true);
+  }
+
+  onSaved(): void {
+    this.formOpen.set(false);
+    this.store.dispatch(PatientActions.refresh());
   }
 
   onVaccinationTool({action}: VaccinationToolRequest): void {

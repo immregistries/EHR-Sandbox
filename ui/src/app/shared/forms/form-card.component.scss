@@ -1,0 +1,82 @@
+@use 'variables' as v;
+@use 'mixins';
+
+:host {
+  display: block;
+  break-inside: avoid;
+}
+
+.card {
+  @include mixins.surface-card;
+
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+  padding: v.$spacing-sm v.$spacing-md;
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-surface-alt);
+
+  h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}
+
+.hl7 {
+  margin-left: auto;
+  font-family: v.$font-family-mono;
+  font-size: 0.65rem;
+  color: var(--app-text-muted);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+  padding: v.$spacing-md;
+  min-width: 0;
+}
+
+/** A run of scalar fields, laid out responsively. */
+.field-row {
+  display: grid;
+  gap: v.$spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  min-width: 0;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.span-3 {
+  grid-column: 1 / -1;
+}
+
+/** A repeating field owns its row, so its track can scroll edge to edge. */
+.list-row {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-xs;
+  min-width: 0;
+}
+
+.list-row-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--app-text-muted);
+}
+
+.card-note {
+  padding: 0 v.$spacing-md v.$spacing-md;
+  font-size: 0.72rem;
+  color: var(--app-text-muted);
+}

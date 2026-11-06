@@ -13,6 +13,7 @@ import {RouterReducerState} from '@ngrx/router-store';
 
 import {AppState} from '../app/core/store';
 import * as fromAuth from '../app/core/store/auth/auth.reducer';
+import * as fromClinician from '../app/core/store/clinician/clinician.reducer';
 import * as fromCodeMaps from '../app/core/store/code-maps/code-maps.reducer';
 import * as fromFacility from '../app/core/store/facility/facility.reducer';
 import * as fromPatient from '../app/core/store/patient/patient.reducer';
@@ -77,6 +78,7 @@ export function appStateFactory(overrides: AppStateOverrides = {}): AppState {
     [fromVaccination.vaccinationFeatureKey]: fromVaccination.initialState,
     [fromRegistry.registryFeatureKey]: fromRegistry.initialState,
     [fromCodeMaps.codeMapsFeatureKey]: fromCodeMaps.initialState,
+    [fromClinician.clinicianFeatureKey]: fromClinician.initialState,
     ...rest,
   };
 }

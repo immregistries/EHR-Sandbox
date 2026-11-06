@@ -1,0 +1,77 @@
+@use 'variables' as v;
+
+.entity-form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$spacing-md;
+}
+
+.form-toolbar {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-md;
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: v.$spacing-sm;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toggle-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  font-weight: 550;
+  cursor: pointer;
+
+  small {
+    font-weight: 400;
+    font-size: 0.72rem;
+    color: var(--app-text-muted);
+  }
+}
+
+:host ::ng-deep .full-width {
+  width: 100%;
+}
+
+.cards {
+  display: grid;
+  gap: v.$spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  align-items: start;
+}
+
+/**
+ * A card holding a repeating field takes the full row, so its horizontal
+ * track has room to show several entries before scrolling.
+ */
+.card--wide {
+  grid-column: 1 / -1;
+}
+
+.json-note {
+  margin: 0 0 v.$spacing-sm;
+  font-size: 0.78rem;
+  color: var(--app-text-muted);
+}
+
+.json-editor {
+  width: 100%;
+  min-height: 420px;
+  padding: v.$spacing-md;
+  font-family: v.$font-family-mono;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--app-text);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: v.$radius-sm;
+  resize: vertical;
+}

@@ -2,6 +2,7 @@ import {isDevMode} from '@angular/core';
 import {ActionReducerMap, MetaReducer} from '@ngrx/store';
 import {routerReducer, RouterReducerState} from '@ngrx/router-store';
 import * as fromAuth from './auth/auth.reducer';
+import * as fromClinician from './clinician/clinician.reducer';
 import * as fromCodeMaps from './code-maps/code-maps.reducer';
 import * as fromTenant from './tenant/tenant.reducer';
 import * as fromFacility from './facility/facility.reducer';
@@ -18,6 +19,7 @@ export interface AppState {
   [fromVaccination.vaccinationFeatureKey]: fromVaccination.VaccinationState;
   [fromRegistry.registryFeatureKey]: fromRegistry.RegistryState;
   [fromCodeMaps.codeMapsFeatureKey]: fromCodeMaps.CodeMapsState;
+  [fromClinician.clinicianFeatureKey]: fromClinician.ClinicianState;
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -29,6 +31,7 @@ export const reducers: ActionReducerMap<AppState> = {
   [fromVaccination.vaccinationFeatureKey]: fromVaccination.reducer,
   [fromRegistry.registryFeatureKey]: fromRegistry.reducer,
   [fromCodeMaps.codeMapsFeatureKey]: fromCodeMaps.reducer,
+  [fromClinician.clinicianFeatureKey]: fromClinician.reducer,
 };
 
 export const metaReducers: MetaReducer<AppState>[] = isDevMode() ? [] : [];

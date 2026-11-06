@@ -12,6 +12,11 @@ export interface NavItem {
   scope: 'global' | 'tenant' | 'facility';
   /** Not yet implemented — rendered but visibly marked. */
   pending?: boolean;
+  /**
+   * Global page that also exists under /t/:tenantId, so navigating to it
+   * from inside a tenant preserves the selection.
+   */
+  tenantScopable?: boolean;
 }
 
 export interface NavSection {
@@ -31,6 +36,7 @@ export const NAV_SECTIONS: NavSection[] = [
         path: ['/home'],
         tooltip: 'Home and introduction',
         scope: 'global',
+        tenantScopable: true,
       },
       {
         label: 'Tenants',
@@ -38,6 +44,7 @@ export const NAV_SECTIONS: NavSection[] = [
         path: ['/tenants'],
         tooltip: 'Select or create a tenant',
         scope: 'global',
+        tenantScopable: true,
       },
       {
         label: 'IIS Settings',

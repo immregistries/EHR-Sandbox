@@ -1,0 +1,82 @@
+@use 'variables' as v;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 550;
+    color: var(--app-text);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+  }
+
+  input.short {
+    max-width: 8rem;
+  }
+
+  :host ::ng-deep p-select,
+  :host ::ng-deep p-datepicker {
+    width: 100%;
+  }
+}
+
+.required {
+  color: var(--app-danger);
+}
+
+.hl7 {
+  margin-left: auto;
+  font-family: v.$font-family-mono;
+  font-size: 0.65rem;
+  color: var(--app-text-muted);
+  opacity: 0.75;
+}
+
+.error,
+.warning,
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.error {
+  color: var(--app-danger);
+}
+
+.warning {
+  color: var(--app-warning);
+}
+
+.hint {
+  color: var(--app-text-muted);
+}
+
+.field--invalid :host ::ng-deep .p-inputtext {
+  border-color: var(--app-danger);
+}
+
+.code-option {
+  display: flex;
+  align-items: baseline;
+  gap: v.$spacing-sm;
+
+  &__value {
+    margin-left: auto;
+    font-family: v.$font-family-mono;
+    font-size: 0.72rem;
+    color: var(--app-text-muted);
+  }
+}

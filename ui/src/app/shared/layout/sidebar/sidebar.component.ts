@@ -100,7 +100,15 @@ export class SidebarComponent {
       case 'facility':
         return ['/t', tenantId, 'f', facilityId, ...item.path];
       default:
-        return item.path;
+        // Context-free pages keep the deepest prefix currently selected, so
+        // visiting Home or Tenants never drops the tenant or facility.
+        if (!item.tenantScopable || tenantId <= 0) {
+          return item.path;
+        }
+        const tail = item.path.map((segment) => segment.replace(/^\//, ''));
+        return facilityId > 0
+          ? ['/t', tenantId, 'f', facilityId, ...tail]
+          : ['/t', tenantId, ...tail];
     }
   }
 }

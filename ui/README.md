@@ -52,6 +52,93 @@ arguments, never read from another service. This is what made the old
 - `ThemeService` toggles `.app-dark` on `<html>` and supports a `system` mode.
 - Scheme-independent tokens (spacing, radius, type) live in `_variables.scss`.
 
+## Forms
+
+`shared/forms` is a generic, config-driven form engine reused by every entity
+form (patient today; vaccination, facility and clinician next).
+
+A form is declared as data — `FormCard[]`, each card holding `FormField`s that
+name an attribute, its `FormType`, validators and its `hl7Location`. See
+`features/patient/patient-form/patient-form.config.ts`.
+
+| Piece                      | Role                                                                                       |
+|----------------------------|--------------------------------------------------------------------------------------------|
+| `form-config.ts`           | `FormType`, `FormField`, `FormCard`, HL7 location helpers                                  |
+| `form-engine.service.ts`   | Builds a typed `FormGroup` from config; `reset()`, `toEntity()`, and required-rule lifting |
+| `form-field.component.ts`  | Renders one field — the `FormType` switch                                                  |
+| `form-list.component.ts`   | A repeating field, one nested card per entry                                               |
+| `form-card.component.ts`   | One section                                                                                |
+| `entity-form.component.ts` | Shell: cards, JSON tab, lift toggle, random fill                                           |
+
+Carried over from the previous UI:
+
+- **Required fields and custom validators**, declared per field.
+- **Lifting required rules** — the old "Form with Requirements lifted" tab is
+  now a toggle in the form header, so incomplete data can still be submitted
+  to test how the registry responds. Validators are re-applied in place, so
+  values already entered survive the switch and custom validators are kept.
+- **Registry feedback as inline warnings** — `form-warnings.ts` matches
+  `Feedback.hl7Locations` to the `hl7Location` of each field, including the
+  right entry of a repeating field (HL7 repetitions are 1-based).
+  `unmatchedWarnings()` returns feedback that matched nothing, so it is never
+  silently dropped.
+- **Comparison hints** — "Previously: x" against another record.
+- **JSON tab** and **Fill random**.
+
+### Layout
+
+Within a card, runs of scalar fields share a responsive grid while each
+repeating field claims a **full row of its own**; its entries then run
+horizontally in a scrolling track, so a patient with many identifiers does
+not stretch the form downwards. Cards that contain a repeating field span the
+full width of the form (`card--wide`) to give that track room.
+
+### Code sources
+
+A `FormType.code` field reads its options either from the codemaps
+(`codeMapLabel`) or from a bundled FHIR CodeSystem (`codeSystem`). Identifier
+types (HL7 table 0203) and clinician qualifications (table 0360) are
+published as code systems, not codemap entries — binding them to a
+`codeMapLabel` yields an empty dropdown.
+
+### Tenant flavors
+
+The backend encodes flavors in the tenant name, so a tenant called
+"SINGLENAME Hospital" has the SINGLENAME flavor active. Fields declare their
+own adjustments, so adding a flavor is a config change:
+
+```ts
+flavors: {SINGLENAME: {singleEntry: true, omitItemFields: ['nameType']}}
+```
+
+`form-flavors.ts` resolves the active keys from the tenant name and returns an
+adapted config; an override can collapse a list to a single entry
+(`singleEntry`), drop sub-fields (`omitItemFields`), hide a field (`omit`) or
+change whether it is required. A single-entry list still holds an array, so
+the API contract does not change.
+
+Two details worth knowing when extending this:
+
+- A `FormControl` is not a signal, so `computed()` over `touched` or validator
+  state never recomputes. `form-field.component.ts` subscribes to
+  `control.events` and bumps a counter signal the computeds depend on.
+- Fields whose value is nested in the model (next of kin) declare a dotted
+  `path`; the engine reads and writes through it.
+- `store.selectSignal` must be called in an injection context, never inside a
+  `computed` — each recomputation would otherwise open a new subscription.
+- A `computed` returning a mutated-in-place array (such as
+  `FormArray.controls`) needs `{equal: () => false}`, or Angular's identity
+  check sees no change and the view never re-renders.
+- Repopulating a form pushes entries with `emitEvent: false` and then emits
+  once, so views bound to a list update exactly one time.
+
+Form validation is covered at three levels: `form-engine.service.spec.ts`
+(validators built and lifted correctly), `form-field.component.spec.ts`
+(errors, required markers and hints actually *render* — control state alone
+can be right while the DOM is stale) and `patient-form.component.spec.ts`
+(submission is blocked, feedback is attached, "Fill random" replaces every
+section including repeating ones).
+
 ## Testing
 
 Karma + Jasmine. Specs run in **random order** and a spec with no
@@ -92,14 +179,25 @@ floor the exemplars reach (45/30/25/45). Raise them as suites land; target is
 ## Layout
 
 `shared/layout` holds the app shell: `MainLayoutComponent` (sidebar + topbar +
-outlet), a collapsible `SidebarComponent`, and a `TopbarComponent` carrying the
-tenant/facility selectors, refresh, theme toggle and logout.
+outlet), a collapsible `SidebarComponent`, and a `TopbarComponent` carrying a
+context breadcrumb, refresh, theme toggle and logout.
 
-The selectors **navigate rather than mutate**: picking a tenant routes to
-`/t/:tenantId`, picking a facility to `/t/:tenantId/f/:facilityId`. Sidebar
-sections are scoped (`global` / `tenant` / `facility`) in
-`sidebar/nav-items.ts` and appear as the url provides the ids they need;
-not-yet-built destinations are marked `pending` and render a "soon" badge.
+There are **no tenant/facility dropdowns**. Context is selected by navigating
+to the tenant and facility list pages, and is read back from the url — so it
+survives reloads, deep links and the browser's back button, and two tabs can
+sit in different tenants. The topbar breadcrumb (Tenants › tenant › facility)
+shows the current context and links back to each selection page.
+
+Context-free pages (Home, Tenants) are mounted three times in `app.routes.ts`
+— at the root, under `/t/:tenantId`, and under `/t/:tenantId/f/:facilityId`.
+The sidebar links them with the deepest prefix currently selected, so moving
+to Home from a dashboard gives `/t/1/f/5/home` and returning to the dashboard
+is still one click. Items marked `tenantScopable` in `sidebar/nav-items.ts`
+opt into this.
+
+Sidebar sections are scoped (`global` / `tenant` / `facility`) and appear as
+the url provides the ids they need; not-yet-built destinations are marked
+`pending` and render a "soon" badge.
 
 Selecting a patient on the dashboard likewise navigates to
 `…/dashboard/patients/:patientId`, so a dashboard view is shareable as a link.
