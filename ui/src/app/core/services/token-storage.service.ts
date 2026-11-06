@@ -5,29 +5,55 @@ const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
 
 /**
- * Persists the JWT in session storage. Clearing selected tenant/facility on
- * sign-out is handled by the auth store, not here.
+ * Persists the JWT that authenticates every request.
+ *
+ * Stored in localStorage so a session survives closing the browser. That is
+ * a deliberate tradeoff: the token is readable by any script on this origin,
+ * which matters more than it would for sessionStorage.
  */
 @Injectable({providedIn: 'root'})
 export class TokenStorageService {
   signOut(): void {
-    window.sessionStorage.clear();
+    // Only the auth keys: the theme preference also lives in localStorage.
+    this.storage?.removeItem(TOKEN_KEY);
+    this.storage?.removeItem(USER_KEY);
   }
 
   saveToken(token: string): void {
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+    this.storage?.setItem(TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return window.sessionStorage.getItem(TOKEN_KEY);
+    return this.storage?.getItem(TOKEN_KEY) ?? null;
   }
 
   saveUser(user: JwtResponse): void {
-    window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    this.storage?.setItem(USER_KEY, JSON.stringify(user));
   }
 
   getUser(): JwtResponse | null {
-    const user = window.sessionStorage.getItem(USER_KEY);
-    return user ? JSON.parse(user) : null;
+    const user = this.storage?.getItem(USER_KEY);
+    if (!user) {
+      return null;
+    }
+    try {
+      return JSON.parse(user) as JwtResponse;
+    } catch {
+      // Corrupt entry: treat it as no session rather than breaking startup.
+      this.signOut();
+      return null;
+    }
+  }
+
+  /**
+   * localStorage throws when access is blocked (private mode, disabled site
+   * data), so every use is guarded: the app then runs without persistence.
+   */
+  private get storage(): Storage | null {
+    try {
+      return window.localStorage;
+    } catch {
+      return null;
+    }
   }
 }
