@@ -190,6 +190,11 @@ Two details worth knowing when extending this:
 - A `computed` returning a mutated-in-place array (such as
   `FormArray.controls`) needs `{equal: () => false}`, or Angular's identity
   check sees no change and the view never re-renders.
+- Angular Forms objects are not signals, so anything derived from one
+  (`getRawValue()`, `touched`, `controls`) must depend on a counter signal
+  fed from the form's own events. `form-field`, `form-list` and the JSON tab
+  in `entity-form` each do this; without it the view silently shows stale
+  data.
 - Repopulating a form pushes entries with `emitEvent: false` and then emits
   once, so views bound to a list update exactly one time.
 

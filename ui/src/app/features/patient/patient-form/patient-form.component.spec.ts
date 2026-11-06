@@ -306,3 +306,100 @@ describe('PatientFormComponent date fields', () => {
     expect((value as Date).getDate()).toBe(4);
   });
 });
+
+describe('PatientFormComponent dialog layout', () => {
+  it('scrolls its body separately from the footer', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+    });
+
+    // The footer sits outside the scrolling body, so it stays visible
+    // however long the form is.
+    const body = h.query<HTMLElement>('.form-dialog-body');
+    const footer = h.query<HTMLElement>('app-form-footer');
+
+    expect(body).not.toBeNull();
+    expect(footer).not.toBeNull();
+    expect(body?.contains(footer!)).toBeFalse();
+  });
+
+  it('puts the form-wide options in the footer, not a header toolbar', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+    });
+
+    expect(h.query('.form-toolbar')).toBeNull();
+    const footerText = h.query<HTMLElement>('app-form-footer')?.textContent ?? '';
+    expect(footerText).toContain('Lift required-field rules');
+    expect(footerText).toContain('Fill random');
+    expect(footerText).toContain('Create patient');
+  });
+});
+
+describe('PatientFormComponent JSON tab', () => {
+  /** The tab panel renders lazily, so open it before reading the editor. */
+  async function openJsonTab(h: ComponentHarness<PatientFormComponent>): Promise<string> {
+    const tab = h
+      .queryAll<HTMLElement>('p-tab')
+      .find((element) => element.textContent?.trim() === 'JSON');
+    tab?.click();
+    h.detectChanges();
+    await h.fixture.whenStable();
+    h.detectChanges();
+    return h.query<HTMLTextAreaElement>('.json-editor')?.value ?? '';
+  }
+
+  it('reflects the form as it stands', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+      inputs: {patient: aPatient({id: 3, sex: 'F'})},
+    });
+
+    expect(await openJsonTab(h)).toContain('"sex": "F"');
+  });
+
+  /** The JSON view must follow the form, not snapshot it once. */
+  it('shows a value typed into the form', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+    });
+
+    h.component.form().get('motherMaiden')?.setValue('Byron');
+    h.detectChanges();
+
+    expect(await openJsonTab(h)).toContain('Byron');
+  });
+
+  it('shows the generated record after fill random', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+    });
+    const patientService = h.fixture.debugElement.injector.get(PatientService);
+    spyOn(patientService, 'readRandom').and.returnValue(
+      of({names: [], motherMaiden: 'RandomMaiden', sex: 'M'} as unknown as EhrPatient),
+    );
+
+    h.component.fillRandom();
+    h.detectChanges();
+
+    expect(await openJsonTab(h)).toContain('RandomMaiden');
+  });
+
+  it('updates after fill random even while the JSON tab is open', async () => {
+    const h = await renderComponent(PatientFormComponent, {
+      state: {route: {tenantId: 1, facilityId: 2}},
+    });
+    const patientService = h.fixture.debugElement.injector.get(PatientService);
+    spyOn(patientService, 'readRandom').and.returnValue(
+      of({names: [], motherMaiden: 'SecondDraw'} as unknown as EhrPatient),
+    );
+    await openJsonTab(h);
+
+    h.component.fillRandom();
+    h.detectChanges();
+    await h.fixture.whenStable();
+    h.detectChanges();
+
+    expect(h.query<HTMLTextAreaElement>('.json-editor')?.value).toContain('SecondDraw');
+  });
+});

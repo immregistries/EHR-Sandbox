@@ -1,4 +1,15 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ButtonModule} from 'primeng/button';
 import {MessageModule} from 'primeng/message';
@@ -76,6 +87,7 @@ import {FormEngineService} from './form-engine.service';
 })
 export class EntityFormComponent {
   private readonly engine = inject(FormEngineService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly config = input.required<FormConfig<never>>();
   readonly form = input.required<FormGroup>();
@@ -96,11 +108,28 @@ export class EntityFormComponent {
   private readonly jsonDraft = signal<string | null>(null);
   readonly jsonError = signal<string | null>(null);
 
-  readonly json = computed(
-    () => this.jsonDraft() ?? JSON.stringify(this.form().getRawValue(), null, 2),
-  );
+  /**
+   * A FormGroup is not a signal, so a computed over `getRawValue()` would
+   * never recompute — the JSON tab would show the form as it was when first
+   * rendered, missing anything typed or generated since.
+   */
+  private readonly formVersion = signal(0);
+
+  readonly json = computed(() => {
+    this.formVersion();
+    return this.jsonDraft() ?? JSON.stringify(this.form().getRawValue(), null, 2);
+  });
 
   constructor() {
+    // Track value changes of whichever form is bound.
+    effect((onCleanup) => {
+      const subscription = this.form()
+        .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.formVersion.update((version) => version + 1));
+      this.formVersion.update((version) => version + 1);
+      onCleanup(() => subscription.unsubscribe());
+    });
+
     // Re-apply validators in place, so values entered so far are preserved.
     effect(() => {
       const lift = this.liftRequired();
