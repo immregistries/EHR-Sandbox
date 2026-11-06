@@ -1,4 +1,16 @@
-import {ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal,} from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  Injector,
+  input,
+  signal,
+} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormArray, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {ButtonModule} from 'primeng/button';
@@ -115,6 +127,8 @@ export class FormListComponent {
   private readonly engine = inject(FormEngineService);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
 
   readonly field = input.required<FormField<never>>();
   readonly array = input.required<FormArray>();
@@ -177,6 +191,26 @@ export class FormListComponent {
   add(): void {
     this.engine.addListItem(this.array(), this.field());
     this.bumpVersion();
+    this.revealLastEntry();
+  }
+
+  /**
+   * A list sitting below the fold would otherwise add its first entry
+   * off-screen. `block: 'nearest'` scrolls only as far as needed, so nothing
+   * moves when the list is already visible.
+   */
+  private revealLastEntry(): void {
+    afterNextRender(
+      () => {
+        const entries = this.host.nativeElement.querySelectorAll<HTMLElement>('.entry');
+        entries[entries.length - 1]?.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      },
+      {injector: this.injector},
+    );
   }
 
   remove(index: number): void {

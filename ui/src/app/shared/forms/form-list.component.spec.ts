@@ -260,3 +260,46 @@ describe('FormListComponent clear', () => {
     expect(h.query('.list-header')).toBeNull();
   });
 });
+
+describe('FormListComponent reveals new entries', () => {
+  it('scrolls the entry it just added into view', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {} as never);
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array: form.get('identifiers') as FormArray},
+    });
+
+    const scrolled: ScrollIntoViewOptions[] = [];
+    // jsdom/headless does not lay out, so record the request instead.
+    Element.prototype.scrollIntoView = function (arg?: boolean | ScrollIntoViewOptions) {
+      scrolled.push(arg as ScrollIntoViewOptions);
+    };
+
+    h.component.add();
+    h.detectChanges();
+    await h.fixture.whenStable();
+
+    expect(scrolled.length).toBe(1);
+    // 'nearest' keeps a visible list from jumping.
+    expect(scrolled[0].block).toBe('nearest');
+  });
+
+  it('does not scroll when an entry is removed', async () => {
+    const engine = makeEngine();
+    const form = engine.build(CONFIG, {identifiers: [{value: 'A'}]} as never);
+    const h = await renderComponent(FormListComponent, {
+      inputs: {field: IDENTIFIER_FIELD, array: form.get('identifiers') as FormArray},
+    });
+
+    let calls = 0;
+    Element.prototype.scrollIntoView = () => {
+      calls += 1;
+    };
+
+    h.component.remove(0);
+    h.detectChanges();
+    await h.fixture.whenStable();
+
+    expect(calls).toBe(0);
+  });
+});
