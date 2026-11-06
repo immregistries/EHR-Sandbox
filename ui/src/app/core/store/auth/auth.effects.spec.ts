@@ -66,7 +66,7 @@ describe('AuthEffects session restore', () => {
     expect(tokenStorage.signOut).toHaveBeenCalled();
   });
 
-  it('falls back to the stored username when the probe returns no body', async () => {
+  it('treats an empty probe body as no session, even with a stored user', async () => {
     tokenStorage.getToken.and.returnValue('jwt-valid');
     tokenStorage.getUser.and.returnValue({
       id: 1,
@@ -74,13 +74,65 @@ describe('AuthEffects session restore', () => {
       accessToken: 'jwt-valid',
       tokenType: 'Bearer',
     });
+    // The backend answers 204 No Content when the token is not accepted, so
+    // an empty body must not be mistaken for a live session.
     authService.checkLoggedUser.and.returnValue(of(''));
+
+    const {effects} = harness();
+
+    await expectEmission(effects.restoreSession$, AuthActions.restoreSessionFailure());
+    expect(tokenStorage.signOut).toHaveBeenCalled();
+  });
+});
+
+describe('AuthEffects restore with a 204 response', () => {
+  let authService: jasmine.SpyObj<AuthService>;
+  let tokenStorage: jasmine.SpyObj<TokenStorageService>;
+
+  beforeEach(() => {
+    authService = jasmine.createSpyObj<AuthService>('AuthService', ['checkLoggedUser', 'login']);
+    tokenStorage = jasmine.createSpyObj<TokenStorageService>('TokenStorageService', [
+      'getToken',
+      'getUser',
+      'saveToken',
+      'saveUser',
+      'signOut',
+    ]);
+  });
+
+  function harness() {
+    return createEffectsHarness(AuthEffects, {
+      actions: of(AuthActions.restoreSession()),
+      providers: [
+        {provide: AuthService, useValue: authService},
+        {provide: TokenStorageService, useValue: tokenStorage},
+      ],
+    });
+  }
+
+  it('treats an empty body as not authenticated and clears the token', async () => {
+    // Spring answers 204 No Content when the token is not accepted.
+    tokenStorage.getToken.and.returnValue('jwt-stale');
+    tokenStorage.getUser.and.returnValue(null);
+    authService.checkLoggedUser.and.returnValue(of(''));
+
+    const {effects} = harness();
+
+    await expectEmission(effects.restoreSession$, AuthActions.restoreSessionFailure());
+    expect(tokenStorage.signOut).toHaveBeenCalled();
+  });
+
+  it('restores from a plain-text username', async () => {
+    tokenStorage.getToken.and.returnValue('jwt-valid');
+    tokenStorage.getUser.and.returnValue(null);
+    authService.checkLoggedUser.and.returnValue(of('tester'));
 
     const {effects} = harness();
 
     await expectEmission(
       effects.restoreSession$,
-      AuthActions.restoreSessionSuccess({username: 'stored-user'}),
+      AuthActions.restoreSessionSuccess({username: 'tester'}),
     );
+    expect(tokenStorage.signOut).not.toHaveBeenCalled();
   });
 });

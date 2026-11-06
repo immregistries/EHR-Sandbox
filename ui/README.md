@@ -39,6 +39,11 @@ Node `v24.16.0` (see `.nvmrc`): `nvm use`.
   `withCredentials`. Storing the token in `localStorage` makes it readable by
   any script on this origin — a deliberate tradeoff for persistence. Sign-out
   removes only the auth keys, since the colour scheme shares that storage.
+- **`GET /auth/user` answers in plain text.** It returns a bare username
+  (not JSON) and `204 No Content` when the token is not accepted. Requesting
+  it as JSON makes Angular throw on the raw string, which looks exactly like
+  a rejected token — so it is read with `responseType: 'text'`, and an empty
+  body is treated as "not authenticated".
 - **Session restore across reloads.** The stored token *is* the session:
   `restoreSession` skips the HTTP call entirely when there is no token, and
   clears a token the API rejects. On a refresh the store starts empty while

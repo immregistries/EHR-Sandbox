@@ -22,8 +22,13 @@ export class AuthService extends ApiBase {
     });
   }
 
+  /**
+   * Validates the stored token. The endpoint answers with a bare username —
+   * plain text, not JSON — and 204 No Content when not authenticated, so it
+   * must be read as text; parsing it as JSON throws on the raw string.
+   */
   checkLoggedUser(): Observable<string> {
-    return this.http.get<string>(this.url('/auth/user'));
+    return this.http.get(this.url('/auth/user'), {responseType: 'text'});
   }
 
   checkBackendHealthy(): Observable<boolean> {

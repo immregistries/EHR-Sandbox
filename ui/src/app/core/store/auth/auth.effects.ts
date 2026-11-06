@@ -66,11 +66,17 @@ export class AuthEffects {
         }
         const stored = this.tokenStorage.getUser();
         return this.authService.checkLoggedUser().pipe(
-          map((username) =>
-            AuthActions.restoreSessionSuccess({
-              username: String(username || stored?.username || ''),
-            }),
-          ),
+          map((username) => {
+            // 204 No Content answers with an empty body: not authenticated.
+            const name = (username ?? '').trim();
+            if (!name) {
+              this.tokenStorage.signOut();
+              return AuthActions.restoreSessionFailure();
+            }
+            return AuthActions.restoreSessionSuccess({
+              username: name || stored?.username || '',
+            });
+          }),
           // The token is present but rejected, so it is stale: clear it.
           catchError(() => {
             this.tokenStorage.signOut();
